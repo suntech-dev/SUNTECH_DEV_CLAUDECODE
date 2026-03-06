@@ -6,23 +6,12 @@
 
 ## PHP 코드 스타일 가이드
 
-### 들여쓰기 & 구조
-- **들여쓰기**: 스페이스 2칸
+### 인코딩
 - **인코딩**: UTF-8 (BOM 없음)
-- 코드는 영문 작성, 핵심 비즈니스 로직 부분만 한글 주석 허용
 
-### 보안
-- **모든 DB 쿼리는 PDO prepared statement 사용 필수**
+### 보안 (추가 규칙)
 - 동적 테이블명은 화이트리스트(`in_array`) 검증 후 사용
 - `$_REQUEST`, `$_GET`, `$_POST` 입력값은 반드시 검증/trim 처리
-- DB 접속정보는 `.env` 파일 또는 환경변수로 관리
-
-### DB 연결 패턴
-```php
-$stmt = $pdo->prepare("SELECT * FROM table WHERE col = ?");
-$stmt->execute([$value]);
-$result = $stmt->fetch(PDO::FETCH_ASSOC);
-```
 
 ### API 응답 형식
 ```php
@@ -45,7 +34,6 @@ flush();
 
 ### 파일 경로 규칙
 - 절대경로: `__DIR__ . '/../../lib/db.php'` 형식 사용
-- URL 경로: `$_SERVER['SCRIPT_NAME']` 기반 동적 경로 사용 (하드코딩 금지)
 
 ---
 
