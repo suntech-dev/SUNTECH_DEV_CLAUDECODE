@@ -1,0 +1,2807 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"andonApi.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.andonLoop,"ax",%progbits
+  20              		.align	2
+  21              		.global	andonLoop
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	andonLoop, %function
+  25              	andonLoop:
+  26              	.LFB62:
+  27              		.file 1 "andonApi.c"
+   1:andonApi.c    **** /* ========================================
+   2:andonApi.c    ****  *
+   3:andonApi.c    ****  * Copyright Suntech, 2023.02.01
+   4:andonApi.c    ****  * All Rights Reserved
+   5:andonApi.c    ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:andonApi.c    ****  *
+   7:andonApi.c    ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:andonApi.c    ****  * WHICH IS THE PROPERTY OF Suntech.
+   9:andonApi.c    ****  *
+  10:andonApi.c    ****  * ========================================
+  11:andonApi.c    **** */
+  12:andonApi.c    **** 
+  13:andonApi.c    ****     
+  14:andonApi.c    **** #include "andonApi.h"
+  15:andonApi.c    **** #include "andonJson.h"
+  16:andonApi.c    **** #include "andonMessageQueue.h"
+  17:andonApi.c    **** #include "lib/WIFI.h"
+  18:andonApi.c    **** #include "lib/server.h"
+  19:andonApi.c    **** #include "lib/utility.h"
+  20:andonApi.c    **** #include "userProjectPatternSewing.h"
+  21:andonApi.c    **** #include "count.h"
+  22:andonApi.c    **** #include "package.h"
+  23:andonApi.c    ****                                 
+  24:andonApi.c    **** LISTS g_Lists;
+  25:andonApi.c    **** uint8 g_bDeviceInfoUpdate=FALSE;
+  26:andonApi.c    **** uint8 g_uReplyResult=RR_INIT;
+  27:andonApi.c    **** uint16 g_uAndonRequestType;
+  28:andonApi.c    **** 
+  29:andonApi.c    **** uint16 g_uAndonRequestType=ANDON_NONE;
+  30:andonApi.c    **** 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 2
+
+
+  31:andonApi.c    **** INFO  g_Info = {
+  32:andonApi.c    ****     .nNoOfLineForNotice =0, 
+  33:andonApi.c    **** };
+  34:andonApi.c    **** 
+  35:andonApi.c    **** uint8 andonLoop()
+  36:andonApi.c    **** {
+  28              		.loc 1 36 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 512
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 11B5     		push	{r0, r4, lr}
+  33              		.cfi_def_cfa_offset 12
+  34              		.cfi_offset 0, -12
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  37 0002 FFB0     		sub	sp, sp, #508
+  38              		.cfi_def_cfa_offset 520
+  37:andonApi.c    ****     if(!isEmptyQueueANDON())
+  39              		.loc 1 37 0
+  40 0004 FFF7FEFF 		bl	isEmptyQueueANDON
+  41              	.LVL0:
+  42 0008 0028     		cmp	r0, #0
+  43 000a 12D1     		bne	.L3
+  44              	.LBB2:
+  38:andonApi.c    ****     {
+  39:andonApi.c    ****         ANDON_QUEUE *aq = deQueueANDON();
+  45              		.loc 1 39 0
+  46 000c FFF7FEFF 		bl	deQueueANDON
+  47              	.LVL1:
+  48 0010 0400     		movs	r4, r0
+  49              	.LVL2:
+  40:andonApi.c    ****         
+  41:andonApi.c    ****         char url[512];
+  42:andonApi.c    ****         sprintf(url,"%s?code=%s",g_strServeURL,aq->message);
+  50              		.loc 1 42 0
+  51 0012 0300     		movs	r3, r0
+  52 0014 084A     		ldr	r2, .L4
+  53 0016 0949     		ldr	r1, .L4+4
+  54 0018 6846     		mov	r0, sp
+  55              	.LVL3:
+  56 001a FFF7FEFF 		bl	sprintf
+  57              	.LVL4:
+  43:andonApi.c    **** 
+  44:andonApi.c    ****         g_uAndonRequestType = aq->type;
+  58              		.loc 1 44 0
+  59 001e 8023     		movs	r3, #128
+  60 0020 5B00     		lsls	r3, r3, #1
+  61 0022 E25A     		ldrh	r2, [r4, r3]
+  62 0024 064B     		ldr	r3, .L4+8
+  63 0026 1A80     		strh	r2, [r3]
+  45:andonApi.c    ****         
+  46:andonApi.c    ****         wifi_cmd_http(url);
+  64              		.loc 1 46 0
+  65 0028 6846     		mov	r0, sp
+  66 002a FFF7FEFF 		bl	wifi_cmd_http
+  67              	.LVL5:
+  47:andonApi.c    ****         return TRUE;
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 3
+
+
+  68              		.loc 1 47 0
+  69 002e 0120     		movs	r0, #1
+  70 0030 00E0     		b	.L2
+  71              	.LVL6:
+  72              	.L3:
+  73              	.LBE2:
+  48:andonApi.c    ****     }
+  49:andonApi.c    ****     return FALSE;
+  74              		.loc 1 49 0
+  75 0032 0020     		movs	r0, #0
+  76              	.L2:
+  50:andonApi.c    **** }
+  77              		.loc 1 50 0 discriminator 1
+  78 0034 7FB0     		add	sp, sp, #508
+  79              		@ sp needed
+  80 0036 12BD     		pop	{r1, r4, pc}
+  81              	.L5:
+  82              		.align	2
+  83              	.L4:
+  84 0038 00000000 		.word	.LANCHOR0
+  85 003c 00000000 		.word	.LC1
+  86 0040 00000000 		.word	.LANCHOR1
+  87              		.cfi_endproc
+  88              	.LFE62:
+  89              		.size	andonLoop, .-andonLoop
+  90              		.section	.text.makeAndonCurrentTimeRequest,"ax",%progbits
+  91              		.align	2
+  92              		.global	makeAndonCurrentTimeRequest
+  93              		.code	16
+  94              		.thumb_func
+  95              		.type	makeAndonCurrentTimeRequest, %function
+  96              	makeAndonCurrentTimeRequest:
+  97              	.LFB63:
+  51:andonApi.c    **** 
+  52:andonApi.c    **** void makeAndonCurrentTimeRequest()
+  53:andonApi.c    **** {
+  98              		.loc 1 53 0
+  99              		.cfi_startproc
+ 100              		@ args = 0, pretend = 0, frame = 0
+ 101              		@ frame_needed = 0, uses_anonymous_args = 0
+ 102 0000 10B5     		push	{r4, lr}
+ 103              		.cfi_def_cfa_offset 8
+ 104              		.cfi_offset 4, -8
+ 105              		.cfi_offset 14, -4
+  54:andonApi.c    ****     enQueueANDON_printf(ANDON_CURRENT_TIME,"get_dateTime");
+ 106              		.loc 1 54 0
+ 107 0002 0249     		ldr	r1, .L7
+ 108 0004 0120     		movs	r0, #1
+ 109 0006 FFF7FEFF 		bl	enQueueANDON_printf
+ 110              	.LVL7:
+  55:andonApi.c    **** }
+ 111              		.loc 1 55 0
+ 112              		@ sp needed
+ 113 000a 10BD     		pop	{r4, pc}
+ 114              	.L8:
+ 115              		.align	2
+ 116              	.L7:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 4
+
+
+ 117 000c 0C000000 		.word	.LC4
+ 118              		.cfi_endproc
+ 119              	.LFE63:
+ 120              		.size	makeAndonCurrentTimeRequest, .-makeAndonCurrentTimeRequest
+ 121              		.section	.text.makeAndonDevice,"ax",%progbits
+ 122              		.align	2
+ 123              		.global	makeAndonDevice
+ 124              		.code	16
+ 125              		.thumb_func
+ 126              		.type	makeAndonDevice, %function
+ 127              	makeAndonDevice:
+ 128              	.LFB64:
+  56:andonApi.c    **** 
+  57:andonApi.c    **** void makeAndonDevice()
+  58:andonApi.c    **** {
+ 129              		.loc 1 58 0
+ 130              		.cfi_startproc
+ 131              		@ args = 0, pretend = 0, frame = 0
+ 132              		@ frame_needed = 0, uses_anonymous_args = 0
+ 133 0000 00B5     		push	{lr}
+ 134              		.cfi_def_cfa_offset 4
+ 135              		.cfi_offset 14, -4
+ 136 0002 83B0     		sub	sp, sp, #12
+ 137              		.cfi_def_cfa_offset 16
+  59:andonApi.c    ****     enQueueANDON_printf(ANDON_GET_DEVICE_NAME,"send_device&mac=%s&name=%s&ip=%s&ver=%s",g_network.M
+ 138              		.loc 1 59 0
+ 139 0004 074B     		ldr	r3, .L10
+ 140 0006 1B68     		ldr	r3, [r3]
+ 141 0008 6E33     		adds	r3, r3, #110
+ 142 000a 074A     		ldr	r2, .L10+4
+ 143 000c 0749     		ldr	r1, .L10+8
+ 144 000e 0191     		str	r1, [sp, #4]
+ 145 0010 1100     		movs	r1, r2
+ 146 0012 4039     		subs	r1, r1, #64
+ 147 0014 0091     		str	r1, [sp]
+ 148 0016 0649     		ldr	r1, .L10+12
+ 149 0018 0220     		movs	r0, #2
+ 150 001a FFF7FEFF 		bl	enQueueANDON_printf
+ 151              	.LVL8:
+  60:andonApi.c    **** }
+ 152              		.loc 1 60 0
+ 153 001e 03B0     		add	sp, sp, #12
+ 154              		@ sp needed
+ 155 0020 00BD     		pop	{pc}
+ 156              	.L11:
+ 157 0022 C046     		.align	2
+ 158              	.L10:
+ 159 0024 00000000 		.word	g_ptrServer
+ 160 0028 6C000000 		.word	g_network+108
+ 161 002c 44000000 		.word	.LC10
+ 162 0030 1C000000 		.word	.LC8
+ 163              		.cfi_endproc
+ 164              	.LFE64:
+ 165              		.size	makeAndonDevice, .-makeAndonDevice
+ 166              		.section	.text.makeAndonList,"ax",%progbits
+ 167              		.align	2
+ 168              		.global	makeAndonList
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 5
+
+
+ 169              		.code	16
+ 170              		.thumb_func
+ 171              		.type	makeAndonList, %function
+ 172              	makeAndonList:
+ 173              	.LFB65:
+  61:andonApi.c    **** 
+  62:andonApi.c    **** void makeAndonList()
+  63:andonApi.c    **** {
+ 174              		.loc 1 63 0
+ 175              		.cfi_startproc
+ 176              		@ args = 0, pretend = 0, frame = 0
+ 177              		@ frame_needed = 0, uses_anonymous_args = 0
+ 178 0000 10B5     		push	{r4, lr}
+ 179              		.cfi_def_cfa_offset 8
+ 180              		.cfi_offset 4, -8
+ 181              		.cfi_offset 14, -4
+  64:andonApi.c    ****     enQueueANDON_printf(ANDON_REQUEST_LIST,"get_andonList&device_idx=%d",g_ptrServer->deviceIndex);
+ 182              		.loc 1 64 0
+ 183 0002 044B     		ldr	r3, .L13
+ 184 0004 1A68     		ldr	r2, [r3]
+ 185 0006 8223     		movs	r3, #130
+ 186 0008 D25A     		ldrh	r2, [r2, r3]
+ 187 000a 0349     		ldr	r1, .L13+4
+ 188 000c 0520     		movs	r0, #5
+ 189 000e FFF7FEFF 		bl	enQueueANDON_printf
+ 190              	.LVL9:
+  65:andonApi.c    **** }
+ 191              		.loc 1 65 0
+ 192              		@ sp needed
+ 193 0012 10BD     		pop	{r4, pc}
+ 194              	.L14:
+ 195              		.align	2
+ 196              	.L13:
+ 197 0014 00000000 		.word	g_ptrServer
+ 198 0018 4C000000 		.word	.LC14
+ 199              		.cfi_endproc
+ 200              	.LFE65:
+ 201              		.size	makeAndonList, .-makeAndonList
+ 202              		.section	.text.makeAndonTextList,"ax",%progbits
+ 203              		.align	2
+ 204              		.global	makeAndonTextList
+ 205              		.code	16
+ 206              		.thumb_func
+ 207              		.type	makeAndonTextList, %function
+ 208              	makeAndonTextList:
+ 209              	.LFB66:
+  66:andonApi.c    **** 
+  67:andonApi.c    **** void makeAndonTextList()
+  68:andonApi.c    **** {
+ 210              		.loc 1 68 0
+ 211              		.cfi_startproc
+ 212              		@ args = 0, pretend = 0, frame = 0
+ 213              		@ frame_needed = 0, uses_anonymous_args = 0
+ 214 0000 10B5     		push	{r4, lr}
+ 215              		.cfi_def_cfa_offset 8
+ 216              		.cfi_offset 4, -8
+ 217              		.cfi_offset 14, -4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 6
+
+
+  69:andonApi.c    ****     enQueueANDON_printf(ANDON_REQUEST_TEXT_LIST,"get_textList&device_idx=%d",g_ptrServer->deviceInd
+ 218              		.loc 1 69 0
+ 219 0002 044B     		ldr	r3, .L16
+ 220 0004 1A68     		ldr	r2, [r3]
+ 221 0006 8223     		movs	r3, #130
+ 222 0008 D25A     		ldrh	r2, [r2, r3]
+ 223 000a 0349     		ldr	r1, .L16+4
+ 224 000c 0620     		movs	r0, #6
+ 225 000e FFF7FEFF 		bl	enQueueANDON_printf
+ 226              	.LVL10:
+  70:andonApi.c    **** }
+ 227              		.loc 1 70 0
+ 228              		@ sp needed
+ 229 0012 10BD     		pop	{r4, pc}
+ 230              	.L17:
+ 231              		.align	2
+ 232              	.L16:
+ 233 0014 00000000 		.word	g_ptrServer
+ 234 0018 68000000 		.word	.LC17
+ 235              		.cfi_endproc
+ 236              	.LFE66:
+ 237              		.size	makeAndonTextList, .-makeAndonTextList
+ 238              		.section	.text.andonResponse,"ax",%progbits
+ 239              		.align	2
+ 240              		.global	andonResponse
+ 241              		.code	16
+ 242              		.thumb_func
+ 243              		.type	andonResponse, %function
+ 244              	andonResponse:
+ 245              	.LFB67:
+  71:andonApi.c    **** 
+  72:andonApi.c    **** void andonResponse(char *ptrText, int16 sizeOfText)
+  73:andonApi.c    **** {
+ 246              		.loc 1 73 0
+ 247              		.cfi_startproc
+ 248              		@ args = 0, pretend = 0, frame = 0
+ 249              		@ frame_needed = 0, uses_anonymous_args = 0
+ 250              	.LVL11:
+ 251 0000 10B5     		push	{r4, lr}
+ 252              		.cfi_def_cfa_offset 8
+ 253              		.cfi_offset 4, -8
+ 254              		.cfi_offset 14, -4
+ 255 0002 0300     		movs	r3, r0
+ 256 0004 0A00     		movs	r2, r1
+  74:andonApi.c    ****     andonJsonParsor(g_uAndonRequestType, ptrText, sizeOfText);
+ 257              		.loc 1 74 0
+ 258 0006 044C     		ldr	r4, .L19
+ 259 0008 2088     		ldrh	r0, [r4]
+ 260              	.LVL12:
+ 261 000a 1900     		movs	r1, r3
+ 262              	.LVL13:
+ 263 000c FFF7FEFF 		bl	andonJsonParsor
+ 264              	.LVL14:
+  75:andonApi.c    ****     g_uAndonRequestType = ANDON_NONE;
+ 265              		.loc 1 75 0
+ 266 0010 0023     		movs	r3, #0
+ 267 0012 2380     		strh	r3, [r4]
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 7
+
+
+  76:andonApi.c    **** }
+ 268              		.loc 1 76 0
+ 269              		@ sp needed
+ 270 0014 10BD     		pop	{r4, pc}
+ 271              	.L20:
+ 272 0016 C046     		.align	2
+ 273              	.L19:
+ 274 0018 00000000 		.word	.LANCHOR1
+ 275              		.cfi_endproc
+ 276              	.LFE67:
+ 277              		.size	andonResponse, .-andonResponse
+ 278              		.section	.text.makeAndonSewingCount,"ax",%progbits
+ 279              		.align	2
+ 280              		.global	makeAndonSewingCount
+ 281              		.code	16
+ 282              		.thumb_func
+ 283              		.type	makeAndonSewingCount, %function
+ 284              	makeAndonSewingCount:
+ 285              	.LFB68:
+  77:andonApi.c    **** 
+  78:andonApi.c    **** void makeAndonSewingCount()
+  79:andonApi.c    **** {
+ 286              		.loc 1 79 0
+ 287              		.cfi_startproc
+ 288              		@ args = 0, pretend = 0, frame = 0
+ 289              		@ frame_needed = 0, uses_anonymous_args = 0
+ 290              		@ link register save eliminated.
+  80:andonApi.c    **** //    enQueueANDON_printf(ANDON_SEND_SEWING_COUNT,"send _cCount&d_idx=%u&pi=%u&tg=%u&sc=%u&ct=%u&ct
+  81:andonApi.c    **** //        g_Info.DeviceIdx,
+  82:andonApi.c    **** //        (g_ptrMachineParameter->sewingPair/g_ptrMachineParameter->sewingPairTrim) / 10 , // pi  :
+  83:andonApi.c    **** //        g_ptrMachineParameter->sewingTarget,// tg  : target
+  84:andonApi.c    **** //        g_ptrCount->sewingActual,           // sc  : shift actual
+  85:andonApi.c    **** //        g_ptrCount->sewingCycleTime,        // ct  : cycle time
+  86:andonApi.c    **** //        g_ptrCount->sewingCycleTimeSum,     // cts : cycle time sum
+  87:andonApi.c    **** //        g_ptrCount->sewingMotorRunTime,     // mrt : motor run time 
+  88:andonApi.c    **** //        g_ptrCount->sewingMotorRunTimeSum,  // mrts: motor run time sum
+  89:andonApi.c    **** //        g_ptrCount->sewingNoStitch,         // sq  : no of stitch
+  90:andonApi.c    **** //        g_ptrCount->sewingNoStitchSum,      // sqs : no of stitch sum
+  91:andonApi.c    **** //        g_ptrCount->sewingTrimCount,        // tc  : trim count
+  92:andonApi.c    **** //        g_ptrCount->sewingTrimCountSum      // tcs : trim count sum
+  93:andonApi.c    **** //        );     
+  94:andonApi.c    **** #ifdef USER_PROJECT_PATTERN_SEWING_MACHINE      
+  95:andonApi.c    ****     enQueueANDON_printf(ANDON_SEND_SEWING_COUNT,"send_cCount&d_idx=%u&pi=%0.1f&tg=%u&sc=%0.1f&ct=%u
+  96:andonApi.c    ****         g_Info.DeviceIdx,
+  97:andonApi.c    ****  //       g_ptrMachineParameter->sewingPairTrim,                                                   
+  98:andonApi.c    ****         g_ptrMachineParameter->sewingPair / 10. ,                                                  
+  99:andonApi.c    ****         g_ptrMachineParameter->sewingTarget,                                                       
+ 100:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->sewingActualH,g_ptrCount->sewingActualL) / 10.,      
+ 101:andonApi.c    ****         g_ptrCount->sewingCycleTime,                                                               
+ 102:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->sewingCycleTimeSumH, g_ptrCount->sewingCycleTimeSumL)
+ 103:andonApi.c    ****         g_ptrCount->sewingMotorRunTime,                                                            
+ 104:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->sewingMotorRunTimeSumH, g_ptrCount->sewingMotorRunTim
+ 105:andonApi.c    ****         g_ptrCount->sewingNoStitch,                                                                
+ 106:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->sewingNoStitchSumH,g_ptrCount->sewingNoStitchSumL),  
+ 107:andonApi.c    ****         g_ptrMachineParameter->sewingPairTrim,                                                     
+ 108:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->sewingTrimCountSumH,g_ptrCount->sewingTrimCountSumL) 
+ 109:andonApi.c    ****         ); 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 8
+
+
+ 110:andonApi.c    **** #endif    
+ 111:andonApi.c    **** //    printf("send_cCount&d_idx=%u&pi=%0.1f&tg=%u&sc=%0.1f&ct=%u&cts=%lu&mrt=%u&mrts=%lu&sq=%u&sqs=
+ 112:andonApi.c    **** //        g_Info.DeviceIdx,
+ 113:andonApi.c    **** // //       g_ptrMachineParameter->sewingPairTrim,                                                 
+ 114:andonApi.c    **** //        g_ptrMachineParameter->sewingPair / 10. ,                                                
+ 115:andonApi.c    **** //        g_ptrMachineParameter->sewingTarget,                                                     
+ 116:andonApi.c    **** //        (uint32) CONVERT_TO_4BYTE(g_ptrCount->sewingActualH,g_ptrCount->sewingActualL) / 10.,    
+ 117:andonApi.c    **** //        g_ptrCount->sewingCycleTime,                                                             
+ 118:andonApi.c    **** //        (uint32) CONVERT_TO_4BYTE(g_ptrCount->sewingCycleTimeSumH, g_ptrCount->sewingCycleTimeSum
+ 119:andonApi.c    **** //        g_ptrCount->sewingMotorRunTime,                                                          
+ 120:andonApi.c    **** //        (uint32) CONVERT_TO_4BYTE(g_ptrCount->sewingMotorRunTimeSumH, g_ptrCount->sewingMotorRunT
+ 121:andonApi.c    **** //        g_ptrCount->sewingNoStitch,                                                              
+ 122:andonApi.c    **** //        (uint32) CONVERT_TO_4BYTE(g_ptrCount->sewingNoStitchSumH,g_ptrCount->sewingNoStitchSumL),
+ 123:andonApi.c    **** //        g_ptrMachineParameter->sewingPairTrim,                                                   
+ 124:andonApi.c    **** //        (uint32) CONVERT_TO_4BYTE(g_ptrCount->sewingTrimCountSumH,g_ptrCount->sewingTrimCountSumL
+ 125:andonApi.c    **** //        ); 
+ 126:andonApi.c    ****     
+ 127:andonApi.c    **** //    printf("send_cCount&d_idx=%u&pc=%u&pi=%3.1f&tg=%u&sc=%lu&ct=%u&cts=%lu&mrt=%u&mrts=%lu&sq=%u&
+ 128:andonApi.c    **** //        g_Info.DeviceIdx,
+ 129:andonApi.c    **** //        g_ptrMachineParameter->sewingPairTrim,                                                   
+ 130:andonApi.c    **** //        g_ptrMachineParameter->sewingPair / 10. ,                                                
+ 131:andonApi.c    **** //        g_ptrMachineParameter->sewingTarget,                                                     
+ 132:andonApi.c    **** //        (uint32) CONVERT_TO_4BYTE(g_ptrCount->sewingActualH,g_ptrCount->sewingActualL) / 10,     
+ 133:andonApi.c    **** //        g_ptrCount->sewingCycleTime,                                                             
+ 134:andonApi.c    **** //        (uint32) CONVERT_TO_4BYTE(g_ptrCount->sewingCycleTimeSumH, g_ptrCount->sewingCycleTimeSum
+ 135:andonApi.c    **** //        g_ptrCount->sewingMotorRunTime,                                                          
+ 136:andonApi.c    **** //        (uint32) CONVERT_TO_4BYTE(g_ptrCount->sewingMotorRunTimeSumH, g_ptrCount->sewingMotorRunT
+ 137:andonApi.c    **** //        g_ptrCount->sewingNoStitch,                                                              
+ 138:andonApi.c    **** //        (uint32) CONVERT_TO_4BYTE(g_ptrCount->sewingNoStitchSumH,g_ptrCount->sewingNoStitchSumL),
+ 139:andonApi.c    **** //        g_ptrCount->sewingTrimCount,                                                             
+ 140:andonApi.c    **** //        (uint32) CONVERT_TO_4BYTE(g_ptrCount->sewingTrimCountSumH,g_ptrCount->sewingTrimCountSumL
+ 141:andonApi.c    **** //        );      
+ 142:andonApi.c    ****      
+ 143:andonApi.c    **** }
+ 291              		.loc 1 143 0
+ 292              		@ sp needed
+ 293 0000 7047     		bx	lr
+ 294              		.cfi_endproc
+ 295              	.LFE68:
+ 296              		.size	makeAndonSewingCount, .-makeAndonSewingCount
+ 297 0002 C046     		.section	.text.initAndon,"ax",%progbits
+ 298              		.align	2
+ 299              		.global	initAndon
+ 300              		.code	16
+ 301              		.thumb_func
+ 302              		.type	initAndon, %function
+ 303              	initAndon:
+ 304              	.LFB69:
+ 144:andonApi.c    **** #ifdef USER_PROJECT_PATTERN_SEWING_MACHINE  
+ 145:andonApi.c    **** void makeAndonPatternCount()
+ 146:andonApi.c    **** {
+ 147:andonApi.c    ****        printf("send_pCount&d_idx=%u&pc=%u&pi=%0.1f&tg=%u&sc=%0.1f&no=%u&et=%u&ets=%lu&&ct=%u&cts=%l
+ 148:andonApi.c    ****         g_Info.DeviceIdx,
+ 149:andonApi.c    ****         g_ptrMachineParameter->patternPairCount,                                                   
+ 150:andonApi.c    ****         g_ptrMachineParameter->patternPair / 10.,                                                  
+ 151:andonApi.c    ****         g_ptrMachineParameter->patternTarget,                                                      
+ 152:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->patternActualH,g_ptrCount->patternActualL) / 10.,    
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 9
+
+
+ 153:andonApi.c    ****         g_ptrCount->patternNo,
+ 154:andonApi.c    ****         g_ptrCount->patternEmergencyTime,                                                          
+ 155:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->patternEmergencyTimeSumH,g_ptrCount->patternEmergency
+ 156:andonApi.c    ****         g_ptrCount->patternCycleTime,                                                              
+ 157:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->patternCycleTimeSumH,g_ptrCount->patternCycleTimeSumL
+ 158:andonApi.c    ****         g_ptrCount->patternMotorRunTime,                                                           
+ 159:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->patternMotorRunTimeSumH, g_ptrCount->patternMotorRunT
+ 160:andonApi.c    ****         g_ptrCount->patternNoStitch,                                                               
+ 161:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->patternNoStitchSumH, g_ptrCount->patternNoStitchSumL)
+ 162:andonApi.c    ****         g_ptrCount->patternStitchLength,                                                           
+ 163:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->patternStitchLengthSumH,g_ptrCount->patternStitchLeng
+ 164:andonApi.c    ****         g_ptrCount->patternTrimCount,                                                              
+ 165:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->patternTrimCountSumH,g_ptrCount->patternTrimCountSumL
+ 166:andonApi.c    ****         g_ptrCount->patternSPM                                                                     
+ 167:andonApi.c    ****         ); 
+ 168:andonApi.c    **** 
+ 169:andonApi.c    ****     enQueueANDON_printf(ANDON_SEND_PATTERN_COUNT,"send_pCount&d_idx=%u&pc=%u&pi=%0.1f&tg=%u&sc=%0.1
+ 170:andonApi.c    ****         g_Info.DeviceIdx,
+ 171:andonApi.c    ****         g_ptrMachineParameter->patternPairCount,                                                   
+ 172:andonApi.c    ****         g_ptrMachineParameter->patternPair / 10.,                                                  
+ 173:andonApi.c    ****         g_ptrMachineParameter->patternTarget,                                                      
+ 174:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->patternActualH,g_ptrCount->patternActualL) / 10.,    
+ 175:andonApi.c    ****         g_ptrCount->patternNo,
+ 176:andonApi.c    ****         g_ptrCount->patternEmergencyTime,                                                          
+ 177:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->patternEmergencyTimeSumH,g_ptrCount->patternEmergency
+ 178:andonApi.c    ****         g_ptrCount->patternCycleTime,                                                              
+ 179:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->patternCycleTimeSumH,g_ptrCount->patternCycleTimeSumL
+ 180:andonApi.c    ****         g_ptrCount->patternMotorRunTime,                                                           
+ 181:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->patternMotorRunTimeSumH, g_ptrCount->patternMotorRunT
+ 182:andonApi.c    ****         g_ptrCount->patternNoStitch,                                                               
+ 183:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->patternNoStitchSumH, g_ptrCount->patternNoStitchSumL)
+ 184:andonApi.c    ****         g_ptrCount->patternStitchLength,                                                           
+ 185:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->patternStitchLengthSumH,g_ptrCount->patternStitchLeng
+ 186:andonApi.c    ****         g_ptrCount->patternTrimCount,                                                              
+ 187:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(g_ptrCount->patternTrimCountSumH,g_ptrCount->patternTrimCountSumL
+ 188:andonApi.c    ****         g_ptrCount->patternSPM                                                                     
+ 189:andonApi.c    ****         );    
+ 190:andonApi.c    **** }
+ 191:andonApi.c    **** #endif
+ 192:andonApi.c    **** void initAndon()
+ 193:andonApi.c    **** {
+ 305              		.loc 1 193 0
+ 306              		.cfi_startproc
+ 307              		@ args = 0, pretend = 0, frame = 0
+ 308              		@ frame_needed = 0, uses_anonymous_args = 0
+ 309 0000 10B5     		push	{r4, lr}
+ 310              		.cfi_def_cfa_offset 8
+ 311              		.cfi_offset 4, -8
+ 312              		.cfi_offset 14, -4
+ 194:andonApi.c    ****     makeAndonCurrentTimeRequest();
+ 313              		.loc 1 194 0
+ 314 0002 FFF7FEFF 		bl	makeAndonCurrentTimeRequest
+ 315              	.LVL15:
+ 195:andonApi.c    ****     makeAndonDevice();    
+ 316              		.loc 1 195 0
+ 317 0006 FFF7FEFF 		bl	makeAndonDevice
+ 318              	.LVL16:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 10
+
+
+ 196:andonApi.c    ****    // makeAndonList();
+ 197:andonApi.c    ****    // makeAndonTextList();
+ 198:andonApi.c    **** }
+ 319              		.loc 1 198 0
+ 320              		@ sp needed
+ 321 000a 10BD     		pop	{r4, pc}
+ 322              		.cfi_endproc
+ 323              	.LFE69:
+ 324              		.size	initAndon, .-initAndon
+ 325              		.global	g_Info
+ 326              		.global	g_uAndonRequestType
+ 327              		.global	g_uReplyResult
+ 328              		.global	g_bDeviceInfoUpdate
+ 329              		.comm	g_Lists,194,4
+ 330              		.comm	Param,6,4
+ 331              		.section	.rodata
+ 332              		.align	2
+ 333              		.set	.LANCHOR0,. + 0
+ 334              		.type	g_strServeURL, %object
+ 335              		.size	g_strServeURL, 15
+ 336              	g_strServeURL:
+ 337 0000 2F617069 		.ascii	"/api/index.php\000"
+ 337      2F696E64 
+ 337      65782E70 
+ 337      687000
+ 338              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 339              		.align	2
+ 340              	.LC1:
+ 341 0000 25733F63 		.ascii	"%s?code=%s\000"
+ 341      6F64653D 
+ 341      257300
+ 342 000b 00       		.space	1
+ 343              	.LC4:
+ 344 000c 6765745F 		.ascii	"get_dateTime\000"
+ 344      64617465 
+ 344      54696D65 
+ 344      00
+ 345 0019 000000   		.space	3
+ 346              	.LC8:
+ 347 001c 73656E64 		.ascii	"send_device&mac=%s&name=%s&ip=%s&ver=%s\000"
+ 347      5F646576 
+ 347      69636526 
+ 347      6D61633D 
+ 347      2573266E 
+ 348              	.LC10:
+ 349 0044 302E302E 		.ascii	"0.0.1\000"
+ 349      3100
+ 350 004a 0000     		.space	2
+ 351              	.LC14:
+ 352 004c 6765745F 		.ascii	"get_andonList&device_idx=%d\000"
+ 352      616E646F 
+ 352      6E4C6973 
+ 352      74266465 
+ 352      76696365 
+ 353              	.LC17:
+ 354 0068 6765745F 		.ascii	"get_textList&device_idx=%d\000"
+ 354      74657874 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 11
+
+
+ 354      4C697374 
+ 354      26646576 
+ 354      6963655F 
+ 355              		.bss
+ 356              		.align	2
+ 357              		.set	.LANCHOR1,. + 0
+ 358              		.type	g_uAndonRequestType, %object
+ 359              		.size	g_uAndonRequestType, 2
+ 360              	g_uAndonRequestType:
+ 361 0000 0000     		.space	2
+ 362 0002 0000     		.space	2
+ 363              		.type	g_Info, %object
+ 364              		.size	g_Info, 392
+ 365              	g_Info:
+ 366 0004 00000000 		.space	392
+ 366      00000000 
+ 366      00000000 
+ 366      00000000 
+ 366      00000000 
+ 367              		.type	g_uReplyResult, %object
+ 368              		.size	g_uReplyResult, 1
+ 369              	g_uReplyResult:
+ 370 018c 00       		.space	1
+ 371              		.type	g_bDeviceInfoUpdate, %object
+ 372              		.size	g_bDeviceInfoUpdate, 1
+ 373              	g_bDeviceInfoUpdate:
+ 374 018d 00       		.space	1
+ 375              		.text
+ 376              	.Letext0:
+ 377              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 378              		.file 3 "main.h"
+ 379              		.file 4 "andonApi.h"
+ 380              		.file 5 "andonMessageQueue.h"
+ 381              		.file 6 "lib/WIFI.h"
+ 382              		.file 7 "lib/server.h"
+ 383              		.file 8 "Generated_Source\\PSoC4/RTC.h"
+ 384              		.file 9 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 385              		.file 10 "andonJson.h"
+ 386              		.section	.debug_info,"",%progbits
+ 387              	.Ldebug_info0:
+ 388 0000 55070000 		.4byte	0x755
+ 389 0004 0400     		.2byte	0x4
+ 390 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 391 000a 04       		.byte	0x4
+ 392 000b 01       		.uleb128 0x1
+ 393 000c 03050000 		.4byte	.LASF110
+ 394 0010 0C       		.byte	0xc
+ 395 0011 96010000 		.4byte	.LASF111
+ 396 0015 58030000 		.4byte	.LASF112
+ 397 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 398 001d 00000000 		.4byte	0
+ 399 0021 00000000 		.4byte	.Ldebug_line0
+ 400 0025 02       		.uleb128 0x2
+ 401 0026 01       		.byte	0x1
+ 402 0027 06       		.byte	0x6
+ 403 0028 71010000 		.4byte	.LASF0
+ 404 002c 02       		.uleb128 0x2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 12
+
+
+ 405 002d 01       		.byte	0x1
+ 406 002e 08       		.byte	0x8
+ 407 002f 2D020000 		.4byte	.LASF1
+ 408 0033 02       		.uleb128 0x2
+ 409 0034 02       		.byte	0x2
+ 410 0035 05       		.byte	0x5
+ 411 0036 75000000 		.4byte	.LASF2
+ 412 003a 02       		.uleb128 0x2
+ 413 003b 02       		.byte	0x2
+ 414 003c 07       		.byte	0x7
+ 415 003d 18040000 		.4byte	.LASF3
+ 416 0041 02       		.uleb128 0x2
+ 417 0042 04       		.byte	0x4
+ 418 0043 05       		.byte	0x5
+ 419 0044 B4010000 		.4byte	.LASF4
+ 420 0048 02       		.uleb128 0x2
+ 421 0049 04       		.byte	0x4
+ 422 004a 07       		.byte	0x7
+ 423 004b 27030000 		.4byte	.LASF5
+ 424 004f 02       		.uleb128 0x2
+ 425 0050 08       		.byte	0x8
+ 426 0051 05       		.byte	0x5
+ 427 0052 C8000000 		.4byte	.LASF6
+ 428 0056 02       		.uleb128 0x2
+ 429 0057 08       		.byte	0x8
+ 430 0058 07       		.byte	0x7
+ 431 0059 C8020000 		.4byte	.LASF7
+ 432 005d 03       		.uleb128 0x3
+ 433 005e 04       		.byte	0x4
+ 434 005f 05       		.byte	0x5
+ 435 0060 696E7400 		.ascii	"int\000"
+ 436 0064 02       		.uleb128 0x2
+ 437 0065 04       		.byte	0x4
+ 438 0066 07       		.byte	0x7
+ 439 0067 E4020000 		.4byte	.LASF8
+ 440 006b 04       		.uleb128 0x4
+ 441 006c A1010000 		.4byte	.LASF9
+ 442 0070 02       		.byte	0x2
+ 443 0071 FC01     		.2byte	0x1fc
+ 444 0073 2C000000 		.4byte	0x2c
+ 445 0077 04       		.uleb128 0x4
+ 446 0078 6B040000 		.4byte	.LASF10
+ 447 007c 02       		.byte	0x2
+ 448 007d FD01     		.2byte	0x1fd
+ 449 007f 3A000000 		.4byte	0x3a
+ 450 0083 04       		.uleb128 0x4
+ 451 0084 28010000 		.4byte	.LASF11
+ 452 0088 02       		.byte	0x2
+ 453 0089 0002     		.2byte	0x200
+ 454 008b 33000000 		.4byte	0x33
+ 455 008f 02       		.uleb128 0x2
+ 456 0090 04       		.byte	0x4
+ 457 0091 04       		.byte	0x4
+ 458 0092 7D010000 		.4byte	.LASF12
+ 459 0096 02       		.uleb128 0x2
+ 460 0097 08       		.byte	0x8
+ 461 0098 04       		.byte	0x4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 13
+
+
+ 462 0099 E7050000 		.4byte	.LASF13
+ 463 009d 02       		.uleb128 0x2
+ 464 009e 01       		.byte	0x1
+ 465 009f 08       		.byte	0x8
+ 466 00a0 F1030000 		.4byte	.LASF14
+ 467 00a4 02       		.uleb128 0x2
+ 468 00a5 08       		.byte	0x8
+ 469 00a6 04       		.byte	0x4
+ 470 00a7 61020000 		.4byte	.LASF15
+ 471 00ab 02       		.uleb128 0x2
+ 472 00ac 04       		.byte	0x4
+ 473 00ad 07       		.byte	0x7
+ 474 00ae 7F000000 		.4byte	.LASF16
+ 475 00b2 05       		.uleb128 0x5
+ 476 00b3 04       		.byte	0x4
+ 477 00b4 9D000000 		.4byte	0x9d
+ 478 00b8 06       		.uleb128 0x6
+ 479 00b9 9D000000 		.4byte	0x9d
+ 480 00bd 07       		.uleb128 0x7
+ 481 00be 60040000 		.4byte	.LASF42
+ 482 00c2 06       		.byte	0x6
+ 483 00c3 03       		.byte	0x3
+ 484 00c4 34       		.byte	0x34
+ 485 00c5 EE000000 		.4byte	0xee
+ 486 00c9 08       		.uleb128 0x8
+ 487 00ca BC020000 		.4byte	.LASF17
+ 488 00ce 03       		.byte	0x3
+ 489 00cf 36       		.byte	0x36
+ 490 00d0 6B000000 		.4byte	0x6b
+ 491 00d4 00       		.byte	0
+ 492 00d5 08       		.uleb128 0x8
+ 493 00d6 60010000 		.4byte	.LASF18
+ 494 00da 03       		.byte	0x3
+ 495 00db 37       		.byte	0x37
+ 496 00dc 77000000 		.4byte	0x77
+ 497 00e0 02       		.byte	0x2
+ 498 00e1 08       		.uleb128 0x8
+ 499 00e2 A2020000 		.4byte	.LASF19
+ 500 00e6 03       		.byte	0x3
+ 501 00e7 38       		.byte	0x38
+ 502 00e8 77000000 		.4byte	0x77
+ 503 00ec 04       		.byte	0x4
+ 504 00ed 00       		.byte	0
+ 505 00ee 09       		.uleb128 0x9
+ 506 00ef 10060000 		.4byte	.LASF37
+ 507 00f3 01       		.byte	0x1
+ 508 00f4 2C000000 		.4byte	0x2c
+ 509 00f8 04       		.byte	0x4
+ 510 00f9 10       		.byte	0x10
+ 511 00fa 65010000 		.4byte	0x165
+ 512 00fe 0A       		.uleb128 0xa
+ 513 00ff DD040000 		.4byte	.LASF20
+ 514 0103 00       		.byte	0
+ 515 0104 0A       		.uleb128 0xa
+ 516 0105 DE030000 		.4byte	.LASF21
+ 517 0109 01       		.byte	0x1
+ 518 010a 0A       		.uleb128 0xa
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 14
+
+
+ 519 010b 88000000 		.4byte	.LASF22
+ 520 010f 02       		.byte	0x2
+ 521 0110 0A       		.uleb128 0xa
+ 522 0111 FC000000 		.4byte	.LASF23
+ 523 0115 03       		.byte	0x3
+ 524 0116 0A       		.uleb128 0xa
+ 525 0117 91050000 		.4byte	.LASF24
+ 526 011b 04       		.byte	0x4
+ 527 011c 0A       		.uleb128 0xa
+ 528 011d 33040000 		.4byte	.LASF25
+ 529 0121 05       		.byte	0x5
+ 530 0122 0A       		.uleb128 0xa
+ 531 0123 F6030000 		.4byte	.LASF26
+ 532 0127 06       		.byte	0x6
+ 533 0128 0A       		.uleb128 0xa
+ 534 0129 BD040000 		.4byte	.LASF27
+ 535 012d 07       		.byte	0x7
+ 536 012e 0A       		.uleb128 0xa
+ 537 012f 13030000 		.4byte	.LASF28
+ 538 0133 08       		.byte	0x8
+ 539 0134 0A       		.uleb128 0xa
+ 540 0135 EC000000 		.4byte	.LASF29
+ 541 0139 09       		.byte	0x9
+ 542 013a 0A       		.uleb128 0xa
+ 543 013b 6D020000 		.4byte	.LASF30
+ 544 013f 0A       		.byte	0xa
+ 545 0140 0A       		.uleb128 0xa
+ 546 0141 17000000 		.4byte	.LASF31
+ 547 0145 0B       		.byte	0xb
+ 548 0146 0A       		.uleb128 0xa
+ 549 0147 FF010000 		.4byte	.LASF32
+ 550 014b 0C       		.byte	0xc
+ 551 014c 0A       		.uleb128 0xa
+ 552 014d FB020000 		.4byte	.LASF33
+ 553 0151 0D       		.byte	0xd
+ 554 0152 0A       		.uleb128 0xa
+ 555 0153 52060000 		.4byte	.LASF34
+ 556 0157 0E       		.byte	0xe
+ 557 0158 0A       		.uleb128 0xa
+ 558 0159 39030000 		.4byte	.LASF35
+ 559 015d 0F       		.byte	0xf
+ 560 015e 0A       		.uleb128 0xa
+ 561 015f AA050000 		.4byte	.LASF36
+ 562 0163 10       		.byte	0x10
+ 563 0164 00       		.byte	0
+ 564 0165 09       		.uleb128 0x9
+ 565 0166 DF000000 		.4byte	.LASF38
+ 566 016a 01       		.byte	0x1
+ 567 016b 2C000000 		.4byte	0x2c
+ 568 016f 04       		.byte	0x4
+ 569 0170 26       		.byte	0x26
+ 570 0171 88010000 		.4byte	0x188
+ 571 0175 0A       		.uleb128 0xa
+ 572 0176 8E010000 		.4byte	.LASF39
+ 573 017a 00       		.byte	0
+ 574 017b 0A       		.uleb128 0xa
+ 575 017c 4D030000 		.4byte	.LASF40
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 15
+
+
+ 576 0180 01       		.byte	0x1
+ 577 0181 0A       		.uleb128 0xa
+ 578 0182 64000000 		.4byte	.LASF41
+ 579 0186 02       		.byte	0x2
+ 580 0187 00       		.byte	0
+ 581 0188 07       		.uleb128 0x7
+ 582 0189 46060000 		.4byte	.LASF43
+ 583 018d 26       		.byte	0x26
+ 584 018e 04       		.byte	0x4
+ 585 018f 37       		.byte	0x37
+ 586 0190 D1010000 		.4byte	0x1d1
+ 587 0194 08       		.uleb128 0x8
+ 588 0195 FA040000 		.4byte	.LASF44
+ 589 0199 04       		.byte	0x4
+ 590 019a 38       		.byte	0x38
+ 591 019b 6B000000 		.4byte	0x6b
+ 592 019f 00       		.byte	0
+ 593 01a0 08       		.uleb128 0x8
+ 594 01a1 B5030000 		.4byte	.LASF45
+ 595 01a5 04       		.byte	0x4
+ 596 01a6 39       		.byte	0x39
+ 597 01a7 6B000000 		.4byte	0x6b
+ 598 01ab 01       		.byte	0x1
+ 599 01ac 08       		.uleb128 0x8
+ 600 01ad 27000000 		.4byte	.LASF46
+ 601 01b1 04       		.byte	0x4
+ 602 01b2 3A       		.byte	0x3a
+ 603 01b3 D1010000 		.4byte	0x1d1
+ 604 01b7 02       		.byte	0x2
+ 605 01b8 0B       		.uleb128 0xb
+ 606 01b9 69647800 		.ascii	"idx\000"
+ 607 01bd 04       		.byte	0x4
+ 608 01be 3B       		.byte	0x3b
+ 609 01bf 83000000 		.4byte	0x83
+ 610 01c3 22       		.byte	0x22
+ 611 01c4 08       		.uleb128 0x8
+ 612 01c5 4E010000 		.4byte	.LASF47
+ 613 01c9 04       		.byte	0x4
+ 614 01ca 3C       		.byte	0x3c
+ 615 01cb 83000000 		.4byte	0x83
+ 616 01cf 24       		.byte	0x24
+ 617 01d0 00       		.byte	0
+ 618 01d1 0C       		.uleb128 0xc
+ 619 01d2 9D000000 		.4byte	0x9d
+ 620 01d6 E1010000 		.4byte	0x1e1
+ 621 01da 0D       		.uleb128 0xd
+ 622 01db AB000000 		.4byte	0xab
+ 623 01df 1F       		.byte	0x1f
+ 624 01e0 00       		.byte	0
+ 625 01e1 0E       		.uleb128 0xe
+ 626 01e2 9E000000 		.4byte	.LASF48
+ 627 01e6 04       		.byte	0x4
+ 628 01e7 3D       		.byte	0x3d
+ 629 01e8 88010000 		.4byte	0x188
+ 630 01ec 07       		.uleb128 0x7
+ 631 01ed D6030000 		.4byte	.LASF49
+ 632 01f1 C2       		.byte	0xc2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 16
+
+
+ 633 01f2 04       		.byte	0x4
+ 634 01f3 3F       		.byte	0x3f
+ 635 01f4 29020000 		.4byte	0x229
+ 636 01f8 08       		.uleb128 0x8
+ 637 01f9 FA040000 		.4byte	.LASF44
+ 638 01fd 04       		.byte	0x4
+ 639 01fe 41       		.byte	0x41
+ 640 01ff 6B000000 		.4byte	0x6b
+ 641 0203 00       		.byte	0
+ 642 0204 08       		.uleb128 0x8
+ 643 0205 A8000000 		.4byte	.LASF50
+ 644 0209 04       		.byte	0x4
+ 645 020a 42       		.byte	0x42
+ 646 020b 6B000000 		.4byte	0x6b
+ 647 020f 01       		.byte	0x1
+ 648 0210 08       		.uleb128 0x8
+ 649 0211 D0040000 		.4byte	.LASF51
+ 650 0215 04       		.byte	0x4
+ 651 0216 43       		.byte	0x43
+ 652 0217 6B000000 		.4byte	0x6b
+ 653 021b 02       		.byte	0x2
+ 654 021c 08       		.uleb128 0x8
+ 655 021d F5040000 		.4byte	.LASF52
+ 656 0221 04       		.byte	0x4
+ 657 0222 44       		.byte	0x44
+ 658 0223 29020000 		.4byte	0x229
+ 659 0227 04       		.byte	0x4
+ 660 0228 00       		.byte	0
+ 661 0229 0C       		.uleb128 0xc
+ 662 022a E1010000 		.4byte	0x1e1
+ 663 022e 39020000 		.4byte	0x239
+ 664 0232 0D       		.uleb128 0xd
+ 665 0233 AB000000 		.4byte	0xab
+ 666 0237 04       		.byte	0x4
+ 667 0238 00       		.byte	0
+ 668 0239 0E       		.uleb128 0xe
+ 669 023a 99040000 		.4byte	.LASF53
+ 670 023e 04       		.byte	0x4
+ 671 023f 45       		.byte	0x45
+ 672 0240 EC010000 		.4byte	0x1ec
+ 673 0244 0F       		.uleb128 0xf
+ 674 0245 9F040000 		.4byte	.LASF54
+ 675 0249 8801     		.2byte	0x188
+ 676 024b 04       		.byte	0x4
+ 677 024c 50       		.byte	0x50
+ 678 024d D8020000 		.4byte	0x2d8
+ 679 0251 08       		.uleb128 0x8
+ 680 0252 2E010000 		.4byte	.LASF55
+ 681 0256 04       		.byte	0x4
+ 682 0257 51       		.byte	0x51
+ 683 0258 6B000000 		.4byte	0x6b
+ 684 025c 00       		.byte	0
+ 685 025d 08       		.uleb128 0x8
+ 686 025e AC030000 		.4byte	.LASF56
+ 687 0262 04       		.byte	0x4
+ 688 0263 53       		.byte	0x53
+ 689 0264 D8020000 		.4byte	0x2d8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 17
+
+
+ 690 0268 01       		.byte	0x1
+ 691 0269 08       		.uleb128 0x8
+ 692 026a EE050000 		.4byte	.LASF57
+ 693 026e 04       		.byte	0x4
+ 694 026f 54       		.byte	0x54
+ 695 0270 D8020000 		.4byte	0x2d8
+ 696 0274 15       		.byte	0x15
+ 697 0275 08       		.uleb128 0x8
+ 698 0276 BC050000 		.4byte	.LASF58
+ 699 027a 04       		.byte	0x4
+ 700 027b 55       		.byte	0x55
+ 701 027c 77000000 		.4byte	0x77
+ 702 0280 2A       		.byte	0x2a
+ 703 0281 08       		.uleb128 0x8
+ 704 0282 BC030000 		.4byte	.LASF59
+ 705 0286 04       		.byte	0x4
+ 706 0287 56       		.byte	0x56
+ 707 0288 D8020000 		.4byte	0x2d8
+ 708 028c 2C       		.byte	0x2c
+ 709 028d 08       		.uleb128 0x8
+ 710 028e 2B040000 		.4byte	.LASF60
+ 711 0292 04       		.byte	0x4
+ 712 0293 58       		.byte	0x58
+ 713 0294 D8020000 		.4byte	0x2d8
+ 714 0298 40       		.byte	0x40
+ 715 0299 08       		.uleb128 0x8
+ 716 029a D2050000 		.4byte	.LASF61
+ 717 029e 04       		.byte	0x4
+ 718 029f 5A       		.byte	0x5a
+ 719 02a0 77000000 		.4byte	0x77
+ 720 02a4 54       		.byte	0x54
+ 721 02a5 08       		.uleb128 0x8
+ 722 02a6 2C000000 		.4byte	.LASF62
+ 723 02aa 04       		.byte	0x4
+ 724 02ab 5B       		.byte	0x5b
+ 725 02ac 77000000 		.4byte	0x77
+ 726 02b0 56       		.byte	0x56
+ 727 02b1 08       		.uleb128 0x8
+ 728 02b2 21010000 		.4byte	.LASF63
+ 729 02b6 04       		.byte	0x4
+ 730 02b7 5C       		.byte	0x5c
+ 731 02b8 E8020000 		.4byte	0x2e8
+ 732 02bc 58       		.byte	0x58
+ 733 02bd 10       		.uleb128 0x10
+ 734 02be 23060000 		.4byte	.LASF64
+ 735 02c2 04       		.byte	0x4
+ 736 02c3 5D       		.byte	0x5d
+ 737 02c4 77000000 		.4byte	0x77
+ 738 02c8 8401     		.2byte	0x184
+ 739 02ca 10       		.uleb128 0x10
+ 740 02cb 72040000 		.4byte	.LASF65
+ 741 02cf 04       		.byte	0x4
+ 742 02d0 5E       		.byte	0x5e
+ 743 02d1 77000000 		.4byte	0x77
+ 744 02d5 8601     		.2byte	0x186
+ 745 02d7 00       		.byte	0
+ 746 02d8 0C       		.uleb128 0xc
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 18
+
+
+ 747 02d9 9D000000 		.4byte	0x9d
+ 748 02dd E8020000 		.4byte	0x2e8
+ 749 02e1 0D       		.uleb128 0xd
+ 750 02e2 AB000000 		.4byte	0xab
+ 751 02e6 13       		.byte	0x13
+ 752 02e7 00       		.byte	0
+ 753 02e8 0C       		.uleb128 0xc
+ 754 02e9 9D000000 		.4byte	0x9d
+ 755 02ed FE020000 		.4byte	0x2fe
+ 756 02f1 0D       		.uleb128 0xd
+ 757 02f2 AB000000 		.4byte	0xab
+ 758 02f6 13       		.byte	0x13
+ 759 02f7 0D       		.uleb128 0xd
+ 760 02f8 AB000000 		.4byte	0xab
+ 761 02fc 0E       		.byte	0xe
+ 762 02fd 00       		.byte	0
+ 763 02fe 0E       		.uleb128 0xe
+ 764 02ff 0E030000 		.4byte	.LASF66
+ 765 0303 04       		.byte	0x4
+ 766 0304 5F       		.byte	0x5f
+ 767 0305 44020000 		.4byte	0x244
+ 768 0309 11       		.uleb128 0x11
+ 769 030a 0201     		.2byte	0x102
+ 770 030c 05       		.byte	0x5
+ 771 030d 12       		.byte	0x12
+ 772 030e 2C030000 		.4byte	0x32c
+ 773 0312 08       		.uleb128 0x8
+ 774 0313 8C040000 		.4byte	.LASF67
+ 775 0317 05       		.byte	0x5
+ 776 0318 13       		.byte	0x13
+ 777 0319 2C030000 		.4byte	0x32c
+ 778 031d 00       		.byte	0
+ 779 031e 10       		.uleb128 0x10
+ 780 031f DF020000 		.4byte	.LASF68
+ 781 0323 05       		.byte	0x5
+ 782 0324 14       		.byte	0x14
+ 783 0325 77000000 		.4byte	0x77
+ 784 0329 0001     		.2byte	0x100
+ 785 032b 00       		.byte	0
+ 786 032c 0C       		.uleb128 0xc
+ 787 032d 9D000000 		.4byte	0x9d
+ 788 0331 3C030000 		.4byte	0x33c
+ 789 0335 0D       		.uleb128 0xd
+ 790 0336 AB000000 		.4byte	0xab
+ 791 033a FF       		.byte	0xff
+ 792 033b 00       		.byte	0
+ 793 033c 0E       		.uleb128 0xe
+ 794 033d 39000000 		.4byte	.LASF69
+ 795 0341 05       		.byte	0x5
+ 796 0342 15       		.byte	0x15
+ 797 0343 09030000 		.4byte	0x309
+ 798 0347 12       		.uleb128 0x12
+ 799 0348 80       		.byte	0x80
+ 800 0349 06       		.byte	0x6
+ 801 034a 1C       		.byte	0x1c
+ 802 034b BC030000 		.4byte	0x3bc
+ 803 034f 08       		.uleb128 0x8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 19
+
+
+ 804 0350 A8020000 		.4byte	.LASF70
+ 805 0354 06       		.byte	0x6
+ 806 0355 1D       		.byte	0x1d
+ 807 0356 6B000000 		.4byte	0x6b
+ 808 035a 00       		.byte	0
+ 809 035b 08       		.uleb128 0x8
+ 810 035c 94040000 		.4byte	.LASF71
+ 811 0360 06       		.byte	0x6
+ 812 0361 1E       		.byte	0x1e
+ 813 0362 83000000 		.4byte	0x83
+ 814 0366 02       		.byte	0x2
+ 815 0367 08       		.uleb128 0x8
+ 816 0368 A7010000 		.4byte	.LASF72
+ 817 036c 06       		.byte	0x6
+ 818 036d 20       		.byte	0x20
+ 819 036e BC030000 		.4byte	0x3bc
+ 820 0372 04       		.byte	0x4
+ 821 0373 08       		.uleb128 0x8
+ 822 0374 12000000 		.4byte	.LASF73
+ 823 0378 06       		.byte	0x6
+ 824 0379 22       		.byte	0x22
+ 825 037a CC030000 		.4byte	0x3cc
+ 826 037e 2C       		.byte	0x2c
+ 827 037f 08       		.uleb128 0x8
+ 828 0380 F7050000 		.4byte	.LASF74
+ 829 0384 06       		.byte	0x6
+ 830 0385 23       		.byte	0x23
+ 831 0386 CC030000 		.4byte	0x3cc
+ 832 038a 3C       		.byte	0x3c
+ 833 038b 08       		.uleb128 0x8
+ 834 038c AC010000 		.4byte	.LASF75
+ 835 0390 06       		.byte	0x6
+ 836 0391 24       		.byte	0x24
+ 837 0392 CC030000 		.4byte	0x3cc
+ 838 0396 4C       		.byte	0x4c
+ 839 0397 08       		.uleb128 0x8
+ 840 0398 F1020000 		.4byte	.LASF76
+ 841 039c 06       		.byte	0x6
+ 842 039d 25       		.byte	0x25
+ 843 039e CC030000 		.4byte	0x3cc
+ 844 03a2 5C       		.byte	0x5c
+ 845 03a3 0B       		.uleb128 0xb
+ 846 03a4 4D414300 		.ascii	"MAC\000"
+ 847 03a8 06       		.byte	0x6
+ 848 03a9 26       		.byte	0x26
+ 849 03aa DC030000 		.4byte	0x3dc
+ 850 03ae 6C       		.byte	0x6c
+ 851 03af 08       		.uleb128 0x8
+ 852 03b0 83010000 		.4byte	.LASF77
+ 853 03b4 06       		.byte	0x6
+ 854 03b5 28       		.byte	0x28
+ 855 03b6 6B000000 		.4byte	0x6b
+ 856 03ba 7E       		.byte	0x7e
+ 857 03bb 00       		.byte	0
+ 858 03bc 0C       		.uleb128 0xc
+ 859 03bd 9D000000 		.4byte	0x9d
+ 860 03c1 CC030000 		.4byte	0x3cc
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 20
+
+
+ 861 03c5 0D       		.uleb128 0xd
+ 862 03c6 AB000000 		.4byte	0xab
+ 863 03ca 27       		.byte	0x27
+ 864 03cb 00       		.byte	0
+ 865 03cc 0C       		.uleb128 0xc
+ 866 03cd 9D000000 		.4byte	0x9d
+ 867 03d1 DC030000 		.4byte	0x3dc
+ 868 03d5 0D       		.uleb128 0xd
+ 869 03d6 AB000000 		.4byte	0xab
+ 870 03da 0F       		.byte	0xf
+ 871 03db 00       		.byte	0
+ 872 03dc 0C       		.uleb128 0xc
+ 873 03dd 9D000000 		.4byte	0x9d
+ 874 03e1 EC030000 		.4byte	0x3ec
+ 875 03e5 0D       		.uleb128 0xd
+ 876 03e6 AB000000 		.4byte	0xab
+ 877 03ea 11       		.byte	0x11
+ 878 03eb 00       		.byte	0
+ 879 03ec 0E       		.uleb128 0xe
+ 880 03ed ED010000 		.4byte	.LASF78
+ 881 03f1 06       		.byte	0x6
+ 882 03f2 29       		.byte	0x29
+ 883 03f3 47030000 		.4byte	0x347
+ 884 03f7 12       		.uleb128 0x12
+ 885 03f8 84       		.byte	0x84
+ 886 03f9 07       		.byte	0x7
+ 887 03fa 15       		.byte	0x15
+ 888 03fb 53040000 		.4byte	0x453
+ 889 03ff 0B       		.uleb128 0xb
+ 890 0400 495000   		.ascii	"IP\000"
+ 891 0403 07       		.byte	0x7
+ 892 0404 16       		.byte	0x16
+ 893 0405 CC030000 		.4byte	0x3cc
+ 894 0409 00       		.byte	0
+ 895 040a 08       		.uleb128 0x8
+ 896 040b F0040000 		.4byte	.LASF79
+ 897 040f 07       		.byte	0x7
+ 898 0410 17       		.byte	0x17
+ 899 0411 D1010000 		.4byte	0x1d1
+ 900 0415 10       		.byte	0x10
+ 901 0416 08       		.uleb128 0x8
+ 902 0417 87040000 		.4byte	.LASF80
+ 903 041b 07       		.byte	0x7
+ 904 041c 18       		.byte	0x18
+ 905 041d 3A000000 		.4byte	0x3a
+ 906 0421 30       		.byte	0x30
+ 907 0422 08       		.uleb128 0x8
+ 908 0423 A7010000 		.4byte	.LASF72
+ 909 0427 07       		.byte	0x7
+ 910 0428 19       		.byte	0x19
+ 911 0429 BC030000 		.4byte	0x3bc
+ 912 042d 32       		.byte	0x32
+ 913 042e 08       		.uleb128 0x8
+ 914 042f D6000000 		.4byte	.LASF81
+ 915 0433 07       		.byte	0x7
+ 916 0434 1A       		.byte	0x1a
+ 917 0435 D8020000 		.4byte	0x2d8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 21
+
+
+ 918 0439 5A       		.byte	0x5a
+ 919 043a 08       		.uleb128 0x8
+ 920 043b 66010000 		.4byte	.LASF82
+ 921 043f 07       		.byte	0x7
+ 922 0440 1B       		.byte	0x1b
+ 923 0441 D8020000 		.4byte	0x2d8
+ 924 0445 6E       		.byte	0x6e
+ 925 0446 08       		.uleb128 0x8
+ 926 0447 C6050000 		.4byte	.LASF83
+ 927 044b 07       		.byte	0x7
+ 928 044c 1D       		.byte	0x1d
+ 929 044d 3A000000 		.4byte	0x3a
+ 930 0451 82       		.byte	0x82
+ 931 0452 00       		.byte	0
+ 932 0453 0E       		.uleb128 0xe
+ 933 0454 19020000 		.4byte	.LASF84
+ 934 0458 07       		.byte	0x7
+ 935 0459 1E       		.byte	0x1e
+ 936 045a F7030000 		.4byte	0x3f7
+ 937 045e 13       		.uleb128 0x13
+ 938 045f F5010000 		.4byte	.LASF89
+ 939 0463 01       		.byte	0x1
+ 940 0464 23       		.byte	0x23
+ 941 0465 6B000000 		.4byte	0x6b
+ 942 0469 00000000 		.4byte	.LFB62
+ 943 046d 44000000 		.4byte	.LFE62-.LFB62
+ 944 0471 01       		.uleb128 0x1
+ 945 0472 9C       		.byte	0x9c
+ 946 0473 F1040000 		.4byte	0x4f1
+ 947 0477 14       		.uleb128 0x14
+ 948 0478 0C000000 		.4byte	.LBB2
+ 949 047c 26000000 		.4byte	.LBE2-.LBB2
+ 950 0480 E7040000 		.4byte	0x4e7
+ 951 0484 15       		.uleb128 0x15
+ 952 0485 617100   		.ascii	"aq\000"
+ 953 0488 01       		.byte	0x1
+ 954 0489 27       		.byte	0x27
+ 955 048a F1040000 		.4byte	0x4f1
+ 956 048e 00000000 		.4byte	.LLST0
+ 957 0492 16       		.uleb128 0x16
+ 958 0493 75726C00 		.ascii	"url\000"
+ 959 0497 01       		.byte	0x1
+ 960 0498 29       		.byte	0x29
+ 961 0499 F7040000 		.4byte	0x4f7
+ 962 049d 03       		.uleb128 0x3
+ 963 049e 91       		.byte	0x91
+ 964 049f F87B     		.sleb128 -520
+ 965 04a1 17       		.uleb128 0x17
+ 966 04a2 10000000 		.4byte	.LVL1
+ 967 04a6 16070000 		.4byte	0x716
+ 968 04aa 18       		.uleb128 0x18
+ 969 04ab 1E000000 		.4byte	.LVL4
+ 970 04af 21070000 		.4byte	0x721
+ 971 04b3 D6040000 		.4byte	0x4d6
+ 972 04b7 19       		.uleb128 0x19
+ 973 04b8 01       		.uleb128 0x1
+ 974 04b9 50       		.byte	0x50
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 22
+
+
+ 975 04ba 02       		.uleb128 0x2
+ 976 04bb 7D       		.byte	0x7d
+ 977 04bc 00       		.sleb128 0
+ 978 04bd 19       		.uleb128 0x19
+ 979 04be 01       		.uleb128 0x1
+ 980 04bf 51       		.byte	0x51
+ 981 04c0 05       		.uleb128 0x5
+ 982 04c1 03       		.byte	0x3
+ 983 04c2 00000000 		.4byte	.LC1
+ 984 04c6 19       		.uleb128 0x19
+ 985 04c7 01       		.uleb128 0x1
+ 986 04c8 52       		.byte	0x52
+ 987 04c9 05       		.uleb128 0x5
+ 988 04ca 03       		.byte	0x3
+ 989 04cb 00000000 		.4byte	.LANCHOR0
+ 990 04cf 19       		.uleb128 0x19
+ 991 04d0 01       		.uleb128 0x1
+ 992 04d1 53       		.byte	0x53
+ 993 04d2 02       		.uleb128 0x2
+ 994 04d3 74       		.byte	0x74
+ 995 04d4 00       		.sleb128 0
+ 996 04d5 00       		.byte	0
+ 997 04d6 1A       		.uleb128 0x1a
+ 998 04d7 2E000000 		.4byte	.LVL5
+ 999 04db 2C070000 		.4byte	0x72c
+ 1000 04df 19       		.uleb128 0x19
+ 1001 04e0 01       		.uleb128 0x1
+ 1002 04e1 50       		.byte	0x50
+ 1003 04e2 02       		.uleb128 0x2
+ 1004 04e3 7D       		.byte	0x7d
+ 1005 04e4 00       		.sleb128 0
+ 1006 04e5 00       		.byte	0
+ 1007 04e6 00       		.byte	0
+ 1008 04e7 17       		.uleb128 0x17
+ 1009 04e8 08000000 		.4byte	.LVL0
+ 1010 04ec 37070000 		.4byte	0x737
+ 1011 04f0 00       		.byte	0
+ 1012 04f1 05       		.uleb128 0x5
+ 1013 04f2 04       		.byte	0x4
+ 1014 04f3 3C030000 		.4byte	0x33c
+ 1015 04f7 0C       		.uleb128 0xc
+ 1016 04f8 9D000000 		.4byte	0x9d
+ 1017 04fc 08050000 		.4byte	0x508
+ 1018 0500 1B       		.uleb128 0x1b
+ 1019 0501 AB000000 		.4byte	0xab
+ 1020 0505 FF01     		.2byte	0x1ff
+ 1021 0507 00       		.byte	0
+ 1022 0508 1C       		.uleb128 0x1c
+ 1023 0509 BD010000 		.4byte	.LASF85
+ 1024 050d 01       		.byte	0x1
+ 1025 050e 34       		.byte	0x34
+ 1026 050f 00000000 		.4byte	.LFB63
+ 1027 0513 10000000 		.4byte	.LFE63-.LFB63
+ 1028 0517 01       		.uleb128 0x1
+ 1029 0518 9C       		.byte	0x9c
+ 1030 0519 36050000 		.4byte	0x536
+ 1031 051d 1A       		.uleb128 0x1a
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 23
+
+
+ 1032 051e 0A000000 		.4byte	.LVL7
+ 1033 0522 42070000 		.4byte	0x742
+ 1034 0526 19       		.uleb128 0x19
+ 1035 0527 01       		.uleb128 0x1
+ 1036 0528 50       		.byte	0x50
+ 1037 0529 01       		.uleb128 0x1
+ 1038 052a 31       		.byte	0x31
+ 1039 052b 19       		.uleb128 0x19
+ 1040 052c 01       		.uleb128 0x1
+ 1041 052d 51       		.byte	0x51
+ 1042 052e 05       		.uleb128 0x5
+ 1043 052f 03       		.byte	0x3
+ 1044 0530 0C000000 		.4byte	.LC4
+ 1045 0534 00       		.byte	0
+ 1046 0535 00       		.byte	0
+ 1047 0536 1C       		.uleb128 0x1c
+ 1048 0537 36060000 		.4byte	.LASF86
+ 1049 053b 01       		.byte	0x1
+ 1050 053c 39       		.byte	0x39
+ 1051 053d 00000000 		.4byte	.LFB64
+ 1052 0541 34000000 		.4byte	.LFE64-.LFB64
+ 1053 0545 01       		.uleb128 0x1
+ 1054 0546 9C       		.byte	0x9c
+ 1055 0547 6E050000 		.4byte	0x56e
+ 1056 054b 1A       		.uleb128 0x1a
+ 1057 054c 1E000000 		.4byte	.LVL8
+ 1058 0550 42070000 		.4byte	0x742
+ 1059 0554 19       		.uleb128 0x19
+ 1060 0555 01       		.uleb128 0x1
+ 1061 0556 50       		.byte	0x50
+ 1062 0557 01       		.uleb128 0x1
+ 1063 0558 32       		.byte	0x32
+ 1064 0559 19       		.uleb128 0x19
+ 1065 055a 01       		.uleb128 0x1
+ 1066 055b 51       		.byte	0x51
+ 1067 055c 05       		.uleb128 0x5
+ 1068 055d 03       		.byte	0x3
+ 1069 055e 1C000000 		.4byte	.LC8
+ 1070 0562 19       		.uleb128 0x19
+ 1071 0563 02       		.uleb128 0x2
+ 1072 0564 7D       		.byte	0x7d
+ 1073 0565 04       		.sleb128 4
+ 1074 0566 05       		.uleb128 0x5
+ 1075 0567 03       		.byte	0x3
+ 1076 0568 44000000 		.4byte	.LC10
+ 1077 056c 00       		.byte	0
+ 1078 056d 00       		.byte	0
+ 1079 056e 1C       		.uleb128 0x1c
+ 1080 056f 52040000 		.4byte	.LASF87
+ 1081 0573 01       		.byte	0x1
+ 1082 0574 3E       		.byte	0x3e
+ 1083 0575 00000000 		.4byte	.LFB65
+ 1084 0579 1C000000 		.4byte	.LFE65-.LFB65
+ 1085 057d 01       		.uleb128 0x1
+ 1086 057e 9C       		.byte	0x9c
+ 1087 057f 9C050000 		.4byte	0x59c
+ 1088 0583 1A       		.uleb128 0x1a
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 24
+
+
+ 1089 0584 12000000 		.4byte	.LVL9
+ 1090 0588 42070000 		.4byte	0x742
+ 1091 058c 19       		.uleb128 0x19
+ 1092 058d 01       		.uleb128 0x1
+ 1093 058e 50       		.byte	0x50
+ 1094 058f 01       		.uleb128 0x1
+ 1095 0590 35       		.byte	0x35
+ 1096 0591 19       		.uleb128 0x19
+ 1097 0592 01       		.uleb128 0x1
+ 1098 0593 51       		.byte	0x51
+ 1099 0594 05       		.uleb128 0x5
+ 1100 0595 03       		.byte	0x3
+ 1101 0596 4C000000 		.4byte	.LC14
+ 1102 059a 00       		.byte	0
+ 1103 059b 00       		.byte	0
+ 1104 059c 1C       		.uleb128 0x1c
+ 1105 059d 3B020000 		.4byte	.LASF88
+ 1106 05a1 01       		.byte	0x1
+ 1107 05a2 43       		.byte	0x43
+ 1108 05a3 00000000 		.4byte	.LFB66
+ 1109 05a7 1C000000 		.4byte	.LFE66-.LFB66
+ 1110 05ab 01       		.uleb128 0x1
+ 1111 05ac 9C       		.byte	0x9c
+ 1112 05ad CA050000 		.4byte	0x5ca
+ 1113 05b1 1A       		.uleb128 0x1a
+ 1114 05b2 12000000 		.4byte	.LVL10
+ 1115 05b6 42070000 		.4byte	0x742
+ 1116 05ba 19       		.uleb128 0x19
+ 1117 05bb 01       		.uleb128 0x1
+ 1118 05bc 50       		.byte	0x50
+ 1119 05bd 01       		.uleb128 0x1
+ 1120 05be 36       		.byte	0x36
+ 1121 05bf 19       		.uleb128 0x19
+ 1122 05c0 01       		.uleb128 0x1
+ 1123 05c1 51       		.byte	0x51
+ 1124 05c2 05       		.uleb128 0x5
+ 1125 05c3 03       		.byte	0x3
+ 1126 05c4 68000000 		.4byte	.LC17
+ 1127 05c8 00       		.byte	0
+ 1128 05c9 00       		.byte	0
+ 1129 05ca 1D       		.uleb128 0x1d
+ 1130 05cb 40010000 		.4byte	.LASF90
+ 1131 05cf 01       		.byte	0x1
+ 1132 05d0 48       		.byte	0x48
+ 1133 05d1 00000000 		.4byte	.LFB67
+ 1134 05d5 1C000000 		.4byte	.LFE67-.LFB67
+ 1135 05d9 01       		.uleb128 0x1
+ 1136 05da 9C       		.byte	0x9c
+ 1137 05db 0F060000 		.4byte	0x60f
+ 1138 05df 1E       		.uleb128 0x1e
+ 1139 05e0 E8040000 		.4byte	.LASF91
+ 1140 05e4 01       		.byte	0x1
+ 1141 05e5 48       		.byte	0x48
+ 1142 05e6 B2000000 		.4byte	0xb2
+ 1143 05ea 29000000 		.4byte	.LLST1
+ 1144 05ee 1E       		.uleb128 0x1e
+ 1145 05ef 7C040000 		.4byte	.LASF92
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 25
+
+
+ 1146 05f3 01       		.byte	0x1
+ 1147 05f4 48       		.byte	0x48
+ 1148 05f5 83000000 		.4byte	0x83
+ 1149 05f9 55000000 		.4byte	.LLST2
+ 1150 05fd 1A       		.uleb128 0x1a
+ 1151 05fe 10000000 		.4byte	.LVL14
+ 1152 0602 4D070000 		.4byte	0x74d
+ 1153 0606 19       		.uleb128 0x19
+ 1154 0607 01       		.uleb128 0x1
+ 1155 0608 51       		.byte	0x51
+ 1156 0609 03       		.uleb128 0x3
+ 1157 060a F3       		.byte	0xf3
+ 1158 060b 01       		.uleb128 0x1
+ 1159 060c 50       		.byte	0x50
+ 1160 060d 00       		.byte	0
+ 1161 060e 00       		.byte	0
+ 1162 060f 1F       		.uleb128 0x1f
+ 1163 0610 4F000000 		.4byte	.LASF113
+ 1164 0614 01       		.byte	0x1
+ 1165 0615 4E       		.byte	0x4e
+ 1166 0616 00000000 		.4byte	.LFB68
+ 1167 061a 02000000 		.4byte	.LFE68-.LFB68
+ 1168 061e 01       		.uleb128 0x1
+ 1169 061f 9C       		.byte	0x9c
+ 1170 0620 1C       		.uleb128 0x1c
+ 1171 0621 0E040000 		.4byte	.LASF93
+ 1172 0625 01       		.byte	0x1
+ 1173 0626 C0       		.byte	0xc0
+ 1174 0627 00000000 		.4byte	.LFB69
+ 1175 062b 0C000000 		.4byte	.LFE69-.LFB69
+ 1176 062f 01       		.uleb128 0x1
+ 1177 0630 9C       		.byte	0x9c
+ 1178 0631 48060000 		.4byte	0x648
+ 1179 0635 17       		.uleb128 0x17
+ 1180 0636 06000000 		.4byte	.LVL15
+ 1181 063a 08050000 		.4byte	0x508
+ 1182 063e 17       		.uleb128 0x17
+ 1183 063f 0A000000 		.4byte	.LVL16
+ 1184 0643 36050000 		.4byte	0x536
+ 1185 0647 00       		.byte	0
+ 1186 0648 0C       		.uleb128 0xc
+ 1187 0649 B8000000 		.4byte	0xb8
+ 1188 064d 58060000 		.4byte	0x658
+ 1189 0651 0D       		.uleb128 0xd
+ 1190 0652 AB000000 		.4byte	0xab
+ 1191 0656 0E       		.byte	0xe
+ 1192 0657 00       		.byte	0
+ 1193 0658 20       		.uleb128 0x20
+ 1194 0659 C8030000 		.4byte	.LASF94
+ 1195 065d 04       		.byte	0x4
+ 1196 065e 68       		.byte	0x68
+ 1197 065f 69060000 		.4byte	0x669
+ 1198 0663 05       		.uleb128 0x5
+ 1199 0664 03       		.byte	0x3
+ 1200 0665 00000000 		.4byte	g_strServeURL
+ 1201 0669 06       		.uleb128 0x6
+ 1202 066a 48060000 		.4byte	0x648
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 26
+
+
+ 1203 066e 0C       		.uleb128 0xc
+ 1204 066f 7E060000 		.4byte	0x67e
+ 1205 0673 7E060000 		.4byte	0x67e
+ 1206 0677 0D       		.uleb128 0xd
+ 1207 0678 AB000000 		.4byte	0xab
+ 1208 067c 0B       		.byte	0xb
+ 1209 067d 00       		.byte	0
+ 1210 067e 06       		.uleb128 0x6
+ 1211 067f 77000000 		.4byte	0x77
+ 1212 0683 21       		.uleb128 0x21
+ 1213 0684 B1000000 		.4byte	.LASF95
+ 1214 0688 08       		.byte	0x8
+ 1215 0689 E001     		.2byte	0x1e0
+ 1216 068b 8F060000 		.4byte	0x68f
+ 1217 068f 06       		.uleb128 0x6
+ 1218 0690 6E060000 		.4byte	0x66e
+ 1219 0694 22       		.uleb128 0x22
+ 1220 0695 6F000000 		.4byte	.LASF96
+ 1221 0699 03       		.byte	0x3
+ 1222 069a 3B       		.byte	0x3b
+ 1223 069b BD000000 		.4byte	0xbd
+ 1224 069f 05       		.uleb128 0x5
+ 1225 06a0 03       		.byte	0x3
+ 1226 06a1 00000000 		.4byte	Param
+ 1227 06a5 22       		.uleb128 0x22
+ 1228 06a6 25020000 		.4byte	.LASF97
+ 1229 06aa 01       		.byte	0x1
+ 1230 06ab 18       		.byte	0x18
+ 1231 06ac 39020000 		.4byte	0x239
+ 1232 06b0 05       		.uleb128 0x5
+ 1233 06b1 03       		.byte	0x3
+ 1234 06b2 00000000 		.4byte	g_Lists
+ 1235 06b6 22       		.uleb128 0x22
+ 1236 06b7 B6040000 		.4byte	.LASF98
+ 1237 06bb 01       		.byte	0x1
+ 1238 06bc 1F       		.byte	0x1f
+ 1239 06bd FE020000 		.4byte	0x2fe
+ 1240 06c1 05       		.uleb128 0x5
+ 1241 06c2 03       		.byte	0x3
+ 1242 06c3 00000000 		.4byte	g_Info
+ 1243 06c7 22       		.uleb128 0x22
+ 1244 06c8 A7040000 		.4byte	.LASF99
+ 1245 06cc 01       		.byte	0x1
+ 1246 06cd 1A       		.byte	0x1a
+ 1247 06ce 6B000000 		.4byte	0x6b
+ 1248 06d2 05       		.uleb128 0x5
+ 1249 06d3 03       		.byte	0x3
+ 1250 06d4 00000000 		.4byte	g_uReplyResult
+ 1251 06d8 23       		.uleb128 0x23
+ 1252 06d9 45000000 		.4byte	.LASF100
+ 1253 06dd 06       		.byte	0x6
+ 1254 06de 2B       		.byte	0x2b
+ 1255 06df EC030000 		.4byte	0x3ec
+ 1256 06e3 23       		.uleb128 0x23
+ 1257 06e4 46040000 		.4byte	.LASF101
+ 1258 06e8 07       		.byte	0x7
+ 1259 06e9 25       		.byte	0x25
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 27
+
+
+ 1260 06ea EE060000 		.4byte	0x6ee
+ 1261 06ee 05       		.uleb128 0x5
+ 1262 06ef 04       		.byte	0x4
+ 1263 06f0 53040000 		.4byte	0x453
+ 1264 06f4 22       		.uleb128 0x22
+ 1265 06f5 D9010000 		.4byte	.LASF102
+ 1266 06f9 01       		.byte	0x1
+ 1267 06fa 19       		.byte	0x19
+ 1268 06fb 6B000000 		.4byte	0x6b
+ 1269 06ff 05       		.uleb128 0x5
+ 1270 0700 03       		.byte	0x3
+ 1271 0701 00000000 		.4byte	g_bDeviceInfoUpdate
+ 1272 0705 22       		.uleb128 0x22
+ 1273 0706 4D020000 		.4byte	.LASF103
+ 1274 070a 01       		.byte	0x1
+ 1275 070b 1D       		.byte	0x1d
+ 1276 070c 77000000 		.4byte	0x77
+ 1277 0710 05       		.uleb128 0x5
+ 1278 0711 03       		.byte	0x3
+ 1279 0712 00000000 		.4byte	g_uAndonRequestType
+ 1280 0716 24       		.uleb128 0x24
+ 1281 0717 14010000 		.4byte	.LASF104
+ 1282 071b 14010000 		.4byte	.LASF104
+ 1283 071f 05       		.byte	0x5
+ 1284 0720 1C       		.byte	0x1c
+ 1285 0721 24       		.uleb128 0x24
+ 1286 0722 B4020000 		.4byte	.LASF105
+ 1287 0726 B4020000 		.4byte	.LASF105
+ 1288 072a 09       		.byte	0x9
+ 1289 072b E7       		.byte	0xe7
+ 1290 072c 24       		.uleb128 0x24
+ 1291 072d 02060000 		.4byte	.LASF106
+ 1292 0731 02060000 		.4byte	.LASF106
+ 1293 0735 06       		.byte	0x6
+ 1294 0736 4C       		.byte	0x4c
+ 1295 0737 24       		.uleb128 0x24
+ 1296 0738 00000000 		.4byte	.LASF107
+ 1297 073c 00000000 		.4byte	.LASF107
+ 1298 0740 05       		.byte	0x5
+ 1299 0741 19       		.byte	0x19
+ 1300 0742 24       		.uleb128 0x24
+ 1301 0743 8E020000 		.4byte	.LASF108
+ 1302 0747 8E020000 		.4byte	.LASF108
+ 1303 074b 05       		.byte	0x5
+ 1304 074c 1B       		.byte	0x1b
+ 1305 074d 24       		.uleb128 0x24
+ 1306 074e 7E020000 		.4byte	.LASF109
+ 1307 0752 7E020000 		.4byte	.LASF109
+ 1308 0756 0A       		.byte	0xa
+ 1309 0757 13       		.byte	0x13
+ 1310 0758 00       		.byte	0
+ 1311              		.section	.debug_abbrev,"",%progbits
+ 1312              	.Ldebug_abbrev0:
+ 1313 0000 01       		.uleb128 0x1
+ 1314 0001 11       		.uleb128 0x11
+ 1315 0002 01       		.byte	0x1
+ 1316 0003 25       		.uleb128 0x25
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 28
+
+
+ 1317 0004 0E       		.uleb128 0xe
+ 1318 0005 13       		.uleb128 0x13
+ 1319 0006 0B       		.uleb128 0xb
+ 1320 0007 03       		.uleb128 0x3
+ 1321 0008 0E       		.uleb128 0xe
+ 1322 0009 1B       		.uleb128 0x1b
+ 1323 000a 0E       		.uleb128 0xe
+ 1324 000b 55       		.uleb128 0x55
+ 1325 000c 17       		.uleb128 0x17
+ 1326 000d 11       		.uleb128 0x11
+ 1327 000e 01       		.uleb128 0x1
+ 1328 000f 10       		.uleb128 0x10
+ 1329 0010 17       		.uleb128 0x17
+ 1330 0011 00       		.byte	0
+ 1331 0012 00       		.byte	0
+ 1332 0013 02       		.uleb128 0x2
+ 1333 0014 24       		.uleb128 0x24
+ 1334 0015 00       		.byte	0
+ 1335 0016 0B       		.uleb128 0xb
+ 1336 0017 0B       		.uleb128 0xb
+ 1337 0018 3E       		.uleb128 0x3e
+ 1338 0019 0B       		.uleb128 0xb
+ 1339 001a 03       		.uleb128 0x3
+ 1340 001b 0E       		.uleb128 0xe
+ 1341 001c 00       		.byte	0
+ 1342 001d 00       		.byte	0
+ 1343 001e 03       		.uleb128 0x3
+ 1344 001f 24       		.uleb128 0x24
+ 1345 0020 00       		.byte	0
+ 1346 0021 0B       		.uleb128 0xb
+ 1347 0022 0B       		.uleb128 0xb
+ 1348 0023 3E       		.uleb128 0x3e
+ 1349 0024 0B       		.uleb128 0xb
+ 1350 0025 03       		.uleb128 0x3
+ 1351 0026 08       		.uleb128 0x8
+ 1352 0027 00       		.byte	0
+ 1353 0028 00       		.byte	0
+ 1354 0029 04       		.uleb128 0x4
+ 1355 002a 16       		.uleb128 0x16
+ 1356 002b 00       		.byte	0
+ 1357 002c 03       		.uleb128 0x3
+ 1358 002d 0E       		.uleb128 0xe
+ 1359 002e 3A       		.uleb128 0x3a
+ 1360 002f 0B       		.uleb128 0xb
+ 1361 0030 3B       		.uleb128 0x3b
+ 1362 0031 05       		.uleb128 0x5
+ 1363 0032 49       		.uleb128 0x49
+ 1364 0033 13       		.uleb128 0x13
+ 1365 0034 00       		.byte	0
+ 1366 0035 00       		.byte	0
+ 1367 0036 05       		.uleb128 0x5
+ 1368 0037 0F       		.uleb128 0xf
+ 1369 0038 00       		.byte	0
+ 1370 0039 0B       		.uleb128 0xb
+ 1371 003a 0B       		.uleb128 0xb
+ 1372 003b 49       		.uleb128 0x49
+ 1373 003c 13       		.uleb128 0x13
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 29
+
+
+ 1374 003d 00       		.byte	0
+ 1375 003e 00       		.byte	0
+ 1376 003f 06       		.uleb128 0x6
+ 1377 0040 26       		.uleb128 0x26
+ 1378 0041 00       		.byte	0
+ 1379 0042 49       		.uleb128 0x49
+ 1380 0043 13       		.uleb128 0x13
+ 1381 0044 00       		.byte	0
+ 1382 0045 00       		.byte	0
+ 1383 0046 07       		.uleb128 0x7
+ 1384 0047 13       		.uleb128 0x13
+ 1385 0048 01       		.byte	0x1
+ 1386 0049 03       		.uleb128 0x3
+ 1387 004a 0E       		.uleb128 0xe
+ 1388 004b 0B       		.uleb128 0xb
+ 1389 004c 0B       		.uleb128 0xb
+ 1390 004d 3A       		.uleb128 0x3a
+ 1391 004e 0B       		.uleb128 0xb
+ 1392 004f 3B       		.uleb128 0x3b
+ 1393 0050 0B       		.uleb128 0xb
+ 1394 0051 01       		.uleb128 0x1
+ 1395 0052 13       		.uleb128 0x13
+ 1396 0053 00       		.byte	0
+ 1397 0054 00       		.byte	0
+ 1398 0055 08       		.uleb128 0x8
+ 1399 0056 0D       		.uleb128 0xd
+ 1400 0057 00       		.byte	0
+ 1401 0058 03       		.uleb128 0x3
+ 1402 0059 0E       		.uleb128 0xe
+ 1403 005a 3A       		.uleb128 0x3a
+ 1404 005b 0B       		.uleb128 0xb
+ 1405 005c 3B       		.uleb128 0x3b
+ 1406 005d 0B       		.uleb128 0xb
+ 1407 005e 49       		.uleb128 0x49
+ 1408 005f 13       		.uleb128 0x13
+ 1409 0060 38       		.uleb128 0x38
+ 1410 0061 0B       		.uleb128 0xb
+ 1411 0062 00       		.byte	0
+ 1412 0063 00       		.byte	0
+ 1413 0064 09       		.uleb128 0x9
+ 1414 0065 04       		.uleb128 0x4
+ 1415 0066 01       		.byte	0x1
+ 1416 0067 03       		.uleb128 0x3
+ 1417 0068 0E       		.uleb128 0xe
+ 1418 0069 0B       		.uleb128 0xb
+ 1419 006a 0B       		.uleb128 0xb
+ 1420 006b 49       		.uleb128 0x49
+ 1421 006c 13       		.uleb128 0x13
+ 1422 006d 3A       		.uleb128 0x3a
+ 1423 006e 0B       		.uleb128 0xb
+ 1424 006f 3B       		.uleb128 0x3b
+ 1425 0070 0B       		.uleb128 0xb
+ 1426 0071 01       		.uleb128 0x1
+ 1427 0072 13       		.uleb128 0x13
+ 1428 0073 00       		.byte	0
+ 1429 0074 00       		.byte	0
+ 1430 0075 0A       		.uleb128 0xa
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 30
+
+
+ 1431 0076 28       		.uleb128 0x28
+ 1432 0077 00       		.byte	0
+ 1433 0078 03       		.uleb128 0x3
+ 1434 0079 0E       		.uleb128 0xe
+ 1435 007a 1C       		.uleb128 0x1c
+ 1436 007b 0B       		.uleb128 0xb
+ 1437 007c 00       		.byte	0
+ 1438 007d 00       		.byte	0
+ 1439 007e 0B       		.uleb128 0xb
+ 1440 007f 0D       		.uleb128 0xd
+ 1441 0080 00       		.byte	0
+ 1442 0081 03       		.uleb128 0x3
+ 1443 0082 08       		.uleb128 0x8
+ 1444 0083 3A       		.uleb128 0x3a
+ 1445 0084 0B       		.uleb128 0xb
+ 1446 0085 3B       		.uleb128 0x3b
+ 1447 0086 0B       		.uleb128 0xb
+ 1448 0087 49       		.uleb128 0x49
+ 1449 0088 13       		.uleb128 0x13
+ 1450 0089 38       		.uleb128 0x38
+ 1451 008a 0B       		.uleb128 0xb
+ 1452 008b 00       		.byte	0
+ 1453 008c 00       		.byte	0
+ 1454 008d 0C       		.uleb128 0xc
+ 1455 008e 01       		.uleb128 0x1
+ 1456 008f 01       		.byte	0x1
+ 1457 0090 49       		.uleb128 0x49
+ 1458 0091 13       		.uleb128 0x13
+ 1459 0092 01       		.uleb128 0x1
+ 1460 0093 13       		.uleb128 0x13
+ 1461 0094 00       		.byte	0
+ 1462 0095 00       		.byte	0
+ 1463 0096 0D       		.uleb128 0xd
+ 1464 0097 21       		.uleb128 0x21
+ 1465 0098 00       		.byte	0
+ 1466 0099 49       		.uleb128 0x49
+ 1467 009a 13       		.uleb128 0x13
+ 1468 009b 2F       		.uleb128 0x2f
+ 1469 009c 0B       		.uleb128 0xb
+ 1470 009d 00       		.byte	0
+ 1471 009e 00       		.byte	0
+ 1472 009f 0E       		.uleb128 0xe
+ 1473 00a0 16       		.uleb128 0x16
+ 1474 00a1 00       		.byte	0
+ 1475 00a2 03       		.uleb128 0x3
+ 1476 00a3 0E       		.uleb128 0xe
+ 1477 00a4 3A       		.uleb128 0x3a
+ 1478 00a5 0B       		.uleb128 0xb
+ 1479 00a6 3B       		.uleb128 0x3b
+ 1480 00a7 0B       		.uleb128 0xb
+ 1481 00a8 49       		.uleb128 0x49
+ 1482 00a9 13       		.uleb128 0x13
+ 1483 00aa 00       		.byte	0
+ 1484 00ab 00       		.byte	0
+ 1485 00ac 0F       		.uleb128 0xf
+ 1486 00ad 13       		.uleb128 0x13
+ 1487 00ae 01       		.byte	0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 31
+
+
+ 1488 00af 03       		.uleb128 0x3
+ 1489 00b0 0E       		.uleb128 0xe
+ 1490 00b1 0B       		.uleb128 0xb
+ 1491 00b2 05       		.uleb128 0x5
+ 1492 00b3 3A       		.uleb128 0x3a
+ 1493 00b4 0B       		.uleb128 0xb
+ 1494 00b5 3B       		.uleb128 0x3b
+ 1495 00b6 0B       		.uleb128 0xb
+ 1496 00b7 01       		.uleb128 0x1
+ 1497 00b8 13       		.uleb128 0x13
+ 1498 00b9 00       		.byte	0
+ 1499 00ba 00       		.byte	0
+ 1500 00bb 10       		.uleb128 0x10
+ 1501 00bc 0D       		.uleb128 0xd
+ 1502 00bd 00       		.byte	0
+ 1503 00be 03       		.uleb128 0x3
+ 1504 00bf 0E       		.uleb128 0xe
+ 1505 00c0 3A       		.uleb128 0x3a
+ 1506 00c1 0B       		.uleb128 0xb
+ 1507 00c2 3B       		.uleb128 0x3b
+ 1508 00c3 0B       		.uleb128 0xb
+ 1509 00c4 49       		.uleb128 0x49
+ 1510 00c5 13       		.uleb128 0x13
+ 1511 00c6 38       		.uleb128 0x38
+ 1512 00c7 05       		.uleb128 0x5
+ 1513 00c8 00       		.byte	0
+ 1514 00c9 00       		.byte	0
+ 1515 00ca 11       		.uleb128 0x11
+ 1516 00cb 13       		.uleb128 0x13
+ 1517 00cc 01       		.byte	0x1
+ 1518 00cd 0B       		.uleb128 0xb
+ 1519 00ce 05       		.uleb128 0x5
+ 1520 00cf 3A       		.uleb128 0x3a
+ 1521 00d0 0B       		.uleb128 0xb
+ 1522 00d1 3B       		.uleb128 0x3b
+ 1523 00d2 0B       		.uleb128 0xb
+ 1524 00d3 01       		.uleb128 0x1
+ 1525 00d4 13       		.uleb128 0x13
+ 1526 00d5 00       		.byte	0
+ 1527 00d6 00       		.byte	0
+ 1528 00d7 12       		.uleb128 0x12
+ 1529 00d8 13       		.uleb128 0x13
+ 1530 00d9 01       		.byte	0x1
+ 1531 00da 0B       		.uleb128 0xb
+ 1532 00db 0B       		.uleb128 0xb
+ 1533 00dc 3A       		.uleb128 0x3a
+ 1534 00dd 0B       		.uleb128 0xb
+ 1535 00de 3B       		.uleb128 0x3b
+ 1536 00df 0B       		.uleb128 0xb
+ 1537 00e0 01       		.uleb128 0x1
+ 1538 00e1 13       		.uleb128 0x13
+ 1539 00e2 00       		.byte	0
+ 1540 00e3 00       		.byte	0
+ 1541 00e4 13       		.uleb128 0x13
+ 1542 00e5 2E       		.uleb128 0x2e
+ 1543 00e6 01       		.byte	0x1
+ 1544 00e7 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 32
+
+
+ 1545 00e8 19       		.uleb128 0x19
+ 1546 00e9 03       		.uleb128 0x3
+ 1547 00ea 0E       		.uleb128 0xe
+ 1548 00eb 3A       		.uleb128 0x3a
+ 1549 00ec 0B       		.uleb128 0xb
+ 1550 00ed 3B       		.uleb128 0x3b
+ 1551 00ee 0B       		.uleb128 0xb
+ 1552 00ef 49       		.uleb128 0x49
+ 1553 00f0 13       		.uleb128 0x13
+ 1554 00f1 11       		.uleb128 0x11
+ 1555 00f2 01       		.uleb128 0x1
+ 1556 00f3 12       		.uleb128 0x12
+ 1557 00f4 06       		.uleb128 0x6
+ 1558 00f5 40       		.uleb128 0x40
+ 1559 00f6 18       		.uleb128 0x18
+ 1560 00f7 9742     		.uleb128 0x2117
+ 1561 00f9 19       		.uleb128 0x19
+ 1562 00fa 01       		.uleb128 0x1
+ 1563 00fb 13       		.uleb128 0x13
+ 1564 00fc 00       		.byte	0
+ 1565 00fd 00       		.byte	0
+ 1566 00fe 14       		.uleb128 0x14
+ 1567 00ff 0B       		.uleb128 0xb
+ 1568 0100 01       		.byte	0x1
+ 1569 0101 11       		.uleb128 0x11
+ 1570 0102 01       		.uleb128 0x1
+ 1571 0103 12       		.uleb128 0x12
+ 1572 0104 06       		.uleb128 0x6
+ 1573 0105 01       		.uleb128 0x1
+ 1574 0106 13       		.uleb128 0x13
+ 1575 0107 00       		.byte	0
+ 1576 0108 00       		.byte	0
+ 1577 0109 15       		.uleb128 0x15
+ 1578 010a 34       		.uleb128 0x34
+ 1579 010b 00       		.byte	0
+ 1580 010c 03       		.uleb128 0x3
+ 1581 010d 08       		.uleb128 0x8
+ 1582 010e 3A       		.uleb128 0x3a
+ 1583 010f 0B       		.uleb128 0xb
+ 1584 0110 3B       		.uleb128 0x3b
+ 1585 0111 0B       		.uleb128 0xb
+ 1586 0112 49       		.uleb128 0x49
+ 1587 0113 13       		.uleb128 0x13
+ 1588 0114 02       		.uleb128 0x2
+ 1589 0115 17       		.uleb128 0x17
+ 1590 0116 00       		.byte	0
+ 1591 0117 00       		.byte	0
+ 1592 0118 16       		.uleb128 0x16
+ 1593 0119 34       		.uleb128 0x34
+ 1594 011a 00       		.byte	0
+ 1595 011b 03       		.uleb128 0x3
+ 1596 011c 08       		.uleb128 0x8
+ 1597 011d 3A       		.uleb128 0x3a
+ 1598 011e 0B       		.uleb128 0xb
+ 1599 011f 3B       		.uleb128 0x3b
+ 1600 0120 0B       		.uleb128 0xb
+ 1601 0121 49       		.uleb128 0x49
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 33
+
+
+ 1602 0122 13       		.uleb128 0x13
+ 1603 0123 02       		.uleb128 0x2
+ 1604 0124 18       		.uleb128 0x18
+ 1605 0125 00       		.byte	0
+ 1606 0126 00       		.byte	0
+ 1607 0127 17       		.uleb128 0x17
+ 1608 0128 898201   		.uleb128 0x4109
+ 1609 012b 00       		.byte	0
+ 1610 012c 11       		.uleb128 0x11
+ 1611 012d 01       		.uleb128 0x1
+ 1612 012e 31       		.uleb128 0x31
+ 1613 012f 13       		.uleb128 0x13
+ 1614 0130 00       		.byte	0
+ 1615 0131 00       		.byte	0
+ 1616 0132 18       		.uleb128 0x18
+ 1617 0133 898201   		.uleb128 0x4109
+ 1618 0136 01       		.byte	0x1
+ 1619 0137 11       		.uleb128 0x11
+ 1620 0138 01       		.uleb128 0x1
+ 1621 0139 31       		.uleb128 0x31
+ 1622 013a 13       		.uleb128 0x13
+ 1623 013b 01       		.uleb128 0x1
+ 1624 013c 13       		.uleb128 0x13
+ 1625 013d 00       		.byte	0
+ 1626 013e 00       		.byte	0
+ 1627 013f 19       		.uleb128 0x19
+ 1628 0140 8A8201   		.uleb128 0x410a
+ 1629 0143 00       		.byte	0
+ 1630 0144 02       		.uleb128 0x2
+ 1631 0145 18       		.uleb128 0x18
+ 1632 0146 9142     		.uleb128 0x2111
+ 1633 0148 18       		.uleb128 0x18
+ 1634 0149 00       		.byte	0
+ 1635 014a 00       		.byte	0
+ 1636 014b 1A       		.uleb128 0x1a
+ 1637 014c 898201   		.uleb128 0x4109
+ 1638 014f 01       		.byte	0x1
+ 1639 0150 11       		.uleb128 0x11
+ 1640 0151 01       		.uleb128 0x1
+ 1641 0152 31       		.uleb128 0x31
+ 1642 0153 13       		.uleb128 0x13
+ 1643 0154 00       		.byte	0
+ 1644 0155 00       		.byte	0
+ 1645 0156 1B       		.uleb128 0x1b
+ 1646 0157 21       		.uleb128 0x21
+ 1647 0158 00       		.byte	0
+ 1648 0159 49       		.uleb128 0x49
+ 1649 015a 13       		.uleb128 0x13
+ 1650 015b 2F       		.uleb128 0x2f
+ 1651 015c 05       		.uleb128 0x5
+ 1652 015d 00       		.byte	0
+ 1653 015e 00       		.byte	0
+ 1654 015f 1C       		.uleb128 0x1c
+ 1655 0160 2E       		.uleb128 0x2e
+ 1656 0161 01       		.byte	0x1
+ 1657 0162 3F       		.uleb128 0x3f
+ 1658 0163 19       		.uleb128 0x19
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 34
+
+
+ 1659 0164 03       		.uleb128 0x3
+ 1660 0165 0E       		.uleb128 0xe
+ 1661 0166 3A       		.uleb128 0x3a
+ 1662 0167 0B       		.uleb128 0xb
+ 1663 0168 3B       		.uleb128 0x3b
+ 1664 0169 0B       		.uleb128 0xb
+ 1665 016a 11       		.uleb128 0x11
+ 1666 016b 01       		.uleb128 0x1
+ 1667 016c 12       		.uleb128 0x12
+ 1668 016d 06       		.uleb128 0x6
+ 1669 016e 40       		.uleb128 0x40
+ 1670 016f 18       		.uleb128 0x18
+ 1671 0170 9742     		.uleb128 0x2117
+ 1672 0172 19       		.uleb128 0x19
+ 1673 0173 01       		.uleb128 0x1
+ 1674 0174 13       		.uleb128 0x13
+ 1675 0175 00       		.byte	0
+ 1676 0176 00       		.byte	0
+ 1677 0177 1D       		.uleb128 0x1d
+ 1678 0178 2E       		.uleb128 0x2e
+ 1679 0179 01       		.byte	0x1
+ 1680 017a 3F       		.uleb128 0x3f
+ 1681 017b 19       		.uleb128 0x19
+ 1682 017c 03       		.uleb128 0x3
+ 1683 017d 0E       		.uleb128 0xe
+ 1684 017e 3A       		.uleb128 0x3a
+ 1685 017f 0B       		.uleb128 0xb
+ 1686 0180 3B       		.uleb128 0x3b
+ 1687 0181 0B       		.uleb128 0xb
+ 1688 0182 27       		.uleb128 0x27
+ 1689 0183 19       		.uleb128 0x19
+ 1690 0184 11       		.uleb128 0x11
+ 1691 0185 01       		.uleb128 0x1
+ 1692 0186 12       		.uleb128 0x12
+ 1693 0187 06       		.uleb128 0x6
+ 1694 0188 40       		.uleb128 0x40
+ 1695 0189 18       		.uleb128 0x18
+ 1696 018a 9742     		.uleb128 0x2117
+ 1697 018c 19       		.uleb128 0x19
+ 1698 018d 01       		.uleb128 0x1
+ 1699 018e 13       		.uleb128 0x13
+ 1700 018f 00       		.byte	0
+ 1701 0190 00       		.byte	0
+ 1702 0191 1E       		.uleb128 0x1e
+ 1703 0192 05       		.uleb128 0x5
+ 1704 0193 00       		.byte	0
+ 1705 0194 03       		.uleb128 0x3
+ 1706 0195 0E       		.uleb128 0xe
+ 1707 0196 3A       		.uleb128 0x3a
+ 1708 0197 0B       		.uleb128 0xb
+ 1709 0198 3B       		.uleb128 0x3b
+ 1710 0199 0B       		.uleb128 0xb
+ 1711 019a 49       		.uleb128 0x49
+ 1712 019b 13       		.uleb128 0x13
+ 1713 019c 02       		.uleb128 0x2
+ 1714 019d 17       		.uleb128 0x17
+ 1715 019e 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 35
+
+
+ 1716 019f 00       		.byte	0
+ 1717 01a0 1F       		.uleb128 0x1f
+ 1718 01a1 2E       		.uleb128 0x2e
+ 1719 01a2 00       		.byte	0
+ 1720 01a3 3F       		.uleb128 0x3f
+ 1721 01a4 19       		.uleb128 0x19
+ 1722 01a5 03       		.uleb128 0x3
+ 1723 01a6 0E       		.uleb128 0xe
+ 1724 01a7 3A       		.uleb128 0x3a
+ 1725 01a8 0B       		.uleb128 0xb
+ 1726 01a9 3B       		.uleb128 0x3b
+ 1727 01aa 0B       		.uleb128 0xb
+ 1728 01ab 11       		.uleb128 0x11
+ 1729 01ac 01       		.uleb128 0x1
+ 1730 01ad 12       		.uleb128 0x12
+ 1731 01ae 06       		.uleb128 0x6
+ 1732 01af 40       		.uleb128 0x40
+ 1733 01b0 18       		.uleb128 0x18
+ 1734 01b1 9742     		.uleb128 0x2117
+ 1735 01b3 19       		.uleb128 0x19
+ 1736 01b4 00       		.byte	0
+ 1737 01b5 00       		.byte	0
+ 1738 01b6 20       		.uleb128 0x20
+ 1739 01b7 34       		.uleb128 0x34
+ 1740 01b8 00       		.byte	0
+ 1741 01b9 03       		.uleb128 0x3
+ 1742 01ba 0E       		.uleb128 0xe
+ 1743 01bb 3A       		.uleb128 0x3a
+ 1744 01bc 0B       		.uleb128 0xb
+ 1745 01bd 3B       		.uleb128 0x3b
+ 1746 01be 0B       		.uleb128 0xb
+ 1747 01bf 49       		.uleb128 0x49
+ 1748 01c0 13       		.uleb128 0x13
+ 1749 01c1 02       		.uleb128 0x2
+ 1750 01c2 18       		.uleb128 0x18
+ 1751 01c3 00       		.byte	0
+ 1752 01c4 00       		.byte	0
+ 1753 01c5 21       		.uleb128 0x21
+ 1754 01c6 34       		.uleb128 0x34
+ 1755 01c7 00       		.byte	0
+ 1756 01c8 03       		.uleb128 0x3
+ 1757 01c9 0E       		.uleb128 0xe
+ 1758 01ca 3A       		.uleb128 0x3a
+ 1759 01cb 0B       		.uleb128 0xb
+ 1760 01cc 3B       		.uleb128 0x3b
+ 1761 01cd 05       		.uleb128 0x5
+ 1762 01ce 49       		.uleb128 0x49
+ 1763 01cf 13       		.uleb128 0x13
+ 1764 01d0 3F       		.uleb128 0x3f
+ 1765 01d1 19       		.uleb128 0x19
+ 1766 01d2 3C       		.uleb128 0x3c
+ 1767 01d3 19       		.uleb128 0x19
+ 1768 01d4 00       		.byte	0
+ 1769 01d5 00       		.byte	0
+ 1770 01d6 22       		.uleb128 0x22
+ 1771 01d7 34       		.uleb128 0x34
+ 1772 01d8 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 36
+
+
+ 1773 01d9 03       		.uleb128 0x3
+ 1774 01da 0E       		.uleb128 0xe
+ 1775 01db 3A       		.uleb128 0x3a
+ 1776 01dc 0B       		.uleb128 0xb
+ 1777 01dd 3B       		.uleb128 0x3b
+ 1778 01de 0B       		.uleb128 0xb
+ 1779 01df 49       		.uleb128 0x49
+ 1780 01e0 13       		.uleb128 0x13
+ 1781 01e1 3F       		.uleb128 0x3f
+ 1782 01e2 19       		.uleb128 0x19
+ 1783 01e3 02       		.uleb128 0x2
+ 1784 01e4 18       		.uleb128 0x18
+ 1785 01e5 00       		.byte	0
+ 1786 01e6 00       		.byte	0
+ 1787 01e7 23       		.uleb128 0x23
+ 1788 01e8 34       		.uleb128 0x34
+ 1789 01e9 00       		.byte	0
+ 1790 01ea 03       		.uleb128 0x3
+ 1791 01eb 0E       		.uleb128 0xe
+ 1792 01ec 3A       		.uleb128 0x3a
+ 1793 01ed 0B       		.uleb128 0xb
+ 1794 01ee 3B       		.uleb128 0x3b
+ 1795 01ef 0B       		.uleb128 0xb
+ 1796 01f0 49       		.uleb128 0x49
+ 1797 01f1 13       		.uleb128 0x13
+ 1798 01f2 3F       		.uleb128 0x3f
+ 1799 01f3 19       		.uleb128 0x19
+ 1800 01f4 3C       		.uleb128 0x3c
+ 1801 01f5 19       		.uleb128 0x19
+ 1802 01f6 00       		.byte	0
+ 1803 01f7 00       		.byte	0
+ 1804 01f8 24       		.uleb128 0x24
+ 1805 01f9 2E       		.uleb128 0x2e
+ 1806 01fa 00       		.byte	0
+ 1807 01fb 3F       		.uleb128 0x3f
+ 1808 01fc 19       		.uleb128 0x19
+ 1809 01fd 3C       		.uleb128 0x3c
+ 1810 01fe 19       		.uleb128 0x19
+ 1811 01ff 6E       		.uleb128 0x6e
+ 1812 0200 0E       		.uleb128 0xe
+ 1813 0201 03       		.uleb128 0x3
+ 1814 0202 0E       		.uleb128 0xe
+ 1815 0203 3A       		.uleb128 0x3a
+ 1816 0204 0B       		.uleb128 0xb
+ 1817 0205 3B       		.uleb128 0x3b
+ 1818 0206 0B       		.uleb128 0xb
+ 1819 0207 00       		.byte	0
+ 1820 0208 00       		.byte	0
+ 1821 0209 00       		.byte	0
+ 1822              		.section	.debug_loc,"",%progbits
+ 1823              	.Ldebug_loc0:
+ 1824              	.LLST0:
+ 1825 0000 12000000 		.4byte	.LVL2
+ 1826 0004 1A000000 		.4byte	.LVL3
+ 1827 0008 0100     		.2byte	0x1
+ 1828 000a 50       		.byte	0x50
+ 1829 000b 1A000000 		.4byte	.LVL3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 37
+
+
+ 1830 000f 1D000000 		.4byte	.LVL4-1
+ 1831 0013 0100     		.2byte	0x1
+ 1832 0015 53       		.byte	0x53
+ 1833 0016 1D000000 		.4byte	.LVL4-1
+ 1834 001a 32000000 		.4byte	.LVL6
+ 1835 001e 0100     		.2byte	0x1
+ 1836 0020 54       		.byte	0x54
+ 1837 0021 00000000 		.4byte	0
+ 1838 0025 00000000 		.4byte	0
+ 1839              	.LLST1:
+ 1840 0029 00000000 		.4byte	.LVL11
+ 1841 002d 0A000000 		.4byte	.LVL12
+ 1842 0031 0100     		.2byte	0x1
+ 1843 0033 50       		.byte	0x50
+ 1844 0034 0A000000 		.4byte	.LVL12
+ 1845 0038 0F000000 		.4byte	.LVL14-1
+ 1846 003c 0100     		.2byte	0x1
+ 1847 003e 53       		.byte	0x53
+ 1848 003f 0F000000 		.4byte	.LVL14-1
+ 1849 0043 1C000000 		.4byte	.LFE67
+ 1850 0047 0400     		.2byte	0x4
+ 1851 0049 F3       		.byte	0xf3
+ 1852 004a 01       		.uleb128 0x1
+ 1853 004b 50       		.byte	0x50
+ 1854 004c 9F       		.byte	0x9f
+ 1855 004d 00000000 		.4byte	0
+ 1856 0051 00000000 		.4byte	0
+ 1857              	.LLST2:
+ 1858 0055 00000000 		.4byte	.LVL11
+ 1859 0059 0C000000 		.4byte	.LVL13
+ 1860 005d 0100     		.2byte	0x1
+ 1861 005f 51       		.byte	0x51
+ 1862 0060 0C000000 		.4byte	.LVL13
+ 1863 0064 1C000000 		.4byte	.LFE67
+ 1864 0068 0400     		.2byte	0x4
+ 1865 006a F3       		.byte	0xf3
+ 1866 006b 01       		.uleb128 0x1
+ 1867 006c 51       		.byte	0x51
+ 1868 006d 9F       		.byte	0x9f
+ 1869 006e 00000000 		.4byte	0
+ 1870 0072 00000000 		.4byte	0
+ 1871              		.section	.debug_aranges,"",%progbits
+ 1872 0000 54000000 		.4byte	0x54
+ 1873 0004 0200     		.2byte	0x2
+ 1874 0006 00000000 		.4byte	.Ldebug_info0
+ 1875 000a 04       		.byte	0x4
+ 1876 000b 00       		.byte	0
+ 1877 000c 0000     		.2byte	0
+ 1878 000e 0000     		.2byte	0
+ 1879 0010 00000000 		.4byte	.LFB62
+ 1880 0014 44000000 		.4byte	.LFE62-.LFB62
+ 1881 0018 00000000 		.4byte	.LFB63
+ 1882 001c 10000000 		.4byte	.LFE63-.LFB63
+ 1883 0020 00000000 		.4byte	.LFB64
+ 1884 0024 34000000 		.4byte	.LFE64-.LFB64
+ 1885 0028 00000000 		.4byte	.LFB65
+ 1886 002c 1C000000 		.4byte	.LFE65-.LFB65
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 38
+
+
+ 1887 0030 00000000 		.4byte	.LFB66
+ 1888 0034 1C000000 		.4byte	.LFE66-.LFB66
+ 1889 0038 00000000 		.4byte	.LFB67
+ 1890 003c 1C000000 		.4byte	.LFE67-.LFB67
+ 1891 0040 00000000 		.4byte	.LFB68
+ 1892 0044 02000000 		.4byte	.LFE68-.LFB68
+ 1893 0048 00000000 		.4byte	.LFB69
+ 1894 004c 0C000000 		.4byte	.LFE69-.LFB69
+ 1895 0050 00000000 		.4byte	0
+ 1896 0054 00000000 		.4byte	0
+ 1897              		.section	.debug_ranges,"",%progbits
+ 1898              	.Ldebug_ranges0:
+ 1899 0000 00000000 		.4byte	.LFB62
+ 1900 0004 44000000 		.4byte	.LFE62
+ 1901 0008 00000000 		.4byte	.LFB63
+ 1902 000c 10000000 		.4byte	.LFE63
+ 1903 0010 00000000 		.4byte	.LFB64
+ 1904 0014 34000000 		.4byte	.LFE64
+ 1905 0018 00000000 		.4byte	.LFB65
+ 1906 001c 1C000000 		.4byte	.LFE65
+ 1907 0020 00000000 		.4byte	.LFB66
+ 1908 0024 1C000000 		.4byte	.LFE66
+ 1909 0028 00000000 		.4byte	.LFB67
+ 1910 002c 1C000000 		.4byte	.LFE67
+ 1911 0030 00000000 		.4byte	.LFB68
+ 1912 0034 02000000 		.4byte	.LFE68
+ 1913 0038 00000000 		.4byte	.LFB69
+ 1914 003c 0C000000 		.4byte	.LFE69
+ 1915 0040 00000000 		.4byte	0
+ 1916 0044 00000000 		.4byte	0
+ 1917              		.section	.debug_line,"",%progbits
+ 1918              	.Ldebug_line0:
+ 1919 0000 B9010000 		.section	.debug_str,"MS",%progbits,1
+ 1919      02001901 
+ 1919      00000201 
+ 1919      FB0E0D00 
+ 1919      01010101 
+ 1920              	.LASF107:
+ 1921 0000 6973456D 		.ascii	"isEmptyQueueANDON\000"
+ 1921      70747951 
+ 1921      75657565 
+ 1921      414E444F 
+ 1921      4E00
+ 1922              	.LASF73:
+ 1923 0012 49507634 		.ascii	"IPv4\000"
+ 1923      00
+ 1924              	.LASF31:
+ 1925 0017 414E444F 		.ascii	"ANDON_LIST_STAT\000"
+ 1925      4E5F4C49 
+ 1925      53545F53 
+ 1925      54415400 
+ 1926              	.LASF46:
+ 1927 0027 74657874 		.ascii	"text\000"
+ 1927      00
+ 1928              	.LASF62:
+ 1929 002c 6E6F7469 		.ascii	"notice_index\000"
+ 1929      63655F69 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 39
+
+
+ 1929      6E646578 
+ 1929      00
+ 1930              	.LASF69:
+ 1931 0039 414E444F 		.ascii	"ANDON_QUEUE\000"
+ 1931      4E5F5155 
+ 1931      45554500 
+ 1932              	.LASF100:
+ 1933 0045 675F6E65 		.ascii	"g_network\000"
+ 1933      74776F72 
+ 1933      6B00
+ 1934              	.LASF113:
+ 1935 004f 6D616B65 		.ascii	"makeAndonSewingCount\000"
+ 1935      416E646F 
+ 1935      6E536577 
+ 1935      696E6743 
+ 1935      6F756E74 
+ 1936              	.LASF41:
+ 1937 0064 52525F46 		.ascii	"RR_FAILURE\000"
+ 1937      41494C55 
+ 1937      524500
+ 1938              	.LASF96:
+ 1939 006f 50617261 		.ascii	"Param\000"
+ 1939      6D00
+ 1940              	.LASF2:
+ 1941 0075 73686F72 		.ascii	"short int\000"
+ 1941      7420696E 
+ 1941      7400
+ 1942              	.LASF16:
+ 1943 007f 73697A65 		.ascii	"sizetype\000"
+ 1943      74797065 
+ 1943      00
+ 1944              	.LASF22:
+ 1945 0088 414E444F 		.ascii	"ANDON_GET_DEVICE_NAME\000"
+ 1945      4E5F4745 
+ 1945      545F4445 
+ 1945      56494345 
+ 1945      5F4E414D 
+ 1946              	.LASF48:
+ 1947 009e 4C495354 		.ascii	"LIST_ITEM\000"
+ 1947      5F495445 
+ 1947      4D00
+ 1948              	.LASF50:
+ 1949 00a8 6E6F4F66 		.ascii	"noOfList\000"
+ 1949      4C697374 
+ 1949      00
+ 1950              	.LASF95:
+ 1951 00b1 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 1951      64617973 
+ 1951      4265666F 
+ 1951      72654D6F 
+ 1951      6E746854 
+ 1952              	.LASF6:
+ 1953 00c8 6C6F6E67 		.ascii	"long long int\000"
+ 1953      206C6F6E 
+ 1953      6720696E 
+ 1953      7400
+ 1954              	.LASF81:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 40
+
+
+ 1955 00d6 70617373 		.ascii	"password\000"
+ 1955      776F7264 
+ 1955      00
+ 1956              	.LASF38:
+ 1957 00df 5245504C 		.ascii	"REPLY_RESULT\000"
+ 1957      595F5245 
+ 1957      53554C54 
+ 1957      00
+ 1958              	.LASF29:
+ 1959 00ec 414E444F 		.ascii	"ANDON_LIST_SEND\000"
+ 1959      4E5F4C49 
+ 1959      53545F53 
+ 1959      454E4400 
+ 1960              	.LASF23:
+ 1961 00fc 414E444F 		.ascii	"ANDON_SEND_SEWING_COUNT\000"
+ 1961      4E5F5345 
+ 1961      4E445F53 
+ 1961      4557494E 
+ 1961      475F434F 
+ 1962              	.LASF104:
+ 1963 0114 64655175 		.ascii	"deQueueANDON\000"
+ 1963      65756541 
+ 1963      4E444F4E 
+ 1963      00
+ 1964              	.LASF63:
+ 1965 0121 6E6F7469 		.ascii	"notice\000"
+ 1965      636500
+ 1966              	.LASF11:
+ 1967 0128 696E7431 		.ascii	"int16\000"
+ 1967      3600
+ 1968              	.LASF55:
+ 1969 012e 62557064 		.ascii	"bUpdateDeviceInfo\000"
+ 1969      61746544 
+ 1969      65766963 
+ 1969      65496E66 
+ 1969      6F00
+ 1970              	.LASF90:
+ 1971 0140 616E646F 		.ascii	"andonResponse\000"
+ 1971      6E526573 
+ 1971      706F6E73 
+ 1971      6500
+ 1972              	.LASF47:
+ 1973 014e 6E6F745F 		.ascii	"not_completed_qty\000"
+ 1973      636F6D70 
+ 1973      6C657465 
+ 1973      645F7174 
+ 1973      7900
+ 1974              	.LASF18:
+ 1975 0160 706F735F 		.ascii	"pos_X\000"
+ 1975      5800
+ 1976              	.LASF82:
+ 1977 0166 64657669 		.ascii	"deviceName\000"
+ 1977      63654E61 
+ 1977      6D6500
+ 1978              	.LASF0:
+ 1979 0171 7369676E 		.ascii	"signed char\000"
+ 1979      65642063 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 41
+
+
+ 1979      68617200 
+ 1980              	.LASF12:
+ 1981 017d 666C6F61 		.ascii	"float\000"
+ 1981      7400
+ 1982              	.LASF77:
+ 1983 0183 62576966 		.ascii	"bWifiReady\000"
+ 1983      69526561 
+ 1983      647900
+ 1984              	.LASF39:
+ 1985 018e 52525F49 		.ascii	"RR_INIT\000"
+ 1985      4E495400 
+ 1986              	.LASF111:
+ 1987 0196 616E646F 		.ascii	"andonApi.c\000"
+ 1987      6E417069 
+ 1987      2E6300
+ 1988              	.LASF9:
+ 1989 01a1 75696E74 		.ascii	"uint8\000"
+ 1989      3800
+ 1990              	.LASF72:
+ 1991 01a7 53534944 		.ascii	"SSID\000"
+ 1991      00
+ 1992              	.LASF75:
+ 1993 01ac 47617465 		.ascii	"Gateway\000"
+ 1993      77617900 
+ 1994              	.LASF4:
+ 1995 01b4 6C6F6E67 		.ascii	"long int\000"
+ 1995      20696E74 
+ 1995      00
+ 1996              	.LASF85:
+ 1997 01bd 6D616B65 		.ascii	"makeAndonCurrentTimeRequest\000"
+ 1997      416E646F 
+ 1997      6E437572 
+ 1997      72656E74 
+ 1997      54696D65 
+ 1998              	.LASF102:
+ 1999 01d9 675F6244 		.ascii	"g_bDeviceInfoUpdate\000"
+ 1999      65766963 
+ 1999      65496E66 
+ 1999      6F557064 
+ 1999      61746500 
+ 2000              	.LASF78:
+ 2001 01ed 4E455457 		.ascii	"NETWORK\000"
+ 2001      4F524B00 
+ 2002              	.LASF89:
+ 2003 01f5 616E646F 		.ascii	"andonLoop\000"
+ 2003      6E4C6F6F 
+ 2003      7000
+ 2004              	.LASF32:
+ 2005 01ff 414E444F 		.ascii	"ANDON_DEVICE_REGISTRATION\000"
+ 2005      4E5F4445 
+ 2005      56494345 
+ 2005      5F524547 
+ 2005      49535452 
+ 2006              	.LASF84:
+ 2007 0219 53455256 		.ascii	"SERVER_INFO\000"
+ 2007      45525F49 
+ 2007      4E464F00 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 42
+
+
+ 2008              	.LASF97:
+ 2009 0225 675F4C69 		.ascii	"g_Lists\000"
+ 2009      73747300 
+ 2010              	.LASF1:
+ 2011 022d 756E7369 		.ascii	"unsigned char\000"
+ 2011      676E6564 
+ 2011      20636861 
+ 2011      7200
+ 2012              	.LASF88:
+ 2013 023b 6D616B65 		.ascii	"makeAndonTextList\000"
+ 2013      416E646F 
+ 2013      6E546578 
+ 2013      744C6973 
+ 2013      7400
+ 2014              	.LASF103:
+ 2015 024d 675F7541 		.ascii	"g_uAndonRequestType\000"
+ 2015      6E646F6E 
+ 2015      52657175 
+ 2015      65737454 
+ 2015      79706500 
+ 2016              	.LASF15:
+ 2017 0261 6C6F6E67 		.ascii	"long double\000"
+ 2017      20646F75 
+ 2017      626C6500 
+ 2018              	.LASF30:
+ 2019 026d 414E444F 		.ascii	"ANDON_REPLY_TEXT\000"
+ 2019      4E5F5245 
+ 2019      504C595F 
+ 2019      54455854 
+ 2019      00
+ 2020              	.LASF109:
+ 2021 027e 616E646F 		.ascii	"andonJsonParsor\000"
+ 2021      6E4A736F 
+ 2021      6E506172 
+ 2021      736F7200 
+ 2022              	.LASF108:
+ 2023 028e 656E5175 		.ascii	"enQueueANDON_printf\000"
+ 2023      65756541 
+ 2023      4E444F4E 
+ 2023      5F707269 
+ 2023      6E746600 
+ 2024              	.LASF19:
+ 2025 02a2 706F735F 		.ascii	"pos_Y\000"
+ 2025      5900
+ 2026              	.LASF70:
+ 2027 02a8 6973436F 		.ascii	"isConnectAP\000"
+ 2027      6E6E6563 
+ 2027      74415000 
+ 2028              	.LASF105:
+ 2029 02b4 73707269 		.ascii	"sprintf\000"
+ 2029      6E746600 
+ 2030              	.LASF17:
+ 2031 02bc 73746174 		.ascii	"stat_TC_INT\000"
+ 2031      5F54435F 
+ 2031      494E5400 
+ 2032              	.LASF7:
+ 2033 02c8 6C6F6E67 		.ascii	"long long unsigned int\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 43
+
+
+ 2033      206C6F6E 
+ 2033      6720756E 
+ 2033      7369676E 
+ 2033      65642069 
+ 2034              	.LASF68:
+ 2035 02df 74797065 		.ascii	"type\000"
+ 2035      00
+ 2036              	.LASF8:
+ 2037 02e4 756E7369 		.ascii	"unsigned int\000"
+ 2037      676E6564 
+ 2037      20696E74 
+ 2037      00
+ 2038              	.LASF76:
+ 2039 02f1 444E5353 		.ascii	"DNSServer\000"
+ 2039      65727665 
+ 2039      7200
+ 2040              	.LASF33:
+ 2041 02fb 414E444F 		.ascii	"ANDON_REQUEST_TEXT\000"
+ 2041      4E5F5245 
+ 2041      51554553 
+ 2041      545F5445 
+ 2041      585400
+ 2042              	.LASF66:
+ 2043 030e 494E464F 		.ascii	"INFO\000"
+ 2043      00
+ 2044              	.LASF28:
+ 2045 0313 454E445F 		.ascii	"END_OF_AUTO_REQUEST\000"
+ 2045      4F465F41 
+ 2045      55544F5F 
+ 2045      52455155 
+ 2045      45535400 
+ 2046              	.LASF5:
+ 2047 0327 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2047      20756E73 
+ 2047      69676E65 
+ 2047      6420696E 
+ 2047      7400
+ 2048              	.LASF35:
+ 2049 0339 414E444F 		.ascii	"ANDON_PATTERN_COUNT\000"
+ 2049      4E5F5041 
+ 2049      54544552 
+ 2049      4E5F434F 
+ 2049      554E5400 
+ 2050              	.LASF40:
+ 2051 034d 52525F53 		.ascii	"RR_SUCCESS\000"
+ 2051      55434345 
+ 2051      535300
+ 2052              	.LASF112:
+ 2053 0358 433A5C53 		.ascii	"C:\\SUNTECH\\PSoC\\KVC_Reset\\Edit_source_2024.05.2"
+ 2053      554E5445 
+ 2053      43485C50 
+ 2053      536F435C 
+ 2053      4B56435F 
+ 2054 0387 3028626F 		.ascii	"0(bobbin_count)\\Project\\Design.cydsn\000"
+ 2054      6262696E 
+ 2054      5F636F75 
+ 2054      6E74295C 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 44
+
+
+ 2054      50726F6A 
+ 2055              	.LASF56:
+ 2056 03ac 44657669 		.ascii	"DeviceNo\000"
+ 2056      63654E6F 
+ 2056      00
+ 2057              	.LASF45:
+ 2058 03b5 73746174 		.ascii	"status\000"
+ 2058      757300
+ 2059              	.LASF59:
+ 2060 03bc 496E7374 		.ascii	"InstallType\000"
+ 2060      616C6C54 
+ 2060      79706500 
+ 2061              	.LASF94:
+ 2062 03c8 675F7374 		.ascii	"g_strServeURL\000"
+ 2062      72536572 
+ 2062      76655552 
+ 2062      4C00
+ 2063              	.LASF49:
+ 2064 03d6 7461674C 		.ascii	"tagList\000"
+ 2064      69737400 
+ 2065              	.LASF21:
+ 2066 03de 414E444F 		.ascii	"ANDON_CURRENT_TIME\000"
+ 2066      4E5F4355 
+ 2066      5252454E 
+ 2066      545F5449 
+ 2066      4D4500
+ 2067              	.LASF14:
+ 2068 03f1 63686172 		.ascii	"char\000"
+ 2068      00
+ 2069              	.LASF26:
+ 2070 03f6 414E444F 		.ascii	"ANDON_REQUEST_TEXT_LIST\000"
+ 2070      4E5F5245 
+ 2070      51554553 
+ 2070      545F5445 
+ 2070      58545F4C 
+ 2071              	.LASF93:
+ 2072 040e 696E6974 		.ascii	"initAndon\000"
+ 2072      416E646F 
+ 2072      6E00
+ 2073              	.LASF3:
+ 2074 0418 73686F72 		.ascii	"short unsigned int\000"
+ 2074      7420756E 
+ 2074      7369676E 
+ 2074      65642069 
+ 2074      6E7400
+ 2075              	.LASF60:
+ 2076 042b 56657273 		.ascii	"Version\000"
+ 2076      696F6E00 
+ 2077              	.LASF25:
+ 2078 0433 414E444F 		.ascii	"ANDON_REQUEST_LIST\000"
+ 2078      4E5F5245 
+ 2078      51554553 
+ 2078      545F4C49 
+ 2078      535400
+ 2079              	.LASF101:
+ 2080 0446 675F7074 		.ascii	"g_ptrServer\000"
+ 2080      72536572 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 45
+
+
+ 2080      76657200 
+ 2081              	.LASF87:
+ 2082 0452 6D616B65 		.ascii	"makeAndonList\000"
+ 2082      416E646F 
+ 2082      6E4C6973 
+ 2082      7400
+ 2083              	.LASF42:
+ 2084 0460 73506172 		.ascii	"sParameter\000"
+ 2084      616D6574 
+ 2084      657200
+ 2085              	.LASF10:
+ 2086 046b 75696E74 		.ascii	"uint16\000"
+ 2086      313600
+ 2087              	.LASF65:
+ 2088 0472 6E4E6F4F 		.ascii	"nNoOfPage\000"
+ 2088      66506167 
+ 2088      6500
+ 2089              	.LASF92:
+ 2090 047c 73697A65 		.ascii	"sizeOfText\000"
+ 2090      4F665465 
+ 2090      787400
+ 2091              	.LASF80:
+ 2092 0487 706F7274 		.ascii	"port\000"
+ 2092      00
+ 2093              	.LASF67:
+ 2094 048c 6D657373 		.ascii	"message\000"
+ 2094      61676500 
+ 2095              	.LASF71:
+ 2096 0494 52535349 		.ascii	"RSSI\000"
+ 2096      00
+ 2097              	.LASF53:
+ 2098 0499 4C495354 		.ascii	"LISTS\000"
+ 2098      5300
+ 2099              	.LASF54:
+ 2100 049f 74616749 		.ascii	"tagInfo\000"
+ 2100      6E666F00 
+ 2101              	.LASF99:
+ 2102 04a7 675F7552 		.ascii	"g_uReplyResult\000"
+ 2102      65706C79 
+ 2102      52657375 
+ 2102      6C7400
+ 2103              	.LASF98:
+ 2104 04b6 675F496E 		.ascii	"g_Info\000"
+ 2104      666F00
+ 2105              	.LASF27:
+ 2106 04bd 414E444F 		.ascii	"ANDON_NOTICE_CHECK\000"
+ 2106      4E5F4E4F 
+ 2106      54494345 
+ 2106      5F434845 
+ 2106      434B00
+ 2107              	.LASF51:
+ 2108 04d0 7553656C 		.ascii	"uSelectIndex\000"
+ 2108      65637449 
+ 2108      6E646578 
+ 2108      00
+ 2109              	.LASF20:
+ 2110 04dd 414E444F 		.ascii	"ANDON_NONE\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 46
+
+
+ 2110      4E5F4E4F 
+ 2110      4E4500
+ 2111              	.LASF91:
+ 2112 04e8 70747254 		.ascii	"ptrText\000"
+ 2112      65787400 
+ 2113              	.LASF79:
+ 2114 04f0 70617468 		.ascii	"path\000"
+ 2114      00
+ 2115              	.LASF52:
+ 2116 04f5 6974656D 		.ascii	"item\000"
+ 2116      00
+ 2117              	.LASF44:
+ 2118 04fa 62557064 		.ascii	"bUpdated\000"
+ 2118      61746564 
+ 2118      00
+ 2119              	.LASF110:
+ 2120 0503 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2120      43313120 
+ 2120      352E342E 
+ 2120      31203230 
+ 2120      31363036 
+ 2121 0536 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 2121      20726576 
+ 2121      6973696F 
+ 2121      6E203233 
+ 2121      37373135 
+ 2122 0569 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2122      66756E63 
+ 2122      74696F6E 
+ 2122      2D736563 
+ 2122      74696F6E 
+ 2123              	.LASF24:
+ 2124 0591 414E444F 		.ascii	"ANDON_SEND_PATTERN_COUNT\000"
+ 2124      4E5F5345 
+ 2124      4E445F50 
+ 2124      41545445 
+ 2124      524E5F43 
+ 2125              	.LASF36:
+ 2126 05aa 454E445F 		.ascii	"END_OF_ANDON_DATA\000"
+ 2126      4F465F41 
+ 2126      4E444F4E 
+ 2126      5F444154 
+ 2126      4100
+ 2127              	.LASF58:
+ 2128 05bc 44657669 		.ascii	"DeviceIdx\000"
+ 2128      63654964 
+ 2128      7800
+ 2129              	.LASF83:
+ 2130 05c6 64657669 		.ascii	"deviceIndex\000"
+ 2130      6365496E 
+ 2130      64657800 
+ 2131              	.LASF61:
+ 2132 05d2 416E646F 		.ascii	"AndonListRequestTime\000"
+ 2132      6E4C6973 
+ 2132      74526571 
+ 2132      75657374 
+ 2132      54696D65 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccANg5NP.s 			page 47
+
+
+ 2133              	.LASF13:
+ 2134 05e7 646F7562 		.ascii	"double\000"
+ 2134      6C6500
+ 2135              	.LASF57:
+ 2136 05ee 4C696E65 		.ascii	"LineName\000"
+ 2136      4E616D65 
+ 2136      00
+ 2137              	.LASF74:
+ 2138 05f7 5375626E 		.ascii	"SubnetMask\000"
+ 2138      65744D61 
+ 2138      736B00
+ 2139              	.LASF106:
+ 2140 0602 77696669 		.ascii	"wifi_cmd_http\000"
+ 2140      5F636D64 
+ 2140      5F687474 
+ 2140      7000
+ 2141              	.LASF37:
+ 2142 0610 414E444F 		.ascii	"ANDON_AUTO_REQUEST\000"
+ 2142      4E5F4155 
+ 2142      544F5F52 
+ 2142      45515545 
+ 2142      535400
+ 2143              	.LASF64:
+ 2144 0623 6E4E6F4F 		.ascii	"nNoOfLineForNotice\000"
+ 2144      664C696E 
+ 2144      65466F72 
+ 2144      4E6F7469 
+ 2144      636500
+ 2145              	.LASF86:
+ 2146 0636 6D616B65 		.ascii	"makeAndonDevice\000"
+ 2146      416E646F 
+ 2146      6E446576 
+ 2146      69636500 
+ 2147              	.LASF43:
+ 2148 0646 7461674C 		.ascii	"tagListItem\000"
+ 2148      69737449 
+ 2148      74656D00 
+ 2149              	.LASF34:
+ 2150 0652 414E444F 		.ascii	"ANDON_REQUEST_SUB_CATEGORY_NAME\000"
+ 2150      4E5F5245 
+ 2150      51554553 
+ 2150      545F5355 
+ 2150      425F4341 
+ 2151              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

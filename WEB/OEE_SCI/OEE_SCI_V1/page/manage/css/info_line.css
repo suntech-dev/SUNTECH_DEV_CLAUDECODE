@@ -1,0 +1,90 @@
+/* Line Page Specific Styles */
+
+/* Header Layout */
+.fiori-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fiori-card__header .quick-actions {
+  padding: 0;
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+/* Modal Layout */
+.line-modal-card {
+  max-height: calc(90vh - 2rem);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: var(--sap-spacing-md);
+  right: var(--sap-spacing-md);
+}
+
+.modal-content {
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(90vh - 8rem);
+}
+
+/* Progress Indicator */
+.progress-indicator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--sap-spacing-lg);
+  padding-bottom: var(--sap-spacing-md);
+  border-bottom: 1px solid var(--sap-border-subtle);
+}
+
+.progress-steps {
+  display: flex;
+  gap: var(--sap-spacing-sm);
+  align-items: center;
+}
+
+.step-counter {
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-secondary);
+}
+
+/* Section Titles */
+.section-title {
+  margin-bottom: var(--sap-spacing-md);
+  color: var(--sap-text-primary);
+}
+
+/* Review Section */
+.review-section {
+  padding: var(--sap-spacing-md);
+  background: var(--sap-surface-2);
+  border-radius: var(--sap-radius-md);
+  margin-top: var(--sap-spacing-md);
+}
+
+.review-title {
+  margin: 0 0 var(--sap-spacing-sm) 0;
+  color: var(--sap-text-primary);
+}
+
+.review-content {
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-secondary);
+}
+
+.review-content div {
+  margin-bottom: var(--sap-spacing-xs);
+}
+
+/* Select Box Width */
+#factoryFilterSelect,
+#statusFilterSelect {
+  width: auto;
+  min-width: 150px;
+}

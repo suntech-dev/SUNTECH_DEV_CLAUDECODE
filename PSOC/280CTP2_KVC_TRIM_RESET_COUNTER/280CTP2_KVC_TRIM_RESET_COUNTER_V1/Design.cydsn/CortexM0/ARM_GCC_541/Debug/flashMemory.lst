@@ -1,0 +1,1404 @@
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"flashMemory.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.WriteDataFlash,"ax",%progbits
+  20              		.align	2
+  21              		.global	WriteDataFlash
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	WriteDataFlash, %function
+  25              	WriteDataFlash:
+  26              	.LFB61:
+  27              		.file 1 "flashMemory.c"
+   1:flashMemory.c **** /* ========================================
+   2:flashMemory.c ****  *
+   3:flashMemory.c ****  * Copyright YOUR COMPANY, THE YEAR
+   4:flashMemory.c ****  * All Rights Reserved
+   5:flashMemory.c ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:flashMemory.c ****  *
+   7:flashMemory.c ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:flashMemory.c ****  * WHICH IS THE PROPERTY OF your company.
+   9:flashMemory.c ****  *
+  10:flashMemory.c ****  * ========================================
+  11:flashMemory.c **** */
+  12:flashMemory.c **** #include "flashMemory.h"
+  13:flashMemory.c **** 
+  14:flashMemory.c **** #define INSTRUCTION_READ_DATA  0x03
+  15:flashMemory.c **** #define INSTRUCTION_CHIP_ERASE 0x06
+  16:flashMemory.c **** 
+  17:flashMemory.c **** #define W25qxx_Delay(delay)     CyDelayUs(delay)
+  18:flashMemory.c **** 
+  19:flashMemory.c **** void WriteDataFlash(uint8_t data)
+  20:flashMemory.c **** {
+  28              		.loc 1 20 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  21:flashMemory.c ****     SPIM_FLASH_WriteTxData(data);
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 2
+
+
+  37              		.loc 1 21 0
+  38 0002 FFF7FEFF 		bl	SPIM_FLASH_WriteTxData
+  39              	.LVL1:
+  22:flashMemory.c **** }
+  40              		.loc 1 22 0
+  41              		@ sp needed
+  42 0006 10BD     		pop	{r4, pc}
+  43              		.cfi_endproc
+  44              	.LFE61:
+  45              		.size	WriteDataFlash, .-WriteDataFlash
+  46              		.section	.text.ReadDataFlash,"ax",%progbits
+  47              		.align	2
+  48              		.global	ReadDataFlash
+  49              		.code	16
+  50              		.thumb_func
+  51              		.type	ReadDataFlash, %function
+  52              	ReadDataFlash:
+  53              	.LFB62:
+  23:flashMemory.c **** 
+  24:flashMemory.c **** uint8_t ReadDataFlash()
+  25:flashMemory.c **** {
+  54              		.loc 1 25 0
+  55              		.cfi_startproc
+  56              		@ args = 0, pretend = 0, frame = 0
+  57              		@ frame_needed = 0, uses_anonymous_args = 0
+  58 0000 10B5     		push	{r4, lr}
+  59              		.cfi_def_cfa_offset 8
+  60              		.cfi_offset 4, -8
+  61              		.cfi_offset 14, -4
+  26:flashMemory.c ****     return SPIM_FLASH_ReadRxData();
+  62              		.loc 1 26 0
+  63 0002 FFF7FEFF 		bl	SPIM_FLASH_ReadRxData
+  64              	.LVL2:
+  27:flashMemory.c **** }
+  65              		.loc 1 27 0
+  66              		@ sp needed
+  67 0006 10BD     		pop	{r4, pc}
+  68              		.cfi_endproc
+  69              	.LFE62:
+  70              		.size	ReadDataFlash, .-ReadDataFlash
+  71              		.section	.text.W25qxx_Spi,"ax",%progbits
+  72              		.align	2
+  73              		.global	W25qxx_Spi
+  74              		.code	16
+  75              		.thumb_func
+  76              		.type	W25qxx_Spi, %function
+  77              	W25qxx_Spi:
+  78              	.LFB63:
+  28:flashMemory.c **** 
+  29:flashMemory.c **** uint8_t	W25qxx_Spi(uint8_t	Data)
+  30:flashMemory.c **** {
+  79              		.loc 1 30 0
+  80              		.cfi_startproc
+  81              		@ args = 0, pretend = 0, frame = 0
+  82              		@ frame_needed = 0, uses_anonymous_args = 0
+  83              	.LVL3:
+  84 0000 10B5     		push	{r4, lr}
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 3
+
+
+  85              		.cfi_def_cfa_offset 8
+  86              		.cfi_offset 4, -8
+  87              		.cfi_offset 14, -4
+  31:flashMemory.c **** 	uint8_t	ret;
+  32:flashMemory.c ****     WriteDataFlash(Data);
+  88              		.loc 1 32 0
+  89 0002 FFF7FEFF 		bl	WriteDataFlash
+  90              	.LVL4:
+  33:flashMemory.c **** 	//HAL_SPI_TransmitReceive(&_W25QXX_SPI,&Data,&ret,1,100);
+  34:flashMemory.c **** 	return ret;	
+  35:flashMemory.c **** }
+  91              		.loc 1 35 0
+  92 0006 0020     		movs	r0, #0
+  93              		@ sp needed
+  94 0008 10BD     		pop	{r4, pc}
+  95              		.cfi_endproc
+  96              	.LFE63:
+  97              		.size	W25qxx_Spi, .-W25qxx_Spi
+  98 000a C046     		.section	.text.W25qxx_WriteEnable,"ax",%progbits
+  99              		.align	2
+ 100              		.global	W25qxx_WriteEnable
+ 101              		.code	16
+ 102              		.thumb_func
+ 103              		.type	W25qxx_WriteEnable, %function
+ 104              	W25qxx_WriteEnable:
+ 105              	.LFB64:
+  36:flashMemory.c **** 
+  37:flashMemory.c **** void W25qxx_WriteEnable(void)
+  38:flashMemory.c **** {
+ 106              		.loc 1 38 0
+ 107              		.cfi_startproc
+ 108              		@ args = 0, pretend = 0, frame = 0
+ 109              		@ frame_needed = 0, uses_anonymous_args = 0
+ 110 0000 10B5     		push	{r4, lr}
+ 111              		.cfi_def_cfa_offset 8
+ 112              		.cfi_offset 4, -8
+ 113              		.cfi_offset 14, -4
+  39:flashMemory.c ****     // WR Pin ->L
+  40:flashMemory.c ****     W25qxx_Spi(0x06);
+ 114              		.loc 1 40 0
+ 115 0002 0620     		movs	r0, #6
+ 116 0004 FFF7FEFF 		bl	W25qxx_Spi
+ 117              	.LVL5:
+  41:flashMemory.c ****     // WR Pin ->H       
+  42:flashMemory.c **** 	W25qxx_Delay(1);
+ 118              		.loc 1 42 0
+ 119 0008 0120     		movs	r0, #1
+ 120 000a FFF7FEFF 		bl	CyDelayUs
+ 121              	.LVL6:
+  43:flashMemory.c **** }
+ 122              		.loc 1 43 0
+ 123              		@ sp needed
+ 124 000e 10BD     		pop	{r4, pc}
+ 125              		.cfi_endproc
+ 126              	.LFE64:
+ 127              		.size	W25qxx_WriteEnable, .-W25qxx_WriteEnable
+ 128              		.section	.text.W25qxx_WriteDisable,"ax",%progbits
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 4
+
+
+ 129              		.align	2
+ 130              		.global	W25qxx_WriteDisable
+ 131              		.code	16
+ 132              		.thumb_func
+ 133              		.type	W25qxx_WriteDisable, %function
+ 134              	W25qxx_WriteDisable:
+ 135              	.LFB65:
+  44:flashMemory.c **** 
+  45:flashMemory.c **** void W25qxx_WriteDisable(void)
+  46:flashMemory.c **** {
+ 136              		.loc 1 46 0
+ 137              		.cfi_startproc
+ 138              		@ args = 0, pretend = 0, frame = 0
+ 139              		@ frame_needed = 0, uses_anonymous_args = 0
+ 140 0000 10B5     		push	{r4, lr}
+ 141              		.cfi_def_cfa_offset 8
+ 142              		.cfi_offset 4, -8
+ 143              		.cfi_offset 14, -4
+  47:flashMemory.c ****     // WR Pin ->L
+  48:flashMemory.c ****     W25qxx_Spi(0x04);
+ 144              		.loc 1 48 0
+ 145 0002 0420     		movs	r0, #4
+ 146 0004 FFF7FEFF 		bl	W25qxx_Spi
+ 147              	.LVL7:
+  49:flashMemory.c ****     // WR Pin ->H       
+  50:flashMemory.c **** 	W25qxx_Delay(1);
+ 148              		.loc 1 50 0
+ 149 0008 0120     		movs	r0, #1
+ 150 000a FFF7FEFF 		bl	CyDelayUs
+ 151              	.LVL8:
+  51:flashMemory.c **** }
+ 152              		.loc 1 51 0
+ 153              		@ sp needed
+ 154 000e 10BD     		pop	{r4, pc}
+ 155              		.cfi_endproc
+ 156              	.LFE65:
+ 157              		.size	W25qxx_WriteDisable, .-W25qxx_WriteDisable
+ 158              		.section	.text.W25qxx_ReadID,"ax",%progbits
+ 159              		.align	2
+ 160              		.global	W25qxx_ReadID
+ 161              		.code	16
+ 162              		.thumb_func
+ 163              		.type	W25qxx_ReadID, %function
+ 164              	W25qxx_ReadID:
+ 165              	.LFB66:
+  52:flashMemory.c **** 
+  53:flashMemory.c **** uint32_t W25qxx_ReadID(void)
+  54:flashMemory.c **** {
+ 166              		.loc 1 54 0
+ 167              		.cfi_startproc
+ 168              		@ args = 0, pretend = 0, frame = 0
+ 169              		@ frame_needed = 0, uses_anonymous_args = 0
+ 170 0000 70B5     		push	{r4, r5, r6, lr}
+ 171              		.cfi_def_cfa_offset 16
+ 172              		.cfi_offset 4, -16
+ 173              		.cfi_offset 5, -12
+ 174              		.cfi_offset 6, -8
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 5
+
+
+ 175              		.cfi_offset 14, -4
+ 176              	.LVL9:
+  55:flashMemory.c ****   uint32_t Temp = 0, Temp0 = 0, Temp1 = 0, Temp2 = 0;
+  56:flashMemory.c ****     W25qxx_WriteEnable();
+ 177              		.loc 1 56 0
+ 178 0002 FFF7FEFF 		bl	W25qxx_WriteEnable
+ 179              	.LVL10:
+  57:flashMemory.c **** W25qxx_Delay(10);
+ 180              		.loc 1 57 0
+ 181 0006 0A20     		movs	r0, #10
+ 182 0008 FFF7FEFF 		bl	CyDelayUs
+ 183              	.LVL11:
+  58:flashMemory.c ****   W25qxx_Spi(0x9F); 	W25qxx_Delay(10);
+ 184              		.loc 1 58 0
+ 185 000c 9F20     		movs	r0, #159
+ 186 000e FFF7FEFF 		bl	W25qxx_Spi
+ 187              	.LVL12:
+ 188 0012 0A20     		movs	r0, #10
+ 189 0014 FFF7FEFF 		bl	CyDelayUs
+ 190              	.LVL13:
+  59:flashMemory.c ****   Temp0 = SPIM_FLASH_ReadRxData();//	W25qxx_Delay(1000);
+ 191              		.loc 1 59 0
+ 192 0018 FFF7FEFF 		bl	SPIM_FLASH_ReadRxData
+ 193              	.LVL14:
+ 194 001c 0600     		movs	r6, r0
+ 195              	.LVL15:
+  60:flashMemory.c ****   Temp1 = SPIM_FLASH_ReadRxData();//	W25qxx_Delay(10);
+ 196              		.loc 1 60 0
+ 197 001e FFF7FEFF 		bl	SPIM_FLASH_ReadRxData
+ 198              	.LVL16:
+ 199 0022 0400     		movs	r4, r0
+ 200              	.LVL17:
+  61:flashMemory.c ****   Temp2 = SPIM_FLASH_ReadRxData();//	W25qxx_Delay(100);
+ 201              		.loc 1 61 0
+ 202 0024 FFF7FEFF 		bl	SPIM_FLASH_ReadRxData
+ 203              	.LVL18:
+ 204 0028 0500     		movs	r5, r0
+ 205              	.LVL19:
+  62:flashMemory.c **** 
+  63:flashMemory.c **** DEBUG_printf("%0x %0x %0x\r\n",Temp0,Temp1, Temp2);
+ 206              		.loc 1 63 0
+ 207 002a 0300     		movs	r3, r0
+ 208 002c 2200     		movs	r2, r4
+ 209 002e 3100     		movs	r1, r6
+ 210 0030 0448     		ldr	r0, .L7
+ 211              	.LVL20:
+ 212 0032 FFF7FEFF 		bl	DEBUG_printf
+ 213              	.LVL21:
+  64:flashMemory.c ****     W25qxx_WriteDisable();
+ 214              		.loc 1 64 0
+ 215 0036 FFF7FEFF 		bl	W25qxx_WriteDisable
+ 216              	.LVL22:
+  65:flashMemory.c ****   Temp = (Temp0 << 16) | (Temp1 << 8) | Temp2;
+ 217              		.loc 1 65 0
+ 218 003a 3004     		lsls	r0, r6, #16
+ 219 003c 2402     		lsls	r4, r4, #8
+ 220              	.LVL23:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 6
+
+
+ 221 003e 2043     		orrs	r0, r4
+ 222 0040 2843     		orrs	r0, r5
+ 223              	.LVL24:
+  66:flashMemory.c ****   return Temp; 
+  67:flashMemory.c **** }
+ 224              		.loc 1 67 0
+ 225              		@ sp needed
+ 226              	.LVL25:
+ 227              	.LVL26:
+ 228 0042 70BD     		pop	{r4, r5, r6, pc}
+ 229              	.L8:
+ 230              		.align	2
+ 231              	.L7:
+ 232 0044 00000000 		.word	.LC0
+ 233              		.cfi_endproc
+ 234              	.LFE66:
+ 235              		.size	W25qxx_ReadID, .-W25qxx_ReadID
+ 236              		.comm	Param,6,4
+ 237              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 238              		.align	2
+ 239              	.LC0:
+ 240 0000 25307820 		.ascii	"%0x %0x %0x\015\012\000"
+ 240      25307820 
+ 240      2530780D 
+ 240      0A00
+ 241              		.text
+ 242              	.Letext0:
+ 243              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.3\\psoc creator\\import\\gnu\\arm\\5.4.
+ 244              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.3\\psoc creator\\import\\gnu\\arm\\5.4.
+ 245              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 246              		.file 5 "main.h"
+ 247              		.file 6 "Generated_Source\\PSoC4/SPIM_FLASH.h"
+ 248              		.file 7 "Generated_Source\\PSoC4/CyLib.h"
+ 249              		.file 8 "debug.h"
+ 250              		.section	.debug_info,"",%progbits
+ 251              	.Ldebug_info0:
+ 252 0000 21030000 		.4byte	0x321
+ 253 0004 0400     		.2byte	0x4
+ 254 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 255 000a 04       		.byte	0x4
+ 256 000b 01       		.uleb128 0x1
+ 257 000c 36010000 		.4byte	.LASF39
+ 258 0010 0C       		.byte	0xc
+ 259 0011 16000000 		.4byte	.LASF40
+ 260 0015 FE010000 		.4byte	.LASF41
+ 261 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 262 001d 00000000 		.4byte	0
+ 263 0021 00000000 		.4byte	.Ldebug_line0
+ 264 0025 02       		.uleb128 0x2
+ 265 0026 01       		.byte	0x1
+ 266 0027 06       		.byte	0x6
+ 267 0028 58020000 		.4byte	.LASF0
+ 268 002c 03       		.uleb128 0x3
+ 269 002d 0C000000 		.4byte	.LASF5
+ 270 0031 02       		.byte	0x2
+ 271 0032 1D       		.byte	0x1d
+ 272 0033 37000000 		.4byte	0x37
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 7
+
+
+ 273 0037 02       		.uleb128 0x2
+ 274 0038 01       		.byte	0x1
+ 275 0039 08       		.byte	0x8
+ 276 003a 4F000000 		.4byte	.LASF1
+ 277 003e 02       		.uleb128 0x2
+ 278 003f 02       		.byte	0x2
+ 279 0040 05       		.byte	0x5
+ 280 0041 2A020000 		.4byte	.LASF2
+ 281 0045 02       		.uleb128 0x2
+ 282 0046 02       		.byte	0x2
+ 283 0047 07       		.byte	0x7
+ 284 0048 87000000 		.4byte	.LASF3
+ 285 004c 02       		.uleb128 0x2
+ 286 004d 04       		.byte	0x4
+ 287 004e 05       		.byte	0x5
+ 288 004f 43020000 		.4byte	.LASF4
+ 289 0053 03       		.uleb128 0x3
+ 290 0054 C6000000 		.4byte	.LASF6
+ 291 0058 02       		.byte	0x2
+ 292 0059 41       		.byte	0x41
+ 293 005a 5E000000 		.4byte	0x5e
+ 294 005e 02       		.uleb128 0x2
+ 295 005f 04       		.byte	0x4
+ 296 0060 07       		.byte	0x7
+ 297 0061 6A000000 		.4byte	.LASF7
+ 298 0065 02       		.uleb128 0x2
+ 299 0066 08       		.byte	0x8
+ 300 0067 05       		.byte	0x5
+ 301 0068 D2010000 		.4byte	.LASF8
+ 302 006c 02       		.uleb128 0x2
+ 303 006d 08       		.byte	0x8
+ 304 006e 07       		.byte	0x7
+ 305 006f EE000000 		.4byte	.LASF9
+ 306 0073 04       		.uleb128 0x4
+ 307 0074 04       		.byte	0x4
+ 308 0075 05       		.byte	0x5
+ 309 0076 696E7400 		.ascii	"int\000"
+ 310 007a 02       		.uleb128 0x2
+ 311 007b 04       		.byte	0x4
+ 312 007c 07       		.byte	0x7
+ 313 007d E1000000 		.4byte	.LASF10
+ 314 0081 03       		.uleb128 0x3
+ 315 0082 05010000 		.4byte	.LASF11
+ 316 0086 03       		.byte	0x3
+ 317 0087 18       		.byte	0x18
+ 318 0088 2C000000 		.4byte	0x2c
+ 319 008c 03       		.uleb128 0x3
+ 320 008d 3A020000 		.4byte	.LASF12
+ 321 0091 03       		.byte	0x3
+ 322 0092 30       		.byte	0x30
+ 323 0093 53000000 		.4byte	0x53
+ 324 0097 05       		.uleb128 0x5
+ 325 0098 49000000 		.4byte	.LASF13
+ 326 009c 04       		.byte	0x4
+ 327 009d FC01     		.2byte	0x1fc
+ 328 009f 37000000 		.4byte	0x37
+ 329 00a3 05       		.uleb128 0x5
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 8
+
+
+ 330 00a4 BA000000 		.4byte	.LASF14
+ 331 00a8 04       		.byte	0x4
+ 332 00a9 FD01     		.2byte	0x1fd
+ 333 00ab 45000000 		.4byte	0x45
+ 334 00af 02       		.uleb128 0x2
+ 335 00b0 04       		.byte	0x4
+ 336 00b1 04       		.byte	0x4
+ 337 00b2 3E000000 		.4byte	.LASF15
+ 338 00b6 02       		.uleb128 0x2
+ 339 00b7 08       		.byte	0x8
+ 340 00b8 04       		.byte	0x4
+ 341 00b9 64020000 		.4byte	.LASF16
+ 342 00bd 02       		.uleb128 0x2
+ 343 00be 01       		.byte	0x1
+ 344 00bf 08       		.byte	0x8
+ 345 00c0 F9010000 		.4byte	.LASF17
+ 346 00c4 02       		.uleb128 0x2
+ 347 00c5 08       		.byte	0x8
+ 348 00c6 04       		.byte	0x4
+ 349 00c7 4C020000 		.4byte	.LASF18
+ 350 00cb 02       		.uleb128 0x2
+ 351 00cc 04       		.byte	0x4
+ 352 00cd 07       		.byte	0x7
+ 353 00ce C9010000 		.4byte	.LASF19
+ 354 00d2 06       		.uleb128 0x6
+ 355 00d3 7C000000 		.4byte	.LASF42
+ 356 00d7 06       		.byte	0x6
+ 357 00d8 05       		.byte	0x5
+ 358 00d9 31       		.byte	0x31
+ 359 00da 03010000 		.4byte	0x103
+ 360 00de 07       		.uleb128 0x7
+ 361 00df 00000000 		.4byte	.LASF20
+ 362 00e3 05       		.byte	0x5
+ 363 00e4 33       		.byte	0x33
+ 364 00e5 97000000 		.4byte	0x97
+ 365 00e9 00       		.byte	0
+ 366 00ea 07       		.uleb128 0x7
+ 367 00eb B4000000 		.4byte	.LASF21
+ 368 00ef 05       		.byte	0x5
+ 369 00f0 34       		.byte	0x34
+ 370 00f1 A3000000 		.4byte	0xa3
+ 371 00f5 02       		.byte	0x2
+ 372 00f6 07       		.uleb128 0x7
+ 373 00f7 34020000 		.4byte	.LASF22
+ 374 00fb 05       		.byte	0x5
+ 375 00fc 35       		.byte	0x35
+ 376 00fd A3000000 		.4byte	0xa3
+ 377 0101 04       		.byte	0x4
+ 378 0102 00       		.byte	0
+ 379 0103 08       		.uleb128 0x8
+ 380 0104 82020000 		.4byte	.LASF23
+ 381 0108 01       		.byte	0x1
+ 382 0109 13       		.byte	0x13
+ 383 010a 00000000 		.4byte	.LFB61
+ 384 010e 08000000 		.4byte	.LFE61-.LFB61
+ 385 0112 01       		.uleb128 0x1
+ 386 0113 9C       		.byte	0x9c
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 9
+
+
+ 387 0114 31010000 		.4byte	0x131
+ 388 0118 09       		.uleb128 0x9
+ 389 0119 44000000 		.4byte	.LASF25
+ 390 011d 01       		.byte	0x1
+ 391 011e 13       		.byte	0x13
+ 392 011f 81000000 		.4byte	0x81
+ 393 0123 00000000 		.4byte	.LLST0
+ 394 0127 0A       		.uleb128 0xa
+ 395 0128 06000000 		.4byte	.LVL1
+ 396 012c F8020000 		.4byte	0x2f8
+ 397 0130 00       		.byte	0
+ 398 0131 0B       		.uleb128 0xb
+ 399 0132 30000000 		.4byte	.LASF24
+ 400 0136 01       		.byte	0x1
+ 401 0137 18       		.byte	0x18
+ 402 0138 81000000 		.4byte	0x81
+ 403 013c 00000000 		.4byte	.LFB62
+ 404 0140 08000000 		.4byte	.LFE62-.LFB62
+ 405 0144 01       		.uleb128 0x1
+ 406 0145 9C       		.byte	0x9c
+ 407 0146 54010000 		.4byte	0x154
+ 408 014a 0A       		.uleb128 0xa
+ 409 014b 06000000 		.4byte	.LVL2
+ 410 014f 03030000 		.4byte	0x303
+ 411 0153 00       		.byte	0
+ 412 0154 0C       		.uleb128 0xc
+ 413 0155 EE010000 		.4byte	.LASF29
+ 414 0159 01       		.byte	0x1
+ 415 015a 1D       		.byte	0x1d
+ 416 015b 81000000 		.4byte	0x81
+ 417 015f 00000000 		.4byte	.LFB63
+ 418 0163 0A000000 		.4byte	.LFE63-.LFB63
+ 419 0167 01       		.uleb128 0x1
+ 420 0168 9C       		.byte	0x9c
+ 421 0169 91010000 		.4byte	0x191
+ 422 016d 09       		.uleb128 0x9
+ 423 016e C1000000 		.4byte	.LASF26
+ 424 0172 01       		.byte	0x1
+ 425 0173 1D       		.byte	0x1d
+ 426 0174 81000000 		.4byte	0x81
+ 427 0178 21000000 		.4byte	.LLST1
+ 428 017c 0D       		.uleb128 0xd
+ 429 017d 72657400 		.ascii	"ret\000"
+ 430 0181 01       		.byte	0x1
+ 431 0182 1F       		.byte	0x1f
+ 432 0183 81000000 		.4byte	0x81
+ 433 0187 0A       		.uleb128 0xa
+ 434 0188 06000000 		.4byte	.LVL4
+ 435 018c 03010000 		.4byte	0x103
+ 436 0190 00       		.byte	0
+ 437 0191 08       		.uleb128 0x8
+ 438 0192 23010000 		.4byte	.LASF27
+ 439 0196 01       		.byte	0x1
+ 440 0197 25       		.byte	0x25
+ 441 0198 00000000 		.4byte	.LFB64
+ 442 019c 10000000 		.4byte	.LFE64-.LFB64
+ 443 01a0 01       		.uleb128 0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 10
+
+
+ 444 01a1 9C       		.byte	0x9c
+ 445 01a2 C9010000 		.4byte	0x1c9
+ 446 01a6 0E       		.uleb128 0xe
+ 447 01a7 08000000 		.4byte	.LVL5
+ 448 01ab 54010000 		.4byte	0x154
+ 449 01af B9010000 		.4byte	0x1b9
+ 450 01b3 0F       		.uleb128 0xf
+ 451 01b4 01       		.uleb128 0x1
+ 452 01b5 50       		.byte	0x50
+ 453 01b6 01       		.uleb128 0x1
+ 454 01b7 36       		.byte	0x36
+ 455 01b8 00       		.byte	0
+ 456 01b9 10       		.uleb128 0x10
+ 457 01ba 0E000000 		.4byte	.LVL6
+ 458 01be 0E030000 		.4byte	0x30e
+ 459 01c2 0F       		.uleb128 0xf
+ 460 01c3 01       		.uleb128 0x1
+ 461 01c4 50       		.byte	0x50
+ 462 01c5 01       		.uleb128 0x1
+ 463 01c6 31       		.byte	0x31
+ 464 01c7 00       		.byte	0
+ 465 01c8 00       		.byte	0
+ 466 01c9 08       		.uleb128 0x8
+ 467 01ca 9A000000 		.4byte	.LASF28
+ 468 01ce 01       		.byte	0x1
+ 469 01cf 2D       		.byte	0x2d
+ 470 01d0 00000000 		.4byte	.LFB65
+ 471 01d4 10000000 		.4byte	.LFE65-.LFB65
+ 472 01d8 01       		.uleb128 0x1
+ 473 01d9 9C       		.byte	0x9c
+ 474 01da 01020000 		.4byte	0x201
+ 475 01de 0E       		.uleb128 0xe
+ 476 01df 08000000 		.4byte	.LVL7
+ 477 01e3 54010000 		.4byte	0x154
+ 478 01e7 F1010000 		.4byte	0x1f1
+ 479 01eb 0F       		.uleb128 0xf
+ 480 01ec 01       		.uleb128 0x1
+ 481 01ed 50       		.byte	0x50
+ 482 01ee 01       		.uleb128 0x1
+ 483 01ef 34       		.byte	0x34
+ 484 01f0 00       		.byte	0
+ 485 01f1 10       		.uleb128 0x10
+ 486 01f2 0E000000 		.4byte	.LVL8
+ 487 01f6 0E030000 		.4byte	0x30e
+ 488 01fa 0F       		.uleb128 0xf
+ 489 01fb 01       		.uleb128 0x1
+ 490 01fc 50       		.byte	0x50
+ 491 01fd 01       		.uleb128 0x1
+ 492 01fe 31       		.byte	0x31
+ 493 01ff 00       		.byte	0
+ 494 0200 00       		.byte	0
+ 495 0201 0C       		.uleb128 0xc
+ 496 0202 E0010000 		.4byte	.LASF30
+ 497 0206 01       		.byte	0x1
+ 498 0207 35       		.byte	0x35
+ 499 0208 8C000000 		.4byte	0x8c
+ 500 020c 00000000 		.4byte	.LFB66
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 11
+
+
+ 501 0210 48000000 		.4byte	.LFE66-.LFB66
+ 502 0214 01       		.uleb128 0x1
+ 503 0215 9C       		.byte	0x9c
+ 504 0216 E7020000 		.4byte	0x2e7
+ 505 021a 11       		.uleb128 0x11
+ 506 021b C4010000 		.4byte	.LASF31
+ 507 021f 01       		.byte	0x1
+ 508 0220 37       		.byte	0x37
+ 509 0221 8C000000 		.4byte	0x8c
+ 510 0225 42000000 		.4byte	.LLST2
+ 511 0229 11       		.uleb128 0x11
+ 512 022a AE000000 		.4byte	.LASF32
+ 513 022e 01       		.byte	0x1
+ 514 022f 37       		.byte	0x37
+ 515 0230 8C000000 		.4byte	0x8c
+ 516 0234 61000000 		.4byte	.LLST3
+ 517 0238 11       		.uleb128 0x11
+ 518 0239 24000000 		.4byte	.LASF33
+ 519 023d 01       		.byte	0x1
+ 520 023e 37       		.byte	0x37
+ 521 023f 8C000000 		.4byte	0x8c
+ 522 0243 8B000000 		.4byte	.LLST4
+ 523 0247 11       		.uleb128 0x11
+ 524 0248 2A000000 		.4byte	.LASF34
+ 525 024c 01       		.byte	0x1
+ 526 024d 37       		.byte	0x37
+ 527 024e 8C000000 		.4byte	0x8c
+ 528 0252 B5000000 		.4byte	.LLST5
+ 529 0256 0A       		.uleb128 0xa
+ 530 0257 06000000 		.4byte	.LVL10
+ 531 025b 91010000 		.4byte	0x191
+ 532 025f 0E       		.uleb128 0xe
+ 533 0260 0C000000 		.4byte	.LVL11
+ 534 0264 0E030000 		.4byte	0x30e
+ 535 0268 72020000 		.4byte	0x272
+ 536 026c 0F       		.uleb128 0xf
+ 537 026d 01       		.uleb128 0x1
+ 538 026e 50       		.byte	0x50
+ 539 026f 01       		.uleb128 0x1
+ 540 0270 3A       		.byte	0x3a
+ 541 0271 00       		.byte	0
+ 542 0272 0E       		.uleb128 0xe
+ 543 0273 12000000 		.4byte	.LVL12
+ 544 0277 54010000 		.4byte	0x154
+ 545 027b 86020000 		.4byte	0x286
+ 546 027f 0F       		.uleb128 0xf
+ 547 0280 01       		.uleb128 0x1
+ 548 0281 50       		.byte	0x50
+ 549 0282 02       		.uleb128 0x2
+ 550 0283 09       		.byte	0x9
+ 551 0284 9F       		.byte	0x9f
+ 552 0285 00       		.byte	0
+ 553 0286 0E       		.uleb128 0xe
+ 554 0287 18000000 		.4byte	.LVL13
+ 555 028b 0E030000 		.4byte	0x30e
+ 556 028f 99020000 		.4byte	0x299
+ 557 0293 0F       		.uleb128 0xf
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 12
+
+
+ 558 0294 01       		.uleb128 0x1
+ 559 0295 50       		.byte	0x50
+ 560 0296 01       		.uleb128 0x1
+ 561 0297 3A       		.byte	0x3a
+ 562 0298 00       		.byte	0
+ 563 0299 0A       		.uleb128 0xa
+ 564 029a 1C000000 		.4byte	.LVL14
+ 565 029e 03030000 		.4byte	0x303
+ 566 02a2 0A       		.uleb128 0xa
+ 567 02a3 22000000 		.4byte	.LVL16
+ 568 02a7 03030000 		.4byte	0x303
+ 569 02ab 0A       		.uleb128 0xa
+ 570 02ac 28000000 		.4byte	.LVL18
+ 571 02b0 03030000 		.4byte	0x303
+ 572 02b4 0E       		.uleb128 0xe
+ 573 02b5 36000000 		.4byte	.LVL21
+ 574 02b9 19030000 		.4byte	0x319
+ 575 02bd DD020000 		.4byte	0x2dd
+ 576 02c1 0F       		.uleb128 0xf
+ 577 02c2 01       		.uleb128 0x1
+ 578 02c3 50       		.byte	0x50
+ 579 02c4 05       		.uleb128 0x5
+ 580 02c5 03       		.byte	0x3
+ 581 02c6 00000000 		.4byte	.LC0
+ 582 02ca 0F       		.uleb128 0xf
+ 583 02cb 01       		.uleb128 0x1
+ 584 02cc 51       		.byte	0x51
+ 585 02cd 02       		.uleb128 0x2
+ 586 02ce 76       		.byte	0x76
+ 587 02cf 00       		.sleb128 0
+ 588 02d0 0F       		.uleb128 0xf
+ 589 02d1 01       		.uleb128 0x1
+ 590 02d2 52       		.byte	0x52
+ 591 02d3 02       		.uleb128 0x2
+ 592 02d4 74       		.byte	0x74
+ 593 02d5 00       		.sleb128 0
+ 594 02d6 0F       		.uleb128 0xf
+ 595 02d7 01       		.uleb128 0x1
+ 596 02d8 53       		.byte	0x53
+ 597 02d9 02       		.uleb128 0x2
+ 598 02da 75       		.byte	0x75
+ 599 02db 00       		.sleb128 0
+ 600 02dc 00       		.byte	0
+ 601 02dd 0A       		.uleb128 0xa
+ 602 02de 3A000000 		.4byte	.LVL22
+ 603 02e2 C9010000 		.4byte	0x1c9
+ 604 02e6 00       		.byte	0
+ 605 02e7 12       		.uleb128 0x12
+ 606 02e8 DB000000 		.4byte	.LASF43
+ 607 02ec 05       		.byte	0x5
+ 608 02ed 38       		.byte	0x38
+ 609 02ee D2000000 		.4byte	0xd2
+ 610 02f2 05       		.uleb128 0x5
+ 611 02f3 03       		.byte	0x3
+ 612 02f4 00000000 		.4byte	Param
+ 613 02f8 13       		.uleb128 0x13
+ 614 02f9 6B020000 		.4byte	.LASF35
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 13
+
+
+ 615 02fd 6B020000 		.4byte	.LASF35
+ 616 0301 06       		.byte	0x6
+ 617 0302 5E       		.byte	0x5e
+ 618 0303 13       		.uleb128 0x13
+ 619 0304 0D010000 		.4byte	.LASF36
+ 620 0308 0D010000 		.4byte	.LASF36
+ 621 030c 06       		.byte	0x6
+ 622 030d 60       		.byte	0x60
+ 623 030e 13       		.uleb128 0x13
+ 624 030f D1000000 		.4byte	.LASF37
+ 625 0313 D1000000 		.4byte	.LASF37
+ 626 0317 07       		.byte	0x7
+ 627 0318 ED       		.byte	0xed
+ 628 0319 13       		.uleb128 0x13
+ 629 031a 5D000000 		.4byte	.LASF38
+ 630 031e 5D000000 		.4byte	.LASF38
+ 631 0322 08       		.byte	0x8
+ 632 0323 11       		.byte	0x11
+ 633 0324 00       		.byte	0
+ 634              		.section	.debug_abbrev,"",%progbits
+ 635              	.Ldebug_abbrev0:
+ 636 0000 01       		.uleb128 0x1
+ 637 0001 11       		.uleb128 0x11
+ 638 0002 01       		.byte	0x1
+ 639 0003 25       		.uleb128 0x25
+ 640 0004 0E       		.uleb128 0xe
+ 641 0005 13       		.uleb128 0x13
+ 642 0006 0B       		.uleb128 0xb
+ 643 0007 03       		.uleb128 0x3
+ 644 0008 0E       		.uleb128 0xe
+ 645 0009 1B       		.uleb128 0x1b
+ 646 000a 0E       		.uleb128 0xe
+ 647 000b 55       		.uleb128 0x55
+ 648 000c 17       		.uleb128 0x17
+ 649 000d 11       		.uleb128 0x11
+ 650 000e 01       		.uleb128 0x1
+ 651 000f 10       		.uleb128 0x10
+ 652 0010 17       		.uleb128 0x17
+ 653 0011 00       		.byte	0
+ 654 0012 00       		.byte	0
+ 655 0013 02       		.uleb128 0x2
+ 656 0014 24       		.uleb128 0x24
+ 657 0015 00       		.byte	0
+ 658 0016 0B       		.uleb128 0xb
+ 659 0017 0B       		.uleb128 0xb
+ 660 0018 3E       		.uleb128 0x3e
+ 661 0019 0B       		.uleb128 0xb
+ 662 001a 03       		.uleb128 0x3
+ 663 001b 0E       		.uleb128 0xe
+ 664 001c 00       		.byte	0
+ 665 001d 00       		.byte	0
+ 666 001e 03       		.uleb128 0x3
+ 667 001f 16       		.uleb128 0x16
+ 668 0020 00       		.byte	0
+ 669 0021 03       		.uleb128 0x3
+ 670 0022 0E       		.uleb128 0xe
+ 671 0023 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 14
+
+
+ 672 0024 0B       		.uleb128 0xb
+ 673 0025 3B       		.uleb128 0x3b
+ 674 0026 0B       		.uleb128 0xb
+ 675 0027 49       		.uleb128 0x49
+ 676 0028 13       		.uleb128 0x13
+ 677 0029 00       		.byte	0
+ 678 002a 00       		.byte	0
+ 679 002b 04       		.uleb128 0x4
+ 680 002c 24       		.uleb128 0x24
+ 681 002d 00       		.byte	0
+ 682 002e 0B       		.uleb128 0xb
+ 683 002f 0B       		.uleb128 0xb
+ 684 0030 3E       		.uleb128 0x3e
+ 685 0031 0B       		.uleb128 0xb
+ 686 0032 03       		.uleb128 0x3
+ 687 0033 08       		.uleb128 0x8
+ 688 0034 00       		.byte	0
+ 689 0035 00       		.byte	0
+ 690 0036 05       		.uleb128 0x5
+ 691 0037 16       		.uleb128 0x16
+ 692 0038 00       		.byte	0
+ 693 0039 03       		.uleb128 0x3
+ 694 003a 0E       		.uleb128 0xe
+ 695 003b 3A       		.uleb128 0x3a
+ 696 003c 0B       		.uleb128 0xb
+ 697 003d 3B       		.uleb128 0x3b
+ 698 003e 05       		.uleb128 0x5
+ 699 003f 49       		.uleb128 0x49
+ 700 0040 13       		.uleb128 0x13
+ 701 0041 00       		.byte	0
+ 702 0042 00       		.byte	0
+ 703 0043 06       		.uleb128 0x6
+ 704 0044 13       		.uleb128 0x13
+ 705 0045 01       		.byte	0x1
+ 706 0046 03       		.uleb128 0x3
+ 707 0047 0E       		.uleb128 0xe
+ 708 0048 0B       		.uleb128 0xb
+ 709 0049 0B       		.uleb128 0xb
+ 710 004a 3A       		.uleb128 0x3a
+ 711 004b 0B       		.uleb128 0xb
+ 712 004c 3B       		.uleb128 0x3b
+ 713 004d 0B       		.uleb128 0xb
+ 714 004e 01       		.uleb128 0x1
+ 715 004f 13       		.uleb128 0x13
+ 716 0050 00       		.byte	0
+ 717 0051 00       		.byte	0
+ 718 0052 07       		.uleb128 0x7
+ 719 0053 0D       		.uleb128 0xd
+ 720 0054 00       		.byte	0
+ 721 0055 03       		.uleb128 0x3
+ 722 0056 0E       		.uleb128 0xe
+ 723 0057 3A       		.uleb128 0x3a
+ 724 0058 0B       		.uleb128 0xb
+ 725 0059 3B       		.uleb128 0x3b
+ 726 005a 0B       		.uleb128 0xb
+ 727 005b 49       		.uleb128 0x49
+ 728 005c 13       		.uleb128 0x13
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 15
+
+
+ 729 005d 38       		.uleb128 0x38
+ 730 005e 0B       		.uleb128 0xb
+ 731 005f 00       		.byte	0
+ 732 0060 00       		.byte	0
+ 733 0061 08       		.uleb128 0x8
+ 734 0062 2E       		.uleb128 0x2e
+ 735 0063 01       		.byte	0x1
+ 736 0064 3F       		.uleb128 0x3f
+ 737 0065 19       		.uleb128 0x19
+ 738 0066 03       		.uleb128 0x3
+ 739 0067 0E       		.uleb128 0xe
+ 740 0068 3A       		.uleb128 0x3a
+ 741 0069 0B       		.uleb128 0xb
+ 742 006a 3B       		.uleb128 0x3b
+ 743 006b 0B       		.uleb128 0xb
+ 744 006c 27       		.uleb128 0x27
+ 745 006d 19       		.uleb128 0x19
+ 746 006e 11       		.uleb128 0x11
+ 747 006f 01       		.uleb128 0x1
+ 748 0070 12       		.uleb128 0x12
+ 749 0071 06       		.uleb128 0x6
+ 750 0072 40       		.uleb128 0x40
+ 751 0073 18       		.uleb128 0x18
+ 752 0074 9742     		.uleb128 0x2117
+ 753 0076 19       		.uleb128 0x19
+ 754 0077 01       		.uleb128 0x1
+ 755 0078 13       		.uleb128 0x13
+ 756 0079 00       		.byte	0
+ 757 007a 00       		.byte	0
+ 758 007b 09       		.uleb128 0x9
+ 759 007c 05       		.uleb128 0x5
+ 760 007d 00       		.byte	0
+ 761 007e 03       		.uleb128 0x3
+ 762 007f 0E       		.uleb128 0xe
+ 763 0080 3A       		.uleb128 0x3a
+ 764 0081 0B       		.uleb128 0xb
+ 765 0082 3B       		.uleb128 0x3b
+ 766 0083 0B       		.uleb128 0xb
+ 767 0084 49       		.uleb128 0x49
+ 768 0085 13       		.uleb128 0x13
+ 769 0086 02       		.uleb128 0x2
+ 770 0087 17       		.uleb128 0x17
+ 771 0088 00       		.byte	0
+ 772 0089 00       		.byte	0
+ 773 008a 0A       		.uleb128 0xa
+ 774 008b 898201   		.uleb128 0x4109
+ 775 008e 00       		.byte	0
+ 776 008f 11       		.uleb128 0x11
+ 777 0090 01       		.uleb128 0x1
+ 778 0091 31       		.uleb128 0x31
+ 779 0092 13       		.uleb128 0x13
+ 780 0093 00       		.byte	0
+ 781 0094 00       		.byte	0
+ 782 0095 0B       		.uleb128 0xb
+ 783 0096 2E       		.uleb128 0x2e
+ 784 0097 01       		.byte	0x1
+ 785 0098 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 16
+
+
+ 786 0099 19       		.uleb128 0x19
+ 787 009a 03       		.uleb128 0x3
+ 788 009b 0E       		.uleb128 0xe
+ 789 009c 3A       		.uleb128 0x3a
+ 790 009d 0B       		.uleb128 0xb
+ 791 009e 3B       		.uleb128 0x3b
+ 792 009f 0B       		.uleb128 0xb
+ 793 00a0 49       		.uleb128 0x49
+ 794 00a1 13       		.uleb128 0x13
+ 795 00a2 11       		.uleb128 0x11
+ 796 00a3 01       		.uleb128 0x1
+ 797 00a4 12       		.uleb128 0x12
+ 798 00a5 06       		.uleb128 0x6
+ 799 00a6 40       		.uleb128 0x40
+ 800 00a7 18       		.uleb128 0x18
+ 801 00a8 9742     		.uleb128 0x2117
+ 802 00aa 19       		.uleb128 0x19
+ 803 00ab 01       		.uleb128 0x1
+ 804 00ac 13       		.uleb128 0x13
+ 805 00ad 00       		.byte	0
+ 806 00ae 00       		.byte	0
+ 807 00af 0C       		.uleb128 0xc
+ 808 00b0 2E       		.uleb128 0x2e
+ 809 00b1 01       		.byte	0x1
+ 810 00b2 3F       		.uleb128 0x3f
+ 811 00b3 19       		.uleb128 0x19
+ 812 00b4 03       		.uleb128 0x3
+ 813 00b5 0E       		.uleb128 0xe
+ 814 00b6 3A       		.uleb128 0x3a
+ 815 00b7 0B       		.uleb128 0xb
+ 816 00b8 3B       		.uleb128 0x3b
+ 817 00b9 0B       		.uleb128 0xb
+ 818 00ba 27       		.uleb128 0x27
+ 819 00bb 19       		.uleb128 0x19
+ 820 00bc 49       		.uleb128 0x49
+ 821 00bd 13       		.uleb128 0x13
+ 822 00be 11       		.uleb128 0x11
+ 823 00bf 01       		.uleb128 0x1
+ 824 00c0 12       		.uleb128 0x12
+ 825 00c1 06       		.uleb128 0x6
+ 826 00c2 40       		.uleb128 0x40
+ 827 00c3 18       		.uleb128 0x18
+ 828 00c4 9742     		.uleb128 0x2117
+ 829 00c6 19       		.uleb128 0x19
+ 830 00c7 01       		.uleb128 0x1
+ 831 00c8 13       		.uleb128 0x13
+ 832 00c9 00       		.byte	0
+ 833 00ca 00       		.byte	0
+ 834 00cb 0D       		.uleb128 0xd
+ 835 00cc 34       		.uleb128 0x34
+ 836 00cd 00       		.byte	0
+ 837 00ce 03       		.uleb128 0x3
+ 838 00cf 08       		.uleb128 0x8
+ 839 00d0 3A       		.uleb128 0x3a
+ 840 00d1 0B       		.uleb128 0xb
+ 841 00d2 3B       		.uleb128 0x3b
+ 842 00d3 0B       		.uleb128 0xb
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 17
+
+
+ 843 00d4 49       		.uleb128 0x49
+ 844 00d5 13       		.uleb128 0x13
+ 845 00d6 00       		.byte	0
+ 846 00d7 00       		.byte	0
+ 847 00d8 0E       		.uleb128 0xe
+ 848 00d9 898201   		.uleb128 0x4109
+ 849 00dc 01       		.byte	0x1
+ 850 00dd 11       		.uleb128 0x11
+ 851 00de 01       		.uleb128 0x1
+ 852 00df 31       		.uleb128 0x31
+ 853 00e0 13       		.uleb128 0x13
+ 854 00e1 01       		.uleb128 0x1
+ 855 00e2 13       		.uleb128 0x13
+ 856 00e3 00       		.byte	0
+ 857 00e4 00       		.byte	0
+ 858 00e5 0F       		.uleb128 0xf
+ 859 00e6 8A8201   		.uleb128 0x410a
+ 860 00e9 00       		.byte	0
+ 861 00ea 02       		.uleb128 0x2
+ 862 00eb 18       		.uleb128 0x18
+ 863 00ec 9142     		.uleb128 0x2111
+ 864 00ee 18       		.uleb128 0x18
+ 865 00ef 00       		.byte	0
+ 866 00f0 00       		.byte	0
+ 867 00f1 10       		.uleb128 0x10
+ 868 00f2 898201   		.uleb128 0x4109
+ 869 00f5 01       		.byte	0x1
+ 870 00f6 11       		.uleb128 0x11
+ 871 00f7 01       		.uleb128 0x1
+ 872 00f8 31       		.uleb128 0x31
+ 873 00f9 13       		.uleb128 0x13
+ 874 00fa 00       		.byte	0
+ 875 00fb 00       		.byte	0
+ 876 00fc 11       		.uleb128 0x11
+ 877 00fd 34       		.uleb128 0x34
+ 878 00fe 00       		.byte	0
+ 879 00ff 03       		.uleb128 0x3
+ 880 0100 0E       		.uleb128 0xe
+ 881 0101 3A       		.uleb128 0x3a
+ 882 0102 0B       		.uleb128 0xb
+ 883 0103 3B       		.uleb128 0x3b
+ 884 0104 0B       		.uleb128 0xb
+ 885 0105 49       		.uleb128 0x49
+ 886 0106 13       		.uleb128 0x13
+ 887 0107 02       		.uleb128 0x2
+ 888 0108 17       		.uleb128 0x17
+ 889 0109 00       		.byte	0
+ 890 010a 00       		.byte	0
+ 891 010b 12       		.uleb128 0x12
+ 892 010c 34       		.uleb128 0x34
+ 893 010d 00       		.byte	0
+ 894 010e 03       		.uleb128 0x3
+ 895 010f 0E       		.uleb128 0xe
+ 896 0110 3A       		.uleb128 0x3a
+ 897 0111 0B       		.uleb128 0xb
+ 898 0112 3B       		.uleb128 0x3b
+ 899 0113 0B       		.uleb128 0xb
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 18
+
+
+ 900 0114 49       		.uleb128 0x49
+ 901 0115 13       		.uleb128 0x13
+ 902 0116 3F       		.uleb128 0x3f
+ 903 0117 19       		.uleb128 0x19
+ 904 0118 02       		.uleb128 0x2
+ 905 0119 18       		.uleb128 0x18
+ 906 011a 00       		.byte	0
+ 907 011b 00       		.byte	0
+ 908 011c 13       		.uleb128 0x13
+ 909 011d 2E       		.uleb128 0x2e
+ 910 011e 00       		.byte	0
+ 911 011f 3F       		.uleb128 0x3f
+ 912 0120 19       		.uleb128 0x19
+ 913 0121 3C       		.uleb128 0x3c
+ 914 0122 19       		.uleb128 0x19
+ 915 0123 6E       		.uleb128 0x6e
+ 916 0124 0E       		.uleb128 0xe
+ 917 0125 03       		.uleb128 0x3
+ 918 0126 0E       		.uleb128 0xe
+ 919 0127 3A       		.uleb128 0x3a
+ 920 0128 0B       		.uleb128 0xb
+ 921 0129 3B       		.uleb128 0x3b
+ 922 012a 0B       		.uleb128 0xb
+ 923 012b 00       		.byte	0
+ 924 012c 00       		.byte	0
+ 925 012d 00       		.byte	0
+ 926              		.section	.debug_loc,"",%progbits
+ 927              	.Ldebug_loc0:
+ 928              	.LLST0:
+ 929 0000 00000000 		.4byte	.LVL0
+ 930 0004 05000000 		.4byte	.LVL1-1
+ 931 0008 0100     		.2byte	0x1
+ 932 000a 50       		.byte	0x50
+ 933 000b 05000000 		.4byte	.LVL1-1
+ 934 000f 08000000 		.4byte	.LFE61
+ 935 0013 0400     		.2byte	0x4
+ 936 0015 F3       		.byte	0xf3
+ 937 0016 01       		.uleb128 0x1
+ 938 0017 50       		.byte	0x50
+ 939 0018 9F       		.byte	0x9f
+ 940 0019 00000000 		.4byte	0
+ 941 001d 00000000 		.4byte	0
+ 942              	.LLST1:
+ 943 0021 00000000 		.4byte	.LVL3
+ 944 0025 05000000 		.4byte	.LVL4-1
+ 945 0029 0100     		.2byte	0x1
+ 946 002b 50       		.byte	0x50
+ 947 002c 05000000 		.4byte	.LVL4-1
+ 948 0030 0A000000 		.4byte	.LFE63
+ 949 0034 0400     		.2byte	0x4
+ 950 0036 F3       		.byte	0xf3
+ 951 0037 01       		.uleb128 0x1
+ 952 0038 50       		.byte	0x50
+ 953 0039 9F       		.byte	0x9f
+ 954 003a 00000000 		.4byte	0
+ 955 003e 00000000 		.4byte	0
+ 956              	.LLST2:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 19
+
+
+ 957 0042 02000000 		.4byte	.LVL9
+ 958 0046 42000000 		.4byte	.LVL24
+ 959 004a 0200     		.2byte	0x2
+ 960 004c 30       		.byte	0x30
+ 961 004d 9F       		.byte	0x9f
+ 962 004e 42000000 		.4byte	.LVL24
+ 963 0052 48000000 		.4byte	.LFE66
+ 964 0056 0100     		.2byte	0x1
+ 965 0058 50       		.byte	0x50
+ 966 0059 00000000 		.4byte	0
+ 967 005d 00000000 		.4byte	0
+ 968              	.LLST3:
+ 969 0061 02000000 		.4byte	.LVL9
+ 970 0065 1E000000 		.4byte	.LVL15
+ 971 0069 0200     		.2byte	0x2
+ 972 006b 30       		.byte	0x30
+ 973 006c 9F       		.byte	0x9f
+ 974 006d 1E000000 		.4byte	.LVL15
+ 975 0071 21000000 		.4byte	.LVL16-1
+ 976 0075 0100     		.2byte	0x1
+ 977 0077 50       		.byte	0x50
+ 978 0078 21000000 		.4byte	.LVL16-1
+ 979 007c 42000000 		.4byte	.LVL26
+ 980 0080 0100     		.2byte	0x1
+ 981 0082 56       		.byte	0x56
+ 982 0083 00000000 		.4byte	0
+ 983 0087 00000000 		.4byte	0
+ 984              	.LLST4:
+ 985 008b 02000000 		.4byte	.LVL9
+ 986 008f 24000000 		.4byte	.LVL17
+ 987 0093 0200     		.2byte	0x2
+ 988 0095 30       		.byte	0x30
+ 989 0096 9F       		.byte	0x9f
+ 990 0097 24000000 		.4byte	.LVL17
+ 991 009b 27000000 		.4byte	.LVL18-1
+ 992 009f 0100     		.2byte	0x1
+ 993 00a1 50       		.byte	0x50
+ 994 00a2 27000000 		.4byte	.LVL18-1
+ 995 00a6 3E000000 		.4byte	.LVL23
+ 996 00aa 0100     		.2byte	0x1
+ 997 00ac 54       		.byte	0x54
+ 998 00ad 00000000 		.4byte	0
+ 999 00b1 00000000 		.4byte	0
+ 1000              	.LLST5:
+ 1001 00b5 02000000 		.4byte	.LVL9
+ 1002 00b9 2A000000 		.4byte	.LVL19
+ 1003 00bd 0200     		.2byte	0x2
+ 1004 00bf 30       		.byte	0x30
+ 1005 00c0 9F       		.byte	0x9f
+ 1006 00c1 2A000000 		.4byte	.LVL19
+ 1007 00c5 32000000 		.4byte	.LVL20
+ 1008 00c9 0100     		.2byte	0x1
+ 1009 00cb 50       		.byte	0x50
+ 1010 00cc 32000000 		.4byte	.LVL20
+ 1011 00d0 35000000 		.4byte	.LVL21-1
+ 1012 00d4 0100     		.2byte	0x1
+ 1013 00d6 53       		.byte	0x53
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 20
+
+
+ 1014 00d7 35000000 		.4byte	.LVL21-1
+ 1015 00db 42000000 		.4byte	.LVL25
+ 1016 00df 0100     		.2byte	0x1
+ 1017 00e1 55       		.byte	0x55
+ 1018 00e2 00000000 		.4byte	0
+ 1019 00e6 00000000 		.4byte	0
+ 1020              		.section	.debug_aranges,"",%progbits
+ 1021 0000 44000000 		.4byte	0x44
+ 1022 0004 0200     		.2byte	0x2
+ 1023 0006 00000000 		.4byte	.Ldebug_info0
+ 1024 000a 04       		.byte	0x4
+ 1025 000b 00       		.byte	0
+ 1026 000c 0000     		.2byte	0
+ 1027 000e 0000     		.2byte	0
+ 1028 0010 00000000 		.4byte	.LFB61
+ 1029 0014 08000000 		.4byte	.LFE61-.LFB61
+ 1030 0018 00000000 		.4byte	.LFB62
+ 1031 001c 08000000 		.4byte	.LFE62-.LFB62
+ 1032 0020 00000000 		.4byte	.LFB63
+ 1033 0024 0A000000 		.4byte	.LFE63-.LFB63
+ 1034 0028 00000000 		.4byte	.LFB64
+ 1035 002c 10000000 		.4byte	.LFE64-.LFB64
+ 1036 0030 00000000 		.4byte	.LFB65
+ 1037 0034 10000000 		.4byte	.LFE65-.LFB65
+ 1038 0038 00000000 		.4byte	.LFB66
+ 1039 003c 48000000 		.4byte	.LFE66-.LFB66
+ 1040 0040 00000000 		.4byte	0
+ 1041 0044 00000000 		.4byte	0
+ 1042              		.section	.debug_ranges,"",%progbits
+ 1043              	.Ldebug_ranges0:
+ 1044 0000 00000000 		.4byte	.LFB61
+ 1045 0004 08000000 		.4byte	.LFE61
+ 1046 0008 00000000 		.4byte	.LFB62
+ 1047 000c 08000000 		.4byte	.LFE62
+ 1048 0010 00000000 		.4byte	.LFB63
+ 1049 0014 0A000000 		.4byte	.LFE63
+ 1050 0018 00000000 		.4byte	.LFB64
+ 1051 001c 10000000 		.4byte	.LFE64
+ 1052 0020 00000000 		.4byte	.LFB65
+ 1053 0024 10000000 		.4byte	.LFE65
+ 1054 0028 00000000 		.4byte	.LFB66
+ 1055 002c 48000000 		.4byte	.LFE66
+ 1056 0030 00000000 		.4byte	0
+ 1057 0034 00000000 		.4byte	0
+ 1058              		.section	.debug_line,"",%progbits
+ 1059              	.Ldebug_line0:
+ 1060 0000 EB010000 		.section	.debug_str,"MS",%progbits,1
+ 1060      02007501 
+ 1060      00000201 
+ 1060      FB0E0D00 
+ 1060      01010101 
+ 1061              	.LASF20:
+ 1062 0000 73746174 		.ascii	"stat_TC_INT\000"
+ 1062      5F54435F 
+ 1062      494E5400 
+ 1063              	.LASF5:
+ 1064 000c 5F5F7569 		.ascii	"__uint8_t\000"
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 21
+
+
+ 1064      6E74385F 
+ 1064      7400
+ 1065              	.LASF40:
+ 1066 0016 666C6173 		.ascii	"flashMemory.c\000"
+ 1066      684D656D 
+ 1066      6F72792E 
+ 1066      6300
+ 1067              	.LASF33:
+ 1068 0024 54656D70 		.ascii	"Temp1\000"
+ 1068      3100
+ 1069              	.LASF34:
+ 1070 002a 54656D70 		.ascii	"Temp2\000"
+ 1070      3200
+ 1071              	.LASF24:
+ 1072 0030 52656164 		.ascii	"ReadDataFlash\000"
+ 1072      44617461 
+ 1072      466C6173 
+ 1072      6800
+ 1073              	.LASF15:
+ 1074 003e 666C6F61 		.ascii	"float\000"
+ 1074      7400
+ 1075              	.LASF25:
+ 1076 0044 64617461 		.ascii	"data\000"
+ 1076      00
+ 1077              	.LASF13:
+ 1078 0049 75696E74 		.ascii	"uint8\000"
+ 1078      3800
+ 1079              	.LASF1:
+ 1080 004f 756E7369 		.ascii	"unsigned char\000"
+ 1080      676E6564 
+ 1080      20636861 
+ 1080      7200
+ 1081              	.LASF38:
+ 1082 005d 44454255 		.ascii	"DEBUG_printf\000"
+ 1082      475F7072 
+ 1082      696E7466 
+ 1082      00
+ 1083              	.LASF7:
+ 1084 006a 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1084      20756E73 
+ 1084      69676E65 
+ 1084      6420696E 
+ 1084      7400
+ 1085              	.LASF42:
+ 1086 007c 73506172 		.ascii	"sParameter\000"
+ 1086      616D6574 
+ 1086      657200
+ 1087              	.LASF3:
+ 1088 0087 73686F72 		.ascii	"short unsigned int\000"
+ 1088      7420756E 
+ 1088      7369676E 
+ 1088      65642069 
+ 1088      6E7400
+ 1089              	.LASF28:
+ 1090 009a 57323571 		.ascii	"W25qxx_WriteDisable\000"
+ 1090      78785F57 
+ 1090      72697465 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 22
+
+
+ 1090      44697361 
+ 1090      626C6500 
+ 1091              	.LASF32:
+ 1092 00ae 54656D70 		.ascii	"Temp0\000"
+ 1092      3000
+ 1093              	.LASF21:
+ 1094 00b4 706F735F 		.ascii	"pos_X\000"
+ 1094      5800
+ 1095              	.LASF14:
+ 1096 00ba 75696E74 		.ascii	"uint16\000"
+ 1096      313600
+ 1097              	.LASF26:
+ 1098 00c1 44617461 		.ascii	"Data\000"
+ 1098      00
+ 1099              	.LASF6:
+ 1100 00c6 5F5F7569 		.ascii	"__uint32_t\000"
+ 1100      6E743332 
+ 1100      5F7400
+ 1101              	.LASF37:
+ 1102 00d1 43794465 		.ascii	"CyDelayUs\000"
+ 1102      6C617955 
+ 1102      7300
+ 1103              	.LASF43:
+ 1104 00db 50617261 		.ascii	"Param\000"
+ 1104      6D00
+ 1105              	.LASF10:
+ 1106 00e1 756E7369 		.ascii	"unsigned int\000"
+ 1106      676E6564 
+ 1106      20696E74 
+ 1106      00
+ 1107              	.LASF9:
+ 1108 00ee 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1108      206C6F6E 
+ 1108      6720756E 
+ 1108      7369676E 
+ 1108      65642069 
+ 1109              	.LASF11:
+ 1110 0105 75696E74 		.ascii	"uint8_t\000"
+ 1110      385F7400 
+ 1111              	.LASF36:
+ 1112 010d 5350494D 		.ascii	"SPIM_FLASH_ReadRxData\000"
+ 1112      5F464C41 
+ 1112      53485F52 
+ 1112      65616452 
+ 1112      78446174 
+ 1113              	.LASF27:
+ 1114 0123 57323571 		.ascii	"W25qxx_WriteEnable\000"
+ 1114      78785F57 
+ 1114      72697465 
+ 1114      456E6162 
+ 1114      6C6500
+ 1115              	.LASF39:
+ 1116 0136 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1116      43313120 
+ 1116      352E342E 
+ 1116      31203230 
+ 1116      31363036 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 23
+
+
+ 1117 0169 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1117      20726576 
+ 1117      6973696F 
+ 1117      6E203233 
+ 1117      37373135 
+ 1118 019c 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1118      66756E63 
+ 1118      74696F6E 
+ 1118      2D736563 
+ 1118      74696F6E 
+ 1119              	.LASF31:
+ 1120 01c4 54656D70 		.ascii	"Temp\000"
+ 1120      00
+ 1121              	.LASF19:
+ 1122 01c9 73697A65 		.ascii	"sizetype\000"
+ 1122      74797065 
+ 1122      00
+ 1123              	.LASF8:
+ 1124 01d2 6C6F6E67 		.ascii	"long long int\000"
+ 1124      206C6F6E 
+ 1124      6720696E 
+ 1124      7400
+ 1125              	.LASF30:
+ 1126 01e0 57323571 		.ascii	"W25qxx_ReadID\000"
+ 1126      78785F52 
+ 1126      65616449 
+ 1126      4400
+ 1127              	.LASF29:
+ 1128 01ee 57323571 		.ascii	"W25qxx_Spi\000"
+ 1128      78785F53 
+ 1128      706900
+ 1129              	.LASF17:
+ 1130 01f9 63686172 		.ascii	"char\000"
+ 1130      00
+ 1131              	.LASF41:
+ 1132 01fe 433A5C44 		.ascii	"C:\\DATA\\IoT\\TouchIoT\\Workspace\\Design.cydsn\000"
+ 1132      4154415C 
+ 1132      496F545C 
+ 1132      546F7563 
+ 1132      68496F54 
+ 1133              	.LASF2:
+ 1134 022a 73686F72 		.ascii	"short int\000"
+ 1134      7420696E 
+ 1134      7400
+ 1135              	.LASF22:
+ 1136 0234 706F735F 		.ascii	"pos_Y\000"
+ 1136      5900
+ 1137              	.LASF12:
+ 1138 023a 75696E74 		.ascii	"uint32_t\000"
+ 1138      33325F74 
+ 1138      00
+ 1139              	.LASF4:
+ 1140 0243 6C6F6E67 		.ascii	"long int\000"
+ 1140      20696E74 
+ 1140      00
+ 1141              	.LASF18:
+ 1142 024c 6C6F6E67 		.ascii	"long double\000"
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cccBhrZt.s 			page 24
+
+
+ 1142      20646F75 
+ 1142      626C6500 
+ 1143              	.LASF0:
+ 1144 0258 7369676E 		.ascii	"signed char\000"
+ 1144      65642063 
+ 1144      68617200 
+ 1145              	.LASF16:
+ 1146 0264 646F7562 		.ascii	"double\000"
+ 1146      6C6500
+ 1147              	.LASF35:
+ 1148 026b 5350494D 		.ascii	"SPIM_FLASH_WriteTxData\000"
+ 1148      5F464C41 
+ 1148      53485F57 
+ 1148      72697465 
+ 1148      54784461 
+ 1149              	.LASF23:
+ 1150 0282 57726974 		.ascii	"WriteDataFlash\000"
+ 1150      65446174 
+ 1150      61466C61 
+ 1150      736800
+ 1151              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

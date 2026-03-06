@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMALL_BOARD_TABLET_SCANNER 프로젝트 문서</title>
+    <style>
+        /* ── 기본 리셋 & 변수 ── */
+        :root {
+            --bg:          #0d1117;
+            --surface:     #161b22;
+            --surface2:    #21262d;
+            --border:      #30363d;
+            --text:        #e6edf3;
+            --text-muted:  #8b949e;
+            --accent:      #58a6ff;
+            --accent2:     #3fb950;
+            --warn:        #d29922;
+            --danger:      #f85149;
+            --tag-bg:      #1f3a5f;
+            --code-bg:     #161b22;
+            --radius:      8px;
+            --sidebar-w:   260px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        /* ── 레이아웃 ── */
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ── 사이드바 (TOC) ── */
+        .sidebar {
+            width: var(--sidebar-w);
+            flex-shrink: 0;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 20px 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 0 20px 16px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+
+        .sidebar-brand .chip {
+            display: inline-block;
+            background: var(--tag-bg);
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-brand h2 {
+            font-size: 13px;
+            color: var(--text);
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .toc-list {
+            list-style: none;
+            padding: 0 8px;
+        }
+
+        .toc-list li a {
+            display: block;
+            padding: 6px 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            border-radius: 6px;
+            transition: background 0.15s, color 0.15s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .toc-list li a:hover,
+        .toc-list li a.active {
+            background: var(--surface2);
+            color: var(--accent);
+        }
+
+        .toc-list li.toc-h3 a {
+            padding-left: 24px;
+            font-size: 12px;
+        }
+
+        /* ── 햄버거 버튼 ── */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 14px; left: 14px;
+            z-index: 200;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 40px; height: 40px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 18px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+        }
+
+        /* ── 메인 컨텐츠 ── */
+        .main {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            min-width: 0;
+            padding: 40px 48px;
+            max-width: 960px;
+        }
+
+        /* ── 헤더 ── */
+        .doc-header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 24px;
+            margin-bottom: 40px;
+        }
+
+        .doc-header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+
+        .meta-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .badge span.label { color: var(--text-muted); }
+        .badge span.value { color: var(--accent); font-weight: 600; }
+        .badge.success span.value { color: var(--accent2); }
+
+        /* ── 섹션 제목 ── */
+        .section {
+            margin-bottom: 48px;
+            scroll-margin-top: 20px;
+        }
+
+        h2.section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2.section-title .num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px; height: 28px;
+            background: var(--tag-bg);
+            color: var(--accent);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        h3.sub-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 24px 0 12px;
+        }
+
+        /* ── 테이블 ── */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            margin: 12px 0 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+        }
+
+        thead tr {
+            background: var(--surface2);
+        }
+
+        th {
+            padding: 10px 14px;
+            text-align: left;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+            vertical-align: top;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(88,166,255,0.04); }
+
+        /* ── 코드 블록 ── */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 12px 0 20px;
+            position: relative;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+            color: #79c0ff;
+        }
+
+        pre code { color: var(--text); }
+
+        p code, li code, td code {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-size: 12.5px;
+            color: var(--accent);
+        }
+
+        /* ── 상태 뱃지 ── */
+        .status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-ok   { background: rgba(63,185,80,0.15);  color: var(--accent2); }
+        .status-warn { background: rgba(210,153,34,0.15); color: var(--warn); }
+        .status-todo { background: rgba(88,166,255,0.12); color: var(--accent); }
+        .status-high { background: rgba(248,81,73,0.15);  color: var(--danger); }
+        .status-med  { background: rgba(210,153,34,0.15); color: var(--warn); }
+        .status-low  { background: rgba(88,166,255,0.12); color: var(--accent); }
+
+        /* ── 카드 ── */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+        }
+
+        .card-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .card-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .card-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--accent);
+        }
+
+        .progress-fill.warn { background: var(--warn); }
+
+        /* ── 아키텍처 다이어그램 v2 (CSS 6열 그리드) ── */
+        .arch-v2 {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .board-outer {
+            border: 2px solid rgba(88,166,255,0.45);
+            border-radius: 10px;
+            padding: 20px 12px 14px;
+            position: relative;
+        }
+
+        .board-label-v2 {
+            position: absolute;
+            top: -11px; left: 14px;
+            background: var(--code-bg);
+            color: var(--accent);
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 0 10px;
+            font-family: 'JetBrains Mono', Consolas, monospace;
+            white-space: nowrap;
+        }
+
+        .sec-labels {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .sec-label-uart {
+            grid-column: 1 / 4;
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.6px;
+            color: var(--accent);
+            background: rgba(88,166,255,0.1);
+            border-radius: 4px; padding: 3px 0; text-align: center;
+        }
+
+        .sec-label-gpio {
+            grid-column: 4 / 7;
+            font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.6px;
+            color: var(--accent2);
+            background: rgba(63,185,80,0.1);
+            border-radius: 4px; padding: 3px 0; text-align: center;
+        }
+
+        .comp-grid-6 {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+        }
+
+        .cc {
+            border-radius: 6px;
+            padding: 8px 4px;
+            text-align: center;
+        }
+
+        .cc.uart {
+            background: rgba(88,166,255,0.08);
+            border: 1px solid rgba(88,166,255,0.3);
+        }
+
+        .cc.gpio {
+            background: rgba(63,185,80,0.08);
+            border: 1px solid rgba(63,185,80,0.3);
+        }
+
+        .cc-name {
+            font-family: 'JetBrains Mono', Consolas, monospace;
+            font-size: 10px; font-weight: 700;
+            color: var(--text);
+            word-break: break-all;
+        }
+
+        .cc-type {
+            font-size: 9px; font-weight: 600; margin-top: 3px;
+        }
+
+        .cc.uart .cc-type { color: var(--accent); }
+        .cc.gpio .cc-type { color: var(--accent2); }
+
+        .cc-detail {
+            font-size: 9px;
+            color: var(--text-muted);
+            margin-top: 2px; line-height: 1.4;
+        }
+
+        .arrow-grid-6 {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            height: 44px;
+            margin: 2px 0;
+        }
+
+        .ac {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .ac .vl {
+            width: 1px; flex: 1;
+            background: var(--border);
+        }
+
+        .ac .ar {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1; padding: 2px 0;
+        }
+
+        .ext-grid-6 {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+        }
+
+        .ec {
+            border-radius: 6px;
+            padding: 8px 4px;
+            text-align: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+        }
+
+        .ec.uart { border-color: rgba(88,166,255,0.3); }
+        .ec.gpio { border-color: rgba(63,185,80,0.3); }
+
+        .ec.empty {
+            background: transparent;
+            border: 1px dashed var(--surface2);
+        }
+
+        .ec-name {
+            font-size: 10px; font-weight: 600;
+            color: var(--text);
+        }
+
+        .ec.empty .ec-name {
+            color: var(--text-muted);
+            font-style: italic; font-size: 9px;
+        }
+
+        .ec-sub {
+            font-size: 9px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        @media (max-width: 700px) {
+            .arch-v2 { overflow-x: scroll; }
+            .board-outer, .arrow-grid-6, .ext-grid-6,
+            .sec-labels, .comp-grid-6 { min-width: 480px; }
+        }
+
+        /* ── 변경 이력 타임라인 ── */
+        .timeline {
+            position: relative;
+            padding-left: 28px;
+            margin: 16px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px; top: 0; bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px; top: 6px;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 2px solid var(--bg);
+        }
+
+        .timeline-date {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: monospace;
+            margin-bottom: 4px;
+        }
+
+        .timeline-content {
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        /* ── 알림 박스 ── */
+        .alert {
+            border-left: 3px solid var(--accent2);
+            background: rgba(63,185,80,0.08);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 12px 16px;
+            margin: 16px 0;
+            font-size: 13.5px;
+        }
+
+        .alert-warn {
+            border-left: 3px solid var(--warn);
+            background: rgba(210,153,34,0.08);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 12px 16px;
+            margin: 16px 0;
+            font-size: 13.5px;
+        }
+
+        /* ── 푸터 ── */
+        .doc-footer {
+            margin-top: 60px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        /* ── 반응형 ── */
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .overlay.open {
+                display: block;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 24px 20px;
+                padding-top: 64px;
+            }
+
+            .doc-header h1 { font-size: 20px; }
+
+            .card-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main { padding: 16px; padding-top: 64px; }
+            .card-grid { grid-template-columns: 1fr; }
+            h2.section-title { font-size: 17px; }
+            .meta-badges { gap: 6px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 햄버거 버튼 (모바일) -->
+<button class="menu-toggle" id="menuToggle" aria-label="메뉴 열기">☰</button>
+<div class="overlay" id="overlay"></div>
+
+<div class="layout">
+
+    <!-- ────────── 사이드바 TOC ────────── -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="chip">PSoC4</div>
+            <h2>TABLET SCANNER<br>SMALL BOARD</h2>
+        </div>
+        <ul class="toc-list">
+            <li><a href="#sec1">1. 프로젝트 개요</a></li>
+            <li><a href="#sec2">2. 하드웨어 정보</a></li>
+            <li><a href="#sec3">3. 프로젝트 구조</a></li>
+            <li><a href="#sec4">4. 시스템 아키텍처</a></li>
+            <li><a href="#sec5">5. 소스코드 분석</a></li>
+            <li class="toc-h3"><a href="#sec5-1">5.1 main.c</a></li>
+            <li class="toc-h3"><a href="#sec5-2">5.2 sysTick.c</a></li>
+            <li class="toc-h3"><a href="#sec5-3">5.3 common.c</a></li>
+            <li><a href="#sec6">6. 통신 프로토콜</a></li>
+            <li><a href="#sec7">7. 부트로더 구조</a></li>
+            <li><a href="#sec8">8. 이슈 &amp; 개선 이력</a></li>
+            <li><a href="#sec9">9. 개발 환경 설정</a></li>
+            <li><a href="#sec10">10. 버전 이력</a></li>
+            <li><a href="#sec11">11. 파일 경로 참조</a></li>
+        </ul>
+    </nav>
+
+    <!-- ────────── 메인 컨텐츠 ────────── -->
+    <main class="main">
+
+        <!-- 헤더 -->
+        <header class="doc-header">
+            <h1>SMALL_BOARD_TABLET_SCANNER<br>프로젝트 분석 문서</h1>
+            <div class="meta-badges">
+                <div class="badge">
+                    <span class="label">분석 버전</span>
+                    <span class="value">2026_V1</span>
+                </div>
+                <div class="badge success">
+                    <span class="label">마지막 빌드</span>
+                    <span class="value">2020-05-13 ✓</span>
+                </div>
+                <div class="badge">
+                    <span class="label">코드 개선</span>
+                    <span class="value">2026-03-04</span>
+                </div>
+                <div class="badge">
+                    <span class="label">최초 작성</span>
+                    <span class="value">2026-03-04</span>
+                </div>
+            </div>
+            <div class="alert-warn">
+                ⚠️ <strong>SMALL_BOARD_SCANNER와의 핵심 차이점</strong>: 포트 역할이 반대입니다.
+                <code>MONITORING</code> 포트 → <strong>태블릿</strong> (JSON 출력) /
+                <code>USB_OP</code> 포트 → <strong>ST-500 Touch OP</strong> (트리거 수신 / DesignNo 송신)
+            </div>
+        </header>
+
+        <!-- 1. 프로젝트 개요 -->
+        <section class="section" id="sec1">
+            <h2 class="section-title"><span class="num">1</span>프로젝트 개요</h2>
+            <p>이 프로젝트는 <strong>Cypress PSoC 4</strong> 기반의 <strong>태블릿 스캐너 소형 통신 보드</strong> 펌웨어입니다.
+            공장 자동화 생산 라인에서 <strong>2D 바코드 스캐너</strong>, <strong>ST-500 Touch OP(HMI)</strong>,
+            <strong>태블릿(Android OP)</strong> 세 장치 간의 데이터를 중계하는 <strong>통신 브리지</strong> 역할을 합니다.</p>
+
+            <h3 class="sub-title">주요 기능 요약</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>기능</th><th>설명</th></tr></thead>
+                    <tbody>
+                        <tr><td>바코드 스캔 수신</td><td>2D 스캐너에서 바코드 데이터 수신</td></tr>
+                        <tr><td>데이터 파싱 및 라우팅</td><td>바코드 데이터를 파싱해 Touch OP와 태블릿으로 각각 전송</td></tr>
+                        <tr><td>스캔 트리거 명령 중계</td><td>USB_OP(Touch OP)의 트리거 명령을 2D 스캐너에 전달</td></tr>
+                        <tr><td>카운터 감지</td><td>외부 Counter 신호를 감지하여 JSON 카운트 이벤트 태블릿 전송</td></tr>
+                        <tr><td>UART 부트로더</td><td>UART를 통한 OTA 방식 펌웨어 업그레이드 지원</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 2. 하드웨어 정보 -->
+        <section class="section" id="sec2">
+            <h2 class="section-title"><span class="num">2</span>하드웨어 정보</h2>
+
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-label">Flash 사용량</div>
+                    <div class="card-value">44.2%</div>
+                    <div class="card-sub">14,470 / 32,768 bytes</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:44.2%"></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-label">SRAM 사용량</div>
+                    <div class="card-value" style="color:var(--warn)">64.9%</div>
+                    <div class="card-sub">2,660 / 4,096 bytes</div>
+                    <div class="progress-bar"><div class="progress-fill warn" style="width:64.9%"></div></div>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>항목</th><th>내용</th></tr></thead>
+                    <tbody>
+                        <tr><td>MCU</td><td><code>Cypress CY8C4245AZI-M445</code></td></tr>
+                        <tr><td>코어</td><td>ARM Cortex-M0</td></tr>
+                        <tr><td>패키지</td><td>64-TQFP</td></tr>
+                        <tr><td>개발툴</td><td>PSoC Creator 4.4</td></tr>
+                        <tr><td>컴파일러</td><td>ARM GCC 5.4-2016-q2-update</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 3. 프로젝트 구조 -->
+        <section class="section" id="sec3">
+            <h2 class="section-title"><span class="num">3</span>프로젝트 구조</h2>
+<pre><code>SMALL_BOARD_TABLET_SCANNER/
+├── SMALL_BOARD_TABLET_SCANNER_2026_V1/
+│   ├── bootloader.cydsn/           # PSoC 부트로더 프로젝트
+│   │   ├── main.c                  # 부트로더 진입점
+│   │   └── Generated_Source/       # PSoC Creator 자동 생성 코드
+│   │
+│   ├── MainFunction.cydsn/         # 메인 애플리케이션 프로젝트
+│   │   ├── main.c                  # ★ 핵심 로직 (데이터 라우팅, 이벤트 처리)
+│   │   ├── main.h                  # 전역 선언, 상수 정의, 펌웨어 버전
+│   │   ├── common.c                # 초기화(init), 부트로더 진입 함수
+│   │   ├── sysTick.c               # SysTick 타이머 (1ms 틱, LED 블링크)
+│   │   ├── TopDesign/              # PSoC 스케매틱
+│   │   └── Generated_Source/PSoC4/ # PSoC Creator 자동 생성 드라이버
+│   │
+│   ├── Bootloader/                 # 펌웨어 업그레이드 도구 (PC용)
+│   │   ├── UARTBootloaderHost.exe  # UART 부트로더 호스트 프로그램
+│   │   └── Prerequisites.txt       # 실행 요구사항
+│   │
+│   └── PatternBarcodeMonitoring.cywrk  # PSoC Creator 워크스페이스
+│
+├── README.md
+├── README.html
+├── VERSION_HISTORY.md
+└── CLAUDE.md</code></pre>
+        </section>
+
+        <!-- 4. 시스템 아키텍처 -->
+        <section class="section" id="sec4">
+            <h2 class="section-title"><span class="num">4</span>시스템 아키텍처 (통신 구조)</h2>
+
+            <div class="arch-v2">
+                <!-- 보드 박스 -->
+                <div class="board-outer">
+                    <div class="board-label-v2">PSoC4 태블릿 스캐너 통신 보드 — CY8C4245AZI-M445 · ARM Cortex-M0</div>
+
+                    <!-- 섹션 레이블 -->
+                    <div class="sec-labels">
+                        <div class="sec-label-uart">UART 인터페이스</div>
+                        <div class="sec-label-gpio">디지털 입력 (GPIO IN)</div>
+                    </div>
+
+                    <!-- 컴포넌트 6열 그리드 -->
+                    <div class="comp-grid-6">
+                        <div class="cc uart">
+                            <div class="cc-name">MONITORING</div>
+                            <div class="cc-type">UART #1</div>
+                            <div class="cc-detail">9600 bps 8N2<br>인터럽트 RX</div>
+                        </div>
+                        <div class="cc uart">
+                            <div class="cc-name">USB_OP</div>
+                            <div class="cc-type">UART #2</div>
+                            <div class="cc-detail">9600 bps 8N2<br>폴링 TX/RX</div>
+                        </div>
+                        <div class="cc uart">
+                            <div class="cc-name">BARCODE</div>
+                            <div class="cc-type">UART #3</div>
+                            <div class="cc-detail">9600 bps 8N2<br>폴링 RX</div>
+                        </div>
+                        <div class="cc gpio">
+                            <div class="cc-name">Barcode_Triger</div>
+                            <div class="cc-type">GPIO IN</div>
+                            <div class="cc-detail">트리거 신호</div>
+                        </div>
+                        <div class="cc gpio">
+                            <div class="cc-name">Counter</div>
+                            <div class="cc-type">GPIO IN</div>
+                            <div class="cc-detail">엣지 감지<br>200~1900ms</div>
+                        </div>
+                        <div class="cc gpio">
+                            <div class="cc-name">Pin_StartBoot</div>
+                            <div class="cc-type">GPIO IN</div>
+                            <div class="cc-detail">LOW →<br>부트로더</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 연결 방향 화살표 (6열 정렬) -->
+                <div class="arrow-grid-6">
+                    <div class="ac"><div class="vl"></div><div class="ar">↓</div><div class="vl"></div></div>
+                    <div class="ac"><div class="vl"></div><div class="ar">↕</div><div class="vl"></div></div>
+                    <div class="ac"><div class="vl"></div><div class="ar">↕</div><div class="vl"></div></div>
+                    <div class="ac"><div class="vl"></div><div class="ar">←</div><div class="vl"></div></div>
+                    <div class="ac"><div class="vl"></div><div class="ar">←</div><div class="vl"></div></div>
+                    <div class="ac"><div class="vl"></div><div class="ar">←</div><div class="vl"></div></div>
+                </div>
+
+                <!-- 외부 장치 (6열 정렬) -->
+                <div class="ext-grid-6">
+                    <div class="ec uart">
+                        <div class="ec-name">태블릿 Android</div>
+                        <div class="ec-sub">MONITORING Port (JSON)</div>
+                    </div>
+                    <div class="ec uart">
+                        <div class="ec-name">ST-500 Touch OP</div>
+                        <div class="ec-sub">USB_OP Port</div>
+                    </div>
+                    <div class="ec uart">
+                        <div class="ec-name">2D 바코드 스캐너</div>
+                    </div>
+                    <div class="ec gpio empty">
+                        <div class="ec-name">외부 트리거 신호</div>
+                    </div>
+                    <div class="ec gpio">
+                        <div class="ec-name">Foot/Hand Switch</div>
+                        <div class="ec-sub">카운터 신호</div>
+                    </div>
+                    <div class="ec gpio">
+                        <div class="ec-name">내부 버튼</div>
+                        <div class="ec-sub">보드 내장</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="sub-title">포트별 역할</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>포트</th><th>연결 장치</th><th>방향</th><th>보드레이트</th><th>형식</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><code>MONITORING</code></td>
+                            <td>태블릿 (Android)</td>
+                            <td>주로 TX</td>
+                            <td>9600 bps</td>
+                            <td>8N2, 인터럽트 기반 수신, JSON 포맷</td>
+                        </tr>
+                        <tr>
+                            <td><code>USB_OP</code></td>
+                            <td>ST-500 Touch OP</td>
+                            <td>양방향</td>
+                            <td>9600 bps</td>
+                            <td>8N2, 트리거 명령 수신 / DesignNo 송신</td>
+                        </tr>
+                        <tr>
+                            <td><code>BARCODE</code></td>
+                            <td>2D 바코드 스캐너</td>
+                            <td>양방향</td>
+                            <td>9600 bps</td>
+                            <td>8N2, 전용 프로토콜</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 5. 소스코드 분석 -->
+        <section class="section" id="sec5">
+            <h2 class="section-title"><span class="num">5</span>소스코드 상세 분석</h2>
+
+            <!-- 5.1 main.c -->
+            <h3 class="sub-title" id="sec5-1">5.1 main.c — 핵심 로직</h3>
+
+            <p style="margin-bottom:12px"><strong>전역 변수</strong></p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>변수</th><th>타입</th><th>설명</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>lastReceivedTime</code></td><td><code>unsigned long</code></td><td>마지막 데이터 수신 시각 (ms)</td></tr>
+                        <tr><td><code>receivedFromBarcode[UART_BUF_SIZE]</code></td><td><code>char[]</code></td><td>스캐너 수신 버퍼 (크기: 256)</td></tr>
+                        <tr><td><code>receivedFromBarcodeCount</code></td><td><code>uint8_t</code></td><td>수신 바이트 카운터 (타입 안전)</td></tr>
+                        <tr><td><code>scanTrigerStart[3]</code></td><td><code>char[]</code></td><td>스캐너 트리거 명령 <code>{0x02, 0xF4, 0x03}</code></td></tr>
+                        <tr><td><code>receivedScanTrigerOrder[UART_BUF_SIZE]</code></td><td><code>char[]</code></td><td>Touch OP 수신 버퍼 (크기: 256)</td></tr>
+                        <tr><td><code>receivedScanTrigerOrderCount</code></td><td><code>unsigned int</code></td><td>Touch OP 수신 바이트 카운터</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p style="margin-bottom:12px"><strong>main.h 정의 상수</strong></p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>상수</th><th>값</th><th>용도</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>UART_BUF_SIZE</code></td><td><code>256u</code></td><td>UART 수신 버퍼 크기</td></tr>
+                        <tr><td><code>TIMEOUT_MS_UART</code></td><td><code>50u</code></td><td>수신 완료 판정 타임아웃 (ms)</td></tr>
+                        <tr><td><code>COUNTER_MIN_MS</code></td><td><code>200u</code></td><td>Counter 유효 최소 간격 (ms)</td></tr>
+                        <tr><td><code>COUNTER_MAX_MS</code></td><td><code>1900u</code></td><td>Counter 유효 최대 간격 (ms)</td></tr>
+                        <tr><td><code>SCAN_TRIGER_ORDER_STR</code></td><td><code>"$$$$#99900035;%%%%"</code></td><td>스캔 트리거 명령 문자열</td></tr>
+                        <tr><td><code>SCAN_MODE_CMD_STR</code></td><td><code>"$$$$#99900304;%%%%"</code></td><td>스캐너 연결 확인 명령</td></tr>
+                        <tr><td><code>FIRMWARE_VERSION</code></td><td><code>"1.0.1"</code></td><td>펌웨어 버전 식별자</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p style="margin-bottom:12px"><strong>main() 메인 루프 흐름</strong></p>
+<pre><code>1. Counter 신호 감지 (엣지 감지 방식)
+   - 하강 엣지 (1→0): 타이머 초기화
+   - 상승 엣지 (0→1): 시간 간격 계산
+     → COUNTER_MIN_MS(200ms) ~ COUNTER_MAX_MS(1900ms) 범위이면
+       태블릿(MONITORING)으로 카운트 JSON 전송
+
+2. 타임아웃 처리 (timerCount - lastReceivedTime > TIMEOUT_MS_UART)
+   - Touch OP 수신 버퍼 초기화 (노이즈 데이터 폐기)
+   - 스캐너 데이터가 있으면 파싱 후 라우팅:
+     * ptrFirst  (DesignNo)  → NULL 검사 후 Touch OP(USB_OP) 전송
+     * ptrSecond (DesignIDX) → NULL 검사 후 태블릿(MONITORING) JSON 전송
+     * ptrThird  (Pieces)    → NULL 검사 후 태블릿(MONITORING) JSON 전송
+   - "SUNTECH" 바코드 스캔 시 부트로더 진입 (활성화 상태)
+
+3. process_USB_OP()  - Touch OP RX 버퍼 폴링
+4. process_BARCODE() - 스캐너 RX 버퍼 폴링
+5. Pin_StartBootloader 감지 → 부트로더 진입</code></pre>
+
+            <!-- 5.2 sysTick.c -->
+            <h3 class="sub-title" id="sec5-2">5.2 sysTick.c — 시스템 타이머</h3>
+            <p><code>CySysTickStart()</code> 초기화 후 콜백 등록. 1ms마다 <code>timerCount++</code>, 1000ms마다 LED 토글로 동작 상태 표시.</p>
+
+            <!-- 5.3 common.c -->
+            <h3 class="sub-title" id="sec5-3">5.3 common.c — 초기화 및 유틸리티</h3>
+<pre><code>// init() 초기화 순서
+initSysTick();          // SysTick 1ms 타이머
+MONITORING_Start();     // 태블릿 UART
+USB_OP_Start();         // ST-500 Touch OP UART
+BARCODE_Start();        // 스캐너 UART</code></pre>
+            <p>부트로더 진입 전 Monitoring 포트로 현재 버전 및 업그레이드 준비 메시지 출력 후 <code>Bootloadable_Load()</code> 호출.</p>
+        </section>
+
+        <!-- 6. 통신 프로토콜 -->
+        <section class="section" id="sec6">
+            <h2 class="section-title"><span class="num">6</span>통신 프로토콜 상세</h2>
+
+            <h3 class="sub-title">6.1 바코드 데이터 형식</h3>
+            <p style="margin-bottom:8px">스캐너가 읽은 바코드는 슬래시(<code>/</code>)로 구분된 최대 3개의 필드:</p>
+<pre><code>{DesignNo}/{DesignIDX}/{Pieces}\r\n</code></pre>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>필드</th><th>필수여부</th><th>전송 목적지</th></tr></thead>
+                    <tbody>
+                        <tr><td>DesignNo</td><td>필수</td><td>ST-500 Touch OP (<code>USB_OP</code>)</td></tr>
+                        <tr><td>DesignIDX</td><td>선택</td><td>태블릿 (<code>MONITORING</code>, JSON)</td></tr>
+                        <tr><td>Pieces</td><td>선택</td><td>태블릿 (<code>MONITORING</code>, JSON)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="sub-title">6.2 ST-500 Touch OP 전송 형식</h3>
+<pre><code>@@@@!99900035;^^^^*P{DesignNo}*\r\n</code></pre>
+
+            <h3 class="sub-title">6.3 태블릿 전송 형식 (JSON)</h3>
+<pre><code>// DesignIDX + Pieces 둘 다 있을 때
+{"cmd" : "barcode", "value" : ["{DesignIDX}", "{Pieces}"]}
+
+// DesignIDX만 있을 때
+{"cmd" : "barcode", "value" : ["{DesignIDX}"]}
+
+// 카운터 이벤트
+{"cmd" : "count", "value" : 1}</code></pre>
+
+            <h3 class="sub-title">6.4 스캐너 트리거 명령</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>방향</th><th>명령</th><th>내용</th></tr></thead>
+                    <tbody>
+                        <tr><td>Touch OP → 보드</td><td><code>$$$$#99900035;%%%%</code></td><td>스캔 트리거 요청</td></tr>
+                        <tr><td>보드 → 스캐너</td><td><code>{0x02, 0xF4, 0x03}</code></td><td>스캔 실행 명령</td></tr>
+                        <tr><td>Touch OP → 보드</td><td><code>$$$$#99900304;%%%%</code></td><td>스캐너 연결 확인</td></tr>
+                        <tr><td>보드 → Touch OP</td><td><code>@@@@!99900304;&amp;{FM100-M-R|DD03AB95}^^^^</code></td><td>스캐너 확인 응답</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 7. 부트로더 구조 -->
+        <section class="section" id="sec7">
+            <h2 class="section-title"><span class="num">7</span>부트로더 구조</h2>
+
+<pre><code>Flash Layout:
+┌─────────────────────┐ 0x00000000
+│   Bootloader        │ 6,272 bytes
+│   (bootloader.cydsn)│
+├─────────────────────┤
+│   Application       │ 8,070 bytes
+│ (MainFunction.cydsn)│
+├─────────────────────┤
+│   Metadata          │ 128 bytes
+└─────────────────────┘ 0x00007FFF</code></pre>
+
+            <h3 class="sub-title">부트로더 진입 조건</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>#</th><th>조건</th><th>비고</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td><code>Pin_StartBootloader</code> 핀이 LOW</td><td>내부 버튼 — 현재 활성화</td></tr>
+                        <tr><td>2</td><td>"SUNTECH" 텍스트 스캔</td><td>현재 <strong>활성화</strong> 상태 (코드에 활성화됨)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="sub-title">펌웨어 업그레이드 방법</h3>
+            <ol style="margin-left:20px; line-height:2">
+                <li>.NET Framework 4, Visual C++ 2010 Redistributable 설치</li>
+                <li><code>Bootloader/UARTBootloaderHost.exe</code> 실행</li>
+                <li>UART 포트 선택 (115200 bps)</li>
+                <li>업로드용 <code>.cyacd</code> 파일 선택 및 업로드</li>
+            </ol>
+        </section>
+
+        <!-- 8. 이슈 & 개선 이력 -->
+        <section class="section" id="sec8">
+            <h2 class="section-title"><span class="num">8</span>발견된 이슈 및 개선 이력</h2>
+
+            <div class="alert">✅ 2026-03-04 코드 품질 개선 — 전체 이슈 해소 완료</div>
+
+            <h3 class="sub-title">8.1 코드 버그 / 잠재적 위험</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>우선순위</th><th>상태</th><th>내용</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="status status-high">HIGH</span></td>
+                            <td><span class="status status-ok">✅ 완료</span></td>
+                            <td><code>receivedFromBarcodeCount</code> <code>char</code> → <code>uint8_t</code> 변경. 배열 인덱스 타입 안전성 확보</td>
+                        </tr>
+                        <tr>
+                            <td><span class="status status-high">HIGH</span></td>
+                            <td><span class="status status-ok">✅ 완료</span></td>
+                            <td><code>ptrFirst</code>, <code>ptrSecond</code>, <code>ptrThird</code> NULL 포인터 검사 추가. strtok NULL 반환 시 크래시 방지</td>
+                        </tr>
+                        <tr>
+                            <td><span class="status status-high">HIGH</span></td>
+                            <td><span class="status status-ok">✅ 완료</span></td>
+                            <td>UART RX 루프 내 항상 문자 소비. 버퍼 미소비 시 무한루프 가능성 제거</td>
+                        </tr>
+                        <tr>
+                            <td><span class="status status-high">HIGH</span></td>
+                            <td><span class="status status-ok">✅ 완료</span></td>
+                            <td>버퍼 경계 검사 추가 (<code>count &lt; UART_BUF_SIZE - 1</code>). 버퍼 오버플로우 방어</td>
+                        </tr>
+                        <tr>
+                            <td><span class="status status-med">MEDIUM</span></td>
+                            <td><span class="status status-ok">✅ 완료</span></td>
+                            <td>미사용 변수 <code>count</code>, <code>oldBarcodeTriger</code>, <code>oldBarcodeTrigerStat</code> 제거</td>
+                        </tr>
+                        <tr>
+                            <td><span class="status status-med">MEDIUM</span></td>
+                            <td><span class="status status-ok">✅ 완료</span></td>
+                            <td>명령 문자열 전역 배열 → <code>#define</code> 상수(<code>SCAN_TRIGER_ORDER_STR</code>, <code>SCAN_MODE_CMD_STR</code>)로 대체</td>
+                        </tr>
+                        <tr>
+                            <td><span class="status status-med">MEDIUM</span></td>
+                            <td><span class="status status-ok">✅ 완료</span></td>
+                            <td>매직 넘버 <code>256</code>, <code>50</code>, <code>200</code>, <code>1900</code> → <code>UART_BUF_SIZE</code>, <code>TIMEOUT_MS_UART</code>, <code>COUNTER_MIN_MS</code>, <code>COUNTER_MAX_MS</code> 상수화</td>
+                        </tr>
+                        <tr>
+                            <td><span class="status status-low">LOW</span></td>
+                            <td><span class="status status-ok">✅ 완료</span></td>
+                            <td>Copyright → <code>SUNTECH, 2018-2026</code> 수정</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="sub-title">8.2 해소된 컴파일러 경고</h3>
+<pre><code>[수정 전 경고]
+main.c:41:  warning: array subscript has type 'char' [-Wchar-subscripts]   → uint8_t 변경으로 해소
+main.c:127: warning: array subscript has type 'char' [-Wchar-subscripts]   → uint8_t 변경으로 해소
+main.c:89:  warning: unused variable 'count' [-Wunused-variable]           → 변수 제거로 해소
+main.c:88:  warning: unused variable 'oldBarcodeTriger' [-Wunused-variable] → 변수 제거로 해소</code></pre>
+
+            <h3 class="sub-title">8.3 아키텍처 개선</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>항목</th><th>상태</th><th>내용</th></tr></thead>
+                    <tbody>
+                        <tr><td>타임아웃 상수화</td><td><span class="status status-ok">✅ 완료</span></td><td><code>50</code>, <code>200</code>, <code>1900</code> → <code>#define</code> 상수</td></tr>
+                        <tr><td>버퍼 크기 상수화</td><td><span class="status status-ok">✅ 완료</span></td><td><code>256</code> → <code>#define UART_BUF_SIZE (256u)</code></td></tr>
+                        <tr><td>명령 문자열 상수화</td><td><span class="status status-ok">✅ 완료</span></td><td>하드코딩 문자열 → <code>#define</code></td></tr>
+                        <tr><td>수신 상태 머신(FSM)</td><td><span class="status status-todo">🔲 향후 검토</span></td><td>폴링 방식 → 인터럽트 기반 FSM 전환 시 신뢰성 향상 가능</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 9. 개발 환경 설정 -->
+        <section class="section" id="sec9">
+            <h2 class="section-title"><span class="num">9</span>개발 환경 설정</h2>
+
+            <h3 class="sub-title">필수 소프트웨어</h3>
+            <ul style="margin-left:20px; line-height:2.2">
+                <li><strong>Cypress PSoC Creator 4.4</strong> — PSoC 프로젝트 편집 및 빌드</li>
+                <li><strong>ARM GCC 5.4-2016-q2-update</strong> — PSoC Creator에 번들됨</li>
+                <li><strong>PSoC Programmer / MiniProg3</strong> — 초기 플래싱용</li>
+            </ul>
+
+            <h3 class="sub-title">빌드 방법</h3>
+            <ol style="margin-left:20px; line-height:2.2">
+                <li>PSoC Creator 실행</li>
+                <li><code>SMALL_BOARD_TABLET_SCANNER_2026_V1/PatternBarcodeMonitoring.cywrk</code> 워크스페이스 열기</li>
+                <li><code>bootloader</code> 프로젝트 먼저 빌드</li>
+                <li><code>MainFunction</code> 프로젝트 빌드</li>
+                <li><code>.cyacd</code> 파일 생성 확인</li>
+            </ol>
+
+            <h3 class="sub-title">UART 설정 (통신 포트 연결 시)</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>포트</th><th>보드레이트</th><th>데이터비트</th><th>패리티</th><th>스톱비트</th></tr></thead>
+                    <tbody>
+                        <tr><td>MONITORING</td><td>9,600</td><td>8</td><td>None</td><td>2</td></tr>
+                        <tr><td>USB_OP</td><td>9,600</td><td>8</td><td>None</td><td>2</td></tr>
+                        <tr><td>BARCODE</td><td>9,600</td><td>8</td><td>None</td><td>2</td></tr>
+                        <tr><td>부트로더 업그레이드</td><td>115,200</td><td>8</td><td>None</td><td>1</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 10. 버전 이력 -->
+        <section class="section" id="sec10">
+            <h2 class="section-title"><span class="num">10</span>버전 이력</h2>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">2018-03-12</div>
+                    <div class="timeline-content">Bootloader 적용. 초성/안도 신형 OP + OEE 통신 보드 통합 구조</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2018-05-14</div>
+                    <div class="timeline-content">2D Scanner + Touch OP 통합. 태블릿 → <code>MONITORING</code> Port / Touch OP → <code>USB_OP</code> Port 구조 확립</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2018-05-25</div>
+                    <div class="timeline-content">Scanner Mode Enable 기능 추가</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2019-04-20</div>
+                    <div class="timeline-content">PWJ 공정 라인 적용</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2020-05-13</div>
+                    <div class="timeline-content">마지막 빌드 성공 확인 (PSoC Creator 4.4)</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026-03-04</div>
+                    <div class="timeline-content">코드 품질 개선: 타입 안전성(<code>uint8_t</code>), NULL 포인터 방어, 미사용 변수 제거, 상수 정의 분리, 버퍼 오버플로우 방어, Copyright 수정</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 11. 관련 파일 경로 -->
+        <section class="section" id="sec11">
+            <h2 class="section-title"><span class="num">11</span>관련 파일 경로 빠른 참조</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>파일</th><th>경로</th><th>설명</th></tr></thead>
+                    <tbody>
+                        <tr><td>핵심 로직</td><td><code>SMALL_BOARD_TABLET_SCANNER_2026_V1/MainFunction.cydsn/main.c</code></td><td>메인 루프 및 데이터 처리</td></tr>
+                        <tr><td>헤더/상수</td><td><code>SMALL_BOARD_TABLET_SCANNER_2026_V1/MainFunction.cydsn/main.h</code></td><td>전역 선언, 상수 정의, 버전</td></tr>
+                        <tr><td>초기화</td><td><code>SMALL_BOARD_TABLET_SCANNER_2026_V1/MainFunction.cydsn/common.c</code></td><td>하드웨어 초기화</td></tr>
+                        <tr><td>타이머</td><td><code>SMALL_BOARD_TABLET_SCANNER_2026_V1/MainFunction.cydsn/sysTick.c</code></td><td>1ms SysTick 콜백</td></tr>
+                        <tr><td>부트로더 main</td><td><code>SMALL_BOARD_TABLET_SCANNER_2026_V1/bootloader.cydsn/main.c</code></td><td>부트로더 진입점</td></tr>
+                        <tr><td>업로더 도구</td><td><code>SMALL_BOARD_TABLET_SCANNER_2026_V1/Bootloader/UARTBootloaderHost.exe</code></td><td>PC 업로드 프로그램</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            Copyright SUNTECH, 2018-2026 · SMALL_BOARD_TABLET_SCANNER_2026_V1
+        </footer>
+
+    </main>
+</div>
+
+<script>
+    // ── 햄버거 메뉴 토글 ──
+    const toggle  = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    function openMenu()  { sidebar.classList.add('open');  overlay.classList.add('open');  }
+    function closeMenu() { sidebar.classList.remove('open'); overlay.classList.remove('open'); }
+
+    toggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeMenu() : openMenu());
+    overlay.addEventListener('click', closeMenu);
+
+    // ── TOC 활성 항목 하이라이트 ──
+    const sections = document.querySelectorAll('.section');
+    const tocLinks = document.querySelectorAll('.toc-list a');
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.id;
+                tocLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+                });
+            }
+        });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+
+    sections.forEach(s => observer.observe(s));
+
+    // ── 모바일: TOC 링크 클릭 시 메뉴 닫기 ──
+    tocLinks.forEach(link => link.addEventListener('click', closeMenu));
+</script>
+
+</body>
+</html>

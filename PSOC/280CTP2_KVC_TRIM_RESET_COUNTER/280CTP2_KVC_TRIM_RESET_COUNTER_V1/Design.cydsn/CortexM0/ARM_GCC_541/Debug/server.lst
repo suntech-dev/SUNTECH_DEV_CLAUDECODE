@@ -1,0 +1,1366 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"server.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.initServer,"ax",%progbits
+  20              		.align	2
+  21              		.global	initServer
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	initServer, %function
+  25              	initServer:
+  26              	.LFB61:
+  27              		.file 1 "lib\\server.c"
+   1:lib/server.c  **** /* ========================================
+   2:lib/server.c  ****  *
+   3:lib/server.c  ****  * Copyright Suntech, 2023.03.30
+   4:lib/server.c  ****  * All Rights Reserved
+   5:lib/server.c  ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:lib/server.c  ****  *
+   7:lib/server.c  ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:lib/server.c  ****  * WHICH IS THE PROPERTY OF Suntech.
+   9:lib/server.c  ****  *
+  10:lib/server.c  ****  * ========================================
+  11:lib/server.c  **** */
+  12:lib/server.c  **** #include "server.h"
+  13:lib/server.c  **** #include "externalFlash.h"
+  14:lib/server.c  **** 
+  15:lib/server.c  **** SERVER_INFO *g_ptrServer;
+  16:lib/server.c  **** 
+  17:lib/server.c  **** void initServer()
+  18:lib/server.c  **** {
+  28              		.loc 1 18 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 10B5     		push	{r4, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  19:lib/server.c  ****     g_ptrServer = (SERVER_INFO *) & getExternalConfigData()[CONFIG_DATA_CONFIG];
+  36              		.loc 1 19 0
+  37 0002 FFF7FEFF 		bl	getExternalConfigData
+  38              	.LVL0:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 2
+
+
+  39 0006 014B     		ldr	r3, .L2
+  40 0008 1860     		str	r0, [r3]
+  20:lib/server.c  **** }
+  41              		.loc 1 20 0
+  42              		@ sp needed
+  43 000a 10BD     		pop	{r4, pc}
+  44              	.L3:
+  45              		.align	2
+  46              	.L2:
+  47 000c 00000000 		.word	g_ptrServer
+  48              		.cfi_endproc
+  49              	.LFE61:
+  50              		.size	initServer, .-initServer
+  51              		.section	.text.SetDefaultConfigServer,"ax",%progbits
+  52              		.align	2
+  53              		.global	SetDefaultConfigServer
+  54              		.code	16
+  55              		.thumb_func
+  56              		.type	SetDefaultConfigServer, %function
+  57              	SetDefaultConfigServer:
+  58              	.LFB62:
+  21:lib/server.c  **** 
+  22:lib/server.c  **** void SetDefaultConfigServer()
+  23:lib/server.c  **** {
+  59              		.loc 1 23 0
+  60              		.cfi_startproc
+  61              		@ args = 0, pretend = 0, frame = 0
+  62              		@ frame_needed = 0, uses_anonymous_args = 0
+  63 0000 10B5     		push	{r4, lr}
+  64              		.cfi_def_cfa_offset 8
+  65              		.cfi_offset 4, -8
+  66              		.cfi_offset 14, -4
+  24:lib/server.c  ****     memset(g_ptrServer,0,sizeof(SERVER_INFO));
+  67              		.loc 1 24 0
+  68 0002 0A4C     		ldr	r4, .L5
+  69 0004 8422     		movs	r2, #132
+  70 0006 0021     		movs	r1, #0
+  71 0008 2068     		ldr	r0, [r4]
+  72 000a FFF7FEFF 		bl	memset
+  73              	.LVL1:
+  25:lib/server.c  ****         
+  26:lib/server.c  ****     strcpy(g_ptrServer->IP,DEFAULT_SERVER_IP);    
+  74              		.loc 1 26 0
+  75 000e 0E22     		movs	r2, #14
+  76 0010 0749     		ldr	r1, .L5+4
+  77 0012 2068     		ldr	r0, [r4]
+  78 0014 FFF7FEFF 		bl	memcpy
+  79              	.LVL2:
+  27:lib/server.c  ****     g_ptrServer->port = DEFAULT_SERVER_PORT;
+  80              		.loc 1 27 0
+  81 0018 2068     		ldr	r0, [r4]
+  82 001a 5023     		movs	r3, #80
+  83 001c 0386     		strh	r3, [r0, #48]
+  28:lib/server.c  ****     
+  29:lib/server.c  ****     strcpy(g_ptrServer->deviceName,DEFAULT_DEVICE_NAME);
+  84              		.loc 1 29 0
+  85 001e 6E30     		adds	r0, r0, #110
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 3
+
+
+  86 0020 0B22     		movs	r2, #11
+  87 0022 0449     		ldr	r1, .L5+8
+  88 0024 FFF7FEFF 		bl	memcpy
+  89              	.LVL3:
+  30:lib/server.c  **** }
+  90              		.loc 1 30 0
+  91              		@ sp needed
+  92 0028 10BD     		pop	{r4, pc}
+  93              	.L6:
+  94 002a C046     		.align	2
+  95              	.L5:
+  96 002c 00000000 		.word	g_ptrServer
+  97 0030 00000000 		.word	.LC2
+  98 0034 10000000 		.word	.LC4
+  99              		.cfi_endproc
+ 100              	.LFE62:
+ 101              		.size	SetDefaultConfigServer, .-SetDefaultConfigServer
+ 102              		.section	.text.ValidationConfigServer,"ax",%progbits
+ 103              		.align	2
+ 104              		.global	ValidationConfigServer
+ 105              		.code	16
+ 106              		.thumb_func
+ 107              		.type	ValidationConfigServer, %function
+ 108              	ValidationConfigServer:
+ 109              	.LFB63:
+  31:lib/server.c  **** 
+  32:lib/server.c  **** void ValidationConfigServer()
+  33:lib/server.c  **** {
+ 110              		.loc 1 33 0
+ 111              		.cfi_startproc
+ 112              		@ args = 0, pretend = 0, frame = 0
+ 113              		@ frame_needed = 0, uses_anonymous_args = 0
+ 114 0000 10B5     		push	{r4, lr}
+ 115              		.cfi_def_cfa_offset 8
+ 116              		.cfi_offset 4, -8
+ 117              		.cfi_offset 14, -4
+  34:lib/server.c  ****     if(strlen(g_ptrServer->IP) == 0)
+ 118              		.loc 1 34 0
+ 119 0002 044B     		ldr	r3, .L9
+ 120 0004 1B68     		ldr	r3, [r3]
+ 121 0006 1B78     		ldrb	r3, [r3]
+ 122 0008 002B     		cmp	r3, #0
+ 123 000a 01D1     		bne	.L7
+  35:lib/server.c  ****     {
+  36:lib/server.c  ****         SetDefaultConfigServer();
+ 124              		.loc 1 36 0
+ 125 000c FFF7FEFF 		bl	SetDefaultConfigServer
+ 126              	.LVL4:
+ 127              	.L7:
+  37:lib/server.c  ****     }
+  38:lib/server.c  **** }
+ 128              		.loc 1 38 0
+ 129              		@ sp needed
+ 130 0010 10BD     		pop	{r4, pc}
+ 131              	.L10:
+ 132 0012 C046     		.align	2
+ 133              	.L9:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 4
+
+
+ 134 0014 00000000 		.word	g_ptrServer
+ 135              		.cfi_endproc
+ 136              	.LFE63:
+ 137              		.size	ValidationConfigServer, .-ValidationConfigServer
+ 138              		.section	.text.printConfig,"ax",%progbits
+ 139              		.align	2
+ 140              		.global	printConfig
+ 141              		.code	16
+ 142              		.thumb_func
+ 143              		.type	printConfig, %function
+ 144              	printConfig:
+ 145              	.LFB64:
+  39:lib/server.c  **** 
+  40:lib/server.c  **** void printConfig()
+  41:lib/server.c  **** {
+ 146              		.loc 1 41 0
+ 147              		.cfi_startproc
+ 148              		@ args = 0, pretend = 0, frame = 0
+ 149              		@ frame_needed = 0, uses_anonymous_args = 0
+ 150 0000 10B5     		push	{r4, lr}
+ 151              		.cfi_def_cfa_offset 8
+ 152              		.cfi_offset 4, -8
+ 153              		.cfi_offset 14, -4
+  42:lib/server.c  ****     if(g_ptrServer->port == 0) g_ptrServer->port = 80;
+ 154              		.loc 1 42 0
+ 155 0002 144B     		ldr	r3, .L13
+ 156 0004 1B68     		ldr	r3, [r3]
+ 157 0006 1A8E     		ldrh	r2, [r3, #48]
+ 158 0008 002A     		cmp	r2, #0
+ 159 000a 01D1     		bne	.L12
+ 160              		.loc 1 42 0 is_stmt 0 discriminator 1
+ 161 000c 5032     		adds	r2, r2, #80
+ 162 000e 1A86     		strh	r2, [r3, #48]
+ 163              	.L12:
+  43:lib/server.c  ****  
+  44:lib/server.c  ****     printf("\r\nConfig :\r\n");
+ 164              		.loc 1 44 0 is_stmt 1
+ 165 0010 1148     		ldr	r0, .L13+4
+ 166 0012 FFF7FEFF 		bl	puts
+ 167              	.LVL5:
+  45:lib/server.c  ****     printf("\t SSID       : %s\r\n",g_ptrServer->SSID);
+ 168              		.loc 1 45 0
+ 169 0016 0F4C     		ldr	r4, .L13
+ 170 0018 2168     		ldr	r1, [r4]
+ 171 001a 3231     		adds	r1, r1, #50
+ 172 001c 0F48     		ldr	r0, .L13+8
+ 173 001e FFF7FEFF 		bl	printf
+ 174              	.LVL6:
+  46:lib/server.c  ****     printf("\t Password   : %s\r\n",g_ptrServer->password);
+ 175              		.loc 1 46 0
+ 176 0022 2168     		ldr	r1, [r4]
+ 177 0024 5A31     		adds	r1, r1, #90
+ 178 0026 0E48     		ldr	r0, .L13+12
+ 179 0028 FFF7FEFF 		bl	printf
+ 180              	.LVL7:
+  47:lib/server.c  ****     printf("\t Server IP  : %s\r\n",g_ptrServer->IP);
+ 181              		.loc 1 47 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 5
+
+
+ 182 002c 2168     		ldr	r1, [r4]
+ 183 002e 0D48     		ldr	r0, .L13+16
+ 184 0030 FFF7FEFF 		bl	printf
+ 185              	.LVL8:
+  48:lib/server.c  ****     printf("\t Server path: %s\r\n",g_ptrServer->path);    
+ 186              		.loc 1 48 0
+ 187 0034 2168     		ldr	r1, [r4]
+ 188 0036 1031     		adds	r1, r1, #16
+ 189 0038 0B48     		ldr	r0, .L13+20
+ 190 003a FFF7FEFF 		bl	printf
+ 191              	.LVL9:
+  49:lib/server.c  ****     printf("\t Server Port: %d\r\n",g_ptrServer->port);
+ 192              		.loc 1 49 0
+ 193 003e 2368     		ldr	r3, [r4]
+ 194 0040 198E     		ldrh	r1, [r3, #48]
+ 195 0042 0A48     		ldr	r0, .L13+24
+ 196 0044 FFF7FEFF 		bl	printf
+ 197              	.LVL10:
+  50:lib/server.c  ****     printf("\t Device Name: %s\r\n",g_ptrServer->deviceName);      
+ 198              		.loc 1 50 0
+ 199 0048 2168     		ldr	r1, [r4]
+ 200 004a 6E31     		adds	r1, r1, #110
+ 201 004c 0848     		ldr	r0, .L13+28
+ 202 004e FFF7FEFF 		bl	printf
+ 203              	.LVL11:
+  51:lib/server.c  **** }
+ 204              		.loc 1 51 0
+ 205              		@ sp needed
+ 206 0052 10BD     		pop	{r4, pc}
+ 207              	.L14:
+ 208              		.align	2
+ 209              	.L13:
+ 210 0054 00000000 		.word	g_ptrServer
+ 211 0058 1C000000 		.word	.LC8
+ 212 005c 28000000 		.word	.LC10
+ 213 0060 3C000000 		.word	.LC12
+ 214 0064 50000000 		.word	.LC14
+ 215 0068 64000000 		.word	.LC16
+ 216 006c 78000000 		.word	.LC18
+ 217 0070 8C000000 		.word	.LC20
+ 218              		.cfi_endproc
+ 219              	.LFE64:
+ 220              		.size	printConfig, .-printConfig
+ 221              		.comm	g_ptrServer,4,4
+ 222              		.comm	Param,6,4
+ 223              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 224              		.align	2
+ 225              	.LC2:
+ 226 0000 34392E32 		.ascii	"49.247.26.228\000"
+ 226      34372E32 
+ 226      362E3232 
+ 226      3800
+ 227 000e 0000     		.space	2
+ 228              	.LC4:
+ 229 0010 496F5420 		.ascii	"IoT Device\000"
+ 229      44657669 
+ 229      636500
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 6
+
+
+ 230 001b 00       		.space	1
+ 231              	.LC8:
+ 232 001c 0D0A436F 		.ascii	"\015\012Config :\015\000"
+ 232      6E666967 
+ 232      203A0D00 
+ 233              	.LC10:
+ 234 0028 09205353 		.ascii	"\011 SSID       : %s\015\012\000"
+ 234      49442020 
+ 234      20202020 
+ 234      203A2025 
+ 234      730D0A00 
+ 235              	.LC12:
+ 236 003c 09205061 		.ascii	"\011 Password   : %s\015\012\000"
+ 236      7373776F 
+ 236      72642020 
+ 236      203A2025 
+ 236      730D0A00 
+ 237              	.LC14:
+ 238 0050 09205365 		.ascii	"\011 Server IP  : %s\015\012\000"
+ 238      72766572 
+ 238      20495020 
+ 238      203A2025 
+ 238      730D0A00 
+ 239              	.LC16:
+ 240 0064 09205365 		.ascii	"\011 Server path: %s\015\012\000"
+ 240      72766572 
+ 240      20706174 
+ 240      683A2025 
+ 240      730D0A00 
+ 241              	.LC18:
+ 242 0078 09205365 		.ascii	"\011 Server Port: %d\015\012\000"
+ 242      72766572 
+ 242      20506F72 
+ 242      743A2025 
+ 242      640D0A00 
+ 243              	.LC20:
+ 244 008c 09204465 		.ascii	"\011 Device Name: %s\015\012\000"
+ 244      76696365 
+ 244      204E616D 
+ 244      653A2025 
+ 244      730D0A00 
+ 245              		.text
+ 246              	.Letext0:
+ 247              		.file 2 "lib\\server.h"
+ 248              		.file 3 "Generated_Source\\PSoC4/cytypes.h"
+ 249              		.file 4 "./main.h"
+ 250              		.file 5 "lib\\externalFlash.h"
+ 251              		.file 6 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 252              		.file 7 "<built-in>"
+ 253              		.section	.debug_info,"",%progbits
+ 254              	.Ldebug_info0:
+ 255 0000 4B030000 		.4byte	0x34b
+ 256 0004 0400     		.2byte	0x4
+ 257 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 258 000a 04       		.byte	0x4
+ 259 000b 01       		.uleb128 0x1
+ 260 000c 27010000 		.4byte	.LASF38
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 7
+
+
+ 261 0010 0C       		.byte	0xc
+ 262 0011 DD010000 		.4byte	.LASF39
+ 263 0015 07020000 		.4byte	.LASF40
+ 264 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 265 001d 00000000 		.4byte	0
+ 266 0021 00000000 		.4byte	.Ldebug_line0
+ 267 0025 02       		.uleb128 0x2
+ 268 0026 84       		.byte	0x84
+ 269 0027 02       		.byte	0x2
+ 270 0028 15       		.byte	0x15
+ 271 0029 81000000 		.4byte	0x81
+ 272 002d 03       		.uleb128 0x3
+ 273 002e 495000   		.ascii	"IP\000"
+ 274 0031 02       		.byte	0x2
+ 275 0032 16       		.byte	0x16
+ 276 0033 81000000 		.4byte	0x81
+ 277 0037 00       		.byte	0
+ 278 0038 04       		.uleb128 0x4
+ 279 0039 62020000 		.4byte	.LASF0
+ 280 003d 02       		.byte	0x2
+ 281 003e 17       		.byte	0x17
+ 282 003f 9F000000 		.4byte	0x9f
+ 283 0043 10       		.byte	0x10
+ 284 0044 04       		.uleb128 0x4
+ 285 0045 F1010000 		.4byte	.LASF1
+ 286 0049 02       		.byte	0x2
+ 287 004a 18       		.byte	0x18
+ 288 004b AF000000 		.4byte	0xaf
+ 289 004f 30       		.byte	0x30
+ 290 0050 04       		.uleb128 0x4
+ 291 0051 67020000 		.4byte	.LASF2
+ 292 0055 02       		.byte	0x2
+ 293 0056 19       		.byte	0x19
+ 294 0057 B6000000 		.4byte	0xb6
+ 295 005b 32       		.byte	0x32
+ 296 005c 04       		.uleb128 0x4
+ 297 005d A3020000 		.4byte	.LASF3
+ 298 0061 02       		.byte	0x2
+ 299 0062 1A       		.byte	0x1a
+ 300 0063 C6000000 		.4byte	0xc6
+ 301 0067 5A       		.byte	0x5a
+ 302 0068 04       		.uleb128 0x4
+ 303 0069 3A000000 		.4byte	.LASF4
+ 304 006d 02       		.byte	0x2
+ 305 006e 1B       		.byte	0x1b
+ 306 006f C6000000 		.4byte	0xc6
+ 307 0073 6E       		.byte	0x6e
+ 308 0074 04       		.uleb128 0x4
+ 309 0075 8B020000 		.4byte	.LASF5
+ 310 0079 02       		.byte	0x2
+ 311 007a 1D       		.byte	0x1d
+ 312 007b AF000000 		.4byte	0xaf
+ 313 007f 82       		.byte	0x82
+ 314 0080 00       		.byte	0
+ 315 0081 05       		.uleb128 0x5
+ 316 0082 98000000 		.4byte	0x98
+ 317 0086 91000000 		.4byte	0x91
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 8
+
+
+ 318 008a 06       		.uleb128 0x6
+ 319 008b 91000000 		.4byte	0x91
+ 320 008f 0F       		.byte	0xf
+ 321 0090 00       		.byte	0
+ 322 0091 07       		.uleb128 0x7
+ 323 0092 04       		.byte	0x4
+ 324 0093 07       		.byte	0x7
+ 325 0094 C1010000 		.4byte	.LASF6
+ 326 0098 07       		.uleb128 0x7
+ 327 0099 01       		.byte	0x1
+ 328 009a 08       		.byte	0x8
+ 329 009b D8010000 		.4byte	.LASF7
+ 330 009f 05       		.uleb128 0x5
+ 331 00a0 98000000 		.4byte	0x98
+ 332 00a4 AF000000 		.4byte	0xaf
+ 333 00a8 06       		.uleb128 0x6
+ 334 00a9 91000000 		.4byte	0x91
+ 335 00ad 1F       		.byte	0x1f
+ 336 00ae 00       		.byte	0
+ 337 00af 07       		.uleb128 0x7
+ 338 00b0 02       		.byte	0x2
+ 339 00b1 07       		.byte	0x7
+ 340 00b2 B5000000 		.4byte	.LASF8
+ 341 00b6 05       		.uleb128 0x5
+ 342 00b7 98000000 		.4byte	0x98
+ 343 00bb C6000000 		.4byte	0xc6
+ 344 00bf 06       		.uleb128 0x6
+ 345 00c0 91000000 		.4byte	0x91
+ 346 00c4 27       		.byte	0x27
+ 347 00c5 00       		.byte	0
+ 348 00c6 05       		.uleb128 0x5
+ 349 00c7 98000000 		.4byte	0x98
+ 350 00cb D6000000 		.4byte	0xd6
+ 351 00cf 06       		.uleb128 0x6
+ 352 00d0 91000000 		.4byte	0x91
+ 353 00d4 13       		.byte	0x13
+ 354 00d5 00       		.byte	0
+ 355 00d6 08       		.uleb128 0x8
+ 356 00d7 97020000 		.4byte	.LASF17
+ 357 00db 02       		.byte	0x2
+ 358 00dc 1E       		.byte	0x1e
+ 359 00dd 25000000 		.4byte	0x25
+ 360 00e1 07       		.uleb128 0x7
+ 361 00e2 01       		.byte	0x1
+ 362 00e3 06       		.byte	0x6
+ 363 00e4 6C020000 		.4byte	.LASF9
+ 364 00e8 07       		.uleb128 0x7
+ 365 00e9 01       		.byte	0x1
+ 366 00ea 08       		.byte	0x8
+ 367 00eb 67000000 		.4byte	.LASF10
+ 368 00ef 07       		.uleb128 0x7
+ 369 00f0 02       		.byte	0x2
+ 370 00f1 05       		.byte	0x5
+ 371 00f2 FD010000 		.4byte	.LASF11
+ 372 00f6 07       		.uleb128 0x7
+ 373 00f7 04       		.byte	0x4
+ 374 00f8 05       		.byte	0x5
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 9
+
+
+ 375 00f9 59020000 		.4byte	.LASF12
+ 376 00fd 07       		.uleb128 0x7
+ 377 00fe 04       		.byte	0x4
+ 378 00ff 07       		.byte	0x7
+ 379 0100 98000000 		.4byte	.LASF13
+ 380 0104 07       		.uleb128 0x7
+ 381 0105 08       		.byte	0x8
+ 382 0106 05       		.byte	0x5
+ 383 0107 CA010000 		.4byte	.LASF14
+ 384 010b 07       		.uleb128 0x7
+ 385 010c 08       		.byte	0x8
+ 386 010d 07       		.byte	0x7
+ 387 010e 10010000 		.4byte	.LASF15
+ 388 0112 09       		.uleb128 0x9
+ 389 0113 04       		.byte	0x4
+ 390 0114 05       		.byte	0x5
+ 391 0115 696E7400 		.ascii	"int\000"
+ 392 0119 07       		.uleb128 0x7
+ 393 011a 04       		.byte	0x4
+ 394 011b 07       		.byte	0x7
+ 395 011c 03010000 		.4byte	.LASF16
+ 396 0120 0A       		.uleb128 0xa
+ 397 0121 4C000000 		.4byte	.LASF18
+ 398 0125 03       		.byte	0x3
+ 399 0126 FC01     		.2byte	0x1fc
+ 400 0128 E8000000 		.4byte	0xe8
+ 401 012c 0A       		.uleb128 0xa
+ 402 012d F6000000 		.4byte	.LASF19
+ 403 0131 03       		.byte	0x3
+ 404 0132 FD01     		.2byte	0x1fd
+ 405 0134 AF000000 		.4byte	0xaf
+ 406 0138 07       		.uleb128 0x7
+ 407 0139 04       		.byte	0x4
+ 408 013a 04       		.byte	0x4
+ 409 013b 52000000 		.4byte	.LASF20
+ 410 013f 07       		.uleb128 0x7
+ 411 0140 08       		.byte	0x8
+ 412 0141 04       		.byte	0x4
+ 413 0142 45000000 		.4byte	.LASF21
+ 414 0146 07       		.uleb128 0x7
+ 415 0147 08       		.byte	0x8
+ 416 0148 04       		.byte	0x4
+ 417 0149 B5010000 		.4byte	.LASF22
+ 418 014d 0B       		.uleb128 0xb
+ 419 014e AA000000 		.4byte	.LASF41
+ 420 0152 06       		.byte	0x6
+ 421 0153 04       		.byte	0x4
+ 422 0154 34       		.byte	0x34
+ 423 0155 7E010000 		.4byte	0x17e
+ 424 0159 04       		.uleb128 0x4
+ 425 015a 00000000 		.4byte	.LASF23
+ 426 015e 04       		.byte	0x4
+ 427 015f 36       		.byte	0x36
+ 428 0160 20010000 		.4byte	0x120
+ 429 0164 00       		.byte	0
+ 430 0165 04       		.uleb128 0x4
+ 431 0166 EA000000 		.4byte	.LASF24
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 10
+
+
+ 432 016a 04       		.byte	0x4
+ 433 016b 37       		.byte	0x37
+ 434 016c 2C010000 		.4byte	0x12c
+ 435 0170 02       		.byte	0x2
+ 436 0171 04       		.uleb128 0x4
+ 437 0172 F0000000 		.4byte	.LASF25
+ 438 0176 04       		.byte	0x4
+ 439 0177 38       		.byte	0x38
+ 440 0178 2C010000 		.4byte	0x12c
+ 441 017c 04       		.byte	0x4
+ 442 017d 00       		.byte	0
+ 443 017e 0C       		.uleb128 0xc
+ 444 017f 44020000 		.4byte	.LASF42
+ 445 0183 01       		.byte	0x1
+ 446 0184 E8000000 		.4byte	0xe8
+ 447 0188 05       		.byte	0x5
+ 448 0189 2B       		.byte	0x2b
+ 449 018a 9B010000 		.4byte	0x19b
+ 450 018e 0D       		.uleb128 0xd
+ 451 018f 78020000 		.4byte	.LASF26
+ 452 0193 00       		.byte	0
+ 453 0194 0D       		.uleb128 0xd
+ 454 0195 33020000 		.4byte	.LASF27
+ 455 0199 96       		.byte	0x96
+ 456 019a 00       		.byte	0
+ 457 019b 0E       		.uleb128 0xe
+ 458 019c 18000000 		.4byte	.LASF28
+ 459 01a0 01       		.byte	0x1
+ 460 01a1 11       		.byte	0x11
+ 461 01a2 00000000 		.4byte	.LFB61
+ 462 01a6 10000000 		.4byte	.LFE61-.LFB61
+ 463 01aa 01       		.uleb128 0x1
+ 464 01ab 9C       		.byte	0x9c
+ 465 01ac BA010000 		.4byte	0x1ba
+ 466 01b0 0F       		.uleb128 0xf
+ 467 01b1 06000000 		.4byte	.LVL0
+ 468 01b5 17030000 		.4byte	0x317
+ 469 01b9 00       		.byte	0
+ 470 01ba 0E       		.uleb128 0xe
+ 471 01bb 23000000 		.4byte	.LASF29
+ 472 01bf 01       		.byte	0x1
+ 473 01c0 16       		.byte	0x16
+ 474 01c1 00000000 		.4byte	.LFB62
+ 475 01c5 38000000 		.4byte	.LFE62-.LFB62
+ 476 01c9 01       		.uleb128 0x1
+ 477 01ca 9C       		.byte	0x9c
+ 478 01cb 1D020000 		.4byte	0x21d
+ 479 01cf 10       		.uleb128 0x10
+ 480 01d0 0E000000 		.4byte	.LVL1
+ 481 01d4 22030000 		.4byte	0x322
+ 482 01d8 E8010000 		.4byte	0x1e8
+ 483 01dc 11       		.uleb128 0x11
+ 484 01dd 01       		.uleb128 0x1
+ 485 01de 51       		.byte	0x51
+ 486 01df 01       		.uleb128 0x1
+ 487 01e0 30       		.byte	0x30
+ 488 01e1 11       		.uleb128 0x11
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 11
+
+
+ 489 01e2 01       		.uleb128 0x1
+ 490 01e3 52       		.byte	0x52
+ 491 01e4 02       		.uleb128 0x2
+ 492 01e5 08       		.byte	0x8
+ 493 01e6 84       		.byte	0x84
+ 494 01e7 00       		.byte	0
+ 495 01e8 10       		.uleb128 0x10
+ 496 01e9 18000000 		.4byte	.LVL2
+ 497 01ed 2B030000 		.4byte	0x32b
+ 498 01f1 04020000 		.4byte	0x204
+ 499 01f5 11       		.uleb128 0x11
+ 500 01f6 01       		.uleb128 0x1
+ 501 01f7 51       		.byte	0x51
+ 502 01f8 05       		.uleb128 0x5
+ 503 01f9 03       		.byte	0x3
+ 504 01fa 00000000 		.4byte	.LC2
+ 505 01fe 11       		.uleb128 0x11
+ 506 01ff 01       		.uleb128 0x1
+ 507 0200 52       		.byte	0x52
+ 508 0201 01       		.uleb128 0x1
+ 509 0202 3E       		.byte	0x3e
+ 510 0203 00       		.byte	0
+ 511 0204 12       		.uleb128 0x12
+ 512 0205 28000000 		.4byte	.LVL3
+ 513 0209 2B030000 		.4byte	0x32b
+ 514 020d 11       		.uleb128 0x11
+ 515 020e 01       		.uleb128 0x1
+ 516 020f 51       		.byte	0x51
+ 517 0210 05       		.uleb128 0x5
+ 518 0211 03       		.byte	0x3
+ 519 0212 10000000 		.4byte	.LC4
+ 520 0216 11       		.uleb128 0x11
+ 521 0217 01       		.uleb128 0x1
+ 522 0218 52       		.byte	0x52
+ 523 0219 01       		.uleb128 0x1
+ 524 021a 3B       		.byte	0x3b
+ 525 021b 00       		.byte	0
+ 526 021c 00       		.byte	0
+ 527 021d 0E       		.uleb128 0xe
+ 528 021e 81000000 		.4byte	.LASF30
+ 529 0222 01       		.byte	0x1
+ 530 0223 20       		.byte	0x20
+ 531 0224 00000000 		.4byte	.LFB63
+ 532 0228 18000000 		.4byte	.LFE63-.LFB63
+ 533 022c 01       		.uleb128 0x1
+ 534 022d 9C       		.byte	0x9c
+ 535 022e 3C020000 		.4byte	0x23c
+ 536 0232 0F       		.uleb128 0xf
+ 537 0233 10000000 		.4byte	.LVL4
+ 538 0237 BA010000 		.4byte	0x1ba
+ 539 023b 00       		.byte	0
+ 540 023c 0E       		.uleb128 0xe
+ 541 023d 75000000 		.4byte	.LASF31
+ 542 0241 01       		.byte	0x1
+ 543 0242 28       		.byte	0x28
+ 544 0243 00000000 		.4byte	.LFB64
+ 545 0247 74000000 		.4byte	.LFE64-.LFB64
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 12
+
+
+ 546 024b 01       		.uleb128 0x1
+ 547 024c 9C       		.byte	0x9c
+ 548 024d EF020000 		.4byte	0x2ef
+ 549 0251 10       		.uleb128 0x10
+ 550 0252 16000000 		.4byte	.LVL5
+ 551 0256 34030000 		.4byte	0x334
+ 552 025a 68020000 		.4byte	0x268
+ 553 025e 11       		.uleb128 0x11
+ 554 025f 01       		.uleb128 0x1
+ 555 0260 50       		.byte	0x50
+ 556 0261 05       		.uleb128 0x5
+ 557 0262 03       		.byte	0x3
+ 558 0263 1C000000 		.4byte	.LC8
+ 559 0267 00       		.byte	0
+ 560 0268 10       		.uleb128 0x10
+ 561 0269 22000000 		.4byte	.LVL6
+ 562 026d 43030000 		.4byte	0x343
+ 563 0271 7F020000 		.4byte	0x27f
+ 564 0275 11       		.uleb128 0x11
+ 565 0276 01       		.uleb128 0x1
+ 566 0277 50       		.byte	0x50
+ 567 0278 05       		.uleb128 0x5
+ 568 0279 03       		.byte	0x3
+ 569 027a 28000000 		.4byte	.LC10
+ 570 027e 00       		.byte	0
+ 571 027f 10       		.uleb128 0x10
+ 572 0280 2C000000 		.4byte	.LVL7
+ 573 0284 43030000 		.4byte	0x343
+ 574 0288 96020000 		.4byte	0x296
+ 575 028c 11       		.uleb128 0x11
+ 576 028d 01       		.uleb128 0x1
+ 577 028e 50       		.byte	0x50
+ 578 028f 05       		.uleb128 0x5
+ 579 0290 03       		.byte	0x3
+ 580 0291 3C000000 		.4byte	.LC12
+ 581 0295 00       		.byte	0
+ 582 0296 10       		.uleb128 0x10
+ 583 0297 34000000 		.4byte	.LVL8
+ 584 029b 43030000 		.4byte	0x343
+ 585 029f AD020000 		.4byte	0x2ad
+ 586 02a3 11       		.uleb128 0x11
+ 587 02a4 01       		.uleb128 0x1
+ 588 02a5 50       		.byte	0x50
+ 589 02a6 05       		.uleb128 0x5
+ 590 02a7 03       		.byte	0x3
+ 591 02a8 50000000 		.4byte	.LC14
+ 592 02ac 00       		.byte	0
+ 593 02ad 10       		.uleb128 0x10
+ 594 02ae 3E000000 		.4byte	.LVL9
+ 595 02b2 43030000 		.4byte	0x343
+ 596 02b6 C4020000 		.4byte	0x2c4
+ 597 02ba 11       		.uleb128 0x11
+ 598 02bb 01       		.uleb128 0x1
+ 599 02bc 50       		.byte	0x50
+ 600 02bd 05       		.uleb128 0x5
+ 601 02be 03       		.byte	0x3
+ 602 02bf 64000000 		.4byte	.LC16
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 13
+
+
+ 603 02c3 00       		.byte	0
+ 604 02c4 10       		.uleb128 0x10
+ 605 02c5 48000000 		.4byte	.LVL10
+ 606 02c9 43030000 		.4byte	0x343
+ 607 02cd DB020000 		.4byte	0x2db
+ 608 02d1 11       		.uleb128 0x11
+ 609 02d2 01       		.uleb128 0x1
+ 610 02d3 50       		.byte	0x50
+ 611 02d4 05       		.uleb128 0x5
+ 612 02d5 03       		.byte	0x3
+ 613 02d6 78000000 		.4byte	.LC18
+ 614 02da 00       		.byte	0
+ 615 02db 12       		.uleb128 0x12
+ 616 02dc 52000000 		.4byte	.LVL11
+ 617 02e0 43030000 		.4byte	0x343
+ 618 02e4 11       		.uleb128 0x11
+ 619 02e5 01       		.uleb128 0x1
+ 620 02e6 50       		.byte	0x50
+ 621 02e7 05       		.uleb128 0x5
+ 622 02e8 03       		.byte	0x3
+ 623 02e9 8C000000 		.4byte	.LC20
+ 624 02ed 00       		.byte	0
+ 625 02ee 00       		.byte	0
+ 626 02ef 13       		.uleb128 0x13
+ 627 02f0 0C000000 		.4byte	.LASF32
+ 628 02f4 01       		.byte	0x1
+ 629 02f5 0F       		.byte	0xf
+ 630 02f6 00030000 		.4byte	0x300
+ 631 02fa 05       		.uleb128 0x5
+ 632 02fb 03       		.byte	0x3
+ 633 02fc 00000000 		.4byte	g_ptrServer
+ 634 0300 14       		.uleb128 0x14
+ 635 0301 04       		.byte	0x4
+ 636 0302 D6000000 		.4byte	0xd6
+ 637 0306 13       		.uleb128 0x13
+ 638 0307 FD000000 		.4byte	.LASF33
+ 639 030b 04       		.byte	0x4
+ 640 030c 3B       		.byte	0x3b
+ 641 030d 4D010000 		.4byte	0x14d
+ 642 0311 05       		.uleb128 0x5
+ 643 0312 03       		.byte	0x3
+ 644 0313 00000000 		.4byte	Param
+ 645 0317 15       		.uleb128 0x15
+ 646 0318 D4000000 		.4byte	.LASF36
+ 647 031c D4000000 		.4byte	.LASF36
+ 648 0320 05       		.byte	0x5
+ 649 0321 1F       		.byte	0x1f
+ 650 0322 16       		.uleb128 0x16
+ 651 0323 CD000000 		.4byte	.LASF34
+ 652 0327 CD000000 		.4byte	.LASF34
+ 653 032b 16       		.uleb128 0x16
+ 654 032c F6010000 		.4byte	.LASF35
+ 655 0330 F6010000 		.4byte	.LASF35
+ 656 0334 17       		.uleb128 0x17
+ 657 0335 C8000000 		.4byte	.LASF43
+ 658 0339 58000000 		.4byte	.LASF44
+ 659 033d 07       		.byte	0x7
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 14
+
+
+ 660 033e 00       		.byte	0
+ 661 033f C8000000 		.4byte	.LASF43
+ 662 0343 15       		.uleb128 0x15
+ 663 0344 EA010000 		.4byte	.LASF37
+ 664 0348 EA010000 		.4byte	.LASF37
+ 665 034c 06       		.byte	0x6
+ 666 034d BB       		.byte	0xbb
+ 667 034e 00       		.byte	0
+ 668              		.section	.debug_abbrev,"",%progbits
+ 669              	.Ldebug_abbrev0:
+ 670 0000 01       		.uleb128 0x1
+ 671 0001 11       		.uleb128 0x11
+ 672 0002 01       		.byte	0x1
+ 673 0003 25       		.uleb128 0x25
+ 674 0004 0E       		.uleb128 0xe
+ 675 0005 13       		.uleb128 0x13
+ 676 0006 0B       		.uleb128 0xb
+ 677 0007 03       		.uleb128 0x3
+ 678 0008 0E       		.uleb128 0xe
+ 679 0009 1B       		.uleb128 0x1b
+ 680 000a 0E       		.uleb128 0xe
+ 681 000b 55       		.uleb128 0x55
+ 682 000c 17       		.uleb128 0x17
+ 683 000d 11       		.uleb128 0x11
+ 684 000e 01       		.uleb128 0x1
+ 685 000f 10       		.uleb128 0x10
+ 686 0010 17       		.uleb128 0x17
+ 687 0011 00       		.byte	0
+ 688 0012 00       		.byte	0
+ 689 0013 02       		.uleb128 0x2
+ 690 0014 13       		.uleb128 0x13
+ 691 0015 01       		.byte	0x1
+ 692 0016 0B       		.uleb128 0xb
+ 693 0017 0B       		.uleb128 0xb
+ 694 0018 3A       		.uleb128 0x3a
+ 695 0019 0B       		.uleb128 0xb
+ 696 001a 3B       		.uleb128 0x3b
+ 697 001b 0B       		.uleb128 0xb
+ 698 001c 01       		.uleb128 0x1
+ 699 001d 13       		.uleb128 0x13
+ 700 001e 00       		.byte	0
+ 701 001f 00       		.byte	0
+ 702 0020 03       		.uleb128 0x3
+ 703 0021 0D       		.uleb128 0xd
+ 704 0022 00       		.byte	0
+ 705 0023 03       		.uleb128 0x3
+ 706 0024 08       		.uleb128 0x8
+ 707 0025 3A       		.uleb128 0x3a
+ 708 0026 0B       		.uleb128 0xb
+ 709 0027 3B       		.uleb128 0x3b
+ 710 0028 0B       		.uleb128 0xb
+ 711 0029 49       		.uleb128 0x49
+ 712 002a 13       		.uleb128 0x13
+ 713 002b 38       		.uleb128 0x38
+ 714 002c 0B       		.uleb128 0xb
+ 715 002d 00       		.byte	0
+ 716 002e 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 15
+
+
+ 717 002f 04       		.uleb128 0x4
+ 718 0030 0D       		.uleb128 0xd
+ 719 0031 00       		.byte	0
+ 720 0032 03       		.uleb128 0x3
+ 721 0033 0E       		.uleb128 0xe
+ 722 0034 3A       		.uleb128 0x3a
+ 723 0035 0B       		.uleb128 0xb
+ 724 0036 3B       		.uleb128 0x3b
+ 725 0037 0B       		.uleb128 0xb
+ 726 0038 49       		.uleb128 0x49
+ 727 0039 13       		.uleb128 0x13
+ 728 003a 38       		.uleb128 0x38
+ 729 003b 0B       		.uleb128 0xb
+ 730 003c 00       		.byte	0
+ 731 003d 00       		.byte	0
+ 732 003e 05       		.uleb128 0x5
+ 733 003f 01       		.uleb128 0x1
+ 734 0040 01       		.byte	0x1
+ 735 0041 49       		.uleb128 0x49
+ 736 0042 13       		.uleb128 0x13
+ 737 0043 01       		.uleb128 0x1
+ 738 0044 13       		.uleb128 0x13
+ 739 0045 00       		.byte	0
+ 740 0046 00       		.byte	0
+ 741 0047 06       		.uleb128 0x6
+ 742 0048 21       		.uleb128 0x21
+ 743 0049 00       		.byte	0
+ 744 004a 49       		.uleb128 0x49
+ 745 004b 13       		.uleb128 0x13
+ 746 004c 2F       		.uleb128 0x2f
+ 747 004d 0B       		.uleb128 0xb
+ 748 004e 00       		.byte	0
+ 749 004f 00       		.byte	0
+ 750 0050 07       		.uleb128 0x7
+ 751 0051 24       		.uleb128 0x24
+ 752 0052 00       		.byte	0
+ 753 0053 0B       		.uleb128 0xb
+ 754 0054 0B       		.uleb128 0xb
+ 755 0055 3E       		.uleb128 0x3e
+ 756 0056 0B       		.uleb128 0xb
+ 757 0057 03       		.uleb128 0x3
+ 758 0058 0E       		.uleb128 0xe
+ 759 0059 00       		.byte	0
+ 760 005a 00       		.byte	0
+ 761 005b 08       		.uleb128 0x8
+ 762 005c 16       		.uleb128 0x16
+ 763 005d 00       		.byte	0
+ 764 005e 03       		.uleb128 0x3
+ 765 005f 0E       		.uleb128 0xe
+ 766 0060 3A       		.uleb128 0x3a
+ 767 0061 0B       		.uleb128 0xb
+ 768 0062 3B       		.uleb128 0x3b
+ 769 0063 0B       		.uleb128 0xb
+ 770 0064 49       		.uleb128 0x49
+ 771 0065 13       		.uleb128 0x13
+ 772 0066 00       		.byte	0
+ 773 0067 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 16
+
+
+ 774 0068 09       		.uleb128 0x9
+ 775 0069 24       		.uleb128 0x24
+ 776 006a 00       		.byte	0
+ 777 006b 0B       		.uleb128 0xb
+ 778 006c 0B       		.uleb128 0xb
+ 779 006d 3E       		.uleb128 0x3e
+ 780 006e 0B       		.uleb128 0xb
+ 781 006f 03       		.uleb128 0x3
+ 782 0070 08       		.uleb128 0x8
+ 783 0071 00       		.byte	0
+ 784 0072 00       		.byte	0
+ 785 0073 0A       		.uleb128 0xa
+ 786 0074 16       		.uleb128 0x16
+ 787 0075 00       		.byte	0
+ 788 0076 03       		.uleb128 0x3
+ 789 0077 0E       		.uleb128 0xe
+ 790 0078 3A       		.uleb128 0x3a
+ 791 0079 0B       		.uleb128 0xb
+ 792 007a 3B       		.uleb128 0x3b
+ 793 007b 05       		.uleb128 0x5
+ 794 007c 49       		.uleb128 0x49
+ 795 007d 13       		.uleb128 0x13
+ 796 007e 00       		.byte	0
+ 797 007f 00       		.byte	0
+ 798 0080 0B       		.uleb128 0xb
+ 799 0081 13       		.uleb128 0x13
+ 800 0082 01       		.byte	0x1
+ 801 0083 03       		.uleb128 0x3
+ 802 0084 0E       		.uleb128 0xe
+ 803 0085 0B       		.uleb128 0xb
+ 804 0086 0B       		.uleb128 0xb
+ 805 0087 3A       		.uleb128 0x3a
+ 806 0088 0B       		.uleb128 0xb
+ 807 0089 3B       		.uleb128 0x3b
+ 808 008a 0B       		.uleb128 0xb
+ 809 008b 01       		.uleb128 0x1
+ 810 008c 13       		.uleb128 0x13
+ 811 008d 00       		.byte	0
+ 812 008e 00       		.byte	0
+ 813 008f 0C       		.uleb128 0xc
+ 814 0090 04       		.uleb128 0x4
+ 815 0091 01       		.byte	0x1
+ 816 0092 03       		.uleb128 0x3
+ 817 0093 0E       		.uleb128 0xe
+ 818 0094 0B       		.uleb128 0xb
+ 819 0095 0B       		.uleb128 0xb
+ 820 0096 49       		.uleb128 0x49
+ 821 0097 13       		.uleb128 0x13
+ 822 0098 3A       		.uleb128 0x3a
+ 823 0099 0B       		.uleb128 0xb
+ 824 009a 3B       		.uleb128 0x3b
+ 825 009b 0B       		.uleb128 0xb
+ 826 009c 01       		.uleb128 0x1
+ 827 009d 13       		.uleb128 0x13
+ 828 009e 00       		.byte	0
+ 829 009f 00       		.byte	0
+ 830 00a0 0D       		.uleb128 0xd
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 17
+
+
+ 831 00a1 28       		.uleb128 0x28
+ 832 00a2 00       		.byte	0
+ 833 00a3 03       		.uleb128 0x3
+ 834 00a4 0E       		.uleb128 0xe
+ 835 00a5 1C       		.uleb128 0x1c
+ 836 00a6 0B       		.uleb128 0xb
+ 837 00a7 00       		.byte	0
+ 838 00a8 00       		.byte	0
+ 839 00a9 0E       		.uleb128 0xe
+ 840 00aa 2E       		.uleb128 0x2e
+ 841 00ab 01       		.byte	0x1
+ 842 00ac 3F       		.uleb128 0x3f
+ 843 00ad 19       		.uleb128 0x19
+ 844 00ae 03       		.uleb128 0x3
+ 845 00af 0E       		.uleb128 0xe
+ 846 00b0 3A       		.uleb128 0x3a
+ 847 00b1 0B       		.uleb128 0xb
+ 848 00b2 3B       		.uleb128 0x3b
+ 849 00b3 0B       		.uleb128 0xb
+ 850 00b4 11       		.uleb128 0x11
+ 851 00b5 01       		.uleb128 0x1
+ 852 00b6 12       		.uleb128 0x12
+ 853 00b7 06       		.uleb128 0x6
+ 854 00b8 40       		.uleb128 0x40
+ 855 00b9 18       		.uleb128 0x18
+ 856 00ba 9742     		.uleb128 0x2117
+ 857 00bc 19       		.uleb128 0x19
+ 858 00bd 01       		.uleb128 0x1
+ 859 00be 13       		.uleb128 0x13
+ 860 00bf 00       		.byte	0
+ 861 00c0 00       		.byte	0
+ 862 00c1 0F       		.uleb128 0xf
+ 863 00c2 898201   		.uleb128 0x4109
+ 864 00c5 00       		.byte	0
+ 865 00c6 11       		.uleb128 0x11
+ 866 00c7 01       		.uleb128 0x1
+ 867 00c8 31       		.uleb128 0x31
+ 868 00c9 13       		.uleb128 0x13
+ 869 00ca 00       		.byte	0
+ 870 00cb 00       		.byte	0
+ 871 00cc 10       		.uleb128 0x10
+ 872 00cd 898201   		.uleb128 0x4109
+ 873 00d0 01       		.byte	0x1
+ 874 00d1 11       		.uleb128 0x11
+ 875 00d2 01       		.uleb128 0x1
+ 876 00d3 31       		.uleb128 0x31
+ 877 00d4 13       		.uleb128 0x13
+ 878 00d5 01       		.uleb128 0x1
+ 879 00d6 13       		.uleb128 0x13
+ 880 00d7 00       		.byte	0
+ 881 00d8 00       		.byte	0
+ 882 00d9 11       		.uleb128 0x11
+ 883 00da 8A8201   		.uleb128 0x410a
+ 884 00dd 00       		.byte	0
+ 885 00de 02       		.uleb128 0x2
+ 886 00df 18       		.uleb128 0x18
+ 887 00e0 9142     		.uleb128 0x2111
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 18
+
+
+ 888 00e2 18       		.uleb128 0x18
+ 889 00e3 00       		.byte	0
+ 890 00e4 00       		.byte	0
+ 891 00e5 12       		.uleb128 0x12
+ 892 00e6 898201   		.uleb128 0x4109
+ 893 00e9 01       		.byte	0x1
+ 894 00ea 11       		.uleb128 0x11
+ 895 00eb 01       		.uleb128 0x1
+ 896 00ec 31       		.uleb128 0x31
+ 897 00ed 13       		.uleb128 0x13
+ 898 00ee 00       		.byte	0
+ 899 00ef 00       		.byte	0
+ 900 00f0 13       		.uleb128 0x13
+ 901 00f1 34       		.uleb128 0x34
+ 902 00f2 00       		.byte	0
+ 903 00f3 03       		.uleb128 0x3
+ 904 00f4 0E       		.uleb128 0xe
+ 905 00f5 3A       		.uleb128 0x3a
+ 906 00f6 0B       		.uleb128 0xb
+ 907 00f7 3B       		.uleb128 0x3b
+ 908 00f8 0B       		.uleb128 0xb
+ 909 00f9 49       		.uleb128 0x49
+ 910 00fa 13       		.uleb128 0x13
+ 911 00fb 3F       		.uleb128 0x3f
+ 912 00fc 19       		.uleb128 0x19
+ 913 00fd 02       		.uleb128 0x2
+ 914 00fe 18       		.uleb128 0x18
+ 915 00ff 00       		.byte	0
+ 916 0100 00       		.byte	0
+ 917 0101 14       		.uleb128 0x14
+ 918 0102 0F       		.uleb128 0xf
+ 919 0103 00       		.byte	0
+ 920 0104 0B       		.uleb128 0xb
+ 921 0105 0B       		.uleb128 0xb
+ 922 0106 49       		.uleb128 0x49
+ 923 0107 13       		.uleb128 0x13
+ 924 0108 00       		.byte	0
+ 925 0109 00       		.byte	0
+ 926 010a 15       		.uleb128 0x15
+ 927 010b 2E       		.uleb128 0x2e
+ 928 010c 00       		.byte	0
+ 929 010d 3F       		.uleb128 0x3f
+ 930 010e 19       		.uleb128 0x19
+ 931 010f 3C       		.uleb128 0x3c
+ 932 0110 19       		.uleb128 0x19
+ 933 0111 6E       		.uleb128 0x6e
+ 934 0112 0E       		.uleb128 0xe
+ 935 0113 03       		.uleb128 0x3
+ 936 0114 0E       		.uleb128 0xe
+ 937 0115 3A       		.uleb128 0x3a
+ 938 0116 0B       		.uleb128 0xb
+ 939 0117 3B       		.uleb128 0x3b
+ 940 0118 0B       		.uleb128 0xb
+ 941 0119 00       		.byte	0
+ 942 011a 00       		.byte	0
+ 943 011b 16       		.uleb128 0x16
+ 944 011c 2E       		.uleb128 0x2e
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 19
+
+
+ 945 011d 00       		.byte	0
+ 946 011e 3F       		.uleb128 0x3f
+ 947 011f 19       		.uleb128 0x19
+ 948 0120 3C       		.uleb128 0x3c
+ 949 0121 19       		.uleb128 0x19
+ 950 0122 6E       		.uleb128 0x6e
+ 951 0123 0E       		.uleb128 0xe
+ 952 0124 03       		.uleb128 0x3
+ 953 0125 0E       		.uleb128 0xe
+ 954 0126 00       		.byte	0
+ 955 0127 00       		.byte	0
+ 956 0128 17       		.uleb128 0x17
+ 957 0129 2E       		.uleb128 0x2e
+ 958 012a 00       		.byte	0
+ 959 012b 3F       		.uleb128 0x3f
+ 960 012c 19       		.uleb128 0x19
+ 961 012d 3C       		.uleb128 0x3c
+ 962 012e 19       		.uleb128 0x19
+ 963 012f 6E       		.uleb128 0x6e
+ 964 0130 0E       		.uleb128 0xe
+ 965 0131 03       		.uleb128 0x3
+ 966 0132 0E       		.uleb128 0xe
+ 967 0133 3A       		.uleb128 0x3a
+ 968 0134 0B       		.uleb128 0xb
+ 969 0135 3B       		.uleb128 0x3b
+ 970 0136 0B       		.uleb128 0xb
+ 971 0137 6E       		.uleb128 0x6e
+ 972 0138 0E       		.uleb128 0xe
+ 973 0139 00       		.byte	0
+ 974 013a 00       		.byte	0
+ 975 013b 00       		.byte	0
+ 976              		.section	.debug_aranges,"",%progbits
+ 977 0000 34000000 		.4byte	0x34
+ 978 0004 0200     		.2byte	0x2
+ 979 0006 00000000 		.4byte	.Ldebug_info0
+ 980 000a 04       		.byte	0x4
+ 981 000b 00       		.byte	0
+ 982 000c 0000     		.2byte	0
+ 983 000e 0000     		.2byte	0
+ 984 0010 00000000 		.4byte	.LFB61
+ 985 0014 10000000 		.4byte	.LFE61-.LFB61
+ 986 0018 00000000 		.4byte	.LFB62
+ 987 001c 38000000 		.4byte	.LFE62-.LFB62
+ 988 0020 00000000 		.4byte	.LFB63
+ 989 0024 18000000 		.4byte	.LFE63-.LFB63
+ 990 0028 00000000 		.4byte	.LFB64
+ 991 002c 74000000 		.4byte	.LFE64-.LFB64
+ 992 0030 00000000 		.4byte	0
+ 993 0034 00000000 		.4byte	0
+ 994              		.section	.debug_ranges,"",%progbits
+ 995              	.Ldebug_ranges0:
+ 996 0000 00000000 		.4byte	.LFB61
+ 997 0004 10000000 		.4byte	.LFE61
+ 998 0008 00000000 		.4byte	.LFB62
+ 999 000c 38000000 		.4byte	.LFE62
+ 1000 0010 00000000 		.4byte	.LFB63
+ 1001 0014 18000000 		.4byte	.LFE63
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 20
+
+
+ 1002 0018 00000000 		.4byte	.LFB64
+ 1003 001c 74000000 		.4byte	.LFE64
+ 1004 0020 00000000 		.4byte	0
+ 1005 0024 00000000 		.4byte	0
+ 1006              		.section	.debug_line,"",%progbits
+ 1007              	.Ldebug_line0:
+ 1008 0000 4E010000 		.section	.debug_str,"MS",%progbits,1
+ 1008      0200F300 
+ 1008      00000201 
+ 1008      FB0E0D00 
+ 1008      01010101 
+ 1009              	.LASF23:
+ 1010 0000 73746174 		.ascii	"stat_TC_INT\000"
+ 1010      5F54435F 
+ 1010      494E5400 
+ 1011              	.LASF32:
+ 1012 000c 675F7074 		.ascii	"g_ptrServer\000"
+ 1012      72536572 
+ 1012      76657200 
+ 1013              	.LASF28:
+ 1014 0018 696E6974 		.ascii	"initServer\000"
+ 1014      53657276 
+ 1014      657200
+ 1015              	.LASF29:
+ 1016 0023 53657444 		.ascii	"SetDefaultConfigServer\000"
+ 1016      65666175 
+ 1016      6C74436F 
+ 1016      6E666967 
+ 1016      53657276 
+ 1017              	.LASF4:
+ 1018 003a 64657669 		.ascii	"deviceName\000"
+ 1018      63654E61 
+ 1018      6D6500
+ 1019              	.LASF21:
+ 1020 0045 646F7562 		.ascii	"double\000"
+ 1020      6C6500
+ 1021              	.LASF18:
+ 1022 004c 75696E74 		.ascii	"uint8\000"
+ 1022      3800
+ 1023              	.LASF20:
+ 1024 0052 666C6F61 		.ascii	"float\000"
+ 1024      7400
+ 1025              	.LASF44:
+ 1026 0058 5F5F6275 		.ascii	"__builtin_puts\000"
+ 1026      696C7469 
+ 1026      6E5F7075 
+ 1026      747300
+ 1027              	.LASF10:
+ 1028 0067 756E7369 		.ascii	"unsigned char\000"
+ 1028      676E6564 
+ 1028      20636861 
+ 1028      7200
+ 1029              	.LASF31:
+ 1030 0075 7072696E 		.ascii	"printConfig\000"
+ 1030      74436F6E 
+ 1030      66696700 
+ 1031              	.LASF30:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 21
+
+
+ 1032 0081 56616C69 		.ascii	"ValidationConfigServer\000"
+ 1032      64617469 
+ 1032      6F6E436F 
+ 1032      6E666967 
+ 1032      53657276 
+ 1033              	.LASF13:
+ 1034 0098 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1034      20756E73 
+ 1034      69676E65 
+ 1034      6420696E 
+ 1034      7400
+ 1035              	.LASF41:
+ 1036 00aa 73506172 		.ascii	"sParameter\000"
+ 1036      616D6574 
+ 1036      657200
+ 1037              	.LASF8:
+ 1038 00b5 73686F72 		.ascii	"short unsigned int\000"
+ 1038      7420756E 
+ 1038      7369676E 
+ 1038      65642069 
+ 1038      6E7400
+ 1039              	.LASF43:
+ 1040 00c8 70757473 		.ascii	"puts\000"
+ 1040      00
+ 1041              	.LASF34:
+ 1042 00cd 6D656D73 		.ascii	"memset\000"
+ 1042      657400
+ 1043              	.LASF36:
+ 1044 00d4 67657445 		.ascii	"getExternalConfigData\000"
+ 1044      78746572 
+ 1044      6E616C43 
+ 1044      6F6E6669 
+ 1044      67446174 
+ 1045              	.LASF24:
+ 1046 00ea 706F735F 		.ascii	"pos_X\000"
+ 1046      5800
+ 1047              	.LASF25:
+ 1048 00f0 706F735F 		.ascii	"pos_Y\000"
+ 1048      5900
+ 1049              	.LASF19:
+ 1050 00f6 75696E74 		.ascii	"uint16\000"
+ 1050      313600
+ 1051              	.LASF33:
+ 1052 00fd 50617261 		.ascii	"Param\000"
+ 1052      6D00
+ 1053              	.LASF16:
+ 1054 0103 756E7369 		.ascii	"unsigned int\000"
+ 1054      676E6564 
+ 1054      20696E74 
+ 1054      00
+ 1055              	.LASF15:
+ 1056 0110 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1056      206C6F6E 
+ 1056      6720756E 
+ 1056      7369676E 
+ 1056      65642069 
+ 1057              	.LASF38:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 22
+
+
+ 1058 0127 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1058      43313120 
+ 1058      352E342E 
+ 1058      31203230 
+ 1058      31363036 
+ 1059 015a 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1059      20726576 
+ 1059      6973696F 
+ 1059      6E203233 
+ 1059      37373135 
+ 1060 018d 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1060      66756E63 
+ 1060      74696F6E 
+ 1060      2D736563 
+ 1060      74696F6E 
+ 1061              	.LASF22:
+ 1062 01b5 6C6F6E67 		.ascii	"long double\000"
+ 1062      20646F75 
+ 1062      626C6500 
+ 1063              	.LASF6:
+ 1064 01c1 73697A65 		.ascii	"sizetype\000"
+ 1064      74797065 
+ 1064      00
+ 1065              	.LASF14:
+ 1066 01ca 6C6F6E67 		.ascii	"long long int\000"
+ 1066      206C6F6E 
+ 1066      6720696E 
+ 1066      7400
+ 1067              	.LASF7:
+ 1068 01d8 63686172 		.ascii	"char\000"
+ 1068      00
+ 1069              	.LASF39:
+ 1070 01dd 6C69625C 		.ascii	"lib\\server.c\000"
+ 1070      73657276 
+ 1070      65722E63 
+ 1070      00
+ 1071              	.LASF37:
+ 1072 01ea 7072696E 		.ascii	"printf\000"
+ 1072      746600
+ 1073              	.LASF1:
+ 1074 01f1 706F7274 		.ascii	"port\000"
+ 1074      00
+ 1075              	.LASF35:
+ 1076 01f6 6D656D63 		.ascii	"memcpy\000"
+ 1076      707900
+ 1077              	.LASF11:
+ 1078 01fd 73686F72 		.ascii	"short int\000"
+ 1078      7420696E 
+ 1078      7400
+ 1079              	.LASF40:
+ 1080 0207 433A5C50 		.ascii	"C:\\Psoc\\IoT_Integrated\\Project\\Design.cydsn\000"
+ 1080      736F635C 
+ 1080      496F545F 
+ 1080      496E7465 
+ 1080      67726174 
+ 1081              	.LASF27:
+ 1082 0233 434F4E46 		.ascii	"CONFIG_DATA_MISC\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cckGW8Bq.s 			page 23
+
+
+ 1082      49475F44 
+ 1082      4154415F 
+ 1082      4D495343 
+ 1082      00
+ 1083              	.LASF42:
+ 1084 0244 45585445 		.ascii	"EXTERNAL_CONFIG_DATA\000"
+ 1084      524E414C 
+ 1084      5F434F4E 
+ 1084      4649475F 
+ 1084      44415441 
+ 1085              	.LASF12:
+ 1086 0259 6C6F6E67 		.ascii	"long int\000"
+ 1086      20696E74 
+ 1086      00
+ 1087              	.LASF0:
+ 1088 0262 70617468 		.ascii	"path\000"
+ 1088      00
+ 1089              	.LASF2:
+ 1090 0267 53534944 		.ascii	"SSID\000"
+ 1090      00
+ 1091              	.LASF9:
+ 1092 026c 7369676E 		.ascii	"signed char\000"
+ 1092      65642063 
+ 1092      68617200 
+ 1093              	.LASF26:
+ 1094 0278 434F4E46 		.ascii	"CONFIG_DATA_CONFIG\000"
+ 1094      49475F44 
+ 1094      4154415F 
+ 1094      434F4E46 
+ 1094      494700
+ 1095              	.LASF5:
+ 1096 028b 64657669 		.ascii	"deviceIndex\000"
+ 1096      6365496E 
+ 1096      64657800 
+ 1097              	.LASF17:
+ 1098 0297 53455256 		.ascii	"SERVER_INFO\000"
+ 1098      45525F49 
+ 1098      4E464F00 
+ 1099              	.LASF3:
+ 1100 02a3 70617373 		.ascii	"password\000"
+ 1100      776F7264 
+ 1100      00
+ 1101              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

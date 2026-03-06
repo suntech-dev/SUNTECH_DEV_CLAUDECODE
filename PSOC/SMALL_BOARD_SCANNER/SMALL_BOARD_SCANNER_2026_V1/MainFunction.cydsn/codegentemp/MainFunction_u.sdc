@@ -1,0 +1,3 @@
+# Component constraints for C:\SUNTECH_DEV_CLAUDECODE\PSOC\SCANNER_SMALL_BOARD\SCANNER_SMALL_BOARD_2026_V1\MainFunction.cydsn\TopDesign\TopDesign.cysch
+# Project: C:\SUNTECH_DEV_CLAUDECODE\PSOC\SCANNER_SMALL_BOARD\SCANNER_SMALL_BOARD_2026_V1\MainFunction.cydsn\MainFunction.cyprj
+# Date: Tue, 03 Mar 2026 23:41:24 GMT

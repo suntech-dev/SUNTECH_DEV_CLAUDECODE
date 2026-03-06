@@ -1,0 +1,705 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc6VuqcO.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"common.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.init,"ax",%progbits
+  20              		.align	2
+  21              		.global	init
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	init, %function
+  25              	init:
+  26              	.LFB35:
+  27              		.file 1 "common.c"
+   1:common.c      **** /* ========================================
+   2:common.c      ****  *
+   3:common.c      ****  * Copyright SUNTECH, 2018-2026
+   4:common.c      ****  * All Rights Reserved
+   5:common.c      ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:common.c      ****  *
+   7:common.c      ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:common.c      ****  * WHICH IS THE PROPERTY OF SUNTECH.
+   9:common.c      ****  *
+  10:common.c      ****  * ========================================
+  11:common.c      **** */
+  12:common.c      **** #include "main.h"
+  13:common.c      **** 
+  14:common.c      **** void init(void)
+  15:common.c      **** {
+  28              		.loc 1 15 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 10B5     		push	{r4, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  16:common.c      ****     initSysTick();
+  36              		.loc 1 16 0
+  37 0002 FFF7FEFF 		bl	initSysTick
+  38              	.LVL0:
+  17:common.c      **** 
+  18:common.c      ****     port_MONITORING_Start();
+  39              		.loc 1 18 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc6VuqcO.s 			page 2
+
+
+  40 0006 FFF7FEFF 		bl	port_MONITORING_Start
+  41              	.LVL1:
+  19:common.c      ****     port_OP_Start();
+  42              		.loc 1 19 0
+  43 000a FFF7FEFF 		bl	port_OP_Start
+  44              	.LVL2:
+  20:common.c      ****     BARCODE_Start();
+  45              		.loc 1 20 0
+  46 000e FFF7FEFF 		bl	BARCODE_Start
+  47              	.LVL3:
+  21:common.c      **** }
+  48              		.loc 1 21 0
+  49              		@ sp needed
+  50 0012 10BD     		pop	{r4, pc}
+  51              		.cfi_endproc
+  52              	.LFE35:
+  53              		.size	init, .-init
+  54              		.section	.text.BootloaderStart,"ax",%progbits
+  55              		.align	2
+  56              		.global	BootloaderStart
+  57              		.code	16
+  58              		.thumb_func
+  59              		.type	BootloaderStart, %function
+  60              	BootloaderStart:
+  61              	.LFB36:
+  22:common.c      **** 
+  23:common.c      **** 
+  24:common.c      **** void BootloaderStart(void)
+  25:common.c      **** {
+  62              		.loc 1 25 0
+  63              		.cfi_startproc
+  64              		@ args = 0, pretend = 0, frame = 0
+  65              		@ frame_needed = 0, uses_anonymous_args = 0
+  66 0000 10B5     		push	{r4, lr}
+  67              		.cfi_def_cfa_offset 8
+  68              		.cfi_offset 4, -8
+  69              		.cfi_offset 14, -4
+  26:common.c      ****     port_MONITORING_UartPutString(__DATE__);
+  70              		.loc 1 26 0
+  71 0002 0948     		ldr	r0, .L3
+  72 0004 FFF7FEFF 		bl	port_MONITORING_UartPutString
+  73              	.LVL4:
+  27:common.c      ****     port_MONITORING_UartPutString("\r\nCurrent firmware Version is ");
+  74              		.loc 1 27 0
+  75 0008 0848     		ldr	r0, .L3+4
+  76 000a FFF7FEFF 		bl	port_MONITORING_UartPutString
+  77              	.LVL5:
+  28:common.c      ****     port_MONITORING_UartPutString(FIRMWARE_VERSION);
+  78              		.loc 1 28 0
+  79 000e 0848     		ldr	r0, .L3+8
+  80 0010 FFF7FEFF 		bl	port_MONITORING_UartPutString
+  81              	.LVL6:
+  29:common.c      ****     port_MONITORING_UartPutString("\r\nFirmware Upgrade Ready");
+  82              		.loc 1 29 0
+  83 0014 0748     		ldr	r0, .L3+12
+  84 0016 FFF7FEFF 		bl	port_MONITORING_UartPutString
+  85              	.LVL7:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc6VuqcO.s 			page 3
+
+
+  30:common.c      ****     port_MONITORING_UartPutString("(115200bps).");
+  86              		.loc 1 30 0
+  87 001a 0748     		ldr	r0, .L3+16
+  88 001c FFF7FEFF 		bl	port_MONITORING_UartPutString
+  89              	.LVL8:
+  31:common.c      **** 
+  32:common.c      ****     Bootloadable_Load();
+  90              		.loc 1 32 0
+  91 0020 FFF7FEFF 		bl	Bootloadable_Load
+  92              	.LVL9:
+  33:common.c      **** }
+  93              		.loc 1 33 0
+  94              		@ sp needed
+  95 0024 10BD     		pop	{r4, pc}
+  96              	.L4:
+  97 0026 C046     		.align	2
+  98              	.L3:
+  99 0028 00000000 		.word	.LC0
+ 100 002c 0C000000 		.word	.LC2
+ 101 0030 2C000000 		.word	.LC4
+ 102 0034 48000000 		.word	.LC6
+ 103 0038 64000000 		.word	.LC8
+ 104              		.cfi_endproc
+ 105              	.LFE36:
+ 106              		.size	BootloaderStart, .-BootloaderStart
+ 107              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 108              		.align	2
+ 109              	.LC0:
+ 110 0000 4D617220 		.ascii	"Mar  4 2026\000"
+ 110      20342032 
+ 110      30323600 
+ 111              	.LC2:
+ 112 000c 0D0A4375 		.ascii	"\015\012Current firmware Version is \000"
+ 112      7272656E 
+ 112      74206669 
+ 112      726D7761 
+ 112      72652056 
+ 113 002b 00       		.space	1
+ 114              	.LC4:
+ 115 002c 5343414E 		.ascii	"SCANNER_SMALL_BOARD_2026_V1\000"
+ 115      4E45525F 
+ 115      534D414C 
+ 115      4C5F424F 
+ 115      4152445F 
+ 116              	.LC6:
+ 117 0048 0D0A4669 		.ascii	"\015\012Firmware Upgrade Ready\000"
+ 117      726D7761 
+ 117      72652055 
+ 117      70677261 
+ 117      64652052 
+ 118 0061 000000   		.space	3
+ 119              	.LC8:
+ 120 0064 28313135 		.ascii	"(115200bps).\000"
+ 120      32303062 
+ 120      7073292E 
+ 120      00
+ 121              		.text
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc6VuqcO.s 			page 4
+
+
+ 122              	.Letext0:
+ 123              		.file 2 "main.h"
+ 124              		.file 3 "Generated_Source\\PSoC4/port_MONITORING.h"
+ 125              		.file 4 "Generated_Source\\PSoC4/port_OP.h"
+ 126              		.file 5 "Generated_Source\\PSoC4/BARCODE.h"
+ 127              		.file 6 "Generated_Source\\PSoC4/port_MONITORING_SPI_UART.h"
+ 128              		.file 7 "Generated_Source\\PSoC4/Bootloadable.h"
+ 129              		.section	.debug_info,"",%progbits
+ 130              	.Ldebug_info0:
+ 131 0000 9A010000 		.4byte	0x19a
+ 132 0004 0400     		.2byte	0x4
+ 133 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 134 000a 04       		.byte	0x4
+ 135 000b 01       		.uleb128 0x1
+ 136 000c 16010000 		.4byte	.LASF22
+ 137 0010 0C       		.byte	0xc
+ 138 0011 CF010000 		.4byte	.LASF23
+ 139 0015 58000000 		.4byte	.LASF24
+ 140 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 141 001d 00000000 		.4byte	0
+ 142 0021 00000000 		.4byte	.Ldebug_line0
+ 143 0025 02       		.uleb128 0x2
+ 144 0026 01       		.byte	0x1
+ 145 0027 06       		.byte	0x6
+ 146 0028 B7010000 		.4byte	.LASF0
+ 147 002c 02       		.uleb128 0x2
+ 148 002d 01       		.byte	0x1
+ 149 002e 08       		.byte	0x8
+ 150 002f 0E000000 		.4byte	.LASF1
+ 151 0033 02       		.uleb128 0x2
+ 152 0034 02       		.byte	0x2
+ 153 0035 05       		.byte	0x5
+ 154 0036 14020000 		.4byte	.LASF2
+ 155 003a 02       		.uleb128 0x2
+ 156 003b 02       		.byte	0x2
+ 157 003c 07       		.byte	0x7
+ 158 003d A4010000 		.4byte	.LASF3
+ 159 0041 02       		.uleb128 0x2
+ 160 0042 04       		.byte	0x4
+ 161 0043 05       		.byte	0x5
+ 162 0044 06010000 		.4byte	.LASF4
+ 163 0048 02       		.uleb128 0x2
+ 164 0049 04       		.byte	0x4
+ 165 004a 07       		.byte	0x7
+ 166 004b BA000000 		.4byte	.LASF5
+ 167 004f 02       		.uleb128 0x2
+ 168 0050 08       		.byte	0x8
+ 169 0051 05       		.byte	0x5
+ 170 0052 00000000 		.4byte	.LASF6
+ 171 0056 02       		.uleb128 0x2
+ 172 0057 08       		.byte	0x8
+ 173 0058 07       		.byte	0x7
+ 174 0059 CC000000 		.4byte	.LASF7
+ 175 005d 03       		.uleb128 0x3
+ 176 005e 04       		.byte	0x4
+ 177 005f 05       		.byte	0x5
+ 178 0060 696E7400 		.ascii	"int\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc6VuqcO.s 			page 5
+
+
+ 179 0064 02       		.uleb128 0x2
+ 180 0065 04       		.byte	0x4
+ 181 0066 07       		.byte	0x7
+ 182 0067 1C000000 		.4byte	.LASF8
+ 183 006b 02       		.uleb128 0x2
+ 184 006c 04       		.byte	0x4
+ 185 006d 04       		.byte	0x4
+ 186 006e EA010000 		.4byte	.LASF9
+ 187 0072 02       		.uleb128 0x2
+ 188 0073 08       		.byte	0x8
+ 189 0074 04       		.byte	0x4
+ 190 0075 0F010000 		.4byte	.LASF10
+ 191 0079 02       		.uleb128 0x2
+ 192 007a 01       		.byte	0x1
+ 193 007b 08       		.byte	0x8
+ 194 007c 01010000 		.4byte	.LASF11
+ 195 0080 02       		.uleb128 0x2
+ 196 0081 08       		.byte	0x8
+ 197 0082 04       		.byte	0x4
+ 198 0083 C3010000 		.4byte	.LASF12
+ 199 0087 02       		.uleb128 0x2
+ 200 0088 04       		.byte	0x4
+ 201 0089 07       		.byte	0x7
+ 202 008a 1E020000 		.4byte	.LASF13
+ 203 008e 04       		.uleb128 0x4
+ 204 008f 29000000 		.4byte	.LASF14
+ 205 0093 01       		.byte	0x1
+ 206 0094 0E       		.byte	0xe
+ 207 0095 00000000 		.4byte	.LFB35
+ 208 0099 14000000 		.4byte	.LFE35-.LFB35
+ 209 009d 01       		.uleb128 0x1
+ 210 009e 9C       		.byte	0x9c
+ 211 009f C8000000 		.4byte	0xc8
+ 212 00a3 05       		.uleb128 0x5
+ 213 00a4 06000000 		.4byte	.LVL0
+ 214 00a8 5A010000 		.4byte	0x15a
+ 215 00ac 05       		.uleb128 0x5
+ 216 00ad 0A000000 		.4byte	.LVL1
+ 217 00b1 65010000 		.4byte	0x165
+ 218 00b5 05       		.uleb128 0x5
+ 219 00b6 0E000000 		.4byte	.LVL2
+ 220 00ba 70010000 		.4byte	0x170
+ 221 00be 05       		.uleb128 0x5
+ 222 00bf 12000000 		.4byte	.LVL3
+ 223 00c3 7B010000 		.4byte	0x17b
+ 224 00c7 00       		.byte	0
+ 225 00c8 04       		.uleb128 0x4
+ 226 00c9 E3000000 		.4byte	.LASF15
+ 227 00cd 01       		.byte	0x1
+ 228 00ce 18       		.byte	0x18
+ 229 00cf 00000000 		.4byte	.LFB36
+ 230 00d3 3C000000 		.4byte	.LFE36-.LFB36
+ 231 00d7 01       		.uleb128 0x1
+ 232 00d8 9C       		.byte	0x9c
+ 233 00d9 5A010000 		.4byte	0x15a
+ 234 00dd 06       		.uleb128 0x6
+ 235 00de 08000000 		.4byte	.LVL4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc6VuqcO.s 			page 6
+
+
+ 236 00e2 86010000 		.4byte	0x186
+ 237 00e6 F4000000 		.4byte	0xf4
+ 238 00ea 07       		.uleb128 0x7
+ 239 00eb 01       		.uleb128 0x1
+ 240 00ec 50       		.byte	0x50
+ 241 00ed 05       		.uleb128 0x5
+ 242 00ee 03       		.byte	0x3
+ 243 00ef 00000000 		.4byte	.LC0
+ 244 00f3 00       		.byte	0
+ 245 00f4 06       		.uleb128 0x6
+ 246 00f5 0E000000 		.4byte	.LVL5
+ 247 00f9 86010000 		.4byte	0x186
+ 248 00fd 0B010000 		.4byte	0x10b
+ 249 0101 07       		.uleb128 0x7
+ 250 0102 01       		.uleb128 0x1
+ 251 0103 50       		.byte	0x50
+ 252 0104 05       		.uleb128 0x5
+ 253 0105 03       		.byte	0x3
+ 254 0106 0C000000 		.4byte	.LC2
+ 255 010a 00       		.byte	0
+ 256 010b 06       		.uleb128 0x6
+ 257 010c 14000000 		.4byte	.LVL6
+ 258 0110 86010000 		.4byte	0x186
+ 259 0114 22010000 		.4byte	0x122
+ 260 0118 07       		.uleb128 0x7
+ 261 0119 01       		.uleb128 0x1
+ 262 011a 50       		.byte	0x50
+ 263 011b 05       		.uleb128 0x5
+ 264 011c 03       		.byte	0x3
+ 265 011d 2C000000 		.4byte	.LC4
+ 266 0121 00       		.byte	0
+ 267 0122 06       		.uleb128 0x6
+ 268 0123 1A000000 		.4byte	.LVL7
+ 269 0127 86010000 		.4byte	0x186
+ 270 012b 39010000 		.4byte	0x139
+ 271 012f 07       		.uleb128 0x7
+ 272 0130 01       		.uleb128 0x1
+ 273 0131 50       		.byte	0x50
+ 274 0132 05       		.uleb128 0x5
+ 275 0133 03       		.byte	0x3
+ 276 0134 48000000 		.4byte	.LC6
+ 277 0138 00       		.byte	0
+ 278 0139 06       		.uleb128 0x6
+ 279 013a 20000000 		.4byte	.LVL8
+ 280 013e 86010000 		.4byte	0x186
+ 281 0142 50010000 		.4byte	0x150
+ 282 0146 07       		.uleb128 0x7
+ 283 0147 01       		.uleb128 0x1
+ 284 0148 50       		.byte	0x50
+ 285 0149 05       		.uleb128 0x5
+ 286 014a 03       		.byte	0x3
+ 287 014b 64000000 		.4byte	.LC8
+ 288 014f 00       		.byte	0
+ 289 0150 05       		.uleb128 0x5
+ 290 0151 24000000 		.4byte	.LVL9
+ 291 0155 92010000 		.4byte	0x192
+ 292 0159 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc6VuqcO.s 			page 7
+
+
+ 293 015a 08       		.uleb128 0x8
+ 294 015b 4C000000 		.4byte	.LASF16
+ 295 015f 4C000000 		.4byte	.LASF16
+ 296 0163 02       		.byte	0x2
+ 297 0164 23       		.byte	0x23
+ 298 0165 08       		.uleb128 0x8
+ 299 0166 F0010000 		.4byte	.LASF17
+ 300 016a F0010000 		.4byte	.LASF17
+ 301 016e 03       		.byte	0x3
+ 302 016f 72       		.byte	0x72
+ 303 0170 08       		.uleb128 0x8
+ 304 0171 F3000000 		.4byte	.LASF18
+ 305 0175 F3000000 		.4byte	.LASF18
+ 306 0179 04       		.byte	0x4
+ 307 017a 72       		.byte	0x72
+ 308 017b 08       		.uleb128 0x8
+ 309 017c 06020000 		.4byte	.LASF19
+ 310 0180 06020000 		.4byte	.LASF19
+ 311 0184 05       		.byte	0x5
+ 312 0185 72       		.byte	0x72
+ 313 0186 09       		.uleb128 0x9
+ 314 0187 2E000000 		.4byte	.LASF20
+ 315 018b 2E000000 		.4byte	.LASF20
+ 316 018f 06       		.byte	0x6
+ 317 0190 2A03     		.2byte	0x32a
+ 318 0192 08       		.uleb128 0x8
+ 319 0193 D8010000 		.4byte	.LASF21
+ 320 0197 D8010000 		.4byte	.LASF21
+ 321 019b 07       		.byte	0x7
+ 322 019c 59       		.byte	0x59
+ 323 019d 00       		.byte	0
+ 324              		.section	.debug_abbrev,"",%progbits
+ 325              	.Ldebug_abbrev0:
+ 326 0000 01       		.uleb128 0x1
+ 327 0001 11       		.uleb128 0x11
+ 328 0002 01       		.byte	0x1
+ 329 0003 25       		.uleb128 0x25
+ 330 0004 0E       		.uleb128 0xe
+ 331 0005 13       		.uleb128 0x13
+ 332 0006 0B       		.uleb128 0xb
+ 333 0007 03       		.uleb128 0x3
+ 334 0008 0E       		.uleb128 0xe
+ 335 0009 1B       		.uleb128 0x1b
+ 336 000a 0E       		.uleb128 0xe
+ 337 000b 55       		.uleb128 0x55
+ 338 000c 17       		.uleb128 0x17
+ 339 000d 11       		.uleb128 0x11
+ 340 000e 01       		.uleb128 0x1
+ 341 000f 10       		.uleb128 0x10
+ 342 0010 17       		.uleb128 0x17
+ 343 0011 00       		.byte	0
+ 344 0012 00       		.byte	0
+ 345 0013 02       		.uleb128 0x2
+ 346 0014 24       		.uleb128 0x24
+ 347 0015 00       		.byte	0
+ 348 0016 0B       		.uleb128 0xb
+ 349 0017 0B       		.uleb128 0xb
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc6VuqcO.s 			page 8
+
+
+ 350 0018 3E       		.uleb128 0x3e
+ 351 0019 0B       		.uleb128 0xb
+ 352 001a 03       		.uleb128 0x3
+ 353 001b 0E       		.uleb128 0xe
+ 354 001c 00       		.byte	0
+ 355 001d 00       		.byte	0
+ 356 001e 03       		.uleb128 0x3
+ 357 001f 24       		.uleb128 0x24
+ 358 0020 00       		.byte	0
+ 359 0021 0B       		.uleb128 0xb
+ 360 0022 0B       		.uleb128 0xb
+ 361 0023 3E       		.uleb128 0x3e
+ 362 0024 0B       		.uleb128 0xb
+ 363 0025 03       		.uleb128 0x3
+ 364 0026 08       		.uleb128 0x8
+ 365 0027 00       		.byte	0
+ 366 0028 00       		.byte	0
+ 367 0029 04       		.uleb128 0x4
+ 368 002a 2E       		.uleb128 0x2e
+ 369 002b 01       		.byte	0x1
+ 370 002c 3F       		.uleb128 0x3f
+ 371 002d 19       		.uleb128 0x19
+ 372 002e 03       		.uleb128 0x3
+ 373 002f 0E       		.uleb128 0xe
+ 374 0030 3A       		.uleb128 0x3a
+ 375 0031 0B       		.uleb128 0xb
+ 376 0032 3B       		.uleb128 0x3b
+ 377 0033 0B       		.uleb128 0xb
+ 378 0034 27       		.uleb128 0x27
+ 379 0035 19       		.uleb128 0x19
+ 380 0036 11       		.uleb128 0x11
+ 381 0037 01       		.uleb128 0x1
+ 382 0038 12       		.uleb128 0x12
+ 383 0039 06       		.uleb128 0x6
+ 384 003a 40       		.uleb128 0x40
+ 385 003b 18       		.uleb128 0x18
+ 386 003c 9742     		.uleb128 0x2117
+ 387 003e 19       		.uleb128 0x19
+ 388 003f 01       		.uleb128 0x1
+ 389 0040 13       		.uleb128 0x13
+ 390 0041 00       		.byte	0
+ 391 0042 00       		.byte	0
+ 392 0043 05       		.uleb128 0x5
+ 393 0044 898201   		.uleb128 0x4109
+ 394 0047 00       		.byte	0
+ 395 0048 11       		.uleb128 0x11
+ 396 0049 01       		.uleb128 0x1
+ 397 004a 31       		.uleb128 0x31
+ 398 004b 13       		.uleb128 0x13
+ 399 004c 00       		.byte	0
+ 400 004d 00       		.byte	0
+ 401 004e 06       		.uleb128 0x6
+ 402 004f 898201   		.uleb128 0x4109
+ 403 0052 01       		.byte	0x1
+ 404 0053 11       		.uleb128 0x11
+ 405 0054 01       		.uleb128 0x1
+ 406 0055 31       		.uleb128 0x31
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc6VuqcO.s 			page 9
+
+
+ 407 0056 13       		.uleb128 0x13
+ 408 0057 01       		.uleb128 0x1
+ 409 0058 13       		.uleb128 0x13
+ 410 0059 00       		.byte	0
+ 411 005a 00       		.byte	0
+ 412 005b 07       		.uleb128 0x7
+ 413 005c 8A8201   		.uleb128 0x410a
+ 414 005f 00       		.byte	0
+ 415 0060 02       		.uleb128 0x2
+ 416 0061 18       		.uleb128 0x18
+ 417 0062 9142     		.uleb128 0x2111
+ 418 0064 18       		.uleb128 0x18
+ 419 0065 00       		.byte	0
+ 420 0066 00       		.byte	0
+ 421 0067 08       		.uleb128 0x8
+ 422 0068 2E       		.uleb128 0x2e
+ 423 0069 00       		.byte	0
+ 424 006a 3F       		.uleb128 0x3f
+ 425 006b 19       		.uleb128 0x19
+ 426 006c 3C       		.uleb128 0x3c
+ 427 006d 19       		.uleb128 0x19
+ 428 006e 6E       		.uleb128 0x6e
+ 429 006f 0E       		.uleb128 0xe
+ 430 0070 03       		.uleb128 0x3
+ 431 0071 0E       		.uleb128 0xe
+ 432 0072 3A       		.uleb128 0x3a
+ 433 0073 0B       		.uleb128 0xb
+ 434 0074 3B       		.uleb128 0x3b
+ 435 0075 0B       		.uleb128 0xb
+ 436 0076 00       		.byte	0
+ 437 0077 00       		.byte	0
+ 438 0078 09       		.uleb128 0x9
+ 439 0079 2E       		.uleb128 0x2e
+ 440 007a 00       		.byte	0
+ 441 007b 3F       		.uleb128 0x3f
+ 442 007c 19       		.uleb128 0x19
+ 443 007d 3C       		.uleb128 0x3c
+ 444 007e 19       		.uleb128 0x19
+ 445 007f 6E       		.uleb128 0x6e
+ 446 0080 0E       		.uleb128 0xe
+ 447 0081 03       		.uleb128 0x3
+ 448 0082 0E       		.uleb128 0xe
+ 449 0083 3A       		.uleb128 0x3a
+ 450 0084 0B       		.uleb128 0xb
+ 451 0085 3B       		.uleb128 0x3b
+ 452 0086 05       		.uleb128 0x5
+ 453 0087 00       		.byte	0
+ 454 0088 00       		.byte	0
+ 455 0089 00       		.byte	0
+ 456              		.section	.debug_aranges,"",%progbits
+ 457 0000 24000000 		.4byte	0x24
+ 458 0004 0200     		.2byte	0x2
+ 459 0006 00000000 		.4byte	.Ldebug_info0
+ 460 000a 04       		.byte	0x4
+ 461 000b 00       		.byte	0
+ 462 000c 0000     		.2byte	0
+ 463 000e 0000     		.2byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc6VuqcO.s 			page 10
+
+
+ 464 0010 00000000 		.4byte	.LFB35
+ 465 0014 14000000 		.4byte	.LFE35-.LFB35
+ 466 0018 00000000 		.4byte	.LFB36
+ 467 001c 3C000000 		.4byte	.LFE36-.LFB36
+ 468 0020 00000000 		.4byte	0
+ 469 0024 00000000 		.4byte	0
+ 470              		.section	.debug_ranges,"",%progbits
+ 471              	.Ldebug_ranges0:
+ 472 0000 00000000 		.4byte	.LFB35
+ 473 0004 14000000 		.4byte	.LFE35
+ 474 0008 00000000 		.4byte	.LFB36
+ 475 000c 3C000000 		.4byte	.LFE36
+ 476 0010 00000000 		.4byte	0
+ 477 0014 00000000 		.4byte	0
+ 478              		.section	.debug_line,"",%progbits
+ 479              	.Ldebug_line0:
+ 480 0000 CF000000 		.section	.debug_str,"MS",%progbits,1
+ 480      02009F00 
+ 480      00000201 
+ 480      FB0E0D00 
+ 480      01010101 
+ 481              	.LASF6:
+ 482 0000 6C6F6E67 		.ascii	"long long int\000"
+ 482      206C6F6E 
+ 482      6720696E 
+ 482      7400
+ 483              	.LASF1:
+ 484 000e 756E7369 		.ascii	"unsigned char\000"
+ 484      676E6564 
+ 484      20636861 
+ 484      7200
+ 485              	.LASF8:
+ 486 001c 756E7369 		.ascii	"unsigned int\000"
+ 486      676E6564 
+ 486      20696E74 
+ 486      00
+ 487              	.LASF14:
+ 488 0029 696E6974 		.ascii	"init\000"
+ 488      00
+ 489              	.LASF20:
+ 490 002e 706F7274 		.ascii	"port_MONITORING_UartPutString\000"
+ 490      5F4D4F4E 
+ 490      49544F52 
+ 490      494E475F 
+ 490      55617274 
+ 491              	.LASF16:
+ 492 004c 696E6974 		.ascii	"initSysTick\000"
+ 492      53797354 
+ 492      69636B00 
+ 493              	.LASF24:
+ 494 0058 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\SCANNER_SMALL_BOA"
+ 494      554E5445 
+ 494      43485F44 
+ 494      45565F43 
+ 494      4C415544 
+ 495 0088 52445C53 		.ascii	"RD\\SCANNER_SMALL_BOARD_2026_V1\\MainFunction.cydsn"
+ 495      43414E4E 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc6VuqcO.s 			page 11
+
+
+ 495      45525F53 
+ 495      4D414C4C 
+ 495      5F424F41 
+ 496 00b9 00       		.ascii	"\000"
+ 497              	.LASF5:
+ 498 00ba 6C6F6E67 		.ascii	"long unsigned int\000"
+ 498      20756E73 
+ 498      69676E65 
+ 498      6420696E 
+ 498      7400
+ 499              	.LASF7:
+ 500 00cc 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 500      206C6F6E 
+ 500      6720756E 
+ 500      7369676E 
+ 500      65642069 
+ 501              	.LASF15:
+ 502 00e3 426F6F74 		.ascii	"BootloaderStart\000"
+ 502      6C6F6164 
+ 502      65725374 
+ 502      61727400 
+ 503              	.LASF18:
+ 504 00f3 706F7274 		.ascii	"port_OP_Start\000"
+ 504      5F4F505F 
+ 504      53746172 
+ 504      7400
+ 505              	.LASF11:
+ 506 0101 63686172 		.ascii	"char\000"
+ 506      00
+ 507              	.LASF4:
+ 508 0106 6C6F6E67 		.ascii	"long int\000"
+ 508      20696E74 
+ 508      00
+ 509              	.LASF10:
+ 510 010f 646F7562 		.ascii	"double\000"
+ 510      6C6500
+ 511              	.LASF22:
+ 512 0116 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 512      43313120 
+ 512      352E342E 
+ 512      31203230 
+ 512      31363036 
+ 513 0149 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 513      20726576 
+ 513      6973696F 
+ 513      6E203233 
+ 513      37373135 
+ 514 017c 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 514      66756E63 
+ 514      74696F6E 
+ 514      2D736563 
+ 514      74696F6E 
+ 515              	.LASF3:
+ 516 01a4 73686F72 		.ascii	"short unsigned int\000"
+ 516      7420756E 
+ 516      7369676E 
+ 516      65642069 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc6VuqcO.s 			page 12
+
+
+ 516      6E7400
+ 517              	.LASF0:
+ 518 01b7 7369676E 		.ascii	"signed char\000"
+ 518      65642063 
+ 518      68617200 
+ 519              	.LASF12:
+ 520 01c3 6C6F6E67 		.ascii	"long double\000"
+ 520      20646F75 
+ 520      626C6500 
+ 521              	.LASF23:
+ 522 01cf 636F6D6D 		.ascii	"common.c\000"
+ 522      6F6E2E63 
+ 522      00
+ 523              	.LASF21:
+ 524 01d8 426F6F74 		.ascii	"Bootloadable_Load\000"
+ 524      6C6F6164 
+ 524      61626C65 
+ 524      5F4C6F61 
+ 524      6400
+ 525              	.LASF9:
+ 526 01ea 666C6F61 		.ascii	"float\000"
+ 526      7400
+ 527              	.LASF17:
+ 528 01f0 706F7274 		.ascii	"port_MONITORING_Start\000"
+ 528      5F4D4F4E 
+ 528      49544F52 
+ 528      494E475F 
+ 528      53746172 
+ 529              	.LASF19:
+ 530 0206 42415243 		.ascii	"BARCODE_Start\000"
+ 530      4F44455F 
+ 530      53746172 
+ 530      7400
+ 531              	.LASF2:
+ 532 0214 73686F72 		.ascii	"short int\000"
+ 532      7420696E 
+ 532      7400
+ 533              	.LASF13:
+ 534 021e 73697A65 		.ascii	"sizetype\000"
+ 534      74797065 
+ 534      00
+ 535              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

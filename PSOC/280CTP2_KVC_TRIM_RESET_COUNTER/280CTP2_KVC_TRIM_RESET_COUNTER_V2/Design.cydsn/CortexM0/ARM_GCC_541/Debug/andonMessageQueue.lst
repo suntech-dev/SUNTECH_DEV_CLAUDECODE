@@ -1,0 +1,1854 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"andonMessageQueue.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.global	__aeabi_idivmod
+  20              		.section	.text.isFullQueueANDON,"ax",%progbits
+  21              		.align	2
+  22              		.global	isFullQueueANDON
+  23              		.code	16
+  24              		.thumb_func
+  25              		.type	isFullQueueANDON, %function
+  26              	isFullQueueANDON:
+  27              	.LFB61:
+  28              		.file 1 "andonMessageQueue.c"
+   1:andonMessageQueue.c **** /* ========================================
+   2:andonMessageQueue.c ****  *
+   3:andonMessageQueue.c ****  * Copyright Suntech, 2023.02.01
+   4:andonMessageQueue.c ****  * All Rights Reserved
+   5:andonMessageQueue.c ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:andonMessageQueue.c ****  *
+   7:andonMessageQueue.c ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:andonMessageQueue.c ****  * WHICH IS THE PROPERTY OF Suntech.
+   9:andonMessageQueue.c ****  *
+  10:andonMessageQueue.c ****  * ========================================
+  11:andonMessageQueue.c **** */
+  12:andonMessageQueue.c **** #include "andonMessageQueue.h"
+  13:andonMessageQueue.c **** 
+  14:andonMessageQueue.c **** short g_uSizeQueueANDON=0;
+  15:andonMessageQueue.c **** short g_uFrontQueueANDON=0;
+  16:andonMessageQueue.c **** short g_uRearQueueANDON=0;
+  17:andonMessageQueue.c **** ANDON_QUEUE  g_cQueue[MAX_ANDON_MESSAGE_QUEUE];
+  18:andonMessageQueue.c **** 
+  19:andonMessageQueue.c **** int isFullQueueANDON(void)
+  20:andonMessageQueue.c **** {
+  29              		.loc 1 20 0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  21:andonMessageQueue.c ****     if( (g_uRearQueueANDON + 1) % MAX_ANDON_MESSAGE_QUEUE == g_uFrontQueueANDON)
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 2
+
+
+  37              		.loc 1 21 0
+  38 0002 074C     		ldr	r4, .L4
+  39 0004 0023     		movs	r3, #0
+  40 0006 E05E     		ldrsh	r0, [r4, r3]
+  41 0008 0130     		adds	r0, r0, #1
+  42 000a 0521     		movs	r1, #5
+  43 000c FFF7FEFF 		bl	__aeabi_idivmod
+  44              	.LVL0:
+  45 0010 0222     		movs	r2, #2
+  46 0012 A35E     		ldrsh	r3, [r4, r2]
+  47 0014 9942     		cmp	r1, r3
+  48 0016 01D1     		bne	.L3
+  22:andonMessageQueue.c ****         return 1;
+  49              		.loc 1 22 0
+  50 0018 0120     		movs	r0, #1
+  51 001a 00E0     		b	.L2
+  52              	.L3:
+  23:andonMessageQueue.c ****     else
+  24:andonMessageQueue.c ****         return 0;
+  53              		.loc 1 24 0
+  54 001c 0020     		movs	r0, #0
+  55              	.L2:
+  25:andonMessageQueue.c **** }
+  56              		.loc 1 25 0
+  57              		@ sp needed
+  58 001e 10BD     		pop	{r4, pc}
+  59              	.L5:
+  60              		.align	2
+  61              	.L4:
+  62 0020 00000000 		.word	.LANCHOR0
+  63              		.cfi_endproc
+  64              	.LFE61:
+  65              		.size	isFullQueueANDON, .-isFullQueueANDON
+  66              		.section	.text.isEmptyQueueANDON,"ax",%progbits
+  67              		.align	2
+  68              		.global	isEmptyQueueANDON
+  69              		.code	16
+  70              		.thumb_func
+  71              		.type	isEmptyQueueANDON, %function
+  72              	isEmptyQueueANDON:
+  73              	.LFB62:
+  26:andonMessageQueue.c **** 
+  27:andonMessageQueue.c **** int isEmptyQueueANDON(void)
+  28:andonMessageQueue.c **** {
+  74              		.loc 1 28 0
+  75              		.cfi_startproc
+  76              		@ args = 0, pretend = 0, frame = 0
+  77              		@ frame_needed = 0, uses_anonymous_args = 0
+  78              		@ link register save eliminated.
+  29:andonMessageQueue.c ****     if(g_uFrontQueueANDON==g_uRearQueueANDON)
+  79              		.loc 1 29 0
+  80 0000 054B     		ldr	r3, .L9
+  81 0002 0221     		movs	r1, #2
+  82 0004 5A5E     		ldrsh	r2, [r3, r1]
+  83 0006 0021     		movs	r1, #0
+  84 0008 5B5E     		ldrsh	r3, [r3, r1]
+  85 000a 9A42     		cmp	r2, r3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 3
+
+
+  86 000c 01D1     		bne	.L8
+  30:andonMessageQueue.c ****             return 1;
+  87              		.loc 1 30 0
+  88 000e 0120     		movs	r0, #1
+  89 0010 00E0     		b	.L7
+  90              	.L8:
+  31:andonMessageQueue.c ****     else
+  32:andonMessageQueue.c ****             return 0;
+  91              		.loc 1 32 0
+  92 0012 0020     		movs	r0, #0
+  93              	.L7:
+  33:andonMessageQueue.c **** }
+  94              		.loc 1 33 0
+  95              		@ sp needed
+  96 0014 7047     		bx	lr
+  97              	.L10:
+  98 0016 C046     		.align	2
+  99              	.L9:
+ 100 0018 00000000 		.word	.LANCHOR0
+ 101              		.cfi_endproc
+ 102              	.LFE62:
+ 103              		.size	isEmptyQueueANDON, .-isEmptyQueueANDON
+ 104              		.section	.text.enQueueANDON,"ax",%progbits
+ 105              		.align	2
+ 106              		.global	enQueueANDON
+ 107              		.code	16
+ 108              		.thumb_func
+ 109              		.type	enQueueANDON, %function
+ 110              	enQueueANDON:
+ 111              	.LFB63:
+  34:andonMessageQueue.c **** 
+  35:andonMessageQueue.c **** short enQueueANDON(ANDON_QUEUE data)
+  36:andonMessageQueue.c **** {
+ 112              		.loc 1 36 0
+ 113              		.cfi_startproc
+ 114              		@ args = 260, pretend = 16, frame = 0
+ 115              		@ frame_needed = 0, uses_anonymous_args = 0
+ 116 0000 84B0     		sub	sp, sp, #16
+ 117              		.cfi_def_cfa_offset 16
+ 118 0002 10B5     		push	{r4, lr}
+ 119              		.cfi_def_cfa_offset 24
+ 120              		.cfi_offset 4, -24
+ 121              		.cfi_offset 14, -20
+ 122 0004 0290     		str	r0, [sp, #8]
+ 123 0006 0391     		str	r1, [sp, #12]
+ 124 0008 0492     		str	r2, [sp, #16]
+ 125 000a 0593     		str	r3, [sp, #20]
+  37:andonMessageQueue.c ****     if(isFullQueueANDON()) return FALSE;
+ 126              		.loc 1 37 0
+ 127 000c FFF7FEFF 		bl	isFullQueueANDON
+ 128              	.LVL1:
+ 129 0010 0028     		cmp	r0, #0
+ 130 0012 17D1     		bne	.L13
+  38:andonMessageQueue.c **** 
+  39:andonMessageQueue.c ****     g_uSizeQueueANDON++;
+ 131              		.loc 1 39 0
+ 132 0014 0E4C     		ldr	r4, .L14
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 4
+
+
+ 133 0016 A388     		ldrh	r3, [r4, #4]
+ 134 0018 0133     		adds	r3, r3, #1
+ 135 001a A380     		strh	r3, [r4, #4]
+  40:andonMessageQueue.c ****     g_uRearQueueANDON = (g_uRearQueueANDON + 1) % MAX_ANDON_MESSAGE_QUEUE;
+ 136              		.loc 1 40 0
+ 137 001c 0023     		movs	r3, #0
+ 138 001e E05E     		ldrsh	r0, [r4, r3]
+ 139 0020 0130     		adds	r0, r0, #1
+ 140 0022 0521     		movs	r1, #5
+ 141 0024 FFF7FEFF 		bl	__aeabi_idivmod
+ 142              	.LVL2:
+ 143 0028 09B2     		sxth	r1, r1
+ 144 002a 2180     		strh	r1, [r4]
+  41:andonMessageQueue.c ****     g_cQueue[g_uRearQueueANDON] = data;
+ 145              		.loc 1 41 0
+ 146 002c CB01     		lsls	r3, r1, #7
+ 147 002e 5918     		adds	r1, r3, r1
+ 148 0030 4800     		lsls	r0, r1, #1
+ 149 0032 084B     		ldr	r3, .L14+4
+ 150 0034 1818     		adds	r0, r3, r0
+ 151 0036 8122     		movs	r2, #129
+ 152 0038 5200     		lsls	r2, r2, #1
+ 153 003a 02A9     		add	r1, sp, #8
+ 154 003c FFF7FEFF 		bl	memcpy
+ 155              	.LVL3:
+  42:andonMessageQueue.c ****     return TRUE;
+ 156              		.loc 1 42 0
+ 157 0040 0120     		movs	r0, #1
+ 158 0042 00E0     		b	.L12
+ 159              	.L13:
+  37:andonMessageQueue.c **** 
+ 160              		.loc 1 37 0
+ 161 0044 0020     		movs	r0, #0
+ 162              	.L12:
+  43:andonMessageQueue.c **** }
+ 163              		.loc 1 43 0
+ 164              		@ sp needed
+ 165 0046 10BC     		pop	{r4}
+ 166 0048 08BC     		pop	{r3}
+ 167 004a 04B0     		add	sp, sp, #16
+ 168 004c 1847     		bx	r3
+ 169              	.L15:
+ 170 004e C046     		.align	2
+ 171              	.L14:
+ 172 0050 00000000 		.word	.LANCHOR0
+ 173 0054 00000000 		.word	g_cQueue
+ 174              		.cfi_endproc
+ 175              	.LFE63:
+ 176              		.size	enQueueANDON, .-enQueueANDON
+ 177              		.section	.text.enQueueANDON_printf,"ax",%progbits
+ 178              		.align	2
+ 179              		.global	enQueueANDON_printf
+ 180              		.code	16
+ 181              		.thumb_func
+ 182              		.type	enQueueANDON_printf, %function
+ 183              	enQueueANDON_printf:
+ 184              	.LFB64:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 5
+
+
+  44:andonMessageQueue.c **** 
+  45:andonMessageQueue.c **** short enQueueANDON_printf(uint16 type, const char *fmt, ...)
+  46:andonMessageQueue.c **** {
+ 185              		.loc 1 46 0
+ 186              		.cfi_startproc
+ 187              		@ args = 4, pretend = 12, frame = 8
+ 188              		@ frame_needed = 0, uses_anonymous_args = 1
+ 189              	.LVL4:
+ 190 0000 0EB4     		push	{r1, r2, r3}
+ 191              		.cfi_def_cfa_offset 12
+ 192 0002 30B5     		push	{r4, r5, lr}
+ 193              		.cfi_def_cfa_offset 24
+ 194              		.cfi_offset 4, -24
+ 195              		.cfi_offset 5, -20
+ 196              		.cfi_offset 14, -16
+ 197 0004 82B0     		sub	sp, sp, #8
+ 198              		.cfi_def_cfa_offset 32
+ 199 0006 0400     		movs	r4, r0
+  47:andonMessageQueue.c ****     if(isFullQueueANDON()) return FALSE;
+ 200              		.loc 1 47 0
+ 201 0008 FFF7FEFF 		bl	isFullQueueANDON
+ 202              	.LVL5:
+ 203 000c 0028     		cmp	r0, #0
+ 204 000e 1ED1     		bne	.L18
+  48:andonMessageQueue.c **** 
+  49:andonMessageQueue.c ****     g_uSizeQueueANDON++;
+ 205              		.loc 1 49 0
+ 206 0010 124D     		ldr	r5, .L19
+ 207 0012 AB88     		ldrh	r3, [r5, #4]
+ 208 0014 0133     		adds	r3, r3, #1
+ 209 0016 AB80     		strh	r3, [r5, #4]
+  50:andonMessageQueue.c ****     g_uRearQueueANDON = (g_uRearQueueANDON + 1) % MAX_ANDON_MESSAGE_QUEUE;
+ 210              		.loc 1 50 0
+ 211 0018 0023     		movs	r3, #0
+ 212 001a E85E     		ldrsh	r0, [r5, r3]
+ 213 001c 0130     		adds	r0, r0, #1
+ 214 001e 0521     		movs	r1, #5
+ 215 0020 FFF7FEFF 		bl	__aeabi_idivmod
+ 216              	.LVL6:
+ 217 0024 09B2     		sxth	r1, r1
+ 218 0026 2980     		strh	r1, [r5]
+  51:andonMessageQueue.c ****     
+  52:andonMessageQueue.c ****     g_cQueue[g_uRearQueueANDON].type = type;
+ 219              		.loc 1 52 0
+ 220 0028 0D48     		ldr	r0, .L19+4
+ 221 002a CA01     		lsls	r2, r1, #7
+ 222 002c 5218     		adds	r2, r2, r1
+ 223 002e 5300     		lsls	r3, r2, #1
+ 224 0030 C318     		adds	r3, r0, r3
+ 225 0032 0133     		adds	r3, r3, #1
+ 226 0034 FF33     		adds	r3, r3, #255
+ 227 0036 1C80     		strh	r4, [r3]
+  53:andonMessageQueue.c ****     
+  54:andonMessageQueue.c ****     va_list ap;   
+  55:andonMessageQueue.c ****     va_start(ap, fmt);
+ 228              		.loc 1 55 0
+ 229 0038 06AA     		add	r2, sp, #24
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 6
+
+
+ 230 003a 0192     		str	r2, [sp, #4]
+  56:andonMessageQueue.c **** 
+  57:andonMessageQueue.c ****     vsprintf(g_cQueue[g_uRearQueueANDON].message, fmt, ap);
+ 231              		.loc 1 57 0
+ 232 003c CB01     		lsls	r3, r1, #7
+ 233 003e 5918     		adds	r1, r3, r1
+ 234 0040 4B00     		lsls	r3, r1, #1
+ 235 0042 1818     		adds	r0, r3, r0
+ 236 0044 0599     		ldr	r1, [sp, #20]
+ 237 0046 FFF7FEFF 		bl	vsprintf
+ 238              	.LVL7:
+  58:andonMessageQueue.c ****     va_end(ap);
+  59:andonMessageQueue.c ****    
+  60:andonMessageQueue.c **** //    printf(">>:%s\r\n",g_cQueue[g_uRearQueueANDON].message);
+  61:andonMessageQueue.c ****         
+  62:andonMessageQueue.c ****     return TRUE;    
+ 239              		.loc 1 62 0
+ 240 004a 0120     		movs	r0, #1
+ 241 004c 00E0     		b	.L17
+ 242              	.L18:
+  47:andonMessageQueue.c **** 
+ 243              		.loc 1 47 0
+ 244 004e 0020     		movs	r0, #0
+ 245              	.L17:
+  63:andonMessageQueue.c **** }
+ 246              		.loc 1 63 0
+ 247 0050 02B0     		add	sp, sp, #8
+ 248              		@ sp needed
+ 249 0052 30BC     		pop	{r4, r5}
+ 250 0054 08BC     		pop	{r3}
+ 251 0056 03B0     		add	sp, sp, #12
+ 252 0058 1847     		bx	r3
+ 253              	.L20:
+ 254 005a C046     		.align	2
+ 255              	.L19:
+ 256 005c 00000000 		.word	.LANCHOR0
+ 257 0060 00000000 		.word	g_cQueue
+ 258              		.cfi_endproc
+ 259              	.LFE64:
+ 260              		.size	enQueueANDON_printf, .-enQueueANDON_printf
+ 261              		.section	.text.deQueueANDON,"ax",%progbits
+ 262              		.align	2
+ 263              		.global	deQueueANDON
+ 264              		.code	16
+ 265              		.thumb_func
+ 266              		.type	deQueueANDON, %function
+ 267              	deQueueANDON:
+ 268              	.LFB65:
+  64:andonMessageQueue.c **** 
+  65:andonMessageQueue.c **** ANDON_QUEUE *deQueueANDON(void)
+  66:andonMessageQueue.c **** {
+ 269              		.loc 1 66 0
+ 270              		.cfi_startproc
+ 271              		@ args = 0, pretend = 0, frame = 0
+ 272              		@ frame_needed = 0, uses_anonymous_args = 0
+ 273 0000 10B5     		push	{r4, lr}
+ 274              		.cfi_def_cfa_offset 8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 7
+
+
+ 275              		.cfi_offset 4, -8
+ 276              		.cfi_offset 14, -4
+  67:andonMessageQueue.c ****     g_uSizeQueueANDON--;
+ 277              		.loc 1 67 0
+ 278 0002 094C     		ldr	r4, .L22
+ 279 0004 A388     		ldrh	r3, [r4, #4]
+ 280 0006 013B     		subs	r3, r3, #1
+ 281 0008 A380     		strh	r3, [r4, #4]
+  68:andonMessageQueue.c ****     g_uFrontQueueANDON = (g_uFrontQueueANDON + 1) % MAX_ANDON_MESSAGE_QUEUE;
+ 282              		.loc 1 68 0
+ 283 000a 0223     		movs	r3, #2
+ 284 000c E05E     		ldrsh	r0, [r4, r3]
+ 285 000e 0130     		adds	r0, r0, #1
+ 286 0010 0521     		movs	r1, #5
+ 287 0012 FFF7FEFF 		bl	__aeabi_idivmod
+ 288              	.LVL8:
+ 289 0016 09B2     		sxth	r1, r1
+ 290 0018 6180     		strh	r1, [r4, #2]
+  69:andonMessageQueue.c ****     
+  70:andonMessageQueue.c ****     return &g_cQueue[g_uFrontQueueANDON];
+ 291              		.loc 1 70 0
+ 292 001a CB01     		lsls	r3, r1, #7
+ 293 001c 5918     		adds	r1, r3, r1
+ 294 001e 4800     		lsls	r0, r1, #1
+ 295 0020 024B     		ldr	r3, .L22+4
+ 296 0022 C018     		adds	r0, r0, r3
+  71:andonMessageQueue.c **** }
+ 297              		.loc 1 71 0
+ 298              		@ sp needed
+ 299 0024 10BD     		pop	{r4, pc}
+ 300              	.L23:
+ 301 0026 C046     		.align	2
+ 302              	.L22:
+ 303 0028 00000000 		.word	.LANCHOR0
+ 304 002c 00000000 		.word	g_cQueue
+ 305              		.cfi_endproc
+ 306              	.LFE65:
+ 307              		.size	deQueueANDON, .-deQueueANDON
+ 308              		.section	.text.getFrontQueueANDON,"ax",%progbits
+ 309              		.align	2
+ 310              		.global	getFrontQueueANDON
+ 311              		.code	16
+ 312              		.thumb_func
+ 313              		.type	getFrontQueueANDON, %function
+ 314              	getFrontQueueANDON:
+ 315              	.LFB66:
+  72:andonMessageQueue.c **** 
+  73:andonMessageQueue.c **** ANDON_QUEUE *getFrontQueueANDON(void)
+  74:andonMessageQueue.c **** {
+ 316              		.loc 1 74 0
+ 317              		.cfi_startproc
+ 318              		@ args = 0, pretend = 0, frame = 0
+ 319              		@ frame_needed = 0, uses_anonymous_args = 0
+ 320 0000 10B5     		push	{r4, lr}
+ 321              		.cfi_def_cfa_offset 8
+ 322              		.cfi_offset 4, -8
+ 323              		.cfi_offset 14, -4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 8
+
+
+  75:andonMessageQueue.c ****    return &g_cQueue[(g_uFrontQueueANDON + 1 ) % MAX_ANDON_MESSAGE_QUEUE ];
+ 324              		.loc 1 75 0
+ 325 0002 064B     		ldr	r3, .L25
+ 326 0004 0220     		movs	r0, #2
+ 327 0006 185E     		ldrsh	r0, [r3, r0]
+ 328 0008 0130     		adds	r0, r0, #1
+ 329 000a 0521     		movs	r1, #5
+ 330 000c FFF7FEFF 		bl	__aeabi_idivmod
+ 331              	.LVL9:
+ 332 0010 CB01     		lsls	r3, r1, #7
+ 333 0012 5918     		adds	r1, r3, r1
+ 334 0014 4800     		lsls	r0, r1, #1
+ 335 0016 024B     		ldr	r3, .L25+4
+ 336 0018 C018     		adds	r0, r0, r3
+  76:andonMessageQueue.c **** }
+ 337              		.loc 1 76 0
+ 338              		@ sp needed
+ 339 001a 10BD     		pop	{r4, pc}
+ 340              	.L26:
+ 341              		.align	2
+ 342              	.L25:
+ 343 001c 00000000 		.word	.LANCHOR0
+ 344 0020 00000000 		.word	g_cQueue
+ 345              		.cfi_endproc
+ 346              	.LFE66:
+ 347              		.size	getFrontQueueANDON, .-getFrontQueueANDON
+ 348              		.section	.text.getFrontNextQueueANDON,"ax",%progbits
+ 349              		.align	2
+ 350              		.global	getFrontNextQueueANDON
+ 351              		.code	16
+ 352              		.thumb_func
+ 353              		.type	getFrontNextQueueANDON, %function
+ 354              	getFrontNextQueueANDON:
+ 355              	.LFB67:
+  77:andonMessageQueue.c **** 
+  78:andonMessageQueue.c **** ANDON_QUEUE *getFrontNextQueueANDON(int i)
+  79:andonMessageQueue.c **** {
+ 356              		.loc 1 79 0
+ 357              		.cfi_startproc
+ 358              		@ args = 0, pretend = 0, frame = 0
+ 359              		@ frame_needed = 0, uses_anonymous_args = 0
+ 360              	.LVL10:
+ 361 0000 10B5     		push	{r4, lr}
+ 362              		.cfi_def_cfa_offset 8
+ 363              		.cfi_offset 4, -8
+ 364              		.cfi_offset 14, -4
+  80:andonMessageQueue.c ****    return &g_cQueue[(g_uFrontQueueANDON + 1 + i) % MAX_ANDON_MESSAGE_QUEUE];
+ 365              		.loc 1 80 0
+ 366 0002 074B     		ldr	r3, .L28
+ 367 0004 0222     		movs	r2, #2
+ 368 0006 9B5E     		ldrsh	r3, [r3, r2]
+ 369 0008 0133     		adds	r3, r3, #1
+ 370 000a 1818     		adds	r0, r3, r0
+ 371              	.LVL11:
+ 372 000c 0521     		movs	r1, #5
+ 373 000e FFF7FEFF 		bl	__aeabi_idivmod
+ 374              	.LVL12:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 9
+
+
+ 375 0012 CB01     		lsls	r3, r1, #7
+ 376 0014 5918     		adds	r1, r3, r1
+ 377 0016 4800     		lsls	r0, r1, #1
+ 378 0018 024B     		ldr	r3, .L28+4
+ 379 001a C018     		adds	r0, r0, r3
+  81:andonMessageQueue.c **** }
+ 380              		.loc 1 81 0
+ 381              		@ sp needed
+ 382 001c 10BD     		pop	{r4, pc}
+ 383              	.L29:
+ 384 001e C046     		.align	2
+ 385              	.L28:
+ 386 0020 00000000 		.word	.LANCHOR0
+ 387 0024 00000000 		.word	g_cQueue
+ 388              		.cfi_endproc
+ 389              	.LFE67:
+ 390              		.size	getFrontNextQueueANDON, .-getFrontNextQueueANDON
+ 391              		.section	.text.getRearQueueANDON,"ax",%progbits
+ 392              		.align	2
+ 393              		.global	getRearQueueANDON
+ 394              		.code	16
+ 395              		.thumb_func
+ 396              		.type	getRearQueueANDON, %function
+ 397              	getRearQueueANDON:
+ 398              	.LFB68:
+  82:andonMessageQueue.c **** 
+  83:andonMessageQueue.c **** ANDON_QUEUE *getRearQueueANDON(void)
+  84:andonMessageQueue.c **** {
+ 399              		.loc 1 84 0
+ 400              		.cfi_startproc
+ 401              		@ args = 0, pretend = 0, frame = 0
+ 402              		@ frame_needed = 0, uses_anonymous_args = 0
+ 403 0000 10B5     		push	{r4, lr}
+ 404              		.cfi_def_cfa_offset 8
+ 405              		.cfi_offset 4, -8
+ 406              		.cfi_offset 14, -4
+  85:andonMessageQueue.c ****    return &g_cQueue[ g_uRearQueueANDON % MAX_ANDON_MESSAGE_QUEUE];
+ 407              		.loc 1 85 0
+ 408 0002 064B     		ldr	r3, .L31
+ 409 0004 0020     		movs	r0, #0
+ 410 0006 185E     		ldrsh	r0, [r3, r0]
+ 411 0008 0521     		movs	r1, #5
+ 412 000a FFF7FEFF 		bl	__aeabi_idivmod
+ 413              	.LVL13:
+ 414 000e 09B2     		sxth	r1, r1
+ 415 0010 CB01     		lsls	r3, r1, #7
+ 416 0012 5918     		adds	r1, r3, r1
+ 417 0014 4800     		lsls	r0, r1, #1
+ 418 0016 024B     		ldr	r3, .L31+4
+ 419 0018 C018     		adds	r0, r0, r3
+  86:andonMessageQueue.c **** }
+ 420              		.loc 1 86 0
+ 421              		@ sp needed
+ 422 001a 10BD     		pop	{r4, pc}
+ 423              	.L32:
+ 424              		.align	2
+ 425              	.L31:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 10
+
+
+ 426 001c 00000000 		.word	.LANCHOR0
+ 427 0020 00000000 		.word	g_cQueue
+ 428              		.cfi_endproc
+ 429              	.LFE68:
+ 430              		.size	getRearQueueANDON, .-getRearQueueANDON
+ 431              		.section	.text.getSizeQueueANDON,"ax",%progbits
+ 432              		.align	2
+ 433              		.global	getSizeQueueANDON
+ 434              		.code	16
+ 435              		.thumb_func
+ 436              		.type	getSizeQueueANDON, %function
+ 437              	getSizeQueueANDON:
+ 438              	.LFB69:
+  87:andonMessageQueue.c **** 
+  88:andonMessageQueue.c **** short getSizeQueueANDON(void)
+  89:andonMessageQueue.c **** {
+ 439              		.loc 1 89 0
+ 440              		.cfi_startproc
+ 441              		@ args = 0, pretend = 0, frame = 0
+ 442              		@ frame_needed = 0, uses_anonymous_args = 0
+ 443              		@ link register save eliminated.
+  90:andonMessageQueue.c ****    return g_uSizeQueueANDON;
+ 444              		.loc 1 90 0
+ 445 0000 014B     		ldr	r3, .L34
+ 446 0002 0420     		movs	r0, #4
+ 447 0004 185E     		ldrsh	r0, [r3, r0]
+  91:andonMessageQueue.c **** }
+ 448              		.loc 1 91 0
+ 449              		@ sp needed
+ 450 0006 7047     		bx	lr
+ 451              	.L35:
+ 452              		.align	2
+ 453              	.L34:
+ 454 0008 00000000 		.word	.LANCHOR0
+ 455              		.cfi_endproc
+ 456              	.LFE69:
+ 457              		.size	getSizeQueueANDON, .-getSizeQueueANDON
+ 458              		.section	.text.PrintInfoQueueANDON,"ax",%progbits
+ 459              		.align	2
+ 460              		.global	PrintInfoQueueANDON
+ 461              		.code	16
+ 462              		.thumb_func
+ 463              		.type	PrintInfoQueueANDON, %function
+ 464              	PrintInfoQueueANDON:
+ 465              	.LFB70:
+  92:andonMessageQueue.c **** 
+  93:andonMessageQueue.c **** void PrintInfoQueueANDON(void)
+  94:andonMessageQueue.c **** {
+ 466              		.loc 1 94 0
+ 467              		.cfi_startproc
+ 468              		@ args = 0, pretend = 0, frame = 0
+ 469              		@ frame_needed = 0, uses_anonymous_args = 0
+ 470              		@ link register save eliminated.
+  95:andonMessageQueue.c ****   // printf("Queue -> Size : %d\n", g_uSizeQueueANDON);
+  96:andonMessageQueue.c ****   // printf("Rest Size : %d\n", getRestSizeQueue());
+  97:andonMessageQueue.c **** }
+ 471              		.loc 1 97 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 11
+
+
+ 472              		@ sp needed
+ 473 0000 7047     		bx	lr
+ 474              		.cfi_endproc
+ 475              	.LFE70:
+ 476              		.size	PrintInfoQueueANDON, .-PrintInfoQueueANDON
+ 477              		.comm	g_cQueue,1290,4
+ 478              		.global	g_uRearQueueANDON
+ 479              		.global	g_uFrontQueueANDON
+ 480              		.global	g_uSizeQueueANDON
+ 481              		.comm	Param,6,4
+ 482 0002 C046     		.bss
+ 483              		.align	1
+ 484              		.set	.LANCHOR0,. + 0
+ 485              		.type	g_uRearQueueANDON, %object
+ 486              		.size	g_uRearQueueANDON, 2
+ 487              	g_uRearQueueANDON:
+ 488 0000 0000     		.space	2
+ 489              		.type	g_uFrontQueueANDON, %object
+ 490              		.size	g_uFrontQueueANDON, 2
+ 491              	g_uFrontQueueANDON:
+ 492 0002 0000     		.space	2
+ 493              		.type	g_uSizeQueueANDON, %object
+ 494              		.size	g_uSizeQueueANDON, 2
+ 495              	g_uSizeQueueANDON:
+ 496 0004 0000     		.space	2
+ 497              		.text
+ 498              	.Letext0:
+ 499              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 500              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 501              		.file 4 "<built-in>"
+ 502              		.file 5 "main.h"
+ 503              		.file 6 "andonMessageQueue.h"
+ 504              		.file 7 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 505              		.section	.debug_info,"",%progbits
+ 506              	.Ldebug_info0:
+ 507 0000 2E030000 		.4byte	0x32e
+ 508 0004 0400     		.2byte	0x4
+ 509 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 510 000a 04       		.byte	0x4
+ 511 000b 01       		.uleb128 0x1
+ 512 000c 79010000 		.4byte	.LASF41
+ 513 0010 0C       		.byte	0xc
+ 514 0011 28020000 		.4byte	.LASF42
+ 515 0015 DA000000 		.4byte	.LASF43
+ 516 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 517 001d 00000000 		.4byte	0
+ 518 0021 00000000 		.4byte	.Ldebug_line0
+ 519 0025 02       		.uleb128 0x2
+ 520 0026 01       		.byte	0x1
+ 521 0027 06       		.byte	0x6
+ 522 0028 D3020000 		.4byte	.LASF0
+ 523 002c 02       		.uleb128 0x2
+ 524 002d 01       		.byte	0x1
+ 525 002e 08       		.byte	0x8
+ 526 002f 82000000 		.4byte	.LASF1
+ 527 0033 02       		.uleb128 0x2
+ 528 0034 02       		.byte	0x2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 12
+
+
+ 529 0035 05       		.byte	0x5
+ 530 0036 66020000 		.4byte	.LASF2
+ 531 003a 02       		.uleb128 0x2
+ 532 003b 02       		.byte	0x2
+ 533 003c 07       		.byte	0x7
+ 534 003d BF000000 		.4byte	.LASF3
+ 535 0041 02       		.uleb128 0x2
+ 536 0042 04       		.byte	0x4
+ 537 0043 05       		.byte	0x5
+ 538 0044 AC020000 		.4byte	.LASF4
+ 539 0048 02       		.uleb128 0x2
+ 540 0049 04       		.byte	0x4
+ 541 004a 07       		.byte	0x7
+ 542 004b A2000000 		.4byte	.LASF5
+ 543 004f 02       		.uleb128 0x2
+ 544 0050 08       		.byte	0x8
+ 545 0051 05       		.byte	0x5
+ 546 0052 1A020000 		.4byte	.LASF6
+ 547 0056 02       		.uleb128 0x2
+ 548 0057 08       		.byte	0x8
+ 549 0058 07       		.byte	0x7
+ 550 0059 57010000 		.4byte	.LASF7
+ 551 005d 03       		.uleb128 0x3
+ 552 005e 04       		.byte	0x4
+ 553 005f 05       		.byte	0x5
+ 554 0060 696E7400 		.ascii	"int\000"
+ 555 0064 02       		.uleb128 0x2
+ 556 0065 04       		.byte	0x4
+ 557 0066 07       		.byte	0x7
+ 558 0067 4A010000 		.4byte	.LASF8
+ 559 006b 04       		.uleb128 0x4
+ 560 006c 3D000000 		.4byte	.LASF9
+ 561 0070 02       		.byte	0x2
+ 562 0071 FC01     		.2byte	0x1fc
+ 563 0073 2C000000 		.4byte	0x2c
+ 564 0077 04       		.uleb128 0x4
+ 565 0078 3D010000 		.4byte	.LASF10
+ 566 007c 02       		.byte	0x2
+ 567 007d FD01     		.2byte	0x1fd
+ 568 007f 3A000000 		.4byte	0x3a
+ 569 0083 02       		.uleb128 0x2
+ 570 0084 04       		.byte	0x4
+ 571 0085 04       		.byte	0x4
+ 572 0086 68000000 		.4byte	.LASF11
+ 573 008a 02       		.uleb128 0x2
+ 574 008b 08       		.byte	0x8
+ 575 008c 04       		.byte	0x4
+ 576 008d DF020000 		.4byte	.LASF12
+ 577 0091 02       		.uleb128 0x2
+ 578 0092 01       		.byte	0x1
+ 579 0093 08       		.byte	0x8
+ 580 0094 3C020000 		.4byte	.LASF13
+ 581 0098 02       		.uleb128 0x2
+ 582 0099 08       		.byte	0x8
+ 583 009a 04       		.byte	0x4
+ 584 009b B5020000 		.4byte	.LASF14
+ 585 009f 02       		.uleb128 0x2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 13
+
+
+ 586 00a0 04       		.byte	0x4
+ 587 00a1 07       		.byte	0x7
+ 588 00a2 07020000 		.4byte	.LASF15
+ 589 00a6 05       		.uleb128 0x5
+ 590 00a7 04       		.byte	0x4
+ 591 00a8 06       		.uleb128 0x6
+ 592 00a9 04       		.byte	0x4
+ 593 00aa AE000000 		.4byte	0xae
+ 594 00ae 07       		.uleb128 0x7
+ 595 00af 91000000 		.4byte	0x91
+ 596 00b3 08       		.uleb128 0x8
+ 597 00b4 73000000 		.4byte	.LASF16
+ 598 00b8 03       		.byte	0x3
+ 599 00b9 28       		.byte	0x28
+ 600 00ba BE000000 		.4byte	0xbe
+ 601 00be 09       		.uleb128 0x9
+ 602 00bf 10020000 		.4byte	.LASF18
+ 603 00c3 04       		.byte	0x4
+ 604 00c4 04       		.byte	0x4
+ 605 00c5 00       		.byte	0
+ 606 00c6 D5000000 		.4byte	0xd5
+ 607 00ca 0A       		.uleb128 0xa
+ 608 00cb 6E010000 		.4byte	.LASF44
+ 609 00cf A6000000 		.4byte	0xa6
+ 610 00d3 00       		.byte	0
+ 611 00d4 00       		.byte	0
+ 612 00d5 08       		.uleb128 0x8
+ 613 00d6 D2000000 		.4byte	.LASF17
+ 614 00da 03       		.byte	0x3
+ 615 00db 62       		.byte	0x62
+ 616 00dc B3000000 		.4byte	0xb3
+ 617 00e0 09       		.uleb128 0x9
+ 618 00e1 B4000000 		.4byte	.LASF19
+ 619 00e5 06       		.byte	0x6
+ 620 00e6 05       		.byte	0x5
+ 621 00e7 34       		.byte	0x34
+ 622 00e8 11010000 		.4byte	0x111
+ 623 00ec 0B       		.uleb128 0xb
+ 624 00ed 55020000 		.4byte	.LASF20
+ 625 00f1 05       		.byte	0x5
+ 626 00f2 36       		.byte	0x36
+ 627 00f3 6B000000 		.4byte	0x6b
+ 628 00f7 00       		.byte	0
+ 629 00f8 0B       		.uleb128 0xb
+ 630 00f9 73010000 		.4byte	.LASF21
+ 631 00fd 05       		.byte	0x5
+ 632 00fe 37       		.byte	0x37
+ 633 00ff 77000000 		.4byte	0x77
+ 634 0103 02       		.byte	0x2
+ 635 0104 0B       		.uleb128 0xb
+ 636 0105 2A010000 		.4byte	.LASF22
+ 637 0109 05       		.byte	0x5
+ 638 010a 38       		.byte	0x38
+ 639 010b 77000000 		.4byte	0x77
+ 640 010f 04       		.byte	0x4
+ 641 0110 00       		.byte	0
+ 642 0111 0C       		.uleb128 0xc
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 14
+
+
+ 643 0112 0201     		.2byte	0x102
+ 644 0114 06       		.byte	0x6
+ 645 0115 12       		.byte	0x12
+ 646 0116 34010000 		.4byte	0x134
+ 647 011a 0B       		.uleb128 0xb
+ 648 011b 00000000 		.4byte	.LASF23
+ 649 011f 06       		.byte	0x6
+ 650 0120 13       		.byte	0x13
+ 651 0121 34010000 		.4byte	0x134
+ 652 0125 00       		.byte	0
+ 653 0126 0D       		.uleb128 0xd
+ 654 0127 61020000 		.4byte	.LASF24
+ 655 012b 06       		.byte	0x6
+ 656 012c 14       		.byte	0x14
+ 657 012d 77000000 		.4byte	0x77
+ 658 0131 0001     		.2byte	0x100
+ 659 0133 00       		.byte	0
+ 660 0134 0E       		.uleb128 0xe
+ 661 0135 91000000 		.4byte	0x91
+ 662 0139 44010000 		.4byte	0x144
+ 663 013d 0F       		.uleb128 0xf
+ 664 013e 9F000000 		.4byte	0x9f
+ 665 0142 FF       		.byte	0xff
+ 666 0143 00       		.byte	0
+ 667 0144 08       		.uleb128 0x8
+ 668 0145 70020000 		.4byte	.LASF25
+ 669 0149 06       		.byte	0x6
+ 670 014a 15       		.byte	0x15
+ 671 014b 11010000 		.4byte	0x111
+ 672 014f 10       		.uleb128 0x10
+ 673 0150 2C000000 		.4byte	.LASF26
+ 674 0154 01       		.byte	0x1
+ 675 0155 13       		.byte	0x13
+ 676 0156 5D000000 		.4byte	0x5d
+ 677 015a 00000000 		.4byte	.LFB61
+ 678 015e 24000000 		.4byte	.LFE61-.LFB61
+ 679 0162 01       		.uleb128 0x1
+ 680 0163 9C       		.byte	0x9c
+ 681 0164 11       		.uleb128 0x11
+ 682 0165 08000000 		.4byte	.LASF27
+ 683 0169 01       		.byte	0x1
+ 684 016a 1B       		.byte	0x1b
+ 685 016b 5D000000 		.4byte	0x5d
+ 686 016f 00000000 		.4byte	.LFB62
+ 687 0173 1C000000 		.4byte	.LFE62-.LFB62
+ 688 0177 01       		.uleb128 0x1
+ 689 0178 9C       		.byte	0x9c
+ 690 0179 12       		.uleb128 0x12
+ 691 017a 30010000 		.4byte	.LASF28
+ 692 017e 01       		.byte	0x1
+ 693 017f 23       		.byte	0x23
+ 694 0180 33000000 		.4byte	0x33
+ 695 0184 00000000 		.4byte	.LFB63
+ 696 0188 58000000 		.4byte	.LFE63-.LFB63
+ 697 018c 01       		.uleb128 0x1
+ 698 018d 9C       		.byte	0x9c
+ 699 018e C1010000 		.4byte	0x1c1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 15
+
+
+ 700 0192 13       		.uleb128 0x13
+ 701 0193 6E000000 		.4byte	.LASF30
+ 702 0197 01       		.byte	0x1
+ 703 0198 23       		.byte	0x23
+ 704 0199 44010000 		.4byte	0x144
+ 705 019d 02       		.uleb128 0x2
+ 706 019e 91       		.byte	0x91
+ 707 019f 70       		.sleb128 -16
+ 708 01a0 14       		.uleb128 0x14
+ 709 01a1 10000000 		.4byte	.LVL1
+ 710 01a5 4F010000 		.4byte	0x14f
+ 711 01a9 15       		.uleb128 0x15
+ 712 01aa 40000000 		.4byte	.LVL3
+ 713 01ae 1D030000 		.4byte	0x31d
+ 714 01b2 16       		.uleb128 0x16
+ 715 01b3 01       		.uleb128 0x1
+ 716 01b4 51       		.byte	0x51
+ 717 01b5 02       		.uleb128 0x2
+ 718 01b6 91       		.byte	0x91
+ 719 01b7 50       		.sleb128 -48
+ 720 01b8 16       		.uleb128 0x16
+ 721 01b9 01       		.uleb128 0x1
+ 722 01ba 52       		.byte	0x52
+ 723 01bb 03       		.uleb128 0x3
+ 724 01bc 0A       		.byte	0xa
+ 725 01bd 0201     		.2byte	0x102
+ 726 01bf 00       		.byte	0
+ 727 01c0 00       		.byte	0
+ 728 01c1 12       		.uleb128 0x12
+ 729 01c2 E6020000 		.4byte	.LASF29
+ 730 01c6 01       		.byte	0x1
+ 731 01c7 2D       		.byte	0x2d
+ 732 01c8 33000000 		.4byte	0x33
+ 733 01cc 00000000 		.4byte	.LFB64
+ 734 01d0 64000000 		.4byte	.LFE64-.LFB64
+ 735 01d4 01       		.uleb128 0x1
+ 736 01d5 9C       		.byte	0x9c
+ 737 01d6 26020000 		.4byte	0x226
+ 738 01da 17       		.uleb128 0x17
+ 739 01db 61020000 		.4byte	.LASF24
+ 740 01df 01       		.byte	0x1
+ 741 01e0 2D       		.byte	0x2d
+ 742 01e1 77000000 		.4byte	0x77
+ 743 01e5 00000000 		.4byte	.LLST0
+ 744 01e9 18       		.uleb128 0x18
+ 745 01ea 666D7400 		.ascii	"fmt\000"
+ 746 01ee 01       		.byte	0x1
+ 747 01ef 2D       		.byte	0x2d
+ 748 01f0 A8000000 		.4byte	0xa8
+ 749 01f4 02       		.uleb128 0x2
+ 750 01f5 91       		.byte	0x91
+ 751 01f6 74       		.sleb128 -12
+ 752 01f7 19       		.uleb128 0x19
+ 753 01f8 1A       		.uleb128 0x1a
+ 754 01f9 617000   		.ascii	"ap\000"
+ 755 01fc 01       		.byte	0x1
+ 756 01fd 36       		.byte	0x36
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 16
+
+
+ 757 01fe D5000000 		.4byte	0xd5
+ 758 0202 02       		.uleb128 0x2
+ 759 0203 91       		.byte	0x91
+ 760 0204 64       		.sleb128 -28
+ 761 0205 14       		.uleb128 0x14
+ 762 0206 0C000000 		.4byte	.LVL5
+ 763 020a 4F010000 		.4byte	0x14f
+ 764 020e 15       		.uleb128 0x15
+ 765 020f 4A000000 		.4byte	.LVL7
+ 766 0213 26030000 		.4byte	0x326
+ 767 0217 16       		.uleb128 0x16
+ 768 0218 01       		.uleb128 0x1
+ 769 0219 51       		.byte	0x51
+ 770 021a 03       		.uleb128 0x3
+ 771 021b 91       		.byte	0x91
+ 772 021c 5C       		.sleb128 -36
+ 773 021d 06       		.byte	0x6
+ 774 021e 16       		.uleb128 0x16
+ 775 021f 01       		.uleb128 0x1
+ 776 0220 52       		.byte	0x52
+ 777 0221 02       		.uleb128 0x2
+ 778 0222 91       		.byte	0x91
+ 779 0223 60       		.sleb128 -32
+ 780 0224 00       		.byte	0
+ 781 0225 00       		.byte	0
+ 782 0226 10       		.uleb128 0x10
+ 783 0227 9F020000 		.4byte	.LASF31
+ 784 022b 01       		.byte	0x1
+ 785 022c 41       		.byte	0x41
+ 786 022d 3B020000 		.4byte	0x23b
+ 787 0231 00000000 		.4byte	.LFB65
+ 788 0235 30000000 		.4byte	.LFE65-.LFB65
+ 789 0239 01       		.uleb128 0x1
+ 790 023a 9C       		.byte	0x9c
+ 791 023b 06       		.uleb128 0x6
+ 792 023c 04       		.byte	0x4
+ 793 023d 44010000 		.4byte	0x144
+ 794 0241 10       		.uleb128 0x10
+ 795 0242 8C020000 		.4byte	.LASF32
+ 796 0246 01       		.byte	0x1
+ 797 0247 49       		.byte	0x49
+ 798 0248 3B020000 		.4byte	0x23b
+ 799 024c 00000000 		.4byte	.LFB66
+ 800 0250 24000000 		.4byte	.LFE66-.LFB66
+ 801 0254 01       		.uleb128 0x1
+ 802 0255 9C       		.byte	0x9c
+ 803 0256 12       		.uleb128 0x12
+ 804 0257 03030000 		.4byte	.LASF33
+ 805 025b 01       		.byte	0x1
+ 806 025c 4E       		.byte	0x4e
+ 807 025d 3B020000 		.4byte	0x23b
+ 808 0261 00000000 		.4byte	.LFB67
+ 809 0265 28000000 		.4byte	.LFE67-.LFB67
+ 810 0269 01       		.uleb128 0x1
+ 811 026a 9C       		.byte	0x9c
+ 812 026b 7D020000 		.4byte	0x27d
+ 813 026f 1B       		.uleb128 0x1b
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 17
+
+
+ 814 0270 6900     		.ascii	"i\000"
+ 815 0272 01       		.byte	0x1
+ 816 0273 4E       		.byte	0x4e
+ 817 0274 5D000000 		.4byte	0x5d
+ 818 0278 21000000 		.4byte	.LLST1
+ 819 027c 00       		.byte	0
+ 820 027d 10       		.uleb128 0x10
+ 821 027e 90000000 		.4byte	.LASF34
+ 822 0282 01       		.byte	0x1
+ 823 0283 53       		.byte	0x53
+ 824 0284 3B020000 		.4byte	0x23b
+ 825 0288 00000000 		.4byte	.LFB68
+ 826 028c 24000000 		.4byte	.LFE68-.LFB68
+ 827 0290 01       		.uleb128 0x1
+ 828 0291 9C       		.byte	0x9c
+ 829 0292 11       		.uleb128 0x11
+ 830 0293 1A000000 		.4byte	.LASF35
+ 831 0297 01       		.byte	0x1
+ 832 0298 58       		.byte	0x58
+ 833 0299 33000000 		.4byte	0x33
+ 834 029d 00000000 		.4byte	.LFB69
+ 835 02a1 0C000000 		.4byte	.LFE69-.LFB69
+ 836 02a5 01       		.uleb128 0x1
+ 837 02a6 9C       		.byte	0x9c
+ 838 02a7 1C       		.uleb128 0x1c
+ 839 02a8 41020000 		.4byte	.LASF45
+ 840 02ac 01       		.byte	0x1
+ 841 02ad 5D       		.byte	0x5d
+ 842 02ae 00000000 		.4byte	.LFB70
+ 843 02b2 02000000 		.4byte	.LFE70-.LFB70
+ 844 02b6 01       		.uleb128 0x1
+ 845 02b7 9C       		.byte	0x9c
+ 846 02b8 1D       		.uleb128 0x1d
+ 847 02b9 44010000 		.4byte	.LASF36
+ 848 02bd 05       		.byte	0x5
+ 849 02be 3B       		.byte	0x3b
+ 850 02bf E0000000 		.4byte	0xe0
+ 851 02c3 05       		.uleb128 0x5
+ 852 02c4 03       		.byte	0x3
+ 853 02c5 00000000 		.4byte	Param
+ 854 02c9 1D       		.uleb128 0x1d
+ 855 02ca 56000000 		.4byte	.LASF37
+ 856 02ce 01       		.byte	0x1
+ 857 02cf 0E       		.byte	0xe
+ 858 02d0 33000000 		.4byte	0x33
+ 859 02d4 05       		.uleb128 0x5
+ 860 02d5 03       		.byte	0x3
+ 861 02d6 00000000 		.4byte	g_uSizeQueueANDON
+ 862 02da 1D       		.uleb128 0x1d
+ 863 02db 43000000 		.4byte	.LASF38
+ 864 02df 01       		.byte	0x1
+ 865 02e0 0F       		.byte	0xf
+ 866 02e1 33000000 		.4byte	0x33
+ 867 02e5 05       		.uleb128 0x5
+ 868 02e6 03       		.byte	0x3
+ 869 02e7 00000000 		.4byte	g_uFrontQueueANDON
+ 870 02eb 1D       		.uleb128 0x1d
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 18
+
+
+ 871 02ec C1020000 		.4byte	.LASF39
+ 872 02f0 01       		.byte	0x1
+ 873 02f1 10       		.byte	0x10
+ 874 02f2 33000000 		.4byte	0x33
+ 875 02f6 05       		.uleb128 0x5
+ 876 02f7 03       		.byte	0x3
+ 877 02f8 00000000 		.4byte	g_uRearQueueANDON
+ 878 02fc 0E       		.uleb128 0xe
+ 879 02fd 44010000 		.4byte	0x144
+ 880 0301 0C030000 		.4byte	0x30c
+ 881 0305 0F       		.uleb128 0xf
+ 882 0306 9F000000 		.4byte	0x9f
+ 883 030a 04       		.byte	0x4
+ 884 030b 00       		.byte	0
+ 885 030c 1D       		.uleb128 0x1d
+ 886 030d 83020000 		.4byte	.LASF40
+ 887 0311 01       		.byte	0x1
+ 888 0312 11       		.byte	0x11
+ 889 0313 FC020000 		.4byte	0x2fc
+ 890 0317 05       		.uleb128 0x5
+ 891 0318 03       		.byte	0x3
+ 892 0319 00000000 		.4byte	g_cQueue
+ 893 031d 1E       		.uleb128 0x1e
+ 894 031e 7C020000 		.4byte	.LASF46
+ 895 0322 7C020000 		.4byte	.LASF46
+ 896 0326 1F       		.uleb128 0x1f
+ 897 0327 FA020000 		.4byte	.LASF47
+ 898 032b FA020000 		.4byte	.LASF47
+ 899 032f 07       		.byte	0x7
+ 900 0330 C5       		.byte	0xc5
+ 901 0331 00       		.byte	0
+ 902              		.section	.debug_abbrev,"",%progbits
+ 903              	.Ldebug_abbrev0:
+ 904 0000 01       		.uleb128 0x1
+ 905 0001 11       		.uleb128 0x11
+ 906 0002 01       		.byte	0x1
+ 907 0003 25       		.uleb128 0x25
+ 908 0004 0E       		.uleb128 0xe
+ 909 0005 13       		.uleb128 0x13
+ 910 0006 0B       		.uleb128 0xb
+ 911 0007 03       		.uleb128 0x3
+ 912 0008 0E       		.uleb128 0xe
+ 913 0009 1B       		.uleb128 0x1b
+ 914 000a 0E       		.uleb128 0xe
+ 915 000b 55       		.uleb128 0x55
+ 916 000c 17       		.uleb128 0x17
+ 917 000d 11       		.uleb128 0x11
+ 918 000e 01       		.uleb128 0x1
+ 919 000f 10       		.uleb128 0x10
+ 920 0010 17       		.uleb128 0x17
+ 921 0011 00       		.byte	0
+ 922 0012 00       		.byte	0
+ 923 0013 02       		.uleb128 0x2
+ 924 0014 24       		.uleb128 0x24
+ 925 0015 00       		.byte	0
+ 926 0016 0B       		.uleb128 0xb
+ 927 0017 0B       		.uleb128 0xb
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 19
+
+
+ 928 0018 3E       		.uleb128 0x3e
+ 929 0019 0B       		.uleb128 0xb
+ 930 001a 03       		.uleb128 0x3
+ 931 001b 0E       		.uleb128 0xe
+ 932 001c 00       		.byte	0
+ 933 001d 00       		.byte	0
+ 934 001e 03       		.uleb128 0x3
+ 935 001f 24       		.uleb128 0x24
+ 936 0020 00       		.byte	0
+ 937 0021 0B       		.uleb128 0xb
+ 938 0022 0B       		.uleb128 0xb
+ 939 0023 3E       		.uleb128 0x3e
+ 940 0024 0B       		.uleb128 0xb
+ 941 0025 03       		.uleb128 0x3
+ 942 0026 08       		.uleb128 0x8
+ 943 0027 00       		.byte	0
+ 944 0028 00       		.byte	0
+ 945 0029 04       		.uleb128 0x4
+ 946 002a 16       		.uleb128 0x16
+ 947 002b 00       		.byte	0
+ 948 002c 03       		.uleb128 0x3
+ 949 002d 0E       		.uleb128 0xe
+ 950 002e 3A       		.uleb128 0x3a
+ 951 002f 0B       		.uleb128 0xb
+ 952 0030 3B       		.uleb128 0x3b
+ 953 0031 05       		.uleb128 0x5
+ 954 0032 49       		.uleb128 0x49
+ 955 0033 13       		.uleb128 0x13
+ 956 0034 00       		.byte	0
+ 957 0035 00       		.byte	0
+ 958 0036 05       		.uleb128 0x5
+ 959 0037 0F       		.uleb128 0xf
+ 960 0038 00       		.byte	0
+ 961 0039 0B       		.uleb128 0xb
+ 962 003a 0B       		.uleb128 0xb
+ 963 003b 00       		.byte	0
+ 964 003c 00       		.byte	0
+ 965 003d 06       		.uleb128 0x6
+ 966 003e 0F       		.uleb128 0xf
+ 967 003f 00       		.byte	0
+ 968 0040 0B       		.uleb128 0xb
+ 969 0041 0B       		.uleb128 0xb
+ 970 0042 49       		.uleb128 0x49
+ 971 0043 13       		.uleb128 0x13
+ 972 0044 00       		.byte	0
+ 973 0045 00       		.byte	0
+ 974 0046 07       		.uleb128 0x7
+ 975 0047 26       		.uleb128 0x26
+ 976 0048 00       		.byte	0
+ 977 0049 49       		.uleb128 0x49
+ 978 004a 13       		.uleb128 0x13
+ 979 004b 00       		.byte	0
+ 980 004c 00       		.byte	0
+ 981 004d 08       		.uleb128 0x8
+ 982 004e 16       		.uleb128 0x16
+ 983 004f 00       		.byte	0
+ 984 0050 03       		.uleb128 0x3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 20
+
+
+ 985 0051 0E       		.uleb128 0xe
+ 986 0052 3A       		.uleb128 0x3a
+ 987 0053 0B       		.uleb128 0xb
+ 988 0054 3B       		.uleb128 0x3b
+ 989 0055 0B       		.uleb128 0xb
+ 990 0056 49       		.uleb128 0x49
+ 991 0057 13       		.uleb128 0x13
+ 992 0058 00       		.byte	0
+ 993 0059 00       		.byte	0
+ 994 005a 09       		.uleb128 0x9
+ 995 005b 13       		.uleb128 0x13
+ 996 005c 01       		.byte	0x1
+ 997 005d 03       		.uleb128 0x3
+ 998 005e 0E       		.uleb128 0xe
+ 999 005f 0B       		.uleb128 0xb
+ 1000 0060 0B       		.uleb128 0xb
+ 1001 0061 3A       		.uleb128 0x3a
+ 1002 0062 0B       		.uleb128 0xb
+ 1003 0063 3B       		.uleb128 0x3b
+ 1004 0064 0B       		.uleb128 0xb
+ 1005 0065 01       		.uleb128 0x1
+ 1006 0066 13       		.uleb128 0x13
+ 1007 0067 00       		.byte	0
+ 1008 0068 00       		.byte	0
+ 1009 0069 0A       		.uleb128 0xa
+ 1010 006a 0D       		.uleb128 0xd
+ 1011 006b 00       		.byte	0
+ 1012 006c 03       		.uleb128 0x3
+ 1013 006d 0E       		.uleb128 0xe
+ 1014 006e 49       		.uleb128 0x49
+ 1015 006f 13       		.uleb128 0x13
+ 1016 0070 38       		.uleb128 0x38
+ 1017 0071 0B       		.uleb128 0xb
+ 1018 0072 34       		.uleb128 0x34
+ 1019 0073 19       		.uleb128 0x19
+ 1020 0074 00       		.byte	0
+ 1021 0075 00       		.byte	0
+ 1022 0076 0B       		.uleb128 0xb
+ 1023 0077 0D       		.uleb128 0xd
+ 1024 0078 00       		.byte	0
+ 1025 0079 03       		.uleb128 0x3
+ 1026 007a 0E       		.uleb128 0xe
+ 1027 007b 3A       		.uleb128 0x3a
+ 1028 007c 0B       		.uleb128 0xb
+ 1029 007d 3B       		.uleb128 0x3b
+ 1030 007e 0B       		.uleb128 0xb
+ 1031 007f 49       		.uleb128 0x49
+ 1032 0080 13       		.uleb128 0x13
+ 1033 0081 38       		.uleb128 0x38
+ 1034 0082 0B       		.uleb128 0xb
+ 1035 0083 00       		.byte	0
+ 1036 0084 00       		.byte	0
+ 1037 0085 0C       		.uleb128 0xc
+ 1038 0086 13       		.uleb128 0x13
+ 1039 0087 01       		.byte	0x1
+ 1040 0088 0B       		.uleb128 0xb
+ 1041 0089 05       		.uleb128 0x5
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 21
+
+
+ 1042 008a 3A       		.uleb128 0x3a
+ 1043 008b 0B       		.uleb128 0xb
+ 1044 008c 3B       		.uleb128 0x3b
+ 1045 008d 0B       		.uleb128 0xb
+ 1046 008e 01       		.uleb128 0x1
+ 1047 008f 13       		.uleb128 0x13
+ 1048 0090 00       		.byte	0
+ 1049 0091 00       		.byte	0
+ 1050 0092 0D       		.uleb128 0xd
+ 1051 0093 0D       		.uleb128 0xd
+ 1052 0094 00       		.byte	0
+ 1053 0095 03       		.uleb128 0x3
+ 1054 0096 0E       		.uleb128 0xe
+ 1055 0097 3A       		.uleb128 0x3a
+ 1056 0098 0B       		.uleb128 0xb
+ 1057 0099 3B       		.uleb128 0x3b
+ 1058 009a 0B       		.uleb128 0xb
+ 1059 009b 49       		.uleb128 0x49
+ 1060 009c 13       		.uleb128 0x13
+ 1061 009d 38       		.uleb128 0x38
+ 1062 009e 05       		.uleb128 0x5
+ 1063 009f 00       		.byte	0
+ 1064 00a0 00       		.byte	0
+ 1065 00a1 0E       		.uleb128 0xe
+ 1066 00a2 01       		.uleb128 0x1
+ 1067 00a3 01       		.byte	0x1
+ 1068 00a4 49       		.uleb128 0x49
+ 1069 00a5 13       		.uleb128 0x13
+ 1070 00a6 01       		.uleb128 0x1
+ 1071 00a7 13       		.uleb128 0x13
+ 1072 00a8 00       		.byte	0
+ 1073 00a9 00       		.byte	0
+ 1074 00aa 0F       		.uleb128 0xf
+ 1075 00ab 21       		.uleb128 0x21
+ 1076 00ac 00       		.byte	0
+ 1077 00ad 49       		.uleb128 0x49
+ 1078 00ae 13       		.uleb128 0x13
+ 1079 00af 2F       		.uleb128 0x2f
+ 1080 00b0 0B       		.uleb128 0xb
+ 1081 00b1 00       		.byte	0
+ 1082 00b2 00       		.byte	0
+ 1083 00b3 10       		.uleb128 0x10
+ 1084 00b4 2E       		.uleb128 0x2e
+ 1085 00b5 00       		.byte	0
+ 1086 00b6 3F       		.uleb128 0x3f
+ 1087 00b7 19       		.uleb128 0x19
+ 1088 00b8 03       		.uleb128 0x3
+ 1089 00b9 0E       		.uleb128 0xe
+ 1090 00ba 3A       		.uleb128 0x3a
+ 1091 00bb 0B       		.uleb128 0xb
+ 1092 00bc 3B       		.uleb128 0x3b
+ 1093 00bd 0B       		.uleb128 0xb
+ 1094 00be 27       		.uleb128 0x27
+ 1095 00bf 19       		.uleb128 0x19
+ 1096 00c0 49       		.uleb128 0x49
+ 1097 00c1 13       		.uleb128 0x13
+ 1098 00c2 11       		.uleb128 0x11
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 22
+
+
+ 1099 00c3 01       		.uleb128 0x1
+ 1100 00c4 12       		.uleb128 0x12
+ 1101 00c5 06       		.uleb128 0x6
+ 1102 00c6 40       		.uleb128 0x40
+ 1103 00c7 18       		.uleb128 0x18
+ 1104 00c8 9642     		.uleb128 0x2116
+ 1105 00ca 19       		.uleb128 0x19
+ 1106 00cb 00       		.byte	0
+ 1107 00cc 00       		.byte	0
+ 1108 00cd 11       		.uleb128 0x11
+ 1109 00ce 2E       		.uleb128 0x2e
+ 1110 00cf 00       		.byte	0
+ 1111 00d0 3F       		.uleb128 0x3f
+ 1112 00d1 19       		.uleb128 0x19
+ 1113 00d2 03       		.uleb128 0x3
+ 1114 00d3 0E       		.uleb128 0xe
+ 1115 00d4 3A       		.uleb128 0x3a
+ 1116 00d5 0B       		.uleb128 0xb
+ 1117 00d6 3B       		.uleb128 0x3b
+ 1118 00d7 0B       		.uleb128 0xb
+ 1119 00d8 27       		.uleb128 0x27
+ 1120 00d9 19       		.uleb128 0x19
+ 1121 00da 49       		.uleb128 0x49
+ 1122 00db 13       		.uleb128 0x13
+ 1123 00dc 11       		.uleb128 0x11
+ 1124 00dd 01       		.uleb128 0x1
+ 1125 00de 12       		.uleb128 0x12
+ 1126 00df 06       		.uleb128 0x6
+ 1127 00e0 40       		.uleb128 0x40
+ 1128 00e1 18       		.uleb128 0x18
+ 1129 00e2 9742     		.uleb128 0x2117
+ 1130 00e4 19       		.uleb128 0x19
+ 1131 00e5 00       		.byte	0
+ 1132 00e6 00       		.byte	0
+ 1133 00e7 12       		.uleb128 0x12
+ 1134 00e8 2E       		.uleb128 0x2e
+ 1135 00e9 01       		.byte	0x1
+ 1136 00ea 3F       		.uleb128 0x3f
+ 1137 00eb 19       		.uleb128 0x19
+ 1138 00ec 03       		.uleb128 0x3
+ 1139 00ed 0E       		.uleb128 0xe
+ 1140 00ee 3A       		.uleb128 0x3a
+ 1141 00ef 0B       		.uleb128 0xb
+ 1142 00f0 3B       		.uleb128 0x3b
+ 1143 00f1 0B       		.uleb128 0xb
+ 1144 00f2 27       		.uleb128 0x27
+ 1145 00f3 19       		.uleb128 0x19
+ 1146 00f4 49       		.uleb128 0x49
+ 1147 00f5 13       		.uleb128 0x13
+ 1148 00f6 11       		.uleb128 0x11
+ 1149 00f7 01       		.uleb128 0x1
+ 1150 00f8 12       		.uleb128 0x12
+ 1151 00f9 06       		.uleb128 0x6
+ 1152 00fa 40       		.uleb128 0x40
+ 1153 00fb 18       		.uleb128 0x18
+ 1154 00fc 9642     		.uleb128 0x2116
+ 1155 00fe 19       		.uleb128 0x19
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 23
+
+
+ 1156 00ff 01       		.uleb128 0x1
+ 1157 0100 13       		.uleb128 0x13
+ 1158 0101 00       		.byte	0
+ 1159 0102 00       		.byte	0
+ 1160 0103 13       		.uleb128 0x13
+ 1161 0104 05       		.uleb128 0x5
+ 1162 0105 00       		.byte	0
+ 1163 0106 03       		.uleb128 0x3
+ 1164 0107 0E       		.uleb128 0xe
+ 1165 0108 3A       		.uleb128 0x3a
+ 1166 0109 0B       		.uleb128 0xb
+ 1167 010a 3B       		.uleb128 0x3b
+ 1168 010b 0B       		.uleb128 0xb
+ 1169 010c 49       		.uleb128 0x49
+ 1170 010d 13       		.uleb128 0x13
+ 1171 010e 02       		.uleb128 0x2
+ 1172 010f 18       		.uleb128 0x18
+ 1173 0110 00       		.byte	0
+ 1174 0111 00       		.byte	0
+ 1175 0112 14       		.uleb128 0x14
+ 1176 0113 898201   		.uleb128 0x4109
+ 1177 0116 00       		.byte	0
+ 1178 0117 11       		.uleb128 0x11
+ 1179 0118 01       		.uleb128 0x1
+ 1180 0119 31       		.uleb128 0x31
+ 1181 011a 13       		.uleb128 0x13
+ 1182 011b 00       		.byte	0
+ 1183 011c 00       		.byte	0
+ 1184 011d 15       		.uleb128 0x15
+ 1185 011e 898201   		.uleb128 0x4109
+ 1186 0121 01       		.byte	0x1
+ 1187 0122 11       		.uleb128 0x11
+ 1188 0123 01       		.uleb128 0x1
+ 1189 0124 31       		.uleb128 0x31
+ 1190 0125 13       		.uleb128 0x13
+ 1191 0126 00       		.byte	0
+ 1192 0127 00       		.byte	0
+ 1193 0128 16       		.uleb128 0x16
+ 1194 0129 8A8201   		.uleb128 0x410a
+ 1195 012c 00       		.byte	0
+ 1196 012d 02       		.uleb128 0x2
+ 1197 012e 18       		.uleb128 0x18
+ 1198 012f 9142     		.uleb128 0x2111
+ 1199 0131 18       		.uleb128 0x18
+ 1200 0132 00       		.byte	0
+ 1201 0133 00       		.byte	0
+ 1202 0134 17       		.uleb128 0x17
+ 1203 0135 05       		.uleb128 0x5
+ 1204 0136 00       		.byte	0
+ 1205 0137 03       		.uleb128 0x3
+ 1206 0138 0E       		.uleb128 0xe
+ 1207 0139 3A       		.uleb128 0x3a
+ 1208 013a 0B       		.uleb128 0xb
+ 1209 013b 3B       		.uleb128 0x3b
+ 1210 013c 0B       		.uleb128 0xb
+ 1211 013d 49       		.uleb128 0x49
+ 1212 013e 13       		.uleb128 0x13
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 24
+
+
+ 1213 013f 02       		.uleb128 0x2
+ 1214 0140 17       		.uleb128 0x17
+ 1215 0141 00       		.byte	0
+ 1216 0142 00       		.byte	0
+ 1217 0143 18       		.uleb128 0x18
+ 1218 0144 05       		.uleb128 0x5
+ 1219 0145 00       		.byte	0
+ 1220 0146 03       		.uleb128 0x3
+ 1221 0147 08       		.uleb128 0x8
+ 1222 0148 3A       		.uleb128 0x3a
+ 1223 0149 0B       		.uleb128 0xb
+ 1224 014a 3B       		.uleb128 0x3b
+ 1225 014b 0B       		.uleb128 0xb
+ 1226 014c 49       		.uleb128 0x49
+ 1227 014d 13       		.uleb128 0x13
+ 1228 014e 02       		.uleb128 0x2
+ 1229 014f 18       		.uleb128 0x18
+ 1230 0150 00       		.byte	0
+ 1231 0151 00       		.byte	0
+ 1232 0152 19       		.uleb128 0x19
+ 1233 0153 18       		.uleb128 0x18
+ 1234 0154 00       		.byte	0
+ 1235 0155 00       		.byte	0
+ 1236 0156 00       		.byte	0
+ 1237 0157 1A       		.uleb128 0x1a
+ 1238 0158 34       		.uleb128 0x34
+ 1239 0159 00       		.byte	0
+ 1240 015a 03       		.uleb128 0x3
+ 1241 015b 08       		.uleb128 0x8
+ 1242 015c 3A       		.uleb128 0x3a
+ 1243 015d 0B       		.uleb128 0xb
+ 1244 015e 3B       		.uleb128 0x3b
+ 1245 015f 0B       		.uleb128 0xb
+ 1246 0160 49       		.uleb128 0x49
+ 1247 0161 13       		.uleb128 0x13
+ 1248 0162 02       		.uleb128 0x2
+ 1249 0163 18       		.uleb128 0x18
+ 1250 0164 00       		.byte	0
+ 1251 0165 00       		.byte	0
+ 1252 0166 1B       		.uleb128 0x1b
+ 1253 0167 05       		.uleb128 0x5
+ 1254 0168 00       		.byte	0
+ 1255 0169 03       		.uleb128 0x3
+ 1256 016a 08       		.uleb128 0x8
+ 1257 016b 3A       		.uleb128 0x3a
+ 1258 016c 0B       		.uleb128 0xb
+ 1259 016d 3B       		.uleb128 0x3b
+ 1260 016e 0B       		.uleb128 0xb
+ 1261 016f 49       		.uleb128 0x49
+ 1262 0170 13       		.uleb128 0x13
+ 1263 0171 02       		.uleb128 0x2
+ 1264 0172 17       		.uleb128 0x17
+ 1265 0173 00       		.byte	0
+ 1266 0174 00       		.byte	0
+ 1267 0175 1C       		.uleb128 0x1c
+ 1268 0176 2E       		.uleb128 0x2e
+ 1269 0177 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 25
+
+
+ 1270 0178 3F       		.uleb128 0x3f
+ 1271 0179 19       		.uleb128 0x19
+ 1272 017a 03       		.uleb128 0x3
+ 1273 017b 0E       		.uleb128 0xe
+ 1274 017c 3A       		.uleb128 0x3a
+ 1275 017d 0B       		.uleb128 0xb
+ 1276 017e 3B       		.uleb128 0x3b
+ 1277 017f 0B       		.uleb128 0xb
+ 1278 0180 27       		.uleb128 0x27
+ 1279 0181 19       		.uleb128 0x19
+ 1280 0182 11       		.uleb128 0x11
+ 1281 0183 01       		.uleb128 0x1
+ 1282 0184 12       		.uleb128 0x12
+ 1283 0185 06       		.uleb128 0x6
+ 1284 0186 40       		.uleb128 0x40
+ 1285 0187 18       		.uleb128 0x18
+ 1286 0188 9742     		.uleb128 0x2117
+ 1287 018a 19       		.uleb128 0x19
+ 1288 018b 00       		.byte	0
+ 1289 018c 00       		.byte	0
+ 1290 018d 1D       		.uleb128 0x1d
+ 1291 018e 34       		.uleb128 0x34
+ 1292 018f 00       		.byte	0
+ 1293 0190 03       		.uleb128 0x3
+ 1294 0191 0E       		.uleb128 0xe
+ 1295 0192 3A       		.uleb128 0x3a
+ 1296 0193 0B       		.uleb128 0xb
+ 1297 0194 3B       		.uleb128 0x3b
+ 1298 0195 0B       		.uleb128 0xb
+ 1299 0196 49       		.uleb128 0x49
+ 1300 0197 13       		.uleb128 0x13
+ 1301 0198 3F       		.uleb128 0x3f
+ 1302 0199 19       		.uleb128 0x19
+ 1303 019a 02       		.uleb128 0x2
+ 1304 019b 18       		.uleb128 0x18
+ 1305 019c 00       		.byte	0
+ 1306 019d 00       		.byte	0
+ 1307 019e 1E       		.uleb128 0x1e
+ 1308 019f 2E       		.uleb128 0x2e
+ 1309 01a0 00       		.byte	0
+ 1310 01a1 3F       		.uleb128 0x3f
+ 1311 01a2 19       		.uleb128 0x19
+ 1312 01a3 3C       		.uleb128 0x3c
+ 1313 01a4 19       		.uleb128 0x19
+ 1314 01a5 6E       		.uleb128 0x6e
+ 1315 01a6 0E       		.uleb128 0xe
+ 1316 01a7 03       		.uleb128 0x3
+ 1317 01a8 0E       		.uleb128 0xe
+ 1318 01a9 00       		.byte	0
+ 1319 01aa 00       		.byte	0
+ 1320 01ab 1F       		.uleb128 0x1f
+ 1321 01ac 2E       		.uleb128 0x2e
+ 1322 01ad 00       		.byte	0
+ 1323 01ae 3F       		.uleb128 0x3f
+ 1324 01af 19       		.uleb128 0x19
+ 1325 01b0 3C       		.uleb128 0x3c
+ 1326 01b1 19       		.uleb128 0x19
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 26
+
+
+ 1327 01b2 6E       		.uleb128 0x6e
+ 1328 01b3 0E       		.uleb128 0xe
+ 1329 01b4 03       		.uleb128 0x3
+ 1330 01b5 0E       		.uleb128 0xe
+ 1331 01b6 3A       		.uleb128 0x3a
+ 1332 01b7 0B       		.uleb128 0xb
+ 1333 01b8 3B       		.uleb128 0x3b
+ 1334 01b9 0B       		.uleb128 0xb
+ 1335 01ba 00       		.byte	0
+ 1336 01bb 00       		.byte	0
+ 1337 01bc 00       		.byte	0
+ 1338              		.section	.debug_loc,"",%progbits
+ 1339              	.Ldebug_loc0:
+ 1340              	.LLST0:
+ 1341 0000 00000000 		.4byte	.LVL4
+ 1342 0004 0B000000 		.4byte	.LVL5-1
+ 1343 0008 0100     		.2byte	0x1
+ 1344 000a 50       		.byte	0x50
+ 1345 000b 0B000000 		.4byte	.LVL5-1
+ 1346 000f 64000000 		.4byte	.LFE64
+ 1347 0013 0400     		.2byte	0x4
+ 1348 0015 F3       		.byte	0xf3
+ 1349 0016 01       		.uleb128 0x1
+ 1350 0017 50       		.byte	0x50
+ 1351 0018 9F       		.byte	0x9f
+ 1352 0019 00000000 		.4byte	0
+ 1353 001d 00000000 		.4byte	0
+ 1354              	.LLST1:
+ 1355 0021 00000000 		.4byte	.LVL10
+ 1356 0025 0C000000 		.4byte	.LVL11
+ 1357 0029 0100     		.2byte	0x1
+ 1358 002b 50       		.byte	0x50
+ 1359 002c 0C000000 		.4byte	.LVL11
+ 1360 0030 28000000 		.4byte	.LFE67
+ 1361 0034 0400     		.2byte	0x4
+ 1362 0036 F3       		.byte	0xf3
+ 1363 0037 01       		.uleb128 0x1
+ 1364 0038 50       		.byte	0x50
+ 1365 0039 9F       		.byte	0x9f
+ 1366 003a 00000000 		.4byte	0
+ 1367 003e 00000000 		.4byte	0
+ 1368              		.section	.debug_aranges,"",%progbits
+ 1369 0000 64000000 		.4byte	0x64
+ 1370 0004 0200     		.2byte	0x2
+ 1371 0006 00000000 		.4byte	.Ldebug_info0
+ 1372 000a 04       		.byte	0x4
+ 1373 000b 00       		.byte	0
+ 1374 000c 0000     		.2byte	0
+ 1375 000e 0000     		.2byte	0
+ 1376 0010 00000000 		.4byte	.LFB61
+ 1377 0014 24000000 		.4byte	.LFE61-.LFB61
+ 1378 0018 00000000 		.4byte	.LFB62
+ 1379 001c 1C000000 		.4byte	.LFE62-.LFB62
+ 1380 0020 00000000 		.4byte	.LFB63
+ 1381 0024 58000000 		.4byte	.LFE63-.LFB63
+ 1382 0028 00000000 		.4byte	.LFB64
+ 1383 002c 64000000 		.4byte	.LFE64-.LFB64
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 27
+
+
+ 1384 0030 00000000 		.4byte	.LFB65
+ 1385 0034 30000000 		.4byte	.LFE65-.LFB65
+ 1386 0038 00000000 		.4byte	.LFB66
+ 1387 003c 24000000 		.4byte	.LFE66-.LFB66
+ 1388 0040 00000000 		.4byte	.LFB67
+ 1389 0044 28000000 		.4byte	.LFE67-.LFB67
+ 1390 0048 00000000 		.4byte	.LFB68
+ 1391 004c 24000000 		.4byte	.LFE68-.LFB68
+ 1392 0050 00000000 		.4byte	.LFB69
+ 1393 0054 0C000000 		.4byte	.LFE69-.LFB69
+ 1394 0058 00000000 		.4byte	.LFB70
+ 1395 005c 02000000 		.4byte	.LFE70-.LFB70
+ 1396 0060 00000000 		.4byte	0
+ 1397 0064 00000000 		.4byte	0
+ 1398              		.section	.debug_ranges,"",%progbits
+ 1399              	.Ldebug_ranges0:
+ 1400 0000 00000000 		.4byte	.LFB61
+ 1401 0004 24000000 		.4byte	.LFE61
+ 1402 0008 00000000 		.4byte	.LFB62
+ 1403 000c 1C000000 		.4byte	.LFE62
+ 1404 0010 00000000 		.4byte	.LFB63
+ 1405 0014 58000000 		.4byte	.LFE63
+ 1406 0018 00000000 		.4byte	.LFB64
+ 1407 001c 64000000 		.4byte	.LFE64
+ 1408 0020 00000000 		.4byte	.LFB65
+ 1409 0024 30000000 		.4byte	.LFE65
+ 1410 0028 00000000 		.4byte	.LFB66
+ 1411 002c 24000000 		.4byte	.LFE66
+ 1412 0030 00000000 		.4byte	.LFB67
+ 1413 0034 28000000 		.4byte	.LFE67
+ 1414 0038 00000000 		.4byte	.LFB68
+ 1415 003c 24000000 		.4byte	.LFE68
+ 1416 0040 00000000 		.4byte	.LFB69
+ 1417 0044 0C000000 		.4byte	.LFE69
+ 1418 0048 00000000 		.4byte	.LFB70
+ 1419 004c 02000000 		.4byte	.LFE70
+ 1420 0050 00000000 		.4byte	0
+ 1421 0054 00000000 		.4byte	0
+ 1422              		.section	.debug_line,"",%progbits
+ 1423              	.Ldebug_line0:
+ 1424 0000 3D020000 		.section	.debug_str,"MS",%progbits,1
+ 1424      02007201 
+ 1424      00000201 
+ 1424      FB0E0D00 
+ 1424      01010101 
+ 1425              	.LASF23:
+ 1426 0000 6D657373 		.ascii	"message\000"
+ 1426      61676500 
+ 1427              	.LASF27:
+ 1428 0008 6973456D 		.ascii	"isEmptyQueueANDON\000"
+ 1428      70747951 
+ 1428      75657565 
+ 1428      414E444F 
+ 1428      4E00
+ 1429              	.LASF35:
+ 1430 001a 67657453 		.ascii	"getSizeQueueANDON\000"
+ 1430      697A6551 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 28
+
+
+ 1430      75657565 
+ 1430      414E444F 
+ 1430      4E00
+ 1431              	.LASF26:
+ 1432 002c 69734675 		.ascii	"isFullQueueANDON\000"
+ 1432      6C6C5175 
+ 1432      65756541 
+ 1432      4E444F4E 
+ 1432      00
+ 1433              	.LASF9:
+ 1434 003d 75696E74 		.ascii	"uint8\000"
+ 1434      3800
+ 1435              	.LASF38:
+ 1436 0043 675F7546 		.ascii	"g_uFrontQueueANDON\000"
+ 1436      726F6E74 
+ 1436      51756575 
+ 1436      65414E44 
+ 1436      4F4E00
+ 1437              	.LASF37:
+ 1438 0056 675F7553 		.ascii	"g_uSizeQueueANDON\000"
+ 1438      697A6551 
+ 1438      75657565 
+ 1438      414E444F 
+ 1438      4E00
+ 1439              	.LASF11:
+ 1440 0068 666C6F61 		.ascii	"float\000"
+ 1440      7400
+ 1441              	.LASF30:
+ 1442 006e 64617461 		.ascii	"data\000"
+ 1442      00
+ 1443              	.LASF16:
+ 1444 0073 5F5F676E 		.ascii	"__gnuc_va_list\000"
+ 1444      75635F76 
+ 1444      615F6C69 
+ 1444      737400
+ 1445              	.LASF1:
+ 1446 0082 756E7369 		.ascii	"unsigned char\000"
+ 1446      676E6564 
+ 1446      20636861 
+ 1446      7200
+ 1447              	.LASF34:
+ 1448 0090 67657452 		.ascii	"getRearQueueANDON\000"
+ 1448      65617251 
+ 1448      75657565 
+ 1448      414E444F 
+ 1448      4E00
+ 1449              	.LASF5:
+ 1450 00a2 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1450      20756E73 
+ 1450      69676E65 
+ 1450      6420696E 
+ 1450      7400
+ 1451              	.LASF19:
+ 1452 00b4 73506172 		.ascii	"sParameter\000"
+ 1452      616D6574 
+ 1452      657200
+ 1453              	.LASF3:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 29
+
+
+ 1454 00bf 73686F72 		.ascii	"short unsigned int\000"
+ 1454      7420756E 
+ 1454      7369676E 
+ 1454      65642069 
+ 1454      6E7400
+ 1455              	.LASF17:
+ 1456 00d2 76615F6C 		.ascii	"va_list\000"
+ 1456      69737400 
+ 1457              	.LASF43:
+ 1458 00da 433A5C53 		.ascii	"C:\\SUNTECH\\PSoC\\KVC_Reset\\Trim_Reset_2025.12.29"
+ 1458      554E5445 
+ 1458      43485C50 
+ 1458      536F435C 
+ 1458      4B56435F 
+ 1459 0109 5C547269 		.ascii	"\\Trim_count\\Project\\Design.cydsn\000"
+ 1459      6D5F636F 
+ 1459      756E745C 
+ 1459      50726F6A 
+ 1459      6563745C 
+ 1460              	.LASF22:
+ 1461 012a 706F735F 		.ascii	"pos_Y\000"
+ 1461      5900
+ 1462              	.LASF28:
+ 1463 0130 656E5175 		.ascii	"enQueueANDON\000"
+ 1463      65756541 
+ 1463      4E444F4E 
+ 1463      00
+ 1464              	.LASF10:
+ 1465 013d 75696E74 		.ascii	"uint16\000"
+ 1465      313600
+ 1466              	.LASF36:
+ 1467 0144 50617261 		.ascii	"Param\000"
+ 1467      6D00
+ 1468              	.LASF8:
+ 1469 014a 756E7369 		.ascii	"unsigned int\000"
+ 1469      676E6564 
+ 1469      20696E74 
+ 1469      00
+ 1470              	.LASF7:
+ 1471 0157 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1471      206C6F6E 
+ 1471      6720756E 
+ 1471      7369676E 
+ 1471      65642069 
+ 1472              	.LASF44:
+ 1473 016e 5F5F6170 		.ascii	"__ap\000"
+ 1473      00
+ 1474              	.LASF21:
+ 1475 0173 706F735F 		.ascii	"pos_X\000"
+ 1475      5800
+ 1476              	.LASF41:
+ 1477 0179 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1477      43313120 
+ 1477      352E342E 
+ 1477      31203230 
+ 1477      31363036 
+ 1478 01ac 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 30
+
+
+ 1478      20726576 
+ 1478      6973696F 
+ 1478      6E203233 
+ 1478      37373135 
+ 1479 01df 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1479      66756E63 
+ 1479      74696F6E 
+ 1479      2D736563 
+ 1479      74696F6E 
+ 1480              	.LASF15:
+ 1481 0207 73697A65 		.ascii	"sizetype\000"
+ 1481      74797065 
+ 1481      00
+ 1482              	.LASF18:
+ 1483 0210 5F5F7661 		.ascii	"__va_list\000"
+ 1483      5F6C6973 
+ 1483      7400
+ 1484              	.LASF6:
+ 1485 021a 6C6F6E67 		.ascii	"long long int\000"
+ 1485      206C6F6E 
+ 1485      6720696E 
+ 1485      7400
+ 1486              	.LASF42:
+ 1487 0228 616E646F 		.ascii	"andonMessageQueue.c\000"
+ 1487      6E4D6573 
+ 1487      73616765 
+ 1487      51756575 
+ 1487      652E6300 
+ 1488              	.LASF13:
+ 1489 023c 63686172 		.ascii	"char\000"
+ 1489      00
+ 1490              	.LASF45:
+ 1491 0241 5072696E 		.ascii	"PrintInfoQueueANDON\000"
+ 1491      74496E66 
+ 1491      6F517565 
+ 1491      7565414E 
+ 1491      444F4E00 
+ 1492              	.LASF20:
+ 1493 0255 73746174 		.ascii	"stat_TC_INT\000"
+ 1493      5F54435F 
+ 1493      494E5400 
+ 1494              	.LASF24:
+ 1495 0261 74797065 		.ascii	"type\000"
+ 1495      00
+ 1496              	.LASF2:
+ 1497 0266 73686F72 		.ascii	"short int\000"
+ 1497      7420696E 
+ 1497      7400
+ 1498              	.LASF25:
+ 1499 0270 414E444F 		.ascii	"ANDON_QUEUE\000"
+ 1499      4E5F5155 
+ 1499      45554500 
+ 1500              	.LASF46:
+ 1501 027c 6D656D63 		.ascii	"memcpy\000"
+ 1501      707900
+ 1502              	.LASF40:
+ 1503 0283 675F6351 		.ascii	"g_cQueue\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccV8Y3uR.s 			page 31
+
+
+ 1503      75657565 
+ 1503      00
+ 1504              	.LASF32:
+ 1505 028c 67657446 		.ascii	"getFrontQueueANDON\000"
+ 1505      726F6E74 
+ 1505      51756575 
+ 1505      65414E44 
+ 1505      4F4E00
+ 1506              	.LASF31:
+ 1507 029f 64655175 		.ascii	"deQueueANDON\000"
+ 1507      65756541 
+ 1507      4E444F4E 
+ 1507      00
+ 1508              	.LASF4:
+ 1509 02ac 6C6F6E67 		.ascii	"long int\000"
+ 1509      20696E74 
+ 1509      00
+ 1510              	.LASF14:
+ 1511 02b5 6C6F6E67 		.ascii	"long double\000"
+ 1511      20646F75 
+ 1511      626C6500 
+ 1512              	.LASF39:
+ 1513 02c1 675F7552 		.ascii	"g_uRearQueueANDON\000"
+ 1513      65617251 
+ 1513      75657565 
+ 1513      414E444F 
+ 1513      4E00
+ 1514              	.LASF0:
+ 1515 02d3 7369676E 		.ascii	"signed char\000"
+ 1515      65642063 
+ 1515      68617200 
+ 1516              	.LASF12:
+ 1517 02df 646F7562 		.ascii	"double\000"
+ 1517      6C6500
+ 1518              	.LASF29:
+ 1519 02e6 656E5175 		.ascii	"enQueueANDON_printf\000"
+ 1519      65756541 
+ 1519      4E444F4E 
+ 1519      5F707269 
+ 1519      6E746600 
+ 1520              	.LASF47:
+ 1521 02fa 76737072 		.ascii	"vsprintf\000"
+ 1521      696E7466 
+ 1521      00
+ 1522              	.LASF33:
+ 1523 0303 67657446 		.ascii	"getFrontNextQueueANDON\000"
+ 1523      726F6E74 
+ 1523      4E657874 
+ 1523      51756575 
+ 1523      65414E44 
+ 1524              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

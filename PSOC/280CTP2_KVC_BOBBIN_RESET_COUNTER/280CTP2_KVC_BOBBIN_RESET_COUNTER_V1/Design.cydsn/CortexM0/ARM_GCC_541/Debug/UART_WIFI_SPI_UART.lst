@@ -1,0 +1,2327 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"UART_WIFI_SPI_UART.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.UART_WIFI_SpiUartReadRxData,"ax",%progbits
+  20              		.align	2
+  21              		.global	UART_WIFI_SpiUartReadRxData
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	UART_WIFI_SpiUartReadRxData, %function
+  25              	UART_WIFI_SpiUartReadRxData:
+  26              	.LFB1:
+  27              		.file 1 "Generated_Source\\PSoC4\\UART_WIFI_SPI_UART.c"
+   1:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** /***************************************************************************//**
+   2:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** * \file UART_WIFI_SPI_UART.c
+   3:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** * \version 4.0
+   4:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *
+   5:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** * \brief
+   6:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *  This file provides the source code to the API for the SCB Component in
+   7:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *  SPI and UART modes.
+   8:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *
+   9:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** * Note:
+  10:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *
+  11:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *******************************************************************************
+  12:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** * \copyright
+  13:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** * Copyright 2013-2017, Cypress Semiconductor Corporation.  All rights reserved.
+  14:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** * You may use this file only in accordance with the license, terms, conditions,
+  15:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** * disclaimers, and limitations in the end user license agreement accompanying
+  16:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** * the software package with which this file was provided.
+  17:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *******************************************************************************/
+  18:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+  19:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** #include "UART_WIFI_PVT.h"
+  20:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** #include "UART_WIFI_SPI_UART_PVT.h"
+  21:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+  22:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** /***************************************
+  23:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *        SPI/UART Private Vars
+  24:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** ***************************************/
+  25:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+  26:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** #if(UART_WIFI_INTERNAL_RX_SW_BUFFER_CONST)
+  27:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     /* Start index to put data into the software receive buffer.*/
+  28:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     volatile uint32 UART_WIFI_rxBufferHead;
+  29:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     /* Start index to get data from the software receive buffer.*/
+  30:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     volatile uint32 UART_WIFI_rxBufferTail;
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 2
+
+
+  31:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     /**
+  32:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * \addtogroup group_globals
+  33:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * \{
+  34:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     */
+  35:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     /** Sets when internal software receive buffer overflow
+  36:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  was occurred.
+  37:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     */
+  38:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     volatile uint8  UART_WIFI_rxBufferOverflow;
+  39:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     /** \} globals */
+  40:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** #endif /* (UART_WIFI_INTERNAL_RX_SW_BUFFER_CONST) */
+  41:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+  42:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** #if(UART_WIFI_INTERNAL_TX_SW_BUFFER_CONST)
+  43:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     /* Start index to put data into the software transmit buffer.*/
+  44:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     volatile uint32 UART_WIFI_txBufferHead;
+  45:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     /* Start index to get data from the software transmit buffer.*/
+  46:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     volatile uint32 UART_WIFI_txBufferTail;
+  47:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** #endif /* (UART_WIFI_INTERNAL_TX_SW_BUFFER_CONST) */
+  48:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+  49:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** #if(UART_WIFI_INTERNAL_RX_SW_BUFFER)
+  50:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     /* Add one element to the buffer to receive full packet. One byte in receive buffer is always e
+  51:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     volatile uint8 UART_WIFI_rxBufferInternal[UART_WIFI_INTERNAL_RX_BUFFER_SIZE];
+  52:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** #endif /* (UART_WIFI_INTERNAL_RX_SW_BUFFER) */
+  53:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+  54:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** #if(UART_WIFI_INTERNAL_TX_SW_BUFFER)
+  55:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     volatile uint8 UART_WIFI_txBufferInternal[UART_WIFI_TX_BUFFER_SIZE];
+  56:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** #endif /* (UART_WIFI_INTERNAL_TX_SW_BUFFER) */
+  57:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+  58:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+  59:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** #if(UART_WIFI_RX_DIRECTION)
+  60:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     /*******************************************************************************
+  61:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * Function Name: UART_WIFI_SpiUartReadRxData
+  62:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     ****************************************************************************//**
+  63:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+  64:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  Retrieves the next data element from the receive buffer.
+  65:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *   - RX software buffer is disabled: Returns data element retrieved from
+  66:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *     RX FIFO. Undefined data will be returned if the RX FIFO is empty.
+  67:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *   - RX software buffer is enabled: Returns data element from the software
+  68:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *     receive buffer. Zero value is returned if the software receive buffer
+  69:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *     is empty.
+  70:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+  71:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * \return
+  72:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  Next data element from the receive buffer. 
+  73:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  The amount of data bits to be received depends on RX data bits selection 
+  74:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  (the data bit counting starts from LSB of return value).
+  75:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+  76:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * \globalvars
+  77:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  UART_WIFI_rxBufferHead - the start index to put data into the 
+  78:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  software receive buffer.
+  79:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  UART_WIFI_rxBufferTail - the start index to get data from the 
+  80:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  software receive buffer.
+  81:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+  82:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *******************************************************************************/
+  83:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     uint32 UART_WIFI_SpiUartReadRxData(void)
+  84:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     {
+  28              		.loc 1 84 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 3
+
+
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  85:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         uint32 rxData = 0u;
+  86:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+  87:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     #if (UART_WIFI_INTERNAL_RX_SW_BUFFER_CONST)
+  88:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         uint32 locTail;
+  89:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     #endif /* (UART_WIFI_INTERNAL_RX_SW_BUFFER_CONST) */
+  90:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+  91:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #if (UART_WIFI_CHECK_RX_SW_BUFFER)
+  92:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         {
+  93:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             if (UART_WIFI_rxBufferHead != UART_WIFI_rxBufferTail)
+  34              		.loc 1 93 0
+  35 0000 0A4B     		ldr	r3, .L6
+  36 0002 1A68     		ldr	r2, [r3]
+  37 0004 0A4B     		ldr	r3, .L6+4
+  38 0006 1B68     		ldr	r3, [r3]
+  39 0008 9A42     		cmp	r2, r3
+  40 000a 0DD0     		beq	.L4
+  94:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             {
+  95:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 /* There is data in RX software buffer */
+  96:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+  97:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 /* Calculate index to read from */
+  98:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 locTail = (UART_WIFI_rxBufferTail + 1u);
+  41              		.loc 1 98 0
+  42 000c 084B     		ldr	r3, .L6+4
+  43 000e 1B68     		ldr	r3, [r3]
+  44 0010 0133     		adds	r3, r3, #1
+  45              	.LVL1:
+  99:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 100:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 if (UART_WIFI_INTERNAL_RX_BUFFER_SIZE == locTail)
+  46              		.loc 1 100 0
+  47 0012 0222     		movs	r2, #2
+  48 0014 FF32     		adds	r2, r2, #255
+  49 0016 9342     		cmp	r3, r2
+  50 0018 00D1     		bne	.L3
+ 101:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 {
+ 102:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                     locTail = 0u;
+  51              		.loc 1 102 0
+  52 001a 0023     		movs	r3, #0
+  53              	.LVL2:
+  54              	.L3:
+ 103:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 }
+ 104:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 105:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 /* Get data from RX software buffer */
+ 106:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 rxData = UART_WIFI_GetWordFromRxBuffer(locTail);
+  55              		.loc 1 106 0
+  56 001c 054A     		ldr	r2, .L6+8
+  57 001e D05C     		ldrb	r0, [r2, r3]
+  58 0020 C0B2     		uxtb	r0, r0
+  59              	.LVL3:
+ 107:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 108:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 /* Change index in the buffer */
+ 109:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 UART_WIFI_rxBufferTail = locTail;
+  60              		.loc 1 109 0
+  61 0022 034A     		ldr	r2, .L6+4
+  62 0024 1360     		str	r3, [r2]
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 4
+
+
+  63 0026 00E0     		b	.L2
+  64              	.LVL4:
+  65              	.L4:
+  85:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+  66              		.loc 1 85 0
+  67 0028 0020     		movs	r0, #0
+  68              	.LVL5:
+  69              	.L2:
+ 110:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 111:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 #if (UART_WIFI_CHECK_UART_RTS_CONTROL_FLOW)
+ 112:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 {
+ 113:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                     /* Check if RX Not Empty is disabled in the interrupt */
+ 114:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                     if (0u == (UART_WIFI_INTR_RX_MASK_REG & UART_WIFI_INTR_RX_NOT_EMPTY))
+ 115:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                     {
+ 116:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                         /* Enable RX Not Empty interrupt source to continue
+ 117:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                         * receiving data into software buffer.
+ 118:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                         */
+ 119:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                         UART_WIFI_INTR_RX_MASK_REG |= UART_WIFI_INTR_RX_NOT_EMPTY;
+ 120:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                     }
+ 121:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 }
+ 122:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 #endif
+ 123:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 124:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             }
+ 125:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         }
+ 126:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #else
+ 127:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         {
+ 128:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             /* Read data from RX FIFO */
+ 129:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             rxData = UART_WIFI_RX_FIFO_RD_REG;
+ 130:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         }
+ 131:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #endif
+ 132:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 133:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         return (rxData);
+ 134:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     }
+  70              		.loc 1 134 0
+  71              		@ sp needed
+  72 002a 7047     		bx	lr
+  73              	.L7:
+  74              		.align	2
+  75              	.L6:
+  76 002c 00000000 		.word	UART_WIFI_rxBufferHead
+  77 0030 00000000 		.word	UART_WIFI_rxBufferTail
+  78 0034 00000000 		.word	UART_WIFI_rxBufferInternal
+  79              		.cfi_endproc
+  80              	.LFE1:
+  81              		.size	UART_WIFI_SpiUartReadRxData, .-UART_WIFI_SpiUartReadRxData
+  82              		.section	.text.UART_WIFI_SpiUartGetRxBufferSize,"ax",%progbits
+  83              		.align	2
+  84              		.global	UART_WIFI_SpiUartGetRxBufferSize
+  85              		.code	16
+  86              		.thumb_func
+  87              		.type	UART_WIFI_SpiUartGetRxBufferSize, %function
+  88              	UART_WIFI_SpiUartGetRxBufferSize:
+  89              	.LFB2:
+ 135:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 136:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 137:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     /*******************************************************************************
+ 138:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * Function Name: UART_WIFI_SpiUartGetRxBufferSize
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 5
+
+
+ 139:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     ****************************************************************************//**
+ 140:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 141:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  Returns the number of received data elements in the receive buffer.
+ 142:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *   - RX software buffer disabled: returns the number of used entries in
+ 143:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *     RX FIFO.
+ 144:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *   - RX software buffer enabled: returns the number of elements which were
+ 145:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *     placed in the receive buffer. This does not include the hardware RX FIFO.
+ 146:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 147:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * \return
+ 148:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  Number of received data elements.
+ 149:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 150:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * \globalvars
+ 151:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  UART_WIFI_rxBufferHead - the start index to put data into the 
+ 152:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  software receive buffer.
+ 153:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  UART_WIFI_rxBufferTail - the start index to get data from the 
+ 154:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  software receive buffer.
+ 155:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 156:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *******************************************************************************/
+ 157:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     uint32 UART_WIFI_SpiUartGetRxBufferSize(void)
+ 158:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     {
+  90              		.loc 1 158 0
+  91              		.cfi_startproc
+  92              		@ args = 0, pretend = 0, frame = 0
+  93              		@ frame_needed = 0, uses_anonymous_args = 0
+  94              		@ link register save eliminated.
+ 159:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         uint32 size;
+ 160:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     #if (UART_WIFI_INTERNAL_RX_SW_BUFFER_CONST)
+ 161:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         uint32 locHead;
+ 162:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     #endif /* (UART_WIFI_INTERNAL_RX_SW_BUFFER_CONST) */
+ 163:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 164:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #if (UART_WIFI_CHECK_RX_SW_BUFFER)
+ 165:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         {
+ 166:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             locHead = UART_WIFI_rxBufferHead;
+  95              		.loc 1 166 0
+  96 0000 074B     		ldr	r3, .L11
+  97 0002 1B68     		ldr	r3, [r3]
+  98              	.LVL6:
+ 167:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 168:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             if(locHead >= UART_WIFI_rxBufferTail)
+  99              		.loc 1 168 0
+ 100 0004 074A     		ldr	r2, .L11+4
+ 101 0006 1268     		ldr	r2, [r2]
+ 102 0008 9342     		cmp	r3, r2
+ 103 000a 03D3     		bcc	.L9
+ 169:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             {
+ 170:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 size = (locHead - UART_WIFI_rxBufferTail);
+ 104              		.loc 1 170 0
+ 105 000c 054A     		ldr	r2, .L11+4
+ 106 000e 1068     		ldr	r0, [r2]
+ 107 0010 181A     		subs	r0, r3, r0
+ 108              	.LVL7:
+ 109 0012 04E0     		b	.L10
+ 110              	.LVL8:
+ 111              	.L9:
+ 171:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             }
+ 172:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             else
+ 173:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             {
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 6
+
+
+ 174:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 size = (locHead + (UART_WIFI_INTERNAL_RX_BUFFER_SIZE - UART_WIFI_rxBufferTail));
+ 112              		.loc 1 174 0
+ 113 0014 034A     		ldr	r2, .L11+4
+ 114 0016 1068     		ldr	r0, [r2]
+ 115 0018 1B1A     		subs	r3, r3, r0
+ 116              	.LVL9:
+ 117 001a 981C     		adds	r0, r3, #2
+ 118 001c FF30     		adds	r0, r0, #255
+ 119              	.LVL10:
+ 120              	.L10:
+ 175:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             }
+ 176:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         }
+ 177:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #else
+ 178:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         {
+ 179:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             size = UART_WIFI_GET_RX_FIFO_ENTRIES;
+ 180:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         }
+ 181:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #endif
+ 182:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 183:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         return (size);
+ 184:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     }
+ 121              		.loc 1 184 0
+ 122              		@ sp needed
+ 123 001e 7047     		bx	lr
+ 124              	.L12:
+ 125              		.align	2
+ 126              	.L11:
+ 127 0020 00000000 		.word	UART_WIFI_rxBufferHead
+ 128 0024 00000000 		.word	UART_WIFI_rxBufferTail
+ 129              		.cfi_endproc
+ 130              	.LFE2:
+ 131              		.size	UART_WIFI_SpiUartGetRxBufferSize, .-UART_WIFI_SpiUartGetRxBufferSize
+ 132              		.section	.text.UART_WIFI_SpiUartClearRxBuffer,"ax",%progbits
+ 133              		.align	2
+ 134              		.global	UART_WIFI_SpiUartClearRxBuffer
+ 135              		.code	16
+ 136              		.thumb_func
+ 137              		.type	UART_WIFI_SpiUartClearRxBuffer, %function
+ 138              	UART_WIFI_SpiUartClearRxBuffer:
+ 139              	.LFB3:
+ 185:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 186:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 187:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     /*******************************************************************************
+ 188:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * Function Name: UART_WIFI_SpiUartClearRxBuffer
+ 189:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     ****************************************************************************//**
+ 190:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 191:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  Clears the receive buffer and RX FIFO.
+ 192:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 193:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * \globalvars
+ 194:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  UART_WIFI_rxBufferHead - the start index to put data into the 
+ 195:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  software receive buffer.
+ 196:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  UART_WIFI_rxBufferTail - the start index to get data from the 
+ 197:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  software receive buffer.
+ 198:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 199:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *******************************************************************************/
+ 200:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     void UART_WIFI_SpiUartClearRxBuffer(void)
+ 201:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     {
+ 140              		.loc 1 201 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 7
+
+
+ 141              		.cfi_startproc
+ 142              		@ args = 0, pretend = 0, frame = 0
+ 143              		@ frame_needed = 0, uses_anonymous_args = 0
+ 144 0000 10B5     		push	{r4, lr}
+ 145              		.cfi_def_cfa_offset 8
+ 146              		.cfi_offset 4, -8
+ 147              		.cfi_offset 14, -4
+ 202:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #if (UART_WIFI_CHECK_RX_SW_BUFFER)
+ 203:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         {
+ 204:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             /* Lock from component interruption */
+ 205:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_DisableInt();
+ 148              		.loc 1 205 0
+ 149 0002 0A20     		movs	r0, #10
+ 150 0004 FFF7FEFF 		bl	CyIntDisable
+ 151              	.LVL11:
+ 206:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 207:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             /* Flush RX software buffer */
+ 208:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_rxBufferHead = UART_WIFI_rxBufferTail;
+ 152              		.loc 1 208 0
+ 153 0008 0B4B     		ldr	r3, .L14
+ 154 000a 1A68     		ldr	r2, [r3]
+ 155 000c 0B4B     		ldr	r3, .L14+4
+ 156 000e 1A60     		str	r2, [r3]
+ 209:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_rxBufferOverflow = 0u;
+ 157              		.loc 1 209 0
+ 158 0010 0022     		movs	r2, #0
+ 159 0012 0B4B     		ldr	r3, .L14+8
+ 160 0014 1A70     		strb	r2, [r3]
+ 210:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 211:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_CLEAR_RX_FIFO;
+ 161              		.loc 1 211 0
+ 162 0016 0B4B     		ldr	r3, .L14+12
+ 163 0018 1A68     		ldr	r2, [r3]
+ 164 001a 8021     		movs	r1, #128
+ 165 001c 4902     		lsls	r1, r1, #9
+ 166 001e 0A43     		orrs	r2, r1
+ 167 0020 1A60     		str	r2, [r3]
+ 168 0022 1968     		ldr	r1, [r3]
+ 169 0024 084A     		ldr	r2, .L14+16
+ 170 0026 0A40     		ands	r2, r1
+ 171 0028 1A60     		str	r2, [r3]
+ 212:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_ClearRxInterruptSource(UART_WIFI_INTR_RX_ALL);
+ 172              		.loc 1 212 0
+ 173 002a 084A     		ldr	r2, .L14+20
+ 174 002c 084B     		ldr	r3, .L14+24
+ 175 002e 1A60     		str	r2, [r3]
+ 213:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 214:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             #if (UART_WIFI_CHECK_UART_RTS_CONTROL_FLOW)
+ 215:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             {
+ 216:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 /* Enable RX Not Empty interrupt source to continue receiving
+ 217:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 * data into software buffer.
+ 218:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 */
+ 219:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 UART_WIFI_INTR_RX_MASK_REG |= UART_WIFI_INTR_RX_NOT_EMPTY;
+ 220:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             }
+ 221:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             #endif
+ 222:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             
+ 223:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             /* Release lock */
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 8
+
+
+ 224:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_EnableInt();
+ 176              		.loc 1 224 0
+ 177 0030 0A20     		movs	r0, #10
+ 178 0032 FFF7FEFF 		bl	CyIntEnable
+ 179              	.LVL12:
+ 225:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         }
+ 226:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #else
+ 227:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         {
+ 228:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_CLEAR_RX_FIFO;
+ 229:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         }
+ 230:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #endif
+ 231:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     }
+ 180              		.loc 1 231 0
+ 181              		@ sp needed
+ 182 0036 10BD     		pop	{r4, pc}
+ 183              	.L15:
+ 184              		.align	2
+ 185              	.L14:
+ 186 0038 00000000 		.word	UART_WIFI_rxBufferTail
+ 187 003c 00000000 		.word	UART_WIFI_rxBufferHead
+ 188 0040 00000000 		.word	UART_WIFI_rxBufferOverflow
+ 189 0044 04032540 		.word	1076167428
+ 190 0048 FFFFFEFF 		.word	-65537
+ 191 004c ED0F0000 		.word	4077
+ 192 0050 C00F2540 		.word	1076170688
+ 193              		.cfi_endproc
+ 194              	.LFE3:
+ 195              		.size	UART_WIFI_SpiUartClearRxBuffer, .-UART_WIFI_SpiUartClearRxBuffer
+ 196              		.section	.text.UART_WIFI_SpiUartWriteTxData,"ax",%progbits
+ 197              		.align	2
+ 198              		.global	UART_WIFI_SpiUartWriteTxData
+ 199              		.code	16
+ 200              		.thumb_func
+ 201              		.type	UART_WIFI_SpiUartWriteTxData, %function
+ 202              	UART_WIFI_SpiUartWriteTxData:
+ 203              	.LFB4:
+ 232:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 233:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** #endif /* (UART_WIFI_RX_DIRECTION) */
+ 234:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 235:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 236:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** #if(UART_WIFI_TX_DIRECTION)
+ 237:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     /*******************************************************************************
+ 238:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * Function Name: UART_WIFI_SpiUartWriteTxData
+ 239:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     ****************************************************************************//**
+ 240:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 241:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  Places a data entry into the transmit buffer to be sent at the next available
+ 242:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  bus time.
+ 243:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  This function is blocking and waits until there is space available to put the
+ 244:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  requested data in the transmit buffer.
+ 245:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 246:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  \param txDataByte: the data to be transmitted.
+ 247:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *   The amount of data bits to be transmitted depends on TX data bits selection 
+ 248:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *   (the data bit counting starts from LSB of txDataByte).
+ 249:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 250:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * \globalvars
+ 251:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  UART_WIFI_txBufferHead - the start index to put data into the 
+ 252:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  software transmit buffer.
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 9
+
+
+ 253:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  UART_WIFI_txBufferTail - start index to get data from the software
+ 254:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  transmit buffer.
+ 255:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 256:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *******************************************************************************/
+ 257:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     void UART_WIFI_SpiUartWriteTxData(uint32 txData)
+ 258:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     {
+ 204              		.loc 1 258 0
+ 205              		.cfi_startproc
+ 206              		@ args = 0, pretend = 0, frame = 0
+ 207              		@ frame_needed = 0, uses_anonymous_args = 0
+ 208              		@ link register save eliminated.
+ 209              	.LVL13:
+ 259:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     #if (UART_WIFI_INTERNAL_TX_SW_BUFFER_CONST)
+ 260:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         uint32 locHead;
+ 261:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     #endif /* (UART_WIFI_INTERNAL_TX_SW_BUFFER_CONST) */
+ 262:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 263:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #if (UART_WIFI_CHECK_TX_SW_BUFFER)
+ 264:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         {
+ 265:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             /* Put data directly into the TX FIFO */
+ 266:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             if ((UART_WIFI_txBufferHead == UART_WIFI_txBufferTail) &&
+ 210              		.loc 1 266 0
+ 211 0000 154B     		ldr	r3, .L22
+ 212 0002 1A68     		ldr	r2, [r3]
+ 213 0004 154B     		ldr	r3, .L22+4
+ 214 0006 1B68     		ldr	r3, [r3]
+ 215 0008 9A42     		cmp	r2, r3
+ 216 000a 08D1     		bne	.L17
+ 267:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 (UART_WIFI_SPI_UART_FIFO_SIZE != UART_WIFI_GET_TX_FIFO_ENTRIES))
+ 217              		.loc 1 267 0 discriminator 1
+ 218 000c 144B     		ldr	r3, .L22+8
+ 219 000e 1B68     		ldr	r3, [r3]
+ 220 0010 1F22     		movs	r2, #31
+ 221 0012 1340     		ands	r3, r2
+ 266:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 (UART_WIFI_SPI_UART_FIFO_SIZE != UART_WIFI_GET_TX_FIFO_ENTRIES))
+ 222              		.loc 1 266 0 discriminator 1
+ 223 0014 082B     		cmp	r3, #8
+ 224 0016 02D0     		beq	.L17
+ 268:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             {
+ 269:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 /* TX software buffer is empty: put data directly in TX FIFO */
+ 270:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 UART_WIFI_TX_FIFO_WR_REG = txData;
+ 225              		.loc 1 270 0
+ 226 0018 124B     		ldr	r3, .L22+12
+ 227 001a 1860     		str	r0, [r3]
+ 228 001c 1BE0     		b	.L16
+ 229              	.L17:
+ 271:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             }
+ 272:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             /* Put data into TX software buffer */
+ 273:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             else
+ 274:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             {
+ 275:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 /* Head index to put data */
+ 276:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 locHead = (UART_WIFI_txBufferHead + 1u);
+ 230              		.loc 1 276 0
+ 231 001e 0E4B     		ldr	r3, .L22
+ 232 0020 1A68     		ldr	r2, [r3]
+ 233 0022 0132     		adds	r2, r2, #1
+ 234              	.LVL14:
+ 277:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 10
+
+
+ 278:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 /* Adjust TX software buffer index */
+ 279:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 if (UART_WIFI_TX_BUFFER_SIZE == locHead)
+ 235              		.loc 1 279 0
+ 236 0024 8023     		movs	r3, #128
+ 237 0026 5B00     		lsls	r3, r3, #1
+ 238 0028 9A42     		cmp	r2, r3
+ 239 002a 00D1     		bne	.L20
+ 280:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 {
+ 281:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                     locHead = 0u;
+ 240              		.loc 1 281 0
+ 241 002c 0022     		movs	r2, #0
+ 242              	.LVL15:
+ 243              	.L20:
+ 282:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 }
+ 283:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 284:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 /* Wait for space in TX software buffer */
+ 285:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 while (locHead == UART_WIFI_txBufferTail)
+ 244              		.loc 1 285 0 discriminator 1
+ 245 002e 0B4B     		ldr	r3, .L22+4
+ 246 0030 1B68     		ldr	r3, [r3]
+ 247 0032 9A42     		cmp	r2, r3
+ 248 0034 FBD0     		beq	.L20
+ 286:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 {
+ 287:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 }
+ 288:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 289:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 /* TX software buffer has at least one room */
+ 290:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 291:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 /* Clear old status of INTR_TX_NOT_FULL. It sets at the end of transfer when TX FIF
+ 292:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 UART_WIFI_ClearTxInterruptSource(UART_WIFI_INTR_TX_NOT_FULL);
+ 249              		.loc 1 292 0
+ 250 0036 0223     		movs	r3, #2
+ 251 0038 0B49     		ldr	r1, .L22+16
+ 252 003a 0B60     		str	r3, [r1]
+ 293:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 294:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 UART_WIFI_PutWordInTxBuffer(locHead, txData);
+ 253              		.loc 1 294 0
+ 254 003c C0B2     		uxtb	r0, r0
+ 255              	.LVL16:
+ 256 003e 0B49     		ldr	r1, .L22+20
+ 257 0040 8854     		strb	r0, [r1, r2]
+ 295:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 296:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 UART_WIFI_txBufferHead = locHead;
+ 258              		.loc 1 296 0
+ 259 0042 0549     		ldr	r1, .L22
+ 260 0044 0A60     		str	r2, [r1]
+ 297:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 298:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 /* Check if TX Not Full is disabled in interrupt */
+ 299:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 if (0u == (UART_WIFI_INTR_TX_MASK_REG & UART_WIFI_INTR_TX_NOT_FULL))
+ 261              		.loc 1 299 0
+ 262 0046 0A4A     		ldr	r2, .L22+24
+ 263              	.LVL17:
+ 264 0048 1268     		ldr	r2, [r2]
+ 265 004a 1342     		tst	r3, r2
+ 266 004c 03D1     		bne	.L16
+ 300:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 {
+ 301:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                     /* Enable TX Not Full interrupt source to transmit from software buffer */
+ 302:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                     UART_WIFI_INTR_TX_MASK_REG |= (uint32) UART_WIFI_INTR_TX_NOT_FULL;
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 11
+
+
+ 267              		.loc 1 302 0
+ 268 004e 084A     		ldr	r2, .L22+24
+ 269 0050 1168     		ldr	r1, [r2]
+ 270 0052 0B43     		orrs	r3, r1
+ 271 0054 1360     		str	r3, [r2]
+ 272              	.LVL18:
+ 273              	.L16:
+ 303:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 }
+ 304:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             }
+ 305:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         }
+ 306:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #else
+ 307:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         {
+ 308:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             /* Wait until TX FIFO has space to put data element */
+ 309:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             while (UART_WIFI_SPI_UART_FIFO_SIZE == UART_WIFI_GET_TX_FIFO_ENTRIES)
+ 310:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             {
+ 311:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             }
+ 312:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 313:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_TX_FIFO_WR_REG = txData;
+ 314:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         }
+ 315:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #endif
+ 316:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     }
+ 274              		.loc 1 316 0
+ 275              		@ sp needed
+ 276 0056 7047     		bx	lr
+ 277              	.L23:
+ 278              		.align	2
+ 279              	.L22:
+ 280 0058 00000000 		.word	UART_WIFI_txBufferHead
+ 281 005c 00000000 		.word	UART_WIFI_txBufferTail
+ 282 0060 08022540 		.word	1076167176
+ 283 0064 40022540 		.word	1076167232
+ 284 0068 800F2540 		.word	1076170624
+ 285 006c 00000000 		.word	UART_WIFI_txBufferInternal
+ 286 0070 880F2540 		.word	1076170632
+ 287              		.cfi_endproc
+ 288              	.LFE4:
+ 289              		.size	UART_WIFI_SpiUartWriteTxData, .-UART_WIFI_SpiUartWriteTxData
+ 290              		.section	.text.UART_WIFI_SpiUartPutArray,"ax",%progbits
+ 291              		.align	2
+ 292              		.global	UART_WIFI_SpiUartPutArray
+ 293              		.code	16
+ 294              		.thumb_func
+ 295              		.type	UART_WIFI_SpiUartPutArray, %function
+ 296              	UART_WIFI_SpiUartPutArray:
+ 297              	.LFB5:
+ 317:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 318:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 319:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     /*******************************************************************************
+ 320:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * Function Name: UART_WIFI_SpiUartPutArray
+ 321:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     ****************************************************************************//**
+ 322:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 323:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  Places an array of data into the transmit buffer to be sent.
+ 324:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  This function is blocking and waits until there is a space available to put
+ 325:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  all the requested data in the transmit buffer. The array size can be greater
+ 326:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  than transmit buffer size.
+ 327:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 328:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * \param wrBuf: pointer to an array of data to be placed in transmit buffer. 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 12
+
+
+ 329:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  The width of the data to be transmitted depends on TX data width selection 
+ 330:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  (the data bit counting starts from LSB for each array element).
+ 331:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * \param count: number of data elements to be placed in the transmit buffer.
+ 332:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 333:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * \globalvars
+ 334:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  UART_WIFI_txBufferHead - the start index to put data into the 
+ 335:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  software transmit buffer.
+ 336:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  UART_WIFI_txBufferTail - start index to get data from the software
+ 337:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  transmit buffer.
+ 338:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 339:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *******************************************************************************/
+ 340:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     void UART_WIFI_SpiUartPutArray(const uint8 wrBuf[], uint32 count)
+ 341:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     {
+ 298              		.loc 1 341 0
+ 299              		.cfi_startproc
+ 300              		@ args = 0, pretend = 0, frame = 0
+ 301              		@ frame_needed = 0, uses_anonymous_args = 0
+ 302              	.LVL19:
+ 303 0000 70B5     		push	{r4, r5, r6, lr}
+ 304              		.cfi_def_cfa_offset 16
+ 305              		.cfi_offset 4, -16
+ 306              		.cfi_offset 5, -12
+ 307              		.cfi_offset 6, -8
+ 308              		.cfi_offset 14, -4
+ 309 0002 0600     		movs	r6, r0
+ 310 0004 0D00     		movs	r5, r1
+ 311              	.LVL20:
+ 342:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         uint32 i;
+ 343:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 344:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         for (i=0u; i < count; i++)
+ 312              		.loc 1 344 0
+ 313 0006 0024     		movs	r4, #0
+ 314 0008 03E0     		b	.L25
+ 315              	.LVL21:
+ 316              	.L26:
+ 345:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         {
+ 346:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_SpiUartWriteTxData((uint32) wrBuf[i]);
+ 317              		.loc 1 346 0 discriminator 3
+ 318 000a 305D     		ldrb	r0, [r6, r4]
+ 319 000c FFF7FEFF 		bl	UART_WIFI_SpiUartWriteTxData
+ 320              	.LVL22:
+ 344:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         {
+ 321              		.loc 1 344 0 discriminator 3
+ 322 0010 0134     		adds	r4, r4, #1
+ 323              	.LVL23:
+ 324              	.L25:
+ 344:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         {
+ 325              		.loc 1 344 0 is_stmt 0 discriminator 1
+ 326 0012 AC42     		cmp	r4, r5
+ 327 0014 F9D3     		bcc	.L26
+ 347:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         }
+ 348:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     }
+ 328              		.loc 1 348 0 is_stmt 1
+ 329              		@ sp needed
+ 330              	.LVL24:
+ 331              	.LVL25:
+ 332              	.LVL26:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 13
+
+
+ 333 0016 70BD     		pop	{r4, r5, r6, pc}
+ 334              		.cfi_endproc
+ 335              	.LFE5:
+ 336              		.size	UART_WIFI_SpiUartPutArray, .-UART_WIFI_SpiUartPutArray
+ 337              		.section	.text.UART_WIFI_SpiUartGetTxBufferSize,"ax",%progbits
+ 338              		.align	2
+ 339              		.global	UART_WIFI_SpiUartGetTxBufferSize
+ 340              		.code	16
+ 341              		.thumb_func
+ 342              		.type	UART_WIFI_SpiUartGetTxBufferSize, %function
+ 343              	UART_WIFI_SpiUartGetTxBufferSize:
+ 344              	.LFB6:
+ 349:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 350:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 351:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     /*******************************************************************************
+ 352:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * Function Name: UART_WIFI_SpiUartGetTxBufferSize
+ 353:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     ****************************************************************************//**
+ 354:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 355:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  Returns the number of elements currently in the transmit buffer.
+ 356:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *   - TX software buffer is disabled: returns the number of used entries in
+ 357:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *     TX FIFO.
+ 358:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *   - TX software buffer is enabled: returns the number of elements currently
+ 359:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *     used in the transmit buffer. This number does not include used entries in
+ 360:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *     the TX FIFO. The transmit buffer size is zero until the TX FIFO is
+ 361:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *     not full.
+ 362:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 363:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * \return
+ 364:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  Number of data elements ready to transmit.
+ 365:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 366:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * \globalvars
+ 367:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  UART_WIFI_txBufferHead - the start index to put data into the 
+ 368:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  software transmit buffer.
+ 369:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  UART_WIFI_txBufferTail - start index to get data from the software
+ 370:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  transmit buffer.
+ 371:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 372:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *******************************************************************************/
+ 373:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     uint32 UART_WIFI_SpiUartGetTxBufferSize(void)
+ 374:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     {
+ 345              		.loc 1 374 0
+ 346              		.cfi_startproc
+ 347              		@ args = 0, pretend = 0, frame = 0
+ 348              		@ frame_needed = 0, uses_anonymous_args = 0
+ 349              		@ link register save eliminated.
+ 375:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         uint32 size;
+ 376:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     #if (UART_WIFI_INTERNAL_TX_SW_BUFFER_CONST)
+ 377:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         uint32 locTail;
+ 378:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     #endif /* (UART_WIFI_INTERNAL_TX_SW_BUFFER_CONST) */
+ 379:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 380:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #if (UART_WIFI_CHECK_TX_SW_BUFFER)
+ 381:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         {
+ 382:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             /* Get current Tail index */
+ 383:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             locTail = UART_WIFI_txBufferTail;
+ 350              		.loc 1 383 0
+ 351 0000 074B     		ldr	r3, .L30
+ 352 0002 1868     		ldr	r0, [r3]
+ 353              	.LVL27:
+ 384:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 14
+
+
+ 385:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             if (UART_WIFI_txBufferHead >= locTail)
+ 354              		.loc 1 385 0
+ 355 0004 074B     		ldr	r3, .L30+4
+ 356 0006 1B68     		ldr	r3, [r3]
+ 357 0008 9842     		cmp	r0, r3
+ 358 000a 03D8     		bhi	.L28
+ 386:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             {
+ 387:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 size = (UART_WIFI_txBufferHead - locTail);
+ 359              		.loc 1 387 0
+ 360 000c 054B     		ldr	r3, .L30+4
+ 361 000e 1B68     		ldr	r3, [r3]
+ 362 0010 181A     		subs	r0, r3, r0
+ 363              	.LVL28:
+ 364 0012 04E0     		b	.L29
+ 365              	.LVL29:
+ 366              	.L28:
+ 388:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             }
+ 389:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             else
+ 390:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             {
+ 391:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****                 size = (UART_WIFI_txBufferHead + (UART_WIFI_TX_BUFFER_SIZE - locTail));
+ 367              		.loc 1 391 0
+ 368 0014 034B     		ldr	r3, .L30+4
+ 369 0016 1B68     		ldr	r3, [r3]
+ 370 0018 181A     		subs	r0, r3, r0
+ 371              	.LVL30:
+ 372 001a 0130     		adds	r0, r0, #1
+ 373 001c FF30     		adds	r0, r0, #255
+ 374              	.LVL31:
+ 375              	.L29:
+ 392:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             }
+ 393:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         }
+ 394:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #else
+ 395:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         {
+ 396:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             size = UART_WIFI_GET_TX_FIFO_ENTRIES;
+ 397:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         }
+ 398:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #endif
+ 399:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 400:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         return (size);
+ 401:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     }
+ 376              		.loc 1 401 0
+ 377              		@ sp needed
+ 378 001e 7047     		bx	lr
+ 379              	.L31:
+ 380              		.align	2
+ 381              	.L30:
+ 382 0020 00000000 		.word	UART_WIFI_txBufferTail
+ 383 0024 00000000 		.word	UART_WIFI_txBufferHead
+ 384              		.cfi_endproc
+ 385              	.LFE6:
+ 386              		.size	UART_WIFI_SpiUartGetTxBufferSize, .-UART_WIFI_SpiUartGetTxBufferSize
+ 387              		.section	.text.UART_WIFI_SpiUartClearTxBuffer,"ax",%progbits
+ 388              		.align	2
+ 389              		.global	UART_WIFI_SpiUartClearTxBuffer
+ 390              		.code	16
+ 391              		.thumb_func
+ 392              		.type	UART_WIFI_SpiUartClearTxBuffer, %function
+ 393              	UART_WIFI_SpiUartClearTxBuffer:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 15
+
+
+ 394              	.LFB7:
+ 402:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 403:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 404:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     /*******************************************************************************
+ 405:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * Function Name: UART_WIFI_SpiUartClearTxBuffer
+ 406:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     ****************************************************************************//**
+ 407:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 408:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  Clears the transmit buffer and TX FIFO.
+ 409:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 410:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     * \globalvars
+ 411:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  UART_WIFI_txBufferHead - the start index to put data into the 
+ 412:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  software transmit buffer.
+ 413:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  UART_WIFI_txBufferTail - start index to get data from the software
+ 414:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *  transmit buffer.
+ 415:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *
+ 416:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     *******************************************************************************/
+ 417:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     void UART_WIFI_SpiUartClearTxBuffer(void)
+ 418:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     {
+ 395              		.loc 1 418 0
+ 396              		.cfi_startproc
+ 397              		@ args = 0, pretend = 0, frame = 0
+ 398              		@ frame_needed = 0, uses_anonymous_args = 0
+ 399 0000 10B5     		push	{r4, lr}
+ 400              		.cfi_def_cfa_offset 8
+ 401              		.cfi_offset 4, -8
+ 402              		.cfi_offset 14, -4
+ 419:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #if (UART_WIFI_CHECK_TX_SW_BUFFER)
+ 420:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         {
+ 421:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             /* Lock from component interruption */
+ 422:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_DisableInt();
+ 403              		.loc 1 422 0
+ 404 0002 0A20     		movs	r0, #10
+ 405 0004 FFF7FEFF 		bl	CyIntDisable
+ 406              	.LVL32:
+ 423:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 424:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             /* Flush TX software buffer */
+ 425:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_txBufferHead = UART_WIFI_txBufferTail;
+ 407              		.loc 1 425 0
+ 408 0008 0C4B     		ldr	r3, .L33
+ 409 000a 1A68     		ldr	r2, [r3]
+ 410 000c 0C4B     		ldr	r3, .L33+4
+ 411 000e 1A60     		str	r2, [r3]
+ 426:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 427:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_INTR_TX_MASK_REG &= (uint32) ~UART_WIFI_INTR_TX_NOT_FULL;
+ 412              		.loc 1 427 0
+ 413 0010 0C4A     		ldr	r2, .L33+8
+ 414 0012 1368     		ldr	r3, [r2]
+ 415 0014 0221     		movs	r1, #2
+ 416 0016 8B43     		bics	r3, r1
+ 417 0018 1360     		str	r3, [r2]
+ 428:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_CLEAR_TX_FIFO;
+ 418              		.loc 1 428 0
+ 419 001a 0B4B     		ldr	r3, .L33+12
+ 420 001c 1A68     		ldr	r2, [r3]
+ 421 001e 8021     		movs	r1, #128
+ 422 0020 4902     		lsls	r1, r1, #9
+ 423 0022 0A43     		orrs	r2, r1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 16
+
+
+ 424 0024 1A60     		str	r2, [r3]
+ 425 0026 1968     		ldr	r1, [r3]
+ 426 0028 084A     		ldr	r2, .L33+16
+ 427 002a 0A40     		ands	r2, r1
+ 428 002c 1A60     		str	r2, [r3]
+ 429:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_ClearTxInterruptSource(UART_WIFI_INTR_TX_ALL);
+ 429              		.loc 1 429 0
+ 430 002e 084A     		ldr	r2, .L33+20
+ 431 0030 084B     		ldr	r3, .L33+24
+ 432 0032 1A60     		str	r2, [r3]
+ 430:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 431:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             /* Release lock */
+ 432:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_EnableInt();
+ 433              		.loc 1 432 0
+ 434 0034 0A20     		movs	r0, #10
+ 435 0036 FFF7FEFF 		bl	CyIntEnable
+ 436              	.LVL33:
+ 433:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         }
+ 434:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #else
+ 435:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         {
+ 436:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****             UART_WIFI_CLEAR_TX_FIFO;
+ 437:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         }
+ 438:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****         #endif
+ 439:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     }
+ 437              		.loc 1 439 0
+ 438              		@ sp needed
+ 439 003a 10BD     		pop	{r4, pc}
+ 440              	.L34:
+ 441              		.align	2
+ 442              	.L33:
+ 443 003c 00000000 		.word	UART_WIFI_txBufferTail
+ 444 0040 00000000 		.word	UART_WIFI_txBufferHead
+ 445 0044 880F2540 		.word	1076170632
+ 446 0048 04022540 		.word	1076167172
+ 447 004c FFFFFEFF 		.word	-65537
+ 448 0050 F3070000 		.word	2035
+ 449 0054 800F2540 		.word	1076170624
+ 450              		.cfi_endproc
+ 451              	.LFE7:
+ 452              		.size	UART_WIFI_SpiUartClearTxBuffer, .-UART_WIFI_SpiUartClearTxBuffer
+ 453              		.section	.text.UART_WIFI_SpiUartDisableIntRx,"ax",%progbits
+ 454              		.align	2
+ 455              		.global	UART_WIFI_SpiUartDisableIntRx
+ 456              		.code	16
+ 457              		.thumb_func
+ 458              		.type	UART_WIFI_SpiUartDisableIntRx, %function
+ 459              	UART_WIFI_SpiUartDisableIntRx:
+ 460              	.LFB8:
+ 440:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 441:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** #endif /* (UART_WIFI_TX_DIRECTION) */
+ 442:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 443:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 444:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** /*******************************************************************************
+ 445:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** * Function Name: UART_WIFI_SpiUartDisableIntRx
+ 446:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** ****************************************************************************//**
+ 447:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *
+ 448:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *  Disables the RX interrupt sources.
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 17
+
+
+ 449:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *
+ 450:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *  \return
+ 451:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *   Returns the RX interrupt sources enabled before the function call.
+ 452:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *
+ 453:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *******************************************************************************/
+ 454:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** uint32 UART_WIFI_SpiUartDisableIntRx(void)
+ 455:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** {
+ 461              		.loc 1 455 0
+ 462              		.cfi_startproc
+ 463              		@ args = 0, pretend = 0, frame = 0
+ 464              		@ frame_needed = 0, uses_anonymous_args = 0
+ 465              		@ link register save eliminated.
+ 456:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     uint32 intSource;
+ 457:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 458:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     intSource = UART_WIFI_GetRxInterruptMode();
+ 466              		.loc 1 458 0
+ 467 0000 024B     		ldr	r3, .L36
+ 468 0002 1868     		ldr	r0, [r3]
+ 469              	.LVL34:
+ 459:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 460:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     UART_WIFI_SetRxInterruptMode(UART_WIFI_NO_INTR_SOURCES);
+ 470              		.loc 1 460 0
+ 471 0004 0022     		movs	r2, #0
+ 472 0006 1A60     		str	r2, [r3]
+ 461:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 462:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     return (intSource);
+ 463:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** }
+ 473              		.loc 1 463 0
+ 474              		@ sp needed
+ 475 0008 7047     		bx	lr
+ 476              	.L37:
+ 477 000a C046     		.align	2
+ 478              	.L36:
+ 479 000c C80F2540 		.word	1076170696
+ 480              		.cfi_endproc
+ 481              	.LFE8:
+ 482              		.size	UART_WIFI_SpiUartDisableIntRx, .-UART_WIFI_SpiUartDisableIntRx
+ 483              		.section	.text.UART_WIFI_SpiUartDisableIntTx,"ax",%progbits
+ 484              		.align	2
+ 485              		.global	UART_WIFI_SpiUartDisableIntTx
+ 486              		.code	16
+ 487              		.thumb_func
+ 488              		.type	UART_WIFI_SpiUartDisableIntTx, %function
+ 489              	UART_WIFI_SpiUartDisableIntTx:
+ 490              	.LFB9:
+ 464:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 465:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 466:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** /*******************************************************************************
+ 467:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** * Function Name: UART_WIFI_SpiUartDisableIntTx
+ 468:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** ****************************************************************************//**
+ 469:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *
+ 470:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *  Disables TX interrupt sources.
+ 471:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *
+ 472:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *  \return
+ 473:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *   Returns TX interrupt sources enabled before function call.
+ 474:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *
+ 475:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** *******************************************************************************/
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 18
+
+
+ 476:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** uint32 UART_WIFI_SpiUartDisableIntTx(void)
+ 477:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** {
+ 491              		.loc 1 477 0
+ 492              		.cfi_startproc
+ 493              		@ args = 0, pretend = 0, frame = 0
+ 494              		@ frame_needed = 0, uses_anonymous_args = 0
+ 495              		@ link register save eliminated.
+ 478:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     uint32 intSourceMask;
+ 479:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 480:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     intSourceMask = UART_WIFI_GetTxInterruptMode();
+ 496              		.loc 1 480 0
+ 497 0000 024B     		ldr	r3, .L39
+ 498 0002 1868     		ldr	r0, [r3]
+ 499              	.LVL35:
+ 481:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 482:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     UART_WIFI_SetTxInterruptMode(UART_WIFI_NO_INTR_SOURCES);
+ 500              		.loc 1 482 0
+ 501 0004 0022     		movs	r2, #0
+ 502 0006 1A60     		str	r2, [r3]
+ 483:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** 
+ 484:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c ****     return (intSourceMask);
+ 485:Generated_Source\PSoC4/UART_WIFI_SPI_UART.c **** }
+ 503              		.loc 1 485 0
+ 504              		@ sp needed
+ 505 0008 7047     		bx	lr
+ 506              	.L40:
+ 507 000a C046     		.align	2
+ 508              	.L39:
+ 509 000c 880F2540 		.word	1076170632
+ 510              		.cfi_endproc
+ 511              	.LFE9:
+ 512              		.size	UART_WIFI_SpiUartDisableIntTx, .-UART_WIFI_SpiUartDisableIntTx
+ 513              		.comm	UART_WIFI_txBufferInternal,256,4
+ 514              		.comm	UART_WIFI_rxBufferInternal,257,4
+ 515              		.comm	UART_WIFI_txBufferTail,4,4
+ 516              		.comm	UART_WIFI_txBufferHead,4,4
+ 517              		.comm	UART_WIFI_rxBufferOverflow,1,1
+ 518              		.comm	UART_WIFI_rxBufferTail,4,4
+ 519              		.comm	UART_WIFI_rxBufferHead,4,4
+ 520              		.text
+ 521              	.Letext0:
+ 522              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 523              		.file 3 "Generated_Source\\PSoC4/CyLib.h"
+ 524              		.section	.debug_info,"",%progbits
+ 525              	.Ldebug_info0:
+ 526 0000 6F030000 		.4byte	0x36f
+ 527 0004 0400     		.2byte	0x4
+ 528 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 529 000a 04       		.byte	0x4
+ 530 000b 01       		.uleb128 0x1
+ 531 000c 00020000 		.4byte	.LASF44
+ 532 0010 0C       		.byte	0xc
+ 533 0011 BF000000 		.4byte	.LASF45
+ 534 0015 BF020000 		.4byte	.LASF46
+ 535 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 536 001d 00000000 		.4byte	0
+ 537 0021 00000000 		.4byte	.Ldebug_line0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 19
+
+
+ 538 0025 02       		.uleb128 0x2
+ 539 0026 01       		.byte	0x1
+ 540 0027 06       		.byte	0x6
+ 541 0028 6C030000 		.4byte	.LASF0
+ 542 002c 02       		.uleb128 0x2
+ 543 002d 01       		.byte	0x1
+ 544 002e 08       		.byte	0x8
+ 545 002f 2B010000 		.4byte	.LASF1
+ 546 0033 02       		.uleb128 0x2
+ 547 0034 02       		.byte	0x2
+ 548 0035 05       		.byte	0x5
+ 549 0036 40010000 		.4byte	.LASF2
+ 550 003a 02       		.uleb128 0x2
+ 551 003b 02       		.byte	0x2
+ 552 003c 07       		.byte	0x7
+ 553 003d 13000000 		.4byte	.LASF3
+ 554 0041 02       		.uleb128 0x2
+ 555 0042 04       		.byte	0x4
+ 556 0043 05       		.byte	0x5
+ 557 0044 4B030000 		.4byte	.LASF4
+ 558 0048 02       		.uleb128 0x2
+ 559 0049 04       		.byte	0x4
+ 560 004a 07       		.byte	0x7
+ 561 004b EB000000 		.4byte	.LASF5
+ 562 004f 02       		.uleb128 0x2
+ 563 0050 08       		.byte	0x8
+ 564 0051 05       		.byte	0x5
+ 565 0052 9F020000 		.4byte	.LASF6
+ 566 0056 02       		.uleb128 0x2
+ 567 0057 08       		.byte	0x8
+ 568 0058 07       		.byte	0x7
+ 569 0059 CE010000 		.4byte	.LASF7
+ 570 005d 03       		.uleb128 0x3
+ 571 005e 04       		.byte	0x4
+ 572 005f 05       		.byte	0x5
+ 573 0060 696E7400 		.ascii	"int\000"
+ 574 0064 02       		.uleb128 0x2
+ 575 0065 04       		.byte	0x4
+ 576 0066 07       		.byte	0x7
+ 577 0067 26000000 		.4byte	.LASF8
+ 578 006b 04       		.uleb128 0x4
+ 579 006c 26030000 		.4byte	.LASF9
+ 580 0070 02       		.byte	0x2
+ 581 0071 FC01     		.2byte	0x1fc
+ 582 0073 2C000000 		.4byte	0x2c
+ 583 0077 04       		.uleb128 0x4
+ 584 0078 AF010000 		.4byte	.LASF10
+ 585 007c 02       		.byte	0x2
+ 586 007d FE01     		.2byte	0x1fe
+ 587 007f 48000000 		.4byte	0x48
+ 588 0083 02       		.uleb128 0x2
+ 589 0084 04       		.byte	0x4
+ 590 0085 04       		.byte	0x4
+ 591 0086 56000000 		.4byte	.LASF11
+ 592 008a 02       		.uleb128 0x2
+ 593 008b 08       		.byte	0x8
+ 594 008c 04       		.byte	0x4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 20
+
+
+ 595 008d 39010000 		.4byte	.LASF12
+ 596 0091 02       		.uleb128 0x2
+ 597 0092 01       		.byte	0x1
+ 598 0093 08       		.byte	0x8
+ 599 0094 AD020000 		.4byte	.LASF13
+ 600 0098 05       		.uleb128 0x5
+ 601 0099 6B000000 		.4byte	0x6b
+ 602 009d 04       		.uleb128 0x4
+ 603 009e 00000000 		.4byte	.LASF14
+ 604 00a2 02       		.byte	0x2
+ 605 00a3 A802     		.2byte	0x2a8
+ 606 00a5 A9000000 		.4byte	0xa9
+ 607 00a9 05       		.uleb128 0x5
+ 608 00aa 77000000 		.4byte	0x77
+ 609 00ae 02       		.uleb128 0x2
+ 610 00af 08       		.byte	0x8
+ 611 00b0 04       		.byte	0x4
+ 612 00b1 54030000 		.4byte	.LASF15
+ 613 00b5 02       		.uleb128 0x2
+ 614 00b6 04       		.byte	0x4
+ 615 00b7 07       		.byte	0x7
+ 616 00b8 96020000 		.4byte	.LASF16
+ 617 00bc 06       		.uleb128 0x6
+ 618 00bd 7C010000 		.4byte	.LASF19
+ 619 00c1 01       		.byte	0x1
+ 620 00c2 53       		.byte	0x53
+ 621 00c3 77000000 		.4byte	0x77
+ 622 00c7 00000000 		.4byte	.LFB1
+ 623 00cb 38000000 		.4byte	.LFE1-.LFB1
+ 624 00cf 01       		.uleb128 0x1
+ 625 00d0 9C       		.byte	0x9c
+ 626 00d1 F4000000 		.4byte	0xf4
+ 627 00d5 07       		.uleb128 0x7
+ 628 00d6 1E010000 		.4byte	.LASF17
+ 629 00da 01       		.byte	0x1
+ 630 00db 55       		.byte	0x55
+ 631 00dc 77000000 		.4byte	0x77
+ 632 00e0 00000000 		.4byte	.LLST0
+ 633 00e4 07       		.uleb128 0x7
+ 634 00e5 8E020000 		.4byte	.LASF18
+ 635 00e9 01       		.byte	0x1
+ 636 00ea 58       		.byte	0x58
+ 637 00eb 77000000 		.4byte	0x77
+ 638 00ef 36000000 		.4byte	.LLST1
+ 639 00f3 00       		.byte	0
+ 640 00f4 06       		.uleb128 0x6
+ 641 00f5 FD000000 		.4byte	.LASF20
+ 642 00f9 01       		.byte	0x1
+ 643 00fa 9D       		.byte	0x9d
+ 644 00fb 77000000 		.4byte	0x77
+ 645 00ff 00000000 		.4byte	.LFB2
+ 646 0103 28000000 		.4byte	.LFE2-.LFB2
+ 647 0107 01       		.uleb128 0x1
+ 648 0108 9C       		.byte	0x9c
+ 649 0109 2C010000 		.4byte	0x12c
+ 650 010d 07       		.uleb128 0x7
+ 651 010e 7A000000 		.4byte	.LASF21
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 21
+
+
+ 652 0112 01       		.byte	0x1
+ 653 0113 9F       		.byte	0x9f
+ 654 0114 77000000 		.4byte	0x77
+ 655 0118 49000000 		.4byte	.LLST2
+ 656 011c 07       		.uleb128 0x7
+ 657 011d 4E000000 		.4byte	.LASF22
+ 658 0121 01       		.byte	0x1
+ 659 0122 A1       		.byte	0xa1
+ 660 0123 77000000 		.4byte	0x77
+ 661 0127 67000000 		.4byte	.LLST3
+ 662 012b 00       		.byte	0
+ 663 012c 08       		.uleb128 0x8
+ 664 012d 7F000000 		.4byte	.LASF23
+ 665 0131 01       		.byte	0x1
+ 666 0132 C8       		.byte	0xc8
+ 667 0133 00000000 		.4byte	.LFB3
+ 668 0137 54000000 		.4byte	.LFE3-.LFB3
+ 669 013b 01       		.uleb128 0x1
+ 670 013c 9C       		.byte	0x9c
+ 671 013d 64010000 		.4byte	0x164
+ 672 0141 09       		.uleb128 0x9
+ 673 0142 08000000 		.4byte	.LVL11
+ 674 0146 5C030000 		.4byte	0x35c
+ 675 014a 54010000 		.4byte	0x154
+ 676 014e 0A       		.uleb128 0xa
+ 677 014f 01       		.uleb128 0x1
+ 678 0150 50       		.byte	0x50
+ 679 0151 01       		.uleb128 0x1
+ 680 0152 3A       		.byte	0x3a
+ 681 0153 00       		.byte	0
+ 682 0154 0B       		.uleb128 0xb
+ 683 0155 36000000 		.4byte	.LVL12
+ 684 0159 67030000 		.4byte	0x367
+ 685 015d 0A       		.uleb128 0xa
+ 686 015e 01       		.uleb128 0x1
+ 687 015f 50       		.byte	0x50
+ 688 0160 01       		.uleb128 0x1
+ 689 0161 3A       		.byte	0x3a
+ 690 0162 00       		.byte	0
+ 691 0163 00       		.byte	0
+ 692 0164 0C       		.uleb128 0xc
+ 693 0165 78030000 		.4byte	.LASF24
+ 694 0169 01       		.byte	0x1
+ 695 016a 0101     		.2byte	0x101
+ 696 016c 00000000 		.4byte	.LFB4
+ 697 0170 74000000 		.4byte	.LFE4-.LFB4
+ 698 0174 01       		.uleb128 0x1
+ 699 0175 9C       		.byte	0x9c
+ 700 0176 9B010000 		.4byte	0x19b
+ 701 017a 0D       		.uleb128 0xd
+ 702 017b 0C000000 		.4byte	.LASF26
+ 703 017f 01       		.byte	0x1
+ 704 0180 0101     		.2byte	0x101
+ 705 0182 77000000 		.4byte	0x77
+ 706 0186 7A000000 		.4byte	.LLST4
+ 707 018a 0E       		.uleb128 0xe
+ 708 018b 4E000000 		.4byte	.LASF22
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 22
+
+
+ 709 018f 01       		.byte	0x1
+ 710 0190 0401     		.2byte	0x104
+ 711 0192 77000000 		.4byte	0x77
+ 712 0196 9B000000 		.4byte	.LLST5
+ 713 019a 00       		.byte	0
+ 714 019b 0C       		.uleb128 0xc
+ 715 019c 95030000 		.4byte	.LASF25
+ 716 01a0 01       		.byte	0x1
+ 717 01a1 5401     		.2byte	0x154
+ 718 01a3 00000000 		.4byte	.LFB5
+ 719 01a7 18000000 		.4byte	.LFE5-.LFB5
+ 720 01ab 01       		.uleb128 0x1
+ 721 01ac 9C       		.byte	0x9c
+ 722 01ad E9010000 		.4byte	0x1e9
+ 723 01b1 0D       		.uleb128 0xd
+ 724 01b2 25010000 		.4byte	.LASF27
+ 725 01b6 01       		.byte	0x1
+ 726 01b7 5401     		.2byte	0x154
+ 727 01b9 E9010000 		.4byte	0x1e9
+ 728 01bd BD000000 		.4byte	.LLST6
+ 729 01c1 0D       		.uleb128 0xd
+ 730 01c2 06000000 		.4byte	.LASF28
+ 731 01c6 01       		.byte	0x1
+ 732 01c7 5401     		.2byte	0x154
+ 733 01c9 77000000 		.4byte	0x77
+ 734 01cd E9000000 		.4byte	.LLST7
+ 735 01d1 0F       		.uleb128 0xf
+ 736 01d2 6900     		.ascii	"i\000"
+ 737 01d4 01       		.byte	0x1
+ 738 01d5 5601     		.2byte	0x156
+ 739 01d7 77000000 		.4byte	0x77
+ 740 01db 15010000 		.4byte	.LLST8
+ 741 01df 10       		.uleb128 0x10
+ 742 01e0 10000000 		.4byte	.LVL22
+ 743 01e4 64010000 		.4byte	0x164
+ 744 01e8 00       		.byte	0
+ 745 01e9 11       		.uleb128 0x11
+ 746 01ea 04       		.byte	0x4
+ 747 01eb EF010000 		.4byte	0x1ef
+ 748 01ef 12       		.uleb128 0x12
+ 749 01f0 6B000000 		.4byte	0x6b
+ 750 01f4 13       		.uleb128 0x13
+ 751 01f5 9E000000 		.4byte	.LASF29
+ 752 01f9 01       		.byte	0x1
+ 753 01fa 7501     		.2byte	0x175
+ 754 01fc 77000000 		.4byte	0x77
+ 755 0200 00000000 		.4byte	.LFB6
+ 756 0204 28000000 		.4byte	.LFE6-.LFB6
+ 757 0208 01       		.uleb128 0x1
+ 758 0209 9C       		.byte	0x9c
+ 759 020a 2F020000 		.4byte	0x22f
+ 760 020e 0E       		.uleb128 0xe
+ 761 020f 7A000000 		.4byte	.LASF21
+ 762 0213 01       		.byte	0x1
+ 763 0214 7701     		.2byte	0x177
+ 764 0216 77000000 		.4byte	0x77
+ 765 021a 34010000 		.4byte	.LLST9
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 23
+
+
+ 766 021e 0E       		.uleb128 0xe
+ 767 021f 8E020000 		.4byte	.LASF18
+ 768 0223 01       		.byte	0x1
+ 769 0224 7901     		.2byte	0x179
+ 770 0226 77000000 		.4byte	0x77
+ 771 022a 52010000 		.4byte	.LLST10
+ 772 022e 00       		.byte	0
+ 773 022f 0C       		.uleb128 0xc
+ 774 0230 2C030000 		.4byte	.LASF30
+ 775 0234 01       		.byte	0x1
+ 776 0235 A101     		.2byte	0x1a1
+ 777 0237 00000000 		.4byte	.LFB7
+ 778 023b 58000000 		.4byte	.LFE7-.LFB7
+ 779 023f 01       		.uleb128 0x1
+ 780 0240 9C       		.byte	0x9c
+ 781 0241 68020000 		.4byte	0x268
+ 782 0245 09       		.uleb128 0x9
+ 783 0246 08000000 		.4byte	.LVL32
+ 784 024a 5C030000 		.4byte	0x35c
+ 785 024e 58020000 		.4byte	0x258
+ 786 0252 0A       		.uleb128 0xa
+ 787 0253 01       		.uleb128 0x1
+ 788 0254 50       		.byte	0x50
+ 789 0255 01       		.uleb128 0x1
+ 790 0256 3A       		.byte	0x3a
+ 791 0257 00       		.byte	0
+ 792 0258 0B       		.uleb128 0xb
+ 793 0259 3A000000 		.4byte	.LVL33
+ 794 025d 67030000 		.4byte	0x367
+ 795 0261 0A       		.uleb128 0xa
+ 796 0262 01       		.uleb128 0x1
+ 797 0263 50       		.byte	0x50
+ 798 0264 01       		.uleb128 0x1
+ 799 0265 3A       		.byte	0x3a
+ 800 0266 00       		.byte	0
+ 801 0267 00       		.byte	0
+ 802 0268 13       		.uleb128 0x13
+ 803 0269 5C000000 		.4byte	.LASF31
+ 804 026d 01       		.byte	0x1
+ 805 026e C601     		.2byte	0x1c6
+ 806 0270 77000000 		.4byte	0x77
+ 807 0274 00000000 		.4byte	.LFB8
+ 808 0278 10000000 		.4byte	.LFE8-.LFB8
+ 809 027c 01       		.uleb128 0x1
+ 810 027d 9C       		.byte	0x9c
+ 811 027e 91020000 		.4byte	0x291
+ 812 0282 14       		.uleb128 0x14
+ 813 0283 C4010000 		.4byte	.LASF32
+ 814 0287 01       		.byte	0x1
+ 815 0288 C801     		.2byte	0x1c8
+ 816 028a 77000000 		.4byte	0x77
+ 817 028e 01       		.uleb128 0x1
+ 818 028f 50       		.byte	0x50
+ 819 0290 00       		.byte	0
+ 820 0291 13       		.uleb128 0x13
+ 821 0292 08030000 		.4byte	.LASF33
+ 822 0296 01       		.byte	0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 24
+
+
+ 823 0297 DC01     		.2byte	0x1dc
+ 824 0299 77000000 		.4byte	0x77
+ 825 029d 00000000 		.4byte	.LFB9
+ 826 02a1 10000000 		.4byte	.LFE9-.LFB9
+ 827 02a5 01       		.uleb128 0x1
+ 828 02a6 9C       		.byte	0x9c
+ 829 02a7 BA020000 		.4byte	0x2ba
+ 830 02ab 14       		.uleb128 0x14
+ 831 02ac B6010000 		.4byte	.LASF34
+ 832 02b0 01       		.byte	0x1
+ 833 02b1 DE01     		.2byte	0x1de
+ 834 02b3 77000000 		.4byte	0x77
+ 835 02b7 01       		.uleb128 0x1
+ 836 02b8 50       		.byte	0x50
+ 837 02b9 00       		.byte	0
+ 838 02ba 15       		.uleb128 0x15
+ 839 02bb 98010000 		.4byte	.LASF35
+ 840 02bf 01       		.byte	0x1
+ 841 02c0 1C       		.byte	0x1c
+ 842 02c1 A9000000 		.4byte	0xa9
+ 843 02c5 05       		.uleb128 0x5
+ 844 02c6 03       		.byte	0x3
+ 845 02c7 00000000 		.4byte	UART_WIFI_rxBufferHead
+ 846 02cb 15       		.uleb128 0x15
+ 847 02cc C6030000 		.4byte	.LASF36
+ 848 02d0 01       		.byte	0x1
+ 849 02d1 1E       		.byte	0x1e
+ 850 02d2 A9000000 		.4byte	0xa9
+ 851 02d6 05       		.uleb128 0x5
+ 852 02d7 03       		.byte	0x3
+ 853 02d8 00000000 		.4byte	UART_WIFI_rxBufferTail
+ 854 02dc 15       		.uleb128 0x15
+ 855 02dd 61010000 		.4byte	.LASF37
+ 856 02e1 01       		.byte	0x1
+ 857 02e2 26       		.byte	0x26
+ 858 02e3 98000000 		.4byte	0x98
+ 859 02e7 05       		.uleb128 0x5
+ 860 02e8 03       		.byte	0x3
+ 861 02e9 00000000 		.4byte	UART_WIFI_rxBufferOverflow
+ 862 02ed 15       		.uleb128 0x15
+ 863 02ee 4A010000 		.4byte	.LASF38
+ 864 02f2 01       		.byte	0x1
+ 865 02f3 2C       		.byte	0x2c
+ 866 02f4 A9000000 		.4byte	0xa9
+ 867 02f8 05       		.uleb128 0x5
+ 868 02f9 03       		.byte	0x3
+ 869 02fa 00000000 		.4byte	UART_WIFI_txBufferHead
+ 870 02fe 15       		.uleb128 0x15
+ 871 02ff AF030000 		.4byte	.LASF39
+ 872 0303 01       		.byte	0x1
+ 873 0304 2E       		.byte	0x2e
+ 874 0305 A9000000 		.4byte	0xa9
+ 875 0309 05       		.uleb128 0x5
+ 876 030a 03       		.byte	0x3
+ 877 030b 00000000 		.4byte	UART_WIFI_txBufferTail
+ 878 030f 16       		.uleb128 0x16
+ 879 0310 98000000 		.4byte	0x98
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 25
+
+
+ 880 0314 20030000 		.4byte	0x320
+ 881 0318 17       		.uleb128 0x17
+ 882 0319 B5000000 		.4byte	0xb5
+ 883 031d 0001     		.2byte	0x100
+ 884 031f 00       		.byte	0
+ 885 0320 15       		.uleb128 0x15
+ 886 0321 33000000 		.4byte	.LASF40
+ 887 0325 01       		.byte	0x1
+ 888 0326 33       		.byte	0x33
+ 889 0327 31030000 		.4byte	0x331
+ 890 032b 05       		.uleb128 0x5
+ 891 032c 03       		.byte	0x3
+ 892 032d 00000000 		.4byte	UART_WIFI_rxBufferInternal
+ 893 0331 05       		.uleb128 0x5
+ 894 0332 0F030000 		.4byte	0x30f
+ 895 0336 16       		.uleb128 0x16
+ 896 0337 98000000 		.4byte	0x98
+ 897 033b 46030000 		.4byte	0x346
+ 898 033f 18       		.uleb128 0x18
+ 899 0340 B5000000 		.4byte	0xb5
+ 900 0344 FF       		.byte	0xff
+ 901 0345 00       		.byte	0
+ 902 0346 15       		.uleb128 0x15
+ 903 0347 E5010000 		.4byte	.LASF41
+ 904 034b 01       		.byte	0x1
+ 905 034c 37       		.byte	0x37
+ 906 034d 57030000 		.4byte	0x357
+ 907 0351 05       		.uleb128 0x5
+ 908 0352 03       		.byte	0x3
+ 909 0353 00000000 		.4byte	UART_WIFI_txBufferInternal
+ 910 0357 05       		.uleb128 0x5
+ 911 0358 36030000 		.4byte	0x336
+ 912 035c 19       		.uleb128 0x19
+ 913 035d B2020000 		.4byte	.LASF42
+ 914 0361 B2020000 		.4byte	.LASF42
+ 915 0365 03       		.byte	0x3
+ 916 0366 D8       		.byte	0xd8
+ 917 0367 19       		.uleb128 0x19
+ 918 0368 60030000 		.4byte	.LASF43
+ 919 036c 60030000 		.4byte	.LASF43
+ 920 0370 03       		.byte	0x3
+ 921 0371 D6       		.byte	0xd6
+ 922 0372 00       		.byte	0
+ 923              		.section	.debug_abbrev,"",%progbits
+ 924              	.Ldebug_abbrev0:
+ 925 0000 01       		.uleb128 0x1
+ 926 0001 11       		.uleb128 0x11
+ 927 0002 01       		.byte	0x1
+ 928 0003 25       		.uleb128 0x25
+ 929 0004 0E       		.uleb128 0xe
+ 930 0005 13       		.uleb128 0x13
+ 931 0006 0B       		.uleb128 0xb
+ 932 0007 03       		.uleb128 0x3
+ 933 0008 0E       		.uleb128 0xe
+ 934 0009 1B       		.uleb128 0x1b
+ 935 000a 0E       		.uleb128 0xe
+ 936 000b 55       		.uleb128 0x55
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 26
+
+
+ 937 000c 17       		.uleb128 0x17
+ 938 000d 11       		.uleb128 0x11
+ 939 000e 01       		.uleb128 0x1
+ 940 000f 10       		.uleb128 0x10
+ 941 0010 17       		.uleb128 0x17
+ 942 0011 00       		.byte	0
+ 943 0012 00       		.byte	0
+ 944 0013 02       		.uleb128 0x2
+ 945 0014 24       		.uleb128 0x24
+ 946 0015 00       		.byte	0
+ 947 0016 0B       		.uleb128 0xb
+ 948 0017 0B       		.uleb128 0xb
+ 949 0018 3E       		.uleb128 0x3e
+ 950 0019 0B       		.uleb128 0xb
+ 951 001a 03       		.uleb128 0x3
+ 952 001b 0E       		.uleb128 0xe
+ 953 001c 00       		.byte	0
+ 954 001d 00       		.byte	0
+ 955 001e 03       		.uleb128 0x3
+ 956 001f 24       		.uleb128 0x24
+ 957 0020 00       		.byte	0
+ 958 0021 0B       		.uleb128 0xb
+ 959 0022 0B       		.uleb128 0xb
+ 960 0023 3E       		.uleb128 0x3e
+ 961 0024 0B       		.uleb128 0xb
+ 962 0025 03       		.uleb128 0x3
+ 963 0026 08       		.uleb128 0x8
+ 964 0027 00       		.byte	0
+ 965 0028 00       		.byte	0
+ 966 0029 04       		.uleb128 0x4
+ 967 002a 16       		.uleb128 0x16
+ 968 002b 00       		.byte	0
+ 969 002c 03       		.uleb128 0x3
+ 970 002d 0E       		.uleb128 0xe
+ 971 002e 3A       		.uleb128 0x3a
+ 972 002f 0B       		.uleb128 0xb
+ 973 0030 3B       		.uleb128 0x3b
+ 974 0031 05       		.uleb128 0x5
+ 975 0032 49       		.uleb128 0x49
+ 976 0033 13       		.uleb128 0x13
+ 977 0034 00       		.byte	0
+ 978 0035 00       		.byte	0
+ 979 0036 05       		.uleb128 0x5
+ 980 0037 35       		.uleb128 0x35
+ 981 0038 00       		.byte	0
+ 982 0039 49       		.uleb128 0x49
+ 983 003a 13       		.uleb128 0x13
+ 984 003b 00       		.byte	0
+ 985 003c 00       		.byte	0
+ 986 003d 06       		.uleb128 0x6
+ 987 003e 2E       		.uleb128 0x2e
+ 988 003f 01       		.byte	0x1
+ 989 0040 3F       		.uleb128 0x3f
+ 990 0041 19       		.uleb128 0x19
+ 991 0042 03       		.uleb128 0x3
+ 992 0043 0E       		.uleb128 0xe
+ 993 0044 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 27
+
+
+ 994 0045 0B       		.uleb128 0xb
+ 995 0046 3B       		.uleb128 0x3b
+ 996 0047 0B       		.uleb128 0xb
+ 997 0048 27       		.uleb128 0x27
+ 998 0049 19       		.uleb128 0x19
+ 999 004a 49       		.uleb128 0x49
+ 1000 004b 13       		.uleb128 0x13
+ 1001 004c 11       		.uleb128 0x11
+ 1002 004d 01       		.uleb128 0x1
+ 1003 004e 12       		.uleb128 0x12
+ 1004 004f 06       		.uleb128 0x6
+ 1005 0050 40       		.uleb128 0x40
+ 1006 0051 18       		.uleb128 0x18
+ 1007 0052 9742     		.uleb128 0x2117
+ 1008 0054 19       		.uleb128 0x19
+ 1009 0055 01       		.uleb128 0x1
+ 1010 0056 13       		.uleb128 0x13
+ 1011 0057 00       		.byte	0
+ 1012 0058 00       		.byte	0
+ 1013 0059 07       		.uleb128 0x7
+ 1014 005a 34       		.uleb128 0x34
+ 1015 005b 00       		.byte	0
+ 1016 005c 03       		.uleb128 0x3
+ 1017 005d 0E       		.uleb128 0xe
+ 1018 005e 3A       		.uleb128 0x3a
+ 1019 005f 0B       		.uleb128 0xb
+ 1020 0060 3B       		.uleb128 0x3b
+ 1021 0061 0B       		.uleb128 0xb
+ 1022 0062 49       		.uleb128 0x49
+ 1023 0063 13       		.uleb128 0x13
+ 1024 0064 02       		.uleb128 0x2
+ 1025 0065 17       		.uleb128 0x17
+ 1026 0066 00       		.byte	0
+ 1027 0067 00       		.byte	0
+ 1028 0068 08       		.uleb128 0x8
+ 1029 0069 2E       		.uleb128 0x2e
+ 1030 006a 01       		.byte	0x1
+ 1031 006b 3F       		.uleb128 0x3f
+ 1032 006c 19       		.uleb128 0x19
+ 1033 006d 03       		.uleb128 0x3
+ 1034 006e 0E       		.uleb128 0xe
+ 1035 006f 3A       		.uleb128 0x3a
+ 1036 0070 0B       		.uleb128 0xb
+ 1037 0071 3B       		.uleb128 0x3b
+ 1038 0072 0B       		.uleb128 0xb
+ 1039 0073 27       		.uleb128 0x27
+ 1040 0074 19       		.uleb128 0x19
+ 1041 0075 11       		.uleb128 0x11
+ 1042 0076 01       		.uleb128 0x1
+ 1043 0077 12       		.uleb128 0x12
+ 1044 0078 06       		.uleb128 0x6
+ 1045 0079 40       		.uleb128 0x40
+ 1046 007a 18       		.uleb128 0x18
+ 1047 007b 9742     		.uleb128 0x2117
+ 1048 007d 19       		.uleb128 0x19
+ 1049 007e 01       		.uleb128 0x1
+ 1050 007f 13       		.uleb128 0x13
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 28
+
+
+ 1051 0080 00       		.byte	0
+ 1052 0081 00       		.byte	0
+ 1053 0082 09       		.uleb128 0x9
+ 1054 0083 898201   		.uleb128 0x4109
+ 1055 0086 01       		.byte	0x1
+ 1056 0087 11       		.uleb128 0x11
+ 1057 0088 01       		.uleb128 0x1
+ 1058 0089 31       		.uleb128 0x31
+ 1059 008a 13       		.uleb128 0x13
+ 1060 008b 01       		.uleb128 0x1
+ 1061 008c 13       		.uleb128 0x13
+ 1062 008d 00       		.byte	0
+ 1063 008e 00       		.byte	0
+ 1064 008f 0A       		.uleb128 0xa
+ 1065 0090 8A8201   		.uleb128 0x410a
+ 1066 0093 00       		.byte	0
+ 1067 0094 02       		.uleb128 0x2
+ 1068 0095 18       		.uleb128 0x18
+ 1069 0096 9142     		.uleb128 0x2111
+ 1070 0098 18       		.uleb128 0x18
+ 1071 0099 00       		.byte	0
+ 1072 009a 00       		.byte	0
+ 1073 009b 0B       		.uleb128 0xb
+ 1074 009c 898201   		.uleb128 0x4109
+ 1075 009f 01       		.byte	0x1
+ 1076 00a0 11       		.uleb128 0x11
+ 1077 00a1 01       		.uleb128 0x1
+ 1078 00a2 31       		.uleb128 0x31
+ 1079 00a3 13       		.uleb128 0x13
+ 1080 00a4 00       		.byte	0
+ 1081 00a5 00       		.byte	0
+ 1082 00a6 0C       		.uleb128 0xc
+ 1083 00a7 2E       		.uleb128 0x2e
+ 1084 00a8 01       		.byte	0x1
+ 1085 00a9 3F       		.uleb128 0x3f
+ 1086 00aa 19       		.uleb128 0x19
+ 1087 00ab 03       		.uleb128 0x3
+ 1088 00ac 0E       		.uleb128 0xe
+ 1089 00ad 3A       		.uleb128 0x3a
+ 1090 00ae 0B       		.uleb128 0xb
+ 1091 00af 3B       		.uleb128 0x3b
+ 1092 00b0 05       		.uleb128 0x5
+ 1093 00b1 27       		.uleb128 0x27
+ 1094 00b2 19       		.uleb128 0x19
+ 1095 00b3 11       		.uleb128 0x11
+ 1096 00b4 01       		.uleb128 0x1
+ 1097 00b5 12       		.uleb128 0x12
+ 1098 00b6 06       		.uleb128 0x6
+ 1099 00b7 40       		.uleb128 0x40
+ 1100 00b8 18       		.uleb128 0x18
+ 1101 00b9 9742     		.uleb128 0x2117
+ 1102 00bb 19       		.uleb128 0x19
+ 1103 00bc 01       		.uleb128 0x1
+ 1104 00bd 13       		.uleb128 0x13
+ 1105 00be 00       		.byte	0
+ 1106 00bf 00       		.byte	0
+ 1107 00c0 0D       		.uleb128 0xd
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 29
+
+
+ 1108 00c1 05       		.uleb128 0x5
+ 1109 00c2 00       		.byte	0
+ 1110 00c3 03       		.uleb128 0x3
+ 1111 00c4 0E       		.uleb128 0xe
+ 1112 00c5 3A       		.uleb128 0x3a
+ 1113 00c6 0B       		.uleb128 0xb
+ 1114 00c7 3B       		.uleb128 0x3b
+ 1115 00c8 05       		.uleb128 0x5
+ 1116 00c9 49       		.uleb128 0x49
+ 1117 00ca 13       		.uleb128 0x13
+ 1118 00cb 02       		.uleb128 0x2
+ 1119 00cc 17       		.uleb128 0x17
+ 1120 00cd 00       		.byte	0
+ 1121 00ce 00       		.byte	0
+ 1122 00cf 0E       		.uleb128 0xe
+ 1123 00d0 34       		.uleb128 0x34
+ 1124 00d1 00       		.byte	0
+ 1125 00d2 03       		.uleb128 0x3
+ 1126 00d3 0E       		.uleb128 0xe
+ 1127 00d4 3A       		.uleb128 0x3a
+ 1128 00d5 0B       		.uleb128 0xb
+ 1129 00d6 3B       		.uleb128 0x3b
+ 1130 00d7 05       		.uleb128 0x5
+ 1131 00d8 49       		.uleb128 0x49
+ 1132 00d9 13       		.uleb128 0x13
+ 1133 00da 02       		.uleb128 0x2
+ 1134 00db 17       		.uleb128 0x17
+ 1135 00dc 00       		.byte	0
+ 1136 00dd 00       		.byte	0
+ 1137 00de 0F       		.uleb128 0xf
+ 1138 00df 34       		.uleb128 0x34
+ 1139 00e0 00       		.byte	0
+ 1140 00e1 03       		.uleb128 0x3
+ 1141 00e2 08       		.uleb128 0x8
+ 1142 00e3 3A       		.uleb128 0x3a
+ 1143 00e4 0B       		.uleb128 0xb
+ 1144 00e5 3B       		.uleb128 0x3b
+ 1145 00e6 05       		.uleb128 0x5
+ 1146 00e7 49       		.uleb128 0x49
+ 1147 00e8 13       		.uleb128 0x13
+ 1148 00e9 02       		.uleb128 0x2
+ 1149 00ea 17       		.uleb128 0x17
+ 1150 00eb 00       		.byte	0
+ 1151 00ec 00       		.byte	0
+ 1152 00ed 10       		.uleb128 0x10
+ 1153 00ee 898201   		.uleb128 0x4109
+ 1154 00f1 00       		.byte	0
+ 1155 00f2 11       		.uleb128 0x11
+ 1156 00f3 01       		.uleb128 0x1
+ 1157 00f4 31       		.uleb128 0x31
+ 1158 00f5 13       		.uleb128 0x13
+ 1159 00f6 00       		.byte	0
+ 1160 00f7 00       		.byte	0
+ 1161 00f8 11       		.uleb128 0x11
+ 1162 00f9 0F       		.uleb128 0xf
+ 1163 00fa 00       		.byte	0
+ 1164 00fb 0B       		.uleb128 0xb
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 30
+
+
+ 1165 00fc 0B       		.uleb128 0xb
+ 1166 00fd 49       		.uleb128 0x49
+ 1167 00fe 13       		.uleb128 0x13
+ 1168 00ff 00       		.byte	0
+ 1169 0100 00       		.byte	0
+ 1170 0101 12       		.uleb128 0x12
+ 1171 0102 26       		.uleb128 0x26
+ 1172 0103 00       		.byte	0
+ 1173 0104 49       		.uleb128 0x49
+ 1174 0105 13       		.uleb128 0x13
+ 1175 0106 00       		.byte	0
+ 1176 0107 00       		.byte	0
+ 1177 0108 13       		.uleb128 0x13
+ 1178 0109 2E       		.uleb128 0x2e
+ 1179 010a 01       		.byte	0x1
+ 1180 010b 3F       		.uleb128 0x3f
+ 1181 010c 19       		.uleb128 0x19
+ 1182 010d 03       		.uleb128 0x3
+ 1183 010e 0E       		.uleb128 0xe
+ 1184 010f 3A       		.uleb128 0x3a
+ 1185 0110 0B       		.uleb128 0xb
+ 1186 0111 3B       		.uleb128 0x3b
+ 1187 0112 05       		.uleb128 0x5
+ 1188 0113 27       		.uleb128 0x27
+ 1189 0114 19       		.uleb128 0x19
+ 1190 0115 49       		.uleb128 0x49
+ 1191 0116 13       		.uleb128 0x13
+ 1192 0117 11       		.uleb128 0x11
+ 1193 0118 01       		.uleb128 0x1
+ 1194 0119 12       		.uleb128 0x12
+ 1195 011a 06       		.uleb128 0x6
+ 1196 011b 40       		.uleb128 0x40
+ 1197 011c 18       		.uleb128 0x18
+ 1198 011d 9742     		.uleb128 0x2117
+ 1199 011f 19       		.uleb128 0x19
+ 1200 0120 01       		.uleb128 0x1
+ 1201 0121 13       		.uleb128 0x13
+ 1202 0122 00       		.byte	0
+ 1203 0123 00       		.byte	0
+ 1204 0124 14       		.uleb128 0x14
+ 1205 0125 34       		.uleb128 0x34
+ 1206 0126 00       		.byte	0
+ 1207 0127 03       		.uleb128 0x3
+ 1208 0128 0E       		.uleb128 0xe
+ 1209 0129 3A       		.uleb128 0x3a
+ 1210 012a 0B       		.uleb128 0xb
+ 1211 012b 3B       		.uleb128 0x3b
+ 1212 012c 05       		.uleb128 0x5
+ 1213 012d 49       		.uleb128 0x49
+ 1214 012e 13       		.uleb128 0x13
+ 1215 012f 02       		.uleb128 0x2
+ 1216 0130 18       		.uleb128 0x18
+ 1217 0131 00       		.byte	0
+ 1218 0132 00       		.byte	0
+ 1219 0133 15       		.uleb128 0x15
+ 1220 0134 34       		.uleb128 0x34
+ 1221 0135 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 31
+
+
+ 1222 0136 03       		.uleb128 0x3
+ 1223 0137 0E       		.uleb128 0xe
+ 1224 0138 3A       		.uleb128 0x3a
+ 1225 0139 0B       		.uleb128 0xb
+ 1226 013a 3B       		.uleb128 0x3b
+ 1227 013b 0B       		.uleb128 0xb
+ 1228 013c 49       		.uleb128 0x49
+ 1229 013d 13       		.uleb128 0x13
+ 1230 013e 3F       		.uleb128 0x3f
+ 1231 013f 19       		.uleb128 0x19
+ 1232 0140 02       		.uleb128 0x2
+ 1233 0141 18       		.uleb128 0x18
+ 1234 0142 00       		.byte	0
+ 1235 0143 00       		.byte	0
+ 1236 0144 16       		.uleb128 0x16
+ 1237 0145 01       		.uleb128 0x1
+ 1238 0146 01       		.byte	0x1
+ 1239 0147 49       		.uleb128 0x49
+ 1240 0148 13       		.uleb128 0x13
+ 1241 0149 01       		.uleb128 0x1
+ 1242 014a 13       		.uleb128 0x13
+ 1243 014b 00       		.byte	0
+ 1244 014c 00       		.byte	0
+ 1245 014d 17       		.uleb128 0x17
+ 1246 014e 21       		.uleb128 0x21
+ 1247 014f 00       		.byte	0
+ 1248 0150 49       		.uleb128 0x49
+ 1249 0151 13       		.uleb128 0x13
+ 1250 0152 2F       		.uleb128 0x2f
+ 1251 0153 05       		.uleb128 0x5
+ 1252 0154 00       		.byte	0
+ 1253 0155 00       		.byte	0
+ 1254 0156 18       		.uleb128 0x18
+ 1255 0157 21       		.uleb128 0x21
+ 1256 0158 00       		.byte	0
+ 1257 0159 49       		.uleb128 0x49
+ 1258 015a 13       		.uleb128 0x13
+ 1259 015b 2F       		.uleb128 0x2f
+ 1260 015c 0B       		.uleb128 0xb
+ 1261 015d 00       		.byte	0
+ 1262 015e 00       		.byte	0
+ 1263 015f 19       		.uleb128 0x19
+ 1264 0160 2E       		.uleb128 0x2e
+ 1265 0161 00       		.byte	0
+ 1266 0162 3F       		.uleb128 0x3f
+ 1267 0163 19       		.uleb128 0x19
+ 1268 0164 3C       		.uleb128 0x3c
+ 1269 0165 19       		.uleb128 0x19
+ 1270 0166 6E       		.uleb128 0x6e
+ 1271 0167 0E       		.uleb128 0xe
+ 1272 0168 03       		.uleb128 0x3
+ 1273 0169 0E       		.uleb128 0xe
+ 1274 016a 3A       		.uleb128 0x3a
+ 1275 016b 0B       		.uleb128 0xb
+ 1276 016c 3B       		.uleb128 0x3b
+ 1277 016d 0B       		.uleb128 0xb
+ 1278 016e 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 32
+
+
+ 1279 016f 00       		.byte	0
+ 1280 0170 00       		.byte	0
+ 1281              		.section	.debug_loc,"",%progbits
+ 1282              	.Ldebug_loc0:
+ 1283              	.LLST0:
+ 1284 0000 00000000 		.4byte	.LVL0
+ 1285 0004 22000000 		.4byte	.LVL3
+ 1286 0008 0200     		.2byte	0x2
+ 1287 000a 30       		.byte	0x30
+ 1288 000b 9F       		.byte	0x9f
+ 1289 000c 22000000 		.4byte	.LVL3
+ 1290 0010 28000000 		.4byte	.LVL4
+ 1291 0014 0100     		.2byte	0x1
+ 1292 0016 50       		.byte	0x50
+ 1293 0017 28000000 		.4byte	.LVL4
+ 1294 001b 2A000000 		.4byte	.LVL5
+ 1295 001f 0200     		.2byte	0x2
+ 1296 0021 30       		.byte	0x30
+ 1297 0022 9F       		.byte	0x9f
+ 1298 0023 2A000000 		.4byte	.LVL5
+ 1299 0027 38000000 		.4byte	.LFE1
+ 1300 002b 0100     		.2byte	0x1
+ 1301 002d 50       		.byte	0x50
+ 1302 002e 00000000 		.4byte	0
+ 1303 0032 00000000 		.4byte	0
+ 1304              	.LLST1:
+ 1305 0036 12000000 		.4byte	.LVL1
+ 1306 003a 28000000 		.4byte	.LVL4
+ 1307 003e 0100     		.2byte	0x1
+ 1308 0040 53       		.byte	0x53
+ 1309 0041 00000000 		.4byte	0
+ 1310 0045 00000000 		.4byte	0
+ 1311              	.LLST2:
+ 1312 0049 12000000 		.4byte	.LVL7
+ 1313 004d 14000000 		.4byte	.LVL8
+ 1314 0051 0100     		.2byte	0x1
+ 1315 0053 50       		.byte	0x50
+ 1316 0054 1E000000 		.4byte	.LVL10
+ 1317 0058 28000000 		.4byte	.LFE2
+ 1318 005c 0100     		.2byte	0x1
+ 1319 005e 50       		.byte	0x50
+ 1320 005f 00000000 		.4byte	0
+ 1321 0063 00000000 		.4byte	0
+ 1322              	.LLST3:
+ 1323 0067 04000000 		.4byte	.LVL6
+ 1324 006b 1A000000 		.4byte	.LVL9
+ 1325 006f 0100     		.2byte	0x1
+ 1326 0071 53       		.byte	0x53
+ 1327 0072 00000000 		.4byte	0
+ 1328 0076 00000000 		.4byte	0
+ 1329              	.LLST4:
+ 1330 007a 00000000 		.4byte	.LVL13
+ 1331 007e 3E000000 		.4byte	.LVL16
+ 1332 0082 0100     		.2byte	0x1
+ 1333 0084 50       		.byte	0x50
+ 1334 0085 3E000000 		.4byte	.LVL16
+ 1335 0089 74000000 		.4byte	.LFE4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 33
+
+
+ 1336 008d 0400     		.2byte	0x4
+ 1337 008f F3       		.byte	0xf3
+ 1338 0090 01       		.uleb128 0x1
+ 1339 0091 50       		.byte	0x50
+ 1340 0092 9F       		.byte	0x9f
+ 1341 0093 00000000 		.4byte	0
+ 1342 0097 00000000 		.4byte	0
+ 1343              	.LLST5:
+ 1344 009b 24000000 		.4byte	.LVL14
+ 1345 009f 48000000 		.4byte	.LVL17
+ 1346 00a3 0100     		.2byte	0x1
+ 1347 00a5 52       		.byte	0x52
+ 1348 00a6 48000000 		.4byte	.LVL17
+ 1349 00aa 56000000 		.4byte	.LVL18
+ 1350 00ae 0500     		.2byte	0x5
+ 1351 00b0 03       		.byte	0x3
+ 1352 00b1 00000000 		.4byte	UART_WIFI_txBufferHead
+ 1353 00b5 00000000 		.4byte	0
+ 1354 00b9 00000000 		.4byte	0
+ 1355              	.LLST6:
+ 1356 00bd 00000000 		.4byte	.LVL19
+ 1357 00c1 0A000000 		.4byte	.LVL21
+ 1358 00c5 0100     		.2byte	0x1
+ 1359 00c7 50       		.byte	0x50
+ 1360 00c8 0A000000 		.4byte	.LVL21
+ 1361 00cc 16000000 		.4byte	.LVL26
+ 1362 00d0 0100     		.2byte	0x1
+ 1363 00d2 56       		.byte	0x56
+ 1364 00d3 16000000 		.4byte	.LVL26
+ 1365 00d7 18000000 		.4byte	.LFE5
+ 1366 00db 0400     		.2byte	0x4
+ 1367 00dd F3       		.byte	0xf3
+ 1368 00de 01       		.uleb128 0x1
+ 1369 00df 50       		.byte	0x50
+ 1370 00e0 9F       		.byte	0x9f
+ 1371 00e1 00000000 		.4byte	0
+ 1372 00e5 00000000 		.4byte	0
+ 1373              	.LLST7:
+ 1374 00e9 00000000 		.4byte	.LVL19
+ 1375 00ed 0A000000 		.4byte	.LVL21
+ 1376 00f1 0100     		.2byte	0x1
+ 1377 00f3 51       		.byte	0x51
+ 1378 00f4 0A000000 		.4byte	.LVL21
+ 1379 00f8 16000000 		.4byte	.LVL25
+ 1380 00fc 0100     		.2byte	0x1
+ 1381 00fe 55       		.byte	0x55
+ 1382 00ff 16000000 		.4byte	.LVL25
+ 1383 0103 18000000 		.4byte	.LFE5
+ 1384 0107 0400     		.2byte	0x4
+ 1385 0109 F3       		.byte	0xf3
+ 1386 010a 01       		.uleb128 0x1
+ 1387 010b 51       		.byte	0x51
+ 1388 010c 9F       		.byte	0x9f
+ 1389 010d 00000000 		.4byte	0
+ 1390 0111 00000000 		.4byte	0
+ 1391              	.LLST8:
+ 1392 0115 06000000 		.4byte	.LVL20
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 34
+
+
+ 1393 0119 0A000000 		.4byte	.LVL21
+ 1394 011d 0200     		.2byte	0x2
+ 1395 011f 30       		.byte	0x30
+ 1396 0120 9F       		.byte	0x9f
+ 1397 0121 0A000000 		.4byte	.LVL21
+ 1398 0125 16000000 		.4byte	.LVL24
+ 1399 0129 0100     		.2byte	0x1
+ 1400 012b 54       		.byte	0x54
+ 1401 012c 00000000 		.4byte	0
+ 1402 0130 00000000 		.4byte	0
+ 1403              	.LLST9:
+ 1404 0134 12000000 		.4byte	.LVL28
+ 1405 0138 14000000 		.4byte	.LVL29
+ 1406 013c 0100     		.2byte	0x1
+ 1407 013e 50       		.byte	0x50
+ 1408 013f 1E000000 		.4byte	.LVL31
+ 1409 0143 28000000 		.4byte	.LFE6
+ 1410 0147 0100     		.2byte	0x1
+ 1411 0149 50       		.byte	0x50
+ 1412 014a 00000000 		.4byte	0
+ 1413 014e 00000000 		.4byte	0
+ 1414              	.LLST10:
+ 1415 0152 04000000 		.4byte	.LVL27
+ 1416 0156 12000000 		.4byte	.LVL28
+ 1417 015a 0100     		.2byte	0x1
+ 1418 015c 50       		.byte	0x50
+ 1419 015d 14000000 		.4byte	.LVL29
+ 1420 0161 1A000000 		.4byte	.LVL30
+ 1421 0165 0100     		.2byte	0x1
+ 1422 0167 50       		.byte	0x50
+ 1423 0168 00000000 		.4byte	0
+ 1424 016c 00000000 		.4byte	0
+ 1425              		.section	.debug_aranges,"",%progbits
+ 1426 0000 5C000000 		.4byte	0x5c
+ 1427 0004 0200     		.2byte	0x2
+ 1428 0006 00000000 		.4byte	.Ldebug_info0
+ 1429 000a 04       		.byte	0x4
+ 1430 000b 00       		.byte	0
+ 1431 000c 0000     		.2byte	0
+ 1432 000e 0000     		.2byte	0
+ 1433 0010 00000000 		.4byte	.LFB1
+ 1434 0014 38000000 		.4byte	.LFE1-.LFB1
+ 1435 0018 00000000 		.4byte	.LFB2
+ 1436 001c 28000000 		.4byte	.LFE2-.LFB2
+ 1437 0020 00000000 		.4byte	.LFB3
+ 1438 0024 54000000 		.4byte	.LFE3-.LFB3
+ 1439 0028 00000000 		.4byte	.LFB4
+ 1440 002c 74000000 		.4byte	.LFE4-.LFB4
+ 1441 0030 00000000 		.4byte	.LFB5
+ 1442 0034 18000000 		.4byte	.LFE5-.LFB5
+ 1443 0038 00000000 		.4byte	.LFB6
+ 1444 003c 28000000 		.4byte	.LFE6-.LFB6
+ 1445 0040 00000000 		.4byte	.LFB7
+ 1446 0044 58000000 		.4byte	.LFE7-.LFB7
+ 1447 0048 00000000 		.4byte	.LFB8
+ 1448 004c 10000000 		.4byte	.LFE8-.LFB8
+ 1449 0050 00000000 		.4byte	.LFB9
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 35
+
+
+ 1450 0054 10000000 		.4byte	.LFE9-.LFB9
+ 1451 0058 00000000 		.4byte	0
+ 1452 005c 00000000 		.4byte	0
+ 1453              		.section	.debug_ranges,"",%progbits
+ 1454              	.Ldebug_ranges0:
+ 1455 0000 00000000 		.4byte	.LFB1
+ 1456 0004 38000000 		.4byte	.LFE1
+ 1457 0008 00000000 		.4byte	.LFB2
+ 1458 000c 28000000 		.4byte	.LFE2
+ 1459 0010 00000000 		.4byte	.LFB3
+ 1460 0014 54000000 		.4byte	.LFE3
+ 1461 0018 00000000 		.4byte	.LFB4
+ 1462 001c 74000000 		.4byte	.LFE4
+ 1463 0020 00000000 		.4byte	.LFB5
+ 1464 0024 18000000 		.4byte	.LFE5
+ 1465 0028 00000000 		.4byte	.LFB6
+ 1466 002c 28000000 		.4byte	.LFE6
+ 1467 0030 00000000 		.4byte	.LFB7
+ 1468 0034 58000000 		.4byte	.LFE7
+ 1469 0038 00000000 		.4byte	.LFB8
+ 1470 003c 10000000 		.4byte	.LFE8
+ 1471 0040 00000000 		.4byte	.LFB9
+ 1472 0044 10000000 		.4byte	.LFE9
+ 1473 0048 00000000 		.4byte	0
+ 1474 004c 00000000 		.4byte	0
+ 1475              		.section	.debug_line,"",%progbits
+ 1476              	.Ldebug_line0:
+ 1477 0000 53010000 		.section	.debug_str,"MS",%progbits,1
+ 1477      02005A00 
+ 1477      00000201 
+ 1477      FB0E0D00 
+ 1477      01010101 
+ 1478              	.LASF14:
+ 1479 0000 72656733 		.ascii	"reg32\000"
+ 1479      3200
+ 1480              	.LASF28:
+ 1481 0006 636F756E 		.ascii	"count\000"
+ 1481      7400
+ 1482              	.LASF26:
+ 1483 000c 74784461 		.ascii	"txData\000"
+ 1483      746100
+ 1484              	.LASF3:
+ 1485 0013 73686F72 		.ascii	"short unsigned int\000"
+ 1485      7420756E 
+ 1485      7369676E 
+ 1485      65642069 
+ 1485      6E7400
+ 1486              	.LASF8:
+ 1487 0026 756E7369 		.ascii	"unsigned int\000"
+ 1487      676E6564 
+ 1487      20696E74 
+ 1487      00
+ 1488              	.LASF40:
+ 1489 0033 55415254 		.ascii	"UART_WIFI_rxBufferInternal\000"
+ 1489      5F574946 
+ 1489      495F7278 
+ 1489      42756666 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 36
+
+
+ 1489      6572496E 
+ 1490              	.LASF22:
+ 1491 004e 6C6F6348 		.ascii	"locHead\000"
+ 1491      65616400 
+ 1492              	.LASF11:
+ 1493 0056 666C6F61 		.ascii	"float\000"
+ 1493      7400
+ 1494              	.LASF31:
+ 1495 005c 55415254 		.ascii	"UART_WIFI_SpiUartDisableIntRx\000"
+ 1495      5F574946 
+ 1495      495F5370 
+ 1495      69556172 
+ 1495      74446973 
+ 1496              	.LASF21:
+ 1497 007a 73697A65 		.ascii	"size\000"
+ 1497      00
+ 1498              	.LASF23:
+ 1499 007f 55415254 		.ascii	"UART_WIFI_SpiUartClearRxBuffer\000"
+ 1499      5F574946 
+ 1499      495F5370 
+ 1499      69556172 
+ 1499      74436C65 
+ 1500              	.LASF29:
+ 1501 009e 55415254 		.ascii	"UART_WIFI_SpiUartGetTxBufferSize\000"
+ 1501      5F574946 
+ 1501      495F5370 
+ 1501      69556172 
+ 1501      74476574 
+ 1502              	.LASF45:
+ 1503 00bf 47656E65 		.ascii	"Generated_Source\\PSoC4\\UART_WIFI_SPI_UART.c\000"
+ 1503      72617465 
+ 1503      645F536F 
+ 1503      75726365 
+ 1503      5C50536F 
+ 1504              	.LASF5:
+ 1505 00eb 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1505      20756E73 
+ 1505      69676E65 
+ 1505      6420696E 
+ 1505      7400
+ 1506              	.LASF20:
+ 1507 00fd 55415254 		.ascii	"UART_WIFI_SpiUartGetRxBufferSize\000"
+ 1507      5F574946 
+ 1507      495F5370 
+ 1507      69556172 
+ 1507      74476574 
+ 1508              	.LASF17:
+ 1509 011e 72784461 		.ascii	"rxData\000"
+ 1509      746100
+ 1510              	.LASF27:
+ 1511 0125 77724275 		.ascii	"wrBuf\000"
+ 1511      6600
+ 1512              	.LASF1:
+ 1513 012b 756E7369 		.ascii	"unsigned char\000"
+ 1513      676E6564 
+ 1513      20636861 
+ 1513      7200
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 37
+
+
+ 1514              	.LASF12:
+ 1515 0139 646F7562 		.ascii	"double\000"
+ 1515      6C6500
+ 1516              	.LASF2:
+ 1517 0140 73686F72 		.ascii	"short int\000"
+ 1517      7420696E 
+ 1517      7400
+ 1518              	.LASF38:
+ 1519 014a 55415254 		.ascii	"UART_WIFI_txBufferHead\000"
+ 1519      5F574946 
+ 1519      495F7478 
+ 1519      42756666 
+ 1519      65724865 
+ 1520              	.LASF37:
+ 1521 0161 55415254 		.ascii	"UART_WIFI_rxBufferOverflow\000"
+ 1521      5F574946 
+ 1521      495F7278 
+ 1521      42756666 
+ 1521      65724F76 
+ 1522              	.LASF19:
+ 1523 017c 55415254 		.ascii	"UART_WIFI_SpiUartReadRxData\000"
+ 1523      5F574946 
+ 1523      495F5370 
+ 1523      69556172 
+ 1523      74526561 
+ 1524              	.LASF35:
+ 1525 0198 55415254 		.ascii	"UART_WIFI_rxBufferHead\000"
+ 1525      5F574946 
+ 1525      495F7278 
+ 1525      42756666 
+ 1525      65724865 
+ 1526              	.LASF10:
+ 1527 01af 75696E74 		.ascii	"uint32\000"
+ 1527      333200
+ 1528              	.LASF34:
+ 1529 01b6 696E7453 		.ascii	"intSourceMask\000"
+ 1529      6F757263 
+ 1529      654D6173 
+ 1529      6B00
+ 1530              	.LASF32:
+ 1531 01c4 696E7453 		.ascii	"intSource\000"
+ 1531      6F757263 
+ 1531      6500
+ 1532              	.LASF7:
+ 1533 01ce 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1533      206C6F6E 
+ 1533      6720756E 
+ 1533      7369676E 
+ 1533      65642069 
+ 1534              	.LASF41:
+ 1535 01e5 55415254 		.ascii	"UART_WIFI_txBufferInternal\000"
+ 1535      5F574946 
+ 1535      495F7478 
+ 1535      42756666 
+ 1535      6572496E 
+ 1536              	.LASF44:
+ 1537 0200 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 38
+
+
+ 1537      43313120 
+ 1537      352E342E 
+ 1537      31203230 
+ 1537      31363036 
+ 1538 0233 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1538      20726576 
+ 1538      6973696F 
+ 1538      6E203233 
+ 1538      37373135 
+ 1539 0266 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1539      66756E63 
+ 1539      74696F6E 
+ 1539      2D736563 
+ 1539      74696F6E 
+ 1540              	.LASF18:
+ 1541 028e 6C6F6354 		.ascii	"locTail\000"
+ 1541      61696C00 
+ 1542              	.LASF16:
+ 1543 0296 73697A65 		.ascii	"sizetype\000"
+ 1543      74797065 
+ 1543      00
+ 1544              	.LASF6:
+ 1545 029f 6C6F6E67 		.ascii	"long long int\000"
+ 1545      206C6F6E 
+ 1545      6720696E 
+ 1545      7400
+ 1546              	.LASF13:
+ 1547 02ad 63686172 		.ascii	"char\000"
+ 1547      00
+ 1548              	.LASF42:
+ 1549 02b2 4379496E 		.ascii	"CyIntDisable\000"
+ 1549      74446973 
+ 1549      61626C65 
+ 1549      00
+ 1550              	.LASF46:
+ 1551 02bf 433A5C50 		.ascii	"C:\\Psoc_final\\KVC_Reset\\Current_source\\Bobbin_c"
+ 1551      736F635F 
+ 1551      66696E61 
+ 1551      6C5C4B56 
+ 1551      435F5265 
+ 1552 02ee 6F756E74 		.ascii	"ount\\Project\\Design.cydsn\000"
+ 1552      5C50726F 
+ 1552      6A656374 
+ 1552      5C446573 
+ 1552      69676E2E 
+ 1553              	.LASF33:
+ 1554 0308 55415254 		.ascii	"UART_WIFI_SpiUartDisableIntTx\000"
+ 1554      5F574946 
+ 1554      495F5370 
+ 1554      69556172 
+ 1554      74446973 
+ 1555              	.LASF9:
+ 1556 0326 75696E74 		.ascii	"uint8\000"
+ 1556      3800
+ 1557              	.LASF30:
+ 1558 032c 55415254 		.ascii	"UART_WIFI_SpiUartClearTxBuffer\000"
+ 1558      5F574946 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVKPPzg.s 			page 39
+
+
+ 1558      495F5370 
+ 1558      69556172 
+ 1558      74436C65 
+ 1559              	.LASF4:
+ 1560 034b 6C6F6E67 		.ascii	"long int\000"
+ 1560      20696E74 
+ 1560      00
+ 1561              	.LASF15:
+ 1562 0354 6C6F6E67 		.ascii	"long double\000"
+ 1562      20646F75 
+ 1562      626C6500 
+ 1563              	.LASF43:
+ 1564 0360 4379496E 		.ascii	"CyIntEnable\000"
+ 1564      74456E61 
+ 1564      626C6500 
+ 1565              	.LASF0:
+ 1566 036c 7369676E 		.ascii	"signed char\000"
+ 1566      65642063 
+ 1566      68617200 
+ 1567              	.LASF24:
+ 1568 0378 55415254 		.ascii	"UART_WIFI_SpiUartWriteTxData\000"
+ 1568      5F574946 
+ 1568      495F5370 
+ 1568      69556172 
+ 1568      74577269 
+ 1569              	.LASF25:
+ 1570 0395 55415254 		.ascii	"UART_WIFI_SpiUartPutArray\000"
+ 1570      5F574946 
+ 1570      495F5370 
+ 1570      69556172 
+ 1570      74507574 
+ 1571              	.LASF39:
+ 1572 03af 55415254 		.ascii	"UART_WIFI_txBufferTail\000"
+ 1572      5F574946 
+ 1572      495F7478 
+ 1572      42756666 
+ 1572      65725461 
+ 1573              	.LASF36:
+ 1574 03c6 55415254 		.ascii	"UART_WIFI_rxBufferTail\000"
+ 1574      5F574946 
+ 1574      495F7278 
+ 1574      42756666 
+ 1574      65725461 
+ 1575              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

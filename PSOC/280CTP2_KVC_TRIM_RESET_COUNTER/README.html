@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>280CTP2_KVC_TRIM_RESET_COUNTER 프로젝트 문서</title>
+    <style>
+        /* ── 기본 리셋 & 변수 ── */
+        :root {
+            --bg:          #0d1117;
+            --surface:     #161b22;
+            --surface2:    #21262d;
+            --border:      #30363d;
+            --text:        #e6edf3;
+            --text-muted:  #8b949e;
+            --accent:      #58a6ff;
+            --accent2:     #3fb950;
+            --warn:        #d29922;
+            --danger:      #f85149;
+            --tag-bg:      #1f3a5f;
+            --code-bg:     #161b22;
+            --radius:      8px;
+            --sidebar-w:   260px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        /* ── 레이아웃 ── */
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ── 사이드바 (TOC) ── */
+        .sidebar {
+            width: var(--sidebar-w);
+            flex-shrink: 0;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 20px 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 0 20px 16px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+
+        .sidebar-brand .chip {
+            display: inline-block;
+            background: var(--tag-bg);
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-brand h2 {
+            font-size: 13px;
+            color: var(--text);
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .toc-list {
+            list-style: none;
+            padding: 0 8px;
+        }
+
+        .toc-list li a {
+            display: block;
+            padding: 6px 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            border-radius: 6px;
+            transition: background 0.15s, color 0.15s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .toc-list li a:hover,
+        .toc-list li a.active {
+            background: var(--surface2);
+            color: var(--accent);
+        }
+
+        .toc-list li.toc-h3 a {
+            padding-left: 24px;
+            font-size: 12px;
+        }
+
+        /* ── 햄버거 버튼 ── */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 14px; left: 14px;
+            z-index: 200;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 40px; height: 40px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 18px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+        }
+
+        /* ── 메인 컨텐츠 ── */
+        .main {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            min-width: 0;
+            padding: 40px 48px;
+            max-width: 960px;
+        }
+
+        /* ── 헤더 ── */
+        .doc-header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 24px;
+            margin-bottom: 40px;
+        }
+
+        .doc-header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+
+        .meta-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .badge span.label { color: var(--text-muted); }
+        .badge span.value { color: var(--accent); font-weight: 600; }
+        .badge.success span.value { color: var(--accent2); }
+        .badge.warn span.value { color: var(--warn); }
+
+        /* ── 섹션 제목 ── */
+        .section {
+            margin-bottom: 48px;
+            scroll-margin-top: 20px;
+        }
+
+        h2.section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2.section-title .num {
+            background: var(--tag-bg);
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 700;
+            padding: 2px 9px;
+            border-radius: 20px;
+        }
+
+        h3.sub-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            margin: 24px 0 12px;
+        }
+
+        /* ── 테이블 ── */
+        .tbl-wrap { overflow-x: auto; margin: 16px 0; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background: var(--surface2);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-align: left;
+            padding: 10px 14px;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 9px 14px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        tr:hover td { background: var(--surface2); }
+
+        /* ── 코드 블록 ── */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            overflow-x: auto;
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 12px 0;
+        }
+
+        code {
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            background: var(--surface2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: var(--text);
+        }
+
+        /* ── 카드 ── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin: 16px 0;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ── 비교 그리드 ── */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        .compare-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+        }
+
+        .compare-card.v1 { border-top: 3px solid var(--warn); }
+        .compare-card.v2 { border-top: 3px solid var(--accent2); }
+
+        .compare-card .ver-tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .compare-card.v1 .ver-tag { background: rgba(210,153,34,0.15); color: var(--warn); }
+        .compare-card.v2 .ver-tag { background: rgba(63,185,80,0.15); color: var(--accent2); }
+
+        /* ── 상태 배지 ── */
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .tag.ok    { background: rgba(63,185,80,0.15);  color: var(--accent2); }
+        .tag.warn  { background: rgba(210,153,34,0.15); color: var(--warn); }
+        .tag.error { background: rgba(248,81,73,0.15);  color: var(--danger); }
+        .tag.info  { background: rgba(88,166,255,0.15); color: var(--accent); }
+
+        /* ── 메모리 프로그레스 바 ── */
+        .mem-bar-wrap { margin: 8px 0 4px; }
+        .mem-label { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: flex; justify-content: space-between; }
+        .mem-bar { background: var(--surface2); border-radius: 4px; height: 10px; overflow: hidden; }
+        .mem-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+        .mem-fill.ok   { background: var(--accent2); }
+        .mem-fill.warn { background: var(--warn); }
+        .mem-fill.danger { background: var(--danger); }
+
+        /* ── 알림 박스 ── */
+        .alert {
+            padding: 14px 18px;
+            border-radius: var(--radius);
+            margin: 16px 0;
+            font-size: 14px;
+            border-left: 4px solid;
+        }
+        .alert.info   { background: rgba(88,166,255,0.08);  border-color: var(--accent);  color: var(--text); }
+        .alert.success{ background: rgba(63,185,80,0.08);   border-color: var(--accent2); color: var(--text); }
+        .alert.warn   { background: rgba(210,153,34,0.08);  border-color: var(--warn);    color: var(--text); }
+        .alert.danger { background: rgba(248,81,73,0.08);   border-color: var(--danger);  color: var(--text); }
+
+        /* ── 메뉴 트리 ── */
+        .tree {
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 13px;
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            line-height: 1.8;
+        }
+
+        /* ── 반응형 ── */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main { margin-left: 0; padding: 20px 16px; }
+            .menu-toggle { display: flex; }
+            .overlay.show { display: block; }
+            .compare-grid { grid-template-columns: 1fr; }
+        }
+
+        p { margin: 8px 0 14px; color: var(--text-muted); font-size: 14px; }
+        ul, ol { padding-left: 20px; margin: 8px 0 14px; color: var(--text-muted); font-size: 14px; }
+        li { margin-bottom: 4px; }
+        strong { color: var(--text); }
+        hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+    </style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="toggleSidebar()">&#9776;</button>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<div class="layout">
+    <!-- ── 사이드바 ── -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="chip">PSoC4 Firmware</div>
+            <h2>280CTP2_KVC<br>TRIM_RESET_COUNTER</h2>
+        </div>
+        <ul class="toc-list">
+            <li><a href="#overview">1. 프로젝트 개요</a></li>
+            <li><a href="#structure">2. 버전 구조</a></li>
+            <li><a href="#hardware">3. 하드웨어 정보</a></li>
+            <li><a href="#compare">4. V1 vs V2 비교</a></li>
+            <li class="toc-h3"><a href="#compare-func">4.1 핵심 기능 비교</a></li>
+            <li class="toc-h3"><a href="#compare-mem">4.2 메모리 비교</a></li>
+            <li><a href="#source">5. 소스코드 분석</a></li>
+            <li class="toc-h3"><a href="#count-c">5.1 count.c RESET 로직</a></li>
+            <li class="toc-h3"><a href="#menu-sys">5.2 메뉴 시스템</a></li>
+            <li class="toc-h3"><a href="#widget">5.3 LCD 위젯</a></li>
+            <li class="toc-h3"><a href="#button">5.4 버튼 텍스트</a></li>
+            <li class="toc-h3"><a href="#bootloader-fn">5.5 부트로더 진입</a></li>
+            <li><a href="#sram">6. SRAM 최적화</a></li>
+            <li><a href="#bootloader">7. 부트로더 구조</a></li>
+            <li><a href="#issues">8. 이슈 및 개선 이력</a></li>
+            <li><a href="#test">9. 테스트 시나리오</a></li>
+            <li><a href="#dev">10. 개발 환경</a></li>
+            <li><a href="#history">11. 버전 이력</a></li>
+            <li><a href="#files">12. 파일 경로 참조</a></li>
+        </ul>
+    </nav>
+
+    <!-- ── 메인 컨텐츠 ── -->
+    <main class="main">
+
+        <!-- 헤더 -->
+        <header class="doc-header">
+            <h1>280CTP2_KVC_TRIM_RESET_COUNTER<br>프로젝트 분석 문서</h1>
+            <div class="meta-badges">
+                <div class="badge"><span class="label">최초 작성</span><span class="value">2026-03-05</span></div>
+                <div class="badge"><span class="label">V1 날짜</span><span class="value">2025-12-25</span></div>
+                <div class="badge success"><span class="label">V2 날짜</span><span class="value">2025-12-30</span></div>
+                <div class="badge"><span class="label">플랫폼</span><span class="value">Cypress PSoC4</span></div>
+                <div class="badge warn"><span class="label">V2 SRAM</span><span class="value">35.2% (최적화 완료)</span></div>
+            </div>
+        </header>
+
+        <!-- 1. 프로젝트 개요 -->
+        <section class="section" id="overview">
+            <h2 class="section-title"><span class="num">1</span>프로젝트 개요</h2>
+            <p>
+                이 프로젝트는 <strong>Cypress PSoC 4</strong> 기반의 <strong>생산 카운터 관리 시스템</strong> 펌웨어입니다.
+                공장 자동화 생산 라인에서 <strong>Trim Count 목표(Target) 달성 여부</strong>를 관리하고,
+                <strong>부정 리셋 방지</strong> 기능을 제공합니다.
+                LCD 터치 디스플레이와 물리적 RESET 버튼을 통해 작업자가 생산량을 추적하고,
+                목표 달성 시에만 카운터를 초기화할 수 있도록 보안이 강화된 시스템입니다.
+            </p>
+            <div class="tbl-wrap">
+                <table>
+                    <thead>
+                        <tr><th>기능</th><th>설명</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Trim Count 추적</strong></td><td>외부 TC_INT 신호를 감지하여 카운트 자동 증가</td></tr>
+                        <tr><td><strong>목표(Target) 관리</strong></td><td>SET 메뉴를 통한 Trim Target 설정</td></tr>
+                        <tr><td><strong>부정 리셋 방지</strong></td><td>Target 도달 시에만 RESET 버튼 동작 (V1→V2 핵심 개선)</td></tr>
+                        <tr><td><strong>경고 메시지</strong></td><td>Target 미달성 시 LCD 경고 + 부저 알림</td></tr>
+                        <tr><td><strong>USB 부트로더</strong></td><td>SET 메뉴를 통한 USB HID 방식 펌웨어 업그레이드</td></tr>
+                        <tr><td><strong>SRAM 최적화</strong></td><td>WiFi/서버/JSON 기능 제거로 메모리 41.7% 절감 (V2)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 2. 버전 구조 -->
+        <section class="section" id="structure">
+            <h2 class="section-title"><span class="num">2</span>버전 구조</h2>
+            <pre>280CTP2_KVC_TRIM_RESET_COUNTER/
+├── 280CTP2_KVC_TRIM_RESET_COUNTER_V1/    # V1 - 초기 구현 (2025.12.25)
+│   ├── Design.cydsn/                      # 메인 애플리케이션
+│   │   ├── count.c                        # RESET 로직 (Phase 1, 2)
+│   │   ├── main.c                         # 메인 루프
+│   │   ├── userMenuCounter.c              # UI 메뉴
+│   │   ├── lib/widget.c                   # LCD UI 위젯 (WiFi 포함)
+│   │   ├── lib/button.c                   # 버튼 렌더링 (16글자 제한)
+│   │   ├── jsmn-master/                   # JSON 라이브러리 (V1만 존재)
+│   │   └── Generated_Source/PSoC4/
+│   ├── bootloader.cydsn/
+│   └── 개선사항.md                         # v1.0
+│
+├── 280CTP2_KVC_TRIM_RESET_COUNTER_V2/    # V2 - 완전한 최적화 (2025.12.30)
+│   ├── Design.cydsn/
+│   │   ├── count.c                        # RESET 로직 최종
+│   │   ├── main.c                         # 메인 루프 + 부트로더 함수
+│   │   ├── userMenuCounter.c              # UI 메뉴 (3단계 계층)
+│   │   ├── lib/widget.c                   # LCD UI 위젯 (WiFi 제거)
+│   │   ├── lib/button.c                   # 버튼 렌더링 (24글자 제한)
+│   │   └── Generated_Source/PSoC4/
+│   ├── bootloader.cydsn/
+│   ├── 개선사항.md                         # v1.3
+│   ├── SRAM_최적화_분석보고서.md
+│   └── Trim_Reset_최적화(...).md
+│
+├── README.md
+└── README.html</pre>
+        </section>
+
+        <!-- 3. 하드웨어 정보 -->
+        <section class="section" id="hardware">
+            <h2 class="section-title"><span class="num">3</span>하드웨어 정보</h2>
+            <div class="tbl-wrap">
+                <table>
+                    <thead><tr><th>항목</th><th>내용</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>MCU</strong></td><td>Cypress PSoC 4 (CY8C42xx 시리즈)</td></tr>
+                        <tr><td><strong>코어</strong></td><td>ARM Cortex-M0</td></tr>
+                        <tr><td><strong>Flash</strong></td><td>262,144 bytes (256KB)</td></tr>
+                        <tr><td><strong>SRAM</strong></td><td>32,768 bytes (32KB)</td></tr>
+                        <tr><td><strong>개발툴</strong></td><td>PSoC Creator 4.x</td></tr>
+                        <tr><td><strong>컴파일러</strong></td><td>ARM GCC 5.4-2016-q2-update</td></tr>
+                        <tr><td><strong>LCD</strong></td><td>ST7789V (320x240, SPI 인터페이스)</td></tr>
+                        <tr><td><strong>터치</strong></td><td>I2C_TC (I2C 기반 터치 컨트롤러)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3 class="sub-title">하드웨어 컴포넌트</h3>
+            <div class="tbl-wrap">
+                <table>
+                    <thead><tr><th>컴포넌트</th><th>역할</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>TC_INT</code></td><td>Trim Count 신호 입력 (외부 카운터)</td></tr>
+                        <tr><td><code>TC_RESET</code></td><td>물리적 RESET 버튼 (LOW = 누름)</td></tr>
+                        <tr><td><code>BUZZER</code></td><td>알림 및 경고음 출력</td></tr>
+                        <tr><td><code>SPIM_LCD</code></td><td>ST7789V LCD SPI 인터페이스</td></tr>
+                        <tr><td><code>I2C_TC</code></td><td>터치 컨트롤러 I2C</td></tr>
+                        <tr><td><code>UART</code></td><td>디버그/통신용</td></tr>
+                        <tr><td><code>RESERVED_OUT_1</code></td><td>Trim 완료 외부 신호 출력</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 4. 버전 비교 -->
+        <section class="section" id="compare">
+            <h2 class="section-title"><span class="num">4</span>버전 비교 (V1 vs V2)</h2>
+
+            <h3 class="sub-title" id="compare-func">4.1 핵심 기능 비교</h3>
+            <div class="tbl-wrap">
+                <table>
+                    <thead><tr><th>기능</th><th>V1 (2025.12.25)</th><th>V2 (2025.12.30)</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>RESET 조건</strong></td>
+                            <td><span class="tag error">count != 0 (취약)</span></td>
+                            <td><span class="tag ok">count == setTrimCount (보안)</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>경고 메시지</strong></td>
+                            <td>"Target Not Reached!\n%d/%d"</td>
+                            <td>"Not Reached! %d/%d" (간소화)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>메시지 표시 시간</strong></td>
+                            <td>1.5초</td>
+                            <td>2초</td>
+                        </tr>
+                        <tr>
+                            <td><strong>경고음 정지</strong></td>
+                            <td><span class="tag error">없음 (계속 울림)</span></td>
+                            <td><span class="tag ok">2초 후 자동 정지</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>화면 복원</strong></td>
+                            <td><span class="tag warn">버튼 값만 업데이트</span></td>
+                            <td><span class="tag ok">전체 화면 갱신 (2단계)</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>LCD 타이틀 바</strong></td>
+                            <td>WiFi 영역 포함 (256px)</td>
+                            <td>전체 너비 사용 (319px, +25%)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>버튼 텍스트 제한</strong></td>
+                            <td>16글자</td>
+                            <td>24글자 (+50%)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>부트로더 진입</strong></td>
+                            <td><span class="tag error">없음</span></td>
+                            <td><span class="tag ok">SET 메뉴 기반 (2단계 확인)</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>메뉴 구조</strong></td>
+                            <td>단일 레벨</td>
+                            <td>3단계 계층 구조</td>
+                        </tr>
+                        <tr>
+                            <td><strong>WiFi / JSON</strong></td>
+                            <td><span class="tag warn">포함</span></td>
+                            <td><span class="tag ok">완전 제거</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>ShowMessage 버퍼</strong></td>
+                            <td><span class="tag error">char buff[20] (오버플로우)</span></td>
+                            <td><span class="tag ok">char buff[64]</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="sub-title" id="compare-mem">4.2 메모리 사용량 비교</h3>
+            <div class="compare-grid">
+                <div class="compare-card v1">
+                    <div class="ver-tag">V1 — 최적화 전</div>
+                    <div class="mem-bar-wrap">
+                        <div class="mem-label">
+                            <span>SRAM</span>
+                            <span>19,788 / 32,768 bytes</span>
+                        </div>
+                        <div class="mem-bar"><div class="mem-fill warn" style="width:60.4%"></div></div>
+                        <div style="font-size:12px; color:var(--warn); margin-top:4px;">60.4% — 주의</div>
+                    </div>
+                    <div class="mem-bar-wrap" style="margin-top:16px">
+                        <div class="mem-label">
+                            <span>Flash</span>
+                            <span>94,468 / 262,144 bytes</span>
+                        </div>
+                        <div class="mem-bar"><div class="mem-fill warn" style="width:36%"></div></div>
+                        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">36.0%</div>
+                    </div>
+                </div>
+                <div class="compare-card v2">
+                    <div class="ver-tag">V2 — 최적화 후</div>
+                    <div class="mem-bar-wrap">
+                        <div class="mem-label">
+                            <span>SRAM</span>
+                            <span>11,532 / 32,768 bytes</span>
+                        </div>
+                        <div class="mem-bar"><div class="mem-fill ok" style="width:35.2%"></div></div>
+                        <div style="font-size:12px; color:var(--accent2); margin-top:4px;">35.2% — 안정</div>
+                    </div>
+                    <div class="mem-bar-wrap" style="margin-top:16px">
+                        <div class="mem-label">
+                            <span>Flash</span>
+                            <span>77,968 / 262,144 bytes</span>
+                        </div>
+                        <div class="mem-bar"><div class="mem-fill ok" style="width:29.7%"></div></div>
+                        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">29.7%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="alert success">
+                <strong>최적화 성과:</strong> SRAM 8,256 bytes (41.7%) 절감, Flash 16,500 bytes (17.5%) 절감
+            </div>
+        </section>
+
+        <!-- 5. 소스코드 분석 -->
+        <section class="section" id="source">
+            <h2 class="section-title"><span class="num">5</span>소스코드 상세 분석</h2>
+
+            <h3 class="sub-title" id="count-c">5.1 count.c — RESET 로직 (핵심)</h3>
+            <div class="compare-grid">
+                <div class="compare-card v1">
+                    <div class="ver-tag">V1 — 취약한 조건</div>
+                    <pre><code>// 카운트가 0이 아니면
+// 언제든 리셋 가능 (보안 취약점)
+if(RESET_KEY_Read() == FALSE
+   &amp;&amp; g_ptrCount->count != 0)
+{
+    CyDelay(50);
+    if(RESET_KEY_Read() == FALSE)
+    {
+        g_ptrCount->count = 0;
+        SaveInternalFlash();
+        // ...
+    }
+}</code></pre>
+                </div>
+                <div class="compare-card v2">
+                    <div class="ver-tag">V2 — 보안 강화</div>
+                    <pre><code>// Target 도달 시에만 리셋 가능
+if(RESET_KEY_Read() == FALSE
+   &amp;&amp; g_ptrCount->count
+      == g_ptrMachineParameter->setTrimCount)
+{
+    CyDelay(50);
+    if(RESET_KEY_Read() == FALSE)
+    {
+        g_ptrCount->count = 0;
+        SaveInternalFlash();
+        // ...
+    }
+}
+// Target 미달성 시 경고
+else if(RESET_KEY_Read() == FALSE
+        &amp;&amp; g_ptrCount->count > 0
+        &amp;&amp; g_ptrCount->count
+           &lt; g_ptrMachineParameter->setTrimCount)
+{
+    CyDelay(50);
+    if(RESET_KEY_Read() == FALSE)
+    {
+        Buzzer(BUZZER_WARNING, 100);
+        ShowMessage("Not Reached! %d/%d",
+            g_ptrCount->count,
+            g_ptrMachineParameter->setTrimCount);
+        CyDelay(2000);
+        Buzzer(BUZZER_STOP, 0);
+        EraseBlankAreaWithoutHeader();
+        g_updateCountMenu = 2;
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <h3 class="sub-title" id="menu-sys">5.2 userMenuCounter.c — 메뉴 시스템 (V2)</h3>
+            <div class="tree">
+TOP MENU (doTopMenu)
+├── Count 화면 (기본 화면)
+├── SET Button 터치
+│   └── SET Submenu (doSetSubmenu)
+│       ├── [BLUE] Set Target ──→ doTargetInfoMenu
+│       ├── [RED]  USB Update ──→ doUSBUpdate
+│       │              "Going to UPDATE?"
+│       │              [GREEN] CANCEL ──→ 서브메뉴 복귀
+│       │              [RED]   UPDATE ──→ EnterBootloaderMode()
+│       └── [GREEN] EXIT ──→ 메인 화면 복귀
+└── Unlock with Key (doUnlockWithKey)
+            </div>
+            <div class="tbl-wrap" style="margin-top:16px">
+                <table>
+                    <thead><tr><th>갱신 모드</th><th>값</th><th>동작</th></tr></thead>
+                    <tbody>
+                        <tr><td>일반 갱신</td><td><code>TRUE (1)</code></td><td>버튼 값만 업데이트 (count, target 표시)</td></tr>
+                        <tr><td>전체 갱신</td><td><code>2</code></td><td><code>DisplayDoTopMenu()</code> 전체 화면 재그리기</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="sub-title" id="widget">5.3 lib/widget.c — LCD UI 위젯</h3>
+            <div class="alert info">
+                <strong>V2 변경:</strong> WiFi 비활성화로 TitleBar 사용 가능 너비 256px → 319px (+25% 증가)
+            </div>
+            <div class="compare-grid">
+                <div class="compare-card v1">
+                    <div class="ver-tag">V1 — ShowMessage 버퍼</div>
+                    <pre><code>void ShowMessage(const char *msg, ...) {
+    char buff[20];  // 오버플로우 위험!
+    // "Target Not Reached!\n50/100"
+    // = 27자 → 버퍼 초과
+    ...
+}</code></pre>
+                </div>
+                <div class="compare-card v2">
+                    <div class="ver-tag">V2 — 수정된 버퍼</div>
+                    <pre><code>void ShowMessage(const char *msg, ...) {
+    char buff[64];  // 충분한 크기
+    // "Not Reached! 50/100"
+    // = 20자 → 여유 있음
+    ...
+}</code></pre>
+                </div>
+            </div>
+
+            <h3 class="sub-title" id="button">5.4 lib/button.c — 버튼 텍스트 제한</h3>
+            <div class="compare-grid">
+                <div class="compare-card v1">
+                    <div class="ver-tag">V1 — 16글자 제한</div>
+                    <pre><code>#define MAX_NUM_BUTTON_STRING 16
+// "KVC Trim Reset V2" = 18글자
+// → 표시 불가!</code></pre>
+                </div>
+                <div class="compare-card v2">
+                    <div class="ver-tag">V2 — 24글자 제한</div>
+                    <pre><code>#define MAX_NUM_BUTTON_STRING 24
+// "KVC Trim Reset V2.1" = 19글자
+// → 정상 표시!</code></pre>
+                </div>
+            </div>
+
+            <h3 class="sub-title" id="bootloader-fn">5.5 main.c — 부트로더 진입 (V2 추가)</h3>
+            <pre><code>// V2 추가 함수
+void EnterBootloaderMode(void)
+{
+    printf("Entering Bootloader Mode...\r\n");
+    Bootloadable_Load();   // 부트로더 메타데이터 로드
+    CySoftwareReset();     // 소프트웨어 리셋 → 부트로더 모드
+}</code></pre>
+        </section>
+
+        <!-- 6. SRAM 최적화 -->
+        <section class="section" id="sram">
+            <h2 class="section-title"><span class="num">6</span>V2 SRAM 최적화 상세</h2>
+
+            <h3 class="sub-title">제거된 주요 항목</h3>
+            <div class="tbl-wrap">
+                <table>
+                    <thead><tr><th>항목</th><th>절감량</th></tr></thead>
+                    <tbody>
+                        <tr><td>WiFi 이미지 데이터 (image_wifi_0~4)</td><td>약 8KB</td></tr>
+                        <tr><td>WiFi 수신 버퍼 (MAX_WIFI_RECEIVE_BUFFER)</td><td>2KB</td></tr>
+                        <tr><td>JSON 파서 버퍼 및 토큰 배열</td><td>1~2KB</td></tr>
+                        <tr><td>서버 설정 구조체 (SERVER_INFO)</td><td>약 400 bytes</td></tr>
+                        <tr><td>Access Point 목록 (g_APs[40])</td><td>약 2KB</td></tr>
+                        <tr><td>기타 WiFi/서버 관련 전역 변수</td><td>약 500 bytes</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="sub-title">제거된 파일 목록 (총 17개 파일 + 1개 디렉토리)</h3>
+            <div class="card">
+                <div class="card-title">삭제된 파일</div>
+                <ul>
+                    <li><code>lib/WIFI.c</code>, <code>lib/WIFI.h</code></li>
+                    <li><code>lib/server.c</code>, <code>lib/server.h</code></li>
+                    <li><code>lib/jsmn.c</code>, <code>lib/jsmn.h</code></li>
+                    <li><code>USBJsonConfig.c/h</code>, <code>USBUARTConfig.c/h</code></li>
+                    <li><code>jsonUtil.c/h</code>, <code>uartJson.c/h</code></li>
+                    <li><code>andonJson.c/h</code>, <code>andonApi.c/h</code></li>
+                    <li><code>jsmn-master/</code> (디렉토리 전체)</li>
+                </ul>
+            </div>
+
+            <div class="tbl-wrap">
+                <table>
+                    <thead><tr><th>단계</th><th>SRAM 사용량</th><th>사용률</th><th>상태</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td>V1 (최적화 전)</td>
+                            <td>19,788 bytes</td>
+                            <td>60.4%</td>
+                            <td><span class="tag warn">주의</span></td>
+                        </tr>
+                        <tr>
+                            <td>V2 (최적화 후)</td>
+                            <td>11,532 bytes</td>
+                            <td>35.2%</td>
+                            <td><span class="tag ok">안정</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>절감량</strong></td>
+                            <td><strong>-8,256 bytes</strong></td>
+                            <td><strong>-25.2%p</strong></td>
+                            <td><span class="tag ok">41.7% 감소</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 7. 부트로더 구조 -->
+        <section class="section" id="bootloader">
+            <h2 class="section-title"><span class="num">7</span>부트로더 구조</h2>
+            <pre>Flash Layout:
+┌─────────────────────┐ 0x00000000
+│   Bootloader        │ 13,312 bytes
+│   (bootloader.cydsn)│
+├─────────────────────┤
+│   Application       │ 64,400 bytes (V2)
+│   (Design.cydsn)    │ 80,900 bytes (V1)
+├─────────────────────┤
+│   Metadata          │ 256 bytes
+└─────────────────────┘ 0x0003FFFF</pre>
+
+            <h3 class="sub-title">펌웨어 업그레이드 워크플로우 (V2)</h3>
+            <div class="tbl-wrap">
+                <table>
+                    <thead><tr><th>단계</th><th>장치 동작</th><th>PC 동작</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>SET 버튼 터치 → 서브메뉴 표시</td><td>-</td></tr>
+                        <tr><td>2</td><td>USB Update [RED] 터치 → 확인 화면</td><td>-</td></tr>
+                        <tr><td>3</td><td>UPDATE [RED] 터치 → <code>EnterBootloaderMode()</code></td><td>-</td></tr>
+                        <tr><td>4</td><td>부트로더 모드 진입 (USB HID 디바이스)</td><td><code>USBBootloaderHost.exe</code> 실행</td></tr>
+                        <tr><td>5</td><td>연결 대기</td><td>[Connect] 클릭</td></tr>
+                        <tr><td>6</td><td>펌웨어 수신 대기</td><td>[Open] → <code>design.cyacd</code> 선택</td></tr>
+                        <tr><td>7</td><td>Flash 쓰기 진행</td><td>[Update] 클릭 → 전송 시작</td></tr>
+                        <tr><td>8</td><td>업데이트 완료 → 자동 재시작</td><td>완료 확인</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 8. 이슈 및 개선 이력 -->
+        <section class="section" id="issues">
+            <h2 class="section-title"><span class="num">8</span>이슈 및 개선 이력</h2>
+
+            <h3 class="sub-title">V1 발견된 문제점</h3>
+            <div class="tbl-wrap">
+                <table>
+                    <thead><tr><th>우선순위</th><th>파일</th><th>문제</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="tag error">HIGH</span></td>
+                            <td><code>count.c</code></td>
+                            <td>RESET 조건 취약 — <code>count != 0</code>으로 언제든 리셋 가능</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag error">HIGH</span></td>
+                            <td><code>count.c</code></td>
+                            <td>Target 미달성 시 RESET 눌러도 아무 피드백 없음</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag error">HIGH</span></td>
+                            <td><code>lib/widget.c</code></td>
+                            <td>ShowMessage 버퍼 부족 — <code>char buff[20]</code> → 오버플로우</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag warn">MEDIUM</span></td>
+                            <td><code>lib/button.c</code></td>
+                            <td>버튼 텍스트 16글자 제한 — "KVC Trim Reset V2" 표시 불가</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag warn">MEDIUM</span></td>
+                            <td><code>lib/widget.c</code></td>
+                            <td>WiFi 영역이 타이틀 바 25% 차지 (불필요한 낭비)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag info">LOW</span></td>
+                            <td><code>count.c</code></td>
+                            <td>경고음이 자동 정지 안 됨</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag info">LOW</span></td>
+                            <td><code>userMenuCounter.c</code></td>
+                            <td>경고 메시지 후 화면 잔상 남음</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="sub-title">V2 수정 내역 (Phase별)</h3>
+            <div class="tbl-wrap">
+                <table>
+                    <thead><tr><th>Phase</th><th>수정 파일</th><th>내용</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="tag ok">Phase 1</span></td><td><code>count.c</code></td><td>RESET 조건 강화 (<code>count == setTrimCount</code>)</td></tr>
+                        <tr><td><span class="tag ok">Phase 2</span></td><td><code>count.c, widget.h</code></td><td>LCD 경고 메시지 + 경고음 추가</td></tr>
+                        <tr><td><span class="tag ok">Phase 3</span></td><td><code>lib/widget.c</code></td><td>WiFi 비활성화, TitleBar 전체 너비 사용</td></tr>
+                        <tr><td><span class="tag ok">Phase 4</span></td><td><code>widget.c, count.c, userMenuCounter.c</code></td><td>메시지 버퍼 증가, 경고음 정지, 화면 복원</td></tr>
+                        <tr><td><span class="tag ok">Phase 5</span></td><td><code>main.c, main.h, userMenuCounter.c</code></td><td>SET 메뉴 기반 부트로더 진입 시스템</td></tr>
+                        <tr><td><span class="tag ok">Phase 6</span></td><td><code>userMenuCounter.c</code></td><td>UI 개선 (버튼 크기, 텍스트 정렬, 아웃라인)</td></tr>
+                        <tr><td><span class="tag ok">SRAM 최적화</span></td><td>17개 파일 삭제 등</td><td>WiFi/서버/JSON 완전 제거</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 9. 테스트 시나리오 -->
+        <section class="section" id="test">
+            <h2 class="section-title"><span class="num">9</span>테스트 시나리오</h2>
+            <div class="tbl-wrap">
+                <table>
+                    <thead><tr><th>테스트</th><th>조건</th><th>기대 결과 (V2)</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="tag ok">TC1</span> 정상 리셋</td>
+                            <td>count=100, Target=100, RESET 누름</td>
+                            <td>카운트 0 리셋, 부저 정지, Flash 저장</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag warn">TC2</span> 미달성 리셋</td>
+                            <td>count=50, Target=100, RESET 누름</td>
+                            <td>카운트 유지, LCD "Not Reached! 50/100", 경고음 2초</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag info">TC3</span> 초기 상태 리셋</td>
+                            <td>count=0, RESET 누름</td>
+                            <td>무반응 (아무 동작 없음)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag ok">TC4</span> 연속 동작</td>
+                            <td>count 100→RESET→50→RESET시도→100→RESET</td>
+                            <td>순서대로 정상 동작</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag ok">TC5</span> 부트로더 진입</td>
+                            <td>SET → USB Update → UPDATE</td>
+                            <td>부트로더 모드 진입 성공</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag ok">TC6</span> 타이틀 표시</td>
+                            <td>전원 ON</td>
+                            <td>"KVC Trim Reset V2.1" 완전 표시</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 10. 개발 환경 -->
+        <section class="section" id="dev">
+            <h2 class="section-title"><span class="num">10</span>개발 환경 설정</h2>
+            <div class="tbl-wrap">
+                <table>
+                    <thead><tr><th>소프트웨어</th><th>용도</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Cypress PSoC Creator 4.x</strong></td><td>PSoC 프로젝트 편집 및 빌드</td></tr>
+                        <tr><td><strong>ARM GCC 5.4-2016-q2-update</strong></td><td>PSoC Creator에 번들됨</td></tr>
+                        <tr><td><strong>PSoC Programmer / MiniProg3</strong></td><td>초기 플래싱용</td></tr>
+                        <tr><td><strong>USBBootloaderHost.exe</strong></td><td>V2 펌웨어 USB 업데이트</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="alert warn">
+                <strong>권장 버전:</strong> V1은 보안 취약점(부정 리셋)이 있어 운영 환경에서는 <strong>V2 사용을 권장</strong>합니다.
+                V2는 모든 Phase 완료 및 기능 테스트 확인됨.
+            </div>
+        </section>
+
+        <!-- 11. 버전 이력 -->
+        <section class="section" id="history">
+            <h2 class="section-title"><span class="num">11</span>버전 이력</h2>
+            <div class="tbl-wrap">
+                <table>
+                    <thead><tr><th>날짜</th><th>버전</th><th>내용</th></tr></thead>
+                    <tbody>
+                        <tr><td>2025-12-25</td><td>V1 (개선사항 v1.0)</td><td>Phase 1: RESET 조건 강화, Phase 2: 경고 메시지 추가</td></tr>
+                        <tr><td>2025-12-29</td><td>V2 시작</td><td>Phase 3~4: 타이틀 바 확장, 메시지 시스템 개선</td></tr>
+                        <tr><td>2025-12-29</td><td>V2 SRAM 최적화</td><td>WiFi/서버/JSON 완전 제거, SRAM 41.7% 절감</td></tr>
+                        <tr><td>2025-12-30</td><td>V2 (개선사항 v1.3)</td><td>Phase 5~6: SET 메뉴 부트로더, UI 개선</td></tr>
+                        <tr><td>2026-03-05</td><td>문서 작성</td><td>전체 프로젝트 분석 문서 생성</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 12. 파일 경로 -->
+        <section class="section" id="files">
+            <h2 class="section-title"><span class="num">12</span>관련 파일 경로 빠른 참조</h2>
+            <div class="tbl-wrap">
+                <table>
+                    <thead><tr><th>파일</th><th>경로</th><th>설명</th></tr></thead>
+                    <tbody>
+                        <tr><td>핵심 RESET 로직</td><td><code>V2/Design.cydsn/count.c</code></td><td>부정 리셋 방지 + 경고 메시지</td></tr>
+                        <tr><td>메인 루프</td><td><code>V2/Design.cydsn/main.c</code></td><td>초기화, 부트로더 진입 함수</td></tr>
+                        <tr><td>UI 메뉴</td><td><code>V2/Design.cydsn/userMenuCounter.c</code></td><td>3단계 계층 메뉴</td></tr>
+                        <tr><td>LCD 위젯</td><td><code>V2/Design.cydsn/lib/widget.c</code></td><td>ShowMessage, WiFi 비활성화</td></tr>
+                        <tr><td>버튼 렌더링</td><td><code>V2/Design.cydsn/lib/button.c</code></td><td>텍스트 길이 24글자 제한</td></tr>
+                        <tr><td>V2 개선사항</td><td><code>V2/개선사항.md</code></td><td>Phase 1~6 상세 구현 내용</td></tr>
+                        <tr><td>SRAM 최적화</td><td><code>V2/SRAM_최적화_분석보고서.md</code></td><td>메모리 최적화 결과</td></tr>
+                        <tr><td>V1 개선사항</td><td><code>V1/개선사항.md</code></td><td>Phase 1~2 초기 구현</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('overlay').classList.toggle('show');
+    }
+    function closeSidebar() {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('overlay').classList.remove('show');
+    }
+
+    // 스크롤 시 TOC 활성화
+    const sections = document.querySelectorAll('.section');
+    const links = document.querySelectorAll('.toc-list a');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                links.forEach(a => a.classList.remove('active'));
+                const id = entry.target.id;
+                const active = document.querySelector(`.toc-list a[href="#${id}"]`);
+                if (active) active.classList.add('active');
+            }
+        });
+    }, { threshold: 0.3 });
+
+    sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

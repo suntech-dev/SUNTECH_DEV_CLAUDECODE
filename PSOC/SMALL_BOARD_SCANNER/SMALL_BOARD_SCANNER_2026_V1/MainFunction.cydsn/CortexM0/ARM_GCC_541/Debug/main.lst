@@ -1,0 +1,2142 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.process_BARCODE,"ax",%progbits
+  20              		.align	2
+  21              		.global	process_BARCODE
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	process_BARCODE, %function
+  25              	process_BARCODE:
+  26              	.LFB35:
+  27              		.file 1 "main.c"
+   1:main.c        **** /*
+   2:main.c        ****  * ST-500 Touch OP Version
+   3:main.c        ****  *
+   4:main.c        ****  * 20-03-10 : Bootloader. 2D Scanner + Touch OP.
+   5:main.c        ****  * 20-03-10 : USED HWI. Scanner Mode Enable.
+   6:main.c        ****  * 20-03-10 : Count > 2Pin. Power > 8Pin. IoT 보드 전원을 CPU 보드와 연결해야 함.
+   7:main.c        ****  * 20-03-10 : HWI Downtime End OK. Foot or Hand Switch Cable 에 연결.
+   8:main.c        ****  * 20-03-10 : Tablet > "OP Port". Touch OP (With Scanner) > "Monitoring Port". Scanner Test OK.
+   9:main.c        ****  * 20-03-10 : HWI 전체 적용.
+  10:main.c        ****  *
+  11:main.c        ****  * 21-05-28 : 2021 New version
+  12:main.c        ****  * 21-05-28 : VJ, SCI, PWJ version
+  13:main.c        ****  * 21-05-28 : old button op unused (only ST-500 version)
+  14:main.c        ****  * 21-05-28 : ST-500 is Monitoring port
+  15:main.c        ****  * 21-05-28 : Tablet is OP port
+  16:main.c        ****  *
+  17:main.c        ****  * 26-03-03 : 코드 개선 - 타입 안전성 향상, NULL 포인터 검사 추가,
+  18:main.c        ****  *            상수 정의 적용, 버퍼 오버플로우 방어, 미사용 변수 제거
+  19:main.c        ****  */
+  20:main.c        **** 
+  21:main.c        **** #include "main.h"
+  22:main.c        **** 
+  23:main.c        **** /* ---- 전역 변수 ---- */
+  24:main.c        **** unsigned long  lastReceivedTime            = 0;
+  25:main.c        **** char           receivedFromBarcode[UART_BUF_SIZE];
+  26:main.c        **** uint8_t        receivedFromBarcodeCount    = 0;   /* FIX: char → uint8_t (배열 인덱스 타입
+  27:main.c        **** 
+  28:main.c        **** char           scanTrigerStart[3]          = { 0x02, 0xF4, 0x03 };  /* 2D SCANNER 트리거 명령 
+  29:main.c        **** 
+  30:main.c        **** char           receivedScanTrigerOrder[UART_BUF_SIZE];
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 2
+
+
+  31:main.c        **** unsigned int   receivedScanTrigerOrderCount = 0;
+  32:main.c        **** 
+  33:main.c        **** 
+  34:main.c        **** /* ------------------------------------------------------------------ */
+  35:main.c        **** /*  process_BARCODE()                                                 */
+  36:main.c        **** /*  스캐너 UART RX 버퍼에서 데이터를 읽어 receivedFromBarcode 에 누적  */
+  37:main.c        **** /* ------------------------------------------------------------------ */
+  38:main.c        **** void process_BARCODE(void)
+  39:main.c        **** {
+  28              		.loc 1 39 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 10B5     		push	{r4, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  40:main.c        ****     while (BARCODE_SpiUartGetRxBufferSize() > 0)
+  36              		.loc 1 40 0
+  37 0002 13E0     		b	.L4
+  38              	.L5:
+  39              	.LBB2:
+  41:main.c        ****     {
+  42:main.c        ****         char c = BARCODE_UartGetChar();  /* 항상 버퍼에서 소비 */
+  40              		.loc 1 42 0
+  41 0004 FFF7FEFF 		bl	BARCODE_UartGetChar
+  42              	.LVL0:
+  43 0008 C0B2     		uxtb	r0, r0
+  44              	.LVL1:
+  43:main.c        **** 
+  44:main.c        ****         if (receivedFromBarcodeCount == 0)
+  45              		.loc 1 44 0
+  46 000a 0B4B     		ldr	r3, .L6
+  47 000c 1B78     		ldrb	r3, [r3]
+  48 000e 002B     		cmp	r3, #0
+  49 0010 02D1     		bne	.L3
+  45:main.c        ****         {
+  46:main.c        ****             timerCount = 0;
+  50              		.loc 1 46 0
+  51 0012 0021     		movs	r1, #0
+  52 0014 094A     		ldr	r2, .L6+4
+  53 0016 1160     		str	r1, [r2]
+  54              	.L3:
+  47:main.c        ****         }
+  48:main.c        **** 
+  49:main.c        ****         lastReceivedTime = timerCount;
+  55              		.loc 1 49 0
+  56 0018 084A     		ldr	r2, .L6+4
+  57 001a 1168     		ldr	r1, [r2]
+  58 001c 064A     		ldr	r2, .L6
+  59 001e 5160     		str	r1, [r2, #4]
+  50:main.c        **** 
+  51:main.c        ****         if (receivedFromBarcodeCount < (uint8_t)(UART_BUF_SIZE - 1))
+  60              		.loc 1 51 0
+  61 0020 FF2B     		cmp	r3, #255
+  62 0022 03D0     		beq	.L4
+  52:main.c        ****         {
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 3
+
+
+  53:main.c        ****             receivedFromBarcode[receivedFromBarcodeCount++] = c;
+  63              		.loc 1 53 0
+  64 0024 591C     		adds	r1, r3, #1
+  65 0026 1170     		strb	r1, [r2]
+  66 0028 054A     		ldr	r2, .L6+8
+  67 002a D054     		strb	r0, [r2, r3]
+  68              	.LVL2:
+  69              	.L4:
+  70              	.LBE2:
+  40:main.c        ****     {
+  71              		.loc 1 40 0
+  72 002c FFF7FEFF 		bl	BARCODE_SpiUartGetRxBufferSize
+  73              	.LVL3:
+  74 0030 0028     		cmp	r0, #0
+  75 0032 E7D1     		bne	.L5
+  54:main.c        ****         }
+  55:main.c        ****     }
+  56:main.c        **** }
+  76              		.loc 1 56 0
+  77              		@ sp needed
+  78 0034 10BD     		pop	{r4, pc}
+  79              	.L7:
+  80 0036 C046     		.align	2
+  81              	.L6:
+  82 0038 00000000 		.word	.LANCHOR0
+  83 003c 00000000 		.word	timerCount
+  84 0040 00000000 		.word	receivedFromBarcode
+  85              		.cfi_endproc
+  86              	.LFE35:
+  87              		.size	process_BARCODE, .-process_BARCODE
+  88              		.section	.text.process_MONITORING,"ax",%progbits
+  89              		.align	2
+  90              		.global	process_MONITORING
+  91              		.code	16
+  92              		.thumb_func
+  93              		.type	process_MONITORING, %function
+  94              	process_MONITORING:
+  95              	.LFB36:
+  57:main.c        **** 
+  58:main.c        **** 
+  59:main.c        **** /* ------------------------------------------------------------------ */
+  60:main.c        **** /*  process_MONITORING()                                              */
+  61:main.c        **** /*  Touch OP 로부터 받은 명령을 파싱하여 스캐너 또는 태블릿으로 전달  */
+  62:main.c        **** /* ------------------------------------------------------------------ */
+  63:main.c        **** void process_MONITORING(void)
+  64:main.c        **** {
+  96              		.loc 1 64 0
+  97              		.cfi_startproc
+  98              		@ args = 0, pretend = 0, frame = 0
+  99              		@ frame_needed = 0, uses_anonymous_args = 0
+ 100 0000 10B5     		push	{r4, lr}
+ 101              		.cfi_def_cfa_offset 8
+ 102              		.cfi_offset 4, -8
+ 103              		.cfi_offset 14, -4
+  65:main.c        ****     while (port_MONITORING_SpiUartGetRxBufferSize() > 0)
+ 104              		.loc 1 65 0
+ 105 0002 35E0     		b	.L12
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 4
+
+
+ 106              	.L17:
+ 107              	.LBB3:
+  66:main.c        ****     {
+  67:main.c        ****         char ch = port_MONITORING_UartGetChar();  /* 항상 버퍼에서 소비 */
+ 108              		.loc 1 67 0
+ 109 0004 FFF7FEFF 		bl	port_MONITORING_UartGetChar
+ 110              	.LVL4:
+ 111 0008 C0B2     		uxtb	r0, r0
+ 112              	.LVL5:
+  68:main.c        **** 
+  69:main.c        ****         if (receivedScanTrigerOrderCount == 0)
+ 113              		.loc 1 69 0
+ 114 000a 1C4B     		ldr	r3, .L19
+ 115 000c 9B68     		ldr	r3, [r3, #8]
+ 116 000e 002B     		cmp	r3, #0
+ 117 0010 02D1     		bne	.L10
+  70:main.c        ****         {
+  71:main.c        ****             timerCount = 0;
+ 118              		.loc 1 71 0
+ 119 0012 0021     		movs	r1, #0
+ 120 0014 1A4A     		ldr	r2, .L19+4
+ 121 0016 1160     		str	r1, [r2]
+ 122              	.L10:
+  72:main.c        ****         }
+  73:main.c        **** 
+  74:main.c        ****         lastReceivedTime = timerCount;
+ 123              		.loc 1 74 0
+ 124 0018 194A     		ldr	r2, .L19+4
+ 125 001a 1168     		ldr	r1, [r2]
+ 126 001c 174A     		ldr	r2, .L19
+ 127 001e 5160     		str	r1, [r2, #4]
+  75:main.c        **** 
+  76:main.c        ****         if (receivedScanTrigerOrderCount < UART_BUF_SIZE - 1)
+ 128              		.loc 1 76 0
+ 129 0020 FE2B     		cmp	r3, #254
+ 130 0022 03D8     		bhi	.L11
+  77:main.c        ****         {
+  78:main.c        ****             receivedScanTrigerOrder[receivedScanTrigerOrderCount++] = ch;
+ 131              		.loc 1 78 0
+ 132 0024 591C     		adds	r1, r3, #1
+ 133 0026 9160     		str	r1, [r2, #8]
+ 134 0028 164A     		ldr	r2, .L19+8
+ 135 002a D054     		strb	r0, [r2, r3]
+ 136              	.L11:
+  79:main.c        ****         }
+  80:main.c        **** 
+  81:main.c        ****         if (receivedScanTrigerOrderCount == strlen(SCAN_TRIGER_ORDER_STR))
+ 137              		.loc 1 81 0
+ 138 002c 134B     		ldr	r3, .L19
+ 139 002e 9B68     		ldr	r3, [r3, #8]
+ 140 0030 122B     		cmp	r3, #18
+ 141 0032 1DD1     		bne	.L12
+  82:main.c        ****         {
+  83:main.c        ****             receivedScanTrigerOrder[receivedScanTrigerOrderCount] = '\0';
+ 142              		.loc 1 83 0
+ 143 0034 1348     		ldr	r0, .L19+8
+ 144              	.LVL6:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 5
+
+
+ 145 0036 0022     		movs	r2, #0
+ 146 0038 C254     		strb	r2, [r0, r3]
+  84:main.c        **** 
+  85:main.c        ****             if (strcmp(receivedScanTrigerOrder, SCAN_TRIGER_ORDER_STR) == 0)
+ 147              		.loc 1 85 0
+ 148 003a 1349     		ldr	r1, .L19+12
+ 149 003c FFF7FEFF 		bl	strcmp
+ 150              	.LVL7:
+ 151 0040 0028     		cmp	r0, #0
+ 152 0042 06D0     		beq	.L18
+ 153              	.LBB4:
+ 154 0044 08E0     		b	.L14
+ 155              	.LVL8:
+ 156              	.L15:
+  86:main.c        ****             {
+  87:main.c        ****                 int i;
+  88:main.c        ****                 for (i = 0; i < 3; i++)
+  89:main.c        ****                 {
+  90:main.c        ****                     BARCODE_UartPutChar(scanTrigerStart[i]);
+ 157              		.loc 1 90 0 discriminator 3
+ 158 0046 114B     		ldr	r3, .L19+16
+ 159 0048 185D     		ldrb	r0, [r3, r4]
+ 160 004a FFF7FEFF 		bl	BARCODE_SpiUartWriteTxData
+ 161              	.LVL9:
+  88:main.c        ****                 {
+ 162              		.loc 1 88 0 discriminator 3
+ 163 004e 0134     		adds	r4, r4, #1
+ 164              	.LVL10:
+ 165 0050 00E0     		b	.L13
+ 166              	.LVL11:
+ 167              	.L18:
+ 168              	.LBE4:
+ 169 0052 0024     		movs	r4, #0
+ 170              	.L13:
+ 171              	.LVL12:
+ 172              	.LBB5:
+  88:main.c        ****                 {
+ 173              		.loc 1 88 0 is_stmt 0 discriminator 1
+ 174 0054 022C     		cmp	r4, #2
+ 175 0056 F6DD     		ble	.L15
+ 176              	.LVL13:
+ 177              	.L14:
+ 178              	.LBE5:
+  91:main.c        ****                 }
+  92:main.c        ****             }
+  93:main.c        **** 
+  94:main.c        ****             if (strcmp(receivedScanTrigerOrder, SCAN_MODE_CMD_STR) == 0)
+ 179              		.loc 1 94 0 is_stmt 1
+ 180 0058 0D49     		ldr	r1, .L19+20
+ 181 005a 0A48     		ldr	r0, .L19+8
+ 182 005c FFF7FEFF 		bl	strcmp
+ 183              	.LVL14:
+ 184 0060 0028     		cmp	r0, #0
+ 185 0062 02D1     		bne	.L16
+  95:main.c        ****             {
+  96:main.c        ****                 port_MONITORING_UartPutString("@@@@!99900304;&{FM100-M-R|DD03AB95}^^^^");
+ 186              		.loc 1 96 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 6
+
+
+ 187 0064 0B48     		ldr	r0, .L19+24
+ 188 0066 FFF7FEFF 		bl	port_MONITORING_UartPutString
+ 189              	.LVL15:
+ 190              	.L16:
+  97:main.c        ****             }
+  98:main.c        **** 
+  99:main.c        ****             receivedScanTrigerOrderCount = 0;
+ 191              		.loc 1 99 0
+ 192 006a 0022     		movs	r2, #0
+ 193 006c 034B     		ldr	r3, .L19
+ 194 006e 9A60     		str	r2, [r3, #8]
+ 195              	.L12:
+ 196              	.LBE3:
+  65:main.c        ****     {
+ 197              		.loc 1 65 0
+ 198 0070 FFF7FEFF 		bl	port_MONITORING_SpiUartGetRxBufferSize
+ 199              	.LVL16:
+ 200 0074 0028     		cmp	r0, #0
+ 201 0076 C5D1     		bne	.L17
+ 100:main.c        ****         }
+ 101:main.c        ****     }
+ 102:main.c        **** }
+ 202              		.loc 1 102 0
+ 203              		@ sp needed
+ 204 0078 10BD     		pop	{r4, pc}
+ 205              	.L20:
+ 206 007a C046     		.align	2
+ 207              	.L19:
+ 208 007c 00000000 		.word	.LANCHOR0
+ 209 0080 00000000 		.word	timerCount
+ 210 0084 00000000 		.word	receivedScanTrigerOrder
+ 211 0088 00000000 		.word	.LC6
+ 212 008c 00000000 		.word	.LANCHOR1
+ 213 0090 14000000 		.word	.LC9
+ 214 0094 28000000 		.word	.LC11
+ 215              		.cfi_endproc
+ 216              	.LFE36:
+ 217              		.size	process_MONITORING, .-process_MONITORING
+ 218              		.section	.text.main,"ax",%progbits
+ 219              		.align	2
+ 220              		.global	main
+ 221              		.code	16
+ 222              		.thumb_func
+ 223              		.type	main, %function
+ 224              	main:
+ 225              	.LFB37:
+ 103:main.c        **** 
+ 104:main.c        **** 
+ 105:main.c        **** /* ------------------------------------------------------------------ */
+ 106:main.c        **** /*  main()                                                            */
+ 107:main.c        **** /* ------------------------------------------------------------------ */
+ 108:main.c        **** int main(void)
+ 109:main.c        **** {
+ 226              		.loc 1 109 0
+ 227              		.cfi_startproc
+ 228              		@ args = 0, pretend = 0, frame = 256
+ 229              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 7
+
+
+ 230 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 231              		.cfi_def_cfa_offset 20
+ 232              		.cfi_offset 4, -20
+ 233              		.cfi_offset 5, -16
+ 234              		.cfi_offset 6, -12
+ 235              		.cfi_offset 7, -8
+ 236              		.cfi_offset 14, -4
+ 237 0002 C1B0     		sub	sp, sp, #260
+ 238              		.cfi_def_cfa_offset 280
+ 110:main.c        ****     CyGlobalIntEnable;
+ 239              		.loc 1 110 0
+ 240              		.syntax divided
+ 241              	@ 110 "main.c" 1
+ 242 0004 62B6     		CPSIE   i
+ 243              	@ 0 "" 2
+ 111:main.c        ****     init();
+ 244              		.loc 1 111 0
+ 245              		.thumb
+ 246              		.syntax unified
+ 247 0006 FFF7FEFF 		bl	init
+ 248              	.LVL17:
+ 112:main.c        **** 
+ 113:main.c        ****     char oldCounterStat = Counter_Read();
+ 249              		.loc 1 113 0
+ 250 000a FFF7FEFF 		bl	Counter_Read
+ 251              	.LVL18:
+ 252 000e 0500     		movs	r5, r0
+ 253              	.LVL19:
+ 254 0010 00E0     		b	.L22
+ 255              	.LVL20:
+ 256              	.L30:
+ 109:main.c        ****     CyGlobalIntEnable;
+ 257              		.loc 1 109 0
+ 258 0012 2500     		movs	r5, r4
+ 259              	.LVL21:
+ 260              	.L22:
+ 261              	.LBB6:
+ 114:main.c        **** 
+ 115:main.c        ****     for (;;)
+ 116:main.c        ****     {
+ 117:main.c        ****         char currentCounterStat = Counter_Read();
+ 262              		.loc 1 117 0
+ 263 0014 FFF7FEFF 		bl	Counter_Read
+ 264              	.LVL22:
+ 265 0018 0400     		movs	r4, r0
+ 266 001a 0300     		movs	r3, r0
+ 267              	.LVL23:
+ 118:main.c        **** 
+ 119:main.c        ****         /* Counter 하강 엣지 (1→0): 타이머 초기화 */
+ 120:main.c        ****         if (oldCounterStat != currentCounterStat && currentCounterStat == 0)
+ 268              		.loc 1 120 0
+ 269 001c 8542     		cmp	r5, r0
+ 270 001e 06D0     		beq	.L23
+ 271              		.loc 1 120 0 is_stmt 0 discriminator 1
+ 272 0020 0028     		cmp	r0, #0
+ 273 0022 04D1     		bne	.L23
+ 121:main.c        ****         {
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 8
+
+
+ 122:main.c        ****             timerCount       = 0;
+ 274              		.loc 1 122 0 is_stmt 1
+ 275 0024 0022     		movs	r2, #0
+ 276 0026 3349     		ldr	r1, .L31
+ 277 0028 0A60     		str	r2, [r1]
+ 123:main.c        ****             lastReceivedTime = 0;
+ 278              		.loc 1 123 0
+ 279 002a 3349     		ldr	r1, .L31+4
+ 280 002c 4A60     		str	r2, [r1, #4]
+ 281              	.L23:
+ 124:main.c        ****         }
+ 125:main.c        **** 
+ 126:main.c        ****         /* Counter 상승 엣지 (0→1): 유효 범위 내면 태블릿에 카운트 이벤트 전
+ 127:main.c        ****         if (oldCounterStat != currentCounterStat && currentCounterStat == 1)
+ 282              		.loc 1 127 0
+ 283 002e 9D42     		cmp	r5, r3
+ 284 0030 0DD0     		beq	.L24
+ 285              		.loc 1 127 0 is_stmt 0 discriminator 1
+ 286 0032 012B     		cmp	r3, #1
+ 287 0034 0BD1     		bne	.L24
+ 288              	.LBB7:
+ 128:main.c        ****         {
+ 129:main.c        ****             unsigned int dTime = timerCount - lastReceivedTime;
+ 289              		.loc 1 129 0 is_stmt 1
+ 290 0036 2F4B     		ldr	r3, .L31
+ 291 0038 1B68     		ldr	r3, [r3]
+ 292 003a 2F4A     		ldr	r2, .L31+4
+ 293 003c 5268     		ldr	r2, [r2, #4]
+ 294 003e 9B1A     		subs	r3, r3, r2
+ 295              	.LVL24:
+ 130:main.c        **** 
+ 131:main.c        ****             if (dTime > COUNTER_MIN_MS && dTime < COUNTER_MAX_MS)
+ 296              		.loc 1 131 0
+ 297 0040 C93B     		subs	r3, r3, #201
+ 298              	.LVL25:
+ 299 0042 2E4A     		ldr	r2, .L31+8
+ 300 0044 9342     		cmp	r3, r2
+ 301 0046 02D8     		bhi	.L24
+ 132:main.c        ****             {
+ 133:main.c        ****                 port_OP_UartPutString("{\"cmd\" : \"count\", \"value\" : 1}");
+ 302              		.loc 1 133 0
+ 303 0048 2D48     		ldr	r0, .L31+12
+ 304              	.LVL26:
+ 305 004a FFF7FEFF 		bl	port_OP_UartPutString
+ 306              	.LVL27:
+ 307              	.L24:
+ 308              	.LBE7:
+ 134:main.c        ****             }
+ 135:main.c        ****         }
+ 136:main.c        **** 
+ 137:main.c        ****         oldCounterStat = currentCounterStat;
+ 138:main.c        **** 
+ 139:main.c        ****         /* 타임아웃: 수신 완료로 판단하고 버퍼 처리 */
+ 140:main.c        ****         if (timerCount - lastReceivedTime > TIMEOUT_MS_UART)
+ 309              		.loc 1 140 0
+ 310 004e 294B     		ldr	r3, .L31
+ 311 0050 1B68     		ldr	r3, [r3]
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 9
+
+
+ 312 0052 294A     		ldr	r2, .L31+4
+ 313 0054 5268     		ldr	r2, [r2, #4]
+ 314 0056 9B1A     		subs	r3, r3, r2
+ 315 0058 322B     		cmp	r3, #50
+ 316 005a 40D9     		bls	.L25
+ 141:main.c        ****         {
+ 142:main.c        ****             receivedScanTrigerOrderCount = 0;
+ 317              		.loc 1 142 0
+ 318 005c 264B     		ldr	r3, .L31+4
+ 319 005e 0022     		movs	r2, #0
+ 320 0060 9A60     		str	r2, [r3, #8]
+ 143:main.c        **** 
+ 144:main.c        ****             if (receivedFromBarcodeCount > 0)
+ 321              		.loc 1 144 0
+ 322 0062 1B78     		ldrb	r3, [r3]
+ 323 0064 002B     		cmp	r3, #0
+ 324 0066 3AD0     		beq	.L25
+ 325              	.LBB8:
+ 145:main.c        ****             {
+ 146:main.c        ****                 char  *ptrFirst;
+ 147:main.c        ****                 char  *ptrSecond;
+ 148:main.c        ****                 char  *ptrThird;
+ 149:main.c        ****                 char   msg[UART_BUF_SIZE];
+ 150:main.c        **** 
+ 151:main.c        ****                 receivedFromBarcode[receivedFromBarcodeCount] = '\0';
+ 326              		.loc 1 151 0
+ 327 0068 2648     		ldr	r0, .L31+16
+ 328 006a C254     		strb	r2, [r0, r3]
+ 152:main.c        **** 
+ 153:main.c        ****                 ptrFirst  = strtok(receivedFromBarcode, "/\r\n");  /* DesignNo  - Touch OP 전송 *
+ 329              		.loc 1 153 0
+ 330 006c 264D     		ldr	r5, .L31+20
+ 331 006e 2900     		movs	r1, r5
+ 332 0070 FFF7FEFF 		bl	strtok
+ 333              	.LVL28:
+ 334 0074 0600     		movs	r6, r0
+ 335              	.LVL29:
+ 154:main.c        ****                 ptrSecond = strtok(NULL, "/\r\n");                 /* DesignIDX - 태블릿 전송 
+ 336              		.loc 1 154 0
+ 337 0076 2900     		movs	r1, r5
+ 338 0078 0020     		movs	r0, #0
+ 339              	.LVL30:
+ 340 007a FFF7FEFF 		bl	strtok
+ 341              	.LVL31:
+ 342 007e 0700     		movs	r7, r0
+ 343              	.LVL32:
+ 155:main.c        ****                 ptrThird  = strtok(NULL, "/\r\n");                 /* Pieces    - 태블릿 전송 
+ 344              		.loc 1 155 0
+ 345 0080 2900     		movs	r1, r5
+ 346 0082 0020     		movs	r0, #0
+ 347              	.LVL33:
+ 348 0084 FFF7FEFF 		bl	strtok
+ 349              	.LVL34:
+ 350 0088 0500     		movs	r5, r0
+ 351              	.LVL35:
+ 156:main.c        **** 
+ 157:main.c        ****                 /* FIX: ptrFirst NULL 체크 추가 */
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 10
+
+
+ 158:main.c        ****                 if (ptrFirst != NULL)
+ 352              		.loc 1 158 0
+ 353 008a 002E     		cmp	r6, #0
+ 354 008c 07D0     		beq	.L26
+ 159:main.c        ****                 {
+ 160:main.c        ****                     sprintf(msg, "@@@@!99900035;^^^^*P%s*\r\n", ptrFirst);
+ 355              		.loc 1 160 0
+ 356 008e 3200     		movs	r2, r6
+ 357 0090 1E49     		ldr	r1, .L31+24
+ 358 0092 6846     		mov	r0, sp
+ 359              	.LVL36:
+ 360 0094 FFF7FEFF 		bl	sprintf
+ 361              	.LVL37:
+ 161:main.c        ****                     port_MONITORING_UartPutString(msg);
+ 362              		.loc 1 161 0
+ 363 0098 6846     		mov	r0, sp
+ 364 009a FFF7FEFF 		bl	port_MONITORING_UartPutString
+ 365              	.LVL38:
+ 366              	.L26:
+ 162:main.c        ****                 }
+ 163:main.c        **** 
+ 164:main.c        ****                 /* FIX: ptrSecond, ptrThird NULL 체크 추가 (strtok NULL 반환 방어) */
+ 165:main.c        ****                 if (ptrThird != NULL && strlen(ptrThird) > 0)
+ 367              		.loc 1 165 0
+ 368 009e 002D     		cmp	r5, #0
+ 369 00a0 09D0     		beq	.L27
+ 370              		.loc 1 165 0 is_stmt 0 discriminator 1
+ 371 00a2 2B78     		ldrb	r3, [r5]
+ 372 00a4 002B     		cmp	r3, #0
+ 373 00a6 06D0     		beq	.L27
+ 166:main.c        ****                 {
+ 167:main.c        ****                     sprintf(msg, "{\"cmd\" : \"barcode\", \"value\" : [\"%s\",\"%s\"]}", ptrSecond,
+ 374              		.loc 1 167 0 is_stmt 1
+ 375 00a8 2B00     		movs	r3, r5
+ 376 00aa 3A00     		movs	r2, r7
+ 377 00ac 1849     		ldr	r1, .L31+28
+ 378 00ae 6846     		mov	r0, sp
+ 379 00b0 FFF7FEFF 		bl	sprintf
+ 380              	.LVL39:
+ 381 00b4 0DE0     		b	.L28
+ 382              	.L27:
+ 168:main.c        ****                 }
+ 169:main.c        ****                 else if (ptrSecond != NULL && strlen(ptrSecond) > 0)
+ 383              		.loc 1 169 0
+ 384 00b6 002F     		cmp	r7, #0
+ 385 00b8 08D0     		beq	.L29
+ 386              		.loc 1 169 0 is_stmt 0 discriminator 1
+ 387 00ba 3B78     		ldrb	r3, [r7]
+ 388 00bc 002B     		cmp	r3, #0
+ 389 00be 05D0     		beq	.L29
+ 170:main.c        ****                 {
+ 171:main.c        ****                     sprintf(msg, "{\"cmd\" : \"barcode\", \"value\" : [\"%s\"]}", ptrSecond);
+ 390              		.loc 1 171 0 is_stmt 1
+ 391 00c0 3A00     		movs	r2, r7
+ 392 00c2 1449     		ldr	r1, .L31+32
+ 393 00c4 6846     		mov	r0, sp
+ 394 00c6 FFF7FEFF 		bl	sprintf
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 11
+
+
+ 395              	.LVL40:
+ 396 00ca 02E0     		b	.L28
+ 397              	.L29:
+ 172:main.c        ****                 }
+ 173:main.c        ****                 else
+ 174:main.c        ****                 {
+ 175:main.c        ****                     strcpy(msg, "");
+ 398              		.loc 1 175 0
+ 399 00cc 0023     		movs	r3, #0
+ 400 00ce 6A46     		mov	r2, sp
+ 401 00d0 1370     		strb	r3, [r2]
+ 402              	.L28:
+ 176:main.c        ****                 }
+ 177:main.c        **** 
+ 178:main.c        ****                 port_OP_UartPutString(msg);
+ 403              		.loc 1 178 0
+ 404 00d2 6846     		mov	r0, sp
+ 405 00d4 FFF7FEFF 		bl	port_OP_UartPutString
+ 406              	.LVL41:
+ 179:main.c        ****                 receivedFromBarcodeCount = 0;
+ 407              		.loc 1 179 0
+ 408 00d8 0022     		movs	r2, #0
+ 409 00da 074B     		ldr	r3, .L31+4
+ 410 00dc 1A70     		strb	r2, [r3]
+ 411              	.LVL42:
+ 412              	.L25:
+ 413              	.LBE8:
+ 180:main.c        ****             }
+ 181:main.c        ****         }
+ 182:main.c        **** 
+ 183:main.c        ****         process_BARCODE();
+ 414              		.loc 1 183 0
+ 415 00de FFF7FEFF 		bl	process_BARCODE
+ 416              	.LVL43:
+ 184:main.c        ****         process_MONITORING();
+ 417              		.loc 1 184 0
+ 418 00e2 FFF7FEFF 		bl	process_MONITORING
+ 419              	.LVL44:
+ 185:main.c        **** 
+ 186:main.c        ****         /* IoT Board 내부 버튼: LOW 감지 시 부트로더 진입 */
+ 187:main.c        ****         if (Pin_StartBootloader_Read() == 0)
+ 420              		.loc 1 187 0
+ 421 00e6 FFF7FEFF 		bl	Pin_StartBootloader_Read
+ 422              	.LVL45:
+ 423 00ea 0028     		cmp	r0, #0
+ 424 00ec 91D1     		bne	.L30
+ 188:main.c        ****         {
+ 189:main.c        ****             BootloaderStart();
+ 425              		.loc 1 189 0
+ 426 00ee FFF7FEFF 		bl	BootloaderStart
+ 427              	.LVL46:
+ 428 00f2 8EE7     		b	.L30
+ 429              	.L32:
+ 430              		.align	2
+ 431              	.L31:
+ 432 00f4 00000000 		.word	timerCount
+ 433 00f8 00000000 		.word	.LANCHOR0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 12
+
+
+ 434 00fc A2060000 		.word	1698
+ 435 0100 50000000 		.word	.LC15
+ 436 0104 00000000 		.word	receivedFromBarcode
+ 437 0108 70000000 		.word	.LC18
+ 438 010c 74000000 		.word	.LC20
+ 439 0110 90000000 		.word	.LC22
+ 440 0114 BC000000 		.word	.LC24
+ 441              	.LBE6:
+ 442              		.cfi_endproc
+ 443              	.LFE37:
+ 444              		.size	main, .-main
+ 445              		.global	receivedScanTrigerOrderCount
+ 446              		.comm	receivedScanTrigerOrder,256,4
+ 447              		.global	scanTrigerStart
+ 448              		.global	receivedFromBarcodeCount
+ 449              		.comm	receivedFromBarcode,256,4
+ 450              		.global	lastReceivedTime
+ 451              		.data
+ 452              		.align	2
+ 453              		.set	.LANCHOR1,. + 0
+ 454              		.type	scanTrigerStart, %object
+ 455              		.size	scanTrigerStart, 3
+ 456              	scanTrigerStart:
+ 457 0000 02       		.byte	2
+ 458 0001 F4       		.byte	-12
+ 459 0002 03       		.byte	3
+ 460              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 461              		.align	2
+ 462              	.LC6:
+ 463 0000 24242424 		.ascii	"$$$$#99900035;%%%%\000"
+ 463      23393939 
+ 463      30303033 
+ 463      353B2525 
+ 463      252500
+ 464 0013 00       		.space	1
+ 465              	.LC9:
+ 466 0014 24242424 		.ascii	"$$$$#99900304;%%%%\000"
+ 466      23393939 
+ 466      30303330 
+ 466      343B2525 
+ 466      252500
+ 467 0027 00       		.space	1
+ 468              	.LC11:
+ 469 0028 40404040 		.ascii	"@@@@!99900304;&{FM100-M-R|DD03AB95}^^^^\000"
+ 469      21393939 
+ 469      30303330 
+ 469      343B267B 
+ 469      464D3130 
+ 470              	.LC15:
+ 471 0050 7B22636D 		.ascii	"{\"cmd\" : \"count\", \"value\" : 1}\000"
+ 471      6422203A 
+ 471      2022636F 
+ 471      756E7422 
+ 471      2C202276 
+ 472 006f 00       		.space	1
+ 473              	.LC18:
+ 474 0070 2F0D0A00 		.ascii	"/\015\012\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 13
+
+
+ 475              	.LC20:
+ 476 0074 40404040 		.ascii	"@@@@!99900035;^^^^*P%s*\015\012\000"
+ 476      21393939 
+ 476      30303033 
+ 476      353B5E5E 
+ 476      5E5E2A50 
+ 477 008e 0000     		.space	2
+ 478              	.LC22:
+ 479 0090 7B22636D 		.ascii	"{\"cmd\" : \"barcode\", \"value\" : [\"%s\",\"%s\"]"
+ 479      6422203A 
+ 479      20226261 
+ 479      72636F64 
+ 479      65222C20 
+ 480 00b9 7D00     		.ascii	"}\000"
+ 481 00bb 00       		.space	1
+ 482              	.LC24:
+ 483 00bc 7B22636D 		.ascii	"{\"cmd\" : \"barcode\", \"value\" : [\"%s\"]}\000"
+ 483      6422203A 
+ 483      20226261 
+ 483      72636F64 
+ 483      65222C20 
+ 484              		.bss
+ 485              		.align	2
+ 486              		.set	.LANCHOR0,. + 0
+ 487              		.type	receivedFromBarcodeCount, %object
+ 488              		.size	receivedFromBarcodeCount, 1
+ 489              	receivedFromBarcodeCount:
+ 490 0000 00       		.space	1
+ 491 0001 000000   		.space	3
+ 492              		.type	lastReceivedTime, %object
+ 493              		.size	lastReceivedTime, 4
+ 494              	lastReceivedTime:
+ 495 0004 00000000 		.space	4
+ 496              		.type	receivedScanTrigerOrderCount, %object
+ 497              		.size	receivedScanTrigerOrderCount, 4
+ 498              	receivedScanTrigerOrderCount:
+ 499 0008 00000000 		.space	4
+ 500              		.text
+ 501              	.Letext0:
+ 502              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 503              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 504              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 505              		.file 5 "main.h"
+ 506              		.file 6 "Generated_Source\\PSoC4/BARCODE_SPI_UART.h"
+ 507              		.file 7 "Generated_Source\\PSoC4/port_MONITORING_SPI_UART.h"
+ 508              		.file 8 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 509              		.file 9 "Generated_Source\\PSoC4/port_OP_SPI_UART.h"
+ 510              		.file 10 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4
+ 511              		.file 11 "Generated_Source\\PSoC4/Counter.h"
+ 512              		.file 12 "Generated_Source\\PSoC4/Pin_StartBootloader.h"
+ 513              		.section	.debug_info,"",%progbits
+ 514              	.Ldebug_info0:
+ 515 0000 C0040000 		.4byte	0x4c0
+ 516 0004 0400     		.2byte	0x4
+ 517 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 518 000a 04       		.byte	0x4
+ 519 000b 01       		.uleb128 0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 14
+
+
+ 520 000c E9020000 		.4byte	.LASF46
+ 521 0010 0C       		.byte	0xc
+ 522 0011 B8020000 		.4byte	.LASF47
+ 523 0015 11000000 		.4byte	.LASF48
+ 524 0019 18000000 		.4byte	.Ldebug_ranges0+0x18
+ 525 001d 00000000 		.4byte	0
+ 526 0021 00000000 		.4byte	.Ldebug_line0
+ 527 0025 02       		.uleb128 0x2
+ 528 0026 01       		.byte	0x1
+ 529 0027 06       		.byte	0x6
+ 530 0028 A7030000 		.4byte	.LASF0
+ 531 002c 03       		.uleb128 0x3
+ 532 002d 7C000000 		.4byte	.LASF9
+ 533 0031 02       		.byte	0x2
+ 534 0032 1D       		.byte	0x1d
+ 535 0033 37000000 		.4byte	0x37
+ 536 0037 02       		.uleb128 0x2
+ 537 0038 01       		.byte	0x1
+ 538 0039 08       		.byte	0x8
+ 539 003a 44010000 		.4byte	.LASF1
+ 540 003e 02       		.uleb128 0x2
+ 541 003f 02       		.byte	0x2
+ 542 0040 05       		.byte	0x5
+ 543 0041 DE010000 		.4byte	.LASF2
+ 544 0045 02       		.uleb128 0x2
+ 545 0046 02       		.byte	0x2
+ 546 0047 07       		.byte	0x7
+ 547 0048 64010000 		.4byte	.LASF3
+ 548 004c 02       		.uleb128 0x2
+ 549 004d 04       		.byte	0x4
+ 550 004e 05       		.byte	0x5
+ 551 004f 92030000 		.4byte	.LASF4
+ 552 0053 02       		.uleb128 0x2
+ 553 0054 04       		.byte	0x4
+ 554 0055 07       		.byte	0x7
+ 555 0056 52010000 		.4byte	.LASF5
+ 556 005a 02       		.uleb128 0x2
+ 557 005b 08       		.byte	0x8
+ 558 005c 05       		.byte	0x5
+ 559 005d AA020000 		.4byte	.LASF6
+ 560 0061 02       		.uleb128 0x2
+ 561 0062 08       		.byte	0x8
+ 562 0063 07       		.byte	0x7
+ 563 0064 4A020000 		.4byte	.LASF7
+ 564 0068 04       		.uleb128 0x4
+ 565 0069 04       		.byte	0x4
+ 566 006a 05       		.byte	0x5
+ 567 006b 696E7400 		.ascii	"int\000"
+ 568 006f 02       		.uleb128 0x2
+ 569 0070 04       		.byte	0x4
+ 570 0071 07       		.byte	0x7
+ 571 0072 30020000 		.4byte	.LASF8
+ 572 0076 03       		.uleb128 0x3
+ 573 0077 61020000 		.4byte	.LASF10
+ 574 007b 03       		.byte	0x3
+ 575 007c 18       		.byte	0x18
+ 576 007d 2C000000 		.4byte	0x2c
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 15
+
+
+ 577 0081 05       		.uleb128 0x5
+ 578 0082 29020000 		.4byte	.LASF11
+ 579 0086 04       		.byte	0x4
+ 580 0087 D401     		.2byte	0x1d4
+ 581 0089 53000000 		.4byte	0x53
+ 582 008d 02       		.uleb128 0x2
+ 583 008e 04       		.byte	0x4
+ 584 008f 04       		.byte	0x4
+ 585 0090 25010000 		.4byte	.LASF12
+ 586 0094 02       		.uleb128 0x2
+ 587 0095 08       		.byte	0x8
+ 588 0096 04       		.byte	0x4
+ 589 0097 93010000 		.4byte	.LASF13
+ 590 009b 02       		.uleb128 0x2
+ 591 009c 01       		.byte	0x1
+ 592 009d 08       		.byte	0x8
+ 593 009e BF020000 		.4byte	.LASF14
+ 594 00a2 02       		.uleb128 0x2
+ 595 00a3 08       		.byte	0x8
+ 596 00a4 04       		.byte	0x4
+ 597 00a5 9B030000 		.4byte	.LASF15
+ 598 00a9 02       		.uleb128 0x2
+ 599 00aa 04       		.byte	0x4
+ 600 00ab 07       		.byte	0x7
+ 601 00ac A1020000 		.4byte	.LASF16
+ 602 00b0 06       		.uleb128 0x6
+ 603 00b1 04       		.byte	0x4
+ 604 00b2 9B000000 		.4byte	0x9b
+ 605 00b6 07       		.uleb128 0x7
+ 606 00b7 CA000000 		.4byte	.LASF17
+ 607 00bb 01       		.byte	0x1
+ 608 00bc 26       		.byte	0x26
+ 609 00bd 00000000 		.4byte	.LFB35
+ 610 00c1 44000000 		.4byte	.LFE35-.LFB35
+ 611 00c5 01       		.uleb128 0x1
+ 612 00c6 9C       		.byte	0x9c
+ 613 00c7 F9000000 		.4byte	0xf9
+ 614 00cb 08       		.uleb128 0x8
+ 615 00cc 04000000 		.4byte	.LBB2
+ 616 00d0 28000000 		.4byte	.LBE2-.LBB2
+ 617 00d4 EF000000 		.4byte	0xef
+ 618 00d8 09       		.uleb128 0x9
+ 619 00d9 6300     		.ascii	"c\000"
+ 620 00db 01       		.byte	0x1
+ 621 00dc 2A       		.byte	0x2a
+ 622 00dd 9B000000 		.4byte	0x9b
+ 623 00e1 00000000 		.4byte	.LLST0
+ 624 00e5 0A       		.uleb128 0xa
+ 625 00e6 08000000 		.4byte	.LVL0
+ 626 00ea 22040000 		.4byte	0x422
+ 627 00ee 00       		.byte	0
+ 628 00ef 0A       		.uleb128 0xa
+ 629 00f0 30000000 		.4byte	.LVL3
+ 630 00f4 2E040000 		.4byte	0x42e
+ 631 00f8 00       		.byte	0
+ 632 00f9 07       		.uleb128 0x7
+ 633 00fa B2000000 		.4byte	.LASF18
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 16
+
+
+ 634 00fe 01       		.byte	0x1
+ 635 00ff 3F       		.byte	0x3f
+ 636 0100 00000000 		.4byte	.LFB36
+ 637 0104 98000000 		.4byte	.LFE36-.LFB36
+ 638 0108 01       		.uleb128 0x1
+ 639 0109 9C       		.byte	0x9c
+ 640 010a B0010000 		.4byte	0x1b0
+ 641 010e 08       		.uleb128 0x8
+ 642 010f 04000000 		.4byte	.LBB3
+ 643 0113 6C000000 		.4byte	.LBE3-.LBB3
+ 644 0117 A6010000 		.4byte	0x1a6
+ 645 011b 09       		.uleb128 0x9
+ 646 011c 636800   		.ascii	"ch\000"
+ 647 011f 01       		.byte	0x1
+ 648 0120 43       		.byte	0x43
+ 649 0121 9B000000 		.4byte	0x9b
+ 650 0125 13000000 		.4byte	.LLST1
+ 651 0129 0B       		.uleb128 0xb
+ 652 012a 00000000 		.4byte	.Ldebug_ranges0+0
+ 653 012e 49010000 		.4byte	0x149
+ 654 0132 09       		.uleb128 0x9
+ 655 0133 6900     		.ascii	"i\000"
+ 656 0135 01       		.byte	0x1
+ 657 0136 57       		.byte	0x57
+ 658 0137 68000000 		.4byte	0x68
+ 659 013b 26000000 		.4byte	.LLST2
+ 660 013f 0A       		.uleb128 0xa
+ 661 0140 4E000000 		.4byte	.LVL9
+ 662 0144 3A040000 		.4byte	0x43a
+ 663 0148 00       		.byte	0
+ 664 0149 0A       		.uleb128 0xa
+ 665 014a 08000000 		.4byte	.LVL4
+ 666 014e 46040000 		.4byte	0x446
+ 667 0152 0C       		.uleb128 0xc
+ 668 0153 40000000 		.4byte	.LVL7
+ 669 0157 52040000 		.4byte	0x452
+ 670 015b 72010000 		.4byte	0x172
+ 671 015f 0D       		.uleb128 0xd
+ 672 0160 01       		.uleb128 0x1
+ 673 0161 50       		.byte	0x50
+ 674 0162 05       		.uleb128 0x5
+ 675 0163 03       		.byte	0x3
+ 676 0164 00000000 		.4byte	receivedScanTrigerOrder
+ 677 0168 0D       		.uleb128 0xd
+ 678 0169 01       		.uleb128 0x1
+ 679 016a 51       		.byte	0x51
+ 680 016b 05       		.uleb128 0x5
+ 681 016c 03       		.byte	0x3
+ 682 016d 00000000 		.4byte	.LC6
+ 683 0171 00       		.byte	0
+ 684 0172 0C       		.uleb128 0xc
+ 685 0173 60000000 		.4byte	.LVL14
+ 686 0177 52040000 		.4byte	0x452
+ 687 017b 92010000 		.4byte	0x192
+ 688 017f 0D       		.uleb128 0xd
+ 689 0180 01       		.uleb128 0x1
+ 690 0181 50       		.byte	0x50
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 17
+
+
+ 691 0182 05       		.uleb128 0x5
+ 692 0183 03       		.byte	0x3
+ 693 0184 00000000 		.4byte	receivedScanTrigerOrder
+ 694 0188 0D       		.uleb128 0xd
+ 695 0189 01       		.uleb128 0x1
+ 696 018a 51       		.byte	0x51
+ 697 018b 05       		.uleb128 0x5
+ 698 018c 03       		.byte	0x3
+ 699 018d 14000000 		.4byte	.LC9
+ 700 0191 00       		.byte	0
+ 701 0192 0E       		.uleb128 0xe
+ 702 0193 6A000000 		.4byte	.LVL15
+ 703 0197 5D040000 		.4byte	0x45d
+ 704 019b 0D       		.uleb128 0xd
+ 705 019c 01       		.uleb128 0x1
+ 706 019d 50       		.byte	0x50
+ 707 019e 05       		.uleb128 0x5
+ 708 019f 03       		.byte	0x3
+ 709 01a0 28000000 		.4byte	.LC11
+ 710 01a4 00       		.byte	0
+ 711 01a5 00       		.byte	0
+ 712 01a6 0A       		.uleb128 0xa
+ 713 01a7 74000000 		.4byte	.LVL16
+ 714 01ab 69040000 		.4byte	0x469
+ 715 01af 00       		.byte	0
+ 716 01b0 0F       		.uleb128 0xf
+ 717 01b1 69020000 		.4byte	.LASF49
+ 718 01b5 01       		.byte	0x1
+ 719 01b6 6C       		.byte	0x6c
+ 720 01b7 68000000 		.4byte	0x68
+ 721 01bb 00000000 		.4byte	.LFB37
+ 722 01bf 18010000 		.4byte	.LFE37-.LFB37
+ 723 01c3 01       		.uleb128 0x1
+ 724 01c4 9C       		.byte	0x9c
+ 725 01c5 91030000 		.4byte	0x391
+ 726 01c9 10       		.uleb128 0x10
+ 727 01ca 75020000 		.4byte	.LASF19
+ 728 01ce 01       		.byte	0x1
+ 729 01cf 71       		.byte	0x71
+ 730 01d0 9B000000 		.4byte	0x9b
+ 731 01d4 44000000 		.4byte	.LLST3
+ 732 01d8 08       		.uleb128 0x8
+ 733 01d9 14000000 		.4byte	.LBB6
+ 734 01dd 04010000 		.4byte	.LBE6-.LBB6
+ 735 01e1 7E030000 		.4byte	0x37e
+ 736 01e5 10       		.uleb128 0x10
+ 737 01e6 12010000 		.4byte	.LASF20
+ 738 01ea 01       		.byte	0x1
+ 739 01eb 75       		.byte	0x75
+ 740 01ec 9B000000 		.4byte	0x9b
+ 741 01f0 78000000 		.4byte	.LLST4
+ 742 01f4 08       		.uleb128 0x8
+ 743 01f5 36000000 		.4byte	.LBB7
+ 744 01f9 18000000 		.4byte	.LBE7-.LBB7
+ 745 01fd 24020000 		.4byte	0x224
+ 746 0201 10       		.uleb128 0x10
+ 747 0202 E3020000 		.4byte	.LASF21
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 18
+
+
+ 748 0206 01       		.byte	0x1
+ 749 0207 81       		.byte	0x81
+ 750 0208 6F000000 		.4byte	0x6f
+ 751 020c 8B000000 		.4byte	.LLST5
+ 752 0210 0E       		.uleb128 0xe
+ 753 0211 4E000000 		.4byte	.LVL27
+ 754 0215 75040000 		.4byte	0x475
+ 755 0219 0D       		.uleb128 0xd
+ 756 021a 01       		.uleb128 0x1
+ 757 021b 50       		.byte	0x50
+ 758 021c 05       		.uleb128 0x5
+ 759 021d 03       		.byte	0x3
+ 760 021e 50000000 		.4byte	.LC15
+ 761 0222 00       		.byte	0
+ 762 0223 00       		.byte	0
+ 763 0224 08       		.uleb128 0x8
+ 764 0225 68000000 		.4byte	.LBB8
+ 765 0229 76000000 		.4byte	.LBE8-.LBB8
+ 766 022d 50030000 		.4byte	0x350
+ 767 0231 10       		.uleb128 0x10
+ 768 0232 73000000 		.4byte	.LASF22
+ 769 0236 01       		.byte	0x1
+ 770 0237 92       		.byte	0x92
+ 771 0238 B0000000 		.4byte	0xb0
+ 772 023c AC000000 		.4byte	.LLST6
+ 773 0240 10       		.uleb128 0x10
+ 774 0241 0F020000 		.4byte	.LASF23
+ 775 0245 01       		.byte	0x1
+ 776 0246 93       		.byte	0x93
+ 777 0247 B0000000 		.4byte	0xb0
+ 778 024b CA000000 		.4byte	.LLST7
+ 779 024f 10       		.uleb128 0x10
+ 780 0250 C2030000 		.4byte	.LASF24
+ 781 0254 01       		.byte	0x1
+ 782 0255 94       		.byte	0x94
+ 783 0256 B0000000 		.4byte	0xb0
+ 784 025a E8000000 		.4byte	.LLST8
+ 785 025e 11       		.uleb128 0x11
+ 786 025f 6D736700 		.ascii	"msg\000"
+ 787 0263 01       		.byte	0x1
+ 788 0264 95       		.byte	0x95
+ 789 0265 91030000 		.4byte	0x391
+ 790 0269 03       		.uleb128 0x3
+ 791 026a 91       		.byte	0x91
+ 792 026b E87D     		.sleb128 -280
+ 793 026d 0C       		.uleb128 0xc
+ 794 026e 74000000 		.4byte	.LVL28
+ 795 0272 81040000 		.4byte	0x481
+ 796 0276 8A020000 		.4byte	0x28a
+ 797 027a 0D       		.uleb128 0xd
+ 798 027b 01       		.uleb128 0x1
+ 799 027c 50       		.byte	0x50
+ 800 027d 05       		.uleb128 0x5
+ 801 027e 03       		.byte	0x3
+ 802 027f 00000000 		.4byte	receivedFromBarcode
+ 803 0283 0D       		.uleb128 0xd
+ 804 0284 01       		.uleb128 0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 19
+
+
+ 805 0285 51       		.byte	0x51
+ 806 0286 02       		.uleb128 0x2
+ 807 0287 75       		.byte	0x75
+ 808 0288 00       		.sleb128 0
+ 809 0289 00       		.byte	0
+ 810 028a 0C       		.uleb128 0xc
+ 811 028b 7E000000 		.4byte	.LVL31
+ 812 028f 81040000 		.4byte	0x481
+ 813 0293 A3020000 		.4byte	0x2a3
+ 814 0297 0D       		.uleb128 0xd
+ 815 0298 01       		.uleb128 0x1
+ 816 0299 50       		.byte	0x50
+ 817 029a 01       		.uleb128 0x1
+ 818 029b 30       		.byte	0x30
+ 819 029c 0D       		.uleb128 0xd
+ 820 029d 01       		.uleb128 0x1
+ 821 029e 51       		.byte	0x51
+ 822 029f 02       		.uleb128 0x2
+ 823 02a0 75       		.byte	0x75
+ 824 02a1 00       		.sleb128 0
+ 825 02a2 00       		.byte	0
+ 826 02a3 0C       		.uleb128 0xc
+ 827 02a4 88000000 		.4byte	.LVL34
+ 828 02a8 81040000 		.4byte	0x481
+ 829 02ac BC020000 		.4byte	0x2bc
+ 830 02b0 0D       		.uleb128 0xd
+ 831 02b1 01       		.uleb128 0x1
+ 832 02b2 50       		.byte	0x50
+ 833 02b3 01       		.uleb128 0x1
+ 834 02b4 30       		.byte	0x30
+ 835 02b5 0D       		.uleb128 0xd
+ 836 02b6 01       		.uleb128 0x1
+ 837 02b7 51       		.byte	0x51
+ 838 02b8 02       		.uleb128 0x2
+ 839 02b9 75       		.byte	0x75
+ 840 02ba 00       		.sleb128 0
+ 841 02bb 00       		.byte	0
+ 842 02bc 0C       		.uleb128 0xc
+ 843 02bd 98000000 		.4byte	.LVL37
+ 844 02c1 8C040000 		.4byte	0x48c
+ 845 02c5 DF020000 		.4byte	0x2df
+ 846 02c9 0D       		.uleb128 0xd
+ 847 02ca 01       		.uleb128 0x1
+ 848 02cb 50       		.byte	0x50
+ 849 02cc 02       		.uleb128 0x2
+ 850 02cd 7D       		.byte	0x7d
+ 851 02ce 00       		.sleb128 0
+ 852 02cf 0D       		.uleb128 0xd
+ 853 02d0 01       		.uleb128 0x1
+ 854 02d1 51       		.byte	0x51
+ 855 02d2 05       		.uleb128 0x5
+ 856 02d3 03       		.byte	0x3
+ 857 02d4 74000000 		.4byte	.LC20
+ 858 02d8 0D       		.uleb128 0xd
+ 859 02d9 01       		.uleb128 0x1
+ 860 02da 52       		.byte	0x52
+ 861 02db 02       		.uleb128 0x2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 20
+
+
+ 862 02dc 76       		.byte	0x76
+ 863 02dd 00       		.sleb128 0
+ 864 02de 00       		.byte	0
+ 865 02df 0C       		.uleb128 0xc
+ 866 02e0 9E000000 		.4byte	.LVL38
+ 867 02e4 5D040000 		.4byte	0x45d
+ 868 02e8 F3020000 		.4byte	0x2f3
+ 869 02ec 0D       		.uleb128 0xd
+ 870 02ed 01       		.uleb128 0x1
+ 871 02ee 50       		.byte	0x50
+ 872 02ef 02       		.uleb128 0x2
+ 873 02f0 7D       		.byte	0x7d
+ 874 02f1 00       		.sleb128 0
+ 875 02f2 00       		.byte	0
+ 876 02f3 0C       		.uleb128 0xc
+ 877 02f4 B4000000 		.4byte	.LVL39
+ 878 02f8 8C040000 		.4byte	0x48c
+ 879 02fc 1C030000 		.4byte	0x31c
+ 880 0300 0D       		.uleb128 0xd
+ 881 0301 01       		.uleb128 0x1
+ 882 0302 50       		.byte	0x50
+ 883 0303 02       		.uleb128 0x2
+ 884 0304 7D       		.byte	0x7d
+ 885 0305 00       		.sleb128 0
+ 886 0306 0D       		.uleb128 0xd
+ 887 0307 01       		.uleb128 0x1
+ 888 0308 51       		.byte	0x51
+ 889 0309 05       		.uleb128 0x5
+ 890 030a 03       		.byte	0x3
+ 891 030b 90000000 		.4byte	.LC22
+ 892 030f 0D       		.uleb128 0xd
+ 893 0310 01       		.uleb128 0x1
+ 894 0311 52       		.byte	0x52
+ 895 0312 02       		.uleb128 0x2
+ 896 0313 77       		.byte	0x77
+ 897 0314 00       		.sleb128 0
+ 898 0315 0D       		.uleb128 0xd
+ 899 0316 01       		.uleb128 0x1
+ 900 0317 53       		.byte	0x53
+ 901 0318 02       		.uleb128 0x2
+ 902 0319 75       		.byte	0x75
+ 903 031a 00       		.sleb128 0
+ 904 031b 00       		.byte	0
+ 905 031c 0C       		.uleb128 0xc
+ 906 031d CA000000 		.4byte	.LVL40
+ 907 0321 8C040000 		.4byte	0x48c
+ 908 0325 3F030000 		.4byte	0x33f
+ 909 0329 0D       		.uleb128 0xd
+ 910 032a 01       		.uleb128 0x1
+ 911 032b 50       		.byte	0x50
+ 912 032c 02       		.uleb128 0x2
+ 913 032d 7D       		.byte	0x7d
+ 914 032e 00       		.sleb128 0
+ 915 032f 0D       		.uleb128 0xd
+ 916 0330 01       		.uleb128 0x1
+ 917 0331 51       		.byte	0x51
+ 918 0332 05       		.uleb128 0x5
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 21
+
+
+ 919 0333 03       		.byte	0x3
+ 920 0334 BC000000 		.4byte	.LC24
+ 921 0338 0D       		.uleb128 0xd
+ 922 0339 01       		.uleb128 0x1
+ 923 033a 52       		.byte	0x52
+ 924 033b 02       		.uleb128 0x2
+ 925 033c 77       		.byte	0x77
+ 926 033d 00       		.sleb128 0
+ 927 033e 00       		.byte	0
+ 928 033f 0E       		.uleb128 0xe
+ 929 0340 D8000000 		.4byte	.LVL41
+ 930 0344 75040000 		.4byte	0x475
+ 931 0348 0D       		.uleb128 0xd
+ 932 0349 01       		.uleb128 0x1
+ 933 034a 50       		.byte	0x50
+ 934 034b 02       		.uleb128 0x2
+ 935 034c 7D       		.byte	0x7d
+ 936 034d 00       		.sleb128 0
+ 937 034e 00       		.byte	0
+ 938 034f 00       		.byte	0
+ 939 0350 0A       		.uleb128 0xa
+ 940 0351 18000000 		.4byte	.LVL22
+ 941 0355 97040000 		.4byte	0x497
+ 942 0359 0A       		.uleb128 0xa
+ 943 035a E2000000 		.4byte	.LVL43
+ 944 035e B6000000 		.4byte	0xb6
+ 945 0362 0A       		.uleb128 0xa
+ 946 0363 E6000000 		.4byte	.LVL44
+ 947 0367 F9000000 		.4byte	0xf9
+ 948 036b 0A       		.uleb128 0xa
+ 949 036c EA000000 		.4byte	.LVL45
+ 950 0370 A2040000 		.4byte	0x4a2
+ 951 0374 0A       		.uleb128 0xa
+ 952 0375 F2000000 		.4byte	.LVL46
+ 953 0379 AD040000 		.4byte	0x4ad
+ 954 037d 00       		.byte	0
+ 955 037e 0A       		.uleb128 0xa
+ 956 037f 0A000000 		.4byte	.LVL17
+ 957 0383 B8040000 		.4byte	0x4b8
+ 958 0387 0A       		.uleb128 0xa
+ 959 0388 0E000000 		.4byte	.LVL18
+ 960 038c 97040000 		.4byte	0x497
+ 961 0390 00       		.byte	0
+ 962 0391 12       		.uleb128 0x12
+ 963 0392 9B000000 		.4byte	0x9b
+ 964 0396 A1030000 		.4byte	0x3a1
+ 965 039a 13       		.uleb128 0x13
+ 966 039b A9000000 		.4byte	0xa9
+ 967 039f FF       		.byte	0xff
+ 968 03a0 00       		.byte	0
+ 969 03a1 14       		.uleb128 0x14
+ 970 03a2 D8020000 		.4byte	.LASF25
+ 971 03a6 05       		.byte	0x5
+ 972 03a7 27       		.byte	0x27
+ 973 03a8 53000000 		.4byte	0x53
+ 974 03ac 15       		.uleb128 0x15
+ 975 03ad 00000000 		.4byte	.LASF26
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 22
+
+
+ 976 03b1 01       		.byte	0x1
+ 977 03b2 18       		.byte	0x18
+ 978 03b3 53000000 		.4byte	0x53
+ 979 03b7 05       		.uleb128 0x5
+ 980 03b8 03       		.byte	0x3
+ 981 03b9 00000000 		.4byte	lastReceivedTime
+ 982 03bd 15       		.uleb128 0x15
+ 983 03be 86000000 		.4byte	.LASF27
+ 984 03c2 01       		.byte	0x1
+ 985 03c3 19       		.byte	0x19
+ 986 03c4 91030000 		.4byte	0x391
+ 987 03c8 05       		.uleb128 0x5
+ 988 03c9 03       		.byte	0x3
+ 989 03ca 00000000 		.4byte	receivedFromBarcode
+ 990 03ce 15       		.uleb128 0x15
+ 991 03cf 2B010000 		.4byte	.LASF28
+ 992 03d3 01       		.byte	0x1
+ 993 03d4 1A       		.byte	0x1a
+ 994 03d5 76000000 		.4byte	0x76
+ 995 03d9 05       		.uleb128 0x5
+ 996 03da 03       		.byte	0x3
+ 997 03db 00000000 		.4byte	receivedFromBarcodeCount
+ 998 03df 12       		.uleb128 0x12
+ 999 03e0 9B000000 		.4byte	0x9b
+ 1000 03e4 EF030000 		.4byte	0x3ef
+ 1001 03e8 13       		.uleb128 0x13
+ 1002 03e9 A9000000 		.4byte	0xa9
+ 1003 03ed 02       		.byte	0x2
+ 1004 03ee 00       		.byte	0
+ 1005 03ef 15       		.uleb128 0x15
+ 1006 03f0 19020000 		.4byte	.LASF29
+ 1007 03f4 01       		.byte	0x1
+ 1008 03f5 1C       		.byte	0x1c
+ 1009 03f6 DF030000 		.4byte	0x3df
+ 1010 03fa 05       		.uleb128 0x5
+ 1011 03fb 03       		.byte	0x3
+ 1012 03fc 00000000 		.4byte	scanTrigerStart
+ 1013 0400 15       		.uleb128 0x15
+ 1014 0401 9A000000 		.4byte	.LASF30
+ 1015 0405 01       		.byte	0x1
+ 1016 0406 1E       		.byte	0x1e
+ 1017 0407 91030000 		.4byte	0x391
+ 1018 040b 05       		.uleb128 0x5
+ 1019 040c 03       		.byte	0x3
+ 1020 040d 00000000 		.4byte	receivedScanTrigerOrder
+ 1021 0411 15       		.uleb128 0x15
+ 1022 0412 84020000 		.4byte	.LASF31
+ 1023 0416 01       		.byte	0x1
+ 1024 0417 1F       		.byte	0x1f
+ 1025 0418 6F000000 		.4byte	0x6f
+ 1026 041c 05       		.uleb128 0x5
+ 1027 041d 03       		.byte	0x3
+ 1028 041e 00000000 		.4byte	receivedScanTrigerOrderCount
+ 1029 0422 16       		.uleb128 0x16
+ 1030 0423 C4020000 		.4byte	.LASF32
+ 1031 0427 C4020000 		.4byte	.LASF32
+ 1032 042b 06       		.byte	0x6
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 23
+
+
+ 1033 042c 0F03     		.2byte	0x30f
+ 1034 042e 16       		.uleb128 0x16
+ 1035 042f DA000000 		.4byte	.LASF33
+ 1036 0433 DA000000 		.4byte	.LASF33
+ 1037 0437 06       		.byte	0x6
+ 1038 0438 3E03     		.2byte	0x33e
+ 1039 043a 16       		.uleb128 0x16
+ 1040 043b 77030000 		.4byte	.LASF34
+ 1041 043f 77030000 		.4byte	.LASF34
+ 1042 0443 06       		.byte	0x6
+ 1043 0444 4403     		.2byte	0x344
+ 1044 0446 16       		.uleb128 0x16
+ 1045 0447 77010000 		.4byte	.LASF35
+ 1046 044b 77010000 		.4byte	.LASF35
+ 1047 044f 07       		.byte	0x7
+ 1048 0450 0F03     		.2byte	0x30f
+ 1049 0452 17       		.uleb128 0x17
+ 1050 0453 6E020000 		.4byte	.LASF36
+ 1051 0457 6E020000 		.4byte	.LASF36
+ 1052 045b 08       		.byte	0x8
+ 1053 045c 1C       		.byte	0x1c
+ 1054 045d 16       		.uleb128 0x16
+ 1055 045e 9A010000 		.4byte	.LASF37
+ 1056 0462 9A010000 		.4byte	.LASF37
+ 1057 0466 07       		.byte	0x7
+ 1058 0467 2A03     		.2byte	0x32a
+ 1059 0469 16       		.uleb128 0x16
+ 1060 046a E8010000 		.4byte	.LASF38
+ 1061 046e E8010000 		.4byte	.LASF38
+ 1062 0472 07       		.byte	0x7
+ 1063 0473 3E03     		.2byte	0x33e
+ 1064 0475 16       		.uleb128 0x16
+ 1065 0476 C8010000 		.4byte	.LASF39
+ 1066 047a C8010000 		.4byte	.LASF39
+ 1067 047e 09       		.byte	0x9
+ 1068 047f 2A03     		.2byte	0x32a
+ 1069 0481 17       		.uleb128 0x17
+ 1070 0482 B3030000 		.4byte	.LASF40
+ 1071 0486 B3030000 		.4byte	.LASF40
+ 1072 048a 08       		.byte	0x8
+ 1073 048b 2A       		.byte	0x2a
+ 1074 048c 17       		.uleb128 0x17
+ 1075 048d BA030000 		.4byte	.LASF41
+ 1076 0491 BA030000 		.4byte	.LASF41
+ 1077 0495 0A       		.byte	0xa
+ 1078 0496 E7       		.byte	0xe7
+ 1079 0497 17       		.uleb128 0x17
+ 1080 0498 3D020000 		.4byte	.LASF42
+ 1081 049c 3D020000 		.4byte	.LASF42
+ 1082 04a0 0B       		.byte	0xb
+ 1083 04a1 32       		.byte	0x32
+ 1084 04a2 17       		.uleb128 0x17
+ 1085 04a3 F9000000 		.4byte	.LASF43
+ 1086 04a7 F9000000 		.4byte	.LASF43
+ 1087 04ab 0C       		.byte	0xc
+ 1088 04ac 32       		.byte	0x32
+ 1089 04ad 17       		.uleb128 0x17
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 24
+
+
+ 1090 04ae B8010000 		.4byte	.LASF44
+ 1091 04b2 B8010000 		.4byte	.LASF44
+ 1092 04b6 05       		.byte	0x5
+ 1093 04b7 25       		.byte	0x25
+ 1094 04b8 17       		.uleb128 0x17
+ 1095 04b9 C5000000 		.4byte	.LASF45
+ 1096 04bd C5000000 		.4byte	.LASF45
+ 1097 04c1 05       		.byte	0x5
+ 1098 04c2 24       		.byte	0x24
+ 1099 04c3 00       		.byte	0
+ 1100              		.section	.debug_abbrev,"",%progbits
+ 1101              	.Ldebug_abbrev0:
+ 1102 0000 01       		.uleb128 0x1
+ 1103 0001 11       		.uleb128 0x11
+ 1104 0002 01       		.byte	0x1
+ 1105 0003 25       		.uleb128 0x25
+ 1106 0004 0E       		.uleb128 0xe
+ 1107 0005 13       		.uleb128 0x13
+ 1108 0006 0B       		.uleb128 0xb
+ 1109 0007 03       		.uleb128 0x3
+ 1110 0008 0E       		.uleb128 0xe
+ 1111 0009 1B       		.uleb128 0x1b
+ 1112 000a 0E       		.uleb128 0xe
+ 1113 000b 55       		.uleb128 0x55
+ 1114 000c 17       		.uleb128 0x17
+ 1115 000d 11       		.uleb128 0x11
+ 1116 000e 01       		.uleb128 0x1
+ 1117 000f 10       		.uleb128 0x10
+ 1118 0010 17       		.uleb128 0x17
+ 1119 0011 00       		.byte	0
+ 1120 0012 00       		.byte	0
+ 1121 0013 02       		.uleb128 0x2
+ 1122 0014 24       		.uleb128 0x24
+ 1123 0015 00       		.byte	0
+ 1124 0016 0B       		.uleb128 0xb
+ 1125 0017 0B       		.uleb128 0xb
+ 1126 0018 3E       		.uleb128 0x3e
+ 1127 0019 0B       		.uleb128 0xb
+ 1128 001a 03       		.uleb128 0x3
+ 1129 001b 0E       		.uleb128 0xe
+ 1130 001c 00       		.byte	0
+ 1131 001d 00       		.byte	0
+ 1132 001e 03       		.uleb128 0x3
+ 1133 001f 16       		.uleb128 0x16
+ 1134 0020 00       		.byte	0
+ 1135 0021 03       		.uleb128 0x3
+ 1136 0022 0E       		.uleb128 0xe
+ 1137 0023 3A       		.uleb128 0x3a
+ 1138 0024 0B       		.uleb128 0xb
+ 1139 0025 3B       		.uleb128 0x3b
+ 1140 0026 0B       		.uleb128 0xb
+ 1141 0027 49       		.uleb128 0x49
+ 1142 0028 13       		.uleb128 0x13
+ 1143 0029 00       		.byte	0
+ 1144 002a 00       		.byte	0
+ 1145 002b 04       		.uleb128 0x4
+ 1146 002c 24       		.uleb128 0x24
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 25
+
+
+ 1147 002d 00       		.byte	0
+ 1148 002e 0B       		.uleb128 0xb
+ 1149 002f 0B       		.uleb128 0xb
+ 1150 0030 3E       		.uleb128 0x3e
+ 1151 0031 0B       		.uleb128 0xb
+ 1152 0032 03       		.uleb128 0x3
+ 1153 0033 08       		.uleb128 0x8
+ 1154 0034 00       		.byte	0
+ 1155 0035 00       		.byte	0
+ 1156 0036 05       		.uleb128 0x5
+ 1157 0037 16       		.uleb128 0x16
+ 1158 0038 00       		.byte	0
+ 1159 0039 03       		.uleb128 0x3
+ 1160 003a 0E       		.uleb128 0xe
+ 1161 003b 3A       		.uleb128 0x3a
+ 1162 003c 0B       		.uleb128 0xb
+ 1163 003d 3B       		.uleb128 0x3b
+ 1164 003e 05       		.uleb128 0x5
+ 1165 003f 49       		.uleb128 0x49
+ 1166 0040 13       		.uleb128 0x13
+ 1167 0041 00       		.byte	0
+ 1168 0042 00       		.byte	0
+ 1169 0043 06       		.uleb128 0x6
+ 1170 0044 0F       		.uleb128 0xf
+ 1171 0045 00       		.byte	0
+ 1172 0046 0B       		.uleb128 0xb
+ 1173 0047 0B       		.uleb128 0xb
+ 1174 0048 49       		.uleb128 0x49
+ 1175 0049 13       		.uleb128 0x13
+ 1176 004a 00       		.byte	0
+ 1177 004b 00       		.byte	0
+ 1178 004c 07       		.uleb128 0x7
+ 1179 004d 2E       		.uleb128 0x2e
+ 1180 004e 01       		.byte	0x1
+ 1181 004f 3F       		.uleb128 0x3f
+ 1182 0050 19       		.uleb128 0x19
+ 1183 0051 03       		.uleb128 0x3
+ 1184 0052 0E       		.uleb128 0xe
+ 1185 0053 3A       		.uleb128 0x3a
+ 1186 0054 0B       		.uleb128 0xb
+ 1187 0055 3B       		.uleb128 0x3b
+ 1188 0056 0B       		.uleb128 0xb
+ 1189 0057 27       		.uleb128 0x27
+ 1190 0058 19       		.uleb128 0x19
+ 1191 0059 11       		.uleb128 0x11
+ 1192 005a 01       		.uleb128 0x1
+ 1193 005b 12       		.uleb128 0x12
+ 1194 005c 06       		.uleb128 0x6
+ 1195 005d 40       		.uleb128 0x40
+ 1196 005e 18       		.uleb128 0x18
+ 1197 005f 9742     		.uleb128 0x2117
+ 1198 0061 19       		.uleb128 0x19
+ 1199 0062 01       		.uleb128 0x1
+ 1200 0063 13       		.uleb128 0x13
+ 1201 0064 00       		.byte	0
+ 1202 0065 00       		.byte	0
+ 1203 0066 08       		.uleb128 0x8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 26
+
+
+ 1204 0067 0B       		.uleb128 0xb
+ 1205 0068 01       		.byte	0x1
+ 1206 0069 11       		.uleb128 0x11
+ 1207 006a 01       		.uleb128 0x1
+ 1208 006b 12       		.uleb128 0x12
+ 1209 006c 06       		.uleb128 0x6
+ 1210 006d 01       		.uleb128 0x1
+ 1211 006e 13       		.uleb128 0x13
+ 1212 006f 00       		.byte	0
+ 1213 0070 00       		.byte	0
+ 1214 0071 09       		.uleb128 0x9
+ 1215 0072 34       		.uleb128 0x34
+ 1216 0073 00       		.byte	0
+ 1217 0074 03       		.uleb128 0x3
+ 1218 0075 08       		.uleb128 0x8
+ 1219 0076 3A       		.uleb128 0x3a
+ 1220 0077 0B       		.uleb128 0xb
+ 1221 0078 3B       		.uleb128 0x3b
+ 1222 0079 0B       		.uleb128 0xb
+ 1223 007a 49       		.uleb128 0x49
+ 1224 007b 13       		.uleb128 0x13
+ 1225 007c 02       		.uleb128 0x2
+ 1226 007d 17       		.uleb128 0x17
+ 1227 007e 00       		.byte	0
+ 1228 007f 00       		.byte	0
+ 1229 0080 0A       		.uleb128 0xa
+ 1230 0081 898201   		.uleb128 0x4109
+ 1231 0084 00       		.byte	0
+ 1232 0085 11       		.uleb128 0x11
+ 1233 0086 01       		.uleb128 0x1
+ 1234 0087 31       		.uleb128 0x31
+ 1235 0088 13       		.uleb128 0x13
+ 1236 0089 00       		.byte	0
+ 1237 008a 00       		.byte	0
+ 1238 008b 0B       		.uleb128 0xb
+ 1239 008c 0B       		.uleb128 0xb
+ 1240 008d 01       		.byte	0x1
+ 1241 008e 55       		.uleb128 0x55
+ 1242 008f 17       		.uleb128 0x17
+ 1243 0090 01       		.uleb128 0x1
+ 1244 0091 13       		.uleb128 0x13
+ 1245 0092 00       		.byte	0
+ 1246 0093 00       		.byte	0
+ 1247 0094 0C       		.uleb128 0xc
+ 1248 0095 898201   		.uleb128 0x4109
+ 1249 0098 01       		.byte	0x1
+ 1250 0099 11       		.uleb128 0x11
+ 1251 009a 01       		.uleb128 0x1
+ 1252 009b 31       		.uleb128 0x31
+ 1253 009c 13       		.uleb128 0x13
+ 1254 009d 01       		.uleb128 0x1
+ 1255 009e 13       		.uleb128 0x13
+ 1256 009f 00       		.byte	0
+ 1257 00a0 00       		.byte	0
+ 1258 00a1 0D       		.uleb128 0xd
+ 1259 00a2 8A8201   		.uleb128 0x410a
+ 1260 00a5 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 27
+
+
+ 1261 00a6 02       		.uleb128 0x2
+ 1262 00a7 18       		.uleb128 0x18
+ 1263 00a8 9142     		.uleb128 0x2111
+ 1264 00aa 18       		.uleb128 0x18
+ 1265 00ab 00       		.byte	0
+ 1266 00ac 00       		.byte	0
+ 1267 00ad 0E       		.uleb128 0xe
+ 1268 00ae 898201   		.uleb128 0x4109
+ 1269 00b1 01       		.byte	0x1
+ 1270 00b2 11       		.uleb128 0x11
+ 1271 00b3 01       		.uleb128 0x1
+ 1272 00b4 31       		.uleb128 0x31
+ 1273 00b5 13       		.uleb128 0x13
+ 1274 00b6 00       		.byte	0
+ 1275 00b7 00       		.byte	0
+ 1276 00b8 0F       		.uleb128 0xf
+ 1277 00b9 2E       		.uleb128 0x2e
+ 1278 00ba 01       		.byte	0x1
+ 1279 00bb 3F       		.uleb128 0x3f
+ 1280 00bc 19       		.uleb128 0x19
+ 1281 00bd 03       		.uleb128 0x3
+ 1282 00be 0E       		.uleb128 0xe
+ 1283 00bf 3A       		.uleb128 0x3a
+ 1284 00c0 0B       		.uleb128 0xb
+ 1285 00c1 3B       		.uleb128 0x3b
+ 1286 00c2 0B       		.uleb128 0xb
+ 1287 00c3 27       		.uleb128 0x27
+ 1288 00c4 19       		.uleb128 0x19
+ 1289 00c5 49       		.uleb128 0x49
+ 1290 00c6 13       		.uleb128 0x13
+ 1291 00c7 8701     		.uleb128 0x87
+ 1292 00c9 19       		.uleb128 0x19
+ 1293 00ca 11       		.uleb128 0x11
+ 1294 00cb 01       		.uleb128 0x1
+ 1295 00cc 12       		.uleb128 0x12
+ 1296 00cd 06       		.uleb128 0x6
+ 1297 00ce 40       		.uleb128 0x40
+ 1298 00cf 18       		.uleb128 0x18
+ 1299 00d0 9742     		.uleb128 0x2117
+ 1300 00d2 19       		.uleb128 0x19
+ 1301 00d3 01       		.uleb128 0x1
+ 1302 00d4 13       		.uleb128 0x13
+ 1303 00d5 00       		.byte	0
+ 1304 00d6 00       		.byte	0
+ 1305 00d7 10       		.uleb128 0x10
+ 1306 00d8 34       		.uleb128 0x34
+ 1307 00d9 00       		.byte	0
+ 1308 00da 03       		.uleb128 0x3
+ 1309 00db 0E       		.uleb128 0xe
+ 1310 00dc 3A       		.uleb128 0x3a
+ 1311 00dd 0B       		.uleb128 0xb
+ 1312 00de 3B       		.uleb128 0x3b
+ 1313 00df 0B       		.uleb128 0xb
+ 1314 00e0 49       		.uleb128 0x49
+ 1315 00e1 13       		.uleb128 0x13
+ 1316 00e2 02       		.uleb128 0x2
+ 1317 00e3 17       		.uleb128 0x17
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 28
+
+
+ 1318 00e4 00       		.byte	0
+ 1319 00e5 00       		.byte	0
+ 1320 00e6 11       		.uleb128 0x11
+ 1321 00e7 34       		.uleb128 0x34
+ 1322 00e8 00       		.byte	0
+ 1323 00e9 03       		.uleb128 0x3
+ 1324 00ea 08       		.uleb128 0x8
+ 1325 00eb 3A       		.uleb128 0x3a
+ 1326 00ec 0B       		.uleb128 0xb
+ 1327 00ed 3B       		.uleb128 0x3b
+ 1328 00ee 0B       		.uleb128 0xb
+ 1329 00ef 49       		.uleb128 0x49
+ 1330 00f0 13       		.uleb128 0x13
+ 1331 00f1 02       		.uleb128 0x2
+ 1332 00f2 18       		.uleb128 0x18
+ 1333 00f3 00       		.byte	0
+ 1334 00f4 00       		.byte	0
+ 1335 00f5 12       		.uleb128 0x12
+ 1336 00f6 01       		.uleb128 0x1
+ 1337 00f7 01       		.byte	0x1
+ 1338 00f8 49       		.uleb128 0x49
+ 1339 00f9 13       		.uleb128 0x13
+ 1340 00fa 01       		.uleb128 0x1
+ 1341 00fb 13       		.uleb128 0x13
+ 1342 00fc 00       		.byte	0
+ 1343 00fd 00       		.byte	0
+ 1344 00fe 13       		.uleb128 0x13
+ 1345 00ff 21       		.uleb128 0x21
+ 1346 0100 00       		.byte	0
+ 1347 0101 49       		.uleb128 0x49
+ 1348 0102 13       		.uleb128 0x13
+ 1349 0103 2F       		.uleb128 0x2f
+ 1350 0104 0B       		.uleb128 0xb
+ 1351 0105 00       		.byte	0
+ 1352 0106 00       		.byte	0
+ 1353 0107 14       		.uleb128 0x14
+ 1354 0108 34       		.uleb128 0x34
+ 1355 0109 00       		.byte	0
+ 1356 010a 03       		.uleb128 0x3
+ 1357 010b 0E       		.uleb128 0xe
+ 1358 010c 3A       		.uleb128 0x3a
+ 1359 010d 0B       		.uleb128 0xb
+ 1360 010e 3B       		.uleb128 0x3b
+ 1361 010f 0B       		.uleb128 0xb
+ 1362 0110 49       		.uleb128 0x49
+ 1363 0111 13       		.uleb128 0x13
+ 1364 0112 3F       		.uleb128 0x3f
+ 1365 0113 19       		.uleb128 0x19
+ 1366 0114 3C       		.uleb128 0x3c
+ 1367 0115 19       		.uleb128 0x19
+ 1368 0116 00       		.byte	0
+ 1369 0117 00       		.byte	0
+ 1370 0118 15       		.uleb128 0x15
+ 1371 0119 34       		.uleb128 0x34
+ 1372 011a 00       		.byte	0
+ 1373 011b 03       		.uleb128 0x3
+ 1374 011c 0E       		.uleb128 0xe
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 29
+
+
+ 1375 011d 3A       		.uleb128 0x3a
+ 1376 011e 0B       		.uleb128 0xb
+ 1377 011f 3B       		.uleb128 0x3b
+ 1378 0120 0B       		.uleb128 0xb
+ 1379 0121 49       		.uleb128 0x49
+ 1380 0122 13       		.uleb128 0x13
+ 1381 0123 3F       		.uleb128 0x3f
+ 1382 0124 19       		.uleb128 0x19
+ 1383 0125 02       		.uleb128 0x2
+ 1384 0126 18       		.uleb128 0x18
+ 1385 0127 00       		.byte	0
+ 1386 0128 00       		.byte	0
+ 1387 0129 16       		.uleb128 0x16
+ 1388 012a 2E       		.uleb128 0x2e
+ 1389 012b 00       		.byte	0
+ 1390 012c 3F       		.uleb128 0x3f
+ 1391 012d 19       		.uleb128 0x19
+ 1392 012e 3C       		.uleb128 0x3c
+ 1393 012f 19       		.uleb128 0x19
+ 1394 0130 6E       		.uleb128 0x6e
+ 1395 0131 0E       		.uleb128 0xe
+ 1396 0132 03       		.uleb128 0x3
+ 1397 0133 0E       		.uleb128 0xe
+ 1398 0134 3A       		.uleb128 0x3a
+ 1399 0135 0B       		.uleb128 0xb
+ 1400 0136 3B       		.uleb128 0x3b
+ 1401 0137 05       		.uleb128 0x5
+ 1402 0138 00       		.byte	0
+ 1403 0139 00       		.byte	0
+ 1404 013a 17       		.uleb128 0x17
+ 1405 013b 2E       		.uleb128 0x2e
+ 1406 013c 00       		.byte	0
+ 1407 013d 3F       		.uleb128 0x3f
+ 1408 013e 19       		.uleb128 0x19
+ 1409 013f 3C       		.uleb128 0x3c
+ 1410 0140 19       		.uleb128 0x19
+ 1411 0141 6E       		.uleb128 0x6e
+ 1412 0142 0E       		.uleb128 0xe
+ 1413 0143 03       		.uleb128 0x3
+ 1414 0144 0E       		.uleb128 0xe
+ 1415 0145 3A       		.uleb128 0x3a
+ 1416 0146 0B       		.uleb128 0xb
+ 1417 0147 3B       		.uleb128 0x3b
+ 1418 0148 0B       		.uleb128 0xb
+ 1419 0149 00       		.byte	0
+ 1420 014a 00       		.byte	0
+ 1421 014b 00       		.byte	0
+ 1422              		.section	.debug_loc,"",%progbits
+ 1423              	.Ldebug_loc0:
+ 1424              	.LLST0:
+ 1425 0000 0A000000 		.4byte	.LVL1
+ 1426 0004 2C000000 		.4byte	.LVL2
+ 1427 0008 0100     		.2byte	0x1
+ 1428 000a 50       		.byte	0x50
+ 1429 000b 00000000 		.4byte	0
+ 1430 000f 00000000 		.4byte	0
+ 1431              	.LLST1:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 30
+
+
+ 1432 0013 0A000000 		.4byte	.LVL5
+ 1433 0017 36000000 		.4byte	.LVL6
+ 1434 001b 0100     		.2byte	0x1
+ 1435 001d 50       		.byte	0x50
+ 1436 001e 00000000 		.4byte	0
+ 1437 0022 00000000 		.4byte	0
+ 1438              	.LLST2:
+ 1439 0026 46000000 		.4byte	.LVL8
+ 1440 002a 52000000 		.4byte	.LVL11
+ 1441 002e 0100     		.2byte	0x1
+ 1442 0030 54       		.byte	0x54
+ 1443 0031 54000000 		.4byte	.LVL12
+ 1444 0035 58000000 		.4byte	.LVL13
+ 1445 0039 0100     		.2byte	0x1
+ 1446 003b 54       		.byte	0x54
+ 1447 003c 00000000 		.4byte	0
+ 1448 0040 00000000 		.4byte	0
+ 1449              	.LLST3:
+ 1450 0044 10000000 		.4byte	.LVL19
+ 1451 0048 12000000 		.4byte	.LVL20
+ 1452 004c 0100     		.2byte	0x1
+ 1453 004e 50       		.byte	0x50
+ 1454 004f 12000000 		.4byte	.LVL20
+ 1455 0053 14000000 		.4byte	.LVL21
+ 1456 0057 0100     		.2byte	0x1
+ 1457 0059 54       		.byte	0x54
+ 1458 005a 14000000 		.4byte	.LVL21
+ 1459 005e 4E000000 		.4byte	.LVL27
+ 1460 0062 0100     		.2byte	0x1
+ 1461 0064 55       		.byte	0x55
+ 1462 0065 4E000000 		.4byte	.LVL27
+ 1463 0069 18010000 		.4byte	.LFE37
+ 1464 006d 0100     		.2byte	0x1
+ 1465 006f 54       		.byte	0x54
+ 1466 0070 00000000 		.4byte	0
+ 1467 0074 00000000 		.4byte	0
+ 1468              	.LLST4:
+ 1469 0078 1C000000 		.4byte	.LVL23
+ 1470 007c 4A000000 		.4byte	.LVL26
+ 1471 0080 0100     		.2byte	0x1
+ 1472 0082 50       		.byte	0x50
+ 1473 0083 00000000 		.4byte	0
+ 1474 0087 00000000 		.4byte	0
+ 1475              	.LLST5:
+ 1476 008b 40000000 		.4byte	.LVL24
+ 1477 008f 42000000 		.4byte	.LVL25
+ 1478 0093 0100     		.2byte	0x1
+ 1479 0095 53       		.byte	0x53
+ 1480 0096 42000000 		.4byte	.LVL25
+ 1481 009a 4D000000 		.4byte	.LVL27-1
+ 1482 009e 0400     		.2byte	0x4
+ 1483 00a0 73       		.byte	0x73
+ 1484 00a1 C901     		.sleb128 201
+ 1485 00a3 9F       		.byte	0x9f
+ 1486 00a4 00000000 		.4byte	0
+ 1487 00a8 00000000 		.4byte	0
+ 1488              	.LLST6:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 31
+
+
+ 1489 00ac 76000000 		.4byte	.LVL29
+ 1490 00b0 7A000000 		.4byte	.LVL30
+ 1491 00b4 0100     		.2byte	0x1
+ 1492 00b6 50       		.byte	0x50
+ 1493 00b7 7A000000 		.4byte	.LVL30
+ 1494 00bb DE000000 		.4byte	.LVL42
+ 1495 00bf 0100     		.2byte	0x1
+ 1496 00c1 56       		.byte	0x56
+ 1497 00c2 00000000 		.4byte	0
+ 1498 00c6 00000000 		.4byte	0
+ 1499              	.LLST7:
+ 1500 00ca 80000000 		.4byte	.LVL32
+ 1501 00ce 84000000 		.4byte	.LVL33
+ 1502 00d2 0100     		.2byte	0x1
+ 1503 00d4 50       		.byte	0x50
+ 1504 00d5 84000000 		.4byte	.LVL33
+ 1505 00d9 DE000000 		.4byte	.LVL42
+ 1506 00dd 0100     		.2byte	0x1
+ 1507 00df 57       		.byte	0x57
+ 1508 00e0 00000000 		.4byte	0
+ 1509 00e4 00000000 		.4byte	0
+ 1510              	.LLST8:
+ 1511 00e8 8A000000 		.4byte	.LVL35
+ 1512 00ec 94000000 		.4byte	.LVL36
+ 1513 00f0 0100     		.2byte	0x1
+ 1514 00f2 50       		.byte	0x50
+ 1515 00f3 94000000 		.4byte	.LVL36
+ 1516 00f7 DE000000 		.4byte	.LVL42
+ 1517 00fb 0100     		.2byte	0x1
+ 1518 00fd 55       		.byte	0x55
+ 1519 00fe 00000000 		.4byte	0
+ 1520 0102 00000000 		.4byte	0
+ 1521              		.section	.debug_aranges,"",%progbits
+ 1522 0000 2C000000 		.4byte	0x2c
+ 1523 0004 0200     		.2byte	0x2
+ 1524 0006 00000000 		.4byte	.Ldebug_info0
+ 1525 000a 04       		.byte	0x4
+ 1526 000b 00       		.byte	0
+ 1527 000c 0000     		.2byte	0
+ 1528 000e 0000     		.2byte	0
+ 1529 0010 00000000 		.4byte	.LFB35
+ 1530 0014 44000000 		.4byte	.LFE35-.LFB35
+ 1531 0018 00000000 		.4byte	.LFB36
+ 1532 001c 98000000 		.4byte	.LFE36-.LFB36
+ 1533 0020 00000000 		.4byte	.LFB37
+ 1534 0024 18010000 		.4byte	.LFE37-.LFB37
+ 1535 0028 00000000 		.4byte	0
+ 1536 002c 00000000 		.4byte	0
+ 1537              		.section	.debug_ranges,"",%progbits
+ 1538              	.Ldebug_ranges0:
+ 1539 0000 44000000 		.4byte	.LBB4
+ 1540 0004 52000000 		.4byte	.LBE4
+ 1541 0008 54000000 		.4byte	.LBB5
+ 1542 000c 58000000 		.4byte	.LBE5
+ 1543 0010 00000000 		.4byte	0
+ 1544 0014 00000000 		.4byte	0
+ 1545 0018 00000000 		.4byte	.LFB35
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 32
+
+
+ 1546 001c 44000000 		.4byte	.LFE35
+ 1547 0020 00000000 		.4byte	.LFB36
+ 1548 0024 98000000 		.4byte	.LFE36
+ 1549 0028 00000000 		.4byte	.LFB37
+ 1550 002c 18010000 		.4byte	.LFE37
+ 1551 0030 00000000 		.4byte	0
+ 1552 0034 00000000 		.4byte	0
+ 1553              		.section	.debug_line,"",%progbits
+ 1554              	.Ldebug_line0:
+ 1555 0000 D9020000 		.section	.debug_str,"MS",%progbits,1
+ 1555      02003702 
+ 1555      00000201 
+ 1555      FB0E0D00 
+ 1555      01010101 
+ 1556              	.LASF26:
+ 1557 0000 6C617374 		.ascii	"lastReceivedTime\000"
+ 1557      52656365 
+ 1557      69766564 
+ 1557      54696D65 
+ 1557      00
+ 1558              	.LASF48:
+ 1559 0011 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\SCANNER_SMALL_BOA"
+ 1559      554E5445 
+ 1559      43485F44 
+ 1559      45565F43 
+ 1559      4C415544 
+ 1560 0041 52445C53 		.ascii	"RD\\SCANNER_SMALL_BOARD_2026_V1\\MainFunction.cydsn"
+ 1560      43414E4E 
+ 1560      45525F53 
+ 1560      4D414C4C 
+ 1560      5F424F41 
+ 1561 0072 00       		.ascii	"\000"
+ 1562              	.LASF22:
+ 1563 0073 70747246 		.ascii	"ptrFirst\000"
+ 1563      69727374 
+ 1563      00
+ 1564              	.LASF9:
+ 1565 007c 5F5F7569 		.ascii	"__uint8_t\000"
+ 1565      6E74385F 
+ 1565      7400
+ 1566              	.LASF27:
+ 1567 0086 72656365 		.ascii	"receivedFromBarcode\000"
+ 1567      69766564 
+ 1567      46726F6D 
+ 1567      42617263 
+ 1567      6F646500 
+ 1568              	.LASF30:
+ 1569 009a 72656365 		.ascii	"receivedScanTrigerOrder\000"
+ 1569      69766564 
+ 1569      5363616E 
+ 1569      54726967 
+ 1569      65724F72 
+ 1570              	.LASF18:
+ 1571 00b2 70726F63 		.ascii	"process_MONITORING\000"
+ 1571      6573735F 
+ 1571      4D4F4E49 
+ 1571      544F5249 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 33
+
+
+ 1571      4E4700
+ 1572              	.LASF45:
+ 1573 00c5 696E6974 		.ascii	"init\000"
+ 1573      00
+ 1574              	.LASF17:
+ 1575 00ca 70726F63 		.ascii	"process_BARCODE\000"
+ 1575      6573735F 
+ 1575      42415243 
+ 1575      4F444500 
+ 1576              	.LASF33:
+ 1577 00da 42415243 		.ascii	"BARCODE_SpiUartGetRxBufferSize\000"
+ 1577      4F44455F 
+ 1577      53706955 
+ 1577      61727447 
+ 1577      65745278 
+ 1578              	.LASF43:
+ 1579 00f9 50696E5F 		.ascii	"Pin_StartBootloader_Read\000"
+ 1579      53746172 
+ 1579      74426F6F 
+ 1579      746C6F61 
+ 1579      6465725F 
+ 1580              	.LASF20:
+ 1581 0112 63757272 		.ascii	"currentCounterStat\000"
+ 1581      656E7443 
+ 1581      6F756E74 
+ 1581      65725374 
+ 1581      617400
+ 1582              	.LASF12:
+ 1583 0125 666C6F61 		.ascii	"float\000"
+ 1583      7400
+ 1584              	.LASF28:
+ 1585 012b 72656365 		.ascii	"receivedFromBarcodeCount\000"
+ 1585      69766564 
+ 1585      46726F6D 
+ 1585      42617263 
+ 1585      6F646543 
+ 1586              	.LASF1:
+ 1587 0144 756E7369 		.ascii	"unsigned char\000"
+ 1587      676E6564 
+ 1587      20636861 
+ 1587      7200
+ 1588              	.LASF5:
+ 1589 0152 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1589      20756E73 
+ 1589      69676E65 
+ 1589      6420696E 
+ 1589      7400
+ 1590              	.LASF3:
+ 1591 0164 73686F72 		.ascii	"short unsigned int\000"
+ 1591      7420756E 
+ 1591      7369676E 
+ 1591      65642069 
+ 1591      6E7400
+ 1592              	.LASF35:
+ 1593 0177 706F7274 		.ascii	"port_MONITORING_UartGetChar\000"
+ 1593      5F4D4F4E 
+ 1593      49544F52 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 34
+
+
+ 1593      494E475F 
+ 1593      55617274 
+ 1594              	.LASF13:
+ 1595 0193 646F7562 		.ascii	"double\000"
+ 1595      6C6500
+ 1596              	.LASF37:
+ 1597 019a 706F7274 		.ascii	"port_MONITORING_UartPutString\000"
+ 1597      5F4D4F4E 
+ 1597      49544F52 
+ 1597      494E475F 
+ 1597      55617274 
+ 1598              	.LASF44:
+ 1599 01b8 426F6F74 		.ascii	"BootloaderStart\000"
+ 1599      6C6F6164 
+ 1599      65725374 
+ 1599      61727400 
+ 1600              	.LASF39:
+ 1601 01c8 706F7274 		.ascii	"port_OP_UartPutString\000"
+ 1601      5F4F505F 
+ 1601      55617274 
+ 1601      50757453 
+ 1601      7472696E 
+ 1602              	.LASF2:
+ 1603 01de 73686F72 		.ascii	"short int\000"
+ 1603      7420696E 
+ 1603      7400
+ 1604              	.LASF38:
+ 1605 01e8 706F7274 		.ascii	"port_MONITORING_SpiUartGetRxBufferSize\000"
+ 1605      5F4D4F4E 
+ 1605      49544F52 
+ 1605      494E475F 
+ 1605      53706955 
+ 1606              	.LASF23:
+ 1607 020f 70747253 		.ascii	"ptrSecond\000"
+ 1607      65636F6E 
+ 1607      6400
+ 1608              	.LASF29:
+ 1609 0219 7363616E 		.ascii	"scanTrigerStart\000"
+ 1609      54726967 
+ 1609      65725374 
+ 1609      61727400 
+ 1610              	.LASF11:
+ 1611 0229 75696E74 		.ascii	"uint32\000"
+ 1611      333200
+ 1612              	.LASF8:
+ 1613 0230 756E7369 		.ascii	"unsigned int\000"
+ 1613      676E6564 
+ 1613      20696E74 
+ 1613      00
+ 1614              	.LASF42:
+ 1615 023d 436F756E 		.ascii	"Counter_Read\000"
+ 1615      7465725F 
+ 1615      52656164 
+ 1615      00
+ 1616              	.LASF7:
+ 1617 024a 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1617      206C6F6E 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 35
+
+
+ 1617      6720756E 
+ 1617      7369676E 
+ 1617      65642069 
+ 1618              	.LASF10:
+ 1619 0261 75696E74 		.ascii	"uint8_t\000"
+ 1619      385F7400 
+ 1620              	.LASF49:
+ 1621 0269 6D61696E 		.ascii	"main\000"
+ 1621      00
+ 1622              	.LASF36:
+ 1623 026e 73747263 		.ascii	"strcmp\000"
+ 1623      6D7000
+ 1624              	.LASF19:
+ 1625 0275 6F6C6443 		.ascii	"oldCounterStat\000"
+ 1625      6F756E74 
+ 1625      65725374 
+ 1625      617400
+ 1626              	.LASF31:
+ 1627 0284 72656365 		.ascii	"receivedScanTrigerOrderCount\000"
+ 1627      69766564 
+ 1627      5363616E 
+ 1627      54726967 
+ 1627      65724F72 
+ 1628              	.LASF16:
+ 1629 02a1 73697A65 		.ascii	"sizetype\000"
+ 1629      74797065 
+ 1629      00
+ 1630              	.LASF6:
+ 1631 02aa 6C6F6E67 		.ascii	"long long int\000"
+ 1631      206C6F6E 
+ 1631      6720696E 
+ 1631      7400
+ 1632              	.LASF47:
+ 1633 02b8 6D61696E 		.ascii	"main.c\000"
+ 1633      2E6300
+ 1634              	.LASF14:
+ 1635 02bf 63686172 		.ascii	"char\000"
+ 1635      00
+ 1636              	.LASF32:
+ 1637 02c4 42415243 		.ascii	"BARCODE_UartGetChar\000"
+ 1637      4F44455F 
+ 1637      55617274 
+ 1637      47657443 
+ 1637      68617200 
+ 1638              	.LASF25:
+ 1639 02d8 74696D65 		.ascii	"timerCount\000"
+ 1639      72436F75 
+ 1639      6E7400
+ 1640              	.LASF21:
+ 1641 02e3 6454696D 		.ascii	"dTime\000"
+ 1641      6500
+ 1642              	.LASF46:
+ 1643 02e9 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1643      43313120 
+ 1643      352E342E 
+ 1643      31203230 
+ 1643      31363036 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYtatOx.s 			page 36
+
+
+ 1644 031c 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1644      20726576 
+ 1644      6973696F 
+ 1644      6E203233 
+ 1644      37373135 
+ 1645 034f 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1645      66756E63 
+ 1645      74696F6E 
+ 1645      2D736563 
+ 1645      74696F6E 
+ 1646              	.LASF34:
+ 1647 0377 42415243 		.ascii	"BARCODE_SpiUartWriteTxData\000"
+ 1647      4F44455F 
+ 1647      53706955 
+ 1647      61727457 
+ 1647      72697465 
+ 1648              	.LASF4:
+ 1649 0392 6C6F6E67 		.ascii	"long int\000"
+ 1649      20696E74 
+ 1649      00
+ 1650              	.LASF15:
+ 1651 039b 6C6F6E67 		.ascii	"long double\000"
+ 1651      20646F75 
+ 1651      626C6500 
+ 1652              	.LASF0:
+ 1653 03a7 7369676E 		.ascii	"signed char\000"
+ 1653      65642063 
+ 1653      68617200 
+ 1654              	.LASF40:
+ 1655 03b3 73747274 		.ascii	"strtok\000"
+ 1655      6F6B00
+ 1656              	.LASF41:
+ 1657 03ba 73707269 		.ascii	"sprintf\000"
+ 1657      6E746600 
+ 1658              	.LASF24:
+ 1659 03c2 70747254 		.ascii	"ptrThird\000"
+ 1659      68697264 
+ 1659      00
+ 1660              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

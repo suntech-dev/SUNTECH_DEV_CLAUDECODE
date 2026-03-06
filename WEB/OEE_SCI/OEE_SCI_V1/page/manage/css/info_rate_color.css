@@ -1,0 +1,276 @@
+ /* Rate Color Page Specific Styles */
+
+ /* Rate Stage Cards */
+ .rate-stage-card {
+   background: var(--sap-surface-1);
+   border: 1px solid var(--sap-border-neutral);
+   border-radius: var(--sap-radius-md);
+   padding: var(--sap-spacing-lg);
+   margin-bottom: var(--sap-spacing-md);
+   transition: all 0.2s ease;
+ }
+
+ .rate-stage-card:hover {
+   border-color: var(--sap-brand-primary);
+   box-shadow: 0 2px 8px rgba(0, 112, 242, 0.1);
+ }
+
+ .rate-stage-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: var(--sap-spacing-md);
+ }
+
+ .rate-stage-title {
+   font-weight: var(--sap-font-weight-medium);
+   font-size: var(--sap-font-size-lg);
+   color: var(--sap-text-primary);
+ }
+
+ .selected-color-preview {
+   display: flex;
+   align-items: center;
+   gap: var(--sap-spacing-sm);
+ }
+
+ /* Rate Range Container */
+ .rate-range-container {
+   margin-top: var(--sap-spacing-md);
+ }
+
+ .range-slider-wrapper {
+   margin-top: var(--sap-spacing-sm);
+   padding: var(--sap-spacing-md);
+   background: var(--sap-surface-2);
+   border-radius: var(--sap-radius-sm);
+ }
+
+ /* Ion Range Slider Fiori Theme */
+ .irs.irs--fiori {
+   font-family: var(--sap-font-family);
+ }
+
+ .irs--fiori .irs-line {
+   background: var(--sap-border-neutral);
+   height: 4px;
+   border-radius: 2px;
+ }
+
+ .irs--fiori .irs-bar {
+   background: var(--sap-brand-primary);
+   height: 4px;
+   border-radius: 2px;
+ }
+
+ .irs--fiori .irs-handle {
+   background: var(--sap-surface-1);
+   border: 2px solid var(--sap-brand-primary);
+   border-radius: 50%;
+   width: 20px;
+   height: 20px;
+   top: -8px;
+   cursor: pointer;
+ }
+
+ .irs--fiori .irs-handle:hover {
+   background: var(--sap-brand-primary);
+ }
+
+ .irs--fiori .irs-from,
+ .irs--fiori .irs-to,
+ .irs--fiori .irs-single {
+   background: var(--sap-brand-primary);
+   color: var(--sap-text-inverse);
+   border-radius: var(--sap-radius-sm);
+   font-size: var(--sap-font-size-sm);
+   padding: 4px 8px;
+   font-weight: var(--sap-font-weight-medium);
+ }
+
+ .irs--fiori .irs-grid-text {
+   color: var(--sap-text-secondary);
+   font-size: var(--sap-font-size-xs);
+ }
+
+ /* Spectrum Color Picker Integration */
+ .spectrum-colorpicker {
+   border: 1px solid var(--sap-border-neutral);
+   border-radius: var(--sap-radius-sm);
+   padding: var(--sap-spacing-xs) var(--sap-spacing-sm);
+   font-family: var(--sap-font-family);
+   font-size: var(--sap-font-size-sm);
+   background: var(--sap-surface-1);
+   color: var(--sap-text-primary);
+   cursor: pointer;
+   transition: all 0.2s ease;
+ }
+
+ .spectrum-colorpicker:hover {
+   border-color: var(--sap-brand-primary);
+ }
+
+ .spectrum-colorpicker:focus {
+   outline: none;
+   border-color: var(--sap-brand-primary);
+   box-shadow: 0 0 0 2px rgba(0, 112, 242, 0.2);
+ }
+
+ /* Preview Container Enhancements */
+ #previewContainer .fiori-card {
+   transition: all 0.2s ease;
+ }
+
+ #previewContainer .fiori-card:hover {
+   transform: translateY(-2px);
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+ }
+
+ .stage-color-box {
+   border: 1px solid var(--sap-border-neutral);
+   transition: all 0.2s ease;
+ }
+
+ .stage-color-box:hover {
+   transform: scale(1.1);
+   border-color: var(--sap-text-primary);
+ }
+
+ /* Quick Actions */
+ .quick-actions {
+   display: flex;
+   gap: var(--sap-spacing-sm);
+   align-items: center;
+ }
+
+ /* Real-time Status Indicator */
+ .real-time-status {
+   display: flex;
+   align-items: center;
+   gap: var(--sap-spacing-xs);
+   color: var(--sap-status-success);
+   font-size: var(--sap-font-size-sm);
+ }
+
+ .real-time-status .status-dot {
+   width: 8px;
+   height: 8px;
+   background: var(--sap-status-success);
+   border-radius: 50%;
+   animation: pulse 2s infinite;
+ }
+
+ @keyframes pulse {
+   0% {
+     opacity: 1;
+   }
+
+   50% {
+     opacity: 0.5;
+   }
+
+   100% {
+     opacity: 1;
+   }
+ }
+
+ /* Sample Rate Box */
+ .sample-rate-box {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   width: 60px;
+   height: 40px;
+   border-radius: var(--sap-radius-sm);
+   color: var(--sap-text-inverse);
+   font-weight: var(--sap-font-weight-medium);
+   font-size: var(--sap-font-size-sm);
+   border: 1px solid rgba(255, 255, 255, 0.2);
+   margin: var(--sap-spacing-xs);
+ }
+
+ /* Modal Enhancements */
+ .fiori-modal .fiori-card {
+   max-height: 80vh;
+   overflow-y: auto;
+ }
+
+ .modal-color-item {
+   display: inline-block;
+   width: 32px;
+   height: 32px;
+   margin: 2px;
+   border-radius: var(--sap-radius-sm);
+   border: 2px solid transparent;
+   cursor: pointer;
+   transition: all 0.2s ease;
+   position: relative;
+ }
+
+ .modal-color-item:hover {
+   transform: scale(1.1);
+   border-color: var(--sap-text-primary);
+ }
+
+ .modal-color-item.selected {
+   border-color: var(--sap-brand-primary);
+   box-shadow: 0 0 0 2px rgba(0, 112, 242, 0.3);
+ }
+
+ .modal-color-item .color-inner {
+   display: block;
+   width: 100%;
+   height: 100%;
+   border-radius: 4px;
+ }
+
+ /* Alert Enhancements */
+ .rate-color-alert {
+   z-index: 10000;
+   backdrop-filter: blur(4px);
+ }
+
+ /* Responsive Design */
+ @media (max-width: 768px) {
+   .rate-stage-header {
+     flex-direction: column;
+     align-items: flex-start;
+     gap: var(--sap-spacing-sm);
+   }
+
+   .range-slider-wrapper {
+     padding: var(--sap-spacing-sm);
+   }
+
+   .quick-actions {
+     flex-wrap: wrap;
+   }
+
+   #previewContainer {
+     grid-template-columns: 1fr;
+   }
+ }
+
+ /* Accessibility Enhancements */
+ @media (prefers-reduced-motion: reduce) {
+   * {
+     animation-duration: 0.01ms !important;
+     animation-iteration-count: 1 !important;
+     transition-duration: 0.01ms !important;
+   }
+ }
+
+ /* High Contrast Mode Support */
+ @media (prefers-contrast: high) {
+   .rate-stage-card {
+     border-width: 2px;
+   }
+
+   .irs--fiori .irs-handle {
+     border-width: 3px;
+   }
+
+   .modal-color-item {
+     border-width: 3px;
+   }
+ }

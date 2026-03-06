@@ -1,0 +1,881 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5UPwTP.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"userProjectCounter.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.initUserProject,"ax",%progbits
+  20              		.align	2
+  21              		.global	initUserProject
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	initUserProject, %function
+  25              	initUserProject:
+  26              	.LFB61:
+  27              		.file 1 "userProjectCounter.c"
+   1:userProjectCounter.c **** /* ========================================
+   2:userProjectCounter.c ****  *
+   3:userProjectCounter.c ****  * Copyright Suntech, 2023.03.30
+   4:userProjectCounter.c ****  * All Rights Reserved
+   5:userProjectCounter.c ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:userProjectCounter.c ****  *
+   7:userProjectCounter.c ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:userProjectCounter.c ****  * WHICH IS THE PROPERTY OF Suntech.
+   9:userProjectCounter.c ****  *
+  10:userProjectCounter.c ****  * ========================================
+  11:userProjectCounter.c **** */
+  12:userProjectCounter.c **** #include "userProjectCounter.h"
+  13:userProjectCounter.c **** #include "lib/externalFlash.h"
+  14:userProjectCounter.c ****  
+  15:userProjectCounter.c **** #ifdef USER_PROJECT_TRIM_COUNT
+  16:userProjectCounter.c ****  
+  17:userProjectCounter.c **** MACHINE_PARAMETER *g_ptrMachineParameter = NULL;
+  18:userProjectCounter.c **** MACHINE_PARAMETER g_DefaultMachineParameter = {
+  19:userProjectCounter.c ****     .setTrimCount = MAX_SET_TRIM_COUNT,
+  20:userProjectCounter.c ****   //  .curTrimCount = 0,
+  21:userProjectCounter.c **** };
+  22:userProjectCounter.c ****     
+  23:userProjectCounter.c **** void initUserProject()
+  24:userProjectCounter.c **** {
+  28              		.loc 1 24 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 10B5     		push	{r4, lr}
+  33              		.cfi_def_cfa_offset 8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5UPwTP.s 			page 2
+
+
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  25:userProjectCounter.c ****     g_ptrMachineParameter = (MACHINE_PARAMETER *) getExternalConfigUserData();
+  36              		.loc 1 25 0
+  37 0002 FFF7FEFF 		bl	getExternalConfigUserData
+  38              	.LVL0:
+  39 0006 014B     		ldr	r3, .L2
+  40 0008 1860     		str	r0, [r3]
+  26:userProjectCounter.c **** }
+  41              		.loc 1 26 0
+  42              		@ sp needed
+  43 000a 10BD     		pop	{r4, pc}
+  44              	.L3:
+  45              		.align	2
+  46              	.L2:
+  47 000c 00000000 		.word	.LANCHOR0
+  48              		.cfi_endproc
+  49              	.LFE61:
+  50              		.size	initUserProject, .-initUserProject
+  51              		.section	.text.SetUserProjectDefaultExternalFlashConfig,"ax",%progbits
+  52              		.align	2
+  53              		.global	SetUserProjectDefaultExternalFlashConfig
+  54              		.code	16
+  55              		.thumb_func
+  56              		.type	SetUserProjectDefaultExternalFlashConfig, %function
+  57              	SetUserProjectDefaultExternalFlashConfig:
+  58              	.LFB62:
+  27:userProjectCounter.c **** 
+  28:userProjectCounter.c **** void SetUserProjectDefaultExternalFlashConfig() // refer to externalFlash.h
+  29:userProjectCounter.c **** {
+  59              		.loc 1 29 0
+  60              		.cfi_startproc
+  61              		@ args = 0, pretend = 0, frame = 0
+  62              		@ frame_needed = 0, uses_anonymous_args = 0
+  63 0000 10B5     		push	{r4, lr}
+  64              		.cfi_def_cfa_offset 8
+  65              		.cfi_offset 4, -8
+  66              		.cfi_offset 14, -4
+  30:userProjectCounter.c ****     memcpy(g_ptrMachineParameter,&g_DefaultMachineParameter,sizeof(MACHINE_PARAMETER));
+  67              		.loc 1 30 0
+  68 0002 034B     		ldr	r3, .L5
+  69 0004 1868     		ldr	r0, [r3]
+  70 0006 0222     		movs	r2, #2
+  71 0008 0249     		ldr	r1, .L5+4
+  72 000a FFF7FEFF 		bl	memcpy
+  73              	.LVL1:
+  31:userProjectCounter.c ****    // g_ptrMachineParameter->machineType = PATTERN_MACHINE;
+  32:userProjectCounter.c **** }
+  74              		.loc 1 32 0
+  75              		@ sp needed
+  76 000e 10BD     		pop	{r4, pc}
+  77              	.L6:
+  78              		.align	2
+  79              	.L5:
+  80 0010 00000000 		.word	.LANCHOR0
+  81 0014 00000000 		.word	.LANCHOR1
+  82              		.cfi_endproc
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5UPwTP.s 			page 3
+
+
+  83              	.LFE62:
+  84              		.size	SetUserProjectDefaultExternalFlashConfig, .-SetUserProjectDefaultExternalFlashConfig
+  85              		.section	.text.userProjectDataValidation,"ax",%progbits
+  86              		.align	2
+  87              		.global	userProjectDataValidation
+  88              		.code	16
+  89              		.thumb_func
+  90              		.type	userProjectDataValidation, %function
+  91              	userProjectDataValidation:
+  92              	.LFB63:
+  33:userProjectCounter.c **** 
+  34:userProjectCounter.c **** uint8 userProjectDataValidation()
+  35:userProjectCounter.c **** {
+  93              		.loc 1 35 0
+  94              		.cfi_startproc
+  95              		@ args = 0, pretend = 0, frame = 0
+  96              		@ frame_needed = 0, uses_anonymous_args = 0
+  97              		@ link register save eliminated.
+  36:userProjectCounter.c ****     if(g_ptrMachineParameter->setTrimCount < 0 || g_ptrMachineParameter->setTrimCount > MAX_SET_TRI
+  98              		.loc 1 36 0
+  99 0000 044B     		ldr	r3, .L10
+ 100 0002 1B68     		ldr	r3, [r3]
+ 101 0004 1B88     		ldrh	r3, [r3]
+ 102 0006 632B     		cmp	r3, #99
+ 103 0008 01D9     		bls	.L9
+ 104 000a 0020     		movs	r0, #0
+ 105 000c 00E0     		b	.L8
+ 106              	.L9:
+  37:userProjectCounter.c ****     
+  38:userProjectCounter.c ****   //      printf("g_ptrMachineParameter. %d\r\n",g_ptrMachineParameter->curTrimCount);
+  39:userProjectCounter.c ****  //   if(g_ptrMachineParameter->curTrimCount < 0 || g_ptrMachineParameter->curTrimCount > MAX_SET_T
+  40:userProjectCounter.c ****     
+  41:userProjectCounter.c ****     return TRUE;
+ 107              		.loc 1 41 0
+ 108 000e 0120     		movs	r0, #1
+ 109              	.L8:
+  42:userProjectCounter.c **** }
+ 110              		.loc 1 42 0
+ 111              		@ sp needed
+ 112 0010 7047     		bx	lr
+ 113              	.L11:
+ 114 0012 C046     		.align	2
+ 115              	.L10:
+ 116 0014 00000000 		.word	.LANCHOR0
+ 117              		.cfi_endproc
+ 118              	.LFE63:
+ 119              		.size	userProjectDataValidation, .-userProjectDataValidation
+ 120              		.global	g_DefaultMachineParameter
+ 121              		.global	g_ptrMachineParameter
+ 122              		.comm	Param,6,4
+ 123              		.data
+ 124              		.align	2
+ 125              		.set	.LANCHOR1,. + 0
+ 126              		.type	g_DefaultMachineParameter, %object
+ 127              		.size	g_DefaultMachineParameter, 2
+ 128              	g_DefaultMachineParameter:
+ 129 0000 6300     		.short	99
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5UPwTP.s 			page 4
+
+
+ 130              		.bss
+ 131              		.align	2
+ 132              		.set	.LANCHOR0,. + 0
+ 133              		.type	g_ptrMachineParameter, %object
+ 134              		.size	g_ptrMachineParameter, 4
+ 135              	g_ptrMachineParameter:
+ 136 0000 00000000 		.space	4
+ 137              		.text
+ 138              	.Letext0:
+ 139              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 140              		.file 3 "main.h"
+ 141              		.file 4 "userProjectCounter.h"
+ 142              		.file 5 "lib/externalFlash.h"
+ 143              		.section	.debug_info,"",%progbits
+ 144              	.Ldebug_info0:
+ 145 0000 A3010000 		.4byte	0x1a3
+ 146 0004 0400     		.2byte	0x4
+ 147 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 148 000a 04       		.byte	0x4
+ 149 000b 01       		.uleb128 0x1
+ 150 000c 3A010000 		.4byte	.LASF26
+ 151 0010 0C       		.byte	0xc
+ 152 0011 47000000 		.4byte	.LASF27
+ 153 0015 93000000 		.4byte	.LASF28
+ 154 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 155 001d 00000000 		.4byte	0
+ 156 0021 00000000 		.4byte	.Ldebug_line0
+ 157 0025 02       		.uleb128 0x2
+ 158 0026 01       		.byte	0x1
+ 159 0027 06       		.byte	0x6
+ 160 0028 50020000 		.4byte	.LASF0
+ 161 002c 02       		.uleb128 0x2
+ 162 002d 01       		.byte	0x1
+ 163 002e 08       		.byte	0x8
+ 164 002f 39000000 		.4byte	.LASF1
+ 165 0033 02       		.uleb128 0x2
+ 166 0034 02       		.byte	0x2
+ 167 0035 05       		.byte	0x5
+ 168 0036 FB010000 		.4byte	.LASF2
+ 169 003a 02       		.uleb128 0x2
+ 170 003b 02       		.byte	0x2
+ 171 003c 07       		.byte	0x7
+ 172 003d 19000000 		.4byte	.LASF3
+ 173 0041 02       		.uleb128 0x2
+ 174 0042 04       		.byte	0x4
+ 175 0043 05       		.byte	0x5
+ 176 0044 3B020000 		.4byte	.LASF4
+ 177 0048 02       		.uleb128 0x2
+ 178 0049 04       		.byte	0x4
+ 179 004a 07       		.byte	0x7
+ 180 004b 5C000000 		.4byte	.LASF5
+ 181 004f 02       		.uleb128 0x2
+ 182 0050 08       		.byte	0x8
+ 183 0051 05       		.byte	0x5
+ 184 0052 D1010000 		.4byte	.LASF6
+ 185 0056 02       		.uleb128 0x2
+ 186 0057 08       		.byte	0x8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5UPwTP.s 			page 5
+
+
+ 187 0058 07       		.byte	0x7
+ 188 0059 1D010000 		.4byte	.LASF7
+ 189 005d 03       		.uleb128 0x3
+ 190 005e 04       		.byte	0x4
+ 191 005f 05       		.byte	0x5
+ 192 0060 696E7400 		.ascii	"int\000"
+ 193 0064 02       		.uleb128 0x2
+ 194 0065 04       		.byte	0x4
+ 195 0066 07       		.byte	0x7
+ 196 0067 10010000 		.4byte	.LASF8
+ 197 006b 04       		.uleb128 0x4
+ 198 006c 05020000 		.4byte	.LASF9
+ 199 0070 02       		.byte	0x2
+ 200 0071 FC01     		.2byte	0x1fc
+ 201 0073 2C000000 		.4byte	0x2c
+ 202 0077 04       		.uleb128 0x4
+ 203 0078 E9000000 		.4byte	.LASF10
+ 204 007c 02       		.byte	0x2
+ 205 007d FD01     		.2byte	0x1fd
+ 206 007f 3A000000 		.4byte	0x3a
+ 207 0083 02       		.uleb128 0x2
+ 208 0084 04       		.byte	0x4
+ 209 0085 04       		.byte	0x4
+ 210 0086 33000000 		.4byte	.LASF11
+ 211 008a 02       		.uleb128 0x2
+ 212 008b 08       		.byte	0x8
+ 213 008c 04       		.byte	0x4
+ 214 008d 2C000000 		.4byte	.LASF12
+ 215 0091 02       		.uleb128 0x2
+ 216 0092 01       		.byte	0x1
+ 217 0093 08       		.byte	0x8
+ 218 0094 DF010000 		.4byte	.LASF13
+ 219 0098 02       		.uleb128 0x2
+ 220 0099 08       		.byte	0x8
+ 221 009a 04       		.byte	0x4
+ 222 009b 44020000 		.4byte	.LASF14
+ 223 009f 02       		.uleb128 0x2
+ 224 00a0 04       		.byte	0x4
+ 225 00a1 07       		.byte	0x7
+ 226 00a2 C8010000 		.4byte	.LASF15
+ 227 00a6 05       		.uleb128 0x5
+ 228 00a7 6E000000 		.4byte	.LASF29
+ 229 00ab 06       		.byte	0x6
+ 230 00ac 03       		.byte	0x3
+ 231 00ad 34       		.byte	0x34
+ 232 00ae D7000000 		.4byte	0xd7
+ 233 00b2 06       		.uleb128 0x6
+ 234 00b3 00000000 		.4byte	.LASF16
+ 235 00b7 03       		.byte	0x3
+ 236 00b8 36       		.byte	0x36
+ 237 00b9 6B000000 		.4byte	0x6b
+ 238 00bd 00       		.byte	0
+ 239 00be 06       		.uleb128 0x6
+ 240 00bf 34010000 		.4byte	.LASF17
+ 241 00c3 03       		.byte	0x3
+ 242 00c4 37       		.byte	0x37
+ 243 00c5 77000000 		.4byte	0x77
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5UPwTP.s 			page 6
+
+
+ 244 00c9 02       		.byte	0x2
+ 245 00ca 06       		.uleb128 0x6
+ 246 00cb E3000000 		.4byte	.LASF18
+ 247 00cf 03       		.byte	0x3
+ 248 00d0 38       		.byte	0x38
+ 249 00d1 77000000 		.4byte	0x77
+ 250 00d5 04       		.byte	0x4
+ 251 00d6 00       		.byte	0
+ 252 00d7 07       		.uleb128 0x7
+ 253 00d8 02       		.byte	0x2
+ 254 00d9 04       		.byte	0x4
+ 255 00da 12       		.byte	0x12
+ 256 00db EC000000 		.4byte	0xec
+ 257 00df 06       		.uleb128 0x6
+ 258 00e0 0C000000 		.4byte	.LASF19
+ 259 00e4 04       		.byte	0x4
+ 260 00e5 13       		.byte	0x13
+ 261 00e6 77000000 		.4byte	0x77
+ 262 00ea 00       		.byte	0
+ 263 00eb 00       		.byte	0
+ 264 00ec 08       		.uleb128 0x8
+ 265 00ed 85020000 		.4byte	.LASF20
+ 266 00f1 04       		.byte	0x4
+ 267 00f2 15       		.byte	0x15
+ 268 00f3 D7000000 		.4byte	0xd7
+ 269 00f7 09       		.uleb128 0x9
+ 270 00f8 E4010000 		.4byte	.LASF21
+ 271 00fc 01       		.byte	0x1
+ 272 00fd 17       		.byte	0x17
+ 273 00fe 00000000 		.4byte	.LFB61
+ 274 0102 10000000 		.4byte	.LFE61-.LFB61
+ 275 0106 01       		.uleb128 0x1
+ 276 0107 9C       		.byte	0x9c
+ 277 0108 16010000 		.4byte	0x116
+ 278 010c 0A       		.uleb128 0xa
+ 279 010d 06000000 		.4byte	.LVL0
+ 280 0111 92010000 		.4byte	0x192
+ 281 0115 00       		.byte	0
+ 282 0116 09       		.uleb128 0x9
+ 283 0117 5C020000 		.4byte	.LASF22
+ 284 011b 01       		.byte	0x1
+ 285 011c 1C       		.byte	0x1c
+ 286 011d 00000000 		.4byte	.LFB62
+ 287 0121 18000000 		.4byte	.LFE62-.LFB62
+ 288 0125 01       		.uleb128 0x1
+ 289 0126 9C       		.byte	0x9c
+ 290 0127 44010000 		.4byte	0x144
+ 291 012b 0B       		.uleb128 0xb
+ 292 012c 0E000000 		.4byte	.LVL1
+ 293 0130 9D010000 		.4byte	0x19d
+ 294 0134 0C       		.uleb128 0xc
+ 295 0135 01       		.uleb128 0x1
+ 296 0136 51       		.byte	0x51
+ 297 0137 05       		.uleb128 0x5
+ 298 0138 03       		.byte	0x3
+ 299 0139 00000000 		.4byte	.LANCHOR1
+ 300 013d 0C       		.uleb128 0xc
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5UPwTP.s 			page 7
+
+
+ 301 013e 01       		.uleb128 0x1
+ 302 013f 52       		.byte	0x52
+ 303 0140 01       		.uleb128 0x1
+ 304 0141 32       		.byte	0x32
+ 305 0142 00       		.byte	0
+ 306 0143 00       		.byte	0
+ 307 0144 0D       		.uleb128 0xd
+ 308 0145 F0000000 		.4byte	.LASF30
+ 309 0149 01       		.byte	0x1
+ 310 014a 22       		.byte	0x22
+ 311 014b 6B000000 		.4byte	0x6b
+ 312 014f 00000000 		.4byte	.LFB63
+ 313 0153 18000000 		.4byte	.LFE63-.LFB63
+ 314 0157 01       		.uleb128 0x1
+ 315 0158 9C       		.byte	0x9c
+ 316 0159 0E       		.uleb128 0xe
+ 317 015a 0A010000 		.4byte	.LASF23
+ 318 015e 03       		.byte	0x3
+ 319 015f 3B       		.byte	0x3b
+ 320 0160 A6000000 		.4byte	0xa6
+ 321 0164 05       		.uleb128 0x5
+ 322 0165 03       		.byte	0x3
+ 323 0166 00000000 		.4byte	Param
+ 324 016a 0E       		.uleb128 0xe
+ 325 016b 25020000 		.4byte	.LASF24
+ 326 016f 01       		.byte	0x1
+ 327 0170 11       		.byte	0x11
+ 328 0171 7B010000 		.4byte	0x17b
+ 329 0175 05       		.uleb128 0x5
+ 330 0176 03       		.byte	0x3
+ 331 0177 00000000 		.4byte	g_ptrMachineParameter
+ 332 017b 0F       		.uleb128 0xf
+ 333 017c 04       		.byte	0x4
+ 334 017d EC000000 		.4byte	0xec
+ 335 0181 0E       		.uleb128 0xe
+ 336 0182 0B020000 		.4byte	.LASF25
+ 337 0186 01       		.byte	0x1
+ 338 0187 12       		.byte	0x12
+ 339 0188 EC000000 		.4byte	0xec
+ 340 018c 05       		.uleb128 0x5
+ 341 018d 03       		.byte	0x3
+ 342 018e 00000000 		.4byte	g_DefaultMachineParameter
+ 343 0192 10       		.uleb128 0x10
+ 344 0193 79000000 		.4byte	.LASF31
+ 345 0197 79000000 		.4byte	.LASF31
+ 346 019b 05       		.byte	0x5
+ 347 019c 20       		.byte	0x20
+ 348 019d 11       		.uleb128 0x11
+ 349 019e F4010000 		.4byte	.LASF32
+ 350 01a2 F4010000 		.4byte	.LASF32
+ 351 01a6 00       		.byte	0
+ 352              		.section	.debug_abbrev,"",%progbits
+ 353              	.Ldebug_abbrev0:
+ 354 0000 01       		.uleb128 0x1
+ 355 0001 11       		.uleb128 0x11
+ 356 0002 01       		.byte	0x1
+ 357 0003 25       		.uleb128 0x25
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5UPwTP.s 			page 8
+
+
+ 358 0004 0E       		.uleb128 0xe
+ 359 0005 13       		.uleb128 0x13
+ 360 0006 0B       		.uleb128 0xb
+ 361 0007 03       		.uleb128 0x3
+ 362 0008 0E       		.uleb128 0xe
+ 363 0009 1B       		.uleb128 0x1b
+ 364 000a 0E       		.uleb128 0xe
+ 365 000b 55       		.uleb128 0x55
+ 366 000c 17       		.uleb128 0x17
+ 367 000d 11       		.uleb128 0x11
+ 368 000e 01       		.uleb128 0x1
+ 369 000f 10       		.uleb128 0x10
+ 370 0010 17       		.uleb128 0x17
+ 371 0011 00       		.byte	0
+ 372 0012 00       		.byte	0
+ 373 0013 02       		.uleb128 0x2
+ 374 0014 24       		.uleb128 0x24
+ 375 0015 00       		.byte	0
+ 376 0016 0B       		.uleb128 0xb
+ 377 0017 0B       		.uleb128 0xb
+ 378 0018 3E       		.uleb128 0x3e
+ 379 0019 0B       		.uleb128 0xb
+ 380 001a 03       		.uleb128 0x3
+ 381 001b 0E       		.uleb128 0xe
+ 382 001c 00       		.byte	0
+ 383 001d 00       		.byte	0
+ 384 001e 03       		.uleb128 0x3
+ 385 001f 24       		.uleb128 0x24
+ 386 0020 00       		.byte	0
+ 387 0021 0B       		.uleb128 0xb
+ 388 0022 0B       		.uleb128 0xb
+ 389 0023 3E       		.uleb128 0x3e
+ 390 0024 0B       		.uleb128 0xb
+ 391 0025 03       		.uleb128 0x3
+ 392 0026 08       		.uleb128 0x8
+ 393 0027 00       		.byte	0
+ 394 0028 00       		.byte	0
+ 395 0029 04       		.uleb128 0x4
+ 396 002a 16       		.uleb128 0x16
+ 397 002b 00       		.byte	0
+ 398 002c 03       		.uleb128 0x3
+ 399 002d 0E       		.uleb128 0xe
+ 400 002e 3A       		.uleb128 0x3a
+ 401 002f 0B       		.uleb128 0xb
+ 402 0030 3B       		.uleb128 0x3b
+ 403 0031 05       		.uleb128 0x5
+ 404 0032 49       		.uleb128 0x49
+ 405 0033 13       		.uleb128 0x13
+ 406 0034 00       		.byte	0
+ 407 0035 00       		.byte	0
+ 408 0036 05       		.uleb128 0x5
+ 409 0037 13       		.uleb128 0x13
+ 410 0038 01       		.byte	0x1
+ 411 0039 03       		.uleb128 0x3
+ 412 003a 0E       		.uleb128 0xe
+ 413 003b 0B       		.uleb128 0xb
+ 414 003c 0B       		.uleb128 0xb
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5UPwTP.s 			page 9
+
+
+ 415 003d 3A       		.uleb128 0x3a
+ 416 003e 0B       		.uleb128 0xb
+ 417 003f 3B       		.uleb128 0x3b
+ 418 0040 0B       		.uleb128 0xb
+ 419 0041 01       		.uleb128 0x1
+ 420 0042 13       		.uleb128 0x13
+ 421 0043 00       		.byte	0
+ 422 0044 00       		.byte	0
+ 423 0045 06       		.uleb128 0x6
+ 424 0046 0D       		.uleb128 0xd
+ 425 0047 00       		.byte	0
+ 426 0048 03       		.uleb128 0x3
+ 427 0049 0E       		.uleb128 0xe
+ 428 004a 3A       		.uleb128 0x3a
+ 429 004b 0B       		.uleb128 0xb
+ 430 004c 3B       		.uleb128 0x3b
+ 431 004d 0B       		.uleb128 0xb
+ 432 004e 49       		.uleb128 0x49
+ 433 004f 13       		.uleb128 0x13
+ 434 0050 38       		.uleb128 0x38
+ 435 0051 0B       		.uleb128 0xb
+ 436 0052 00       		.byte	0
+ 437 0053 00       		.byte	0
+ 438 0054 07       		.uleb128 0x7
+ 439 0055 13       		.uleb128 0x13
+ 440 0056 01       		.byte	0x1
+ 441 0057 0B       		.uleb128 0xb
+ 442 0058 0B       		.uleb128 0xb
+ 443 0059 3A       		.uleb128 0x3a
+ 444 005a 0B       		.uleb128 0xb
+ 445 005b 3B       		.uleb128 0x3b
+ 446 005c 0B       		.uleb128 0xb
+ 447 005d 01       		.uleb128 0x1
+ 448 005e 13       		.uleb128 0x13
+ 449 005f 00       		.byte	0
+ 450 0060 00       		.byte	0
+ 451 0061 08       		.uleb128 0x8
+ 452 0062 16       		.uleb128 0x16
+ 453 0063 00       		.byte	0
+ 454 0064 03       		.uleb128 0x3
+ 455 0065 0E       		.uleb128 0xe
+ 456 0066 3A       		.uleb128 0x3a
+ 457 0067 0B       		.uleb128 0xb
+ 458 0068 3B       		.uleb128 0x3b
+ 459 0069 0B       		.uleb128 0xb
+ 460 006a 49       		.uleb128 0x49
+ 461 006b 13       		.uleb128 0x13
+ 462 006c 00       		.byte	0
+ 463 006d 00       		.byte	0
+ 464 006e 09       		.uleb128 0x9
+ 465 006f 2E       		.uleb128 0x2e
+ 466 0070 01       		.byte	0x1
+ 467 0071 3F       		.uleb128 0x3f
+ 468 0072 19       		.uleb128 0x19
+ 469 0073 03       		.uleb128 0x3
+ 470 0074 0E       		.uleb128 0xe
+ 471 0075 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5UPwTP.s 			page 10
+
+
+ 472 0076 0B       		.uleb128 0xb
+ 473 0077 3B       		.uleb128 0x3b
+ 474 0078 0B       		.uleb128 0xb
+ 475 0079 11       		.uleb128 0x11
+ 476 007a 01       		.uleb128 0x1
+ 477 007b 12       		.uleb128 0x12
+ 478 007c 06       		.uleb128 0x6
+ 479 007d 40       		.uleb128 0x40
+ 480 007e 18       		.uleb128 0x18
+ 481 007f 9742     		.uleb128 0x2117
+ 482 0081 19       		.uleb128 0x19
+ 483 0082 01       		.uleb128 0x1
+ 484 0083 13       		.uleb128 0x13
+ 485 0084 00       		.byte	0
+ 486 0085 00       		.byte	0
+ 487 0086 0A       		.uleb128 0xa
+ 488 0087 898201   		.uleb128 0x4109
+ 489 008a 00       		.byte	0
+ 490 008b 11       		.uleb128 0x11
+ 491 008c 01       		.uleb128 0x1
+ 492 008d 31       		.uleb128 0x31
+ 493 008e 13       		.uleb128 0x13
+ 494 008f 00       		.byte	0
+ 495 0090 00       		.byte	0
+ 496 0091 0B       		.uleb128 0xb
+ 497 0092 898201   		.uleb128 0x4109
+ 498 0095 01       		.byte	0x1
+ 499 0096 11       		.uleb128 0x11
+ 500 0097 01       		.uleb128 0x1
+ 501 0098 31       		.uleb128 0x31
+ 502 0099 13       		.uleb128 0x13
+ 503 009a 00       		.byte	0
+ 504 009b 00       		.byte	0
+ 505 009c 0C       		.uleb128 0xc
+ 506 009d 8A8201   		.uleb128 0x410a
+ 507 00a0 00       		.byte	0
+ 508 00a1 02       		.uleb128 0x2
+ 509 00a2 18       		.uleb128 0x18
+ 510 00a3 9142     		.uleb128 0x2111
+ 511 00a5 18       		.uleb128 0x18
+ 512 00a6 00       		.byte	0
+ 513 00a7 00       		.byte	0
+ 514 00a8 0D       		.uleb128 0xd
+ 515 00a9 2E       		.uleb128 0x2e
+ 516 00aa 00       		.byte	0
+ 517 00ab 3F       		.uleb128 0x3f
+ 518 00ac 19       		.uleb128 0x19
+ 519 00ad 03       		.uleb128 0x3
+ 520 00ae 0E       		.uleb128 0xe
+ 521 00af 3A       		.uleb128 0x3a
+ 522 00b0 0B       		.uleb128 0xb
+ 523 00b1 3B       		.uleb128 0x3b
+ 524 00b2 0B       		.uleb128 0xb
+ 525 00b3 49       		.uleb128 0x49
+ 526 00b4 13       		.uleb128 0x13
+ 527 00b5 11       		.uleb128 0x11
+ 528 00b6 01       		.uleb128 0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5UPwTP.s 			page 11
+
+
+ 529 00b7 12       		.uleb128 0x12
+ 530 00b8 06       		.uleb128 0x6
+ 531 00b9 40       		.uleb128 0x40
+ 532 00ba 18       		.uleb128 0x18
+ 533 00bb 9742     		.uleb128 0x2117
+ 534 00bd 19       		.uleb128 0x19
+ 535 00be 00       		.byte	0
+ 536 00bf 00       		.byte	0
+ 537 00c0 0E       		.uleb128 0xe
+ 538 00c1 34       		.uleb128 0x34
+ 539 00c2 00       		.byte	0
+ 540 00c3 03       		.uleb128 0x3
+ 541 00c4 0E       		.uleb128 0xe
+ 542 00c5 3A       		.uleb128 0x3a
+ 543 00c6 0B       		.uleb128 0xb
+ 544 00c7 3B       		.uleb128 0x3b
+ 545 00c8 0B       		.uleb128 0xb
+ 546 00c9 49       		.uleb128 0x49
+ 547 00ca 13       		.uleb128 0x13
+ 548 00cb 3F       		.uleb128 0x3f
+ 549 00cc 19       		.uleb128 0x19
+ 550 00cd 02       		.uleb128 0x2
+ 551 00ce 18       		.uleb128 0x18
+ 552 00cf 00       		.byte	0
+ 553 00d0 00       		.byte	0
+ 554 00d1 0F       		.uleb128 0xf
+ 555 00d2 0F       		.uleb128 0xf
+ 556 00d3 00       		.byte	0
+ 557 00d4 0B       		.uleb128 0xb
+ 558 00d5 0B       		.uleb128 0xb
+ 559 00d6 49       		.uleb128 0x49
+ 560 00d7 13       		.uleb128 0x13
+ 561 00d8 00       		.byte	0
+ 562 00d9 00       		.byte	0
+ 563 00da 10       		.uleb128 0x10
+ 564 00db 2E       		.uleb128 0x2e
+ 565 00dc 00       		.byte	0
+ 566 00dd 3F       		.uleb128 0x3f
+ 567 00de 19       		.uleb128 0x19
+ 568 00df 3C       		.uleb128 0x3c
+ 569 00e0 19       		.uleb128 0x19
+ 570 00e1 6E       		.uleb128 0x6e
+ 571 00e2 0E       		.uleb128 0xe
+ 572 00e3 03       		.uleb128 0x3
+ 573 00e4 0E       		.uleb128 0xe
+ 574 00e5 3A       		.uleb128 0x3a
+ 575 00e6 0B       		.uleb128 0xb
+ 576 00e7 3B       		.uleb128 0x3b
+ 577 00e8 0B       		.uleb128 0xb
+ 578 00e9 00       		.byte	0
+ 579 00ea 00       		.byte	0
+ 580 00eb 11       		.uleb128 0x11
+ 581 00ec 2E       		.uleb128 0x2e
+ 582 00ed 00       		.byte	0
+ 583 00ee 3F       		.uleb128 0x3f
+ 584 00ef 19       		.uleb128 0x19
+ 585 00f0 3C       		.uleb128 0x3c
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5UPwTP.s 			page 12
+
+
+ 586 00f1 19       		.uleb128 0x19
+ 587 00f2 6E       		.uleb128 0x6e
+ 588 00f3 0E       		.uleb128 0xe
+ 589 00f4 03       		.uleb128 0x3
+ 590 00f5 0E       		.uleb128 0xe
+ 591 00f6 00       		.byte	0
+ 592 00f7 00       		.byte	0
+ 593 00f8 00       		.byte	0
+ 594              		.section	.debug_aranges,"",%progbits
+ 595 0000 2C000000 		.4byte	0x2c
+ 596 0004 0200     		.2byte	0x2
+ 597 0006 00000000 		.4byte	.Ldebug_info0
+ 598 000a 04       		.byte	0x4
+ 599 000b 00       		.byte	0
+ 600 000c 0000     		.2byte	0
+ 601 000e 0000     		.2byte	0
+ 602 0010 00000000 		.4byte	.LFB61
+ 603 0014 10000000 		.4byte	.LFE61-.LFB61
+ 604 0018 00000000 		.4byte	.LFB62
+ 605 001c 18000000 		.4byte	.LFE62-.LFB62
+ 606 0020 00000000 		.4byte	.LFB63
+ 607 0024 18000000 		.4byte	.LFE63-.LFB63
+ 608 0028 00000000 		.4byte	0
+ 609 002c 00000000 		.4byte	0
+ 610              		.section	.debug_ranges,"",%progbits
+ 611              	.Ldebug_ranges0:
+ 612 0000 00000000 		.4byte	.LFB61
+ 613 0004 10000000 		.4byte	.LFE61
+ 614 0008 00000000 		.4byte	.LFB62
+ 615 000c 18000000 		.4byte	.LFE62
+ 616 0010 00000000 		.4byte	.LFB63
+ 617 0014 18000000 		.4byte	.LFE63
+ 618 0018 00000000 		.4byte	0
+ 619 001c 00000000 		.4byte	0
+ 620              		.section	.debug_line,"",%progbits
+ 621              	.Ldebug_line0:
+ 622 0000 C2000000 		.section	.debug_str,"MS",%progbits,1
+ 622      02008800 
+ 622      00000201 
+ 622      FB0E0D00 
+ 622      01010101 
+ 623              	.LASF16:
+ 624 0000 73746174 		.ascii	"stat_TC_INT\000"
+ 624      5F54435F 
+ 624      494E5400 
+ 625              	.LASF19:
+ 626 000c 73657454 		.ascii	"setTrimCount\000"
+ 626      72696D43 
+ 626      6F756E74 
+ 626      00
+ 627              	.LASF3:
+ 628 0019 73686F72 		.ascii	"short unsigned int\000"
+ 628      7420756E 
+ 628      7369676E 
+ 628      65642069 
+ 628      6E7400
+ 629              	.LASF12:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5UPwTP.s 			page 13
+
+
+ 630 002c 646F7562 		.ascii	"double\000"
+ 630      6C6500
+ 631              	.LASF11:
+ 632 0033 666C6F61 		.ascii	"float\000"
+ 632      7400
+ 633              	.LASF1:
+ 634 0039 756E7369 		.ascii	"unsigned char\000"
+ 634      676E6564 
+ 634      20636861 
+ 634      7200
+ 635              	.LASF27:
+ 636 0047 75736572 		.ascii	"userProjectCounter.c\000"
+ 636      50726F6A 
+ 636      65637443 
+ 636      6F756E74 
+ 636      65722E63 
+ 637              	.LASF5:
+ 638 005c 6C6F6E67 		.ascii	"long unsigned int\000"
+ 638      20756E73 
+ 638      69676E65 
+ 638      6420696E 
+ 638      7400
+ 639              	.LASF29:
+ 640 006e 73506172 		.ascii	"sParameter\000"
+ 640      616D6574 
+ 640      657200
+ 641              	.LASF31:
+ 642 0079 67657445 		.ascii	"getExternalConfigUserData\000"
+ 642      78746572 
+ 642      6E616C43 
+ 642      6F6E6669 
+ 642      67557365 
+ 643              	.LASF28:
+ 644 0093 433A5C53 		.ascii	"C:\\SUNTECH\\PSoC\\KVC_Reset\\Trim_Reset_2025.12.29"
+ 644      554E5445 
+ 644      43485C50 
+ 644      536F435C 
+ 644      4B56435F 
+ 645 00c2 5C547269 		.ascii	"\\Trim_count\\Project\\Design.cydsn\000"
+ 645      6D5F636F 
+ 645      756E745C 
+ 645      50726F6A 
+ 645      6563745C 
+ 646              	.LASF18:
+ 647 00e3 706F735F 		.ascii	"pos_Y\000"
+ 647      5900
+ 648              	.LASF10:
+ 649 00e9 75696E74 		.ascii	"uint16\000"
+ 649      313600
+ 650              	.LASF30:
+ 651 00f0 75736572 		.ascii	"userProjectDataValidation\000"
+ 651      50726F6A 
+ 651      65637444 
+ 651      61746156 
+ 651      616C6964 
+ 652              	.LASF23:
+ 653 010a 50617261 		.ascii	"Param\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5UPwTP.s 			page 14
+
+
+ 653      6D00
+ 654              	.LASF8:
+ 655 0110 756E7369 		.ascii	"unsigned int\000"
+ 655      676E6564 
+ 655      20696E74 
+ 655      00
+ 656              	.LASF7:
+ 657 011d 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 657      206C6F6E 
+ 657      6720756E 
+ 657      7369676E 
+ 657      65642069 
+ 658              	.LASF17:
+ 659 0134 706F735F 		.ascii	"pos_X\000"
+ 659      5800
+ 660              	.LASF26:
+ 661 013a 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 661      43313120 
+ 661      352E342E 
+ 661      31203230 
+ 661      31363036 
+ 662 016d 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 662      20726576 
+ 662      6973696F 
+ 662      6E203233 
+ 662      37373135 
+ 663 01a0 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 663      66756E63 
+ 663      74696F6E 
+ 663      2D736563 
+ 663      74696F6E 
+ 664              	.LASF15:
+ 665 01c8 73697A65 		.ascii	"sizetype\000"
+ 665      74797065 
+ 665      00
+ 666              	.LASF6:
+ 667 01d1 6C6F6E67 		.ascii	"long long int\000"
+ 667      206C6F6E 
+ 667      6720696E 
+ 667      7400
+ 668              	.LASF13:
+ 669 01df 63686172 		.ascii	"char\000"
+ 669      00
+ 670              	.LASF21:
+ 671 01e4 696E6974 		.ascii	"initUserProject\000"
+ 671      55736572 
+ 671      50726F6A 
+ 671      65637400 
+ 672              	.LASF32:
+ 673 01f4 6D656D63 		.ascii	"memcpy\000"
+ 673      707900
+ 674              	.LASF2:
+ 675 01fb 73686F72 		.ascii	"short int\000"
+ 675      7420696E 
+ 675      7400
+ 676              	.LASF9:
+ 677 0205 75696E74 		.ascii	"uint8\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5UPwTP.s 			page 15
+
+
+ 677      3800
+ 678              	.LASF25:
+ 679 020b 675F4465 		.ascii	"g_DefaultMachineParameter\000"
+ 679      6661756C 
+ 679      744D6163 
+ 679      68696E65 
+ 679      50617261 
+ 680              	.LASF24:
+ 681 0225 675F7074 		.ascii	"g_ptrMachineParameter\000"
+ 681      724D6163 
+ 681      68696E65 
+ 681      50617261 
+ 681      6D657465 
+ 682              	.LASF4:
+ 683 023b 6C6F6E67 		.ascii	"long int\000"
+ 683      20696E74 
+ 683      00
+ 684              	.LASF14:
+ 685 0244 6C6F6E67 		.ascii	"long double\000"
+ 685      20646F75 
+ 685      626C6500 
+ 686              	.LASF0:
+ 687 0250 7369676E 		.ascii	"signed char\000"
+ 687      65642063 
+ 687      68617200 
+ 688              	.LASF22:
+ 689 025c 53657455 		.ascii	"SetUserProjectDefaultExternalFlashConfig\000"
+ 689      73657250 
+ 689      726F6A65 
+ 689      63744465 
+ 689      6661756C 
+ 690              	.LASF20:
+ 691 0285 4D414348 		.ascii	"MACHINE_PARAMETER\000"
+ 691      494E455F 
+ 691      50415241 
+ 691      4D455445 
+ 691      5200
+ 692              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

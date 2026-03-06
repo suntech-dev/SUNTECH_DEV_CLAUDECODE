@@ -1,0 +1,1841 @@
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"USBFS_boot.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.USBFS_CyBtldrCommStart,"ax",%progbits
+  20              		.align	2
+  21              		.global	USBFS_CyBtldrCommStart
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	USBFS_CyBtldrCommStart, %function
+  25              	USBFS_CyBtldrCommStart:
+  26              	.LFB1:
+  27              		.file 1 "Generated_Source\\PSoC4\\USBFS_boot.c"
+   1:Generated_Source\PSoC4/USBFS_boot.c **** /***************************************************************************//**
+   2:Generated_Source\PSoC4/USBFS_boot.c **** * \file USBFS_boot.c
+   3:Generated_Source\PSoC4/USBFS_boot.c **** * \version 3.10
+   4:Generated_Source\PSoC4/USBFS_boot.c **** *
+   5:Generated_Source\PSoC4/USBFS_boot.c **** * \brief
+   6:Generated_Source\PSoC4/USBFS_boot.c **** *  This file contains the Bootloader API for USBFS Component.
+   7:Generated_Source\PSoC4/USBFS_boot.c **** *
+   8:Generated_Source\PSoC4/USBFS_boot.c **** ********************************************************************************
+   9:Generated_Source\PSoC4/USBFS_boot.c **** * \copyright
+  10:Generated_Source\PSoC4/USBFS_boot.c **** * Copyright 2008-2016, Cypress Semiconductor Corporation.  All rights reserved.
+  11:Generated_Source\PSoC4/USBFS_boot.c **** * You may use this file only in accordance with the license, terms, conditions,
+  12:Generated_Source\PSoC4/USBFS_boot.c **** * disclaimers, and limitations in the end user license agreement accompanying
+  13:Generated_Source\PSoC4/USBFS_boot.c **** * the software package with which this file was provided.
+  14:Generated_Source\PSoC4/USBFS_boot.c **** *******************************************************************************/
+  15:Generated_Source\PSoC4/USBFS_boot.c **** 
+  16:Generated_Source\PSoC4/USBFS_boot.c **** #include "USBFS_pvt.h"
+  17:Generated_Source\PSoC4/USBFS_boot.c **** 
+  18:Generated_Source\PSoC4/USBFS_boot.c **** #if defined(CYDEV_BOOTLOADER_IO_COMP) && ((CYDEV_BOOTLOADER_IO_COMP == CyBtldr_USBFS) || \
+  19:Generated_Source\PSoC4/USBFS_boot.c ****                                           (CYDEV_BOOTLOADER_IO_COMP == CyBtldr_Custom_Interface))  
+  20:Generated_Source\PSoC4/USBFS_boot.c **** 
+  21:Generated_Source\PSoC4/USBFS_boot.c **** /***************************************
+  22:Generated_Source\PSoC4/USBFS_boot.c **** *    Bootloader Variables
+  23:Generated_Source\PSoC4/USBFS_boot.c **** ***************************************/
+  24:Generated_Source\PSoC4/USBFS_boot.c ****     
+  25:Generated_Source\PSoC4/USBFS_boot.c **** 
+  26:Generated_Source\PSoC4/USBFS_boot.c **** static uint8  USBFS_started = 0u;
+  27:Generated_Source\PSoC4/USBFS_boot.c **** 
+  28:Generated_Source\PSoC4/USBFS_boot.c **** 
+  29:Generated_Source\PSoC4/USBFS_boot.c **** /*******************************************************************************
+  30:Generated_Source\PSoC4/USBFS_boot.c **** * Function Name: USBFS_CyBtldrCommStart
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 2
+
+
+  31:Generated_Source\PSoC4/USBFS_boot.c **** ****************************************************************************//**
+  32:Generated_Source\PSoC4/USBFS_boot.c **** *
+  33:Generated_Source\PSoC4/USBFS_boot.c **** *  This function performs all required initialization for the USBFS component, 
+  34:Generated_Source\PSoC4/USBFS_boot.c **** *  waits on enumeration, and enables communication.
+  35:Generated_Source\PSoC4/USBFS_boot.c **** *
+  36:Generated_Source\PSoC4/USBFS_boot.c **** * \sideeffect
+  37:Generated_Source\PSoC4/USBFS_boot.c **** *  This function starts the USB with 3V or 5V operation.
+  38:Generated_Source\PSoC4/USBFS_boot.c **** *
+  39:Generated_Source\PSoC4/USBFS_boot.c **** * \reentrant
+  40:Generated_Source\PSoC4/USBFS_boot.c **** *  No.
+  41:Generated_Source\PSoC4/USBFS_boot.c **** *
+  42:Generated_Source\PSoC4/USBFS_boot.c **** *******************************************************************************/
+  43:Generated_Source\PSoC4/USBFS_boot.c **** void USBFS_CyBtldrCommStart(void) 
+  44:Generated_Source\PSoC4/USBFS_boot.c **** {
+  28              		.loc 1 44 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 10B5     		push	{r4, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  45:Generated_Source\PSoC4/USBFS_boot.c ****     /* Enable Global Interrupts. Interrupts are mandatory for USBFS component operation. */
+  46:Generated_Source\PSoC4/USBFS_boot.c ****     CyGlobalIntEnable;
+  36              		.loc 1 46 0
+  37              		.syntax divided
+  38              	@ 46 "Generated_Source\PSoC4\USBFS_boot.c" 1
+  39 0002 62B6     		CPSIE   i
+  40              	@ 0 "" 2
+  47:Generated_Source\PSoC4/USBFS_boot.c **** 
+  48:Generated_Source\PSoC4/USBFS_boot.c ****     /* Start USBFS Operation: device 0 and with 5V or 3V operation depend on Voltage Configuration 
+  49:Generated_Source\PSoC4/USBFS_boot.c ****     USBFS_Start(0u, USBFS_DWR_POWER_OPERATION);
+  41              		.loc 1 49 0
+  42              		.thumb
+  43              		.syntax unified
+  44 0004 0221     		movs	r1, #2
+  45 0006 0020     		movs	r0, #0
+  46 0008 FFF7FEFF 		bl	USBFS_Start
+  47              	.LVL0:
+  50:Generated_Source\PSoC4/USBFS_boot.c **** 
+  51:Generated_Source\PSoC4/USBFS_boot.c ****     /* USB component started, the correct enumeration will be checked in the first Read operation. 
+  52:Generated_Source\PSoC4/USBFS_boot.c ****     USBFS_started = 1u;
+  48              		.loc 1 52 0
+  49 000c 0122     		movs	r2, #1
+  50 000e 014B     		ldr	r3, .L2
+  51 0010 1A70     		strb	r2, [r3]
+  53:Generated_Source\PSoC4/USBFS_boot.c **** }
+  52              		.loc 1 53 0
+  53              		@ sp needed
+  54 0012 10BD     		pop	{r4, pc}
+  55              	.L3:
+  56              		.align	2
+  57              	.L2:
+  58 0014 00000000 		.word	.LANCHOR0
+  59              		.cfi_endproc
+  60              	.LFE1:
+  61              		.size	USBFS_CyBtldrCommStart, .-USBFS_CyBtldrCommStart
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 3
+
+
+  62              		.section	.text.USBFS_CyBtldrCommStop,"ax",%progbits
+  63              		.align	2
+  64              		.global	USBFS_CyBtldrCommStop
+  65              		.code	16
+  66              		.thumb_func
+  67              		.type	USBFS_CyBtldrCommStop, %function
+  68              	USBFS_CyBtldrCommStop:
+  69              	.LFB2:
+  54:Generated_Source\PSoC4/USBFS_boot.c **** 
+  55:Generated_Source\PSoC4/USBFS_boot.c **** 
+  56:Generated_Source\PSoC4/USBFS_boot.c **** /*******************************************************************************
+  57:Generated_Source\PSoC4/USBFS_boot.c **** * Function Name: USBFS_CyBtldrCommStop.
+  58:Generated_Source\PSoC4/USBFS_boot.c **** ****************************************************************************//**
+  59:Generated_Source\PSoC4/USBFS_boot.c **** *
+  60:Generated_Source\PSoC4/USBFS_boot.c **** *  This function performs all necessary shutdown tasks required for the USBFS 
+  61:Generated_Source\PSoC4/USBFS_boot.c **** *  component.
+  62:Generated_Source\PSoC4/USBFS_boot.c **** *  
+  63:Generated_Source\PSoC4/USBFS_boot.c **** *  \sideeffect
+  64:Generated_Source\PSoC4/USBFS_boot.c **** *   Calls the USBFS_Stop() function.
+  65:Generated_Source\PSoC4/USBFS_boot.c **** *
+  66:Generated_Source\PSoC4/USBFS_boot.c **** *******************************************************************************/
+  67:Generated_Source\PSoC4/USBFS_boot.c **** void USBFS_CyBtldrCommStop(void) 
+  68:Generated_Source\PSoC4/USBFS_boot.c **** {
+  70              		.loc 1 68 0
+  71              		.cfi_startproc
+  72              		@ args = 0, pretend = 0, frame = 0
+  73              		@ frame_needed = 0, uses_anonymous_args = 0
+  74 0000 10B5     		push	{r4, lr}
+  75              		.cfi_def_cfa_offset 8
+  76              		.cfi_offset 4, -8
+  77              		.cfi_offset 14, -4
+  69:Generated_Source\PSoC4/USBFS_boot.c ****     USBFS_Stop();
+  78              		.loc 1 69 0
+  79 0002 FFF7FEFF 		bl	USBFS_Stop
+  80              	.LVL1:
+  70:Generated_Source\PSoC4/USBFS_boot.c **** }
+  81              		.loc 1 70 0
+  82              		@ sp needed
+  83 0006 10BD     		pop	{r4, pc}
+  84              		.cfi_endproc
+  85              	.LFE2:
+  86              		.size	USBFS_CyBtldrCommStop, .-USBFS_CyBtldrCommStop
+  87              		.section	.text.USBFS_CyBtldrCommReset,"ax",%progbits
+  88              		.align	2
+  89              		.global	USBFS_CyBtldrCommReset
+  90              		.code	16
+  91              		.thumb_func
+  92              		.type	USBFS_CyBtldrCommReset, %function
+  93              	USBFS_CyBtldrCommReset:
+  94              	.LFB3:
+  71:Generated_Source\PSoC4/USBFS_boot.c **** 
+  72:Generated_Source\PSoC4/USBFS_boot.c **** 
+  73:Generated_Source\PSoC4/USBFS_boot.c **** /*******************************************************************************
+  74:Generated_Source\PSoC4/USBFS_boot.c **** * Function Name: USBFS_CyBtldrCommReset.
+  75:Generated_Source\PSoC4/USBFS_boot.c **** ****************************************************************************//**
+  76:Generated_Source\PSoC4/USBFS_boot.c **** *
+  77:Generated_Source\PSoC4/USBFS_boot.c **** *  This function resets receive and transmit communication buffers.
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 4
+
+
+  78:Generated_Source\PSoC4/USBFS_boot.c **** *
+  79:Generated_Source\PSoC4/USBFS_boot.c **** * \reentrant
+  80:Generated_Source\PSoC4/USBFS_boot.c **** *  No
+  81:Generated_Source\PSoC4/USBFS_boot.c **** *
+  82:Generated_Source\PSoC4/USBFS_boot.c **** *******************************************************************************/
+  83:Generated_Source\PSoC4/USBFS_boot.c **** void USBFS_CyBtldrCommReset(void) 
+  84:Generated_Source\PSoC4/USBFS_boot.c **** {
+  95              		.loc 1 84 0
+  96              		.cfi_startproc
+  97              		@ args = 0, pretend = 0, frame = 0
+  98              		@ frame_needed = 0, uses_anonymous_args = 0
+  99 0000 10B5     		push	{r4, lr}
+ 100              		.cfi_def_cfa_offset 8
+ 101              		.cfi_offset 4, -8
+ 102              		.cfi_offset 14, -4
+  85:Generated_Source\PSoC4/USBFS_boot.c ****     USBFS_EnableOutEP(USBFS_BTLDR_OUT_EP); 
+ 103              		.loc 1 85 0
+ 104 0002 0120     		movs	r0, #1
+ 105 0004 FFF7FEFF 		bl	USBFS_EnableOutEP
+ 106              	.LVL2:
+  86:Generated_Source\PSoC4/USBFS_boot.c **** }
+ 107              		.loc 1 86 0
+ 108              		@ sp needed
+ 109 0008 10BD     		pop	{r4, pc}
+ 110              		.cfi_endproc
+ 111              	.LFE3:
+ 112              		.size	USBFS_CyBtldrCommReset, .-USBFS_CyBtldrCommReset
+ 113 000a C046     		.section	.text.USBFS_CyBtldrCommWrite,"ax",%progbits
+ 114              		.align	2
+ 115              		.global	USBFS_CyBtldrCommWrite
+ 116              		.code	16
+ 117              		.thumb_func
+ 118              		.type	USBFS_CyBtldrCommWrite, %function
+ 119              	USBFS_CyBtldrCommWrite:
+ 120              	.LFB4:
+  87:Generated_Source\PSoC4/USBFS_boot.c **** 
+  88:Generated_Source\PSoC4/USBFS_boot.c **** 
+  89:Generated_Source\PSoC4/USBFS_boot.c **** /*******************************************************************************
+  90:Generated_Source\PSoC4/USBFS_boot.c **** * Function Name: USBFS_CyBtldrCommWrite.
+  91:Generated_Source\PSoC4/USBFS_boot.c **** ****************************************************************************//**
+  92:Generated_Source\PSoC4/USBFS_boot.c **** *
+  93:Generated_Source\PSoC4/USBFS_boot.c **** *  This function allows the caller to write data to the bootloader host. It 
+  94:Generated_Source\PSoC4/USBFS_boot.c **** *  handles polling to allow a block of data to be completely sent to the host 
+  95:Generated_Source\PSoC4/USBFS_boot.c **** *  device.
+  96:Generated_Source\PSoC4/USBFS_boot.c **** *
+  97:Generated_Source\PSoC4/USBFS_boot.c **** *  \param pData    A pointer to the block of data to send to the device
+  98:Generated_Source\PSoC4/USBFS_boot.c **** *  \param size     The number of bytes to write.
+  99:Generated_Source\PSoC4/USBFS_boot.c **** *  \param count    Pointer to an unsigned short variable to write the number of
+ 100:Generated_Source\PSoC4/USBFS_boot.c **** *                  bytes actually written.
+ 101:Generated_Source\PSoC4/USBFS_boot.c **** *  \param timeOut  Number of units to wait before returning because of a timeout.
+ 102:Generated_Source\PSoC4/USBFS_boot.c **** *
+ 103:Generated_Source\PSoC4/USBFS_boot.c **** * \return
+ 104:Generated_Source\PSoC4/USBFS_boot.c **** *  Returns CYRET_SUCCESS if no problem was encountered or returns the value that 
+ 105:Generated_Source\PSoC4/USBFS_boot.c **** *  best describes the problem. For more information, see the “Return Codes” 
+ 106:Generated_Source\PSoC4/USBFS_boot.c **** *  section of the System Reference Guide.
+ 107:Generated_Source\PSoC4/USBFS_boot.c **** *
+ 108:Generated_Source\PSoC4/USBFS_boot.c **** * \reentrant
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 5
+
+
+ 109:Generated_Source\PSoC4/USBFS_boot.c **** *  No
+ 110:Generated_Source\PSoC4/USBFS_boot.c **** *
+ 111:Generated_Source\PSoC4/USBFS_boot.c **** *******************************************************************************/
+ 112:Generated_Source\PSoC4/USBFS_boot.c **** cystatus USBFS_CyBtldrCommWrite(const uint8 pData[], uint16 size, uint16 *count, uint8 timeOut) CYS
+ 113:Generated_Source\PSoC4/USBFS_boot.c ****                                                             
+ 114:Generated_Source\PSoC4/USBFS_boot.c **** {
+ 121              		.loc 1 114 0
+ 122              		.cfi_startproc
+ 123              		@ args = 0, pretend = 0, frame = 0
+ 124              		@ frame_needed = 0, uses_anonymous_args = 0
+ 125              	.LVL3:
+ 126 0000 70B5     		push	{r4, r5, r6, lr}
+ 127              		.cfi_def_cfa_offset 16
+ 128              		.cfi_offset 4, -16
+ 129              		.cfi_offset 5, -12
+ 130              		.cfi_offset 6, -8
+ 131              		.cfi_offset 14, -4
+ 132 0002 0E00     		movs	r6, r1
+ 133 0004 1500     		movs	r5, r2
+ 115:Generated_Source\PSoC4/USBFS_boot.c ****     cystatus retCode;
+ 116:Generated_Source\PSoC4/USBFS_boot.c ****     uint16 timeoutMs;
+ 117:Generated_Source\PSoC4/USBFS_boot.c **** 
+ 118:Generated_Source\PSoC4/USBFS_boot.c ****     /* Convert 10mS checks into 1mS checks. */
+ 119:Generated_Source\PSoC4/USBFS_boot.c ****     timeoutMs = ((uint16) 10u * timeOut);
+ 134              		.loc 1 119 0
+ 135 0006 9A00     		lsls	r2, r3, #2
+ 136              	.LVL4:
+ 137 0008 9B18     		adds	r3, r3, r2
+ 138              	.LVL5:
+ 139 000a 5C00     		lsls	r4, r3, #1
+ 140 000c A4B2     		uxth	r4, r4
+ 141              	.LVL6:
+ 120:Generated_Source\PSoC4/USBFS_boot.c **** 
+ 121:Generated_Source\PSoC4/USBFS_boot.c ****     /* Load data into IN endpoint to be read by host. */
+ 122:Generated_Source\PSoC4/USBFS_boot.c ****     USBFS_LoadInEP(USBFS_BTLDR_IN_EP, pData, USBFS_BTLDR_SIZEOF_READ_BUFFER);
+ 142              		.loc 1 122 0
+ 143 000e 4022     		movs	r2, #64
+ 144 0010 0100     		movs	r1, r0
+ 145              	.LVL7:
+ 146 0012 0220     		movs	r0, #2
+ 147              	.LVL8:
+ 148 0014 FFF7FEFF 		bl	USBFS_LoadInEP
+ 149              	.LVL9:
+ 123:Generated_Source\PSoC4/USBFS_boot.c **** 
+ 124:Generated_Source\PSoC4/USBFS_boot.c ****     /* Wait unitl host reads data from IN endpoint. */
+ 125:Generated_Source\PSoC4/USBFS_boot.c ****     while ((USBFS_GetEPState(USBFS_BTLDR_IN_EP) == USBFS_IN_BUFFER_FULL) &&
+ 150              		.loc 1 125 0
+ 151 0018 04E0     		b	.L7
+ 152              	.L9:
+ 126:Generated_Source\PSoC4/USBFS_boot.c ****            (0u != timeoutMs))
+ 127:Generated_Source\PSoC4/USBFS_boot.c ****     {
+ 128:Generated_Source\PSoC4/USBFS_boot.c ****         CyDelay(USBFS_BTLDR_WAIT_1_MS);
+ 153              		.loc 1 128 0
+ 154 001a 0120     		movs	r0, #1
+ 155 001c FFF7FEFF 		bl	CyDelay
+ 156              	.LVL10:
+ 129:Generated_Source\PSoC4/USBFS_boot.c ****         timeoutMs--;
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 6
+
+
+ 157              		.loc 1 129 0
+ 158 0020 013C     		subs	r4, r4, #1
+ 159              	.LVL11:
+ 160 0022 A4B2     		uxth	r4, r4
+ 161              	.LVL12:
+ 162              	.L7:
+ 125:Generated_Source\PSoC4/USBFS_boot.c ****            (0u != timeoutMs))
+ 163              		.loc 1 125 0
+ 164 0024 0220     		movs	r0, #2
+ 165 0026 FFF7FEFF 		bl	USBFS_GetEPState
+ 166              	.LVL13:
+ 167 002a 0028     		cmp	r0, #0
+ 168 002c 01D1     		bne	.L8
+ 125:Generated_Source\PSoC4/USBFS_boot.c ****            (0u != timeoutMs))
+ 169              		.loc 1 125 0 is_stmt 0 discriminator 1
+ 170 002e 002C     		cmp	r4, #0
+ 171 0030 F3D1     		bne	.L9
+ 172              	.L8:
+ 130:Generated_Source\PSoC4/USBFS_boot.c ****     }
+ 131:Generated_Source\PSoC4/USBFS_boot.c **** 
+ 132:Generated_Source\PSoC4/USBFS_boot.c ****     if (USBFS_GetEPState(USBFS_BTLDR_IN_EP) == USBFS_IN_BUFFER_FULL)
+ 173              		.loc 1 132 0 is_stmt 1
+ 174 0032 0220     		movs	r0, #2
+ 175 0034 FFF7FEFF 		bl	USBFS_GetEPState
+ 176              	.LVL14:
+ 177 0038 0028     		cmp	r0, #0
+ 178 003a 02D0     		beq	.L11
+ 133:Generated_Source\PSoC4/USBFS_boot.c ****     {
+ 134:Generated_Source\PSoC4/USBFS_boot.c ****         retCode = CYRET_TIMEOUT;
+ 135:Generated_Source\PSoC4/USBFS_boot.c ****     }
+ 136:Generated_Source\PSoC4/USBFS_boot.c ****     else
+ 137:Generated_Source\PSoC4/USBFS_boot.c ****     {
+ 138:Generated_Source\PSoC4/USBFS_boot.c ****         *count = size;
+ 179              		.loc 1 138 0
+ 180 003c 2E80     		strh	r6, [r5]
+ 181              	.LVL15:
+ 139:Generated_Source\PSoC4/USBFS_boot.c ****         retCode = CYRET_SUCCESS;
+ 182              		.loc 1 139 0
+ 183 003e 0020     		movs	r0, #0
+ 184 0040 00E0     		b	.L10
+ 185              	.LVL16:
+ 186              	.L11:
+ 134:Generated_Source\PSoC4/USBFS_boot.c ****     }
+ 187              		.loc 1 134 0
+ 188 0042 1020     		movs	r0, #16
+ 189              	.L10:
+ 190              	.LVL17:
+ 140:Generated_Source\PSoC4/USBFS_boot.c ****     }
+ 141:Generated_Source\PSoC4/USBFS_boot.c **** 
+ 142:Generated_Source\PSoC4/USBFS_boot.c ****     return (retCode);
+ 143:Generated_Source\PSoC4/USBFS_boot.c **** }
+ 191              		.loc 1 143 0
+ 192              		@ sp needed
+ 193              	.LVL18:
+ 194              	.LVL19:
+ 195 0044 70BD     		pop	{r4, r5, r6, pc}
+ 196              		.cfi_endproc
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 7
+
+
+ 197              	.LFE4:
+ 198              		.size	USBFS_CyBtldrCommWrite, .-USBFS_CyBtldrCommWrite
+ 199 0046 C046     		.section	.text.USBFS_CyBtldrCommRead,"ax",%progbits
+ 200              		.align	2
+ 201              		.global	USBFS_CyBtldrCommRead
+ 202              		.code	16
+ 203              		.thumb_func
+ 204              		.type	USBFS_CyBtldrCommRead, %function
+ 205              	USBFS_CyBtldrCommRead:
+ 206              	.LFB5:
+ 144:Generated_Source\PSoC4/USBFS_boot.c **** 
+ 145:Generated_Source\PSoC4/USBFS_boot.c **** 
+ 146:Generated_Source\PSoC4/USBFS_boot.c **** /*******************************************************************************
+ 147:Generated_Source\PSoC4/USBFS_boot.c **** * Function Name: USBFS_CyBtldrCommRead.
+ 148:Generated_Source\PSoC4/USBFS_boot.c **** ****************************************************************************//**
+ 149:Generated_Source\PSoC4/USBFS_boot.c **** *
+ 150:Generated_Source\PSoC4/USBFS_boot.c **** *  This function allows the caller to read data from the bootloader host. It 
+ 151:Generated_Source\PSoC4/USBFS_boot.c **** *  handles polling to allow a block of data to be completely received from the 
+ 152:Generated_Source\PSoC4/USBFS_boot.c **** *  host device.
+ 153:Generated_Source\PSoC4/USBFS_boot.c **** *
+ 154:Generated_Source\PSoC4/USBFS_boot.c **** *  \param pData    A pointer to the area to store the block of data received
+ 155:Generated_Source\PSoC4/USBFS_boot.c **** *                  from the device.
+ 156:Generated_Source\PSoC4/USBFS_boot.c **** *  \param size     The number of bytes to read.
+ 157:Generated_Source\PSoC4/USBFS_boot.c **** *  \param count    Pointer to an unsigned short variable to write the number
+ 158:Generated_Source\PSoC4/USBFS_boot.c **** *                  of bytes actually read.
+ 159:Generated_Source\PSoC4/USBFS_boot.c **** *  \param timeOut  Number of units to wait before returning because of a timeOut.
+ 160:Generated_Source\PSoC4/USBFS_boot.c **** *                  Timeout is measured in 10s of ms.
+ 161:Generated_Source\PSoC4/USBFS_boot.c **** *
+ 162:Generated_Source\PSoC4/USBFS_boot.c **** * \return
+ 163:Generated_Source\PSoC4/USBFS_boot.c **** *  Returns CYRET_SUCCESS if no problem was encountered or returns the value that 
+ 164:Generated_Source\PSoC4/USBFS_boot.c **** *  best describes the problem. For more information, see the “Return Codes” 
+ 165:Generated_Source\PSoC4/USBFS_boot.c **** *  section of the System Reference Guide.
+ 166:Generated_Source\PSoC4/USBFS_boot.c **** *
+ 167:Generated_Source\PSoC4/USBFS_boot.c **** * \reentrant
+ 168:Generated_Source\PSoC4/USBFS_boot.c **** *  No
+ 169:Generated_Source\PSoC4/USBFS_boot.c **** *
+ 170:Generated_Source\PSoC4/USBFS_boot.c **** *******************************************************************************/
+ 171:Generated_Source\PSoC4/USBFS_boot.c **** cystatus USBFS_CyBtldrCommRead(uint8 pData[], uint16 size, uint16 *count, uint8 timeOut) CYSMALL
+ 172:Generated_Source\PSoC4/USBFS_boot.c ****                                                             
+ 173:Generated_Source\PSoC4/USBFS_boot.c **** {
+ 207              		.loc 1 173 0
+ 208              		.cfi_startproc
+ 209              		@ args = 0, pretend = 0, frame = 8
+ 210              		@ frame_needed = 0, uses_anonymous_args = 0
+ 211              	.LVL20:
+ 212 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 213              		.cfi_def_cfa_offset 20
+ 214              		.cfi_offset 4, -20
+ 215              		.cfi_offset 5, -16
+ 216              		.cfi_offset 6, -12
+ 217              		.cfi_offset 7, -8
+ 218              		.cfi_offset 14, -4
+ 219 0002 83B0     		sub	sp, sp, #12
+ 220              		.cfi_def_cfa_offset 32
+ 221 0004 0190     		str	r0, [sp, #4]
+ 222 0006 0F00     		movs	r7, r1
+ 223 0008 1600     		movs	r6, r2
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 8
+
+
+ 174:Generated_Source\PSoC4/USBFS_boot.c ****     cystatus retCode;
+ 175:Generated_Source\PSoC4/USBFS_boot.c ****     uint16 timeoutMs;
+ 176:Generated_Source\PSoC4/USBFS_boot.c **** 
+ 177:Generated_Source\PSoC4/USBFS_boot.c ****     /* Convert 10mS checks into 1mS checks. */
+ 178:Generated_Source\PSoC4/USBFS_boot.c ****     timeoutMs = ((uint16) 10u * timeOut);
+ 224              		.loc 1 178 0
+ 225 000a 9A00     		lsls	r2, r3, #2
+ 226              	.LVL21:
+ 227 000c 9B18     		adds	r3, r3, r2
+ 228              	.LVL22:
+ 229 000e 5C00     		lsls	r4, r3, #1
+ 230 0010 A4B2     		uxth	r4, r4
+ 231              	.LVL23:
+ 179:Generated_Source\PSoC4/USBFS_boot.c **** 
+ 180:Generated_Source\PSoC4/USBFS_boot.c ****     if (size > USBFS_BTLDR_SIZEOF_WRITE_BUFFER)
+ 232              		.loc 1 180 0
+ 233 0012 4029     		cmp	r1, #64
+ 234 0014 00D9     		bls	.L13
+ 181:Generated_Source\PSoC4/USBFS_boot.c ****     {
+ 182:Generated_Source\PSoC4/USBFS_boot.c ****         size = USBFS_BTLDR_SIZEOF_WRITE_BUFFER;
+ 235              		.loc 1 182 0
+ 236 0016 4027     		movs	r7, #64
+ 237              	.L13:
+ 238              	.LVL24:
+ 183:Generated_Source\PSoC4/USBFS_boot.c ****     }
+ 184:Generated_Source\PSoC4/USBFS_boot.c **** 
+ 185:Generated_Source\PSoC4/USBFS_boot.c ****     /* Wait for enumeration first time. */
+ 186:Generated_Source\PSoC4/USBFS_boot.c ****     if (0u != USBFS_started)
+ 239              		.loc 1 186 0
+ 240 0018 224B     		ldr	r3, .L27
+ 241 001a 1B78     		ldrb	r3, [r3]
+ 242 001c 002B     		cmp	r3, #0
+ 243 001e 06D1     		bne	.L25
+ 244 0020 18E0     		b	.L26
+ 245              	.LVL25:
+ 246              	.L17:
+ 187:Generated_Source\PSoC4/USBFS_boot.c ****     {
+ 188:Generated_Source\PSoC4/USBFS_boot.c ****         /* Wait for device enumeration. */
+ 189:Generated_Source\PSoC4/USBFS_boot.c ****         while ((0u == USBFS_GetConfiguration()) && (0u != timeoutMs))
+ 190:Generated_Source\PSoC4/USBFS_boot.c ****         {
+ 191:Generated_Source\PSoC4/USBFS_boot.c ****             CyDelay(USBFS_BTLDR_WAIT_1_MS);
+ 247              		.loc 1 191 0
+ 248 0022 0120     		movs	r0, #1
+ 249 0024 FFF7FEFF 		bl	CyDelay
+ 250              	.LVL26:
+ 192:Generated_Source\PSoC4/USBFS_boot.c ****             timeoutMs--;
+ 251              		.loc 1 192 0
+ 252 0028 013D     		subs	r5, r5, #1
+ 253              	.LVL27:
+ 254 002a ADB2     		uxth	r5, r5
+ 255              	.LVL28:
+ 256 002c 00E0     		b	.L14
+ 257              	.LVL29:
+ 258              	.L25:
+ 259 002e 2500     		movs	r5, r4
+ 260              	.LVL30:
+ 261              	.L14:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 9
+
+
+ 189:Generated_Source\PSoC4/USBFS_boot.c ****         {
+ 262              		.loc 1 189 0
+ 263 0030 FFF7FEFF 		bl	USBFS_GetConfiguration
+ 264              	.LVL31:
+ 265 0034 0028     		cmp	r0, #0
+ 266 0036 01D1     		bne	.L16
+ 189:Generated_Source\PSoC4/USBFS_boot.c ****         {
+ 267              		.loc 1 189 0 is_stmt 0 discriminator 1
+ 268 0038 002D     		cmp	r5, #0
+ 269 003a F2D1     		bne	.L17
+ 270              	.L16:
+ 193:Generated_Source\PSoC4/USBFS_boot.c ****         }
+ 194:Generated_Source\PSoC4/USBFS_boot.c **** 
+ 195:Generated_Source\PSoC4/USBFS_boot.c ****         /* Enable OUT after enumeration. */
+ 196:Generated_Source\PSoC4/USBFS_boot.c ****         if (0u != USBFS_GetConfiguration())
+ 271              		.loc 1 196 0 is_stmt 1
+ 272 003c FFF7FEFF 		bl	USBFS_GetConfiguration
+ 273              	.LVL32:
+ 274 0040 0028     		cmp	r0, #0
+ 275 0042 17D0     		beq	.L19
+ 197:Generated_Source\PSoC4/USBFS_boot.c ****         {
+ 198:Generated_Source\PSoC4/USBFS_boot.c ****             (void) USBFS_IsConfigurationChanged();  /* Clear configuration changes state status. */
+ 276              		.loc 1 198 0
+ 277 0044 FFF7FEFF 		bl	USBFS_IsConfigurationChanged
+ 278              	.LVL33:
+ 199:Generated_Source\PSoC4/USBFS_boot.c ****             USBFS_CyBtldrCommReset();
+ 279              		.loc 1 199 0
+ 280 0048 FFF7FEFF 		bl	USBFS_CyBtldrCommReset
+ 281              	.LVL34:
+ 200:Generated_Source\PSoC4/USBFS_boot.c ****             
+ 201:Generated_Source\PSoC4/USBFS_boot.c ****             USBFS_started = 0u;
+ 282              		.loc 1 201 0
+ 283 004c 0022     		movs	r2, #0
+ 284 004e 154B     		ldr	r3, .L27
+ 285 0050 1A70     		strb	r2, [r3]
+ 286 0052 0FE0     		b	.L19
+ 287              	.LVL35:
+ 288              	.L26:
+ 202:Generated_Source\PSoC4/USBFS_boot.c ****         }
+ 203:Generated_Source\PSoC4/USBFS_boot.c ****     }
+ 204:Generated_Source\PSoC4/USBFS_boot.c ****     else /* Check for configuration changes, has been done by Host. */
+ 205:Generated_Source\PSoC4/USBFS_boot.c ****     {
+ 206:Generated_Source\PSoC4/USBFS_boot.c ****         if (0u != USBFS_IsConfigurationChanged()) /* Host could send double SET_INTERFACE request o
+ 289              		.loc 1 206 0
+ 290 0054 FFF7FEFF 		bl	USBFS_IsConfigurationChanged
+ 291              	.LVL36:
+ 292 0058 0028     		cmp	r0, #0
+ 293 005a 0BD0     		beq	.L19
+ 207:Generated_Source\PSoC4/USBFS_boot.c ****         {
+ 208:Generated_Source\PSoC4/USBFS_boot.c ****             if (0u != USBFS_GetConfiguration())   /* Init OUT endpoints when device reconfigured. *
+ 294              		.loc 1 208 0
+ 295 005c FFF7FEFF 		bl	USBFS_GetConfiguration
+ 296              	.LVL37:
+ 297 0060 0028     		cmp	r0, #0
+ 298 0062 07D0     		beq	.L19
+ 209:Generated_Source\PSoC4/USBFS_boot.c ****             {
+ 210:Generated_Source\PSoC4/USBFS_boot.c ****                 USBFS_CyBtldrCommReset();
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 10
+
+
+ 299              		.loc 1 210 0
+ 300 0064 FFF7FEFF 		bl	USBFS_CyBtldrCommReset
+ 301              	.LVL38:
+ 302 0068 04E0     		b	.L19
+ 303              	.L21:
+ 211:Generated_Source\PSoC4/USBFS_boot.c ****             }
+ 212:Generated_Source\PSoC4/USBFS_boot.c ****         }
+ 213:Generated_Source\PSoC4/USBFS_boot.c ****     }
+ 214:Generated_Source\PSoC4/USBFS_boot.c **** 
+ 215:Generated_Source\PSoC4/USBFS_boot.c ****     timeoutMs = ((uint16) 10u * timeOut); /* Re-arm timeout */
+ 216:Generated_Source\PSoC4/USBFS_boot.c **** 
+ 217:Generated_Source\PSoC4/USBFS_boot.c ****     /* Wait unitl host writes data into OUT endpoint. */
+ 218:Generated_Source\PSoC4/USBFS_boot.c ****     while ((USBFS_GetEPState(USBFS_BTLDR_OUT_EP) != USBFS_OUT_BUFFER_FULL) && \
+ 219:Generated_Source\PSoC4/USBFS_boot.c ****            (0u != timeoutMs))
+ 220:Generated_Source\PSoC4/USBFS_boot.c ****     {
+ 221:Generated_Source\PSoC4/USBFS_boot.c ****         CyDelay(USBFS_BTLDR_WAIT_1_MS);
+ 304              		.loc 1 221 0
+ 305 006a 0120     		movs	r0, #1
+ 306 006c FFF7FEFF 		bl	CyDelay
+ 307              	.LVL39:
+ 222:Generated_Source\PSoC4/USBFS_boot.c ****         timeoutMs--;
+ 308              		.loc 1 222 0
+ 309 0070 013C     		subs	r4, r4, #1
+ 310              	.LVL40:
+ 311 0072 A4B2     		uxth	r4, r4
+ 312              	.LVL41:
+ 313              	.L19:
+ 218:Generated_Source\PSoC4/USBFS_boot.c ****            (0u != timeoutMs))
+ 314              		.loc 1 218 0
+ 315 0074 0120     		movs	r0, #1
+ 316 0076 FFF7FEFF 		bl	USBFS_GetEPState
+ 317              	.LVL42:
+ 318 007a 0128     		cmp	r0, #1
+ 319 007c 01D0     		beq	.L20
+ 218:Generated_Source\PSoC4/USBFS_boot.c ****            (0u != timeoutMs))
+ 320              		.loc 1 218 0 is_stmt 0 discriminator 1
+ 321 007e 002C     		cmp	r4, #0
+ 322 0080 F3D1     		bne	.L21
+ 323              	.L20:
+ 223:Generated_Source\PSoC4/USBFS_boot.c ****     }
+ 224:Generated_Source\PSoC4/USBFS_boot.c **** 
+ 225:Generated_Source\PSoC4/USBFS_boot.c ****     /* Read data from OUT endpoint if host wrote data into it. */
+ 226:Generated_Source\PSoC4/USBFS_boot.c ****     if (USBFS_GetEPState(USBFS_BTLDR_OUT_EP) == USBFS_OUT_BUFFER_FULL)
+ 324              		.loc 1 226 0 is_stmt 1
+ 325 0082 0120     		movs	r0, #1
+ 326 0084 FFF7FEFF 		bl	USBFS_GetEPState
+ 327              	.LVL43:
+ 328 0088 0128     		cmp	r0, #1
+ 329 008a 06D1     		bne	.L22
+ 227:Generated_Source\PSoC4/USBFS_boot.c ****     {
+ 228:Generated_Source\PSoC4/USBFS_boot.c ****         *count = USBFS_ReadOutEP(USBFS_BTLDR_OUT_EP, pData, size);
+ 330              		.loc 1 228 0
+ 331 008c 3A00     		movs	r2, r7
+ 332 008e 0199     		ldr	r1, [sp, #4]
+ 333 0090 FFF7FEFF 		bl	USBFS_ReadOutEP
+ 334              	.LVL44:
+ 335 0094 3080     		strh	r0, [r6]
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 11
+
+
+ 336              	.LVL45:
+ 229:Generated_Source\PSoC4/USBFS_boot.c ****         retCode = CYRET_SUCCESS;
+ 337              		.loc 1 229 0
+ 338 0096 0020     		movs	r0, #0
+ 339 0098 02E0     		b	.L23
+ 340              	.LVL46:
+ 341              	.L22:
+ 230:Generated_Source\PSoC4/USBFS_boot.c ****     }
+ 231:Generated_Source\PSoC4/USBFS_boot.c ****     else
+ 232:Generated_Source\PSoC4/USBFS_boot.c ****     {
+ 233:Generated_Source\PSoC4/USBFS_boot.c ****         *count = 0u;
+ 342              		.loc 1 233 0
+ 343 009a 0023     		movs	r3, #0
+ 344 009c 3380     		strh	r3, [r6]
+ 345              	.LVL47:
+ 234:Generated_Source\PSoC4/USBFS_boot.c ****         retCode = CYRET_TIMEOUT;
+ 346              		.loc 1 234 0
+ 347 009e 1020     		movs	r0, #16
+ 348              	.LVL48:
+ 349              	.L23:
+ 235:Generated_Source\PSoC4/USBFS_boot.c ****     }
+ 236:Generated_Source\PSoC4/USBFS_boot.c **** 
+ 237:Generated_Source\PSoC4/USBFS_boot.c ****     return (retCode);
+ 238:Generated_Source\PSoC4/USBFS_boot.c **** }
+ 350              		.loc 1 238 0
+ 351 00a0 03B0     		add	sp, sp, #12
+ 352              		@ sp needed
+ 353              	.LVL49:
+ 354              	.LVL50:
+ 355              	.LVL51:
+ 356 00a2 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 357              	.L28:
+ 358              		.align	2
+ 359              	.L27:
+ 360 00a4 00000000 		.word	.LANCHOR0
+ 361              		.cfi_endproc
+ 362              	.LFE5:
+ 363              		.size	USBFS_CyBtldrCommRead, .-USBFS_CyBtldrCommRead
+ 364              		.bss
+ 365              		.set	.LANCHOR0,. + 0
+ 366              		.type	USBFS_started, %object
+ 367              		.size	USBFS_started, 1
+ 368              	USBFS_started:
+ 369 0000 00       		.space	1
+ 370              		.text
+ 371              	.Letext0:
+ 372              		.file 2 "Generated_Source\\PSoC4\\cytypes.h"
+ 373              		.file 3 "Generated_Source\\PSoC4\\USBFS.h"
+ 374              		.file 4 "Generated_Source\\PSoC4\\CyLib.h"
+ 375              		.section	.debug_info,"",%progbits
+ 376              	.Ldebug_info0:
+ 377 0000 8F030000 		.4byte	0x38f
+ 378 0004 0400     		.2byte	0x4
+ 379 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 380 000a 04       		.byte	0x4
+ 381 000b 01       		.uleb128 0x1
+ 382 000c 8A010000 		.4byte	.LASF38
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 12
+
+
+ 383 0010 0C       		.byte	0xc
+ 384 0011 2C000000 		.4byte	.LASF39
+ 385 0015 CC000000 		.4byte	.LASF40
+ 386 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 387 001d 00000000 		.4byte	0
+ 388 0021 00000000 		.4byte	.Ldebug_line0
+ 389 0025 02       		.uleb128 0x2
+ 390 0026 01       		.byte	0x1
+ 391 0027 06       		.byte	0x6
+ 392 0028 91020000 		.4byte	.LASF0
+ 393 002c 02       		.uleb128 0x2
+ 394 002d 01       		.byte	0x1
+ 395 002e 08       		.byte	0x8
+ 396 002f BE000000 		.4byte	.LASF1
+ 397 0033 02       		.uleb128 0x2
+ 398 0034 02       		.byte	0x2
+ 399 0035 05       		.byte	0x5
+ 400 0036 43020000 		.4byte	.LASF2
+ 401 003a 02       		.uleb128 0x2
+ 402 003b 02       		.byte	0x2
+ 403 003c 07       		.byte	0x7
+ 404 003d 19000000 		.4byte	.LASF3
+ 405 0041 02       		.uleb128 0x2
+ 406 0042 04       		.byte	0x4
+ 407 0043 05       		.byte	0x5
+ 408 0044 66020000 		.4byte	.LASF4
+ 409 0048 02       		.uleb128 0x2
+ 410 0049 04       		.byte	0x4
+ 411 004a 07       		.byte	0x7
+ 412 004b A6000000 		.4byte	.LASF5
+ 413 004f 02       		.uleb128 0x2
+ 414 0050 08       		.byte	0x8
+ 415 0051 05       		.byte	0x5
+ 416 0052 21020000 		.4byte	.LASF6
+ 417 0056 02       		.uleb128 0x2
+ 418 0057 08       		.byte	0x8
+ 419 0058 07       		.byte	0x7
+ 420 0059 59010000 		.4byte	.LASF7
+ 421 005d 03       		.uleb128 0x3
+ 422 005e 04       		.byte	0x4
+ 423 005f 05       		.byte	0x5
+ 424 0060 696E7400 		.ascii	"int\000"
+ 425 0064 02       		.uleb128 0x2
+ 426 0065 04       		.byte	0x4
+ 427 0066 07       		.byte	0x7
+ 428 0067 4C010000 		.4byte	.LASF8
+ 429 006b 04       		.uleb128 0x4
+ 430 006c B8000000 		.4byte	.LASF9
+ 431 0070 02       		.byte	0x2
+ 432 0071 D201     		.2byte	0x1d2
+ 433 0073 2C000000 		.4byte	0x2c
+ 434 0077 04       		.uleb128 0x4
+ 435 0078 2E010000 		.4byte	.LASF10
+ 436 007c 02       		.byte	0x2
+ 437 007d D301     		.2byte	0x1d3
+ 438 007f 3A000000 		.4byte	0x3a
+ 439 0083 02       		.uleb128 0x2
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 13
+
+
+ 440 0084 04       		.byte	0x4
+ 441 0085 04       		.byte	0x4
+ 442 0086 90000000 		.4byte	.LASF11
+ 443 008a 02       		.uleb128 0x2
+ 444 008b 08       		.byte	0x8
+ 445 008c 04       		.byte	0x4
+ 446 008d 00010000 		.4byte	.LASF12
+ 447 0091 02       		.uleb128 0x2
+ 448 0092 01       		.byte	0x1
+ 449 0093 08       		.byte	0x8
+ 450 0094 2F020000 		.4byte	.LASF13
+ 451 0098 04       		.uleb128 0x4
+ 452 0099 0A000000 		.4byte	.LASF14
+ 453 009d 02       		.byte	0x2
+ 454 009e 7402     		.2byte	0x274
+ 455 00a0 48000000 		.4byte	0x48
+ 456 00a4 02       		.uleb128 0x2
+ 457 00a5 08       		.byte	0x8
+ 458 00a6 04       		.byte	0x4
+ 459 00a7 6F020000 		.4byte	.LASF15
+ 460 00ab 02       		.uleb128 0x2
+ 461 00ac 04       		.byte	0x4
+ 462 00ad 07       		.byte	0x7
+ 463 00ae 18020000 		.4byte	.LASF16
+ 464 00b2 05       		.uleb128 0x5
+ 465 00b3 79000000 		.4byte	.LASF17
+ 466 00b7 01       		.byte	0x1
+ 467 00b8 2B       		.byte	0x2b
+ 468 00b9 00000000 		.4byte	.LFB1
+ 469 00bd 18000000 		.4byte	.LFE1-.LFB1
+ 470 00c1 01       		.uleb128 0x1
+ 471 00c2 9C       		.byte	0x9c
+ 472 00c3 DC000000 		.4byte	0xdc
+ 473 00c7 06       		.uleb128 0x6
+ 474 00c8 0C000000 		.4byte	.LVL0
+ 475 00cc 27030000 		.4byte	0x327
+ 476 00d0 07       		.uleb128 0x7
+ 477 00d1 01       		.uleb128 0x1
+ 478 00d2 50       		.byte	0x50
+ 479 00d3 01       		.uleb128 0x1
+ 480 00d4 30       		.byte	0x30
+ 481 00d5 07       		.uleb128 0x7
+ 482 00d6 01       		.uleb128 0x1
+ 483 00d7 51       		.byte	0x51
+ 484 00d8 01       		.uleb128 0x1
+ 485 00d9 32       		.byte	0x32
+ 486 00da 00       		.byte	0
+ 487 00db 00       		.byte	0
+ 488 00dc 05       		.uleb128 0x5
+ 489 00dd 7B020000 		.4byte	.LASF18
+ 490 00e1 01       		.byte	0x1
+ 491 00e2 43       		.byte	0x43
+ 492 00e3 00000000 		.4byte	.LFB2
+ 493 00e7 08000000 		.4byte	.LFE2-.LFB2
+ 494 00eb 01       		.uleb128 0x1
+ 495 00ec 9C       		.byte	0x9c
+ 496 00ed FB000000 		.4byte	0xfb
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 14
+
+
+ 497 00f1 08       		.uleb128 0x8
+ 498 00f2 06000000 		.4byte	.LVL1
+ 499 00f6 33030000 		.4byte	0x333
+ 500 00fa 00       		.byte	0
+ 501 00fb 05       		.uleb128 0x5
+ 502 00fc 50000000 		.4byte	.LASF19
+ 503 0100 01       		.byte	0x1
+ 504 0101 53       		.byte	0x53
+ 505 0102 00000000 		.4byte	.LFB3
+ 506 0106 0A000000 		.4byte	.LFE3-.LFB3
+ 507 010a 01       		.uleb128 0x1
+ 508 010b 9C       		.byte	0x9c
+ 509 010c 20010000 		.4byte	0x120
+ 510 0110 06       		.uleb128 0x6
+ 511 0111 08000000 		.4byte	.LVL2
+ 512 0115 3F030000 		.4byte	0x33f
+ 513 0119 07       		.uleb128 0x7
+ 514 011a 01       		.uleb128 0x1
+ 515 011b 50       		.byte	0x50
+ 516 011c 01       		.uleb128 0x1
+ 517 011d 31       		.byte	0x31
+ 518 011e 00       		.byte	0
+ 519 011f 00       		.byte	0
+ 520 0120 09       		.uleb128 0x9
+ 521 0121 17010000 		.4byte	.LASF26
+ 522 0125 01       		.byte	0x1
+ 523 0126 70       		.byte	0x70
+ 524 0127 98000000 		.4byte	0x98
+ 525 012b 00000000 		.4byte	.LFB4
+ 526 012f 46000000 		.4byte	.LFE4-.LFB4
+ 527 0133 01       		.uleb128 0x1
+ 528 0134 9C       		.byte	0x9c
+ 529 0135 E9010000 		.4byte	0x1e9
+ 530 0139 0A       		.uleb128 0xa
+ 531 013a 73000000 		.4byte	.LASF20
+ 532 013e 01       		.byte	0x1
+ 533 013f 70       		.byte	0x70
+ 534 0140 E9010000 		.4byte	0x1e9
+ 535 0144 00000000 		.4byte	.LLST0
+ 536 0148 0A       		.uleb128 0xa
+ 537 0149 A1000000 		.4byte	.LASF21
+ 538 014d 01       		.byte	0x1
+ 539 014e 70       		.byte	0x70
+ 540 014f 77000000 		.4byte	0x77
+ 541 0153 2C000000 		.4byte	.LLST1
+ 542 0157 0A       		.uleb128 0xa
+ 543 0158 13000000 		.4byte	.LASF22
+ 544 015c 01       		.byte	0x1
+ 545 015d 70       		.byte	0x70
+ 546 015e F4010000 		.4byte	0x1f4
+ 547 0162 4D000000 		.4byte	.LLST2
+ 548 0166 0A       		.uleb128 0xa
+ 549 0167 4D020000 		.4byte	.LASF23
+ 550 016b 01       		.byte	0x1
+ 551 016c 70       		.byte	0x70
+ 552 016d 6B000000 		.4byte	0x6b
+ 553 0171 79000000 		.4byte	.LLST3
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 15
+
+
+ 554 0175 0B       		.uleb128 0xb
+ 555 0176 82010000 		.4byte	.LASF24
+ 556 017a 01       		.byte	0x1
+ 557 017b 73       		.byte	0x73
+ 558 017c 98000000 		.4byte	0x98
+ 559 0180 9A000000 		.4byte	.LLST4
+ 560 0184 0B       		.uleb128 0xb
+ 561 0185 00000000 		.4byte	.LASF25
+ 562 0189 01       		.byte	0x1
+ 563 018a 74       		.byte	0x74
+ 564 018b 77000000 		.4byte	0x77
+ 565 018f B9000000 		.4byte	.LLST5
+ 566 0193 0C       		.uleb128 0xc
+ 567 0194 18000000 		.4byte	.LVL9
+ 568 0198 4B030000 		.4byte	0x34b
+ 569 019c B3010000 		.4byte	0x1b3
+ 570 01a0 07       		.uleb128 0x7
+ 571 01a1 01       		.uleb128 0x1
+ 572 01a2 50       		.byte	0x50
+ 573 01a3 01       		.uleb128 0x1
+ 574 01a4 32       		.byte	0x32
+ 575 01a5 07       		.uleb128 0x7
+ 576 01a6 01       		.uleb128 0x1
+ 577 01a7 51       		.byte	0x51
+ 578 01a8 03       		.uleb128 0x3
+ 579 01a9 F3       		.byte	0xf3
+ 580 01aa 01       		.uleb128 0x1
+ 581 01ab 50       		.byte	0x50
+ 582 01ac 07       		.uleb128 0x7
+ 583 01ad 01       		.uleb128 0x1
+ 584 01ae 52       		.byte	0x52
+ 585 01af 02       		.uleb128 0x2
+ 586 01b0 08       		.byte	0x8
+ 587 01b1 40       		.byte	0x40
+ 588 01b2 00       		.byte	0
+ 589 01b3 0C       		.uleb128 0xc
+ 590 01b4 20000000 		.4byte	.LVL10
+ 591 01b8 57030000 		.4byte	0x357
+ 592 01bc C6010000 		.4byte	0x1c6
+ 593 01c0 07       		.uleb128 0x7
+ 594 01c1 01       		.uleb128 0x1
+ 595 01c2 50       		.byte	0x50
+ 596 01c3 01       		.uleb128 0x1
+ 597 01c4 31       		.byte	0x31
+ 598 01c5 00       		.byte	0
+ 599 01c6 0C       		.uleb128 0xc
+ 600 01c7 2A000000 		.4byte	.LVL13
+ 601 01cb 62030000 		.4byte	0x362
+ 602 01cf D9010000 		.4byte	0x1d9
+ 603 01d3 07       		.uleb128 0x7
+ 604 01d4 01       		.uleb128 0x1
+ 605 01d5 50       		.byte	0x50
+ 606 01d6 01       		.uleb128 0x1
+ 607 01d7 32       		.byte	0x32
+ 608 01d8 00       		.byte	0
+ 609 01d9 06       		.uleb128 0x6
+ 610 01da 38000000 		.4byte	.LVL14
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 16
+
+
+ 611 01de 62030000 		.4byte	0x362
+ 612 01e2 07       		.uleb128 0x7
+ 613 01e3 01       		.uleb128 0x1
+ 614 01e4 50       		.byte	0x50
+ 615 01e5 01       		.uleb128 0x1
+ 616 01e6 32       		.byte	0x32
+ 617 01e7 00       		.byte	0
+ 618 01e8 00       		.byte	0
+ 619 01e9 0D       		.uleb128 0xd
+ 620 01ea 04       		.byte	0x4
+ 621 01eb EF010000 		.4byte	0x1ef
+ 622 01ef 0E       		.uleb128 0xe
+ 623 01f0 6B000000 		.4byte	0x6b
+ 624 01f4 0D       		.uleb128 0xd
+ 625 01f5 04       		.byte	0x4
+ 626 01f6 77000000 		.4byte	0x77
+ 627 01fa 09       		.uleb128 0x9
+ 628 01fb B3020000 		.4byte	.LASF27
+ 629 01ff 01       		.byte	0x1
+ 630 0200 AB       		.byte	0xab
+ 631 0201 98000000 		.4byte	0x98
+ 632 0205 00000000 		.4byte	.LFB5
+ 633 0209 A8000000 		.4byte	.LFE5-.LFB5
+ 634 020d 01       		.uleb128 0x1
+ 635 020e 9C       		.byte	0x9c
+ 636 020f 10030000 		.4byte	0x310
+ 637 0213 0A       		.uleb128 0xa
+ 638 0214 73000000 		.4byte	.LASF20
+ 639 0218 01       		.byte	0x1
+ 640 0219 AB       		.byte	0xab
+ 641 021a 10030000 		.4byte	0x310
+ 642 021e D7000000 		.4byte	.LLST6
+ 643 0222 0A       		.uleb128 0xa
+ 644 0223 A1000000 		.4byte	.LASF21
+ 645 0227 01       		.byte	0x1
+ 646 0228 AB       		.byte	0xab
+ 647 0229 77000000 		.4byte	0x77
+ 648 022d 24010000 		.4byte	.LLST7
+ 649 0231 0A       		.uleb128 0xa
+ 650 0232 13000000 		.4byte	.LASF22
+ 651 0236 01       		.byte	0x1
+ 652 0237 AB       		.byte	0xab
+ 653 0238 F4010000 		.4byte	0x1f4
+ 654 023c 42010000 		.4byte	.LLST8
+ 655 0240 0A       		.uleb128 0xa
+ 656 0241 4D020000 		.4byte	.LASF23
+ 657 0245 01       		.byte	0x1
+ 658 0246 AB       		.byte	0xab
+ 659 0247 6B000000 		.4byte	0x6b
+ 660 024b 6E010000 		.4byte	.LLST9
+ 661 024f 0B       		.uleb128 0xb
+ 662 0250 82010000 		.4byte	.LASF24
+ 663 0254 01       		.byte	0x1
+ 664 0255 AE       		.byte	0xae
+ 665 0256 98000000 		.4byte	0x98
+ 666 025a 8F010000 		.4byte	.LLST10
+ 667 025e 0B       		.uleb128 0xb
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 17
+
+
+ 668 025f 00000000 		.4byte	.LASF25
+ 669 0263 01       		.byte	0x1
+ 670 0264 AF       		.byte	0xaf
+ 671 0265 77000000 		.4byte	0x77
+ 672 0269 BA010000 		.4byte	.LLST11
+ 673 026d 0C       		.uleb128 0xc
+ 674 026e 28000000 		.4byte	.LVL26
+ 675 0272 57030000 		.4byte	0x357
+ 676 0276 80020000 		.4byte	0x280
+ 677 027a 07       		.uleb128 0x7
+ 678 027b 01       		.uleb128 0x1
+ 679 027c 50       		.byte	0x50
+ 680 027d 01       		.uleb128 0x1
+ 681 027e 31       		.byte	0x31
+ 682 027f 00       		.byte	0
+ 683 0280 08       		.uleb128 0x8
+ 684 0281 34000000 		.4byte	.LVL31
+ 685 0285 6E030000 		.4byte	0x36e
+ 686 0289 08       		.uleb128 0x8
+ 687 028a 40000000 		.4byte	.LVL32
+ 688 028e 6E030000 		.4byte	0x36e
+ 689 0292 08       		.uleb128 0x8
+ 690 0293 48000000 		.4byte	.LVL33
+ 691 0297 7A030000 		.4byte	0x37a
+ 692 029b 08       		.uleb128 0x8
+ 693 029c 4C000000 		.4byte	.LVL34
+ 694 02a0 FB000000 		.4byte	0xfb
+ 695 02a4 08       		.uleb128 0x8
+ 696 02a5 58000000 		.4byte	.LVL36
+ 697 02a9 7A030000 		.4byte	0x37a
+ 698 02ad 08       		.uleb128 0x8
+ 699 02ae 60000000 		.4byte	.LVL37
+ 700 02b2 6E030000 		.4byte	0x36e
+ 701 02b6 08       		.uleb128 0x8
+ 702 02b7 68000000 		.4byte	.LVL38
+ 703 02bb FB000000 		.4byte	0xfb
+ 704 02bf 0C       		.uleb128 0xc
+ 705 02c0 70000000 		.4byte	.LVL39
+ 706 02c4 57030000 		.4byte	0x357
+ 707 02c8 D2020000 		.4byte	0x2d2
+ 708 02cc 07       		.uleb128 0x7
+ 709 02cd 01       		.uleb128 0x1
+ 710 02ce 50       		.byte	0x50
+ 711 02cf 01       		.uleb128 0x1
+ 712 02d0 31       		.byte	0x31
+ 713 02d1 00       		.byte	0
+ 714 02d2 0C       		.uleb128 0xc
+ 715 02d3 7A000000 		.4byte	.LVL42
+ 716 02d7 62030000 		.4byte	0x362
+ 717 02db E5020000 		.4byte	0x2e5
+ 718 02df 07       		.uleb128 0x7
+ 719 02e0 01       		.uleb128 0x1
+ 720 02e1 50       		.byte	0x50
+ 721 02e2 01       		.uleb128 0x1
+ 722 02e3 31       		.byte	0x31
+ 723 02e4 00       		.byte	0
+ 724 02e5 0C       		.uleb128 0xc
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 18
+
+
+ 725 02e6 88000000 		.4byte	.LVL43
+ 726 02ea 62030000 		.4byte	0x362
+ 727 02ee F8020000 		.4byte	0x2f8
+ 728 02f2 07       		.uleb128 0x7
+ 729 02f3 01       		.uleb128 0x1
+ 730 02f4 50       		.byte	0x50
+ 731 02f5 01       		.uleb128 0x1
+ 732 02f6 31       		.byte	0x31
+ 733 02f7 00       		.byte	0
+ 734 02f8 06       		.uleb128 0x6
+ 735 02f9 94000000 		.4byte	.LVL44
+ 736 02fd 86030000 		.4byte	0x386
+ 737 0301 07       		.uleb128 0x7
+ 738 0302 01       		.uleb128 0x1
+ 739 0303 51       		.byte	0x51
+ 740 0304 03       		.uleb128 0x3
+ 741 0305 91       		.byte	0x91
+ 742 0306 64       		.sleb128 -28
+ 743 0307 06       		.byte	0x6
+ 744 0308 07       		.uleb128 0x7
+ 745 0309 01       		.uleb128 0x1
+ 746 030a 52       		.byte	0x52
+ 747 030b 02       		.uleb128 0x2
+ 748 030c 77       		.byte	0x77
+ 749 030d 00       		.sleb128 0
+ 750 030e 00       		.byte	0
+ 751 030f 00       		.byte	0
+ 752 0310 0D       		.uleb128 0xd
+ 753 0311 04       		.byte	0x4
+ 754 0312 6B000000 		.4byte	0x6b
+ 755 0316 0F       		.uleb128 0xf
+ 756 0317 9D020000 		.4byte	.LASF28
+ 757 031b 01       		.byte	0x1
+ 758 031c 1A       		.byte	0x1a
+ 759 031d 6B000000 		.4byte	0x6b
+ 760 0321 05       		.uleb128 0x5
+ 761 0322 03       		.byte	0x3
+ 762 0323 00000000 		.4byte	USBFS_started
+ 763 0327 10       		.uleb128 0x10
+ 764 0328 67000000 		.4byte	.LASF29
+ 765 032c 67000000 		.4byte	.LASF29
+ 766 0330 03       		.byte	0x3
+ 767 0331 3201     		.2byte	0x132
+ 768 0333 10       		.uleb128 0x10
+ 769 0334 96000000 		.4byte	.LASF30
+ 770 0338 96000000 		.4byte	.LASF30
+ 771 033c 03       		.byte	0x3
+ 772 033d 3401     		.2byte	0x134
+ 773 033f 10       		.uleb128 0x10
+ 774 0340 70010000 		.4byte	.LASF31
+ 775 0344 70010000 		.4byte	.LASF31
+ 776 0348 03       		.byte	0x3
+ 777 0349 3E01     		.2byte	0x13e
+ 778 034b 10       		.uleb128 0x10
+ 779 034c 34020000 		.4byte	.LASF32
+ 780 0350 34020000 		.4byte	.LASF32
+ 781 0354 03       		.byte	0x3
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 19
+
+
+ 782 0355 3A01     		.2byte	0x13a
+ 783 0357 11       		.uleb128 0x11
+ 784 0358 AB020000 		.4byte	.LASF33
+ 785 035c AB020000 		.4byte	.LASF33
+ 786 0360 04       		.byte	0x4
+ 787 0361 D9       		.byte	0xd9
+ 788 0362 10       		.uleb128 0x10
+ 789 0363 55020000 		.4byte	.LASF34
+ 790 0367 55020000 		.4byte	.LASF34
+ 791 036b 03       		.byte	0x3
+ 792 036c 3801     		.2byte	0x138
+ 793 036e 10       		.uleb128 0x10
+ 794 036f 35010000 		.4byte	.LASF35
+ 795 0373 35010000 		.4byte	.LASF35
+ 796 0377 03       		.byte	0x3
+ 797 0378 3501     		.2byte	0x135
+ 798 037a 10       		.uleb128 0x10
+ 799 037b C9020000 		.4byte	.LASF36
+ 800 037f C9020000 		.4byte	.LASF36
+ 801 0383 03       		.byte	0x3
+ 802 0384 3601     		.2byte	0x136
+ 803 0386 10       		.uleb128 0x10
+ 804 0387 07010000 		.4byte	.LASF37
+ 805 038b 07010000 		.4byte	.LASF37
+ 806 038f 03       		.byte	0x3
+ 807 0390 3C01     		.2byte	0x13c
+ 808 0392 00       		.byte	0
+ 809              		.section	.debug_abbrev,"",%progbits
+ 810              	.Ldebug_abbrev0:
+ 811 0000 01       		.uleb128 0x1
+ 812 0001 11       		.uleb128 0x11
+ 813 0002 01       		.byte	0x1
+ 814 0003 25       		.uleb128 0x25
+ 815 0004 0E       		.uleb128 0xe
+ 816 0005 13       		.uleb128 0x13
+ 817 0006 0B       		.uleb128 0xb
+ 818 0007 03       		.uleb128 0x3
+ 819 0008 0E       		.uleb128 0xe
+ 820 0009 1B       		.uleb128 0x1b
+ 821 000a 0E       		.uleb128 0xe
+ 822 000b 55       		.uleb128 0x55
+ 823 000c 17       		.uleb128 0x17
+ 824 000d 11       		.uleb128 0x11
+ 825 000e 01       		.uleb128 0x1
+ 826 000f 10       		.uleb128 0x10
+ 827 0010 17       		.uleb128 0x17
+ 828 0011 00       		.byte	0
+ 829 0012 00       		.byte	0
+ 830 0013 02       		.uleb128 0x2
+ 831 0014 24       		.uleb128 0x24
+ 832 0015 00       		.byte	0
+ 833 0016 0B       		.uleb128 0xb
+ 834 0017 0B       		.uleb128 0xb
+ 835 0018 3E       		.uleb128 0x3e
+ 836 0019 0B       		.uleb128 0xb
+ 837 001a 03       		.uleb128 0x3
+ 838 001b 0E       		.uleb128 0xe
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 20
+
+
+ 839 001c 00       		.byte	0
+ 840 001d 00       		.byte	0
+ 841 001e 03       		.uleb128 0x3
+ 842 001f 24       		.uleb128 0x24
+ 843 0020 00       		.byte	0
+ 844 0021 0B       		.uleb128 0xb
+ 845 0022 0B       		.uleb128 0xb
+ 846 0023 3E       		.uleb128 0x3e
+ 847 0024 0B       		.uleb128 0xb
+ 848 0025 03       		.uleb128 0x3
+ 849 0026 08       		.uleb128 0x8
+ 850 0027 00       		.byte	0
+ 851 0028 00       		.byte	0
+ 852 0029 04       		.uleb128 0x4
+ 853 002a 16       		.uleb128 0x16
+ 854 002b 00       		.byte	0
+ 855 002c 03       		.uleb128 0x3
+ 856 002d 0E       		.uleb128 0xe
+ 857 002e 3A       		.uleb128 0x3a
+ 858 002f 0B       		.uleb128 0xb
+ 859 0030 3B       		.uleb128 0x3b
+ 860 0031 05       		.uleb128 0x5
+ 861 0032 49       		.uleb128 0x49
+ 862 0033 13       		.uleb128 0x13
+ 863 0034 00       		.byte	0
+ 864 0035 00       		.byte	0
+ 865 0036 05       		.uleb128 0x5
+ 866 0037 2E       		.uleb128 0x2e
+ 867 0038 01       		.byte	0x1
+ 868 0039 3F       		.uleb128 0x3f
+ 869 003a 19       		.uleb128 0x19
+ 870 003b 03       		.uleb128 0x3
+ 871 003c 0E       		.uleb128 0xe
+ 872 003d 3A       		.uleb128 0x3a
+ 873 003e 0B       		.uleb128 0xb
+ 874 003f 3B       		.uleb128 0x3b
+ 875 0040 0B       		.uleb128 0xb
+ 876 0041 27       		.uleb128 0x27
+ 877 0042 19       		.uleb128 0x19
+ 878 0043 11       		.uleb128 0x11
+ 879 0044 01       		.uleb128 0x1
+ 880 0045 12       		.uleb128 0x12
+ 881 0046 06       		.uleb128 0x6
+ 882 0047 40       		.uleb128 0x40
+ 883 0048 18       		.uleb128 0x18
+ 884 0049 9742     		.uleb128 0x2117
+ 885 004b 19       		.uleb128 0x19
+ 886 004c 01       		.uleb128 0x1
+ 887 004d 13       		.uleb128 0x13
+ 888 004e 00       		.byte	0
+ 889 004f 00       		.byte	0
+ 890 0050 06       		.uleb128 0x6
+ 891 0051 898201   		.uleb128 0x4109
+ 892 0054 01       		.byte	0x1
+ 893 0055 11       		.uleb128 0x11
+ 894 0056 01       		.uleb128 0x1
+ 895 0057 31       		.uleb128 0x31
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 21
+
+
+ 896 0058 13       		.uleb128 0x13
+ 897 0059 00       		.byte	0
+ 898 005a 00       		.byte	0
+ 899 005b 07       		.uleb128 0x7
+ 900 005c 8A8201   		.uleb128 0x410a
+ 901 005f 00       		.byte	0
+ 902 0060 02       		.uleb128 0x2
+ 903 0061 18       		.uleb128 0x18
+ 904 0062 9142     		.uleb128 0x2111
+ 905 0064 18       		.uleb128 0x18
+ 906 0065 00       		.byte	0
+ 907 0066 00       		.byte	0
+ 908 0067 08       		.uleb128 0x8
+ 909 0068 898201   		.uleb128 0x4109
+ 910 006b 00       		.byte	0
+ 911 006c 11       		.uleb128 0x11
+ 912 006d 01       		.uleb128 0x1
+ 913 006e 31       		.uleb128 0x31
+ 914 006f 13       		.uleb128 0x13
+ 915 0070 00       		.byte	0
+ 916 0071 00       		.byte	0
+ 917 0072 09       		.uleb128 0x9
+ 918 0073 2E       		.uleb128 0x2e
+ 919 0074 01       		.byte	0x1
+ 920 0075 3F       		.uleb128 0x3f
+ 921 0076 19       		.uleb128 0x19
+ 922 0077 03       		.uleb128 0x3
+ 923 0078 0E       		.uleb128 0xe
+ 924 0079 3A       		.uleb128 0x3a
+ 925 007a 0B       		.uleb128 0xb
+ 926 007b 3B       		.uleb128 0x3b
+ 927 007c 0B       		.uleb128 0xb
+ 928 007d 27       		.uleb128 0x27
+ 929 007e 19       		.uleb128 0x19
+ 930 007f 49       		.uleb128 0x49
+ 931 0080 13       		.uleb128 0x13
+ 932 0081 11       		.uleb128 0x11
+ 933 0082 01       		.uleb128 0x1
+ 934 0083 12       		.uleb128 0x12
+ 935 0084 06       		.uleb128 0x6
+ 936 0085 40       		.uleb128 0x40
+ 937 0086 18       		.uleb128 0x18
+ 938 0087 9742     		.uleb128 0x2117
+ 939 0089 19       		.uleb128 0x19
+ 940 008a 01       		.uleb128 0x1
+ 941 008b 13       		.uleb128 0x13
+ 942 008c 00       		.byte	0
+ 943 008d 00       		.byte	0
+ 944 008e 0A       		.uleb128 0xa
+ 945 008f 05       		.uleb128 0x5
+ 946 0090 00       		.byte	0
+ 947 0091 03       		.uleb128 0x3
+ 948 0092 0E       		.uleb128 0xe
+ 949 0093 3A       		.uleb128 0x3a
+ 950 0094 0B       		.uleb128 0xb
+ 951 0095 3B       		.uleb128 0x3b
+ 952 0096 0B       		.uleb128 0xb
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 22
+
+
+ 953 0097 49       		.uleb128 0x49
+ 954 0098 13       		.uleb128 0x13
+ 955 0099 02       		.uleb128 0x2
+ 956 009a 17       		.uleb128 0x17
+ 957 009b 00       		.byte	0
+ 958 009c 00       		.byte	0
+ 959 009d 0B       		.uleb128 0xb
+ 960 009e 34       		.uleb128 0x34
+ 961 009f 00       		.byte	0
+ 962 00a0 03       		.uleb128 0x3
+ 963 00a1 0E       		.uleb128 0xe
+ 964 00a2 3A       		.uleb128 0x3a
+ 965 00a3 0B       		.uleb128 0xb
+ 966 00a4 3B       		.uleb128 0x3b
+ 967 00a5 0B       		.uleb128 0xb
+ 968 00a6 49       		.uleb128 0x49
+ 969 00a7 13       		.uleb128 0x13
+ 970 00a8 02       		.uleb128 0x2
+ 971 00a9 17       		.uleb128 0x17
+ 972 00aa 00       		.byte	0
+ 973 00ab 00       		.byte	0
+ 974 00ac 0C       		.uleb128 0xc
+ 975 00ad 898201   		.uleb128 0x4109
+ 976 00b0 01       		.byte	0x1
+ 977 00b1 11       		.uleb128 0x11
+ 978 00b2 01       		.uleb128 0x1
+ 979 00b3 31       		.uleb128 0x31
+ 980 00b4 13       		.uleb128 0x13
+ 981 00b5 01       		.uleb128 0x1
+ 982 00b6 13       		.uleb128 0x13
+ 983 00b7 00       		.byte	0
+ 984 00b8 00       		.byte	0
+ 985 00b9 0D       		.uleb128 0xd
+ 986 00ba 0F       		.uleb128 0xf
+ 987 00bb 00       		.byte	0
+ 988 00bc 0B       		.uleb128 0xb
+ 989 00bd 0B       		.uleb128 0xb
+ 990 00be 49       		.uleb128 0x49
+ 991 00bf 13       		.uleb128 0x13
+ 992 00c0 00       		.byte	0
+ 993 00c1 00       		.byte	0
+ 994 00c2 0E       		.uleb128 0xe
+ 995 00c3 26       		.uleb128 0x26
+ 996 00c4 00       		.byte	0
+ 997 00c5 49       		.uleb128 0x49
+ 998 00c6 13       		.uleb128 0x13
+ 999 00c7 00       		.byte	0
+ 1000 00c8 00       		.byte	0
+ 1001 00c9 0F       		.uleb128 0xf
+ 1002 00ca 34       		.uleb128 0x34
+ 1003 00cb 00       		.byte	0
+ 1004 00cc 03       		.uleb128 0x3
+ 1005 00cd 0E       		.uleb128 0xe
+ 1006 00ce 3A       		.uleb128 0x3a
+ 1007 00cf 0B       		.uleb128 0xb
+ 1008 00d0 3B       		.uleb128 0x3b
+ 1009 00d1 0B       		.uleb128 0xb
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 23
+
+
+ 1010 00d2 49       		.uleb128 0x49
+ 1011 00d3 13       		.uleb128 0x13
+ 1012 00d4 02       		.uleb128 0x2
+ 1013 00d5 18       		.uleb128 0x18
+ 1014 00d6 00       		.byte	0
+ 1015 00d7 00       		.byte	0
+ 1016 00d8 10       		.uleb128 0x10
+ 1017 00d9 2E       		.uleb128 0x2e
+ 1018 00da 00       		.byte	0
+ 1019 00db 3F       		.uleb128 0x3f
+ 1020 00dc 19       		.uleb128 0x19
+ 1021 00dd 3C       		.uleb128 0x3c
+ 1022 00de 19       		.uleb128 0x19
+ 1023 00df 6E       		.uleb128 0x6e
+ 1024 00e0 0E       		.uleb128 0xe
+ 1025 00e1 03       		.uleb128 0x3
+ 1026 00e2 0E       		.uleb128 0xe
+ 1027 00e3 3A       		.uleb128 0x3a
+ 1028 00e4 0B       		.uleb128 0xb
+ 1029 00e5 3B       		.uleb128 0x3b
+ 1030 00e6 05       		.uleb128 0x5
+ 1031 00e7 00       		.byte	0
+ 1032 00e8 00       		.byte	0
+ 1033 00e9 11       		.uleb128 0x11
+ 1034 00ea 2E       		.uleb128 0x2e
+ 1035 00eb 00       		.byte	0
+ 1036 00ec 3F       		.uleb128 0x3f
+ 1037 00ed 19       		.uleb128 0x19
+ 1038 00ee 3C       		.uleb128 0x3c
+ 1039 00ef 19       		.uleb128 0x19
+ 1040 00f0 6E       		.uleb128 0x6e
+ 1041 00f1 0E       		.uleb128 0xe
+ 1042 00f2 03       		.uleb128 0x3
+ 1043 00f3 0E       		.uleb128 0xe
+ 1044 00f4 3A       		.uleb128 0x3a
+ 1045 00f5 0B       		.uleb128 0xb
+ 1046 00f6 3B       		.uleb128 0x3b
+ 1047 00f7 0B       		.uleb128 0xb
+ 1048 00f8 00       		.byte	0
+ 1049 00f9 00       		.byte	0
+ 1050 00fa 00       		.byte	0
+ 1051              		.section	.debug_loc,"",%progbits
+ 1052              	.Ldebug_loc0:
+ 1053              	.LLST0:
+ 1054 0000 00000000 		.4byte	.LVL3
+ 1055 0004 14000000 		.4byte	.LVL8
+ 1056 0008 0100     		.2byte	0x1
+ 1057 000a 50       		.byte	0x50
+ 1058 000b 14000000 		.4byte	.LVL8
+ 1059 000f 17000000 		.4byte	.LVL9-1
+ 1060 0013 0100     		.2byte	0x1
+ 1061 0015 51       		.byte	0x51
+ 1062 0016 17000000 		.4byte	.LVL9-1
+ 1063 001a 46000000 		.4byte	.LFE4
+ 1064 001e 0400     		.2byte	0x4
+ 1065 0020 F3       		.byte	0xf3
+ 1066 0021 01       		.uleb128 0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 24
+
+
+ 1067 0022 50       		.byte	0x50
+ 1068 0023 9F       		.byte	0x9f
+ 1069 0024 00000000 		.4byte	0
+ 1070 0028 00000000 		.4byte	0
+ 1071              	.LLST1:
+ 1072 002c 00000000 		.4byte	.LVL3
+ 1073 0030 12000000 		.4byte	.LVL7
+ 1074 0034 0100     		.2byte	0x1
+ 1075 0036 51       		.byte	0x51
+ 1076 0037 12000000 		.4byte	.LVL7
+ 1077 003b 46000000 		.4byte	.LFE4
+ 1078 003f 0400     		.2byte	0x4
+ 1079 0041 F3       		.byte	0xf3
+ 1080 0042 01       		.uleb128 0x1
+ 1081 0043 51       		.byte	0x51
+ 1082 0044 9F       		.byte	0x9f
+ 1083 0045 00000000 		.4byte	0
+ 1084 0049 00000000 		.4byte	0
+ 1085              	.LLST2:
+ 1086 004d 00000000 		.4byte	.LVL3
+ 1087 0051 08000000 		.4byte	.LVL4
+ 1088 0055 0100     		.2byte	0x1
+ 1089 0057 52       		.byte	0x52
+ 1090 0058 08000000 		.4byte	.LVL4
+ 1091 005c 44000000 		.4byte	.LVL19
+ 1092 0060 0100     		.2byte	0x1
+ 1093 0062 55       		.byte	0x55
+ 1094 0063 44000000 		.4byte	.LVL19
+ 1095 0067 46000000 		.4byte	.LFE4
+ 1096 006b 0400     		.2byte	0x4
+ 1097 006d F3       		.byte	0xf3
+ 1098 006e 01       		.uleb128 0x1
+ 1099 006f 52       		.byte	0x52
+ 1100 0070 9F       		.byte	0x9f
+ 1101 0071 00000000 		.4byte	0
+ 1102 0075 00000000 		.4byte	0
+ 1103              	.LLST3:
+ 1104 0079 00000000 		.4byte	.LVL3
+ 1105 007d 0A000000 		.4byte	.LVL5
+ 1106 0081 0100     		.2byte	0x1
+ 1107 0083 53       		.byte	0x53
+ 1108 0084 0A000000 		.4byte	.LVL5
+ 1109 0088 46000000 		.4byte	.LFE4
+ 1110 008c 0400     		.2byte	0x4
+ 1111 008e F3       		.byte	0xf3
+ 1112 008f 01       		.uleb128 0x1
+ 1113 0090 53       		.byte	0x53
+ 1114 0091 9F       		.byte	0x9f
+ 1115 0092 00000000 		.4byte	0
+ 1116 0096 00000000 		.4byte	0
+ 1117              	.LLST4:
+ 1118 009a 3E000000 		.4byte	.LVL15
+ 1119 009e 42000000 		.4byte	.LVL16
+ 1120 00a2 0200     		.2byte	0x2
+ 1121 00a4 30       		.byte	0x30
+ 1122 00a5 9F       		.byte	0x9f
+ 1123 00a6 44000000 		.4byte	.LVL17
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 25
+
+
+ 1124 00aa 46000000 		.4byte	.LFE4
+ 1125 00ae 0100     		.2byte	0x1
+ 1126 00b0 50       		.byte	0x50
+ 1127 00b1 00000000 		.4byte	0
+ 1128 00b5 00000000 		.4byte	0
+ 1129              	.LLST5:
+ 1130 00b9 0E000000 		.4byte	.LVL6
+ 1131 00bd 22000000 		.4byte	.LVL11
+ 1132 00c1 0100     		.2byte	0x1
+ 1133 00c3 54       		.byte	0x54
+ 1134 00c4 24000000 		.4byte	.LVL12
+ 1135 00c8 44000000 		.4byte	.LVL18
+ 1136 00cc 0100     		.2byte	0x1
+ 1137 00ce 54       		.byte	0x54
+ 1138 00cf 00000000 		.4byte	0
+ 1139 00d3 00000000 		.4byte	0
+ 1140              	.LLST6:
+ 1141 00d7 00000000 		.4byte	.LVL20
+ 1142 00db 22000000 		.4byte	.LVL25
+ 1143 00df 0100     		.2byte	0x1
+ 1144 00e1 50       		.byte	0x50
+ 1145 00e2 22000000 		.4byte	.LVL25
+ 1146 00e6 2E000000 		.4byte	.LVL29
+ 1147 00ea 0200     		.2byte	0x2
+ 1148 00ec 91       		.byte	0x91
+ 1149 00ed 64       		.sleb128 -28
+ 1150 00ee 2E000000 		.4byte	.LVL29
+ 1151 00f2 30000000 		.4byte	.LVL30
+ 1152 00f6 0100     		.2byte	0x1
+ 1153 00f8 50       		.byte	0x50
+ 1154 00f9 30000000 		.4byte	.LVL30
+ 1155 00fd 54000000 		.4byte	.LVL35
+ 1156 0101 0200     		.2byte	0x2
+ 1157 0103 91       		.byte	0x91
+ 1158 0104 64       		.sleb128 -28
+ 1159 0105 54000000 		.4byte	.LVL35
+ 1160 0109 57000000 		.4byte	.LVL36-1
+ 1161 010d 0100     		.2byte	0x1
+ 1162 010f 50       		.byte	0x50
+ 1163 0110 57000000 		.4byte	.LVL36-1
+ 1164 0114 A8000000 		.4byte	.LFE5
+ 1165 0118 0200     		.2byte	0x2
+ 1166 011a 91       		.byte	0x91
+ 1167 011b 64       		.sleb128 -28
+ 1168 011c 00000000 		.4byte	0
+ 1169 0120 00000000 		.4byte	0
+ 1170              	.LLST7:
+ 1171 0124 00000000 		.4byte	.LVL20
+ 1172 0128 18000000 		.4byte	.LVL24
+ 1173 012c 0100     		.2byte	0x1
+ 1174 012e 51       		.byte	0x51
+ 1175 012f 18000000 		.4byte	.LVL24
+ 1176 0133 A2000000 		.4byte	.LVL51
+ 1177 0137 0100     		.2byte	0x1
+ 1178 0139 57       		.byte	0x57
+ 1179 013a 00000000 		.4byte	0
+ 1180 013e 00000000 		.4byte	0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 26
+
+
+ 1181              	.LLST8:
+ 1182 0142 00000000 		.4byte	.LVL20
+ 1183 0146 0C000000 		.4byte	.LVL21
+ 1184 014a 0100     		.2byte	0x1
+ 1185 014c 52       		.byte	0x52
+ 1186 014d 0C000000 		.4byte	.LVL21
+ 1187 0151 A2000000 		.4byte	.LVL50
+ 1188 0155 0100     		.2byte	0x1
+ 1189 0157 56       		.byte	0x56
+ 1190 0158 A2000000 		.4byte	.LVL50
+ 1191 015c A8000000 		.4byte	.LFE5
+ 1192 0160 0400     		.2byte	0x4
+ 1193 0162 F3       		.byte	0xf3
+ 1194 0163 01       		.uleb128 0x1
+ 1195 0164 52       		.byte	0x52
+ 1196 0165 9F       		.byte	0x9f
+ 1197 0166 00000000 		.4byte	0
+ 1198 016a 00000000 		.4byte	0
+ 1199              	.LLST9:
+ 1200 016e 00000000 		.4byte	.LVL20
+ 1201 0172 0E000000 		.4byte	.LVL22
+ 1202 0176 0100     		.2byte	0x1
+ 1203 0178 53       		.byte	0x53
+ 1204 0179 0E000000 		.4byte	.LVL22
+ 1205 017d A8000000 		.4byte	.LFE5
+ 1206 0181 0400     		.2byte	0x4
+ 1207 0183 F3       		.byte	0xf3
+ 1208 0184 01       		.uleb128 0x1
+ 1209 0185 53       		.byte	0x53
+ 1210 0186 9F       		.byte	0x9f
+ 1211 0187 00000000 		.4byte	0
+ 1212 018b 00000000 		.4byte	0
+ 1213              	.LLST10:
+ 1214 018f 96000000 		.4byte	.LVL45
+ 1215 0193 9A000000 		.4byte	.LVL46
+ 1216 0197 0200     		.2byte	0x2
+ 1217 0199 30       		.byte	0x30
+ 1218 019a 9F       		.byte	0x9f
+ 1219 019b 9E000000 		.4byte	.LVL47
+ 1220 019f A0000000 		.4byte	.LVL48
+ 1221 01a3 0200     		.2byte	0x2
+ 1222 01a5 40       		.byte	0x40
+ 1223 01a6 9F       		.byte	0x9f
+ 1224 01a7 A0000000 		.4byte	.LVL48
+ 1225 01ab A8000000 		.4byte	.LFE5
+ 1226 01af 0100     		.2byte	0x1
+ 1227 01b1 50       		.byte	0x50
+ 1228 01b2 00000000 		.4byte	0
+ 1229 01b6 00000000 		.4byte	0
+ 1230              	.LLST11:
+ 1231 01ba 12000000 		.4byte	.LVL23
+ 1232 01be 22000000 		.4byte	.LVL25
+ 1233 01c2 0100     		.2byte	0x1
+ 1234 01c4 54       		.byte	0x54
+ 1235 01c5 22000000 		.4byte	.LVL25
+ 1236 01c9 2A000000 		.4byte	.LVL27
+ 1237 01cd 0100     		.2byte	0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 27
+
+
+ 1238 01cf 55       		.byte	0x55
+ 1239 01d0 2C000000 		.4byte	.LVL28
+ 1240 01d4 2E000000 		.4byte	.LVL29
+ 1241 01d8 0100     		.2byte	0x1
+ 1242 01da 55       		.byte	0x55
+ 1243 01db 2E000000 		.4byte	.LVL29
+ 1244 01df 30000000 		.4byte	.LVL30
+ 1245 01e3 0100     		.2byte	0x1
+ 1246 01e5 54       		.byte	0x54
+ 1247 01e6 30000000 		.4byte	.LVL30
+ 1248 01ea 54000000 		.4byte	.LVL35
+ 1249 01ee 0100     		.2byte	0x1
+ 1250 01f0 55       		.byte	0x55
+ 1251 01f1 54000000 		.4byte	.LVL35
+ 1252 01f5 72000000 		.4byte	.LVL40
+ 1253 01f9 0100     		.2byte	0x1
+ 1254 01fb 54       		.byte	0x54
+ 1255 01fc 74000000 		.4byte	.LVL41
+ 1256 0200 A2000000 		.4byte	.LVL49
+ 1257 0204 0100     		.2byte	0x1
+ 1258 0206 54       		.byte	0x54
+ 1259 0207 00000000 		.4byte	0
+ 1260 020b 00000000 		.4byte	0
+ 1261              		.section	.debug_aranges,"",%progbits
+ 1262 0000 3C000000 		.4byte	0x3c
+ 1263 0004 0200     		.2byte	0x2
+ 1264 0006 00000000 		.4byte	.Ldebug_info0
+ 1265 000a 04       		.byte	0x4
+ 1266 000b 00       		.byte	0
+ 1267 000c 0000     		.2byte	0
+ 1268 000e 0000     		.2byte	0
+ 1269 0010 00000000 		.4byte	.LFB1
+ 1270 0014 18000000 		.4byte	.LFE1-.LFB1
+ 1271 0018 00000000 		.4byte	.LFB2
+ 1272 001c 08000000 		.4byte	.LFE2-.LFB2
+ 1273 0020 00000000 		.4byte	.LFB3
+ 1274 0024 0A000000 		.4byte	.LFE3-.LFB3
+ 1275 0028 00000000 		.4byte	.LFB4
+ 1276 002c 46000000 		.4byte	.LFE4-.LFB4
+ 1277 0030 00000000 		.4byte	.LFB5
+ 1278 0034 A8000000 		.4byte	.LFE5-.LFB5
+ 1279 0038 00000000 		.4byte	0
+ 1280 003c 00000000 		.4byte	0
+ 1281              		.section	.debug_ranges,"",%progbits
+ 1282              	.Ldebug_ranges0:
+ 1283 0000 00000000 		.4byte	.LFB1
+ 1284 0004 18000000 		.4byte	.LFE1
+ 1285 0008 00000000 		.4byte	.LFB2
+ 1286 000c 08000000 		.4byte	.LFE2
+ 1287 0010 00000000 		.4byte	.LFB3
+ 1288 0014 0A000000 		.4byte	.LFE3
+ 1289 0018 00000000 		.4byte	.LFB4
+ 1290 001c 46000000 		.4byte	.LFE4
+ 1291 0020 00000000 		.4byte	.LFB5
+ 1292 0024 A8000000 		.4byte	.LFE5
+ 1293 0028 00000000 		.4byte	0
+ 1294 002c 00000000 		.4byte	0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 28
+
+
+ 1295              		.section	.debug_line,"",%progbits
+ 1296              	.Ldebug_line0:
+ 1297 0000 F5000000 		.section	.debug_str,"MS",%progbits,1
+ 1297      02005D00 
+ 1297      00000201 
+ 1297      FB0E0D00 
+ 1297      01010101 
+ 1298              	.LASF25:
+ 1299 0000 74696D65 		.ascii	"timeoutMs\000"
+ 1299      6F75744D 
+ 1299      7300
+ 1300              	.LASF14:
+ 1301 000a 63797374 		.ascii	"cystatus\000"
+ 1301      61747573 
+ 1301      00
+ 1302              	.LASF22:
+ 1303 0013 636F756E 		.ascii	"count\000"
+ 1303      7400
+ 1304              	.LASF3:
+ 1305 0019 73686F72 		.ascii	"short unsigned int\000"
+ 1305      7420756E 
+ 1305      7369676E 
+ 1305      65642069 
+ 1305      6E7400
+ 1306              	.LASF39:
+ 1307 002c 47656E65 		.ascii	"Generated_Source\\PSoC4\\USBFS_boot.c\000"
+ 1307      72617465 
+ 1307      645F536F 
+ 1307      75726365 
+ 1307      5C50536F 
+ 1308              	.LASF19:
+ 1309 0050 55534246 		.ascii	"USBFS_CyBtldrCommReset\000"
+ 1309      535F4379 
+ 1309      42746C64 
+ 1309      72436F6D 
+ 1309      6D526573 
+ 1310              	.LASF29:
+ 1311 0067 55534246 		.ascii	"USBFS_Start\000"
+ 1311      535F5374 
+ 1311      61727400 
+ 1312              	.LASF20:
+ 1313 0073 70446174 		.ascii	"pData\000"
+ 1313      6100
+ 1314              	.LASF17:
+ 1315 0079 55534246 		.ascii	"USBFS_CyBtldrCommStart\000"
+ 1315      535F4379 
+ 1315      42746C64 
+ 1315      72436F6D 
+ 1315      6D537461 
+ 1316              	.LASF11:
+ 1317 0090 666C6F61 		.ascii	"float\000"
+ 1317      7400
+ 1318              	.LASF30:
+ 1319 0096 55534246 		.ascii	"USBFS_Stop\000"
+ 1319      535F5374 
+ 1319      6F7000
+ 1320              	.LASF21:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 29
+
+
+ 1321 00a1 73697A65 		.ascii	"size\000"
+ 1321      00
+ 1322              	.LASF5:
+ 1323 00a6 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1323      20756E73 
+ 1323      69676E65 
+ 1323      6420696E 
+ 1323      7400
+ 1324              	.LASF9:
+ 1325 00b8 75696E74 		.ascii	"uint8\000"
+ 1325      3800
+ 1326              	.LASF1:
+ 1327 00be 756E7369 		.ascii	"unsigned char\000"
+ 1327      676E6564 
+ 1327      20636861 
+ 1327      7200
+ 1328              	.LASF40:
+ 1329 00cc 443A5C44 		.ascii	"D:\\DATA\\IoT\\IoT_Integrated\\Project\\bootloader."
+ 1329      4154415C 
+ 1329      496F545C 
+ 1329      496F545F 
+ 1329      496E7465 
+ 1330 00fa 63796473 		.ascii	"cydsn\000"
+ 1330      6E00
+ 1331              	.LASF12:
+ 1332 0100 646F7562 		.ascii	"double\000"
+ 1332      6C6500
+ 1333              	.LASF37:
+ 1334 0107 55534246 		.ascii	"USBFS_ReadOutEP\000"
+ 1334      535F5265 
+ 1334      61644F75 
+ 1334      74455000 
+ 1335              	.LASF26:
+ 1336 0117 55534246 		.ascii	"USBFS_CyBtldrCommWrite\000"
+ 1336      535F4379 
+ 1336      42746C64 
+ 1336      72436F6D 
+ 1336      6D577269 
+ 1337              	.LASF10:
+ 1338 012e 75696E74 		.ascii	"uint16\000"
+ 1338      313600
+ 1339              	.LASF35:
+ 1340 0135 55534246 		.ascii	"USBFS_GetConfiguration\000"
+ 1340      535F4765 
+ 1340      74436F6E 
+ 1340      66696775 
+ 1340      72617469 
+ 1341              	.LASF8:
+ 1342 014c 756E7369 		.ascii	"unsigned int\000"
+ 1342      676E6564 
+ 1342      20696E74 
+ 1342      00
+ 1343              	.LASF7:
+ 1344 0159 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1344      206C6F6E 
+ 1344      6720756E 
+ 1344      7369676E 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 30
+
+
+ 1344      65642069 
+ 1345              	.LASF31:
+ 1346 0170 55534246 		.ascii	"USBFS_EnableOutEP\000"
+ 1346      535F456E 
+ 1346      61626C65 
+ 1346      4F757445 
+ 1346      5000
+ 1347              	.LASF24:
+ 1348 0182 72657443 		.ascii	"retCode\000"
+ 1348      6F646500 
+ 1349              	.LASF38:
+ 1350 018a 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1350      43313120 
+ 1350      352E342E 
+ 1350      31203230 
+ 1350      31363036 
+ 1351 01bd 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1351      20726576 
+ 1351      6973696F 
+ 1351      6E203233 
+ 1351      37373135 
+ 1352 01f0 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1352      66756E63 
+ 1352      74696F6E 
+ 1352      2D736563 
+ 1352      74696F6E 
+ 1353              	.LASF16:
+ 1354 0218 73697A65 		.ascii	"sizetype\000"
+ 1354      74797065 
+ 1354      00
+ 1355              	.LASF6:
+ 1356 0221 6C6F6E67 		.ascii	"long long int\000"
+ 1356      206C6F6E 
+ 1356      6720696E 
+ 1356      7400
+ 1357              	.LASF13:
+ 1358 022f 63686172 		.ascii	"char\000"
+ 1358      00
+ 1359              	.LASF32:
+ 1360 0234 55534246 		.ascii	"USBFS_LoadInEP\000"
+ 1360      535F4C6F 
+ 1360      6164496E 
+ 1360      455000
+ 1361              	.LASF2:
+ 1362 0243 73686F72 		.ascii	"short int\000"
+ 1362      7420696E 
+ 1362      7400
+ 1363              	.LASF23:
+ 1364 024d 74696D65 		.ascii	"timeOut\000"
+ 1364      4F757400 
+ 1365              	.LASF34:
+ 1366 0255 55534246 		.ascii	"USBFS_GetEPState\000"
+ 1366      535F4765 
+ 1366      74455053 
+ 1366      74617465 
+ 1366      00
+ 1367              	.LASF4:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\cctHgpMf.s 			page 31
+
+
+ 1368 0266 6C6F6E67 		.ascii	"long int\000"
+ 1368      20696E74 
+ 1368      00
+ 1369              	.LASF15:
+ 1370 026f 6C6F6E67 		.ascii	"long double\000"
+ 1370      20646F75 
+ 1370      626C6500 
+ 1371              	.LASF18:
+ 1372 027b 55534246 		.ascii	"USBFS_CyBtldrCommStop\000"
+ 1372      535F4379 
+ 1372      42746C64 
+ 1372      72436F6D 
+ 1372      6D53746F 
+ 1373              	.LASF0:
+ 1374 0291 7369676E 		.ascii	"signed char\000"
+ 1374      65642063 
+ 1374      68617200 
+ 1375              	.LASF28:
+ 1376 029d 55534246 		.ascii	"USBFS_started\000"
+ 1376      535F7374 
+ 1376      61727465 
+ 1376      6400
+ 1377              	.LASF33:
+ 1378 02ab 43794465 		.ascii	"CyDelay\000"
+ 1378      6C617900 
+ 1379              	.LASF27:
+ 1380 02b3 55534246 		.ascii	"USBFS_CyBtldrCommRead\000"
+ 1380      535F4379 
+ 1380      42746C64 
+ 1380      72436F6D 
+ 1380      6D526561 
+ 1381              	.LASF36:
+ 1382 02c9 55534246 		.ascii	"USBFS_IsConfigurationChanged\000"
+ 1382      535F4973 
+ 1382      436F6E66 
+ 1382      69677572 
+ 1382      6174696F 
+ 1383              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

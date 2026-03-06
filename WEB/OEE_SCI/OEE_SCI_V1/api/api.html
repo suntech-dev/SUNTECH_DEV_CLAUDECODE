@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API 테스터</title>
+  <link rel="stylesheet" href="../assets/css/test_api.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>API 테스터</h1>
+    
+    <!-- 에러 메시지를 표시할 컨테이너 -->
+    <div id="error-container" style="display: none; color: red; margin-bottom: 1rem; padding: 1rem; background-color: #ffebee; border: 1px solid #ef9a9a; border-radius: 4px;"></div>
+
+    <!-- 버튼이 동적으로 생성될 컨테이너 -->
+    <div id="api-buttons-container"></div>
+
+    <!-- AJAX로 불러온 컨텐츠가 표시될 컨테이너 -->
+    <div id="viewer"></div>
+  </div>
+
+  <script src="../assets/js/api-tester.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,2354 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"USB.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.initUSB,"ax",%progbits
+  20              		.align	2
+  21              		.global	initUSB
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	initUSB, %function
+  25              	initUSB:
+  26              	.LFB61:
+  27              		.file 1 "lib\\USB.c"
+   1:lib/USB.c     **** /* ========================================
+   2:lib/USB.c     ****  *
+   3:lib/USB.c     ****  * Copyright Suntech, 2023.02.01
+   4:lib/USB.c     ****  * All Rights Reserved
+   5:lib/USB.c     ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:lib/USB.c     ****  *
+   7:lib/USB.c     ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:lib/USB.c     ****  * WHICH IS THE PROPERTY OF your company.
+   9:lib/USB.c     ****  *
+  10:lib/USB.c     ****  * ========================================
+  11:lib/USB.c     **** */
+  12:lib/USB.c     **** #include "USB.h"
+  13:lib/USB.c     **** #include "main.h"
+  14:lib/USB.c     **** #include "USBJsonConfig.h"
+  15:lib/USB.c     **** 
+  16:lib/USB.c     **** #define USBUART_BUFFER_SIZE 64
+  17:lib/USB.c     **** uint8 g_usb_buffer[USBUART_BUFFER_SIZE+1];
+  18:lib/USB.c     **** uint16 g_usb_count;
+  19:lib/USB.c     **** 
+  20:lib/USB.c     **** 
+  21:lib/USB.c     **** void initUSB()
+  22:lib/USB.c     **** {
+  28              		.loc 1 22 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 10B5     		push	{r4, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 2
+
+
+  23:lib/USB.c     ****     USBUART_Start(0,USBUART_5V_OPERATION);    
+  36              		.loc 1 23 0
+  37 0002 0121     		movs	r1, #1
+  38 0004 0020     		movs	r0, #0
+  39 0006 FFF7FEFF 		bl	USBUART_Start
+  40              	.LVL0:
+  24:lib/USB.c     **** }
+  41              		.loc 1 24 0
+  42              		@ sp needed
+  43 000a 10BD     		pop	{r4, pc}
+  44              		.cfi_endproc
+  45              	.LFE61:
+  46              		.size	initUSB, .-initUSB
+  47              		.section	.text.getUSB_ReceiveBuffer,"ax",%progbits
+  48              		.align	2
+  49              		.global	getUSB_ReceiveBuffer
+  50              		.code	16
+  51              		.thumb_func
+  52              		.type	getUSB_ReceiveBuffer, %function
+  53              	getUSB_ReceiveBuffer:
+  54              	.LFB63:
+  25:lib/USB.c     **** 
+  26:lib/USB.c     **** void usbLoop()
+  27:lib/USB.c     **** {
+  28:lib/USB.c     ****     /* Host can send double SET_INTERFACE request. */
+  29:lib/USB.c     ****     if (0u != USBUART_IsConfigurationChanged())
+  30:lib/USB.c     ****     {
+  31:lib/USB.c     ****        // if(g_USBStat != USB_DISCONNECT) printf("USB Disconnected.2.\r\n");
+  32:lib/USB.c     ****         /* Initialize IN endpoints when device is configured. */
+  33:lib/USB.c     ****         if (0u != USBUART_GetConfiguration())
+  34:lib/USB.c     ****         {
+  35:lib/USB.c     ****             /* Enumeration is done, enable OUT endpoint to receive data 
+  36:lib/USB.c     ****              * from host. */
+  37:lib/USB.c     ****             USBUART_CDC_Init();
+  38:lib/USB.c     ****         }
+  39:lib/USB.c     ****     } 
+  40:lib/USB.c     ****     
+  41:lib/USB.c     ****     /* Service USB CDC when device is configured. */
+  42:lib/USB.c     ****     if (0u != USBUART_GetConfiguration())
+  43:lib/USB.c     ****     {
+  44:lib/USB.c     ****         /* Check for input data from host. */
+  45:lib/USB.c     ****         if (0u != USBUART_DataIsReady())
+  46:lib/USB.c     ****         {                
+  47:lib/USB.c     ****             /* Read received data and re-enable OUT endpoint. */
+  48:lib/USB.c     ****             g_usb_count = USBUART_GetAll(g_usb_buffer);
+  49:lib/USB.c     ****             
+  50:lib/USB.c     ****             if (0u != g_usb_count)
+  51:lib/USB.c     ****             {
+  52:lib/USB.c     ****                 USB_ReceiveData(g_usb_buffer,g_usb_count);
+  53:lib/USB.c     ****             }
+  54:lib/USB.c     ****         }
+  55:lib/USB.c     ****     }
+  56:lib/USB.c     **** }
+  57:lib/USB.c     **** 
+  58:lib/USB.c     **** 
+  59:lib/USB.c     **** uint8 g_USB_ReceiveBuffer[MAX_USB_RECEIVE_BUFFER+1];
+  60:lib/USB.c     **** uint16 g_size_USB_ReceiveBuffer=0;
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 3
+
+
+  61:lib/USB.c     **** 
+  62:lib/USB.c     **** uint8 *getUSB_ReceiveBuffer() {return g_USB_ReceiveBuffer;};
+  55              		.loc 1 62 0
+  56              		.cfi_startproc
+  57              		@ args = 0, pretend = 0, frame = 0
+  58              		@ frame_needed = 0, uses_anonymous_args = 0
+  59              		@ link register save eliminated.
+  60              		.loc 1 62 0
+  61 0000 0048     		ldr	r0, .L3
+  62              		@ sp needed
+  63 0002 7047     		bx	lr
+  64              	.L4:
+  65              		.align	2
+  66              	.L3:
+  67 0004 00000000 		.word	g_USB_ReceiveBuffer
+  68              		.cfi_endproc
+  69              	.LFE63:
+  70              		.size	getUSB_ReceiveBuffer, .-getUSB_ReceiveBuffer
+  71              		.section	.text.USB_ReceiveData,"ax",%progbits
+  72              		.align	2
+  73              		.global	USB_ReceiveData
+  74              		.code	16
+  75              		.thumb_func
+  76              		.type	USB_ReceiveData, %function
+  77              	USB_ReceiveData:
+  78              	.LFB64:
+  63:lib/USB.c     **** 
+  64:lib/USB.c     **** void USB_ReceiveData(uint8 *buffer, int size)
+  65:lib/USB.c     **** {
+  79              		.loc 1 65 0
+  80              		.cfi_startproc
+  81              		@ args = 0, pretend = 0, frame = 0
+  82              		@ frame_needed = 0, uses_anonymous_args = 0
+  83              	.LVL1:
+  84 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  85              		.cfi_def_cfa_offset 24
+  86              		.cfi_offset 3, -24
+  87              		.cfi_offset 4, -20
+  88              		.cfi_offset 5, -16
+  89              		.cfi_offset 6, -12
+  90              		.cfi_offset 7, -8
+  91              		.cfi_offset 14, -4
+  92 0002 0600     		movs	r6, r0
+  93 0004 0C00     		movs	r4, r1
+  66:lib/USB.c     ****     if(MAX_USB_RECEIVE_BUFFER < g_size_USB_ReceiveBuffer+size)
+  94              		.loc 1 66 0
+  95 0006 0C4B     		ldr	r3, .L8
+  96 0008 1D88     		ldrh	r5, [r3]
+  97 000a 6A18     		adds	r2, r5, r1
+  98 000c FA23     		movs	r3, #250
+  99 000e 5B00     		lsls	r3, r3, #1
+ 100 0010 9A42     		cmp	r2, r3
+ 101 0012 03DD     		ble	.L6
+  67:lib/USB.c     ****     {
+  68:lib/USB.c     ****         printf("Error : Overflow in USB_ReceiveData()\r\n");
+ 102              		.loc 1 68 0
+ 103 0014 0948     		ldr	r0, .L8+4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 4
+
+
+ 104              	.LVL2:
+ 105 0016 FFF7FEFF 		bl	puts
+ 106              	.LVL3:
+  69:lib/USB.c     ****         return;
+ 107              		.loc 1 69 0
+ 108 001a 0BE0     		b	.L5
+ 109              	.LVL4:
+ 110              	.L6:
+  70:lib/USB.c     ****     }
+  71:lib/USB.c     ****     
+  72:lib/USB.c     ****     memcpy(&g_USB_ReceiveBuffer[g_size_USB_ReceiveBuffer], buffer, size);
+ 111              		.loc 1 72 0
+ 112 001c 084F     		ldr	r7, .L8+8
+ 113 001e 7819     		adds	r0, r7, r5
+ 114              	.LVL5:
+ 115 0020 0A00     		movs	r2, r1
+ 116 0022 3100     		movs	r1, r6
+ 117              	.LVL6:
+ 118 0024 FFF7FEFF 		bl	memcpy
+ 119              	.LVL7:
+  73:lib/USB.c     ****     g_size_USB_ReceiveBuffer += size;
+ 120              		.loc 1 73 0
+ 121 0028 2C19     		adds	r4, r5, r4
+ 122              	.LVL8:
+ 123 002a A4B2     		uxth	r4, r4
+ 124 002c 024B     		ldr	r3, .L8
+ 125 002e 1C80     		strh	r4, [r3]
+  74:lib/USB.c     ****     g_USB_ReceiveBuffer[g_size_USB_ReceiveBuffer] = 0;
+ 126              		.loc 1 74 0
+ 127 0030 0023     		movs	r3, #0
+ 128 0032 3B55     		strb	r3, [r7, r4]
+ 129              	.L5:
+  75:lib/USB.c     **** }
+ 130              		.loc 1 75 0
+ 131              		@ sp needed
+ 132              	.LVL9:
+ 133 0034 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 134              	.L9:
+ 135 0036 C046     		.align	2
+ 136              	.L8:
+ 137 0038 00000000 		.word	.LANCHOR0
+ 138 003c 00000000 		.word	.LC2
+ 139 0040 00000000 		.word	g_USB_ReceiveBuffer
+ 140              		.cfi_endproc
+ 141              	.LFE64:
+ 142              		.size	USB_ReceiveData, .-USB_ReceiveData
+ 143              		.section	.text.usbLoop,"ax",%progbits
+ 144              		.align	2
+ 145              		.global	usbLoop
+ 146              		.code	16
+ 147              		.thumb_func
+ 148              		.type	usbLoop, %function
+ 149              	usbLoop:
+ 150              	.LFB62:
+  27:lib/USB.c     ****     /* Host can send double SET_INTERFACE request. */
+ 151              		.loc 1 27 0
+ 152              		.cfi_startproc
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 5
+
+
+ 153              		@ args = 0, pretend = 0, frame = 0
+ 154              		@ frame_needed = 0, uses_anonymous_args = 0
+ 155 0000 10B5     		push	{r4, lr}
+ 156              		.cfi_def_cfa_offset 8
+ 157              		.cfi_offset 4, -8
+ 158              		.cfi_offset 14, -4
+  29:lib/USB.c     ****     {
+ 159              		.loc 1 29 0
+ 160 0002 FFF7FEFF 		bl	USBUART_IsConfigurationChanged
+ 161              	.LVL10:
+ 162 0006 0028     		cmp	r0, #0
+ 163 0008 05D0     		beq	.L11
+  33:lib/USB.c     ****         {
+ 164              		.loc 1 33 0
+ 165 000a FFF7FEFF 		bl	USBUART_GetConfiguration
+ 166              	.LVL11:
+ 167 000e 0028     		cmp	r0, #0
+ 168 0010 01D0     		beq	.L11
+  37:lib/USB.c     ****         }
+ 169              		.loc 1 37 0
+ 170 0012 FFF7FEFF 		bl	USBUART_CDC_Init
+ 171              	.LVL12:
+ 172              	.L11:
+  42:lib/USB.c     ****     {
+ 173              		.loc 1 42 0
+ 174 0016 FFF7FEFF 		bl	USBUART_GetConfiguration
+ 175              	.LVL13:
+ 176 001a 0028     		cmp	r0, #0
+ 177 001c 0ED0     		beq	.L10
+  45:lib/USB.c     ****         {                
+ 178              		.loc 1 45 0
+ 179 001e FFF7FEFF 		bl	USBUART_DataIsReady
+ 180              	.LVL14:
+ 181 0022 0028     		cmp	r0, #0
+ 182 0024 0AD0     		beq	.L10
+  48:lib/USB.c     ****             
+ 183              		.loc 1 48 0
+ 184 0026 0648     		ldr	r0, .L13
+ 185 0028 FFF7FEFF 		bl	USBUART_GetAll
+ 186              	.LVL15:
+ 187 002c 054B     		ldr	r3, .L13+4
+ 188 002e 1880     		strh	r0, [r3]
+  50:lib/USB.c     ****             {
+ 189              		.loc 1 50 0
+ 190 0030 0028     		cmp	r0, #0
+ 191 0032 03D0     		beq	.L10
+  52:lib/USB.c     ****             }
+ 192              		.loc 1 52 0
+ 193 0034 0100     		movs	r1, r0
+ 194 0036 0248     		ldr	r0, .L13
+ 195 0038 FFF7FEFF 		bl	USB_ReceiveData
+ 196              	.LVL16:
+ 197              	.L10:
+  56:lib/USB.c     **** 
+ 198              		.loc 1 56 0
+ 199              		@ sp needed
+ 200 003c 10BD     		pop	{r4, pc}
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 6
+
+
+ 201              	.L14:
+ 202 003e C046     		.align	2
+ 203              	.L13:
+ 204 0040 00000000 		.word	g_usb_buffer
+ 205 0044 00000000 		.word	g_usb_count
+ 206              		.cfi_endproc
+ 207              	.LFE62:
+ 208              		.size	usbLoop, .-usbLoop
+ 209              		.section	.text.USBUART_IsTxReady,"ax",%progbits
+ 210              		.align	2
+ 211              		.global	USBUART_IsTxReady
+ 212              		.code	16
+ 213              		.thumb_func
+ 214              		.type	USBUART_IsTxReady, %function
+ 215              	USBUART_IsTxReady:
+ 216              	.LFB65:
+  76:lib/USB.c     **** 
+  77:lib/USB.c     **** _Bool usb_active = USBUART_TRUE;
+  78:lib/USB.c     **** 
+  79:lib/USB.c     **** _Bool USBUART_IsTxReady(_Bool allow_blocking)
+  80:lib/USB.c     **** {
+ 217              		.loc 1 80 0
+ 218              		.cfi_startproc
+ 219              		@ args = 0, pretend = 0, frame = 0
+ 220              		@ frame_needed = 0, uses_anonymous_args = 0
+ 221              	.LVL17:
+ 222 0000 70B5     		push	{r4, r5, r6, lr}
+ 223              		.cfi_def_cfa_offset 16
+ 224              		.cfi_offset 4, -16
+ 225              		.cfi_offset 5, -12
+ 226              		.cfi_offset 6, -8
+ 227              		.cfi_offset 14, -4
+ 228              	.LVL18:
+  81:lib/USB.c     ****     _Bool ret = USBUART_TRUE;
+  82:lib/USB.c     ****  
+  83:lib/USB.c     ****     if(allow_blocking == USBUART_TRUE)
+ 229              		.loc 1 83 0
+ 230 0002 0028     		cmp	r0, #0
+ 231 0004 28D0     		beq	.L16
+ 232              	.LVL19:
+ 233              	.LBB2:
+  84:lib/USB.c     ****     {    // blocking implementation
+  85:lib/USB.c     **** 
+  86:lib/USB.c     ****         int8 subsystick_wrap_cnt = 0;
+  87:lib/USB.c     ****         int32_t subsystick_reload = (int32_t)CySysTickGetReload();    // SysTick Reload value
+ 234              		.loc 1 87 0
+ 235 0006 FFF7FEFF 		bl	CySysTickGetReload
+ 236              	.LVL20:
+ 237 000a 0600     		movs	r6, r0
+ 238              	.LVL21:
+  88:lib/USB.c     ****         int32_t subsystick_cnt = (int32_t)CySysTickGetValue();    // SysTick Timestamp when we ente
+ 239              		.loc 1 88 0
+ 240 000c FFF7FEFF 		bl	CySysTickGetValue
+ 241              	.LVL22:
+ 242 0010 0400     		movs	r4, r0
+ 243              	.LVL23:
+  89:lib/USB.c     **** 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 7
+
+
+  90:lib/USB.c     ****         CySysTickStart();        // Start the SysTick interval @ 1ms.  This allows USBUART_IsTxRead
+ 244              		.loc 1 90 0
+ 245 0012 FFF7FEFF 		bl	CySysTickStart
+ 246              	.LVL24:
+  86:lib/USB.c     ****         int32_t subsystick_reload = (int32_t)CySysTickGetReload();    // SysTick Reload value
+ 247              		.loc 1 86 0
+ 248 0016 0025     		movs	r5, #0
+  91:lib/USB.c     **** 
+  92:lib/USB.c     ****         while(USBUART_CDCIsReady() == 0)
+ 249              		.loc 1 92 0
+ 250 0018 12E0     		b	.L17
+ 251              	.LVL25:
+ 252              	.L20:
+  93:lib/USB.c     ****         { // Tx Port is not ready.
+  94:lib/USB.c     **** 
+  95:lib/USB.c     ****             if(usb_active == USBUART_FALSE) {ret = USBUART_FALSE; break;}    // break out of while(
+ 253              		.loc 1 95 0
+ 254 001a 134B     		ldr	r3, .L25
+ 255 001c 1B78     		ldrb	r3, [r3]
+ 256 001e 002B     		cmp	r3, #0
+ 257 0020 14D0     		beq	.L22
+ 258              	.LBB3:
+  96:lib/USB.c     ****             else
+  97:lib/USB.c     ****             {    // check the SysTick counter timestamp exceeds up to 2 times the SysTick Reload va
+  98:lib/USB.c     **** 
+  99:lib/USB.c     ****                 int32_t subsystick_cnt_diff = subsystick_cnt - (int32)CySysTickGetValue();    // ge
+ 259              		.loc 1 99 0
+ 260 0022 FFF7FEFF 		bl	CySysTickGetValue
+ 261              	.LVL26:
+ 262 0026 201A     		subs	r0, r4, r0
+ 263              	.LVL27:
+ 100:lib/USB.c     ****                 if(subsystick_cnt_diff < 0) { subsystick_wrap_cnt++; }    // if current subsystick 
+ 264              		.loc 1 100 0
+ 265 0028 01D5     		bpl	.L19
+ 266              		.loc 1 100 0 is_stmt 0 discriminator 1
+ 267 002a 0135     		adds	r5, r5, #1
+ 268              	.LVL28:
+ 269 002c 6DB2     		sxtb	r5, r5
+ 270              	.LVL29:
+ 271              	.L19:
+ 101:lib/USB.c     **** 
+ 102:lib/USB.c     ****                 if(( (subsystick_wrap_cnt*subsystick_reload) + (subsystick_cnt_diff)) > (subsystick
+ 272              		.loc 1 102 0 is_stmt 1
+ 273 002e 3300     		movs	r3, r6
+ 274 0030 6B43     		muls	r3, r5
+ 275 0032 C018     		adds	r0, r0, r3
+ 276              	.LVL30:
+ 277 0034 7300     		lsls	r3, r6, #1
+ 278 0036 9842     		cmp	r0, r3
+ 279 0038 0ADC     		bgt	.L23
+ 103:lib/USB.c     ****                 {
+ 104:lib/USB.c     ****                     ret = USBUART_FALSE;    // Exceeded SysTick 1ms
+ 105:lib/USB.c     ****                     break;                    // break out of while() because we detected the USB p
+ 106:lib/USB.c     ****                 }
+ 107:lib/USB.c     ****                 subsystick_cnt = (int32_t)CySysTickGetValue();                            // store 
+ 280              		.loc 1 107 0
+ 281 003a FFF7FEFF 		bl	CySysTickGetValue
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 8
+
+
+ 282              	.LVL31:
+ 283 003e 0400     		movs	r4, r0
+ 284              	.LVL32:
+ 285              	.L17:
+ 286              	.LBE3:
+  92:lib/USB.c     ****         { // Tx Port is not ready.
+ 287              		.loc 1 92 0
+ 288 0040 FFF7FEFF 		bl	USBUART_CDCIsReady
+ 289              	.LVL33:
+ 290 0044 0028     		cmp	r0, #0
+ 291 0046 E8D0     		beq	.L20
+ 292              	.LBE2:
+  81:lib/USB.c     ****  
+ 293              		.loc 1 81 0
+ 294 0048 0120     		movs	r0, #1
+ 295              	.LBB5:
+ 296 004a 02E0     		b	.L18
+ 297              	.L22:
+  95:lib/USB.c     ****             else
+ 298              		.loc 1 95 0
+ 299 004c 0020     		movs	r0, #0
+ 300 004e 00E0     		b	.L18
+ 301              	.L23:
+ 302              	.LBB4:
+ 104:lib/USB.c     ****                     break;                    // break out of while() because we detected the USB p
+ 303              		.loc 1 104 0
+ 304 0050 0020     		movs	r0, #0
+ 305              	.L18:
+ 306              	.LVL34:
+ 307              	.LBE4:
+ 108:lib/USB.c     ****             }
+ 109:lib/USB.c     ****         }
+ 110:lib/USB.c     ****         usb_active = ret;
+ 308              		.loc 1 110 0
+ 309 0052 054B     		ldr	r3, .L25
+ 310 0054 1870     		strb	r0, [r3]
+ 311              	.LBE5:
+ 312 0056 06E0     		b	.L21
+ 313              	.LVL35:
+ 314              	.L16:
+ 111:lib/USB.c     ****     }
+ 112:lib/USB.c     ****     else ret = (USBUART_CDCIsReady() ? USBUART_TRUE : USBUART_FALSE);        // non-blocking
+ 315              		.loc 1 112 0
+ 316 0058 FFF7FEFF 		bl	USBUART_CDCIsReady
+ 317              	.LVL36:
+ 318 005c 0028     		cmp	r0, #0
+ 319 005e 01D0     		beq	.L24
+ 320 0060 0120     		movs	r0, #1
+ 321 0062 00E0     		b	.L21
+ 322              	.L24:
+ 323 0064 0020     		movs	r0, #0
+ 324              	.LVL37:
+ 325              	.L21:
+ 113:lib/USB.c     **** 
+ 114:lib/USB.c     ****     return ret;
+ 115:lib/USB.c     **** }
+ 326              		.loc 1 115 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 9
+
+
+ 327              		@ sp needed
+ 328 0066 70BD     		pop	{r4, r5, r6, pc}
+ 329              	.L26:
+ 330              		.align	2
+ 331              	.L25:
+ 332 0068 00000000 		.word	.LANCHOR1
+ 333              		.cfi_endproc
+ 334              	.LFE65:
+ 335              		.size	USBUART_IsTxReady, .-USBUART_IsTxReady
+ 336              		.section	.text.printf_USB,"ax",%progbits
+ 337              		.align	2
+ 338              		.global	printf_USB
+ 339              		.code	16
+ 340              		.thumb_func
+ 341              		.type	printf_USB, %function
+ 342              	printf_USB:
+ 343              	.LFB66:
+ 116:lib/USB.c     **** 
+ 117:lib/USB.c     **** void printf_USB(const char *fmt, ...)
+ 118:lib/USB.c     **** {
+ 344              		.loc 1 118 0
+ 345              		.cfi_startproc
+ 346              		@ args = 4, pretend = 16, frame = 72
+ 347              		@ frame_needed = 0, uses_anonymous_args = 1
+ 348              	.LVL38:
+ 349 0000 0FB4     		push	{r0, r1, r2, r3}
+ 350              		.cfi_def_cfa_offset 16
+ 351 0002 00B5     		push	{lr}
+ 352              		.cfi_def_cfa_offset 20
+ 353              		.cfi_offset 14, -20
+ 354 0004 93B0     		sub	sp, sp, #76
+ 355              		.cfi_def_cfa_offset 96
+ 356 0006 14AA     		add	r2, sp, #80
+ 357 0008 02CA     		ldmia	r2!, {r1}
+ 119:lib/USB.c     ****     va_list ap;
+ 120:lib/USB.c     ****     char buff[USBUART_BUFFER_SIZE+1];
+ 121:lib/USB.c     ****     
+ 122:lib/USB.c     ****     va_start(ap, fmt);
+ 358              		.loc 1 122 0
+ 359 000a 1192     		str	r2, [sp, #68]
+ 123:lib/USB.c     **** 
+ 124:lib/USB.c     ****     vsprintf(buff, fmt, ap);
+ 360              		.loc 1 124 0
+ 361 000c 6846     		mov	r0, sp
+ 362 000e FFF7FEFF 		bl	vsprintf
+ 363              	.LVL39:
+ 125:lib/USB.c     ****     va_end(ap);
+ 126:lib/USB.c     ****     
+ 127:lib/USB.c     ****     uint16 nLength = strlen(buff);
+ 364              		.loc 1 127 0
+ 365 0012 6846     		mov	r0, sp
+ 366 0014 FFF7FEFF 		bl	strlen
+ 367              	.LVL40:
+ 368 0018 80B2     		uxth	r0, r0
+ 369              	.LVL41:
+ 128:lib/USB.c     ****     if(nLength > USBUART_BUFFER_SIZE) printf("Out of Data in USBUARTprintf()\r\n");
+ 370              		.loc 1 128 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 10
+
+
+ 371 001a 4028     		cmp	r0, #64
+ 372 001c 02D9     		bls	.L29
+ 373              		.loc 1 128 0 is_stmt 0 discriminator 1
+ 374 001e 0748     		ldr	r0, .L30
+ 375              	.LVL42:
+ 376 0020 FFF7FEFF 		bl	puts
+ 377              	.LVL43:
+ 378              	.L29:
+ 129:lib/USB.c     ****     
+ 130:lib/USB.c     ****     while(USBUART_IsTxReady(TRUE)==0);  
+ 379              		.loc 1 130 0 is_stmt 1 discriminator 1
+ 380 0024 0120     		movs	r0, #1
+ 381 0026 FFF7FEFF 		bl	USBUART_IsTxReady
+ 382              	.LVL44:
+ 383 002a 0028     		cmp	r0, #0
+ 384 002c FAD0     		beq	.L29
+ 131:lib/USB.c     ****     USBUART_PutString(buff); 
+ 385              		.loc 1 131 0
+ 386 002e 6846     		mov	r0, sp
+ 387 0030 FFF7FEFF 		bl	USBUART_PutString
+ 388              	.LVL45:
+ 132:lib/USB.c     **** }
+ 389              		.loc 1 132 0
+ 390 0034 13B0     		add	sp, sp, #76
+ 391              		@ sp needed
+ 392 0036 08BC     		pop	{r3}
+ 393 0038 04B0     		add	sp, sp, #16
+ 394 003a 1847     		bx	r3
+ 395              	.L31:
+ 396              		.align	2
+ 397              	.L30:
+ 398 003c 28000000 		.word	.LC8
+ 399              		.cfi_endproc
+ 400              	.LFE66:
+ 401              		.size	printf_USB, .-printf_USB
+ 402              		.global	usb_active
+ 403              		.global	g_size_USB_ReceiveBuffer
+ 404              		.comm	g_USB_ReceiveBuffer,501,4
+ 405              		.comm	g_usb_count,2,2
+ 406              		.comm	g_usb_buffer,65,4
+ 407              		.comm	Param,6,4
+ 408              		.data
+ 409              		.set	.LANCHOR1,. + 0
+ 410              		.type	usb_active, %object
+ 411              		.size	usb_active, 1
+ 412              	usb_active:
+ 413 0000 01       		.byte	1
+ 414              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 415              		.align	2
+ 416              	.LC2:
+ 417 0000 4572726F 		.ascii	"Error : Overflow in USB_ReceiveData()\015\000"
+ 417      72203A20 
+ 417      4F766572 
+ 417      666C6F77 
+ 417      20696E20 
+ 418 0027 00       		.space	1
+ 419              	.LC8:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 11
+
+
+ 420 0028 4F757420 		.ascii	"Out of Data in USBUARTprintf()\015\000"
+ 420      6F662044 
+ 420      61746120 
+ 420      696E2055 
+ 420      53425541 
+ 421              		.bss
+ 422              		.align	1
+ 423              		.set	.LANCHOR0,. + 0
+ 424              		.type	g_size_USB_ReceiveBuffer, %object
+ 425              		.size	g_size_USB_ReceiveBuffer, 2
+ 426              	g_size_USB_ReceiveBuffer:
+ 427 0000 0000     		.space	2
+ 428              		.text
+ 429              	.Letext0:
+ 430              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 431              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 432              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 433              		.file 5 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 434              		.file 6 "<built-in>"
+ 435              		.file 7 "./main.h"
+ 436              		.file 8 "Generated_Source\\PSoC4/USBUART.h"
+ 437              		.file 9 "Generated_Source\\PSoC4/USBUART_cdc.h"
+ 438              		.file 10 "Generated_Source\\PSoC4/CyLib.h"
+ 439              		.file 11 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4
+ 440              		.file 12 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4
+ 441              		.section	.debug_info,"",%progbits
+ 442              	.Ldebug_info0:
+ 443 0000 29050000 		.4byte	0x529
+ 444 0004 0400     		.2byte	0x4
+ 445 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 446 000a 04       		.byte	0x4
+ 447 000b 01       		.uleb128 0x1
+ 448 000c 16010000 		.4byte	.LASF60
+ 449 0010 0C       		.byte	0xc
+ 450 0011 E2030000 		.4byte	.LASF61
+ 451 0015 8B000000 		.4byte	.LASF62
+ 452 0019 30000000 		.4byte	.Ldebug_ranges0+0x30
+ 453 001d 00000000 		.4byte	0
+ 454 0021 00000000 		.4byte	.Ldebug_line0
+ 455 0025 02       		.uleb128 0x2
+ 456 0026 01       		.byte	0x1
+ 457 0027 06       		.byte	0x6
+ 458 0028 7F020000 		.4byte	.LASF0
+ 459 002c 02       		.uleb128 0x2
+ 460 002d 01       		.byte	0x1
+ 461 002e 08       		.byte	0x8
+ 462 002f 5E020000 		.4byte	.LASF1
+ 463 0033 02       		.uleb128 0x2
+ 464 0034 02       		.byte	0x2
+ 465 0035 05       		.byte	0x5
+ 466 0036 57000000 		.4byte	.LASF2
+ 467 003a 02       		.uleb128 0x2
+ 468 003b 02       		.byte	0x2
+ 469 003c 07       		.byte	0x7
+ 470 003d DC020000 		.4byte	.LASF3
+ 471 0041 03       		.uleb128 0x3
+ 472 0042 98030000 		.4byte	.LASF9
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 12
+
+
+ 473 0046 02       		.byte	0x2
+ 474 0047 3F       		.byte	0x3f
+ 475 0048 4C000000 		.4byte	0x4c
+ 476 004c 02       		.uleb128 0x2
+ 477 004d 04       		.byte	0x4
+ 478 004e 05       		.byte	0x5
+ 479 004f FE010000 		.4byte	.LASF4
+ 480 0053 02       		.uleb128 0x2
+ 481 0054 04       		.byte	0x4
+ 482 0055 07       		.byte	0x7
+ 483 0056 4F030000 		.4byte	.LASF5
+ 484 005a 02       		.uleb128 0x2
+ 485 005b 08       		.byte	0x8
+ 486 005c 05       		.byte	0x5
+ 487 005d E1010000 		.4byte	.LASF6
+ 488 0061 02       		.uleb128 0x2
+ 489 0062 08       		.byte	0x8
+ 490 0063 07       		.byte	0x7
+ 491 0064 8B020000 		.4byte	.LASF7
+ 492 0068 04       		.uleb128 0x4
+ 493 0069 04       		.byte	0x4
+ 494 006a 05       		.byte	0x5
+ 495 006b 696E7400 		.ascii	"int\000"
+ 496 006f 02       		.uleb128 0x2
+ 497 0070 04       		.byte	0x4
+ 498 0071 07       		.byte	0x7
+ 499 0072 B1020000 		.4byte	.LASF8
+ 500 0076 03       		.uleb128 0x3
+ 501 0077 14030000 		.4byte	.LASF10
+ 502 007b 03       		.byte	0x3
+ 503 007c 2C       		.byte	0x2c
+ 504 007d 41000000 		.4byte	0x41
+ 505 0081 05       		.uleb128 0x5
+ 506 0082 A4010000 		.4byte	.LASF11
+ 507 0086 04       		.byte	0x4
+ 508 0087 FC01     		.2byte	0x1fc
+ 509 0089 2C000000 		.4byte	0x2c
+ 510 008d 05       		.uleb128 0x5
+ 511 008e 36030000 		.4byte	.LASF12
+ 512 0092 04       		.byte	0x4
+ 513 0093 FD01     		.2byte	0x1fd
+ 514 0095 3A000000 		.4byte	0x3a
+ 515 0099 05       		.uleb128 0x5
+ 516 009a EF010000 		.4byte	.LASF13
+ 517 009e 04       		.byte	0x4
+ 518 009f FF01     		.2byte	0x1ff
+ 519 00a1 25000000 		.4byte	0x25
+ 520 00a5 05       		.uleb128 0x5
+ 521 00a6 61030000 		.4byte	.LASF14
+ 522 00aa 04       		.byte	0x4
+ 523 00ab 0102     		.2byte	0x201
+ 524 00ad 4C000000 		.4byte	0x4c
+ 525 00b1 02       		.uleb128 0x2
+ 526 00b2 04       		.byte	0x4
+ 527 00b3 04       		.byte	0x4
+ 528 00b4 C2010000 		.4byte	.LASF15
+ 529 00b8 02       		.uleb128 0x2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 13
+
+
+ 530 00b9 08       		.byte	0x8
+ 531 00ba 04       		.byte	0x4
+ 532 00bb 67030000 		.4byte	.LASF16
+ 533 00bf 02       		.uleb128 0x2
+ 534 00c0 01       		.byte	0x1
+ 535 00c1 08       		.byte	0x8
+ 536 00c2 F4020000 		.4byte	.LASF17
+ 537 00c6 02       		.uleb128 0x2
+ 538 00c7 08       		.byte	0x8
+ 539 00c8 04       		.byte	0x4
+ 540 00c9 42020000 		.4byte	.LASF18
+ 541 00cd 02       		.uleb128 0x2
+ 542 00ce 04       		.byte	0x4
+ 543 00cf 07       		.byte	0x7
+ 544 00d0 73000000 		.4byte	.LASF19
+ 545 00d4 06       		.uleb128 0x6
+ 546 00d5 04       		.byte	0x4
+ 547 00d6 07       		.uleb128 0x7
+ 548 00d7 04       		.byte	0x4
+ 549 00d8 DC000000 		.4byte	0xdc
+ 550 00dc 08       		.uleb128 0x8
+ 551 00dd BF000000 		.4byte	0xbf
+ 552 00e1 07       		.uleb128 0x7
+ 553 00e2 04       		.byte	0x4
+ 554 00e3 81000000 		.4byte	0x81
+ 555 00e7 03       		.uleb128 0x3
+ 556 00e8 A2030000 		.4byte	.LASF20
+ 557 00ec 05       		.byte	0x5
+ 558 00ed 28       		.byte	0x28
+ 559 00ee F2000000 		.4byte	0xf2
+ 560 00f2 09       		.uleb128 0x9
+ 561 00f3 F4010000 		.4byte	.LASF22
+ 562 00f7 04       		.byte	0x4
+ 563 00f8 06       		.byte	0x6
+ 564 00f9 00       		.byte	0
+ 565 00fa 09010000 		.4byte	0x109
+ 566 00fe 0A       		.uleb128 0xa
+ 567 00ff EF020000 		.4byte	.LASF63
+ 568 0103 D4000000 		.4byte	0xd4
+ 569 0107 00       		.byte	0
+ 570 0108 00       		.byte	0
+ 571 0109 03       		.uleb128 0x3
+ 572 010a CF000000 		.4byte	.LASF21
+ 573 010e 05       		.byte	0x5
+ 574 010f 62       		.byte	0x62
+ 575 0110 E7000000 		.4byte	0xe7
+ 576 0114 09       		.uleb128 0x9
+ 577 0115 2B030000 		.4byte	.LASF23
+ 578 0119 06       		.byte	0x6
+ 579 011a 07       		.byte	0x7
+ 580 011b 34       		.byte	0x34
+ 581 011c 45010000 		.4byte	0x145
+ 582 0120 0B       		.uleb128 0xb
+ 583 0121 B7000000 		.4byte	.LASF24
+ 584 0125 07       		.byte	0x7
+ 585 0126 36       		.byte	0x36
+ 586 0127 81000000 		.4byte	0x81
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 14
+
+
+ 587 012b 00       		.byte	0
+ 588 012c 0B       		.uleb128 0xb
+ 589 012d AA010000 		.4byte	.LASF25
+ 590 0131 07       		.byte	0x7
+ 591 0132 37       		.byte	0x37
+ 592 0133 8D000000 		.4byte	0x8d
+ 593 0137 02       		.byte	0x2
+ 594 0138 0B       		.uleb128 0xb
+ 595 0139 6C020000 		.4byte	.LASF26
+ 596 013d 07       		.byte	0x7
+ 597 013e 38       		.byte	0x38
+ 598 013f 8D000000 		.4byte	0x8d
+ 599 0143 04       		.byte	0x4
+ 600 0144 00       		.byte	0
+ 601 0145 0C       		.uleb128 0xc
+ 602 0146 D7000000 		.4byte	.LASF29
+ 603 014a 01       		.byte	0x1
+ 604 014b 15       		.byte	0x15
+ 605 014c 00000000 		.4byte	.LFB61
+ 606 0150 0C000000 		.4byte	.LFE61-.LFB61
+ 607 0154 01       		.uleb128 0x1
+ 608 0155 9C       		.byte	0x9c
+ 609 0156 6F010000 		.4byte	0x16f
+ 610 015a 0D       		.uleb128 0xd
+ 611 015b 0A000000 		.4byte	.LVL0
+ 612 015f 7F040000 		.4byte	0x47f
+ 613 0163 0E       		.uleb128 0xe
+ 614 0164 01       		.uleb128 0x1
+ 615 0165 50       		.byte	0x50
+ 616 0166 01       		.uleb128 0x1
+ 617 0167 30       		.byte	0x30
+ 618 0168 0E       		.uleb128 0xe
+ 619 0169 01       		.uleb128 0x1
+ 620 016a 51       		.byte	0x51
+ 621 016b 01       		.uleb128 0x1
+ 622 016c 31       		.byte	0x31
+ 623 016d 00       		.byte	0
+ 624 016e 00       		.byte	0
+ 625 016f 0F       		.uleb128 0xf
+ 626 0170 DF000000 		.4byte	.LASF64
+ 627 0174 01       		.byte	0x1
+ 628 0175 3E       		.byte	0x3e
+ 629 0176 E1000000 		.4byte	0xe1
+ 630 017a 00000000 		.4byte	.LFB63
+ 631 017e 08000000 		.4byte	.LFE63-.LFB63
+ 632 0182 01       		.uleb128 0x1
+ 633 0183 9C       		.byte	0x9c
+ 634 0184 10       		.uleb128 0x10
+ 635 0185 4E020000 		.4byte	.LASF37
+ 636 0189 01       		.byte	0x1
+ 637 018a 40       		.byte	0x40
+ 638 018b 00000000 		.4byte	.LFB64
+ 639 018f 44000000 		.4byte	.LFE64-.LFB64
+ 640 0193 01       		.uleb128 0x1
+ 641 0194 9C       		.byte	0x9c
+ 642 0195 EE010000 		.4byte	0x1ee
+ 643 0199 11       		.uleb128 0x11
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 15
+
+
+ 644 019a 3D030000 		.4byte	.LASF27
+ 645 019e 01       		.byte	0x1
+ 646 019f 40       		.byte	0x40
+ 647 01a0 E1000000 		.4byte	0xe1
+ 648 01a4 00000000 		.4byte	.LLST0
+ 649 01a8 11       		.uleb128 0x11
+ 650 01a9 93030000 		.4byte	.LASF28
+ 651 01ad 01       		.byte	0x1
+ 652 01ae 40       		.byte	0x40
+ 653 01af 68000000 		.4byte	0x68
+ 654 01b3 42000000 		.4byte	.LLST1
+ 655 01b7 12       		.uleb128 0x12
+ 656 01b8 1A000000 		.4byte	.LVL3
+ 657 01bc 8B040000 		.4byte	0x48b
+ 658 01c0 CE010000 		.4byte	0x1ce
+ 659 01c4 0E       		.uleb128 0xe
+ 660 01c5 01       		.uleb128 0x1
+ 661 01c6 50       		.byte	0x50
+ 662 01c7 05       		.uleb128 0x5
+ 663 01c8 03       		.byte	0x3
+ 664 01c9 00000000 		.4byte	.LC2
+ 665 01cd 00       		.byte	0
+ 666 01ce 0D       		.uleb128 0xd
+ 667 01cf 28000000 		.4byte	.LVL7
+ 668 01d3 9A040000 		.4byte	0x49a
+ 669 01d7 0E       		.uleb128 0xe
+ 670 01d8 01       		.uleb128 0x1
+ 671 01d9 50       		.byte	0x50
+ 672 01da 05       		.uleb128 0x5
+ 673 01db 77       		.byte	0x77
+ 674 01dc 00       		.sleb128 0
+ 675 01dd 75       		.byte	0x75
+ 676 01de 00       		.sleb128 0
+ 677 01df 22       		.byte	0x22
+ 678 01e0 0E       		.uleb128 0xe
+ 679 01e1 01       		.uleb128 0x1
+ 680 01e2 51       		.byte	0x51
+ 681 01e3 02       		.uleb128 0x2
+ 682 01e4 76       		.byte	0x76
+ 683 01e5 00       		.sleb128 0
+ 684 01e6 0E       		.uleb128 0xe
+ 685 01e7 01       		.uleb128 0x1
+ 686 01e8 52       		.byte	0x52
+ 687 01e9 02       		.uleb128 0x2
+ 688 01ea 74       		.byte	0x74
+ 689 01eb 00       		.sleb128 0
+ 690 01ec 00       		.byte	0
+ 691 01ed 00       		.byte	0
+ 692 01ee 0C       		.uleb128 0xc
+ 693 01ef 00000000 		.4byte	.LASF30
+ 694 01f3 01       		.byte	0x1
+ 695 01f4 1A       		.byte	0x1a
+ 696 01f5 00000000 		.4byte	.LFB62
+ 697 01f9 48000000 		.4byte	.LFE62-.LFB62
+ 698 01fd 01       		.uleb128 0x1
+ 699 01fe 9C       		.byte	0x9c
+ 700 01ff 5B020000 		.4byte	0x25b
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 16
+
+
+ 701 0203 13       		.uleb128 0x13
+ 702 0204 06000000 		.4byte	.LVL10
+ 703 0208 A3040000 		.4byte	0x4a3
+ 704 020c 13       		.uleb128 0x13
+ 705 020d 0E000000 		.4byte	.LVL11
+ 706 0211 AF040000 		.4byte	0x4af
+ 707 0215 13       		.uleb128 0x13
+ 708 0216 16000000 		.4byte	.LVL12
+ 709 021a BB040000 		.4byte	0x4bb
+ 710 021e 13       		.uleb128 0x13
+ 711 021f 1A000000 		.4byte	.LVL13
+ 712 0223 AF040000 		.4byte	0x4af
+ 713 0227 13       		.uleb128 0x13
+ 714 0228 22000000 		.4byte	.LVL14
+ 715 022c C6040000 		.4byte	0x4c6
+ 716 0230 12       		.uleb128 0x12
+ 717 0231 2C000000 		.4byte	.LVL15
+ 718 0235 D1040000 		.4byte	0x4d1
+ 719 0239 47020000 		.4byte	0x247
+ 720 023d 0E       		.uleb128 0xe
+ 721 023e 01       		.uleb128 0x1
+ 722 023f 50       		.byte	0x50
+ 723 0240 05       		.uleb128 0x5
+ 724 0241 03       		.byte	0x3
+ 725 0242 00000000 		.4byte	g_usb_buffer
+ 726 0246 00       		.byte	0
+ 727 0247 0D       		.uleb128 0xd
+ 728 0248 3C000000 		.4byte	.LVL16
+ 729 024c 84010000 		.4byte	0x184
+ 730 0250 0E       		.uleb128 0xe
+ 731 0251 01       		.uleb128 0x1
+ 732 0252 50       		.byte	0x50
+ 733 0253 05       		.uleb128 0x5
+ 734 0254 03       		.byte	0x3
+ 735 0255 00000000 		.4byte	g_usb_buffer
+ 736 0259 00       		.byte	0
+ 737 025a 00       		.byte	0
+ 738 025b 14       		.uleb128 0x14
+ 739 025c 81030000 		.4byte	.LASF65
+ 740 0260 01       		.byte	0x1
+ 741 0261 4F       		.byte	0x4f
+ 742 0262 22030000 		.4byte	0x322
+ 743 0266 00000000 		.4byte	.LFB65
+ 744 026a 6C000000 		.4byte	.LFE65-.LFB65
+ 745 026e 01       		.uleb128 0x1
+ 746 026f 9C       		.byte	0x9c
+ 747 0270 22030000 		.4byte	0x322
+ 748 0274 11       		.uleb128 0x11
+ 749 0275 A2020000 		.4byte	.LASF31
+ 750 0279 01       		.byte	0x1
+ 751 027a 4F       		.byte	0x4f
+ 752 027b 22030000 		.4byte	0x322
+ 753 027f 84000000 		.4byte	.LLST2
+ 754 0283 15       		.uleb128 0x15
+ 755 0284 72657400 		.ascii	"ret\000"
+ 756 0288 01       		.byte	0x1
+ 757 0289 51       		.byte	0x51
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 17
+
+
+ 758 028a 22030000 		.4byte	0x322
+ 759 028e BE000000 		.4byte	.LLST3
+ 760 0292 16       		.uleb128 0x16
+ 761 0293 00000000 		.4byte	.Ldebug_ranges0+0
+ 762 0297 18030000 		.4byte	0x318
+ 763 029b 17       		.uleb128 0x17
+ 764 029c F9020000 		.4byte	.LASF32
+ 765 02a0 01       		.byte	0x1
+ 766 02a1 56       		.byte	0x56
+ 767 02a2 99000000 		.4byte	0x99
+ 768 02a6 F4000000 		.4byte	.LLST4
+ 769 02aa 17       		.uleb128 0x17
+ 770 02ab 61000000 		.4byte	.LASF33
+ 771 02af 01       		.byte	0x1
+ 772 02b0 57       		.byte	0x57
+ 773 02b1 76000000 		.4byte	0x76
+ 774 02b5 1E010000 		.4byte	.LLST5
+ 775 02b9 17       		.uleb128 0x17
+ 776 02ba 28020000 		.4byte	.LASF34
+ 777 02be 01       		.byte	0x1
+ 778 02bf 58       		.byte	0x58
+ 779 02c0 76000000 		.4byte	0x76
+ 780 02c4 3C010000 		.4byte	.LLST6
+ 781 02c8 16       		.uleb128 0x16
+ 782 02c9 18000000 		.4byte	.Ldebug_ranges0+0x18
+ 783 02cd F3020000 		.4byte	0x2f3
+ 784 02d1 17       		.uleb128 0x17
+ 785 02d2 CE030000 		.4byte	.LASF35
+ 786 02d6 01       		.byte	0x1
+ 787 02d7 63       		.byte	0x63
+ 788 02d8 76000000 		.4byte	0x76
+ 789 02dc 5A010000 		.4byte	.LLST7
+ 790 02e0 13       		.uleb128 0x13
+ 791 02e1 26000000 		.4byte	.LVL26
+ 792 02e5 DC040000 		.4byte	0x4dc
+ 793 02e9 13       		.uleb128 0x13
+ 794 02ea 3E000000 		.4byte	.LVL31
+ 795 02ee DC040000 		.4byte	0x4dc
+ 796 02f2 00       		.byte	0
+ 797 02f3 13       		.uleb128 0x13
+ 798 02f4 0A000000 		.4byte	.LVL20
+ 799 02f8 E8040000 		.4byte	0x4e8
+ 800 02fc 13       		.uleb128 0x13
+ 801 02fd 10000000 		.4byte	.LVL22
+ 802 0301 DC040000 		.4byte	0x4dc
+ 803 0305 13       		.uleb128 0x13
+ 804 0306 16000000 		.4byte	.LVL24
+ 805 030a F4040000 		.4byte	0x4f4
+ 806 030e 13       		.uleb128 0x13
+ 807 030f 44000000 		.4byte	.LVL33
+ 808 0313 00050000 		.4byte	0x500
+ 809 0317 00       		.byte	0
+ 810 0318 13       		.uleb128 0x13
+ 811 0319 5C000000 		.4byte	.LVL36
+ 812 031d 00050000 		.4byte	0x500
+ 813 0321 00       		.byte	0
+ 814 0322 02       		.uleb128 0x2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 18
+
+
+ 815 0323 01       		.byte	0x1
+ 816 0324 02       		.byte	0x2
+ 817 0325 1C030000 		.4byte	.LASF36
+ 818 0329 10       		.uleb128 0x10
+ 819 032a 44030000 		.4byte	.LASF38
+ 820 032e 01       		.byte	0x1
+ 821 032f 75       		.byte	0x75
+ 822 0330 00000000 		.4byte	.LFB66
+ 823 0334 40000000 		.4byte	.LFE66-.LFB66
+ 824 0338 01       		.uleb128 0x1
+ 825 0339 9C       		.byte	0x9c
+ 826 033a E8030000 		.4byte	0x3e8
+ 827 033e 18       		.uleb128 0x18
+ 828 033f 666D7400 		.ascii	"fmt\000"
+ 829 0343 01       		.byte	0x1
+ 830 0344 75       		.byte	0x75
+ 831 0345 D6000000 		.4byte	0xd6
+ 832 0349 02       		.uleb128 0x2
+ 833 034a 91       		.byte	0x91
+ 834 034b 70       		.sleb128 -16
+ 835 034c 19       		.uleb128 0x19
+ 836 034d 1A       		.uleb128 0x1a
+ 837 034e 617000   		.ascii	"ap\000"
+ 838 0351 01       		.byte	0x1
+ 839 0352 77       		.byte	0x77
+ 840 0353 09010000 		.4byte	0x109
+ 841 0357 02       		.uleb128 0x2
+ 842 0358 91       		.byte	0x91
+ 843 0359 64       		.sleb128 -28
+ 844 035a 1B       		.uleb128 0x1b
+ 845 035b CA000000 		.4byte	.LASF39
+ 846 035f 01       		.byte	0x1
+ 847 0360 78       		.byte	0x78
+ 848 0361 E8030000 		.4byte	0x3e8
+ 849 0365 03       		.uleb128 0x3
+ 850 0366 91       		.byte	0x91
+ 851 0367 A07F     		.sleb128 -96
+ 852 0369 17       		.uleb128 0x17
+ 853 036a 49000000 		.4byte	.LASF40
+ 854 036e 01       		.byte	0x1
+ 855 036f 7F       		.byte	0x7f
+ 856 0370 8D000000 		.4byte	0x8d
+ 857 0374 6D010000 		.4byte	.LLST8
+ 858 0378 12       		.uleb128 0x12
+ 859 0379 12000000 		.4byte	.LVL39
+ 860 037d 0B050000 		.4byte	0x50b
+ 861 0381 99030000 		.4byte	0x399
+ 862 0385 0E       		.uleb128 0xe
+ 863 0386 01       		.uleb128 0x1
+ 864 0387 50       		.byte	0x50
+ 865 0388 02       		.uleb128 0x2
+ 866 0389 7D       		.byte	0x7d
+ 867 038a 00       		.sleb128 0
+ 868 038b 0E       		.uleb128 0xe
+ 869 038c 01       		.uleb128 0x1
+ 870 038d 51       		.byte	0x51
+ 871 038e 03       		.uleb128 0x3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 19
+
+
+ 872 038f 91       		.byte	0x91
+ 873 0390 50       		.sleb128 -48
+ 874 0391 06       		.byte	0x6
+ 875 0392 0E       		.uleb128 0xe
+ 876 0393 01       		.uleb128 0x1
+ 877 0394 52       		.byte	0x52
+ 878 0395 02       		.uleb128 0x2
+ 879 0396 91       		.byte	0x91
+ 880 0397 54       		.sleb128 -44
+ 881 0398 00       		.byte	0
+ 882 0399 12       		.uleb128 0x12
+ 883 039a 18000000 		.4byte	.LVL40
+ 884 039e 16050000 		.4byte	0x516
+ 885 03a2 AD030000 		.4byte	0x3ad
+ 886 03a6 0E       		.uleb128 0xe
+ 887 03a7 01       		.uleb128 0x1
+ 888 03a8 50       		.byte	0x50
+ 889 03a9 02       		.uleb128 0x2
+ 890 03aa 7D       		.byte	0x7d
+ 891 03ab 00       		.sleb128 0
+ 892 03ac 00       		.byte	0
+ 893 03ad 12       		.uleb128 0x12
+ 894 03ae 24000000 		.4byte	.LVL43
+ 895 03b2 8B040000 		.4byte	0x48b
+ 896 03b6 C4030000 		.4byte	0x3c4
+ 897 03ba 0E       		.uleb128 0xe
+ 898 03bb 01       		.uleb128 0x1
+ 899 03bc 50       		.byte	0x50
+ 900 03bd 05       		.uleb128 0x5
+ 901 03be 03       		.byte	0x3
+ 902 03bf 28000000 		.4byte	.LC8
+ 903 03c3 00       		.byte	0
+ 904 03c4 12       		.uleb128 0x12
+ 905 03c5 2A000000 		.4byte	.LVL44
+ 906 03c9 5B020000 		.4byte	0x25b
+ 907 03cd D7030000 		.4byte	0x3d7
+ 908 03d1 0E       		.uleb128 0xe
+ 909 03d2 01       		.uleb128 0x1
+ 910 03d3 50       		.byte	0x50
+ 911 03d4 01       		.uleb128 0x1
+ 912 03d5 31       		.byte	0x31
+ 913 03d6 00       		.byte	0
+ 914 03d7 0D       		.uleb128 0xd
+ 915 03d8 34000000 		.4byte	.LVL45
+ 916 03dc 21050000 		.4byte	0x521
+ 917 03e0 0E       		.uleb128 0xe
+ 918 03e1 01       		.uleb128 0x1
+ 919 03e2 50       		.byte	0x50
+ 920 03e3 02       		.uleb128 0x2
+ 921 03e4 7D       		.byte	0x7d
+ 922 03e5 00       		.sleb128 0
+ 923 03e6 00       		.byte	0
+ 924 03e7 00       		.byte	0
+ 925 03e8 1C       		.uleb128 0x1c
+ 926 03e9 BF000000 		.4byte	0xbf
+ 927 03ed F8030000 		.4byte	0x3f8
+ 928 03f1 1D       		.uleb128 0x1d
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 20
+
+
+ 929 03f2 CD000000 		.4byte	0xcd
+ 930 03f6 40       		.byte	0x40
+ 931 03f7 00       		.byte	0
+ 932 03f8 1E       		.uleb128 0x1e
+ 933 03f9 51000000 		.4byte	.LASF41
+ 934 03fd 07       		.byte	0x7
+ 935 03fe 3B       		.byte	0x3b
+ 936 03ff 14010000 		.4byte	0x114
+ 937 0403 05       		.uleb128 0x5
+ 938 0404 03       		.byte	0x3
+ 939 0405 00000000 		.4byte	Param
+ 940 0409 1E       		.uleb128 0x1e
+ 941 040a BE020000 		.4byte	.LASF42
+ 942 040e 01       		.byte	0x1
+ 943 040f 3C       		.byte	0x3c
+ 944 0410 8D000000 		.4byte	0x8d
+ 945 0414 05       		.uleb128 0x5
+ 946 0415 03       		.byte	0x3
+ 947 0416 00000000 		.4byte	g_size_USB_ReceiveBuffer
+ 948 041a 1C       		.uleb128 0x1c
+ 949 041b 81000000 		.4byte	0x81
+ 950 041f 2A040000 		.4byte	0x42a
+ 951 0423 1D       		.uleb128 0x1d
+ 952 0424 CD000000 		.4byte	0xcd
+ 953 0428 40       		.byte	0x40
+ 954 0429 00       		.byte	0
+ 955 042a 1E       		.uleb128 0x1e
+ 956 042b 72020000 		.4byte	.LASF43
+ 957 042f 01       		.byte	0x1
+ 958 0430 11       		.byte	0x11
+ 959 0431 1A040000 		.4byte	0x41a
+ 960 0435 05       		.uleb128 0x5
+ 961 0436 03       		.byte	0x3
+ 962 0437 00000000 		.4byte	g_usb_buffer
+ 963 043b 1E       		.uleb128 0x1e
+ 964 043c B1030000 		.4byte	.LASF44
+ 965 0440 01       		.byte	0x1
+ 966 0441 12       		.byte	0x12
+ 967 0442 8D000000 		.4byte	0x8d
+ 968 0446 05       		.uleb128 0x5
+ 969 0447 03       		.byte	0x3
+ 970 0448 00000000 		.4byte	g_usb_count
+ 971 044c 1C       		.uleb128 0x1c
+ 972 044d 81000000 		.4byte	0x81
+ 973 0451 5D040000 		.4byte	0x45d
+ 974 0455 1F       		.uleb128 0x1f
+ 975 0456 CD000000 		.4byte	0xcd
+ 976 045a F401     		.2byte	0x1f4
+ 977 045c 00       		.byte	0
+ 978 045d 1E       		.uleb128 0x1e
+ 979 045e 02010000 		.4byte	.LASF45
+ 980 0462 01       		.byte	0x1
+ 981 0463 3B       		.byte	0x3b
+ 982 0464 4C040000 		.4byte	0x44c
+ 983 0468 05       		.uleb128 0x5
+ 984 0469 03       		.byte	0x3
+ 985 046a 00000000 		.4byte	g_USB_ReceiveBuffer
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 21
+
+
+ 986 046e 1E       		.uleb128 0x1e
+ 987 046f 37020000 		.4byte	.LASF46
+ 988 0473 01       		.byte	0x1
+ 989 0474 4D       		.byte	0x4d
+ 990 0475 22030000 		.4byte	0x322
+ 991 0479 05       		.uleb128 0x5
+ 992 047a 03       		.byte	0x3
+ 993 047b 00000000 		.4byte	usb_active
+ 994 047f 20       		.uleb128 0x20
+ 995 0480 F4000000 		.4byte	.LASF47
+ 996 0484 F4000000 		.4byte	.LASF47
+ 997 0488 08       		.byte	0x8
+ 998 0489 2B01     		.2byte	0x12b
+ 999 048b 21       		.uleb128 0x21
+ 1000 048c D7020000 		.4byte	.LASF66
+ 1001 0490 1B000000 		.4byte	.LASF67
+ 1002 0494 06       		.byte	0x6
+ 1003 0495 00       		.byte	0
+ 1004 0496 D7020000 		.4byte	.LASF66
+ 1005 049a 22       		.uleb128 0x22
+ 1006 049b C3000000 		.4byte	.LASF68
+ 1007 049f C3000000 		.4byte	.LASF68
+ 1008 04a3 20       		.uleb128 0x20
+ 1009 04a4 2A000000 		.4byte	.LASF48
+ 1010 04a8 2A000000 		.4byte	.LASF48
+ 1011 04ac 08       		.byte	0x8
+ 1012 04ad 2F01     		.2byte	0x12f
+ 1013 04af 20       		.uleb128 0x20
+ 1014 04b0 C8010000 		.4byte	.LASF49
+ 1015 04b4 C8010000 		.4byte	.LASF49
+ 1016 04b8 08       		.byte	0x8
+ 1017 04b9 2E01     		.2byte	0x12e
+ 1018 04bb 23       		.uleb128 0x23
+ 1019 04bc BD030000 		.4byte	.LASF50
+ 1020 04c0 BD030000 		.4byte	.LASF50
+ 1021 04c4 09       		.byte	0x9
+ 1022 04c5 22       		.byte	0x22
+ 1023 04c6 23       		.uleb128 0x23
+ 1024 04c7 EC030000 		.4byte	.LASF51
+ 1025 04cb EC030000 		.4byte	.LASF51
+ 1026 04cf 09       		.byte	0x9
+ 1027 04d0 29       		.byte	0x29
+ 1028 04d1 23       		.uleb128 0x23
+ 1029 04d2 7C000000 		.4byte	.LASF52
+ 1030 04d6 7C000000 		.4byte	.LASF52
+ 1031 04da 09       		.byte	0x9
+ 1032 04db 2B       		.byte	0x2b
+ 1033 04dc 20       		.uleb128 0x20
+ 1034 04dd 16020000 		.4byte	.LASF53
+ 1035 04e1 16020000 		.4byte	.LASF53
+ 1036 04e5 0A       		.byte	0xa
+ 1037 04e6 1201     		.2byte	0x112
+ 1038 04e8 20       		.uleb128 0x20
+ 1039 04e9 6E030000 		.4byte	.LASF54
+ 1040 04ed 6E030000 		.4byte	.LASF54
+ 1041 04f1 0A       		.byte	0xa
+ 1042 04f2 1101     		.2byte	0x111
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 22
+
+
+ 1043 04f4 20       		.uleb128 0x20
+ 1044 04f5 07020000 		.4byte	.LASF55
+ 1045 04f9 07020000 		.4byte	.LASF55
+ 1046 04fd 0A       		.byte	0xa
+ 1047 04fe 0A01     		.2byte	0x10a
+ 1048 0500 23       		.uleb128 0x23
+ 1049 0501 08000000 		.4byte	.LASF56
+ 1050 0505 08000000 		.4byte	.LASF56
+ 1051 0509 09       		.byte	0x9
+ 1052 050a 28       		.byte	0x28
+ 1053 050b 23       		.uleb128 0x23
+ 1054 050c 22030000 		.4byte	.LASF57
+ 1055 0510 22030000 		.4byte	.LASF57
+ 1056 0514 0B       		.byte	0xb
+ 1057 0515 C5       		.byte	0xc5
+ 1058 0516 23       		.uleb128 0x23
+ 1059 0517 0D030000 		.4byte	.LASF58
+ 1060 051b 0D030000 		.4byte	.LASF58
+ 1061 051f 0C       		.byte	0xc
+ 1062 0520 21       		.byte	0x21
+ 1063 0521 23       		.uleb128 0x23
+ 1064 0522 B0010000 		.4byte	.LASF59
+ 1065 0526 B0010000 		.4byte	.LASF59
+ 1066 052a 09       		.byte	0x9
+ 1067 052b 24       		.byte	0x24
+ 1068 052c 00       		.byte	0
+ 1069              		.section	.debug_abbrev,"",%progbits
+ 1070              	.Ldebug_abbrev0:
+ 1071 0000 01       		.uleb128 0x1
+ 1072 0001 11       		.uleb128 0x11
+ 1073 0002 01       		.byte	0x1
+ 1074 0003 25       		.uleb128 0x25
+ 1075 0004 0E       		.uleb128 0xe
+ 1076 0005 13       		.uleb128 0x13
+ 1077 0006 0B       		.uleb128 0xb
+ 1078 0007 03       		.uleb128 0x3
+ 1079 0008 0E       		.uleb128 0xe
+ 1080 0009 1B       		.uleb128 0x1b
+ 1081 000a 0E       		.uleb128 0xe
+ 1082 000b 55       		.uleb128 0x55
+ 1083 000c 17       		.uleb128 0x17
+ 1084 000d 11       		.uleb128 0x11
+ 1085 000e 01       		.uleb128 0x1
+ 1086 000f 10       		.uleb128 0x10
+ 1087 0010 17       		.uleb128 0x17
+ 1088 0011 00       		.byte	0
+ 1089 0012 00       		.byte	0
+ 1090 0013 02       		.uleb128 0x2
+ 1091 0014 24       		.uleb128 0x24
+ 1092 0015 00       		.byte	0
+ 1093 0016 0B       		.uleb128 0xb
+ 1094 0017 0B       		.uleb128 0xb
+ 1095 0018 3E       		.uleb128 0x3e
+ 1096 0019 0B       		.uleb128 0xb
+ 1097 001a 03       		.uleb128 0x3
+ 1098 001b 0E       		.uleb128 0xe
+ 1099 001c 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 23
+
+
+ 1100 001d 00       		.byte	0
+ 1101 001e 03       		.uleb128 0x3
+ 1102 001f 16       		.uleb128 0x16
+ 1103 0020 00       		.byte	0
+ 1104 0021 03       		.uleb128 0x3
+ 1105 0022 0E       		.uleb128 0xe
+ 1106 0023 3A       		.uleb128 0x3a
+ 1107 0024 0B       		.uleb128 0xb
+ 1108 0025 3B       		.uleb128 0x3b
+ 1109 0026 0B       		.uleb128 0xb
+ 1110 0027 49       		.uleb128 0x49
+ 1111 0028 13       		.uleb128 0x13
+ 1112 0029 00       		.byte	0
+ 1113 002a 00       		.byte	0
+ 1114 002b 04       		.uleb128 0x4
+ 1115 002c 24       		.uleb128 0x24
+ 1116 002d 00       		.byte	0
+ 1117 002e 0B       		.uleb128 0xb
+ 1118 002f 0B       		.uleb128 0xb
+ 1119 0030 3E       		.uleb128 0x3e
+ 1120 0031 0B       		.uleb128 0xb
+ 1121 0032 03       		.uleb128 0x3
+ 1122 0033 08       		.uleb128 0x8
+ 1123 0034 00       		.byte	0
+ 1124 0035 00       		.byte	0
+ 1125 0036 05       		.uleb128 0x5
+ 1126 0037 16       		.uleb128 0x16
+ 1127 0038 00       		.byte	0
+ 1128 0039 03       		.uleb128 0x3
+ 1129 003a 0E       		.uleb128 0xe
+ 1130 003b 3A       		.uleb128 0x3a
+ 1131 003c 0B       		.uleb128 0xb
+ 1132 003d 3B       		.uleb128 0x3b
+ 1133 003e 05       		.uleb128 0x5
+ 1134 003f 49       		.uleb128 0x49
+ 1135 0040 13       		.uleb128 0x13
+ 1136 0041 00       		.byte	0
+ 1137 0042 00       		.byte	0
+ 1138 0043 06       		.uleb128 0x6
+ 1139 0044 0F       		.uleb128 0xf
+ 1140 0045 00       		.byte	0
+ 1141 0046 0B       		.uleb128 0xb
+ 1142 0047 0B       		.uleb128 0xb
+ 1143 0048 00       		.byte	0
+ 1144 0049 00       		.byte	0
+ 1145 004a 07       		.uleb128 0x7
+ 1146 004b 0F       		.uleb128 0xf
+ 1147 004c 00       		.byte	0
+ 1148 004d 0B       		.uleb128 0xb
+ 1149 004e 0B       		.uleb128 0xb
+ 1150 004f 49       		.uleb128 0x49
+ 1151 0050 13       		.uleb128 0x13
+ 1152 0051 00       		.byte	0
+ 1153 0052 00       		.byte	0
+ 1154 0053 08       		.uleb128 0x8
+ 1155 0054 26       		.uleb128 0x26
+ 1156 0055 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 24
+
+
+ 1157 0056 49       		.uleb128 0x49
+ 1158 0057 13       		.uleb128 0x13
+ 1159 0058 00       		.byte	0
+ 1160 0059 00       		.byte	0
+ 1161 005a 09       		.uleb128 0x9
+ 1162 005b 13       		.uleb128 0x13
+ 1163 005c 01       		.byte	0x1
+ 1164 005d 03       		.uleb128 0x3
+ 1165 005e 0E       		.uleb128 0xe
+ 1166 005f 0B       		.uleb128 0xb
+ 1167 0060 0B       		.uleb128 0xb
+ 1168 0061 3A       		.uleb128 0x3a
+ 1169 0062 0B       		.uleb128 0xb
+ 1170 0063 3B       		.uleb128 0x3b
+ 1171 0064 0B       		.uleb128 0xb
+ 1172 0065 01       		.uleb128 0x1
+ 1173 0066 13       		.uleb128 0x13
+ 1174 0067 00       		.byte	0
+ 1175 0068 00       		.byte	0
+ 1176 0069 0A       		.uleb128 0xa
+ 1177 006a 0D       		.uleb128 0xd
+ 1178 006b 00       		.byte	0
+ 1179 006c 03       		.uleb128 0x3
+ 1180 006d 0E       		.uleb128 0xe
+ 1181 006e 49       		.uleb128 0x49
+ 1182 006f 13       		.uleb128 0x13
+ 1183 0070 38       		.uleb128 0x38
+ 1184 0071 0B       		.uleb128 0xb
+ 1185 0072 34       		.uleb128 0x34
+ 1186 0073 19       		.uleb128 0x19
+ 1187 0074 00       		.byte	0
+ 1188 0075 00       		.byte	0
+ 1189 0076 0B       		.uleb128 0xb
+ 1190 0077 0D       		.uleb128 0xd
+ 1191 0078 00       		.byte	0
+ 1192 0079 03       		.uleb128 0x3
+ 1193 007a 0E       		.uleb128 0xe
+ 1194 007b 3A       		.uleb128 0x3a
+ 1195 007c 0B       		.uleb128 0xb
+ 1196 007d 3B       		.uleb128 0x3b
+ 1197 007e 0B       		.uleb128 0xb
+ 1198 007f 49       		.uleb128 0x49
+ 1199 0080 13       		.uleb128 0x13
+ 1200 0081 38       		.uleb128 0x38
+ 1201 0082 0B       		.uleb128 0xb
+ 1202 0083 00       		.byte	0
+ 1203 0084 00       		.byte	0
+ 1204 0085 0C       		.uleb128 0xc
+ 1205 0086 2E       		.uleb128 0x2e
+ 1206 0087 01       		.byte	0x1
+ 1207 0088 3F       		.uleb128 0x3f
+ 1208 0089 19       		.uleb128 0x19
+ 1209 008a 03       		.uleb128 0x3
+ 1210 008b 0E       		.uleb128 0xe
+ 1211 008c 3A       		.uleb128 0x3a
+ 1212 008d 0B       		.uleb128 0xb
+ 1213 008e 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 25
+
+
+ 1214 008f 0B       		.uleb128 0xb
+ 1215 0090 11       		.uleb128 0x11
+ 1216 0091 01       		.uleb128 0x1
+ 1217 0092 12       		.uleb128 0x12
+ 1218 0093 06       		.uleb128 0x6
+ 1219 0094 40       		.uleb128 0x40
+ 1220 0095 18       		.uleb128 0x18
+ 1221 0096 9742     		.uleb128 0x2117
+ 1222 0098 19       		.uleb128 0x19
+ 1223 0099 01       		.uleb128 0x1
+ 1224 009a 13       		.uleb128 0x13
+ 1225 009b 00       		.byte	0
+ 1226 009c 00       		.byte	0
+ 1227 009d 0D       		.uleb128 0xd
+ 1228 009e 898201   		.uleb128 0x4109
+ 1229 00a1 01       		.byte	0x1
+ 1230 00a2 11       		.uleb128 0x11
+ 1231 00a3 01       		.uleb128 0x1
+ 1232 00a4 31       		.uleb128 0x31
+ 1233 00a5 13       		.uleb128 0x13
+ 1234 00a6 00       		.byte	0
+ 1235 00a7 00       		.byte	0
+ 1236 00a8 0E       		.uleb128 0xe
+ 1237 00a9 8A8201   		.uleb128 0x410a
+ 1238 00ac 00       		.byte	0
+ 1239 00ad 02       		.uleb128 0x2
+ 1240 00ae 18       		.uleb128 0x18
+ 1241 00af 9142     		.uleb128 0x2111
+ 1242 00b1 18       		.uleb128 0x18
+ 1243 00b2 00       		.byte	0
+ 1244 00b3 00       		.byte	0
+ 1245 00b4 0F       		.uleb128 0xf
+ 1246 00b5 2E       		.uleb128 0x2e
+ 1247 00b6 00       		.byte	0
+ 1248 00b7 3F       		.uleb128 0x3f
+ 1249 00b8 19       		.uleb128 0x19
+ 1250 00b9 03       		.uleb128 0x3
+ 1251 00ba 0E       		.uleb128 0xe
+ 1252 00bb 3A       		.uleb128 0x3a
+ 1253 00bc 0B       		.uleb128 0xb
+ 1254 00bd 3B       		.uleb128 0x3b
+ 1255 00be 0B       		.uleb128 0xb
+ 1256 00bf 49       		.uleb128 0x49
+ 1257 00c0 13       		.uleb128 0x13
+ 1258 00c1 11       		.uleb128 0x11
+ 1259 00c2 01       		.uleb128 0x1
+ 1260 00c3 12       		.uleb128 0x12
+ 1261 00c4 06       		.uleb128 0x6
+ 1262 00c5 40       		.uleb128 0x40
+ 1263 00c6 18       		.uleb128 0x18
+ 1264 00c7 9742     		.uleb128 0x2117
+ 1265 00c9 19       		.uleb128 0x19
+ 1266 00ca 00       		.byte	0
+ 1267 00cb 00       		.byte	0
+ 1268 00cc 10       		.uleb128 0x10
+ 1269 00cd 2E       		.uleb128 0x2e
+ 1270 00ce 01       		.byte	0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 26
+
+
+ 1271 00cf 3F       		.uleb128 0x3f
+ 1272 00d0 19       		.uleb128 0x19
+ 1273 00d1 03       		.uleb128 0x3
+ 1274 00d2 0E       		.uleb128 0xe
+ 1275 00d3 3A       		.uleb128 0x3a
+ 1276 00d4 0B       		.uleb128 0xb
+ 1277 00d5 3B       		.uleb128 0x3b
+ 1278 00d6 0B       		.uleb128 0xb
+ 1279 00d7 27       		.uleb128 0x27
+ 1280 00d8 19       		.uleb128 0x19
+ 1281 00d9 11       		.uleb128 0x11
+ 1282 00da 01       		.uleb128 0x1
+ 1283 00db 12       		.uleb128 0x12
+ 1284 00dc 06       		.uleb128 0x6
+ 1285 00dd 40       		.uleb128 0x40
+ 1286 00de 18       		.uleb128 0x18
+ 1287 00df 9742     		.uleb128 0x2117
+ 1288 00e1 19       		.uleb128 0x19
+ 1289 00e2 01       		.uleb128 0x1
+ 1290 00e3 13       		.uleb128 0x13
+ 1291 00e4 00       		.byte	0
+ 1292 00e5 00       		.byte	0
+ 1293 00e6 11       		.uleb128 0x11
+ 1294 00e7 05       		.uleb128 0x5
+ 1295 00e8 00       		.byte	0
+ 1296 00e9 03       		.uleb128 0x3
+ 1297 00ea 0E       		.uleb128 0xe
+ 1298 00eb 3A       		.uleb128 0x3a
+ 1299 00ec 0B       		.uleb128 0xb
+ 1300 00ed 3B       		.uleb128 0x3b
+ 1301 00ee 0B       		.uleb128 0xb
+ 1302 00ef 49       		.uleb128 0x49
+ 1303 00f0 13       		.uleb128 0x13
+ 1304 00f1 02       		.uleb128 0x2
+ 1305 00f2 17       		.uleb128 0x17
+ 1306 00f3 00       		.byte	0
+ 1307 00f4 00       		.byte	0
+ 1308 00f5 12       		.uleb128 0x12
+ 1309 00f6 898201   		.uleb128 0x4109
+ 1310 00f9 01       		.byte	0x1
+ 1311 00fa 11       		.uleb128 0x11
+ 1312 00fb 01       		.uleb128 0x1
+ 1313 00fc 31       		.uleb128 0x31
+ 1314 00fd 13       		.uleb128 0x13
+ 1315 00fe 01       		.uleb128 0x1
+ 1316 00ff 13       		.uleb128 0x13
+ 1317 0100 00       		.byte	0
+ 1318 0101 00       		.byte	0
+ 1319 0102 13       		.uleb128 0x13
+ 1320 0103 898201   		.uleb128 0x4109
+ 1321 0106 00       		.byte	0
+ 1322 0107 11       		.uleb128 0x11
+ 1323 0108 01       		.uleb128 0x1
+ 1324 0109 31       		.uleb128 0x31
+ 1325 010a 13       		.uleb128 0x13
+ 1326 010b 00       		.byte	0
+ 1327 010c 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 27
+
+
+ 1328 010d 14       		.uleb128 0x14
+ 1329 010e 2E       		.uleb128 0x2e
+ 1330 010f 01       		.byte	0x1
+ 1331 0110 3F       		.uleb128 0x3f
+ 1332 0111 19       		.uleb128 0x19
+ 1333 0112 03       		.uleb128 0x3
+ 1334 0113 0E       		.uleb128 0xe
+ 1335 0114 3A       		.uleb128 0x3a
+ 1336 0115 0B       		.uleb128 0xb
+ 1337 0116 3B       		.uleb128 0x3b
+ 1338 0117 0B       		.uleb128 0xb
+ 1339 0118 27       		.uleb128 0x27
+ 1340 0119 19       		.uleb128 0x19
+ 1341 011a 49       		.uleb128 0x49
+ 1342 011b 13       		.uleb128 0x13
+ 1343 011c 11       		.uleb128 0x11
+ 1344 011d 01       		.uleb128 0x1
+ 1345 011e 12       		.uleb128 0x12
+ 1346 011f 06       		.uleb128 0x6
+ 1347 0120 40       		.uleb128 0x40
+ 1348 0121 18       		.uleb128 0x18
+ 1349 0122 9742     		.uleb128 0x2117
+ 1350 0124 19       		.uleb128 0x19
+ 1351 0125 01       		.uleb128 0x1
+ 1352 0126 13       		.uleb128 0x13
+ 1353 0127 00       		.byte	0
+ 1354 0128 00       		.byte	0
+ 1355 0129 15       		.uleb128 0x15
+ 1356 012a 34       		.uleb128 0x34
+ 1357 012b 00       		.byte	0
+ 1358 012c 03       		.uleb128 0x3
+ 1359 012d 08       		.uleb128 0x8
+ 1360 012e 3A       		.uleb128 0x3a
+ 1361 012f 0B       		.uleb128 0xb
+ 1362 0130 3B       		.uleb128 0x3b
+ 1363 0131 0B       		.uleb128 0xb
+ 1364 0132 49       		.uleb128 0x49
+ 1365 0133 13       		.uleb128 0x13
+ 1366 0134 02       		.uleb128 0x2
+ 1367 0135 17       		.uleb128 0x17
+ 1368 0136 00       		.byte	0
+ 1369 0137 00       		.byte	0
+ 1370 0138 16       		.uleb128 0x16
+ 1371 0139 0B       		.uleb128 0xb
+ 1372 013a 01       		.byte	0x1
+ 1373 013b 55       		.uleb128 0x55
+ 1374 013c 17       		.uleb128 0x17
+ 1375 013d 01       		.uleb128 0x1
+ 1376 013e 13       		.uleb128 0x13
+ 1377 013f 00       		.byte	0
+ 1378 0140 00       		.byte	0
+ 1379 0141 17       		.uleb128 0x17
+ 1380 0142 34       		.uleb128 0x34
+ 1381 0143 00       		.byte	0
+ 1382 0144 03       		.uleb128 0x3
+ 1383 0145 0E       		.uleb128 0xe
+ 1384 0146 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 28
+
+
+ 1385 0147 0B       		.uleb128 0xb
+ 1386 0148 3B       		.uleb128 0x3b
+ 1387 0149 0B       		.uleb128 0xb
+ 1388 014a 49       		.uleb128 0x49
+ 1389 014b 13       		.uleb128 0x13
+ 1390 014c 02       		.uleb128 0x2
+ 1391 014d 17       		.uleb128 0x17
+ 1392 014e 00       		.byte	0
+ 1393 014f 00       		.byte	0
+ 1394 0150 18       		.uleb128 0x18
+ 1395 0151 05       		.uleb128 0x5
+ 1396 0152 00       		.byte	0
+ 1397 0153 03       		.uleb128 0x3
+ 1398 0154 08       		.uleb128 0x8
+ 1399 0155 3A       		.uleb128 0x3a
+ 1400 0156 0B       		.uleb128 0xb
+ 1401 0157 3B       		.uleb128 0x3b
+ 1402 0158 0B       		.uleb128 0xb
+ 1403 0159 49       		.uleb128 0x49
+ 1404 015a 13       		.uleb128 0x13
+ 1405 015b 02       		.uleb128 0x2
+ 1406 015c 18       		.uleb128 0x18
+ 1407 015d 00       		.byte	0
+ 1408 015e 00       		.byte	0
+ 1409 015f 19       		.uleb128 0x19
+ 1410 0160 18       		.uleb128 0x18
+ 1411 0161 00       		.byte	0
+ 1412 0162 00       		.byte	0
+ 1413 0163 00       		.byte	0
+ 1414 0164 1A       		.uleb128 0x1a
+ 1415 0165 34       		.uleb128 0x34
+ 1416 0166 00       		.byte	0
+ 1417 0167 03       		.uleb128 0x3
+ 1418 0168 08       		.uleb128 0x8
+ 1419 0169 3A       		.uleb128 0x3a
+ 1420 016a 0B       		.uleb128 0xb
+ 1421 016b 3B       		.uleb128 0x3b
+ 1422 016c 0B       		.uleb128 0xb
+ 1423 016d 49       		.uleb128 0x49
+ 1424 016e 13       		.uleb128 0x13
+ 1425 016f 02       		.uleb128 0x2
+ 1426 0170 18       		.uleb128 0x18
+ 1427 0171 00       		.byte	0
+ 1428 0172 00       		.byte	0
+ 1429 0173 1B       		.uleb128 0x1b
+ 1430 0174 34       		.uleb128 0x34
+ 1431 0175 00       		.byte	0
+ 1432 0176 03       		.uleb128 0x3
+ 1433 0177 0E       		.uleb128 0xe
+ 1434 0178 3A       		.uleb128 0x3a
+ 1435 0179 0B       		.uleb128 0xb
+ 1436 017a 3B       		.uleb128 0x3b
+ 1437 017b 0B       		.uleb128 0xb
+ 1438 017c 49       		.uleb128 0x49
+ 1439 017d 13       		.uleb128 0x13
+ 1440 017e 02       		.uleb128 0x2
+ 1441 017f 18       		.uleb128 0x18
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 29
+
+
+ 1442 0180 00       		.byte	0
+ 1443 0181 00       		.byte	0
+ 1444 0182 1C       		.uleb128 0x1c
+ 1445 0183 01       		.uleb128 0x1
+ 1446 0184 01       		.byte	0x1
+ 1447 0185 49       		.uleb128 0x49
+ 1448 0186 13       		.uleb128 0x13
+ 1449 0187 01       		.uleb128 0x1
+ 1450 0188 13       		.uleb128 0x13
+ 1451 0189 00       		.byte	0
+ 1452 018a 00       		.byte	0
+ 1453 018b 1D       		.uleb128 0x1d
+ 1454 018c 21       		.uleb128 0x21
+ 1455 018d 00       		.byte	0
+ 1456 018e 49       		.uleb128 0x49
+ 1457 018f 13       		.uleb128 0x13
+ 1458 0190 2F       		.uleb128 0x2f
+ 1459 0191 0B       		.uleb128 0xb
+ 1460 0192 00       		.byte	0
+ 1461 0193 00       		.byte	0
+ 1462 0194 1E       		.uleb128 0x1e
+ 1463 0195 34       		.uleb128 0x34
+ 1464 0196 00       		.byte	0
+ 1465 0197 03       		.uleb128 0x3
+ 1466 0198 0E       		.uleb128 0xe
+ 1467 0199 3A       		.uleb128 0x3a
+ 1468 019a 0B       		.uleb128 0xb
+ 1469 019b 3B       		.uleb128 0x3b
+ 1470 019c 0B       		.uleb128 0xb
+ 1471 019d 49       		.uleb128 0x49
+ 1472 019e 13       		.uleb128 0x13
+ 1473 019f 3F       		.uleb128 0x3f
+ 1474 01a0 19       		.uleb128 0x19
+ 1475 01a1 02       		.uleb128 0x2
+ 1476 01a2 18       		.uleb128 0x18
+ 1477 01a3 00       		.byte	0
+ 1478 01a4 00       		.byte	0
+ 1479 01a5 1F       		.uleb128 0x1f
+ 1480 01a6 21       		.uleb128 0x21
+ 1481 01a7 00       		.byte	0
+ 1482 01a8 49       		.uleb128 0x49
+ 1483 01a9 13       		.uleb128 0x13
+ 1484 01aa 2F       		.uleb128 0x2f
+ 1485 01ab 05       		.uleb128 0x5
+ 1486 01ac 00       		.byte	0
+ 1487 01ad 00       		.byte	0
+ 1488 01ae 20       		.uleb128 0x20
+ 1489 01af 2E       		.uleb128 0x2e
+ 1490 01b0 00       		.byte	0
+ 1491 01b1 3F       		.uleb128 0x3f
+ 1492 01b2 19       		.uleb128 0x19
+ 1493 01b3 3C       		.uleb128 0x3c
+ 1494 01b4 19       		.uleb128 0x19
+ 1495 01b5 6E       		.uleb128 0x6e
+ 1496 01b6 0E       		.uleb128 0xe
+ 1497 01b7 03       		.uleb128 0x3
+ 1498 01b8 0E       		.uleb128 0xe
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 30
+
+
+ 1499 01b9 3A       		.uleb128 0x3a
+ 1500 01ba 0B       		.uleb128 0xb
+ 1501 01bb 3B       		.uleb128 0x3b
+ 1502 01bc 05       		.uleb128 0x5
+ 1503 01bd 00       		.byte	0
+ 1504 01be 00       		.byte	0
+ 1505 01bf 21       		.uleb128 0x21
+ 1506 01c0 2E       		.uleb128 0x2e
+ 1507 01c1 00       		.byte	0
+ 1508 01c2 3F       		.uleb128 0x3f
+ 1509 01c3 19       		.uleb128 0x19
+ 1510 01c4 3C       		.uleb128 0x3c
+ 1511 01c5 19       		.uleb128 0x19
+ 1512 01c6 6E       		.uleb128 0x6e
+ 1513 01c7 0E       		.uleb128 0xe
+ 1514 01c8 03       		.uleb128 0x3
+ 1515 01c9 0E       		.uleb128 0xe
+ 1516 01ca 3A       		.uleb128 0x3a
+ 1517 01cb 0B       		.uleb128 0xb
+ 1518 01cc 3B       		.uleb128 0x3b
+ 1519 01cd 0B       		.uleb128 0xb
+ 1520 01ce 6E       		.uleb128 0x6e
+ 1521 01cf 0E       		.uleb128 0xe
+ 1522 01d0 00       		.byte	0
+ 1523 01d1 00       		.byte	0
+ 1524 01d2 22       		.uleb128 0x22
+ 1525 01d3 2E       		.uleb128 0x2e
+ 1526 01d4 00       		.byte	0
+ 1527 01d5 3F       		.uleb128 0x3f
+ 1528 01d6 19       		.uleb128 0x19
+ 1529 01d7 3C       		.uleb128 0x3c
+ 1530 01d8 19       		.uleb128 0x19
+ 1531 01d9 6E       		.uleb128 0x6e
+ 1532 01da 0E       		.uleb128 0xe
+ 1533 01db 03       		.uleb128 0x3
+ 1534 01dc 0E       		.uleb128 0xe
+ 1535 01dd 00       		.byte	0
+ 1536 01de 00       		.byte	0
+ 1537 01df 23       		.uleb128 0x23
+ 1538 01e0 2E       		.uleb128 0x2e
+ 1539 01e1 00       		.byte	0
+ 1540 01e2 3F       		.uleb128 0x3f
+ 1541 01e3 19       		.uleb128 0x19
+ 1542 01e4 3C       		.uleb128 0x3c
+ 1543 01e5 19       		.uleb128 0x19
+ 1544 01e6 6E       		.uleb128 0x6e
+ 1545 01e7 0E       		.uleb128 0xe
+ 1546 01e8 03       		.uleb128 0x3
+ 1547 01e9 0E       		.uleb128 0xe
+ 1548 01ea 3A       		.uleb128 0x3a
+ 1549 01eb 0B       		.uleb128 0xb
+ 1550 01ec 3B       		.uleb128 0x3b
+ 1551 01ed 0B       		.uleb128 0xb
+ 1552 01ee 00       		.byte	0
+ 1553 01ef 00       		.byte	0
+ 1554 01f0 00       		.byte	0
+ 1555              		.section	.debug_loc,"",%progbits
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 31
+
+
+ 1556              	.Ldebug_loc0:
+ 1557              	.LLST0:
+ 1558 0000 00000000 		.4byte	.LVL1
+ 1559 0004 16000000 		.4byte	.LVL2
+ 1560 0008 0100     		.2byte	0x1
+ 1561 000a 50       		.byte	0x50
+ 1562 000b 16000000 		.4byte	.LVL2
+ 1563 000f 1C000000 		.4byte	.LVL4
+ 1564 0013 0100     		.2byte	0x1
+ 1565 0015 56       		.byte	0x56
+ 1566 0016 1C000000 		.4byte	.LVL4
+ 1567 001a 20000000 		.4byte	.LVL5
+ 1568 001e 0100     		.2byte	0x1
+ 1569 0020 50       		.byte	0x50
+ 1570 0021 20000000 		.4byte	.LVL5
+ 1571 0025 34000000 		.4byte	.LVL9
+ 1572 0029 0100     		.2byte	0x1
+ 1573 002b 56       		.byte	0x56
+ 1574 002c 34000000 		.4byte	.LVL9
+ 1575 0030 44000000 		.4byte	.LFE64
+ 1576 0034 0400     		.2byte	0x4
+ 1577 0036 F3       		.byte	0xf3
+ 1578 0037 01       		.uleb128 0x1
+ 1579 0038 50       		.byte	0x50
+ 1580 0039 9F       		.byte	0x9f
+ 1581 003a 00000000 		.4byte	0
+ 1582 003e 00000000 		.4byte	0
+ 1583              	.LLST1:
+ 1584 0042 00000000 		.4byte	.LVL1
+ 1585 0046 19000000 		.4byte	.LVL3-1
+ 1586 004a 0100     		.2byte	0x1
+ 1587 004c 51       		.byte	0x51
+ 1588 004d 19000000 		.4byte	.LVL3-1
+ 1589 0051 1C000000 		.4byte	.LVL4
+ 1590 0055 0100     		.2byte	0x1
+ 1591 0057 54       		.byte	0x54
+ 1592 0058 1C000000 		.4byte	.LVL4
+ 1593 005c 24000000 		.4byte	.LVL6
+ 1594 0060 0100     		.2byte	0x1
+ 1595 0062 51       		.byte	0x51
+ 1596 0063 24000000 		.4byte	.LVL6
+ 1597 0067 2A000000 		.4byte	.LVL8
+ 1598 006b 0100     		.2byte	0x1
+ 1599 006d 54       		.byte	0x54
+ 1600 006e 2A000000 		.4byte	.LVL8
+ 1601 0072 44000000 		.4byte	.LFE64
+ 1602 0076 0400     		.2byte	0x4
+ 1603 0078 F3       		.byte	0xf3
+ 1604 0079 01       		.uleb128 0x1
+ 1605 007a 51       		.byte	0x51
+ 1606 007b 9F       		.byte	0x9f
+ 1607 007c 00000000 		.4byte	0
+ 1608 0080 00000000 		.4byte	0
+ 1609              	.LLST2:
+ 1610 0084 00000000 		.4byte	.LVL17
+ 1611 0088 09000000 		.4byte	.LVL20-1
+ 1612 008c 0100     		.2byte	0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 32
+
+
+ 1613 008e 50       		.byte	0x50
+ 1614 008f 09000000 		.4byte	.LVL20-1
+ 1615 0093 58000000 		.4byte	.LVL35
+ 1616 0097 0400     		.2byte	0x4
+ 1617 0099 F3       		.byte	0xf3
+ 1618 009a 01       		.uleb128 0x1
+ 1619 009b 50       		.byte	0x50
+ 1620 009c 9F       		.byte	0x9f
+ 1621 009d 58000000 		.4byte	.LVL35
+ 1622 00a1 5B000000 		.4byte	.LVL36-1
+ 1623 00a5 0100     		.2byte	0x1
+ 1624 00a7 50       		.byte	0x50
+ 1625 00a8 5B000000 		.4byte	.LVL36-1
+ 1626 00ac 6C000000 		.4byte	.LFE65
+ 1627 00b0 0400     		.2byte	0x4
+ 1628 00b2 F3       		.byte	0xf3
+ 1629 00b3 01       		.uleb128 0x1
+ 1630 00b4 50       		.byte	0x50
+ 1631 00b5 9F       		.byte	0x9f
+ 1632 00b6 00000000 		.4byte	0
+ 1633 00ba 00000000 		.4byte	0
+ 1634              	.LLST3:
+ 1635 00be 02000000 		.4byte	.LVL18
+ 1636 00c2 52000000 		.4byte	.LVL34
+ 1637 00c6 0200     		.2byte	0x2
+ 1638 00c8 31       		.byte	0x31
+ 1639 00c9 9F       		.byte	0x9f
+ 1640 00ca 52000000 		.4byte	.LVL34
+ 1641 00ce 58000000 		.4byte	.LVL35
+ 1642 00d2 0100     		.2byte	0x1
+ 1643 00d4 50       		.byte	0x50
+ 1644 00d5 58000000 		.4byte	.LVL35
+ 1645 00d9 66000000 		.4byte	.LVL37
+ 1646 00dd 0200     		.2byte	0x2
+ 1647 00df 31       		.byte	0x31
+ 1648 00e0 9F       		.byte	0x9f
+ 1649 00e1 66000000 		.4byte	.LVL37
+ 1650 00e5 6C000000 		.4byte	.LFE65
+ 1651 00e9 0100     		.2byte	0x1
+ 1652 00eb 50       		.byte	0x50
+ 1653 00ec 00000000 		.4byte	0
+ 1654 00f0 00000000 		.4byte	0
+ 1655              	.LLST4:
+ 1656 00f4 06000000 		.4byte	.LVL19
+ 1657 00f8 1A000000 		.4byte	.LVL25
+ 1658 00fc 0200     		.2byte	0x2
+ 1659 00fe 30       		.byte	0x30
+ 1660 00ff 9F       		.byte	0x9f
+ 1661 0100 1A000000 		.4byte	.LVL25
+ 1662 0104 2C000000 		.4byte	.LVL28
+ 1663 0108 0100     		.2byte	0x1
+ 1664 010a 55       		.byte	0x55
+ 1665 010b 2E000000 		.4byte	.LVL29
+ 1666 010f 58000000 		.4byte	.LVL35
+ 1667 0113 0100     		.2byte	0x1
+ 1668 0115 55       		.byte	0x55
+ 1669 0116 00000000 		.4byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 33
+
+
+ 1670 011a 00000000 		.4byte	0
+ 1671              	.LLST5:
+ 1672 011e 0C000000 		.4byte	.LVL21
+ 1673 0122 0F000000 		.4byte	.LVL22-1
+ 1674 0126 0100     		.2byte	0x1
+ 1675 0128 50       		.byte	0x50
+ 1676 0129 0F000000 		.4byte	.LVL22-1
+ 1677 012d 58000000 		.4byte	.LVL35
+ 1678 0131 0100     		.2byte	0x1
+ 1679 0133 56       		.byte	0x56
+ 1680 0134 00000000 		.4byte	0
+ 1681 0138 00000000 		.4byte	0
+ 1682              	.LLST6:
+ 1683 013c 12000000 		.4byte	.LVL23
+ 1684 0140 15000000 		.4byte	.LVL24-1
+ 1685 0144 0100     		.2byte	0x1
+ 1686 0146 50       		.byte	0x50
+ 1687 0147 15000000 		.4byte	.LVL24-1
+ 1688 014b 58000000 		.4byte	.LVL35
+ 1689 014f 0100     		.2byte	0x1
+ 1690 0151 54       		.byte	0x54
+ 1691 0152 00000000 		.4byte	0
+ 1692 0156 00000000 		.4byte	0
+ 1693              	.LLST7:
+ 1694 015a 28000000 		.4byte	.LVL27
+ 1695 015e 34000000 		.4byte	.LVL30
+ 1696 0162 0100     		.2byte	0x1
+ 1697 0164 50       		.byte	0x50
+ 1698 0165 00000000 		.4byte	0
+ 1699 0169 00000000 		.4byte	0
+ 1700              	.LLST8:
+ 1701 016d 1A000000 		.4byte	.LVL41
+ 1702 0171 20000000 		.4byte	.LVL42
+ 1703 0175 0100     		.2byte	0x1
+ 1704 0177 50       		.byte	0x50
+ 1705 0178 00000000 		.4byte	0
+ 1706 017c 00000000 		.4byte	0
+ 1707              		.section	.debug_aranges,"",%progbits
+ 1708 0000 44000000 		.4byte	0x44
+ 1709 0004 0200     		.2byte	0x2
+ 1710 0006 00000000 		.4byte	.Ldebug_info0
+ 1711 000a 04       		.byte	0x4
+ 1712 000b 00       		.byte	0
+ 1713 000c 0000     		.2byte	0
+ 1714 000e 0000     		.2byte	0
+ 1715 0010 00000000 		.4byte	.LFB61
+ 1716 0014 0C000000 		.4byte	.LFE61-.LFB61
+ 1717 0018 00000000 		.4byte	.LFB63
+ 1718 001c 08000000 		.4byte	.LFE63-.LFB63
+ 1719 0020 00000000 		.4byte	.LFB64
+ 1720 0024 44000000 		.4byte	.LFE64-.LFB64
+ 1721 0028 00000000 		.4byte	.LFB62
+ 1722 002c 48000000 		.4byte	.LFE62-.LFB62
+ 1723 0030 00000000 		.4byte	.LFB65
+ 1724 0034 6C000000 		.4byte	.LFE65-.LFB65
+ 1725 0038 00000000 		.4byte	.LFB66
+ 1726 003c 40000000 		.4byte	.LFE66-.LFB66
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 34
+
+
+ 1727 0040 00000000 		.4byte	0
+ 1728 0044 00000000 		.4byte	0
+ 1729              		.section	.debug_ranges,"",%progbits
+ 1730              	.Ldebug_ranges0:
+ 1731 0000 06000000 		.4byte	.LBB2
+ 1732 0004 48000000 		.4byte	.LBE2
+ 1733 0008 4A000000 		.4byte	.LBB5
+ 1734 000c 56000000 		.4byte	.LBE5
+ 1735 0010 00000000 		.4byte	0
+ 1736 0014 00000000 		.4byte	0
+ 1737 0018 22000000 		.4byte	.LBB3
+ 1738 001c 40000000 		.4byte	.LBE3
+ 1739 0020 50000000 		.4byte	.LBB4
+ 1740 0024 52000000 		.4byte	.LBE4
+ 1741 0028 00000000 		.4byte	0
+ 1742 002c 00000000 		.4byte	0
+ 1743 0030 00000000 		.4byte	.LFB61
+ 1744 0034 0C000000 		.4byte	.LFE61
+ 1745 0038 00000000 		.4byte	.LFB63
+ 1746 003c 08000000 		.4byte	.LFE63
+ 1747 0040 00000000 		.4byte	.LFB64
+ 1748 0044 44000000 		.4byte	.LFE64
+ 1749 0048 00000000 		.4byte	.LFB62
+ 1750 004c 48000000 		.4byte	.LFE62
+ 1751 0050 00000000 		.4byte	.LFB65
+ 1752 0054 6C000000 		.4byte	.LFE65
+ 1753 0058 00000000 		.4byte	.LFB66
+ 1754 005c 40000000 		.4byte	.LFE66
+ 1755 0060 00000000 		.4byte	0
+ 1756 0064 00000000 		.4byte	0
+ 1757              		.section	.debug_line,"",%progbits
+ 1758              	.Ldebug_line0:
+ 1759 0000 2E030000 		.section	.debug_str,"MS",%progbits,1
+ 1759      02008502 
+ 1759      00000201 
+ 1759      FB0E0D00 
+ 1759      01010101 
+ 1760              	.LASF30:
+ 1761 0000 7573624C 		.ascii	"usbLoop\000"
+ 1761      6F6F7000 
+ 1762              	.LASF56:
+ 1763 0008 55534255 		.ascii	"USBUART_CDCIsReady\000"
+ 1763      4152545F 
+ 1763      43444349 
+ 1763      73526561 
+ 1763      647900
+ 1764              	.LASF67:
+ 1765 001b 5F5F6275 		.ascii	"__builtin_puts\000"
+ 1765      696C7469 
+ 1765      6E5F7075 
+ 1765      747300
+ 1766              	.LASF48:
+ 1767 002a 55534255 		.ascii	"USBUART_IsConfigurationChanged\000"
+ 1767      4152545F 
+ 1767      4973436F 
+ 1767      6E666967 
+ 1767      75726174 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 35
+
+
+ 1768              	.LASF40:
+ 1769 0049 6E4C656E 		.ascii	"nLength\000"
+ 1769      67746800 
+ 1770              	.LASF41:
+ 1771 0051 50617261 		.ascii	"Param\000"
+ 1771      6D00
+ 1772              	.LASF2:
+ 1773 0057 73686F72 		.ascii	"short int\000"
+ 1773      7420696E 
+ 1773      7400
+ 1774              	.LASF33:
+ 1775 0061 73756273 		.ascii	"subsystick_reload\000"
+ 1775      79737469 
+ 1775      636B5F72 
+ 1775      656C6F61 
+ 1775      6400
+ 1776              	.LASF19:
+ 1777 0073 73697A65 		.ascii	"sizetype\000"
+ 1777      74797065 
+ 1777      00
+ 1778              	.LASF52:
+ 1779 007c 55534255 		.ascii	"USBUART_GetAll\000"
+ 1779      4152545F 
+ 1779      47657441 
+ 1779      6C6C00
+ 1780              	.LASF62:
+ 1781 008b 433A5C50 		.ascii	"C:\\Psoc\\IoT_Integrated\\Project\\Design.cydsn\000"
+ 1781      736F635C 
+ 1781      496F545F 
+ 1781      496E7465 
+ 1781      67726174 
+ 1782              	.LASF24:
+ 1783 00b7 73746174 		.ascii	"stat_TC_INT\000"
+ 1783      5F54435F 
+ 1783      494E5400 
+ 1784              	.LASF68:
+ 1785 00c3 6D656D63 		.ascii	"memcpy\000"
+ 1785      707900
+ 1786              	.LASF39:
+ 1787 00ca 62756666 		.ascii	"buff\000"
+ 1787      00
+ 1788              	.LASF21:
+ 1789 00cf 76615F6C 		.ascii	"va_list\000"
+ 1789      69737400 
+ 1790              	.LASF29:
+ 1791 00d7 696E6974 		.ascii	"initUSB\000"
+ 1791      55534200 
+ 1792              	.LASF64:
+ 1793 00df 67657455 		.ascii	"getUSB_ReceiveBuffer\000"
+ 1793      53425F52 
+ 1793      65636569 
+ 1793      76654275 
+ 1793      66666572 
+ 1794              	.LASF47:
+ 1795 00f4 55534255 		.ascii	"USBUART_Start\000"
+ 1795      4152545F 
+ 1795      53746172 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 36
+
+
+ 1795      7400
+ 1796              	.LASF45:
+ 1797 0102 675F5553 		.ascii	"g_USB_ReceiveBuffer\000"
+ 1797      425F5265 
+ 1797      63656976 
+ 1797      65427566 
+ 1797      66657200 
+ 1798              	.LASF60:
+ 1799 0116 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1799      43313120 
+ 1799      352E342E 
+ 1799      31203230 
+ 1799      31363036 
+ 1800 0149 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1800      20726576 
+ 1800      6973696F 
+ 1800      6E203233 
+ 1800      37373135 
+ 1801 017c 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1801      66756E63 
+ 1801      74696F6E 
+ 1801      2D736563 
+ 1801      74696F6E 
+ 1802              	.LASF11:
+ 1803 01a4 75696E74 		.ascii	"uint8\000"
+ 1803      3800
+ 1804              	.LASF25:
+ 1805 01aa 706F735F 		.ascii	"pos_X\000"
+ 1805      5800
+ 1806              	.LASF59:
+ 1807 01b0 55534255 		.ascii	"USBUART_PutString\000"
+ 1807      4152545F 
+ 1807      50757453 
+ 1807      7472696E 
+ 1807      6700
+ 1808              	.LASF15:
+ 1809 01c2 666C6F61 		.ascii	"float\000"
+ 1809      7400
+ 1810              	.LASF49:
+ 1811 01c8 55534255 		.ascii	"USBUART_GetConfiguration\000"
+ 1811      4152545F 
+ 1811      47657443 
+ 1811      6F6E6669 
+ 1811      67757261 
+ 1812              	.LASF6:
+ 1813 01e1 6C6F6E67 		.ascii	"long long int\000"
+ 1813      206C6F6E 
+ 1813      6720696E 
+ 1813      7400
+ 1814              	.LASF13:
+ 1815 01ef 696E7438 		.ascii	"int8\000"
+ 1815      00
+ 1816              	.LASF22:
+ 1817 01f4 5F5F7661 		.ascii	"__va_list\000"
+ 1817      5F6C6973 
+ 1817      7400
+ 1818              	.LASF4:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 37
+
+
+ 1819 01fe 6C6F6E67 		.ascii	"long int\000"
+ 1819      20696E74 
+ 1819      00
+ 1820              	.LASF55:
+ 1821 0207 43795379 		.ascii	"CySysTickStart\000"
+ 1821      73546963 
+ 1821      6B537461 
+ 1821      727400
+ 1822              	.LASF53:
+ 1823 0216 43795379 		.ascii	"CySysTickGetValue\000"
+ 1823      73546963 
+ 1823      6B476574 
+ 1823      56616C75 
+ 1823      6500
+ 1824              	.LASF34:
+ 1825 0228 73756273 		.ascii	"subsystick_cnt\000"
+ 1825      79737469 
+ 1825      636B5F63 
+ 1825      6E7400
+ 1826              	.LASF46:
+ 1827 0237 7573625F 		.ascii	"usb_active\000"
+ 1827      61637469 
+ 1827      766500
+ 1828              	.LASF18:
+ 1829 0242 6C6F6E67 		.ascii	"long double\000"
+ 1829      20646F75 
+ 1829      626C6500 
+ 1830              	.LASF37:
+ 1831 024e 5553425F 		.ascii	"USB_ReceiveData\000"
+ 1831      52656365 
+ 1831      69766544 
+ 1831      61746100 
+ 1832              	.LASF1:
+ 1833 025e 756E7369 		.ascii	"unsigned char\000"
+ 1833      676E6564 
+ 1833      20636861 
+ 1833      7200
+ 1834              	.LASF26:
+ 1835 026c 706F735F 		.ascii	"pos_Y\000"
+ 1835      5900
+ 1836              	.LASF43:
+ 1837 0272 675F7573 		.ascii	"g_usb_buffer\000"
+ 1837      625F6275 
+ 1837      66666572 
+ 1837      00
+ 1838              	.LASF0:
+ 1839 027f 7369676E 		.ascii	"signed char\000"
+ 1839      65642063 
+ 1839      68617200 
+ 1840              	.LASF7:
+ 1841 028b 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1841      206C6F6E 
+ 1841      6720756E 
+ 1841      7369676E 
+ 1841      65642069 
+ 1842              	.LASF31:
+ 1843 02a2 616C6C6F 		.ascii	"allow_blocking\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 38
+
+
+ 1843      775F626C 
+ 1843      6F636B69 
+ 1843      6E6700
+ 1844              	.LASF8:
+ 1845 02b1 756E7369 		.ascii	"unsigned int\000"
+ 1845      676E6564 
+ 1845      20696E74 
+ 1845      00
+ 1846              	.LASF42:
+ 1847 02be 675F7369 		.ascii	"g_size_USB_ReceiveBuffer\000"
+ 1847      7A655F55 
+ 1847      53425F52 
+ 1847      65636569 
+ 1847      76654275 
+ 1848              	.LASF66:
+ 1849 02d7 70757473 		.ascii	"puts\000"
+ 1849      00
+ 1850              	.LASF3:
+ 1851 02dc 73686F72 		.ascii	"short unsigned int\000"
+ 1851      7420756E 
+ 1851      7369676E 
+ 1851      65642069 
+ 1851      6E7400
+ 1852              	.LASF63:
+ 1853 02ef 5F5F6170 		.ascii	"__ap\000"
+ 1853      00
+ 1854              	.LASF17:
+ 1855 02f4 63686172 		.ascii	"char\000"
+ 1855      00
+ 1856              	.LASF32:
+ 1857 02f9 73756273 		.ascii	"subsystick_wrap_cnt\000"
+ 1857      79737469 
+ 1857      636B5F77 
+ 1857      7261705F 
+ 1857      636E7400 
+ 1858              	.LASF58:
+ 1859 030d 7374726C 		.ascii	"strlen\000"
+ 1859      656E00
+ 1860              	.LASF10:
+ 1861 0314 696E7433 		.ascii	"int32_t\000"
+ 1861      325F7400 
+ 1862              	.LASF36:
+ 1863 031c 5F426F6F 		.ascii	"_Bool\000"
+ 1863      6C00
+ 1864              	.LASF57:
+ 1865 0322 76737072 		.ascii	"vsprintf\000"
+ 1865      696E7466 
+ 1865      00
+ 1866              	.LASF23:
+ 1867 032b 73506172 		.ascii	"sParameter\000"
+ 1867      616D6574 
+ 1867      657200
+ 1868              	.LASF12:
+ 1869 0336 75696E74 		.ascii	"uint16\000"
+ 1869      313600
+ 1870              	.LASF27:
+ 1871 033d 62756666 		.ascii	"buffer\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 39
+
+
+ 1871      657200
+ 1872              	.LASF38:
+ 1873 0344 7072696E 		.ascii	"printf_USB\000"
+ 1873      74665F55 
+ 1873      534200
+ 1874              	.LASF5:
+ 1875 034f 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1875      20756E73 
+ 1875      69676E65 
+ 1875      6420696E 
+ 1875      7400
+ 1876              	.LASF14:
+ 1877 0361 696E7433 		.ascii	"int32\000"
+ 1877      3200
+ 1878              	.LASF16:
+ 1879 0367 646F7562 		.ascii	"double\000"
+ 1879      6C6500
+ 1880              	.LASF54:
+ 1881 036e 43795379 		.ascii	"CySysTickGetReload\000"
+ 1881      73546963 
+ 1881      6B476574 
+ 1881      52656C6F 
+ 1881      616400
+ 1882              	.LASF65:
+ 1883 0381 55534255 		.ascii	"USBUART_IsTxReady\000"
+ 1883      4152545F 
+ 1883      49735478 
+ 1883      52656164 
+ 1883      7900
+ 1884              	.LASF28:
+ 1885 0393 73697A65 		.ascii	"size\000"
+ 1885      00
+ 1886              	.LASF9:
+ 1887 0398 5F5F696E 		.ascii	"__int32_t\000"
+ 1887      7433325F 
+ 1887      7400
+ 1888              	.LASF20:
+ 1889 03a2 5F5F676E 		.ascii	"__gnuc_va_list\000"
+ 1889      75635F76 
+ 1889      615F6C69 
+ 1889      737400
+ 1890              	.LASF44:
+ 1891 03b1 675F7573 		.ascii	"g_usb_count\000"
+ 1891      625F636F 
+ 1891      756E7400 
+ 1892              	.LASF50:
+ 1893 03bd 55534255 		.ascii	"USBUART_CDC_Init\000"
+ 1893      4152545F 
+ 1893      4344435F 
+ 1893      496E6974 
+ 1893      00
+ 1894              	.LASF35:
+ 1895 03ce 73756273 		.ascii	"subsystick_cnt_diff\000"
+ 1895      79737469 
+ 1895      636B5F63 
+ 1895      6E745F64 
+ 1895      69666600 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccZuT9AZ.s 			page 40
+
+
+ 1896              	.LASF61:
+ 1897 03e2 6C69625C 		.ascii	"lib\\USB.c\000"
+ 1897      5553422E 
+ 1897      6300
+ 1898              	.LASF51:
+ 1899 03ec 55534255 		.ascii	"USBUART_DataIsReady\000"
+ 1899      4152545F 
+ 1899      44617461 
+ 1899      49735265 
+ 1899      61647900 
+ 1900              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

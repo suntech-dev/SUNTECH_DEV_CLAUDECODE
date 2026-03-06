@@ -1,0 +1,16 @@
+# bootloader
+# 2025-12-30 00:55:28Z
+
+# IO_4@[IOP=(0)][IoId=(4)] is reserved: KhzXtalEnabled
+dont_use_io iocell 0 4
+# IO_5@[IOP=(0)][IoId=(5)] is reserved: KhzXtalEnabled
+dont_use_io iocell 0 5
+set_location "ClockGenBlock" m0s8clockgenblockcell -1 -1 0
+set_io "LED(0)" iocell 0 1
+set_io "LCD_SS(0)" iocell 2 4
+set_io "LCD_SCL(0)" iocell 2 2
+set_io "LCD_MOSI(0)" iocell 2 0
+set_io "LCD_Backlight(0)" iocell 1 6
+set_io "LCD_MISO(0)" iocell 2 1
+set_io "LCD_RES(0)" iocell 2 6
+set_io "LCD_RS(0)" iocell 2 5

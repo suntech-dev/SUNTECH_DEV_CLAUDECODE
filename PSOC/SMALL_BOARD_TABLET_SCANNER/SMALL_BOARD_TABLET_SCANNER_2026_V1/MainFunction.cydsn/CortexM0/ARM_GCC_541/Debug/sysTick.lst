@@ -1,0 +1,795 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccCXRizP.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"sysTick.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.global	__aeabi_uidivmod
+  20              		.section	.text.SysTickISRCallback,"ax",%progbits
+  21              		.align	2
+  22              		.global	SysTickISRCallback
+  23              		.code	16
+  24              		.thumb_func
+  25              		.type	SysTickISRCallback, %function
+  26              	SysTickISRCallback:
+  27              	.LFB35:
+  28              		.file 1 "sysTick.c"
+   1:sysTick.c     **** /* ========================================
+   2:sysTick.c     ****  *
+   3:sysTick.c     ****  * Copyright SUNTECH, 2018-2026
+   4:sysTick.c     ****  * All Rights Reserved
+   5:sysTick.c     ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:sysTick.c     ****  *
+   7:sysTick.c     ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:sysTick.c     ****  * WHICH IS THE PROPERTY OF SUNTECH.
+   9:sysTick.c     ****  *
+  10:sysTick.c     ****  * ========================================
+  11:sysTick.c     **** */
+  12:sysTick.c     **** #include "project.h"
+  13:sysTick.c     **** 
+  14:sysTick.c     **** /* Function Prototypes */
+  15:sysTick.c     **** void SysTickISRCallback(void);
+  16:sysTick.c     **** 
+  17:sysTick.c     **** unsigned long int timerCount =0;
+  18:sysTick.c     **** 
+  19:sysTick.c     **** void initSysTick()
+  20:sysTick.c     **** {
+  21:sysTick.c     ****     CySysTickStart();
+  22:sysTick.c     ****     uint32 i;
+  23:sysTick.c     ****     
+  24:sysTick.c     ****     /* Find unused callback slot and assign the callback. */
+  25:sysTick.c     ****     for (i = 0u; i < CY_SYS_SYST_NUM_OF_CALLBACKS; ++i)
+  26:sysTick.c     ****     {
+  27:sysTick.c     ****         if (CySysTickGetCallback(i) == NULL)
+  28:sysTick.c     ****         {
+  29:sysTick.c     ****             /* Set callback */
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccCXRizP.s 			page 2
+
+
+  30:sysTick.c     ****             CySysTickSetCallback(i, SysTickISRCallback);
+  31:sysTick.c     ****             break;
+  32:sysTick.c     ****         }
+  33:sysTick.c     ****     }
+  34:sysTick.c     **** }
+  35:sysTick.c     **** 
+  36:sysTick.c     **** void SysTickISRCallback(void)
+  37:sysTick.c     **** { 
+  29              		.loc 1 37 0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  38:sysTick.c     ****     timerCount++;
+  37              		.loc 1 38 0
+  38 0002 084B     		ldr	r3, .L3
+  39 0004 1A68     		ldr	r2, [r3]
+  40 0006 501C     		adds	r0, r2, #1
+  41 0008 1860     		str	r0, [r3]
+  39:sysTick.c     ****     
+  40:sysTick.c     ****     if((timerCount % 1000) == 0) LED_Write(~LED_Read());    
+  42              		.loc 1 40 0
+  43 000a FA21     		movs	r1, #250
+  44 000c 8900     		lsls	r1, r1, #2
+  45 000e FFF7FEFF 		bl	__aeabi_uidivmod
+  46              	.LVL0:
+  47 0012 0029     		cmp	r1, #0
+  48 0014 05D1     		bne	.L1
+  49              		.loc 1 40 0 is_stmt 0 discriminator 1
+  50 0016 FFF7FEFF 		bl	LED_Read
+  51              	.LVL1:
+  52 001a C043     		mvns	r0, r0
+  53 001c C0B2     		uxtb	r0, r0
+  54 001e FFF7FEFF 		bl	LED_Write
+  55              	.LVL2:
+  56              	.L1:
+  41:sysTick.c     **** }
+  57              		.loc 1 41 0 is_stmt 1
+  58              		@ sp needed
+  59 0022 10BD     		pop	{r4, pc}
+  60              	.L4:
+  61              		.align	2
+  62              	.L3:
+  63 0024 00000000 		.word	.LANCHOR0
+  64              		.cfi_endproc
+  65              	.LFE35:
+  66              		.size	SysTickISRCallback, .-SysTickISRCallback
+  67              		.section	.text.initSysTick,"ax",%progbits
+  68              		.align	2
+  69              		.global	initSysTick
+  70              		.code	16
+  71              		.thumb_func
+  72              		.type	initSysTick, %function
+  73              	initSysTick:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccCXRizP.s 			page 3
+
+
+  74              	.LFB34:
+  20:sysTick.c     ****     CySysTickStart();
+  75              		.loc 1 20 0
+  76              		.cfi_startproc
+  77              		@ args = 0, pretend = 0, frame = 0
+  78              		@ frame_needed = 0, uses_anonymous_args = 0
+  79 0000 10B5     		push	{r4, lr}
+  80              		.cfi_def_cfa_offset 8
+  81              		.cfi_offset 4, -8
+  82              		.cfi_offset 14, -4
+  21:sysTick.c     ****     uint32 i;
+  83              		.loc 1 21 0
+  84 0002 FFF7FEFF 		bl	CySysTickStart
+  85              	.LVL3:
+  25:sysTick.c     ****     {
+  86              		.loc 1 25 0
+  87 0006 0024     		movs	r4, #0
+  88 0008 0AE0     		b	.L6
+  89              	.LVL4:
+  90              	.L9:
+  27:sysTick.c     ****         {
+  91              		.loc 1 27 0
+  92 000a 2000     		movs	r0, r4
+  93 000c FFF7FEFF 		bl	CySysTickGetCallback
+  94              	.LVL5:
+  95 0010 0028     		cmp	r0, #0
+  96 0012 04D1     		bne	.L7
+  30:sysTick.c     ****             break;
+  97              		.loc 1 30 0
+  98 0014 0449     		ldr	r1, .L10
+  99 0016 2000     		movs	r0, r4
+ 100 0018 FFF7FEFF 		bl	CySysTickSetCallback
+ 101              	.LVL6:
+  31:sysTick.c     ****         }
+ 102              		.loc 1 31 0
+ 103 001c 02E0     		b	.L5
+ 104              	.L7:
+  25:sysTick.c     ****     {
+ 105              		.loc 1 25 0 discriminator 2
+ 106 001e 0134     		adds	r4, r4, #1
+ 107              	.LVL7:
+ 108              	.L6:
+  25:sysTick.c     ****     {
+ 109              		.loc 1 25 0 is_stmt 0 discriminator 1
+ 110 0020 042C     		cmp	r4, #4
+ 111 0022 F2D9     		bls	.L9
+ 112              	.L5:
+  34:sysTick.c     **** 
+ 113              		.loc 1 34 0 is_stmt 1
+ 114              		@ sp needed
+ 115              	.LVL8:
+ 116 0024 10BD     		pop	{r4, pc}
+ 117              	.L11:
+ 118 0026 C046     		.align	2
+ 119              	.L10:
+ 120 0028 00000000 		.word	SysTickISRCallback
+ 121              		.cfi_endproc
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccCXRizP.s 			page 4
+
+
+ 122              	.LFE34:
+ 123              		.size	initSysTick, .-initSysTick
+ 124              		.global	timerCount
+ 125              		.bss
+ 126              		.align	2
+ 127              		.set	.LANCHOR0,. + 0
+ 128              		.type	timerCount, %object
+ 129              		.size	timerCount, 4
+ 130              	timerCount:
+ 131 0000 00000000 		.space	4
+ 132              		.text
+ 133              	.Letext0:
+ 134              		.file 2 "Generated_Source\\PSoC4/LED.h"
+ 135              		.file 3 "Generated_Source\\PSoC4/CyLib.h"
+ 136              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 137              		.section	.debug_info,"",%progbits
+ 138              	.Ldebug_info0:
+ 139 0000 62010000 		.4byte	0x162
+ 140 0004 0400     		.2byte	0x4
+ 141 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 142 000a 04       		.byte	0x4
+ 143 000b 01       		.uleb128 0x1
+ 144 000c 4F010000 		.4byte	.LASF19
+ 145 0010 0C       		.byte	0xc
+ 146 0011 0E000000 		.4byte	.LASF20
+ 147 0015 A9000000 		.4byte	.LASF21
+ 148 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 149 001d 00000000 		.4byte	0
+ 150 0021 00000000 		.4byte	.Ldebug_line0
+ 151 0025 02       		.uleb128 0x2
+ 152 0026 01       		.byte	0x1
+ 153 0027 06       		.byte	0x6
+ 154 0028 F0010000 		.4byte	.LASF0
+ 155 002c 02       		.uleb128 0x2
+ 156 002d 01       		.byte	0x1
+ 157 002e 08       		.byte	0x8
+ 158 002f 19010000 		.4byte	.LASF1
+ 159 0033 02       		.uleb128 0x2
+ 160 0034 02       		.byte	0x2
+ 161 0035 05       		.byte	0x5
+ 162 0036 0E020000 		.4byte	.LASF2
+ 163 003a 02       		.uleb128 0x2
+ 164 003b 02       		.byte	0x2
+ 165 003c 07       		.byte	0x7
+ 166 003d DD010000 		.4byte	.LASF3
+ 167 0041 02       		.uleb128 0x2
+ 168 0042 04       		.byte	0x4
+ 169 0043 05       		.byte	0x5
+ 170 0044 3F010000 		.4byte	.LASF4
+ 171 0048 02       		.uleb128 0x2
+ 172 0049 04       		.byte	0x4
+ 173 004a 07       		.byte	0x7
+ 174 004b 57000000 		.4byte	.LASF5
+ 175 004f 02       		.uleb128 0x2
+ 176 0050 08       		.byte	0x8
+ 177 0051 05       		.byte	0x5
+ 178 0052 00000000 		.4byte	.LASF6
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccCXRizP.s 			page 5
+
+
+ 179 0056 02       		.uleb128 0x2
+ 180 0057 08       		.byte	0x8
+ 181 0058 07       		.byte	0x7
+ 182 0059 69000000 		.4byte	.LASF7
+ 183 005d 03       		.uleb128 0x3
+ 184 005e 04       		.byte	0x4
+ 185 005f 05       		.byte	0x5
+ 186 0060 696E7400 		.ascii	"int\000"
+ 187 0064 02       		.uleb128 0x2
+ 188 0065 04       		.byte	0x4
+ 189 0066 07       		.byte	0x7
+ 190 0067 18000000 		.4byte	.LASF8
+ 191 006b 04       		.uleb128 0x4
+ 192 006c 25000000 		.4byte	.LASF22
+ 193 0070 04       		.byte	0x4
+ 194 0071 D401     		.2byte	0x1d4
+ 195 0073 48000000 		.4byte	0x48
+ 196 0077 02       		.uleb128 0x2
+ 197 0078 04       		.byte	0x4
+ 198 0079 04       		.byte	0x4
+ 199 007a 08020000 		.4byte	.LASF9
+ 200 007e 02       		.uleb128 0x2
+ 201 007f 08       		.byte	0x8
+ 202 0080 04       		.byte	0x4
+ 203 0081 48010000 		.4byte	.LASF10
+ 204 0085 02       		.uleb128 0x2
+ 205 0086 01       		.byte	0x1
+ 206 0087 08       		.byte	0x8
+ 207 0088 27010000 		.4byte	.LASF11
+ 208 008c 02       		.uleb128 0x2
+ 209 008d 08       		.byte	0x8
+ 210 008e 04       		.byte	0x4
+ 211 008f FC010000 		.4byte	.LASF12
+ 212 0093 02       		.uleb128 0x2
+ 213 0094 04       		.byte	0x4
+ 214 0095 07       		.byte	0x7
+ 215 0096 18020000 		.4byte	.LASF13
+ 216 009a 05       		.uleb128 0x5
+ 217 009b 2C010000 		.4byte	.LASF23
+ 218 009f 01       		.byte	0x1
+ 219 00a0 24       		.byte	0x24
+ 220 00a1 00000000 		.4byte	.LFB35
+ 221 00a5 28000000 		.4byte	.LFE35-.LFB35
+ 222 00a9 01       		.uleb128 0x1
+ 223 00aa 9C       		.byte	0x9c
+ 224 00ab C2000000 		.4byte	0xc2
+ 225 00af 06       		.uleb128 0x6
+ 226 00b0 1A000000 		.4byte	.LVL1
+ 227 00b4 2C010000 		.4byte	0x12c
+ 228 00b8 06       		.uleb128 0x6
+ 229 00b9 22000000 		.4byte	.LVL2
+ 230 00bd 37010000 		.4byte	0x137
+ 231 00c1 00       		.byte	0
+ 232 00c2 07       		.uleb128 0x7
+ 233 00c3 41000000 		.4byte	.LASF24
+ 234 00c7 01       		.byte	0x1
+ 235 00c8 13       		.byte	0x13
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccCXRizP.s 			page 6
+
+
+ 236 00c9 00000000 		.4byte	.LFB34
+ 237 00cd 2C000000 		.4byte	.LFE34-.LFB34
+ 238 00d1 01       		.uleb128 0x1
+ 239 00d2 9C       		.byte	0x9c
+ 240 00d3 1B010000 		.4byte	0x11b
+ 241 00d7 08       		.uleb128 0x8
+ 242 00d8 6900     		.ascii	"i\000"
+ 243 00da 01       		.byte	0x1
+ 244 00db 16       		.byte	0x16
+ 245 00dc 6B000000 		.4byte	0x6b
+ 246 00e0 00000000 		.4byte	.LLST0
+ 247 00e4 06       		.uleb128 0x6
+ 248 00e5 06000000 		.4byte	.LVL3
+ 249 00e9 42010000 		.4byte	0x142
+ 250 00ed 09       		.uleb128 0x9
+ 251 00ee 10000000 		.4byte	.LVL5
+ 252 00f2 4D010000 		.4byte	0x14d
+ 253 00f6 01010000 		.4byte	0x101
+ 254 00fa 0A       		.uleb128 0xa
+ 255 00fb 01       		.uleb128 0x1
+ 256 00fc 50       		.byte	0x50
+ 257 00fd 02       		.uleb128 0x2
+ 258 00fe 74       		.byte	0x74
+ 259 00ff 00       		.sleb128 0
+ 260 0100 00       		.byte	0
+ 261 0101 0B       		.uleb128 0xb
+ 262 0102 1C000000 		.4byte	.LVL6
+ 263 0106 59010000 		.4byte	0x159
+ 264 010a 0A       		.uleb128 0xa
+ 265 010b 01       		.uleb128 0x1
+ 266 010c 50       		.byte	0x50
+ 267 010d 02       		.uleb128 0x2
+ 268 010e 74       		.byte	0x74
+ 269 010f 00       		.sleb128 0
+ 270 0110 0A       		.uleb128 0xa
+ 271 0111 01       		.uleb128 0x1
+ 272 0112 51       		.byte	0x51
+ 273 0113 05       		.uleb128 0x5
+ 274 0114 03       		.byte	0x3
+ 275 0115 00000000 		.4byte	SysTickISRCallback
+ 276 0119 00       		.byte	0
+ 277 011a 00       		.byte	0
+ 278 011b 0C       		.uleb128 0xc
+ 279 011c 9E000000 		.4byte	.LASF25
+ 280 0120 01       		.byte	0x1
+ 281 0121 11       		.byte	0x11
+ 282 0122 48000000 		.4byte	0x48
+ 283 0126 05       		.uleb128 0x5
+ 284 0127 03       		.byte	0x3
+ 285 0128 00000000 		.4byte	timerCount
+ 286 012c 0D       		.uleb128 0xd
+ 287 012d 95000000 		.4byte	.LASF14
+ 288 0131 95000000 		.4byte	.LASF14
+ 289 0135 02       		.byte	0x2
+ 290 0136 32       		.byte	0x32
+ 291 0137 0D       		.uleb128 0xd
+ 292 0138 4D000000 		.4byte	.LASF15
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccCXRizP.s 			page 7
+
+
+ 293 013c 4D000000 		.4byte	.LASF15
+ 294 0140 02       		.byte	0x2
+ 295 0141 33       		.byte	0x33
+ 296 0142 0D       		.uleb128 0xd
+ 297 0143 21020000 		.4byte	.LASF16
+ 298 0147 21020000 		.4byte	.LASF16
+ 299 014b 03       		.byte	0x3
+ 300 014c F7       		.byte	0xf7
+ 301 014d 0E       		.uleb128 0xe
+ 302 014e 80000000 		.4byte	.LASF17
+ 303 0152 80000000 		.4byte	.LASF17
+ 304 0156 03       		.byte	0x3
+ 305 0157 0101     		.2byte	0x101
+ 306 0159 0E       		.uleb128 0xe
+ 307 015a 2C000000 		.4byte	.LASF18
+ 308 015e 2C000000 		.4byte	.LASF18
+ 309 0162 03       		.byte	0x3
+ 310 0163 0001     		.2byte	0x100
+ 311 0165 00       		.byte	0
+ 312              		.section	.debug_abbrev,"",%progbits
+ 313              	.Ldebug_abbrev0:
+ 314 0000 01       		.uleb128 0x1
+ 315 0001 11       		.uleb128 0x11
+ 316 0002 01       		.byte	0x1
+ 317 0003 25       		.uleb128 0x25
+ 318 0004 0E       		.uleb128 0xe
+ 319 0005 13       		.uleb128 0x13
+ 320 0006 0B       		.uleb128 0xb
+ 321 0007 03       		.uleb128 0x3
+ 322 0008 0E       		.uleb128 0xe
+ 323 0009 1B       		.uleb128 0x1b
+ 324 000a 0E       		.uleb128 0xe
+ 325 000b 55       		.uleb128 0x55
+ 326 000c 17       		.uleb128 0x17
+ 327 000d 11       		.uleb128 0x11
+ 328 000e 01       		.uleb128 0x1
+ 329 000f 10       		.uleb128 0x10
+ 330 0010 17       		.uleb128 0x17
+ 331 0011 00       		.byte	0
+ 332 0012 00       		.byte	0
+ 333 0013 02       		.uleb128 0x2
+ 334 0014 24       		.uleb128 0x24
+ 335 0015 00       		.byte	0
+ 336 0016 0B       		.uleb128 0xb
+ 337 0017 0B       		.uleb128 0xb
+ 338 0018 3E       		.uleb128 0x3e
+ 339 0019 0B       		.uleb128 0xb
+ 340 001a 03       		.uleb128 0x3
+ 341 001b 0E       		.uleb128 0xe
+ 342 001c 00       		.byte	0
+ 343 001d 00       		.byte	0
+ 344 001e 03       		.uleb128 0x3
+ 345 001f 24       		.uleb128 0x24
+ 346 0020 00       		.byte	0
+ 347 0021 0B       		.uleb128 0xb
+ 348 0022 0B       		.uleb128 0xb
+ 349 0023 3E       		.uleb128 0x3e
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccCXRizP.s 			page 8
+
+
+ 350 0024 0B       		.uleb128 0xb
+ 351 0025 03       		.uleb128 0x3
+ 352 0026 08       		.uleb128 0x8
+ 353 0027 00       		.byte	0
+ 354 0028 00       		.byte	0
+ 355 0029 04       		.uleb128 0x4
+ 356 002a 16       		.uleb128 0x16
+ 357 002b 00       		.byte	0
+ 358 002c 03       		.uleb128 0x3
+ 359 002d 0E       		.uleb128 0xe
+ 360 002e 3A       		.uleb128 0x3a
+ 361 002f 0B       		.uleb128 0xb
+ 362 0030 3B       		.uleb128 0x3b
+ 363 0031 05       		.uleb128 0x5
+ 364 0032 49       		.uleb128 0x49
+ 365 0033 13       		.uleb128 0x13
+ 366 0034 00       		.byte	0
+ 367 0035 00       		.byte	0
+ 368 0036 05       		.uleb128 0x5
+ 369 0037 2E       		.uleb128 0x2e
+ 370 0038 01       		.byte	0x1
+ 371 0039 3F       		.uleb128 0x3f
+ 372 003a 19       		.uleb128 0x19
+ 373 003b 03       		.uleb128 0x3
+ 374 003c 0E       		.uleb128 0xe
+ 375 003d 3A       		.uleb128 0x3a
+ 376 003e 0B       		.uleb128 0xb
+ 377 003f 3B       		.uleb128 0x3b
+ 378 0040 0B       		.uleb128 0xb
+ 379 0041 27       		.uleb128 0x27
+ 380 0042 19       		.uleb128 0x19
+ 381 0043 11       		.uleb128 0x11
+ 382 0044 01       		.uleb128 0x1
+ 383 0045 12       		.uleb128 0x12
+ 384 0046 06       		.uleb128 0x6
+ 385 0047 40       		.uleb128 0x40
+ 386 0048 18       		.uleb128 0x18
+ 387 0049 9642     		.uleb128 0x2116
+ 388 004b 19       		.uleb128 0x19
+ 389 004c 01       		.uleb128 0x1
+ 390 004d 13       		.uleb128 0x13
+ 391 004e 00       		.byte	0
+ 392 004f 00       		.byte	0
+ 393 0050 06       		.uleb128 0x6
+ 394 0051 898201   		.uleb128 0x4109
+ 395 0054 00       		.byte	0
+ 396 0055 11       		.uleb128 0x11
+ 397 0056 01       		.uleb128 0x1
+ 398 0057 31       		.uleb128 0x31
+ 399 0058 13       		.uleb128 0x13
+ 400 0059 00       		.byte	0
+ 401 005a 00       		.byte	0
+ 402 005b 07       		.uleb128 0x7
+ 403 005c 2E       		.uleb128 0x2e
+ 404 005d 01       		.byte	0x1
+ 405 005e 3F       		.uleb128 0x3f
+ 406 005f 19       		.uleb128 0x19
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccCXRizP.s 			page 9
+
+
+ 407 0060 03       		.uleb128 0x3
+ 408 0061 0E       		.uleb128 0xe
+ 409 0062 3A       		.uleb128 0x3a
+ 410 0063 0B       		.uleb128 0xb
+ 411 0064 3B       		.uleb128 0x3b
+ 412 0065 0B       		.uleb128 0xb
+ 413 0066 11       		.uleb128 0x11
+ 414 0067 01       		.uleb128 0x1
+ 415 0068 12       		.uleb128 0x12
+ 416 0069 06       		.uleb128 0x6
+ 417 006a 40       		.uleb128 0x40
+ 418 006b 18       		.uleb128 0x18
+ 419 006c 9742     		.uleb128 0x2117
+ 420 006e 19       		.uleb128 0x19
+ 421 006f 01       		.uleb128 0x1
+ 422 0070 13       		.uleb128 0x13
+ 423 0071 00       		.byte	0
+ 424 0072 00       		.byte	0
+ 425 0073 08       		.uleb128 0x8
+ 426 0074 34       		.uleb128 0x34
+ 427 0075 00       		.byte	0
+ 428 0076 03       		.uleb128 0x3
+ 429 0077 08       		.uleb128 0x8
+ 430 0078 3A       		.uleb128 0x3a
+ 431 0079 0B       		.uleb128 0xb
+ 432 007a 3B       		.uleb128 0x3b
+ 433 007b 0B       		.uleb128 0xb
+ 434 007c 49       		.uleb128 0x49
+ 435 007d 13       		.uleb128 0x13
+ 436 007e 02       		.uleb128 0x2
+ 437 007f 17       		.uleb128 0x17
+ 438 0080 00       		.byte	0
+ 439 0081 00       		.byte	0
+ 440 0082 09       		.uleb128 0x9
+ 441 0083 898201   		.uleb128 0x4109
+ 442 0086 01       		.byte	0x1
+ 443 0087 11       		.uleb128 0x11
+ 444 0088 01       		.uleb128 0x1
+ 445 0089 31       		.uleb128 0x31
+ 446 008a 13       		.uleb128 0x13
+ 447 008b 01       		.uleb128 0x1
+ 448 008c 13       		.uleb128 0x13
+ 449 008d 00       		.byte	0
+ 450 008e 00       		.byte	0
+ 451 008f 0A       		.uleb128 0xa
+ 452 0090 8A8201   		.uleb128 0x410a
+ 453 0093 00       		.byte	0
+ 454 0094 02       		.uleb128 0x2
+ 455 0095 18       		.uleb128 0x18
+ 456 0096 9142     		.uleb128 0x2111
+ 457 0098 18       		.uleb128 0x18
+ 458 0099 00       		.byte	0
+ 459 009a 00       		.byte	0
+ 460 009b 0B       		.uleb128 0xb
+ 461 009c 898201   		.uleb128 0x4109
+ 462 009f 01       		.byte	0x1
+ 463 00a0 11       		.uleb128 0x11
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccCXRizP.s 			page 10
+
+
+ 464 00a1 01       		.uleb128 0x1
+ 465 00a2 31       		.uleb128 0x31
+ 466 00a3 13       		.uleb128 0x13
+ 467 00a4 00       		.byte	0
+ 468 00a5 00       		.byte	0
+ 469 00a6 0C       		.uleb128 0xc
+ 470 00a7 34       		.uleb128 0x34
+ 471 00a8 00       		.byte	0
+ 472 00a9 03       		.uleb128 0x3
+ 473 00aa 0E       		.uleb128 0xe
+ 474 00ab 3A       		.uleb128 0x3a
+ 475 00ac 0B       		.uleb128 0xb
+ 476 00ad 3B       		.uleb128 0x3b
+ 477 00ae 0B       		.uleb128 0xb
+ 478 00af 49       		.uleb128 0x49
+ 479 00b0 13       		.uleb128 0x13
+ 480 00b1 3F       		.uleb128 0x3f
+ 481 00b2 19       		.uleb128 0x19
+ 482 00b3 02       		.uleb128 0x2
+ 483 00b4 18       		.uleb128 0x18
+ 484 00b5 00       		.byte	0
+ 485 00b6 00       		.byte	0
+ 486 00b7 0D       		.uleb128 0xd
+ 487 00b8 2E       		.uleb128 0x2e
+ 488 00b9 00       		.byte	0
+ 489 00ba 3F       		.uleb128 0x3f
+ 490 00bb 19       		.uleb128 0x19
+ 491 00bc 3C       		.uleb128 0x3c
+ 492 00bd 19       		.uleb128 0x19
+ 493 00be 6E       		.uleb128 0x6e
+ 494 00bf 0E       		.uleb128 0xe
+ 495 00c0 03       		.uleb128 0x3
+ 496 00c1 0E       		.uleb128 0xe
+ 497 00c2 3A       		.uleb128 0x3a
+ 498 00c3 0B       		.uleb128 0xb
+ 499 00c4 3B       		.uleb128 0x3b
+ 500 00c5 0B       		.uleb128 0xb
+ 501 00c6 00       		.byte	0
+ 502 00c7 00       		.byte	0
+ 503 00c8 0E       		.uleb128 0xe
+ 504 00c9 2E       		.uleb128 0x2e
+ 505 00ca 00       		.byte	0
+ 506 00cb 3F       		.uleb128 0x3f
+ 507 00cc 19       		.uleb128 0x19
+ 508 00cd 3C       		.uleb128 0x3c
+ 509 00ce 19       		.uleb128 0x19
+ 510 00cf 6E       		.uleb128 0x6e
+ 511 00d0 0E       		.uleb128 0xe
+ 512 00d1 03       		.uleb128 0x3
+ 513 00d2 0E       		.uleb128 0xe
+ 514 00d3 3A       		.uleb128 0x3a
+ 515 00d4 0B       		.uleb128 0xb
+ 516 00d5 3B       		.uleb128 0x3b
+ 517 00d6 05       		.uleb128 0x5
+ 518 00d7 00       		.byte	0
+ 519 00d8 00       		.byte	0
+ 520 00d9 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccCXRizP.s 			page 11
+
+
+ 521              		.section	.debug_loc,"",%progbits
+ 522              	.Ldebug_loc0:
+ 523              	.LLST0:
+ 524 0000 06000000 		.4byte	.LVL3
+ 525 0004 0A000000 		.4byte	.LVL4
+ 526 0008 0200     		.2byte	0x2
+ 527 000a 30       		.byte	0x30
+ 528 000b 9F       		.byte	0x9f
+ 529 000c 0A000000 		.4byte	.LVL4
+ 530 0010 24000000 		.4byte	.LVL8
+ 531 0014 0100     		.2byte	0x1
+ 532 0016 54       		.byte	0x54
+ 533 0017 00000000 		.4byte	0
+ 534 001b 00000000 		.4byte	0
+ 535              		.section	.debug_aranges,"",%progbits
+ 536 0000 24000000 		.4byte	0x24
+ 537 0004 0200     		.2byte	0x2
+ 538 0006 00000000 		.4byte	.Ldebug_info0
+ 539 000a 04       		.byte	0x4
+ 540 000b 00       		.byte	0
+ 541 000c 0000     		.2byte	0
+ 542 000e 0000     		.2byte	0
+ 543 0010 00000000 		.4byte	.LFB35
+ 544 0014 28000000 		.4byte	.LFE35-.LFB35
+ 545 0018 00000000 		.4byte	.LFB34
+ 546 001c 2C000000 		.4byte	.LFE34-.LFB34
+ 547 0020 00000000 		.4byte	0
+ 548 0024 00000000 		.4byte	0
+ 549              		.section	.debug_ranges,"",%progbits
+ 550              	.Ldebug_ranges0:
+ 551 0000 00000000 		.4byte	.LFB35
+ 552 0004 28000000 		.4byte	.LFE35
+ 553 0008 00000000 		.4byte	.LFB34
+ 554 000c 2C000000 		.4byte	.LFE34
+ 555 0010 00000000 		.4byte	0
+ 556 0014 00000000 		.4byte	0
+ 557              		.section	.debug_line,"",%progbits
+ 558              	.Ldebug_line0:
+ 559 0000 9C000000 		.section	.debug_str,"MS",%progbits,1
+ 559      02005800 
+ 559      00000201 
+ 559      FB0E0D00 
+ 559      01010101 
+ 560              	.LASF6:
+ 561 0000 6C6F6E67 		.ascii	"long long int\000"
+ 561      206C6F6E 
+ 561      6720696E 
+ 561      7400
+ 562              	.LASF20:
+ 563 000e 73797354 		.ascii	"sysTick.c\000"
+ 563      69636B2E 
+ 563      6300
+ 564              	.LASF8:
+ 565 0018 756E7369 		.ascii	"unsigned int\000"
+ 565      676E6564 
+ 565      20696E74 
+ 565      00
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccCXRizP.s 			page 12
+
+
+ 566              	.LASF22:
+ 567 0025 75696E74 		.ascii	"uint32\000"
+ 567      333200
+ 568              	.LASF18:
+ 569 002c 43795379 		.ascii	"CySysTickSetCallback\000"
+ 569      73546963 
+ 569      6B536574 
+ 569      43616C6C 
+ 569      6261636B 
+ 570              	.LASF24:
+ 571 0041 696E6974 		.ascii	"initSysTick\000"
+ 571      53797354 
+ 571      69636B00 
+ 572              	.LASF15:
+ 573 004d 4C45445F 		.ascii	"LED_Write\000"
+ 573      57726974 
+ 573      6500
+ 574              	.LASF5:
+ 575 0057 6C6F6E67 		.ascii	"long unsigned int\000"
+ 575      20756E73 
+ 575      69676E65 
+ 575      6420696E 
+ 575      7400
+ 576              	.LASF7:
+ 577 0069 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 577      206C6F6E 
+ 577      6720756E 
+ 577      7369676E 
+ 577      65642069 
+ 578              	.LASF17:
+ 579 0080 43795379 		.ascii	"CySysTickGetCallback\000"
+ 579      73546963 
+ 579      6B476574 
+ 579      43616C6C 
+ 579      6261636B 
+ 580              	.LASF14:
+ 581 0095 4C45445F 		.ascii	"LED_Read\000"
+ 581      52656164 
+ 581      00
+ 582              	.LASF25:
+ 583 009e 74696D65 		.ascii	"timerCount\000"
+ 583      72436F75 
+ 583      6E7400
+ 584              	.LASF21:
+ 585 00a9 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\TABLET_SCANNER_SM"
+ 585      554E5445 
+ 585      43485F44 
+ 585      45565F43 
+ 585      4C415544 
+ 586 00d9 414C4C5F 		.ascii	"ALL_BOARD\\TABLET_SCANNER_SMALL_BOARD_2026_V1\\Main"
+ 586      424F4152 
+ 586      445C5441 
+ 586      424C4554 
+ 586      5F534341 
+ 587 010a 46756E63 		.ascii	"Function.cydsn\000"
+ 587      74696F6E 
+ 587      2E637964 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccCXRizP.s 			page 13
+
+
+ 587      736E00
+ 588              	.LASF1:
+ 589 0119 756E7369 		.ascii	"unsigned char\000"
+ 589      676E6564 
+ 589      20636861 
+ 589      7200
+ 590              	.LASF11:
+ 591 0127 63686172 		.ascii	"char\000"
+ 591      00
+ 592              	.LASF23:
+ 593 012c 53797354 		.ascii	"SysTickISRCallback\000"
+ 593      69636B49 
+ 593      53524361 
+ 593      6C6C6261 
+ 593      636B00
+ 594              	.LASF4:
+ 595 013f 6C6F6E67 		.ascii	"long int\000"
+ 595      20696E74 
+ 595      00
+ 596              	.LASF10:
+ 597 0148 646F7562 		.ascii	"double\000"
+ 597      6C6500
+ 598              	.LASF19:
+ 599 014f 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 599      43313120 
+ 599      352E342E 
+ 599      31203230 
+ 599      31363036 
+ 600 0182 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 600      20726576 
+ 600      6973696F 
+ 600      6E203233 
+ 600      37373135 
+ 601 01b5 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 601      66756E63 
+ 601      74696F6E 
+ 601      2D736563 
+ 601      74696F6E 
+ 602              	.LASF3:
+ 603 01dd 73686F72 		.ascii	"short unsigned int\000"
+ 603      7420756E 
+ 603      7369676E 
+ 603      65642069 
+ 603      6E7400
+ 604              	.LASF0:
+ 605 01f0 7369676E 		.ascii	"signed char\000"
+ 605      65642063 
+ 605      68617200 
+ 606              	.LASF12:
+ 607 01fc 6C6F6E67 		.ascii	"long double\000"
+ 607      20646F75 
+ 607      626C6500 
+ 608              	.LASF9:
+ 609 0208 666C6F61 		.ascii	"float\000"
+ 609      7400
+ 610              	.LASF2:
+ 611 020e 73686F72 		.ascii	"short int\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccCXRizP.s 			page 14
+
+
+ 611      7420696E 
+ 611      7400
+ 612              	.LASF13:
+ 613 0218 73697A65 		.ascii	"sizetype\000"
+ 613      74797065 
+ 613      00
+ 614              	.LASF16:
+ 615 0221 43795379 		.ascii	"CySysTickStart\000"
+ 615      73546963 
+ 615      6B537461 
+ 615      727400
+ 616              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

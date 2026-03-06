@@ -1,0 +1,18 @@
+# 업로드 폴더 보안 설정
+# 이미지 파일만 직접 접근 허용
+<Files ~ "\.(jpg|jpeg|png)$">
+    Order allow,deny
+    Allow from all
+</Files>
+
+# PHP 파일 실행 금지
+<Files ~ "\.php$">
+    Order deny,allow
+    Deny from all
+</Files>
+
+# 기타 실행 파일 차단
+<FilesMatch "\.(phtml|php3|php4|php5|pl|py|cgi|sh)$">
+    Order deny,allow
+    Deny from all
+</FilesMatch>

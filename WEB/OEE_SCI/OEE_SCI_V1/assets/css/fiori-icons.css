@@ -1,0 +1,416 @@
+/*!
+ * SAP Fiori Icon System
+ * CSS-based icon system for OEE Monitoring System
+ * Version: 1.0.0
+ */
+
+/* ===== 기본 아이콘 클래스 ===== */
+.sap-icon {
+  display: inline-block;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  vertical-align: middle;
+  font-size: inherit;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== CSS 기반 아이콘 시스템 ===== */
+
+/* AI 및 인공지능 아이콘 */
+.sap-icon--ai::before {
+  content: "🤖";
+}
+
+.sap-icon--brain::before {
+  content: "🧠";
+}
+
+.sap-icon--analytics::before {
+  content: "📊";
+}
+
+.sap-icon--chart::before {
+  content: "📈";
+}
+
+.sap-icon--prediction::before {
+  content: "🔮";
+}
+
+.sap-icon--insight::before {
+  content: "💡";
+}
+
+/* 상태 및 인디케이터 아이콘 */
+.sap-icon--success::before {
+  content: "✅";
+}
+
+.sap-icon--warning::before {
+  content: "⚠️";
+}
+
+.sap-icon--error::before {
+  content: "❌";
+}
+
+.sap-icon--info::before {
+  content: "ℹ️";
+}
+
+.sap-icon--active::before {
+  content: "🟢";
+}
+
+.sap-icon--connected::before {
+  content: "🔗";
+}
+
+/* 필터 및 제어 아이콘 */
+.sap-icon--filter::before {
+  content: "🔍";
+}
+
+.sap-icon--settings::before {
+  content: "⚙️";
+}
+
+.sap-icon--time::before {
+  content: "⏰";
+}
+
+.sap-icon--calendar::before {
+  content: "📅";
+}
+
+.sap-icon--refresh::before {
+  content: "🔄";
+}
+
+.sap-icon--reset::before {
+  content: "↩️";
+}
+
+.sap-icon--export::before {
+  content: "📤";
+}
+
+.sap-icon--download::before {
+  content: "⬇️";
+}
+
+/* 데이터 및 분석 아이콘 */
+.sap-icon--database::before {
+  content: "🗃️";
+}
+
+.sap-icon--table::before {
+  content: "📋";
+}
+
+.sap-icon--correlation::before {
+  content: "🔗";
+}
+
+.sap-icon--trend-up::before {
+  content: "📈";
+}
+
+.sap-icon--trend-down::before {
+  content: "📉";
+}
+
+.sap-icon--anomaly::before {
+  content: "🚨";
+}
+
+.sap-icon--optimization::before {
+  content: "⚡";
+}
+
+/* 제조 및 생산 아이콘 */
+.sap-icon--machine::before {
+  content: "🏭";
+}
+
+.sap-icon--production::before {
+  content: "⚙️";
+}
+
+.sap-icon--quality::before {
+  content: "🎯";
+}
+
+.sap-icon--performance::before {
+  content: "📊";
+}
+
+.sap-icon--efficiency::before {
+  content: "⚡";
+}
+
+/* 네비게이션 및 액션 아이콘 */
+.sap-icon--fullscreen::before {
+  content: "🔍";
+}
+
+.sap-icon--switch-view::before {
+  content: "🔄";
+}
+
+.sap-icon--toggle::before {
+  content: "🔀";
+}
+
+.sap-icon--expand::before {
+  content: "➕";
+}
+
+.sap-icon--collapse::before {
+  content: "➖";
+}
+
+/* 실시간 모니터링 아이콘 */
+.sap-icon--real-time::before {
+  content: "⚡";
+}
+
+.sap-icon--gauge::before {
+  content: "🌡️";
+}
+
+.sap-icon--monitor::before {
+  content: "📺";
+}
+
+.sap-icon--dashboard::before {
+  content: "🖥️";
+}
+
+/* Heat Map 및 시각화 아이콘 */
+.sap-icon--heatmap::before {
+  content: "🗺️";
+}
+
+.sap-icon--chart-bar::before {
+  content: "📊";
+}
+
+.sap-icon--chart-pie::before {
+  content: "🥧";
+}
+
+.sap-icon--chart-line::before {
+  content: "📈";
+}
+
+/* 특별 아이콘 스타일 */
+.sap-icon--animate {
+  animation: iconPulse 2s infinite ease-in-out;
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+.sap-icon--spin {
+  animation: iconSpin 2s infinite linear;
+}
+
+@keyframes iconSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 아이콘 크기 변형 */
+.sap-icon--xs {
+  font-size: 0.75rem;
+}
+
+.sap-icon--sm {
+  font-size: 0.875rem;
+}
+
+.sap-icon--md {
+  font-size: 1rem;
+}
+
+.sap-icon--lg {
+  font-size: 1.25rem;
+}
+
+.sap-icon--xl {
+  font-size: 1.5rem;
+}
+
+/* 아이콘 색상 변형 */
+.sap-icon--primary {
+  color: var(--sap-brand-primary);
+}
+
+.sap-icon--secondary {
+  color: var(--sap-text-secondary);
+}
+
+.sap-icon--success {
+  color: var(--sap-status-success);
+}
+
+.sap-icon--warning {
+  color: var(--sap-status-warning);
+}
+
+.sap-icon--error {
+  color: var(--sap-status-error);
+}
+
+.sap-icon--info {
+  color: var(--sap-status-info);
+}
+
+/* 아이콘 간격 조정 */
+.sap-icon + .text,
+.text + .sap-icon {
+  margin-left: 0.5rem;
+}
+
+/* 반응형 아이콘 */
+@media (max-width: 768px) {
+  .sap-icon--responsive {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sap-icon--responsive {
+    font-size: 1rem;
+  }
+}
+
+/* 호버 효과 */
+.sap-icon--hover:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* 아이콘 버튼 조합 */
+.fiori-btn .sap-icon {
+  margin-right: 0.5rem;
+}
+
+.fiori-btn .sap-icon:last-child {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+/* 카드 헤더 아이콘 */
+.fiori-card__header .sap-icon {
+  margin-right: 0.75rem;
+  color: var(--sap-brand-primary);
+}
+
+/* 테이블 셀 아이콘 */
+.fiori-table td .sap-icon {
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+/* 상태 인디케이터 아이콘 */
+.status-indicator .sap-icon {
+  margin-right: 0.25rem;
+}
+
+/* 알림 아이콘 */
+.fiori-alert .sap-icon {
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* 로딩 상태 아이콘 */
+.loading .sap-icon {
+  animation: iconSpin 1s linear infinite;
+}
+
+/* 아이콘 그룹 */
+.sap-icon-group {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.sap-icon-group .sap-icon {
+  margin: 0;
+}
+
+/* 아이콘 배지 조합 */
+.sap-icon-badge {
+  position: relative;
+  display: inline-block;
+}
+
+.sap-icon-badge::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: var(--sap-status-error);
+  border-radius: 50%;
+  border: 1px solid var(--sap-surface-1);
+}
+
+.sap-icon-badge--success::after {
+  background: var(--sap-status-success);
+}
+
+.sap-icon-badge--warning::after {
+  background: var(--sap-status-warning);
+}
+
+/* 접근성 향상 */
+.sap-icon[aria-hidden="true"] {
+  speak: none;
+}
+
+.sap-icon[role="img"] {
+  alt: attr(aria-label);
+}
+
+/* 고대비 모드 지원 */
+@media (prefers-contrast: high) {
+  .sap-icon {
+    text-shadow: 0 0 1px currentColor;
+  }
+}
+
+/* 다크 모드 대비 (미래 확장용) */
+[data-theme="dark"] .sap-icon {
+  opacity: 0.9;
+}
+
+/* 인쇄 스타일 */
+@media print {
+  .sap-icon--animate,
+  .sap-icon--spin {
+    animation: none !important;
+  }
+  
+  .sap-icon {
+    color: #000 !important;
+  }
+}

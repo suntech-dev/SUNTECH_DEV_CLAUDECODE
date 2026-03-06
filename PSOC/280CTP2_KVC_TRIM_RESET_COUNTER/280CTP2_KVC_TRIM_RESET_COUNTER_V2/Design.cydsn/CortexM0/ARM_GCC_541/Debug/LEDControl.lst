@@ -1,0 +1,1143 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"LEDControl.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.LED_Brightness,"ax",%progbits
+  20              		.align	2
+  21              		.global	LED_Brightness
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	LED_Brightness, %function
+  25              	LED_Brightness:
+  26              	.LFB62:
+  27              		.file 1 "lib\\LEDControl.c"
+   1:lib/LEDControl.c **** /* ========================================
+   2:lib/LEDControl.c ****  *
+   3:lib/LEDControl.c ****  * Copyright Suntech, 2023.02.01
+   4:lib/LEDControl.c ****  * All Rights Reserved
+   5:lib/LEDControl.c ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:lib/LEDControl.c ****  *
+   7:lib/LEDControl.c ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:lib/LEDControl.c ****  * WHICH IS THE PROPERTY OF Suntech.
+   9:lib/LEDControl.c ****  *
+  10:lib/LEDControl.c ****  * ========================================
+  11:lib/LEDControl.c **** */
+  12:lib/LEDControl.c **** #include "LEDControl.h"
+  13:lib/LEDControl.c **** #include "externalFlash.h"
+  14:lib/LEDControl.c **** uint16 g_uLED1_Color = LED_OFF;
+  15:lib/LEDControl.c **** uint16 g_uLED2_Color = LED_OFF;
+  16:lib/LEDControl.c **** uint8  g_bLED1_Flickering = FALSE;   
+  17:lib/LEDControl.c **** uint8  g_bLED2_Flickering = FALSE;  
+  18:lib/LEDControl.c **** 
+  19:lib/LEDControl.c **** void initLEDControl()
+  20:lib/LEDControl.c **** {
+  21:lib/LEDControl.c ****     TCPWM_LED_Start();    
+  22:lib/LEDControl.c ****     Control_Reg_LED_1_Write(g_uLED1_Color);
+  23:lib/LEDControl.c ****     Control_Reg_LED_2_Write(g_uLED2_Color);  
+  24:lib/LEDControl.c ****     
+  25:lib/LEDControl.c ****     if(getMiscConfig()->uBrightness < 0 || getMiscConfig()->uBrightness > 99) getMiscConfig()->uBri
+  26:lib/LEDControl.c ****   
+  27:lib/LEDControl.c ****     LED_Brightness(getMiscConfig()->uBrightness); 
+  28:lib/LEDControl.c **** }
+  29:lib/LEDControl.c **** 
+  30:lib/LEDControl.c **** void LED_Brightness(uint16 brightness)
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 2
+
+
+  31:lib/LEDControl.c **** {
+  28              		.loc 1 31 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  32:lib/LEDControl.c ****     TCPWM_LED_WriteCompare(brightness);
+  37              		.loc 1 32 0
+  38 0002 FFF7FEFF 		bl	TCPWM_LED_WriteCompare
+  39              	.LVL1:
+  33:lib/LEDControl.c **** }
+  40              		.loc 1 33 0
+  41              		@ sp needed
+  42 0006 10BD     		pop	{r4, pc}
+  43              		.cfi_endproc
+  44              	.LFE62:
+  45              		.size	LED_Brightness, .-LED_Brightness
+  46              		.section	.text.initLEDControl,"ax",%progbits
+  47              		.align	2
+  48              		.global	initLEDControl
+  49              		.code	16
+  50              		.thumb_func
+  51              		.type	initLEDControl, %function
+  52              	initLEDControl:
+  53              	.LFB61:
+  20:lib/LEDControl.c ****     TCPWM_LED_Start();    
+  54              		.loc 1 20 0
+  55              		.cfi_startproc
+  56              		@ args = 0, pretend = 0, frame = 0
+  57              		@ frame_needed = 0, uses_anonymous_args = 0
+  58 0000 10B5     		push	{r4, lr}
+  59              		.cfi_def_cfa_offset 8
+  60              		.cfi_offset 4, -8
+  61              		.cfi_offset 14, -4
+  21:lib/LEDControl.c ****     Control_Reg_LED_1_Write(g_uLED1_Color);
+  62              		.loc 1 21 0
+  63 0002 FFF7FEFF 		bl	TCPWM_LED_Start
+  64              	.LVL2:
+  22:lib/LEDControl.c ****     Control_Reg_LED_2_Write(g_uLED2_Color);  
+  65              		.loc 1 22 0
+  66 0006 0C4C     		ldr	r4, .L4
+  67 0008 2078     		ldrb	r0, [r4]
+  68 000a FFF7FEFF 		bl	Control_Reg_LED_1_Write
+  69              	.LVL3:
+  23:lib/LEDControl.c ****     
+  70              		.loc 1 23 0
+  71 000e A078     		ldrb	r0, [r4, #2]
+  72 0010 FFF7FEFF 		bl	Control_Reg_LED_2_Write
+  73              	.LVL4:
+  25:lib/LEDControl.c ****   
+  74              		.loc 1 25 0
+  75 0014 FFF7FEFF 		bl	getMiscConfig
+  76              	.LVL5:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 3
+
+
+  77 0018 FFF7FEFF 		bl	getMiscConfig
+  78              	.LVL6:
+  79 001c 4388     		ldrh	r3, [r0, #2]
+  80 001e 632B     		cmp	r3, #99
+  81 0020 03D9     		bls	.L3
+  25:lib/LEDControl.c ****   
+  82              		.loc 1 25 0 is_stmt 0 discriminator 3
+  83 0022 FFF7FEFF 		bl	getMiscConfig
+  84              	.LVL7:
+  85 0026 3223     		movs	r3, #50
+  86 0028 4380     		strh	r3, [r0, #2]
+  87              	.L3:
+  27:lib/LEDControl.c **** }
+  88              		.loc 1 27 0 is_stmt 1
+  89 002a FFF7FEFF 		bl	getMiscConfig
+  90              	.LVL8:
+  91 002e 4088     		ldrh	r0, [r0, #2]
+  92 0030 FFF7FEFF 		bl	LED_Brightness
+  93              	.LVL9:
+  28:lib/LEDControl.c **** 
+  94              		.loc 1 28 0
+  95              		@ sp needed
+  96 0034 10BD     		pop	{r4, pc}
+  97              	.L5:
+  98 0036 C046     		.align	2
+  99              	.L4:
+ 100 0038 00000000 		.word	.LANCHOR0
+ 101              		.cfi_endproc
+ 102              	.LFE61:
+ 103              		.size	initLEDControl, .-initLEDControl
+ 104              		.section	.text.LED_OneSecondControl,"ax",%progbits
+ 105              		.align	2
+ 106              		.global	LED_OneSecondControl
+ 107              		.code	16
+ 108              		.thumb_func
+ 109              		.type	LED_OneSecondControl, %function
+ 110              	LED_OneSecondControl:
+ 111              	.LFB63:
+  34:lib/LEDControl.c **** 
+  35:lib/LEDControl.c **** void LED_OneSecondControl()
+  36:lib/LEDControl.c **** {
+ 112              		.loc 1 36 0
+ 113              		.cfi_startproc
+ 114              		@ args = 0, pretend = 0, frame = 0
+ 115              		@ frame_needed = 0, uses_anonymous_args = 0
+ 116 0000 10B5     		push	{r4, lr}
+ 117              		.cfi_def_cfa_offset 8
+ 118              		.cfi_offset 4, -8
+ 119              		.cfi_offset 14, -4
+  37:lib/LEDControl.c ****     static uint8 count =0;
+  38:lib/LEDControl.c ****     static uint8 Flickering = FALSE;
+  39:lib/LEDControl.c ****     
+  40:lib/LEDControl.c ****     Flickering = Flickering ? FALSE : TRUE;
+ 120              		.loc 1 40 0
+ 121 0002 174A     		ldr	r2, .L13
+ 122 0004 1379     		ldrb	r3, [r2, #4]
+ 123 0006 5942     		rsbs	r1, r3, #0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 4
+
+
+ 124 0008 4B41     		adcs	r3, r3, r1
+ 125 000a DBB2     		uxtb	r3, r3
+ 126 000c 1371     		strb	r3, [r2, #4]
+  41:lib/LEDControl.c ****     
+  42:lib/LEDControl.c ****     if(g_bLED1_Flickering)
+ 127              		.loc 1 42 0
+ 128 000e 5279     		ldrb	r2, [r2, #5]
+ 129 0010 002A     		cmp	r2, #0
+ 130 0012 0AD0     		beq	.L7
+  43:lib/LEDControl.c ****     {
+  44:lib/LEDControl.c ****         if(Flickering) Control_Reg_LED_1_Write(g_uLED1_Color);
+ 131              		.loc 1 44 0
+ 132 0014 002B     		cmp	r3, #0
+ 133 0016 04D0     		beq	.L8
+ 134              		.loc 1 44 0 is_stmt 0 discriminator 1
+ 135 0018 114B     		ldr	r3, .L13
+ 136 001a 1878     		ldrb	r0, [r3]
+ 137 001c FFF7FEFF 		bl	Control_Reg_LED_1_Write
+ 138              	.LVL10:
+ 139 0020 07E0     		b	.L9
+ 140              	.L8:
+  45:lib/LEDControl.c ****         else           Control_Reg_LED_1_Write(LED_OFF);
+ 141              		.loc 1 45 0 is_stmt 1
+ 142 0022 0020     		movs	r0, #0
+ 143 0024 FFF7FEFF 		bl	Control_Reg_LED_1_Write
+ 144              	.LVL11:
+ 145 0028 03E0     		b	.L9
+ 146              	.L7:
+  46:lib/LEDControl.c ****     } else {
+  47:lib/LEDControl.c ****         Control_Reg_LED_1_Write(g_uLED1_Color);
+ 147              		.loc 1 47 0
+ 148 002a 0D4B     		ldr	r3, .L13
+ 149 002c 1878     		ldrb	r0, [r3]
+ 150 002e FFF7FEFF 		bl	Control_Reg_LED_1_Write
+ 151              	.LVL12:
+ 152              	.L9:
+  48:lib/LEDControl.c ****     }
+  49:lib/LEDControl.c ****     
+  50:lib/LEDControl.c **** 
+  51:lib/LEDControl.c ****     if(g_bLED2_Flickering)
+ 153              		.loc 1 51 0
+ 154 0032 0B4B     		ldr	r3, .L13
+ 155 0034 9B79     		ldrb	r3, [r3, #6]
+ 156 0036 002B     		cmp	r3, #0
+ 157 0038 0CD0     		beq	.L10
+  52:lib/LEDControl.c ****     {
+  53:lib/LEDControl.c ****         if(Flickering) Control_Reg_LED_2_Write(g_uLED2_Color);
+ 158              		.loc 1 53 0
+ 159 003a 094B     		ldr	r3, .L13
+ 160 003c 1B79     		ldrb	r3, [r3, #4]
+ 161 003e 002B     		cmp	r3, #0
+ 162 0040 04D0     		beq	.L11
+ 163              		.loc 1 53 0 is_stmt 0 discriminator 1
+ 164 0042 074B     		ldr	r3, .L13
+ 165 0044 9878     		ldrb	r0, [r3, #2]
+ 166 0046 FFF7FEFF 		bl	Control_Reg_LED_2_Write
+ 167              	.LVL13:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 5
+
+
+ 168 004a 07E0     		b	.L6
+ 169              	.L11:
+  54:lib/LEDControl.c ****         else           Control_Reg_LED_2_Write(LED_OFF);
+ 170              		.loc 1 54 0 is_stmt 1
+ 171 004c 0020     		movs	r0, #0
+ 172 004e FFF7FEFF 		bl	Control_Reg_LED_2_Write
+ 173              	.LVL14:
+ 174 0052 03E0     		b	.L6
+ 175              	.L10:
+  55:lib/LEDControl.c ****     } else {
+  56:lib/LEDControl.c ****         Control_Reg_LED_2_Write(g_uLED2_Color);
+ 176              		.loc 1 56 0
+ 177 0054 024B     		ldr	r3, .L13
+ 178 0056 9878     		ldrb	r0, [r3, #2]
+ 179 0058 FFF7FEFF 		bl	Control_Reg_LED_2_Write
+ 180              	.LVL15:
+ 181              	.L6:
+  57:lib/LEDControl.c ****     }
+  58:lib/LEDControl.c ****     
+  59:lib/LEDControl.c **** }
+ 182              		.loc 1 59 0
+ 183              		@ sp needed
+ 184 005c 10BD     		pop	{r4, pc}
+ 185              	.L14:
+ 186 005e C046     		.align	2
+ 187              	.L13:
+ 188 0060 00000000 		.word	.LANCHOR0
+ 189              		.cfi_endproc
+ 190              	.LFE63:
+ 191              		.size	LED_OneSecondControl, .-LED_OneSecondControl
+ 192              		.global	g_bLED2_Flickering
+ 193              		.global	g_bLED1_Flickering
+ 194              		.global	g_uLED2_Color
+ 195              		.global	g_uLED1_Color
+ 196              		.comm	Param,6,4
+ 197              		.bss
+ 198              		.align	1
+ 199              		.set	.LANCHOR0,. + 0
+ 200              		.type	g_uLED1_Color, %object
+ 201              		.size	g_uLED1_Color, 2
+ 202              	g_uLED1_Color:
+ 203 0000 0000     		.space	2
+ 204              		.type	g_uLED2_Color, %object
+ 205              		.size	g_uLED2_Color, 2
+ 206              	g_uLED2_Color:
+ 207 0002 0000     		.space	2
+ 208              		.type	Flickering.8821, %object
+ 209              		.size	Flickering.8821, 1
+ 210              	Flickering.8821:
+ 211 0004 00       		.space	1
+ 212              		.type	g_bLED1_Flickering, %object
+ 213              		.size	g_bLED1_Flickering, 1
+ 214              	g_bLED1_Flickering:
+ 215 0005 00       		.space	1
+ 216              		.type	g_bLED2_Flickering, %object
+ 217              		.size	g_bLED2_Flickering, 1
+ 218              	g_bLED2_Flickering:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 6
+
+
+ 219 0006 00       		.space	1
+ 220              		.text
+ 221              	.Letext0:
+ 222              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 223              		.file 3 "./main.h"
+ 224              		.file 4 "Generated_Source\\PSoC4/TCPWM_LED.h"
+ 225              		.file 5 "Generated_Source\\PSoC4/Control_Reg_LED_1.h"
+ 226              		.file 6 "Generated_Source\\PSoC4/Control_Reg_LED_2.h"
+ 227              		.file 7 "lib\\externalFlash.h"
+ 228              		.section	.debug_info,"",%progbits
+ 229              	.Ldebug_info0:
+ 230 0000 6B020000 		.4byte	0x26b
+ 231 0004 0400     		.2byte	0x4
+ 232 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 233 000a 04       		.byte	0x4
+ 234 000b 01       		.uleb128 0x1
+ 235 000c BD010000 		.4byte	.LASF33
+ 236 0010 0C       		.byte	0xc
+ 237 0011 75020000 		.4byte	.LASF34
+ 238 0015 DD000000 		.4byte	.LASF35
+ 239 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 240 001d 00000000 		.4byte	0
+ 241 0021 00000000 		.4byte	.Ldebug_line0
+ 242 0025 02       		.uleb128 0x2
+ 243 0026 01       		.byte	0x1
+ 244 0027 06       		.byte	0x6
+ 245 0028 A1020000 		.4byte	.LASF0
+ 246 002c 02       		.uleb128 0x2
+ 247 002d 01       		.byte	0x1
+ 248 002e 08       		.byte	0x8
+ 249 002f 7A000000 		.4byte	.LASF1
+ 250 0033 02       		.uleb128 0x2
+ 251 0034 02       		.byte	0x2
+ 252 0035 05       		.byte	0x5
+ 253 0036 33010000 		.4byte	.LASF2
+ 254 003a 02       		.uleb128 0x2
+ 255 003b 02       		.byte	0x2
+ 256 003c 07       		.byte	0x7
+ 257 003d A5000000 		.4byte	.LASF3
+ 258 0041 02       		.uleb128 0x2
+ 259 0042 04       		.byte	0x4
+ 260 0043 05       		.byte	0x5
+ 261 0044 8C020000 		.4byte	.LASF4
+ 262 0048 02       		.uleb128 0x2
+ 263 0049 04       		.byte	0x4
+ 264 004a 07       		.byte	0x7
+ 265 004b 88000000 		.4byte	.LASF5
+ 266 004f 02       		.uleb128 0x2
+ 267 0050 08       		.byte	0x8
+ 268 0051 05       		.byte	0x5
+ 269 0052 62020000 		.4byte	.LASF6
+ 270 0056 02       		.uleb128 0x2
+ 271 0057 08       		.byte	0x8
+ 272 0058 07       		.byte	0x7
+ 273 0059 7E010000 		.4byte	.LASF7
+ 274 005d 03       		.uleb128 0x3
+ 275 005e 04       		.byte	0x4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 7
+
+
+ 276 005f 05       		.byte	0x5
+ 277 0060 696E7400 		.ascii	"int\000"
+ 278 0064 02       		.uleb128 0x2
+ 279 0065 04       		.byte	0x4
+ 280 0066 07       		.byte	0x7
+ 281 0067 59010000 		.4byte	.LASF8
+ 282 006b 04       		.uleb128 0x4
+ 283 006c 86020000 		.4byte	.LASF9
+ 284 0070 02       		.byte	0x2
+ 285 0071 FC01     		.2byte	0x1fc
+ 286 0073 2C000000 		.4byte	0x2c
+ 287 0077 04       		.uleb128 0x4
+ 288 0078 3D010000 		.4byte	.LASF10
+ 289 007c 02       		.byte	0x2
+ 290 007d FD01     		.2byte	0x1fd
+ 291 007f 3A000000 		.4byte	0x3a
+ 292 0083 02       		.uleb128 0x2
+ 293 0084 04       		.byte	0x4
+ 294 0085 04       		.byte	0x4
+ 295 0086 74000000 		.4byte	.LASF11
+ 296 008a 02       		.uleb128 0x2
+ 297 008b 08       		.byte	0x8
+ 298 008c 04       		.byte	0x4
+ 299 008d 4C000000 		.4byte	.LASF12
+ 300 0091 02       		.uleb128 0x2
+ 301 0092 01       		.byte	0x1
+ 302 0093 08       		.byte	0x8
+ 303 0094 70020000 		.4byte	.LASF13
+ 304 0098 02       		.uleb128 0x2
+ 305 0099 08       		.byte	0x8
+ 306 009a 04       		.byte	0x4
+ 307 009b 95020000 		.4byte	.LASF14
+ 308 009f 02       		.uleb128 0x2
+ 309 00a0 04       		.byte	0x4
+ 310 00a1 07       		.byte	0x7
+ 311 00a2 59020000 		.4byte	.LASF15
+ 312 00a6 05       		.uleb128 0x5
+ 313 00a7 9A000000 		.4byte	.LASF36
+ 314 00ab 06       		.byte	0x6
+ 315 00ac 03       		.byte	0x3
+ 316 00ad 34       		.byte	0x34
+ 317 00ae D7000000 		.4byte	0xd7
+ 318 00b2 06       		.uleb128 0x6
+ 319 00b3 00000000 		.4byte	.LASF16
+ 320 00b7 03       		.byte	0x3
+ 321 00b8 36       		.byte	0x36
+ 322 00b9 6B000000 		.4byte	0x6b
+ 323 00bd 00       		.byte	0
+ 324 00be 06       		.uleb128 0x6
+ 325 00bf C0020000 		.4byte	.LASF17
+ 326 00c3 03       		.byte	0x3
+ 327 00c4 37       		.byte	0x37
+ 328 00c5 77000000 		.4byte	0x77
+ 329 00c9 02       		.byte	0x2
+ 330 00ca 06       		.uleb128 0x6
+ 331 00cb 2D010000 		.4byte	.LASF18
+ 332 00cf 03       		.byte	0x3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 8
+
+
+ 333 00d0 38       		.byte	0x38
+ 334 00d1 77000000 		.4byte	0x77
+ 335 00d5 04       		.byte	0x4
+ 336 00d6 00       		.byte	0
+ 337 00d7 07       		.uleb128 0x7
+ 338 00d8 44010000 		.4byte	.LASF37
+ 339 00dc 01       		.byte	0x1
+ 340 00dd 1E       		.byte	0x1e
+ 341 00de 00000000 		.4byte	.LFB62
+ 342 00e2 08000000 		.4byte	.LFE62-.LFB62
+ 343 00e6 01       		.uleb128 0x1
+ 344 00e7 9C       		.byte	0x9c
+ 345 00e8 05010000 		.4byte	0x105
+ 346 00ec 08       		.uleb128 0x8
+ 347 00ed B8000000 		.4byte	.LASF38
+ 348 00f1 01       		.byte	0x1
+ 349 00f2 1E       		.byte	0x1e
+ 350 00f3 77000000 		.4byte	0x77
+ 351 00f7 00000000 		.4byte	.LLST0
+ 352 00fb 09       		.uleb128 0x9
+ 353 00fc 06000000 		.4byte	.LVL1
+ 354 0100 35020000 		.4byte	0x235
+ 355 0104 00       		.byte	0
+ 356 0105 0A       		.uleb128 0xa
+ 357 0106 CE000000 		.4byte	.LASF19
+ 358 010a 01       		.byte	0x1
+ 359 010b 13       		.byte	0x13
+ 360 010c 00000000 		.4byte	.LFB61
+ 361 0110 3C000000 		.4byte	.LFE61-.LFB61
+ 362 0114 01       		.uleb128 0x1
+ 363 0115 9C       		.byte	0x9c
+ 364 0116 63010000 		.4byte	0x163
+ 365 011a 09       		.uleb128 0x9
+ 366 011b 06000000 		.4byte	.LVL2
+ 367 011f 41020000 		.4byte	0x241
+ 368 0123 09       		.uleb128 0x9
+ 369 0124 0E000000 		.4byte	.LVL3
+ 370 0128 4D020000 		.4byte	0x24d
+ 371 012c 09       		.uleb128 0x9
+ 372 012d 14000000 		.4byte	.LVL4
+ 373 0131 58020000 		.4byte	0x258
+ 374 0135 09       		.uleb128 0x9
+ 375 0136 18000000 		.4byte	.LVL5
+ 376 013a 63020000 		.4byte	0x263
+ 377 013e 09       		.uleb128 0x9
+ 378 013f 1C000000 		.4byte	.LVL6
+ 379 0143 63020000 		.4byte	0x263
+ 380 0147 09       		.uleb128 0x9
+ 381 0148 26000000 		.4byte	.LVL7
+ 382 014c 63020000 		.4byte	0x263
+ 383 0150 09       		.uleb128 0x9
+ 384 0151 2E000000 		.4byte	.LVL8
+ 385 0155 63020000 		.4byte	0x263
+ 386 0159 09       		.uleb128 0x9
+ 387 015a 34000000 		.4byte	.LVL9
+ 388 015e D7000000 		.4byte	0xd7
+ 389 0162 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 9
+
+
+ 390 0163 0A       		.uleb128 0xa
+ 391 0164 0C000000 		.4byte	.LASF20
+ 392 0168 01       		.byte	0x1
+ 393 0169 23       		.byte	0x23
+ 394 016a 00000000 		.4byte	.LFB63
+ 395 016e 64000000 		.4byte	.LFE63-.LFB63
+ 396 0172 01       		.uleb128 0x1
+ 397 0173 9C       		.byte	0x9c
+ 398 0174 E0010000 		.4byte	0x1e0
+ 399 0178 0B       		.uleb128 0xb
+ 400 0179 38000000 		.4byte	.LASF21
+ 401 017d 01       		.byte	0x1
+ 402 017e 25       		.byte	0x25
+ 403 017f 6B000000 		.4byte	0x6b
+ 404 0183 00       		.byte	0
+ 405 0184 0C       		.uleb128 0xc
+ 406 0185 C3000000 		.4byte	.LASF22
+ 407 0189 01       		.byte	0x1
+ 408 018a 26       		.byte	0x26
+ 409 018b 6B000000 		.4byte	0x6b
+ 410 018f 05       		.uleb128 0x5
+ 411 0190 03       		.byte	0x3
+ 412 0191 04000000 		.4byte	Flickering.8821
+ 413 0195 09       		.uleb128 0x9
+ 414 0196 20000000 		.4byte	.LVL10
+ 415 019a 4D020000 		.4byte	0x24d
+ 416 019e 0D       		.uleb128 0xd
+ 417 019f 28000000 		.4byte	.LVL11
+ 418 01a3 4D020000 		.4byte	0x24d
+ 419 01a7 B1010000 		.4byte	0x1b1
+ 420 01ab 0E       		.uleb128 0xe
+ 421 01ac 01       		.uleb128 0x1
+ 422 01ad 50       		.byte	0x50
+ 423 01ae 01       		.uleb128 0x1
+ 424 01af 30       		.byte	0x30
+ 425 01b0 00       		.byte	0
+ 426 01b1 09       		.uleb128 0x9
+ 427 01b2 32000000 		.4byte	.LVL12
+ 428 01b6 4D020000 		.4byte	0x24d
+ 429 01ba 09       		.uleb128 0x9
+ 430 01bb 4A000000 		.4byte	.LVL13
+ 431 01bf 58020000 		.4byte	0x258
+ 432 01c3 0D       		.uleb128 0xd
+ 433 01c4 52000000 		.4byte	.LVL14
+ 434 01c8 58020000 		.4byte	0x258
+ 435 01cc D6010000 		.4byte	0x1d6
+ 436 01d0 0E       		.uleb128 0xe
+ 437 01d1 01       		.uleb128 0x1
+ 438 01d2 50       		.byte	0x50
+ 439 01d3 01       		.uleb128 0x1
+ 440 01d4 30       		.byte	0x30
+ 441 01d5 00       		.byte	0
+ 442 01d6 09       		.uleb128 0x9
+ 443 01d7 5C000000 		.4byte	.LVL15
+ 444 01db 58020000 		.4byte	0x258
+ 445 01df 00       		.byte	0
+ 446 01e0 0F       		.uleb128 0xf
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 10
+
+
+ 447 01e1 53010000 		.4byte	.LASF23
+ 448 01e5 03       		.byte	0x3
+ 449 01e6 3B       		.byte	0x3b
+ 450 01e7 A6000000 		.4byte	0xa6
+ 451 01eb 05       		.uleb128 0x5
+ 452 01ec 03       		.byte	0x3
+ 453 01ed 00000000 		.4byte	Param
+ 454 01f1 0F       		.uleb128 0xf
+ 455 01f2 66000000 		.4byte	.LASF24
+ 456 01f6 01       		.byte	0x1
+ 457 01f7 0E       		.byte	0xe
+ 458 01f8 77000000 		.4byte	0x77
+ 459 01fc 05       		.uleb128 0x5
+ 460 01fd 03       		.byte	0x3
+ 461 01fe 00000000 		.4byte	g_uLED1_Color
+ 462 0202 0F       		.uleb128 0xf
+ 463 0203 3E000000 		.4byte	.LASF25
+ 464 0207 01       		.byte	0x1
+ 465 0208 0F       		.byte	0xf
+ 466 0209 77000000 		.4byte	0x77
+ 467 020d 05       		.uleb128 0x5
+ 468 020e 03       		.byte	0x3
+ 469 020f 00000000 		.4byte	g_uLED2_Color
+ 470 0213 0F       		.uleb128 0xf
+ 471 0214 53000000 		.4byte	.LASF26
+ 472 0218 01       		.byte	0x1
+ 473 0219 10       		.byte	0x10
+ 474 021a 6B000000 		.4byte	0x6b
+ 475 021e 05       		.uleb128 0x5
+ 476 021f 03       		.byte	0x3
+ 477 0220 00000000 		.4byte	g_bLED1_Flickering
+ 478 0224 0F       		.uleb128 0xf
+ 479 0225 AD020000 		.4byte	.LASF27
+ 480 0229 01       		.byte	0x1
+ 481 022a 11       		.byte	0x11
+ 482 022b 6B000000 		.4byte	0x6b
+ 483 022f 05       		.uleb128 0x5
+ 484 0230 03       		.byte	0x3
+ 485 0231 00000000 		.4byte	g_bLED2_Flickering
+ 486 0235 10       		.uleb128 0x10
+ 487 0236 21000000 		.4byte	.LASF28
+ 488 023a 21000000 		.4byte	.LASF28
+ 489 023e 04       		.byte	0x4
+ 490 023f 5501     		.2byte	0x155
+ 491 0241 10       		.uleb128 0x10
+ 492 0242 AD010000 		.4byte	.LASF29
+ 493 0246 AD010000 		.4byte	.LASF29
+ 494 024a 04       		.byte	0x4
+ 495 024b 3201     		.2byte	0x132
+ 496 024d 11       		.uleb128 0x11
+ 497 024e 95010000 		.4byte	.LASF30
+ 498 0252 95010000 		.4byte	.LASF30
+ 499 0256 05       		.byte	0x5
+ 500 0257 2F       		.byte	0x2f
+ 501 0258 11       		.uleb128 0x11
+ 502 0259 66010000 		.4byte	.LASF31
+ 503 025d 66010000 		.4byte	.LASF31
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 11
+
+
+ 504 0261 06       		.byte	0x6
+ 505 0262 2F       		.byte	0x2f
+ 506 0263 11       		.uleb128 0x11
+ 507 0264 4B020000 		.4byte	.LASF32
+ 508 0268 4B020000 		.4byte	.LASF32
+ 509 026c 07       		.byte	0x7
+ 510 026d 37       		.byte	0x37
+ 511 026e 00       		.byte	0
+ 512              		.section	.debug_abbrev,"",%progbits
+ 513              	.Ldebug_abbrev0:
+ 514 0000 01       		.uleb128 0x1
+ 515 0001 11       		.uleb128 0x11
+ 516 0002 01       		.byte	0x1
+ 517 0003 25       		.uleb128 0x25
+ 518 0004 0E       		.uleb128 0xe
+ 519 0005 13       		.uleb128 0x13
+ 520 0006 0B       		.uleb128 0xb
+ 521 0007 03       		.uleb128 0x3
+ 522 0008 0E       		.uleb128 0xe
+ 523 0009 1B       		.uleb128 0x1b
+ 524 000a 0E       		.uleb128 0xe
+ 525 000b 55       		.uleb128 0x55
+ 526 000c 17       		.uleb128 0x17
+ 527 000d 11       		.uleb128 0x11
+ 528 000e 01       		.uleb128 0x1
+ 529 000f 10       		.uleb128 0x10
+ 530 0010 17       		.uleb128 0x17
+ 531 0011 00       		.byte	0
+ 532 0012 00       		.byte	0
+ 533 0013 02       		.uleb128 0x2
+ 534 0014 24       		.uleb128 0x24
+ 535 0015 00       		.byte	0
+ 536 0016 0B       		.uleb128 0xb
+ 537 0017 0B       		.uleb128 0xb
+ 538 0018 3E       		.uleb128 0x3e
+ 539 0019 0B       		.uleb128 0xb
+ 540 001a 03       		.uleb128 0x3
+ 541 001b 0E       		.uleb128 0xe
+ 542 001c 00       		.byte	0
+ 543 001d 00       		.byte	0
+ 544 001e 03       		.uleb128 0x3
+ 545 001f 24       		.uleb128 0x24
+ 546 0020 00       		.byte	0
+ 547 0021 0B       		.uleb128 0xb
+ 548 0022 0B       		.uleb128 0xb
+ 549 0023 3E       		.uleb128 0x3e
+ 550 0024 0B       		.uleb128 0xb
+ 551 0025 03       		.uleb128 0x3
+ 552 0026 08       		.uleb128 0x8
+ 553 0027 00       		.byte	0
+ 554 0028 00       		.byte	0
+ 555 0029 04       		.uleb128 0x4
+ 556 002a 16       		.uleb128 0x16
+ 557 002b 00       		.byte	0
+ 558 002c 03       		.uleb128 0x3
+ 559 002d 0E       		.uleb128 0xe
+ 560 002e 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 12
+
+
+ 561 002f 0B       		.uleb128 0xb
+ 562 0030 3B       		.uleb128 0x3b
+ 563 0031 05       		.uleb128 0x5
+ 564 0032 49       		.uleb128 0x49
+ 565 0033 13       		.uleb128 0x13
+ 566 0034 00       		.byte	0
+ 567 0035 00       		.byte	0
+ 568 0036 05       		.uleb128 0x5
+ 569 0037 13       		.uleb128 0x13
+ 570 0038 01       		.byte	0x1
+ 571 0039 03       		.uleb128 0x3
+ 572 003a 0E       		.uleb128 0xe
+ 573 003b 0B       		.uleb128 0xb
+ 574 003c 0B       		.uleb128 0xb
+ 575 003d 3A       		.uleb128 0x3a
+ 576 003e 0B       		.uleb128 0xb
+ 577 003f 3B       		.uleb128 0x3b
+ 578 0040 0B       		.uleb128 0xb
+ 579 0041 01       		.uleb128 0x1
+ 580 0042 13       		.uleb128 0x13
+ 581 0043 00       		.byte	0
+ 582 0044 00       		.byte	0
+ 583 0045 06       		.uleb128 0x6
+ 584 0046 0D       		.uleb128 0xd
+ 585 0047 00       		.byte	0
+ 586 0048 03       		.uleb128 0x3
+ 587 0049 0E       		.uleb128 0xe
+ 588 004a 3A       		.uleb128 0x3a
+ 589 004b 0B       		.uleb128 0xb
+ 590 004c 3B       		.uleb128 0x3b
+ 591 004d 0B       		.uleb128 0xb
+ 592 004e 49       		.uleb128 0x49
+ 593 004f 13       		.uleb128 0x13
+ 594 0050 38       		.uleb128 0x38
+ 595 0051 0B       		.uleb128 0xb
+ 596 0052 00       		.byte	0
+ 597 0053 00       		.byte	0
+ 598 0054 07       		.uleb128 0x7
+ 599 0055 2E       		.uleb128 0x2e
+ 600 0056 01       		.byte	0x1
+ 601 0057 3F       		.uleb128 0x3f
+ 602 0058 19       		.uleb128 0x19
+ 603 0059 03       		.uleb128 0x3
+ 604 005a 0E       		.uleb128 0xe
+ 605 005b 3A       		.uleb128 0x3a
+ 606 005c 0B       		.uleb128 0xb
+ 607 005d 3B       		.uleb128 0x3b
+ 608 005e 0B       		.uleb128 0xb
+ 609 005f 27       		.uleb128 0x27
+ 610 0060 19       		.uleb128 0x19
+ 611 0061 11       		.uleb128 0x11
+ 612 0062 01       		.uleb128 0x1
+ 613 0063 12       		.uleb128 0x12
+ 614 0064 06       		.uleb128 0x6
+ 615 0065 40       		.uleb128 0x40
+ 616 0066 18       		.uleb128 0x18
+ 617 0067 9742     		.uleb128 0x2117
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 13
+
+
+ 618 0069 19       		.uleb128 0x19
+ 619 006a 01       		.uleb128 0x1
+ 620 006b 13       		.uleb128 0x13
+ 621 006c 00       		.byte	0
+ 622 006d 00       		.byte	0
+ 623 006e 08       		.uleb128 0x8
+ 624 006f 05       		.uleb128 0x5
+ 625 0070 00       		.byte	0
+ 626 0071 03       		.uleb128 0x3
+ 627 0072 0E       		.uleb128 0xe
+ 628 0073 3A       		.uleb128 0x3a
+ 629 0074 0B       		.uleb128 0xb
+ 630 0075 3B       		.uleb128 0x3b
+ 631 0076 0B       		.uleb128 0xb
+ 632 0077 49       		.uleb128 0x49
+ 633 0078 13       		.uleb128 0x13
+ 634 0079 02       		.uleb128 0x2
+ 635 007a 17       		.uleb128 0x17
+ 636 007b 00       		.byte	0
+ 637 007c 00       		.byte	0
+ 638 007d 09       		.uleb128 0x9
+ 639 007e 898201   		.uleb128 0x4109
+ 640 0081 00       		.byte	0
+ 641 0082 11       		.uleb128 0x11
+ 642 0083 01       		.uleb128 0x1
+ 643 0084 31       		.uleb128 0x31
+ 644 0085 13       		.uleb128 0x13
+ 645 0086 00       		.byte	0
+ 646 0087 00       		.byte	0
+ 647 0088 0A       		.uleb128 0xa
+ 648 0089 2E       		.uleb128 0x2e
+ 649 008a 01       		.byte	0x1
+ 650 008b 3F       		.uleb128 0x3f
+ 651 008c 19       		.uleb128 0x19
+ 652 008d 03       		.uleb128 0x3
+ 653 008e 0E       		.uleb128 0xe
+ 654 008f 3A       		.uleb128 0x3a
+ 655 0090 0B       		.uleb128 0xb
+ 656 0091 3B       		.uleb128 0x3b
+ 657 0092 0B       		.uleb128 0xb
+ 658 0093 11       		.uleb128 0x11
+ 659 0094 01       		.uleb128 0x1
+ 660 0095 12       		.uleb128 0x12
+ 661 0096 06       		.uleb128 0x6
+ 662 0097 40       		.uleb128 0x40
+ 663 0098 18       		.uleb128 0x18
+ 664 0099 9742     		.uleb128 0x2117
+ 665 009b 19       		.uleb128 0x19
+ 666 009c 01       		.uleb128 0x1
+ 667 009d 13       		.uleb128 0x13
+ 668 009e 00       		.byte	0
+ 669 009f 00       		.byte	0
+ 670 00a0 0B       		.uleb128 0xb
+ 671 00a1 34       		.uleb128 0x34
+ 672 00a2 00       		.byte	0
+ 673 00a3 03       		.uleb128 0x3
+ 674 00a4 0E       		.uleb128 0xe
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 14
+
+
+ 675 00a5 3A       		.uleb128 0x3a
+ 676 00a6 0B       		.uleb128 0xb
+ 677 00a7 3B       		.uleb128 0x3b
+ 678 00a8 0B       		.uleb128 0xb
+ 679 00a9 49       		.uleb128 0x49
+ 680 00aa 13       		.uleb128 0x13
+ 681 00ab 1C       		.uleb128 0x1c
+ 682 00ac 0B       		.uleb128 0xb
+ 683 00ad 00       		.byte	0
+ 684 00ae 00       		.byte	0
+ 685 00af 0C       		.uleb128 0xc
+ 686 00b0 34       		.uleb128 0x34
+ 687 00b1 00       		.byte	0
+ 688 00b2 03       		.uleb128 0x3
+ 689 00b3 0E       		.uleb128 0xe
+ 690 00b4 3A       		.uleb128 0x3a
+ 691 00b5 0B       		.uleb128 0xb
+ 692 00b6 3B       		.uleb128 0x3b
+ 693 00b7 0B       		.uleb128 0xb
+ 694 00b8 49       		.uleb128 0x49
+ 695 00b9 13       		.uleb128 0x13
+ 696 00ba 02       		.uleb128 0x2
+ 697 00bb 18       		.uleb128 0x18
+ 698 00bc 00       		.byte	0
+ 699 00bd 00       		.byte	0
+ 700 00be 0D       		.uleb128 0xd
+ 701 00bf 898201   		.uleb128 0x4109
+ 702 00c2 01       		.byte	0x1
+ 703 00c3 11       		.uleb128 0x11
+ 704 00c4 01       		.uleb128 0x1
+ 705 00c5 31       		.uleb128 0x31
+ 706 00c6 13       		.uleb128 0x13
+ 707 00c7 01       		.uleb128 0x1
+ 708 00c8 13       		.uleb128 0x13
+ 709 00c9 00       		.byte	0
+ 710 00ca 00       		.byte	0
+ 711 00cb 0E       		.uleb128 0xe
+ 712 00cc 8A8201   		.uleb128 0x410a
+ 713 00cf 00       		.byte	0
+ 714 00d0 02       		.uleb128 0x2
+ 715 00d1 18       		.uleb128 0x18
+ 716 00d2 9142     		.uleb128 0x2111
+ 717 00d4 18       		.uleb128 0x18
+ 718 00d5 00       		.byte	0
+ 719 00d6 00       		.byte	0
+ 720 00d7 0F       		.uleb128 0xf
+ 721 00d8 34       		.uleb128 0x34
+ 722 00d9 00       		.byte	0
+ 723 00da 03       		.uleb128 0x3
+ 724 00db 0E       		.uleb128 0xe
+ 725 00dc 3A       		.uleb128 0x3a
+ 726 00dd 0B       		.uleb128 0xb
+ 727 00de 3B       		.uleb128 0x3b
+ 728 00df 0B       		.uleb128 0xb
+ 729 00e0 49       		.uleb128 0x49
+ 730 00e1 13       		.uleb128 0x13
+ 731 00e2 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 15
+
+
+ 732 00e3 19       		.uleb128 0x19
+ 733 00e4 02       		.uleb128 0x2
+ 734 00e5 18       		.uleb128 0x18
+ 735 00e6 00       		.byte	0
+ 736 00e7 00       		.byte	0
+ 737 00e8 10       		.uleb128 0x10
+ 738 00e9 2E       		.uleb128 0x2e
+ 739 00ea 00       		.byte	0
+ 740 00eb 3F       		.uleb128 0x3f
+ 741 00ec 19       		.uleb128 0x19
+ 742 00ed 3C       		.uleb128 0x3c
+ 743 00ee 19       		.uleb128 0x19
+ 744 00ef 6E       		.uleb128 0x6e
+ 745 00f0 0E       		.uleb128 0xe
+ 746 00f1 03       		.uleb128 0x3
+ 747 00f2 0E       		.uleb128 0xe
+ 748 00f3 3A       		.uleb128 0x3a
+ 749 00f4 0B       		.uleb128 0xb
+ 750 00f5 3B       		.uleb128 0x3b
+ 751 00f6 05       		.uleb128 0x5
+ 752 00f7 00       		.byte	0
+ 753 00f8 00       		.byte	0
+ 754 00f9 11       		.uleb128 0x11
+ 755 00fa 2E       		.uleb128 0x2e
+ 756 00fb 00       		.byte	0
+ 757 00fc 3F       		.uleb128 0x3f
+ 758 00fd 19       		.uleb128 0x19
+ 759 00fe 3C       		.uleb128 0x3c
+ 760 00ff 19       		.uleb128 0x19
+ 761 0100 6E       		.uleb128 0x6e
+ 762 0101 0E       		.uleb128 0xe
+ 763 0102 03       		.uleb128 0x3
+ 764 0103 0E       		.uleb128 0xe
+ 765 0104 3A       		.uleb128 0x3a
+ 766 0105 0B       		.uleb128 0xb
+ 767 0106 3B       		.uleb128 0x3b
+ 768 0107 0B       		.uleb128 0xb
+ 769 0108 00       		.byte	0
+ 770 0109 00       		.byte	0
+ 771 010a 00       		.byte	0
+ 772              		.section	.debug_loc,"",%progbits
+ 773              	.Ldebug_loc0:
+ 774              	.LLST0:
+ 775 0000 00000000 		.4byte	.LVL0
+ 776 0004 05000000 		.4byte	.LVL1-1
+ 777 0008 0100     		.2byte	0x1
+ 778 000a 50       		.byte	0x50
+ 779 000b 05000000 		.4byte	.LVL1-1
+ 780 000f 08000000 		.4byte	.LFE62
+ 781 0013 0400     		.2byte	0x4
+ 782 0015 F3       		.byte	0xf3
+ 783 0016 01       		.uleb128 0x1
+ 784 0017 50       		.byte	0x50
+ 785 0018 9F       		.byte	0x9f
+ 786 0019 00000000 		.4byte	0
+ 787 001d 00000000 		.4byte	0
+ 788              		.section	.debug_aranges,"",%progbits
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 16
+
+
+ 789 0000 2C000000 		.4byte	0x2c
+ 790 0004 0200     		.2byte	0x2
+ 791 0006 00000000 		.4byte	.Ldebug_info0
+ 792 000a 04       		.byte	0x4
+ 793 000b 00       		.byte	0
+ 794 000c 0000     		.2byte	0
+ 795 000e 0000     		.2byte	0
+ 796 0010 00000000 		.4byte	.LFB62
+ 797 0014 08000000 		.4byte	.LFE62-.LFB62
+ 798 0018 00000000 		.4byte	.LFB61
+ 799 001c 3C000000 		.4byte	.LFE61-.LFB61
+ 800 0020 00000000 		.4byte	.LFB63
+ 801 0024 64000000 		.4byte	.LFE63-.LFB63
+ 802 0028 00000000 		.4byte	0
+ 803 002c 00000000 		.4byte	0
+ 804              		.section	.debug_ranges,"",%progbits
+ 805              	.Ldebug_ranges0:
+ 806 0000 00000000 		.4byte	.LFB62
+ 807 0004 08000000 		.4byte	.LFE62
+ 808 0008 00000000 		.4byte	.LFB61
+ 809 000c 3C000000 		.4byte	.LFE61
+ 810 0010 00000000 		.4byte	.LFB63
+ 811 0014 64000000 		.4byte	.LFE63
+ 812 0018 00000000 		.4byte	0
+ 813 001c 00000000 		.4byte	0
+ 814              		.section	.debug_line,"",%progbits
+ 815              	.Ldebug_line0:
+ 816 0000 01010000 		.section	.debug_str,"MS",%progbits,1
+ 816      0200A700 
+ 816      00000201 
+ 816      FB0E0D00 
+ 816      01010101 
+ 817              	.LASF16:
+ 818 0000 73746174 		.ascii	"stat_TC_INT\000"
+ 818      5F54435F 
+ 818      494E5400 
+ 819              	.LASF20:
+ 820 000c 4C45445F 		.ascii	"LED_OneSecondControl\000"
+ 820      4F6E6553 
+ 820      65636F6E 
+ 820      64436F6E 
+ 820      74726F6C 
+ 821              	.LASF28:
+ 822 0021 54435057 		.ascii	"TCPWM_LED_WriteCompare\000"
+ 822      4D5F4C45 
+ 822      445F5772 
+ 822      69746543 
+ 822      6F6D7061 
+ 823              	.LASF21:
+ 824 0038 636F756E 		.ascii	"count\000"
+ 824      7400
+ 825              	.LASF25:
+ 826 003e 675F754C 		.ascii	"g_uLED2_Color\000"
+ 826      4544325F 
+ 826      436F6C6F 
+ 826      7200
+ 827              	.LASF12:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 17
+
+
+ 828 004c 646F7562 		.ascii	"double\000"
+ 828      6C6500
+ 829              	.LASF26:
+ 830 0053 675F624C 		.ascii	"g_bLED1_Flickering\000"
+ 830      4544315F 
+ 830      466C6963 
+ 830      6B657269 
+ 830      6E6700
+ 831              	.LASF24:
+ 832 0066 675F754C 		.ascii	"g_uLED1_Color\000"
+ 832      4544315F 
+ 832      436F6C6F 
+ 832      7200
+ 833              	.LASF11:
+ 834 0074 666C6F61 		.ascii	"float\000"
+ 834      7400
+ 835              	.LASF1:
+ 836 007a 756E7369 		.ascii	"unsigned char\000"
+ 836      676E6564 
+ 836      20636861 
+ 836      7200
+ 837              	.LASF5:
+ 838 0088 6C6F6E67 		.ascii	"long unsigned int\000"
+ 838      20756E73 
+ 838      69676E65 
+ 838      6420696E 
+ 838      7400
+ 839              	.LASF36:
+ 840 009a 73506172 		.ascii	"sParameter\000"
+ 840      616D6574 
+ 840      657200
+ 841              	.LASF3:
+ 842 00a5 73686F72 		.ascii	"short unsigned int\000"
+ 842      7420756E 
+ 842      7369676E 
+ 842      65642069 
+ 842      6E7400
+ 843              	.LASF38:
+ 844 00b8 62726967 		.ascii	"brightness\000"
+ 844      68746E65 
+ 844      737300
+ 845              	.LASF22:
+ 846 00c3 466C6963 		.ascii	"Flickering\000"
+ 846      6B657269 
+ 846      6E6700
+ 847              	.LASF19:
+ 848 00ce 696E6974 		.ascii	"initLEDControl\000"
+ 848      4C454443 
+ 848      6F6E7472 
+ 848      6F6C00
+ 849              	.LASF35:
+ 850 00dd 433A5C53 		.ascii	"C:\\SUNTECH\\PSoC\\KVC_Reset\\Trim_Reset_2025.12.29"
+ 850      554E5445 
+ 850      43485C50 
+ 850      536F435C 
+ 850      4B56435F 
+ 851 010c 5C547269 		.ascii	"\\Trim_count\\Project\\Design.cydsn\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 18
+
+
+ 851      6D5F636F 
+ 851      756E745C 
+ 851      50726F6A 
+ 851      6563745C 
+ 852              	.LASF18:
+ 853 012d 706F735F 		.ascii	"pos_Y\000"
+ 853      5900
+ 854              	.LASF2:
+ 855 0133 73686F72 		.ascii	"short int\000"
+ 855      7420696E 
+ 855      7400
+ 856              	.LASF10:
+ 857 013d 75696E74 		.ascii	"uint16\000"
+ 857      313600
+ 858              	.LASF37:
+ 859 0144 4C45445F 		.ascii	"LED_Brightness\000"
+ 859      42726967 
+ 859      68746E65 
+ 859      737300
+ 860              	.LASF23:
+ 861 0153 50617261 		.ascii	"Param\000"
+ 861      6D00
+ 862              	.LASF8:
+ 863 0159 756E7369 		.ascii	"unsigned int\000"
+ 863      676E6564 
+ 863      20696E74 
+ 863      00
+ 864              	.LASF31:
+ 865 0166 436F6E74 		.ascii	"Control_Reg_LED_2_Write\000"
+ 865      726F6C5F 
+ 865      5265675F 
+ 865      4C45445F 
+ 865      325F5772 
+ 866              	.LASF7:
+ 867 017e 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 867      206C6F6E 
+ 867      6720756E 
+ 867      7369676E 
+ 867      65642069 
+ 868              	.LASF30:
+ 869 0195 436F6E74 		.ascii	"Control_Reg_LED_1_Write\000"
+ 869      726F6C5F 
+ 869      5265675F 
+ 869      4C45445F 
+ 869      315F5772 
+ 870              	.LASF29:
+ 871 01ad 54435057 		.ascii	"TCPWM_LED_Start\000"
+ 871      4D5F4C45 
+ 871      445F5374 
+ 871      61727400 
+ 872              	.LASF33:
+ 873 01bd 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 873      43313120 
+ 873      352E342E 
+ 873      31203230 
+ 873      31363036 
+ 874 01f0 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 19
+
+
+ 874      20726576 
+ 874      6973696F 
+ 874      6E203233 
+ 874      37373135 
+ 875 0223 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 875      66756E63 
+ 875      74696F6E 
+ 875      2D736563 
+ 875      74696F6E 
+ 876              	.LASF32:
+ 877 024b 6765744D 		.ascii	"getMiscConfig\000"
+ 877      69736343 
+ 877      6F6E6669 
+ 877      6700
+ 878              	.LASF15:
+ 879 0259 73697A65 		.ascii	"sizetype\000"
+ 879      74797065 
+ 879      00
+ 880              	.LASF6:
+ 881 0262 6C6F6E67 		.ascii	"long long int\000"
+ 881      206C6F6E 
+ 881      6720696E 
+ 881      7400
+ 882              	.LASF13:
+ 883 0270 63686172 		.ascii	"char\000"
+ 883      00
+ 884              	.LASF34:
+ 885 0275 6C69625C 		.ascii	"lib\\LEDControl.c\000"
+ 885      4C454443 
+ 885      6F6E7472 
+ 885      6F6C2E63 
+ 885      00
+ 886              	.LASF9:
+ 887 0286 75696E74 		.ascii	"uint8\000"
+ 887      3800
+ 888              	.LASF4:
+ 889 028c 6C6F6E67 		.ascii	"long int\000"
+ 889      20696E74 
+ 889      00
+ 890              	.LASF14:
+ 891 0295 6C6F6E67 		.ascii	"long double\000"
+ 891      20646F75 
+ 891      626C6500 
+ 892              	.LASF0:
+ 893 02a1 7369676E 		.ascii	"signed char\000"
+ 893      65642063 
+ 893      68617200 
+ 894              	.LASF27:
+ 895 02ad 675F624C 		.ascii	"g_bLED2_Flickering\000"
+ 895      4544325F 
+ 895      466C6963 
+ 895      6B657269 
+ 895      6E6700
+ 896              	.LASF17:
+ 897 02c0 706F735F 		.ascii	"pos_X\000"
+ 897      5800
+ 898              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccmpGLB8.s 			page 20
+
+

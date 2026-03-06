@@ -1,0 +1,420 @@
+--------------- Build Started: 06/10/2025 15:56:04 Project: Design, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
+The code generation step is up to date.
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/ST7789V.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\ST7789V.c -o .\CortexM0\ARM_GCC_541\Debug\ST7789V.o
+lib\ST7789V.c: In function 'LCD_DrawString':
+lib\ST7789V.c:292:9: warning: implicit declaration of function 'LCD_DrawChar_16' [-Wimplicit-function-declaration]
+         LCD_DrawChar_16(Xpos + 16 * i , Ypos, *st++);        
+         ^
+lib\ST7789V.c: At top level:
+lib\ST7789V.c:54:16: warning: 'init_ENH_OB130SB128' defined but not used [-Wunused-variable]
+ static uint8_t init_ENH_OB130SB128[30] = {  0x40, 0x81, 0x80, 0xA0, 0xA4, 0xA6, 0xA8, 0x3F, 0xC0,
+                ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/menu.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\menu.c -o .\CortexM0\ARM_GCC_541\Debug\menu.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UI.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\UI.c -o .\CortexM0\ARM_GCC_541\Debug\UI.o
+lib\UI.c: In function 'FillRectangle':
+lib\UI.c:105:10: warning: unused variable 'rect' [-Wunused-variable]
+     RECT rect = ST7789V_setaddress_MapScreenCoordinate(x1, y1, x2, y2);
+          ^
+lib\UI.c: In function 'LCD_DrawFont':
+lib\UI.c:193:12: warning: unused variable 'noFont' [-Wunused-variable]
+     uint16 noFont = font[3];
+            ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/widget.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\widget.c -o .\CortexM0\ARM_GCC_541\Debug\widget.o
+In file included from lib\widget.c:14:0:
+lib\image.h:86:17: warning: 'image_wifi_1' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_1[] = {
+                 ^
+lib\image.h:154:17: warning: 'image_wifi_2' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_2[] = {
+                 ^
+lib\image.h:222:17: warning: 'image_wifi_3' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_3[]  = {
+                 ^
+lib\image.h:358:17: warning: 'image_suntech' defined but not used [-Wunused-variable]
+ static uint16_t image_suntech[] = {
+                 ^
+lib\image.h:656:17: warning: 'image_danger' defined but not used [-Wunused-variable]
+ static uint16_t image_danger[] = {
+                 ^
+lib\image.h:725:17: warning: 'image_arrow_left' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_left[] = {
+                 ^
+lib\image.h:793:17: warning: 'image_arrow_right' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_right[] = {
+                 ^
+lib\image.h:1000:17: warning: 'image_arrow_up2' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_up2[] = {
+                 ^
+lib\image.h:1069:17: warning: 'image_arrow_down2' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_down2[] = {
+                 ^
+lib\widget.c: In function 'UpdateDrawListButtons':
+lib\widget.c:298:5: warning: 'yPos' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     EraseBlankArea(yPos, isExistScroll(menu));
+     ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/button.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\button.c -o .\CortexM0\ARM_GCC_541\Debug\button.o
+lib\button.c: In function 'DrawButtonArray':
+lib\button.c:62:17: warning: unused variable 'btn' [-Wunused-variable]
+         BUTTON *btn = array->btn;
+                 ^
+lib\button.c: In function 'DrawButtonText':
+lib\button.c:78:12: warning: unused variable 'marginTopBottom' [-Wunused-variable]
+     uint16 marginTopBottom;
+            ^
+lib\button.c:77:12: warning: unused variable 'marginLeftRight' [-Wunused-variable]
+     uint16 marginLeftRight;
+            ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/externalFlash.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\externalFlash.c -o .\CortexM0\ARM_GCC_541\Debug\externalFlash.o
+lib\externalFlash.c: In function 'LoadExternalFlashConfig':
+lib\externalFlash.c:66:12: warning: unused variable 'crc' [-Wunused-variable]
+     uint16 crc = externalFlashCRC();
+            ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/manageMenu.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\manageMenu.c -o .\CortexM0\ARM_GCC_541\Debug\manageMenu.o
+lib\manageMenu.c: In function 'DisplayDeviceInfoMenu':
+lib\manageMenu.c:103:12: warning: unused variable 'btnVersion' [-Wunused-variable]
+     BUTTON btnVersion; 
+            ^
+lib\manageMenu.c:87:12: warning: unused variable 'btnMac' [-Wunused-variable]
+     BUTTON btnMac;    
+            ^
+lib\manageMenu.c: In function 'doMonitoring':
+lib\manageMenu.c:528:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;
+               ^
+lib\manageMenu.c: In function 'manageMenuCreate':
+lib\manageMenu.c:604:19: warning: unused variable 'resetData' [-Wunused-variable]
+         MENUNODE *resetData            = createMENUNODE(root,      "RESET DATA",    &doResetData);                
+                   ^
+lib\manageMenu.c:602:24: warning: unused variable 'factoryReset' [-Wunused-variable]
+              MENUNODE *factoryReset    = createMENUNODE(settings,  "FACT. RESET", &doFactoryReset);
+                        ^
+lib\manageMenu.c:601:24: warning: unused variable 'brightness' [-Wunused-variable]
+              MENUNODE *brightness      = createMENUNODE(settings,  "LED BRIGHT.",   &doBrightness);
+                        ^
+lib\manageMenu.c:600:24: warning: unused variable 'displayDir' [-Wunused-variable]
+              MENUNODE *displayDir      = createMENUNODE(settings,  "DISPLAY DIR",  &doDisplayDir);
+                        ^
+lib\manageMenu.c:598:20: warning: unused variable 'wifiInfo' [-Wunused-variable]
+          MENUNODE *wifiInfo            = createMENUNODE(root,      "WIFI INFO",     &doWifiInfo);        
+                    ^
+lib\manageMenu.c:597:20: warning: unused variable 'deviceInfo' [-Wunused-variable]
+          MENUNODE *deviceInfo          = createMENUNODE(root,      "DEVICE INFO",   &doDeviceInfo);
+                    ^
+In file included from lib\manageMenu.c:15:0:
+lib\manageMenu.c: At top level:
+./lib/image.h:18:17: warning: 'image_wifi_0' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_0[] = {
+                 ^
+In file included from lib\manageMenu.c:15:0:
+./lib/image.h:86:17: warning: 'image_wifi_1' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_1[] = {
+                 ^
+./lib/image.h:154:17: warning: 'image_wifi_2' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_2[] = {
+                 ^
+./lib/image.h:222:17: warning: 'image_wifi_3' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_3[]  = {
+                 ^
+./lib/image.h:290:17: warning: 'image_wifi_4' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_4[]  = {
+                 ^
+./lib/image.h:358:17: warning: 'image_suntech' defined but not used [-Wunused-variable]
+ static uint16_t image_suntech[] = {
+                 ^
+./lib/image.h:656:17: warning: 'image_danger' defined but not used [-Wunused-variable]
+ static uint16_t image_danger[] = {
+                 ^
+./lib/image.h:725:17: warning: 'image_arrow_left' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_left[] = {
+                 ^
+./lib/image.h:793:17: warning: 'image_arrow_right' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_right[] = {
+                 ^
+./lib/image.h:862:17: warning: 'image_arrow_up' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_up[] = {
+                 ^
+./lib/image.h:931:17: warning: 'image_arrow_down' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_down[] = {
+                 ^
+./lib/image.h:1000:17: warning: 'image_arrow_up2' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_up2[] = {
+                 ^
+./lib/image.h:1069:17: warning: 'image_arrow_down2' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_down2[] = {
+                 ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/andonMenu.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\andonMenu.c -o .\CortexM0\ARM_GCC_541\Debug\andonMenu.o
+In file included from lib\andonMenu.c:15:0:
+./lib/image.h:18:17: warning: 'image_wifi_0' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_0[] = {
+                 ^
+In file included from lib\andonMenu.c:15:0:
+./lib/image.h:86:17: warning: 'image_wifi_1' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_1[] = {
+                 ^
+./lib/image.h:154:17: warning: 'image_wifi_2' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_2[] = {
+                 ^
+./lib/image.h:222:17: warning: 'image_wifi_3' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_3[]  = {
+                 ^
+./lib/image.h:290:17: warning: 'image_wifi_4' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_4[]  = {
+                 ^
+./lib/image.h:358:17: warning: 'image_suntech' defined but not used [-Wunused-variable]
+ static uint16_t image_suntech[] = {
+                 ^
+./lib/image.h:656:17: warning: 'image_danger' defined but not used [-Wunused-variable]
+ static uint16_t image_danger[] = {
+                 ^
+./lib/image.h:725:17: warning: 'image_arrow_left' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_left[] = {
+                 ^
+./lib/image.h:793:17: warning: 'image_arrow_right' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_right[] = {
+                 ^
+./lib/image.h:862:17: warning: 'image_arrow_up' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_up[] = {
+                 ^
+./lib/image.h:931:17: warning: 'image_arrow_down' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_down[] = {
+                 ^
+./lib/image.h:1000:17: warning: 'image_arrow_up2' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_up2[] = {
+                 ^
+./lib/image.h:1069:17: warning: 'image_arrow_down2' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_down2[] = {
+                 ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/WIFI.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\WIFI.c -o .\CortexM0\ARM_GCC_541\Debug\WIFI.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/main.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c main.c -o .\CortexM0\ARM_GCC_541\Debug\main.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/setup.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c setup.c -o .\CortexM0\ARM_GCC_541\Debug\setup.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/userTimer.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c userTimer.c -o .\CortexM0\ARM_GCC_541\Debug\userTimer.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBJsonConfig.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c USBJsonConfig.c -o .\CortexM0\ARM_GCC_541\Debug\USBJsonConfig.o
+USBJsonConfig.c: In function 'USB_CommandProcess':
+USBJsonConfig.c:48:9: warning: unused variable 'nLoop' [-Wunused-variable]
+     int nLoop=0;
+         ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/andonJson.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c andonJson.c -o .\CortexM0\ARM_GCC_541\Debug\andonJson.o
+andonJson.c: In function 'andonMenuParsing':
+andonJson.c:204:11: warning: variable 'bLEDAlarm' set but not used [-Wunused-but-set-variable]
+     uint8 bLEDAlarm = FALSE;
+           ^
+andonJson.c: In function 'andonTextListParsing':
+andonJson.c:352:9: warning: variable 'r' set but not used [-Wunused-but-set-variable]
+     int r;
+         ^
+andonJson.c:351:9: warning: unused variable 'i' [-Wunused-variable]
+     int i;
+         ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/menuDesign.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c menuDesign.c -o .\CortexM0\ARM_GCC_541\Debug\menuDesign.o
+In file included from menuDesign.c:13:0:
+lib/image.h:18:17: warning: 'image_wifi_0' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_0[] = {
+                 ^
+In file included from menuDesign.c:13:0:
+lib/image.h:86:17: warning: 'image_wifi_1' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_1[] = {
+                 ^
+lib/image.h:154:17: warning: 'image_wifi_2' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_2[] = {
+                 ^
+lib/image.h:222:17: warning: 'image_wifi_3' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_3[]  = {
+                 ^
+lib/image.h:290:17: warning: 'image_wifi_4' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_4[]  = {
+                 ^
+lib/image.h:358:17: warning: 'image_suntech' defined but not used [-Wunused-variable]
+ static uint16_t image_suntech[] = {
+                 ^
+lib/image.h:656:17: warning: 'image_danger' defined but not used [-Wunused-variable]
+ static uint16_t image_danger[] = {
+                 ^
+lib/image.h:725:17: warning: 'image_arrow_left' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_left[] = {
+                 ^
+lib/image.h:793:17: warning: 'image_arrow_right' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_right[] = {
+                 ^
+lib/image.h:862:17: warning: 'image_arrow_up' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_up[] = {
+                 ^
+lib/image.h:931:17: warning: 'image_arrow_down' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_down[] = {
+                 ^
+lib/image.h:1000:17: warning: 'image_arrow_up2' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_up2[] = {
+                 ^
+lib/image.h:1069:17: warning: 'image_arrow_down2' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_down2[] = {
+                 ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/userMenuProject1.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c userMenuProject1.c -o .\CortexM0\ARM_GCC_541\Debug\userMenuProject1.o
+In file included from userMenuProject1.c:14:0:
+lib/image.h:18:17: warning: 'image_wifi_0' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_0[] = {
+                 ^
+In file included from userMenuProject1.c:14:0:
+lib/image.h:86:17: warning: 'image_wifi_1' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_1[] = {
+                 ^
+lib/image.h:154:17: warning: 'image_wifi_2' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_2[] = {
+                 ^
+lib/image.h:222:17: warning: 'image_wifi_3' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_3[]  = {
+                 ^
+lib/image.h:290:17: warning: 'image_wifi_4' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_4[]  = {
+                 ^
+lib/image.h:358:17: warning: 'image_suntech' defined but not used [-Wunused-variable]
+ static uint16_t image_suntech[] = {
+                 ^
+lib/image.h:656:17: warning: 'image_danger' defined but not used [-Wunused-variable]
+ static uint16_t image_danger[] = {
+                 ^
+lib/image.h:725:17: warning: 'image_arrow_left' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_left[] = {
+                 ^
+lib/image.h:793:17: warning: 'image_arrow_right' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_right[] = {
+                 ^
+lib/image.h:862:17: warning: 'image_arrow_up' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_up[] = {
+                 ^
+lib/image.h:931:17: warning: 'image_arrow_down' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_down[] = {
+                 ^
+lib/image.h:1000:17: warning: 'image_arrow_up2' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_up2[] = {
+                 ^
+lib/image.h:1069:17: warning: 'image_arrow_down2' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_down2[] = {
+                 ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/userMenuPatternSewingMachine.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c userMenuPatternSewingMachine.c -o .\CortexM0\ARM_GCC_541\Debug\userMenuPatternSewingMachine.o
+In file included from userMenuPatternSewingMachine.c:14:0:
+lib/image.h:18:17: warning: 'image_wifi_0' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_0[] = {
+                 ^
+In file included from userMenuPatternSewingMachine.c:14:0:
+lib/image.h:86:17: warning: 'image_wifi_1' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_1[] = {
+                 ^
+lib/image.h:154:17: warning: 'image_wifi_2' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_2[] = {
+                 ^
+lib/image.h:222:17: warning: 'image_wifi_3' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_3[]  = {
+                 ^
+lib/image.h:290:17: warning: 'image_wifi_4' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_4[]  = {
+                 ^
+lib/image.h:358:17: warning: 'image_suntech' defined but not used [-Wunused-variable]
+ static uint16_t image_suntech[] = {
+                 ^
+lib/image.h:656:17: warning: 'image_danger' defined but not used [-Wunused-variable]
+ static uint16_t image_danger[] = {
+                 ^
+lib/image.h:725:17: warning: 'image_arrow_left' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_left[] = {
+                 ^
+lib/image.h:793:17: warning: 'image_arrow_right' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_right[] = {
+                 ^
+lib/image.h:862:17: warning: 'image_arrow_up' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_up[] = {
+                 ^
+lib/image.h:931:17: warning: 'image_arrow_down' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_down[] = {
+                 ^
+lib/image.h:1000:17: warning: 'image_arrow_up2' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_up2[] = {
+                 ^
+lib/image.h:1069:17: warning: 'image_arrow_down2' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_down2[] = {
+                 ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/count.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c count.c -o .\CortexM0\ARM_GCC_541\Debug\count.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/uartJson.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c uartJson.c -o .\CortexM0\ARM_GCC_541\Debug\uartJson.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/userMenuCounter.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c userMenuCounter.c -o .\CortexM0\ARM_GCC_541\Debug\userMenuCounter.o
+userMenuCounter.c: In function 'doTopMenu':
+userMenuCounter.c:41:28: warning: unused variable 'oldPage' [-Wunused-variable]
+     static uint8 page = 0, oldPage = 0xFF;
+                            ^
+userMenuCounter.c:41:18: warning: unused variable 'page' [-Wunused-variable]
+     static uint8 page = 0, oldPage = 0xFF;
+                  ^
+userMenuCounter.c:40:18: warning: unused variable 'sewingPage' [-Wunused-variable]
+     static uint8 sewingPage = 0;
+                  ^
+userMenuCounter.c:39:18: warning: unused variable 'patternPage' [-Wunused-variable]
+     static uint8 patternPage = 0;
+                  ^
+userMenuCounter.c:37:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;    
+               ^
+userMenuCounter.c: In function 'TopMenuPageUpdateValue':
+userMenuCounter.c:246:13: warning: unused variable 'btn' [-Wunused-variable]
+     BUTTON *btn;
+             ^
+userMenuCounter.c: In function 'doTargetInfoMenu':
+userMenuCounter.c:319:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;    
+               ^
+userMenuCounter.c: In function 'menuCreate':
+userMenuCounter.c:454:15: warning: unused variable 'trimCountSet' [-Wunused-variable]
+     MENUNODE *trimCountSet             = createMENUNODE(root,    "Trim Count",     &doTargetInfoMenu);    
+               ^
+userMenuCounter.c:453:15: warning: unused variable 'unlockWithKeyNode' [-Wunused-variable]
+     MENUNODE *unlockWithKeyNode        = createMENUNODE(root,    "Unlock with Key",&doUnlockWithKey);
+               ^
+In file included from userMenuCounter.c:14:0:
+userMenuCounter.c: At top level:
+lib/image.h:18:17: warning: 'image_wifi_0' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_0[] = {
+                 ^
+In file included from userMenuCounter.c:14:0:
+lib/image.h:86:17: warning: 'image_wifi_1' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_1[] = {
+                 ^
+lib/image.h:154:17: warning: 'image_wifi_2' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_2[] = {
+                 ^
+lib/image.h:222:17: warning: 'image_wifi_3' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_3[]  = {
+                 ^
+lib/image.h:290:17: warning: 'image_wifi_4' defined but not used [-Wunused-variable]
+ static uint16_t image_wifi_4[]  = {
+                 ^
+lib/image.h:358:17: warning: 'image_suntech' defined but not used [-Wunused-variable]
+ static uint16_t image_suntech[] = {
+                 ^
+lib/image.h:656:17: warning: 'image_danger' defined but not used [-Wunused-variable]
+ static uint16_t image_danger[] = {
+                 ^
+lib/image.h:725:17: warning: 'image_arrow_left' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_left[] = {
+                 ^
+lib/image.h:793:17: warning: 'image_arrow_right' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_right[] = {
+                 ^
+lib/image.h:862:17: warning: 'image_arrow_up' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_up[] = {
+                 ^
+lib/image.h:931:17: warning: 'image_arrow_down' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_down[] = {
+                 ^
+lib/image.h:1000:17: warning: 'image_arrow_up2' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_up2[] = {
+                 ^
+lib/image.h:1069:17: warning: 'image_arrow_down2' defined but not used [-Wunused-variable]
+ static uint16_t image_arrow_down2[] = {
+                 ^
+arm-none-eabi-ar.exe -rs .\CortexM0\ARM_GCC_541\Debug\Design.a .\CortexM0\ARM_GCC_541\Debug\RTC.o .\CortexM0\ARM_GCC_541\Debug\TC_RESET.o .\CortexM0\ARM_GCC_541\Debug\TC_RESET_PM.o .\CortexM0\ARM_GCC_541\Debug\TC_INT.o .\CortexM0\ARM_GCC_541\Debug\TC_INT_PM.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C_INT.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C_BOOT.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C_MASTER.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_PM.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_BOOT.o .\CortexM0\ARM_GCC_541\Debug\UART.o .\CortexM0\ARM_GCC_541\Debug\UART_SPI_UART.o .\CortexM0\ARM_GCC_541\Debug\UART_SPI_UART_INT.o .\CortexM0\ARM_GCC_541\Debug\UART_PM.o .\CortexM0\ARM_GCC_541\Debug\UART_UART.o .\CortexM0\ARM_GCC_541\Debug\UART_BOOT.o .\CortexM0\ARM_GCC_541\Debug\UART_UART_BOOT.o .\CortexM0\ARM_GCC_541\Debug\Ctrl_LCD_RS.o .\CortexM0\ARM_GCC_541\Debug\Ctrl_LCD_RS_PM.o .\CortexM0\ARM_GCC_541\Debug\LCD_MISO.o .\CortexM0\ARM_GCC_541\Debug\LCD_MISO_PM.o .\CortexM0\ARM_GCC_541\Debug\LCD_RS.o .\CortexM0\ARM_GCC_541\Debug\LCD_RS_PM.o .\CortexM0\ARM_GCC_541\Debug\LCD_Backlight.o .\CortexM0\ARM_GCC_541\Debug\LCD_Backlight_PM.o .\CortexM0\ARM_GCC_541\Debug\SPIM_LCD.o .\CortexM0\ARM_GCC_541\Debug\SPIM_LCD_PM.o .\CortexM0\ARM_GCC_541\Debug\SPIM_LCD_INT.o .\CortexM0\ARM_GCC_541\Debug\LCD_RES.o .\CortexM0\ARM_GCC_541\Debug\LCD_RES_PM.o .\CortexM0\ARM_GCC_541\Debug\BUZZER.o .\CortexM0\ARM_GCC_541\Debug\BUZZER_PM.o .\CortexM0\ARM_GCC_541\Debug\USBUART.o .\CortexM0\ARM_GCC_541\Debug\USBUART_audio.o .\CortexM0\ARM_GCC_541\Debug\USBUART_boot.o .\CortexM0\ARM_GCC_541\Debug\USBUART_cdc.o .\CortexM0\ARM_GCC_541\Debug\USBUART_cls.o .\CortexM0\ARM_GCC_541\Debug\USBUART_descr.o .\CortexM0\ARM_GCC_541\Debug\USBUART_drv.o .\CortexM0\ARM_GCC_541\Debug\USBUART_episr.o .\CortexM0\ARM_GCC_541\Debug\USBUART_hid.o .\CortexM0\ARM_GCC_541\Debug\USBUART_pm.o .\CortexM0\ARM_GCC_541\Debug\USBUART_std.o .\CortexM0\ARM_GCC_541\Debug\USBUART_vnd.o .\CortexM0\ARM_GCC_541\Debug\USBUART_midi.o .\CortexM0\ARM_GCC_541\Debug\USBUART_msc.o .\CortexM0\ARM_GCC_541\Debug\FLASH_MISO.o .\CortexM0\ARM_GCC_541\Debug\FLASH_MISO_PM.o .\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH.o .\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH_PM.o .\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH_INT.o .\CortexM0\ARM_GCC_541\Debug\WIFI_EN.o .\CortexM0\ARM_GCC_541\Debug\WIFI_EN_PM.o .\CortexM0\ARM_GCC_541\Debug\LED2_B.o .\CortexM0\ARM_GCC_541\Debug\LED2_B_PM.o .\CortexM0\ARM_GCC_541\Debug\LED2_G.o .\CortexM0\ARM_GCC_541\Debug\LED2_G_PM.o .\CortexM0\ARM_GCC_541\Debug\LED2_R.o .\CortexM0\ARM_GCC_541\Debug\LED2_R_PM.o .\CortexM0\ARM_GCC_541\Debug\LED1_B.o .\CortexM0\ARM_GCC_541\Debug\LED1_B_PM.o .\CortexM0\ARM_GCC_541\Debug\LED1_G.o .\CortexM0\ARM_GCC_541\Debug\LED1_G_PM.o .\CortexM0\ARM_GCC_541\Debug\LED1_R.o .\CortexM0\ARM_GCC_541\Debug\LED1_R_PM.o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_2.o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_2_PM.o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_1.o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_1_PM.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_SCBCLK.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_sda.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_sda_PM.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_scl.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_scl_PM.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_SCB_IRQ.o .\CortexM0\ARM_GCC_541\Debug\UART_SCBCLK.o .\CortexM0\ARM_GCC_541\Debug\UART_tx.o .\CortexM0\ARM_GCC_541\Debug\UART_tx_PM.o .\CortexM0\ARM_GCC_541\Debug\UART_rx.o .\CortexM0\ARM_GCC_541\Debug\UART_rx_PM.o .\CortexM0\ARM_GCC_541\Debug\SPIM_LCD_IntClock.o .\CortexM0\ARM_GCC_541\Debug\USBUART_Dp.o .\CortexM0\ARM_GCC_541\Debug\USBUART_Dp_PM.o .\CortexM0\ARM_GCC_541\Debug\USBUART_Dm.o .\CortexM0\ARM_GCC_541\Debug\USBUART_Dm_PM.o .\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH_IntClock.o .\CortexM0\ARM_GCC_541\Debug\CyFlash.o .\CortexM0\ARM_GCC_541\Debug\CyLib.o .\CortexM0\ARM_GCC_541\Debug\cyPm.o .\CortexM0\ARM_GCC_541\Debug\cyutils.o .\CortexM0\ARM_GCC_541\Debug\CyDMA.o .\CortexM0\ARM_GCC_541\Debug\CyLFClk.o .\CortexM0\ARM_GCC_541\Debug\cy_em_eeprom.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SPI_UART.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SPI_UART_INT.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_PM.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_UART.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_BOOT.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_UART_BOOT.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SCBCLK.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_tx.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_tx_PM.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SCB_IRQ.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_rx.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_rx_PM.o .\CortexM0\ARM_GCC_541\Debug\PWM_ONE_SECOND.o .\CortexM0\ARM_GCC_541\Debug\PWM_ONE_SECOND_PM.o .\CortexM0\ARM_GCC_541\Debug\isr_ONE_SECOND.o .\CortexM0\ARM_GCC_541\Debug\TCPWM_LED.o .\CortexM0\ARM_GCC_541\Debug\TCPWM_LED_PM.o .\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_1.o .\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_1_PM.o .\CortexM0\ARM_GCC_541\Debug\Clock_LED.o .\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_2.o .\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_2_PM.o .\CortexM0\ARM_GCC_541\Debug\Em_EEPROM.o .\CortexM0\ARM_GCC_541\Debug\Bootloadable.o .\CortexM0\ARM_GCC_541\Debug\Ctrl_MEM_SS.o .\CortexM0\ARM_GCC_541\Debug\Ctrl_MEM_SS_PM.o .\CortexM0\ARM_GCC_541\Debug\trim_Int.o .\CortexM0\ARM_GCC_541\Debug\SwClk.o .\CortexM0\ARM_GCC_541\Debug\InputPin.o .\CortexM0\ARM_GCC_541\Debug\InputPin_PM.o .\CortexM0\ARM_GCC_541\Debug\WIFI_RESET.o .\CortexM0\ARM_GCC_541\Debug\WIFI_RESET_PM.o .\CortexM0\ARM_GCC_541\Debug\TrimPin.o .\CortexM0\ARM_GCC_541\Debug\TrimPin_PM.o .\CortexM0\ARM_GCC_541\Debug\Reg_Pattern.o .\CortexM0\ARM_GCC_541\Debug\Reg_Pattern_PM.o .\CortexM0\ARM_GCC_541\Debug\KEY_LOCK.o .\CortexM0\ARM_GCC_541\Debug\KEY_LOCK_PM.o .\CortexM0\ARM_GCC_541\Debug\RESET_KEY.o .\CortexM0\ARM_GCC_541\Debug\RESET_KEY_PM.o .\CortexM0\ARM_GCC_541\Debug\CyBootAsmGnu.o
+arm-none-eabi-ar.exe: creating .\CortexM0\ARM_GCC_541\Debug\Design.a
+arm-none-eabi-gcc.exe -Wl,--start-group -o C:\SUNTECH\PSoC\KVC_Reset\Bobbin_Reset_2025.04.29\Project\Design.cydsn\CortexM0\ARM_GCC_541\Debug\Design.elf .\CortexM0\ARM_GCC_541\Debug\FT5x46.o .\CortexM0\ARM_GCC_541\Debug\IODefine.o .\CortexM0\ARM_GCC_541\Debug\IOUtil.o .\CortexM0\ARM_GCC_541\Debug\LEDControl.o .\CortexM0\ARM_GCC_541\Debug\RealTimeClock.o .\CortexM0\ARM_GCC_541\Debug\ST7789V.o .\CortexM0\ARM_GCC_541\Debug\stdout.o .\CortexM0\ARM_GCC_541\Debug\sysTick.o .\CortexM0\ARM_GCC_541\Debug\w25qxx.o .\CortexM0\ARM_GCC_541\Debug\menu.o .\CortexM0\ARM_GCC_541\Debug\USB.o .\CortexM0\ARM_GCC_541\Debug\jsmn.o .\CortexM0\ARM_GCC_541\Debug\UI.o .\CortexM0\ARM_GCC_541\Debug\widget.o .\CortexM0\ARM_GCC_541\Debug\button.o .\CortexM0\ARM_GCC_541\Debug\internalFlash.o .\CortexM0\ARM_GCC_541\Debug\externalFlash.o .\CortexM0\ARM_GCC_541\Debug\manageMenu.o .\CortexM0\ARM_GCC_541\Debug\andonMenu.o .\CortexM0\ARM_GCC_541\Debug\WIFI.o .\CortexM0\ARM_GCC_541\Debug\server.o .\CortexM0\ARM_GCC_541\Debug\utility.o .\CortexM0\ARM_GCC_541\Debug\main.o .\CortexM0\ARM_GCC_541\Debug\setup.o .\CortexM0\ARM_GCC_541\Debug\userTimer.o .\CortexM0\ARM_GCC_541\Debug\USBJsonConfig.o .\CortexM0\ARM_GCC_541\Debug\andonApi.o .\CortexM0\ARM_GCC_541\Debug\andonMessageQueue.o .\CortexM0\ARM_GCC_541\Debug\andonJson.o .\CortexM0\ARM_GCC_541\Debug\jsonUtil.o .\CortexM0\ARM_GCC_541\Debug\menuDesign.o .\CortexM0\ARM_GCC_541\Debug\userMenuProject1.o .\CortexM0\ARM_GCC_541\Debug\userMenuPatternSewingMachine.o .\CortexM0\ARM_GCC_541\Debug\userProjectPatternSewing.o .\CortexM0\ARM_GCC_541\Debug\count.o .\CortexM0\ARM_GCC_541\Debug\uartJson.o .\CortexM0\ARM_GCC_541\Debug\userMenuCounter.o .\CortexM0\ARM_GCC_541\Debug\userProjectCounter.o .\CortexM0\ARM_GCC_541\Debug\cyfitter_cfg.o .\CortexM0\ARM_GCC_541\Debug\cymetadata.o .\CortexM0\ARM_GCC_541\Debug\Cm0Start.o .\CortexM0\ARM_GCC_541\Debug\cybootloader.o .\CortexM0\ARM_GCC_541\Debug\Design.a -mcpu=cortex-m0 -mthumb -L Generated_Source\PSoC4 -Wl,-Map,.\CortexM0\ARM_GCC_541\Debug/Design.map -T Generated_Source\PSoC4\cm0gcc.ld -specs=nano.specs -u _printf_float -Wl,--gc-sections -g -ffunction-sections -Og -ffat-lto-objects -Wl,--end-group
+cyelftool.exe -B C:\SUNTECH\PSoC\KVC_Reset\Bobbin_Reset_2025.04.29\Project\Design.cydsn\CortexM0\ARM_GCC_541\Debug\Design.elf --flash_row_size 256 --flash_size 262144 --flash_offset 0x00000000 --flash_array_size 262144
+No ELF section .cychecksum found, creating one
+Application checksum calculated and stored in ELF section .cychecksum
+Checksum calculated and stored in ELF section .cymeta
+cyelftool.exe -S C:\SUNTECH\PSoC\KVC_Reset\Bobbin_Reset_2025.04.29\Project\Design.cydsn\CortexM0\ARM_GCC_541\Debug\Design.elf
+Flash used: 96892 of 262144 bytes (37.0%). Bootloader: 13312 bytes. Application: 83324 bytes. Metadata: 256 bytes.
+SRAM used: 21836 of 32768 bytes (66.6%). Stack: 2048 bytes. Heap: 1024 bytes.
+--------------- Build Succeeded: 06/10/2025 15:56:14 ---------------
