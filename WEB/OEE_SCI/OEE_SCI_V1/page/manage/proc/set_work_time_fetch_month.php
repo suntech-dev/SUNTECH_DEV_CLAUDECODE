@@ -227,8 +227,8 @@ $html .= "
       $html .= "<tr>";
       for($i=0; $i<7; $i++) {
         $nday = sprintf("%02d", $day);
-        if ($now_year_month==$year_month.$nday) $days[$day]['cls'] .= ' today';
-        $html .= "<td class='day_cell ".$days[$day]['cls']."'><div class='day_name'>".($day > $last_day ? '&nbsp;':"<a href='javascript:;' class='updateDay' date='".$year_month.$nday."'>".$day."</a>")."</div><div class='day_kind'>".$days[$day]['kind']."</div>".$days[$day]['info']."</td>";
+        if ($now_year_month==$year_month.$nday && isset($days[$day])) $days[$day]['cls'] .= ' today';
+        $html .= "<td class='day_cell ".($days[$day]['cls'] ?? '')."'><div class='day_name'>".($day > $last_day ? '&nbsp;':"<a href='javascript:;' class='updateDay' date='".$year_month.$nday."'>".$day."</a>")."</div><div class='day_kind'>".($days[$day]['kind'] ?? '')."</div>".($days[$day]['info'] ?? '')."</td>";
         $day++;
       }
       $html .= "</tr>";

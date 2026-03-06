@@ -88,7 +88,7 @@ if (!$operation) {
     if (!$factory_idx || $factory_idx=='-1') jsonFail('There is no building');
     if (!$line_idx || $line_idx=='-1') jsonFail('There is no line');
 
-    require_once($_SERVER['DOCUMENT_ROOT'] . '/samho/lib/worktime.lib.php');
+    require_once(__DIR__ . '/../../../lib/worktime.lib.php');
     $worktime = new Worktime($pdo);
 
     $result = $worktime->getDayShift($oneday, $factory_idx, $line_idx);

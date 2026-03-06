@@ -1,7 +1,7 @@
 # OEE_SCI 버전 이력
 
 > 최초 작성: 2026-03-06
-> 마지막 업데이트: 2026-03-06 (수정: 2026-03-06)
+> 마지막 업데이트: 2026-03-06 (수정: 2026-03-06 — info_worktime.php 버그 수정)
 
 ---
 
@@ -55,3 +55,7 @@
 | 2026-03-06 | `inc/nav-fiori.php` 하드코딩 경로(`/2025/sci/new/`) → `preg_match` 기반 동적 `$project_root` 계산으로 수정 |
 | 2026-03-06 | `inc/head.php` PWA manifest 링크 제거 |
 | 2026-03-06 | `manifest.json` 삭제 (PWA 미사용 확정) |
+| 2026-03-06 | `lib/worktime_database.php` — 하드코딩 DB 인증 제거, `config.php` require로 교체 |
+| 2026-03-06 | `page/manage/proc/set_work_time_fetch_month.php` — PHP Notice 수정: 달력 빈 셀(32~35일) `Undefined offset` → `isset()` + `??` null coalescing 적용 |
+| 2026-03-06 | `page/manage/info_worktime.php` — include 순서 수정 (nav-fiori.php가 body 열리기 전에 출력되던 버그), `window.prevMonth/nextMonth/thisMonth` 전역 노출 |
+| 2026-03-06 | `page/manage/proc/set_work_time_insert.php` — 하드코딩 경로 `/samho/lib/worktime.lib.php` → `__DIR__ . '/../../../lib/worktime.lib.php'` 수정, 달력 날짜 클릭 모달 정상 동작 |
