@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Intelligence Dashboard — User Manual</title>
+  <style>
+    :root {
+      --bg:         #0d1117;
+      --surface:    #161b22;
+      --surface2:   #21262d;
+      --border:     #30363d;
+      --text:       #e6edf3;
+      --text-muted: #8b949e;
+      --accent:     #58a6ff;
+      --accent2:    #3fb950;
+      --warn:       #d29922;
+      --danger:     #f85149;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      display: flex;
+    }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 260px;
+      height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 24px 0;
+      z-index: 100;
+    }
+
+    #sidebar .sidebar-header {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+
+    #sidebar .sidebar-header h1 {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+
+    #sidebar .sidebar-header p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    #sidebar nav a {
+      display: block;
+      padding: 6px 20px;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+    }
+
+    #sidebar nav a:hover,
+    #sidebar nav a.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: rgba(88, 166, 255, 0.06);
+    }
+
+    #sidebar nav .nav-group {
+      padding: 12px 20px 4px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+    }
+
+    /* ── Hamburger ── */
+    #menuBtn {
+      display: none;
+      position: fixed;
+      top: 16px; left: 16px;
+      z-index: 200;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    #overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 99;
+    }
+
+    /* ── Main Content ── */
+    #main {
+      margin-left: 260px;
+      flex: 1;
+      padding: 48px 56px;
+      max-width: 900px;
+    }
+
+    /* ── Sections ── */
+    section {
+      margin-bottom: 56px;
+      scroll-margin-top: 24px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .section-title h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    /* ── Cards ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .card h4 {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .card p {
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+
+    /* ── Tags ── */
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .tag.ok     { background: rgba(63,185,80,0.15); color: var(--accent2); }
+    .tag.warn   { background: rgba(210,153,34,0.15); color: var(--warn); }
+    .tag.error  { background: rgba(248,81,73,0.15);  color: var(--danger); }
+    .tag.info   { background: rgba(88,166,255,0.15); color: var(--accent); }
+
+    /* ── Table ── */
+    .tbl-wrap { overflow-x: auto; margin-bottom: 20px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th {
+      background: var(--surface2);
+      color: var(--text-muted);
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface); }
+
+    /* ── Callout ── */
+    .callout {
+      border-left: 3px solid var(--accent);
+      background: rgba(88,166,255,0.06);
+      padding: 14px 18px;
+      border-radius: 0 6px 6px 0;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+
+    .callout.warn {
+      border-color: var(--warn);
+      background: rgba(210,153,34,0.06);
+    }
+
+    .callout.ok {
+      border-color: var(--accent2);
+      background: rgba(63,185,80,0.06);
+    }
+
+    .callout strong { color: var(--accent); }
+    .callout.warn strong { color: var(--warn); }
+    .callout.ok strong { color: var(--accent2); }
+
+    /* ── Step list ── */
+    .steps { list-style: none; counter-reset: step; margin: 16px 0; }
+
+    .steps li {
+      counter-increment: step;
+      padding: 12px 16px 12px 56px;
+      position: relative;
+      margin-bottom: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 26px; height: 26px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    /* ── Priority badge ── */
+    .p1 { color: #da1e28; font-weight: 700; }
+    .p2 { color: #e67e22; font-weight: 700; }
+    .p3 { color: #0070f2; font-weight: 700; }
+
+    /* ── Code inline ── */
+    code {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      font-size: 0.84em;
+      color: var(--accent);
+    }
+
+    /* ── Glossary ── */
+    .glossary dt {
+      font-weight: 700;
+      color: var(--accent);
+      margin-top: 16px;
+    }
+
+    .glossary dd {
+      color: var(--text-muted);
+      margin-left: 16px;
+      font-size: 0.9rem;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 40px;
+    }
+
+    .hero h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      max-width: 560px;
+    }
+
+    .hero .meta {
+      margin-top: 16px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* ── Back link ── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.88rem;
+      margin-bottom: 32px;
+    }
+
+    .back-link:hover { text-decoration: underline; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      #sidebar { transform: translateX(-100%); transition: transform 0.25s; }
+      #sidebar.open { transform: translateX(0); }
+      #menuBtn { display: block; }
+      #overlay.show { display: block; }
+      #main { margin-left: 0; padding: 24px 20px; }
+      .card-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<button id="menuBtn" onclick="toggleSidebar()">&#9776;</button>
+<div id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar TOC -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <h1>User Manual</h1>
+    <p>AI Intelligence Dashboard</p>
+  </div>
+  <nav>
+    <span class="nav-group">Getting Started</span>
+    <a href="#overview">Overview</a>
+    <a href="#filters">Using Filters</a>
+
+    <span class="nav-group">Dashboard Sections</span>
+    <a href="#summary-cards">Summary Cards</a>
+    <a href="#oee-forecast">OEE Trend &amp; Forecast</a>
+    <a href="#anomaly">Anomaly Detection</a>
+    <a href="#health">Line Health Index</a>
+    <a href="#maintenance">Predictive Maintenance</a>
+    <a href="#streaming">Real-time Streaming</a>
+    <a href="#optimization">Production Optimization</a>
+
+    <span class="nav-group">Reference</span>
+    <a href="#glossary">Glossary</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+</nav>
+
+<!-- Main Content -->
+<div id="main">
+
+  <a href="ai_dashboard.php" class="back-link">&#8592; Back to Dashboard</a>
+
+  <div class="hero">
+    <h1>AI Intelligence Dashboard</h1>
+    <p>This manual explains every section of the dashboard — what each indicator means, how to interpret the data, and how to take action based on AI recommendations.</p>
+    <div class="meta">
+      <span class="tag info">OEE_SCI V2</span>
+      <span class="tag ok">AI Powered</span>
+      <span class="tag info">v2026.03</span>
+    </div>
+  </div>
+
+  <!-- ===== 1. Overview ===== -->
+  <section id="overview">
+    <div class="section-title">
+      <span class="num">1</span>
+      <h2>Overview</h2>
+    </div>
+
+    <p>The AI Intelligence Dashboard is a real-time factory monitoring tool that uses AI/ML algorithms to help production managers identify issues early, prevent machine failures, and optimize OEE (Overall Equipment Effectiveness).</p>
+
+    <div class="callout ok" style="margin-top: 20px;">
+      <strong>What is OEE?</strong><br>
+      OEE measures how effectively your production lines are running.<br>
+      <strong>OEE = Availability × Performance × Quality</strong><br>
+      A score of 85% or above is considered world-class.
+    </div>
+
+    <div class="tbl-wrap" style="margin-top: 24px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Section</th>
+            <th>What it does</th>
+            <th>Update frequency</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Summary Cards</td><td>Quick snapshot of key AI indicators</td><td>Every 60s</td></tr>
+          <tr><td>OEE Trend &amp; Forecast</td><td>Historical OEE + 4-hour AI prediction</td><td>Every 60s</td></tr>
+          <tr><td>Anomaly Detection</td><td>Lines with statistically abnormal OEE today</td><td>Every 60s</td></tr>
+          <tr><td>Line Health Index</td><td>7-day OEE health score per production line</td><td>Every 60s</td></tr>
+          <tr><td>Predictive Maintenance</td><td>Machines ranked by failure risk score</td><td>Every 60s</td></tr>
+          <tr><td>Real-time Streaming</td><td>Live event feed — anomalies, downtime, risk alerts</td><td>Real-time (SSE)</td></tr>
+          <tr><td>Production Optimization</td><td>Bottleneck analysis &amp; improvement suggestions</td><td>Every ~2s on load</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== 2. Filters ===== -->
+  <section id="filters">
+    <div class="section-title">
+      <span class="num">2</span>
+      <h2>Using Filters</h2>
+    </div>
+
+    <p>Three filters at the top of the dashboard let you narrow the data to a specific scope. All sections update simultaneously when you change a filter.</p>
+
+    <ol class="steps">
+      <li><strong>All Factory</strong> — Shows data across all factories. Select a specific factory to drill down.</li>
+      <li><strong>All Line</strong> — Available after selecting a factory. Filters to a single production line.</li>
+      <li><strong>All Machine</strong> — Available after selecting a line. Filters to a specific machine.</li>
+    </ol>
+
+    <div class="callout">
+      <strong>Tip:</strong> Click the <strong>Refresh</strong> button to manually reload all sections without changing filters. Useful when you want the latest data immediately.
+    </div>
+
+    <div class="callout warn" style="margin-top: 16px;">
+      <strong>Note:</strong> The Real-time Streaming feed (Section 8) will reconnect automatically whenever you change a filter. You may see a brief "Connecting..." status — this is normal.
+    </div>
+  </section>
+
+  <!-- ===== 3. Summary Cards ===== -->
+  <section id="summary-cards">
+    <div class="section-title">
+      <span class="num">3</span>
+      <h2>Summary Cards</h2>
+    </div>
+
+    <p>Four cards at the top give you an instant overview of the most important AI-monitored metrics.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h4>Next 4H OEE Forecast</h4>
+        <p>The current OEE value and AI's predicted OEE for the next 4 hours, based on recent trends. Includes a trend badge (Improving / Declining / Stable).</p>
+      </div>
+      <div class="card">
+        <h4>Anomaly Detection</h4>
+        <p>Total number of production lines showing statistically abnormal OEE today. A red "CRITICAL" badge appears when any anomaly is high-severity.</p>
+      </div>
+      <div class="card">
+        <h4>High-Risk Machines</h4>
+        <p>Number of machines with a risk score &ge; 70. These machines are candidates for immediate preventive maintenance.</p>
+      </div>
+      <div class="card">
+        <h4>Line Health Index (Avg)</h4>
+        <p>Average health score across all lines (0–100), based on the 7-day OEE average. A score below 70 indicates a line needs attention.</p>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Trend Badge</th><th>Meaning</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="tag ok">Improving</span></td><td>OEE is trending upward — forecast is above current value</td></tr>
+          <tr><td><span class="tag info">Stable</span></td><td>OEE is relatively flat — no significant change expected</td></tr>
+          <tr><td><span class="tag error">Declining</span></td><td>OEE is trending downward — intervention may be needed</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== 4. OEE Forecast ===== -->
+  <section id="oee-forecast">
+    <div class="section-title">
+      <span class="num">4</span>
+      <h2>OEE Trend &amp; AI Forecast</h2>
+    </div>
+
+    <p>This chart shows historical OEE data alongside AI-generated predictions for the next several hours.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Chart Element</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Solid line (blue)</strong></td>
+            <td>Actual OEE measurements recorded over the past hours/days</td>
+          </tr>
+          <tr>
+            <td><strong>Dashed line (orange)</strong></td>
+            <td>AI forecast — predicted OEE values for the upcoming period</td>
+          </tr>
+          <tr>
+            <td><strong>Shaded band</strong></td>
+            <td>90% confidence interval — the AI is 90% confident the actual value will fall in this range</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <strong>How to read this:</strong> If the dashed forecast line is heading below the <code>85%</code> target line, consider investigating the root cause now — before OEE actually drops.
+    </div>
+
+    <div class="callout warn">
+      <strong>Forecast accuracy:</strong> The AI forecast is based on statistical patterns from historical data. Unexpected events (machine breakdowns, material shortages) are not reflected in forecasts.
+    </div>
+  </section>
+
+  <!-- ===== 5. Anomaly Detection ===== -->
+  <section id="anomaly">
+    <div class="section-title">
+      <span class="num">5</span>
+      <h2>Anomaly Detection</h2>
+    </div>
+
+    <p>This panel shows production lines where today's OEE is <em>statistically unusual</em> compared to their own historical baseline (last 30 days).</p>
+
+    <div class="callout">
+      <strong>How anomalies are detected:</strong> The AI calculates a <strong>Z-Score</strong> for each line's OEE every hour. A Z-Score of 2.0 or higher means the current OEE is more than 2 standard deviations below the 30-day average — a statistically significant drop.
+    </div>
+
+    <div class="tbl-wrap" style="margin-top: 20px;">
+      <table>
+        <thead>
+          <tr><th>Severity</th><th>Z-Score range</th><th>What it means</th><th>Recommended action</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag error">DANGER</span></td>
+            <td>Z &ge; 3.0</td>
+            <td>Extreme OEE drop — very unusual for this line</td>
+            <td>Investigate immediately</td>
+          </tr>
+          <tr>
+            <td><span class="tag warn">WARNING</span></td>
+            <td>2.0 &le; Z &lt; 3.0</td>
+            <td>Significant OEE drop — below normal range</td>
+            <td>Check within 30 minutes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout ok">
+      <strong>No anomalies shown?</strong> This is good news — all lines are performing within their normal range today.
+    </div>
+  </section>
+
+  <!-- ===== 6. Health Index ===== -->
+  <section id="health">
+    <div class="section-title">
+      <span class="num">6</span>
+      <h2>Line Health Index</h2>
+    </div>
+
+    <p>The health index summarizes the overall condition of each production line using a simple 0–100 score, based on OEE data from the last 7 days.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Score</th><th>Status</th><th>Interpretation</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong style="color: var(--accent2);">80 – 100</strong></td><td><span class="tag ok">Healthy</span></td><td>Line is performing well — no action needed</td></tr>
+          <tr><td><strong style="color: var(--warn);">60 – 79</strong></td><td><span class="tag warn">Fair</span></td><td>Some degradation — monitor closely</td></tr>
+          <tr><td><strong style="color: var(--danger);">0 – 59</strong></td><td><span class="tag error">Poor</span></td><td>Significant performance issues — prioritize investigation</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <strong>How it is calculated:</strong> Health score = 7-day average OEE for the line, scaled to a 0–100 index. Lines with consistent high OEE receive high scores; lines with frequent dips or downtime receive lower scores.
+    </div>
+  </section>
+
+  <!-- ===== 7. Maintenance ===== -->
+  <section id="maintenance">
+    <div class="section-title">
+      <span class="num">7</span>
+      <h2>Predictive Maintenance</h2>
+    </div>
+
+    <p>This section ranks machines by their estimated failure risk so maintenance teams can prioritize inspections before breakdowns occur.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Risk Score</th><th>Risk Level</th><th>Recommended action</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong style="color: var(--danger);">70 – 100</strong></td><td><span class="tag error">High Risk</span></td><td>Schedule maintenance within 24 hours</td></tr>
+          <tr><td><strong style="color: var(--warn);">40 – 69</strong></td><td><span class="tag warn">Medium Risk</span></td><td>Plan maintenance within the week</td></tr>
+          <tr><td><strong style="color: var(--accent2);">0 – 39</strong></td><td><span class="tag ok">Low Risk</span></td><td>Continue normal maintenance schedule</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <strong>How the risk score is calculated:</strong> The AI combines three factors:
+      <ul style="margin: 8px 0 0 16px; font-size: 0.88rem;">
+        <li><strong>Downtime frequency (40%):</strong> How many downtime events occurred in the last 7 days</li>
+        <li><strong>Downtime rate (35%):</strong> Average downtime duration vs. available hours</li>
+        <li><strong>Machine age factor (25%):</strong> Time since last recorded maintenance event</li>
+      </ul>
+    </div>
+
+    <div class="callout warn">
+      <strong>Important:</strong> The risk score is a predictive estimate based on historical patterns. Always combine this information with physical inspection and operator knowledge.
+    </div>
+  </section>
+
+  <!-- ===== 8. Streaming ===== -->
+  <section id="streaming">
+    <div class="section-title">
+      <span class="num">8</span>
+      <h2>Real-time AI Streaming Analysis</h2>
+    </div>
+
+    <p>This live feed displays AI-detected events as they happen — no page refresh needed. Events arrive via a persistent server connection (SSE) and are displayed in reverse chronological order (newest first).</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Event type</th><th>Icon</th><th>Meaning</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>OEE Anomaly Detected</strong></td><td style="font-size: 1.2rem;">&#9888;&#65039;</td><td>A production line's OEE has dropped significantly below its baseline today</td></tr>
+          <tr><td><strong>Active Downtime</strong></td><td style="font-size: 1.2rem;">&#128308;</td><td>A machine is currently in an unplanned downtime state (not yet resolved)</td></tr>
+          <tr><td><strong>Maintenance Risk Alert</strong></td><td style="font-size: 1.2rem;">&#128295;</td><td>A machine's risk score has exceeded the high-risk threshold</td></tr>
+          <tr><td><strong>Quality Alert</strong></td><td style="font-size: 1.2rem;">&#128300;</td><td>Quality rate on a line has dropped below the acceptable threshold</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tbl-wrap" style="margin-top: 16px;">
+      <table>
+        <thead>
+          <tr><th>Severity badge</th><th>Color</th><th>What it means</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="tag error">DANGER</span></td><td>Red</td><td>Requires immediate attention</td></tr>
+          <tr><td><span class="tag warn">WARNING</span></td><td>Orange</td><td>Should be reviewed soon</td></tr>
+          <tr><td><span class="tag info">INFO</span></td><td>Blue</td><td>Informational — no urgent action needed</td></tr>
+          <tr><td><span class="tag ok">NORMAL</span></td><td>Green</td><td>Situation has returned to normal</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <strong>Connection status indicator:</strong>
+      <ul style="margin: 8px 0 0 16px; font-size: 0.88rem;">
+        <li><strong>Green dot + "Connected":</strong> Live feed is active and receiving events</li>
+        <li><strong>Orange dot + "Reconnecting...":</strong> Connection lost — automatically retrying in 15 seconds</li>
+      </ul>
+    </div>
+
+    <div class="callout warn">
+      <strong>Maximum displayed events:</strong> The feed shows the latest 15 events. Older events are automatically removed when new ones arrive.
+    </div>
+  </section>
+
+  <!-- ===== 9. Optimization ===== -->
+  <section id="optimization">
+    <div class="section-title">
+      <span class="num">9</span>
+      <h2>Production Optimization</h2>
+    </div>
+
+    <p>This section analyzes OEE data from the last 14 days for every production line and presents prioritized improvement opportunities — so you know exactly where to focus effort for the biggest OEE gain.</p>
+
+    <h3 style="font-size: 1rem; margin: 24px 0 12px; color: var(--text-muted);">Priority Levels</h3>
+
+    <div class="card-grid">
+      <div class="card" style="border-top: 3px solid #da1e28;">
+        <h4 class="p1">P1 — Critical</h4>
+        <p>OEE gap &ge; 20 percentage points below target. Immediate action required.</p>
+      </div>
+      <div class="card" style="border-top: 3px solid #e67e22;">
+        <h4 class="p2">P2 — High</h4>
+        <p>OEE gap 10–19 percentage points below target. Address within the week.</p>
+      </div>
+      <div class="card" style="border-top: 3px solid #0070f2;">
+        <h4 class="p3">P3 — Medium</h4>
+        <p>OEE gap under 10 percentage points. Improvement is beneficial but not urgent.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size: 1rem; margin: 24px 0 12px; color: var(--text-muted);">Reading an Optimization Card</h3>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Card element</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Priority badge</strong> (P1/P2/P3)</td><td>Urgency level — see table above</td></tr>
+          <tr><td><strong>Trend arrow</strong> (&#8593; / &#8594; / &#8595;)</td><td>Whether OEE on this line is improving, stable, or declining</td></tr>
+          <tr><td><strong>Current OEE</strong></td><td>14-day average OEE for this line</td></tr>
+          <tr><td><strong>-X%p below target 85%</strong></td><td>How far below the 85% world-class target this line currently sits</td></tr>
+          <tr><td><strong>Current bar</strong></td><td>Visual representation of current OEE; the vertical line marks the 85% target</td></tr>
+          <tr><td><strong>Potential bar</strong></td><td>Estimated OEE if the identified bottleneck is resolved</td></tr>
+          <tr><td><strong>Bottleneck</strong></td><td>The OEE component (Availability / Performance / Quality) with the largest gap vs. its target</td></tr>
+          <tr><td><strong>Avail. / Perf. / Quality</strong></td><td>14-day averages for each OEE component; the bottleneck component is highlighted</td></tr>
+          <tr><td><strong>vs. best line</strong></td><td>How this line compares to the best-performing line in the factory</td></tr>
+          <tr><td><strong>Improvement Suggestions</strong></td><td>Click to expand 2–4 AI-generated action items specific to the bottleneck type and gap size</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-size: 1rem; margin: 24px 0 12px; color: var(--text-muted);">Bottleneck Types</h3>
+
+    <div class="card-grid">
+      <div class="card">
+        <h4>&#9881;&#65039; Availability</h4>
+        <p>Machines are running less than the scheduled time. Common causes: unplanned downtime, slow starts, changeovers.</p>
+      </div>
+      <div class="card">
+        <h4>&#127939; Performance</h4>
+        <p>Machines run but slower than their rated speed. Common causes: micro-stoppages, speed losses, worn tooling.</p>
+      </div>
+      <div class="card">
+        <h4>&#128300; Quality</h4>
+        <p>Too many defective or reworked units. Common causes: material issues, process drift, operator errors.</p>
+      </div>
+    </div>
+
+    <div class="callout ok">
+      <strong>How "Potential OEE" is calculated:</strong> The AI estimates how much OEE would improve if the bottleneck component were brought up to its target level. The potential gain is shown as <code>+X%</code> on the potential bar.
+    </div>
+  </section>
+
+  <!-- ===== 10. Glossary ===== -->
+  <section id="glossary">
+    <div class="section-title">
+      <span class="num">10</span>
+      <h2>Glossary</h2>
+    </div>
+
+    <dl class="glossary">
+      <dt>OEE (Overall Equipment Effectiveness)</dt>
+      <dd>A measure of manufacturing productivity: OEE = Availability × Performance × Quality. World-class target: 85%.</dd>
+
+      <dt>Availability</dt>
+      <dd>The percentage of scheduled production time that a machine is actually running. Target: 90%.<br>
+      Availability = (Operating Time) / (Planned Production Time)</dd>
+
+      <dt>Performance</dt>
+      <dd>How fast a machine runs compared to its theoretical maximum speed. Target: 90%.<br>
+      Performance = (Actual Output) / (Theoretical Maximum Output)</dd>
+
+      <dt>Quality</dt>
+      <dd>The percentage of good units produced without defects or rework. Target: 99%.<br>
+      Quality = (Good Units) / (Total Units Produced)</dd>
+
+      <dt>Z-Score</dt>
+      <dd>A statistical measure of how many standard deviations a value is from the mean. A Z-Score of 2.0 or higher indicates an unusually low OEE value that is unlikely to occur by chance alone.</dd>
+
+      <dt>Baseline (30-day)</dt>
+      <dd>The historical average and standard deviation of OEE for a specific line over the past 30 days, used as a reference for anomaly detection.</dd>
+
+      <dt>Risk Score</dt>
+      <dd>A composite score (0–100) estimating the probability of machine failure, based on downtime frequency, downtime rate, and time since last maintenance.</dd>
+
+      <dt>Health Index</dt>
+      <dd>A 0–100 score summarizing a production line's overall condition based on its 7-day OEE average. Higher is better.</dd>
+
+      <dt>Bottleneck</dt>
+      <dd>The OEE component (Availability, Performance, or Quality) that is furthest below its target, limiting overall OEE the most.</dd>
+
+      <dt>SSE (Server-Sent Events)</dt>
+      <dd>A technology that allows the server to push real-time updates to the browser over a persistent HTTP connection — used for the live streaming feed.</dd>
+
+      <dt>Confidence Interval (90%)</dt>
+      <dd>A range within which the AI is 90% confident the actual OEE value will fall. A wider band means more uncertainty in the forecast.</dd>
+
+      <dt>P1 / P2 / P3</dt>
+      <dd>Priority classification for optimization opportunities: P1 (Critical, gap &ge; 20%p), P2 (High, 10–19%p), P3 (Medium, &lt;10%p).</dd>
+    </dl>
+  </section>
+
+  <!-- ===== 11. FAQ ===== -->
+  <section id="faq">
+    <div class="section-title">
+      <span class="num">11</span>
+      <h2>FAQ</h2>
+    </div>
+
+    <div class="card" style="margin-bottom: 12px;">
+      <h4>Why is the dashboard showing "--" for some values?</h4>
+      <p>The AI modules are still loading data. Values typically populate within 1–3 seconds of the page loading. If they remain blank after 10 seconds, try clicking <strong>Refresh</strong>.</p>
+    </div>
+
+    <div class="card" style="margin-bottom: 12px;">
+      <h4>Why is the streaming feed showing "Reconnecting..."?</h4>
+      <p>The live connection to the server was interrupted. It will automatically reconnect within 15 seconds. If it stays disconnected, refresh the page.</p>
+    </div>
+
+    <div class="card" style="margin-bottom: 12px;">
+      <h4>The Production Optimization section shows no cards. Why?</h4>
+      <p>This means all production lines are currently meeting the 85% OEE target — a good result. Optimization cards only appear for lines that are below target.</p>
+    </div>
+
+    <div class="card" style="margin-bottom: 12px;">
+      <h4>How often should I check this dashboard?</h4>
+      <p>The dashboard auto-updates continuously, so you can leave it open on a monitor. For proactive management, review the Predictive Maintenance and Production Optimization sections at the start of each shift.</p>
+    </div>
+
+    <div class="card" style="margin-bottom: 12px;">
+      <h4>Are the AI suggestions always correct?</h4>
+      <p>AI suggestions are based on statistical patterns and industry best practices. They should be treated as a starting point for investigation — always verify with on-floor inspection and operator experience before taking action.</p>
+    </div>
+
+    <div class="card" style="margin-bottom: 12px;">
+      <h4>What does "vs. best line" mean on an optimization card?</h4>
+      <p>It shows how many OEE percentage points this line is behind the best-performing line in the same factory. This helps benchmark realistic improvement targets based on what is already being achieved in your own plant.</p>
+    </div>
+
+    <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 0.82rem; color: var(--text-muted);">
+      &copy; 2025 SUNTECH. All Rights Reserved. &nbsp;|&nbsp; OEE_SCI V2 &nbsp;|&nbsp; AI Intelligence Dashboard Manual
+    </div>
+  </section>
+
+</div>
+
+<script>
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('show');
+  }
+
+  // IntersectionObserver — highlight active TOC link
+  const links = document.querySelectorAll('#sidebar nav a[href^="#"]');
+  const sections = document.querySelectorAll('section[id]');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`#sidebar nav a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
