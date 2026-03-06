@@ -47,7 +47,7 @@ require_once(__DIR__ . '/../../inc/nav-fiori.php');
           </div>
           <div>
             <button id="aiRefreshBtn" class="fiori-btn fiori-btn--tertiary">Refresh</button>
-            <a href="ai_dashboard_manual.html" target="_blank" class="fiori-btn fiori-btn--ghost" style="margin-left:8px; text-decoration:none;">Help</a>
+            <a href="ai_dashboard_manual_kor.html" target="_blank" class="fiori-btn fiori-btn--ghost" style="margin-left:8px; text-decoration:none;">Help</a>
           </div>
         </div>
       </div>
