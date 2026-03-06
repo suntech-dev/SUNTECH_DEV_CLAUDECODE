@@ -1,0 +1,492 @@
+/* OEE Data Monitoring Styles */
+
+.fiori-badge {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  font-weight: var(--sap-font-weight-semibold);
+}
+
+.fiori-badge.fiori-badge--error {
+  color: var(--sap-status-error) !important;
+}
+
+.fiori-badge.fiori-badge--success {
+  color: var(--sap-status-success) !important;
+}
+
+.fiori-badge.fiori-badge--warning {
+  color: var(--sap-status-warning) !important;
+}
+
+.fiori-badge.fiori-badge--info {
+  color: var(--sap-status-info) !important;
+}
+
+/* Filter Section Styles */
+.filter-header-content {
+  padding-top: var(--sap-spacing-sm);
+  padding-bottom: 0;
+}
+
+#factoryFilterSelect,
+#factoryLineFilterSelect,
+#factoryLineMachineFilterSelect {
+  width: 200px;
+}
+
+#timeRangeSelect,
+#shiftSelect {
+  width: 150px;
+}
+
+#dateRangePicker {
+  width: 250px;
+}
+
+.real-time-status-header {
+  margin-top: 4px;
+}
+
+.connection-status-info {
+  margin-left: 10px;
+  font-size: 0.85em;
+  color: var(--sap-text-secondary);
+}
+
+.data-table-centered {
+  text-align: center;
+  padding: var(--sap-spacing-xl);
+}
+
+/* OEE Layout Styles */
+.oee-monitoring-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--sap-spacing-lg);
+  margin-bottom: var(--sap-spacing-xl);
+  transition: all 0.3s ease;
+}
+
+.oee-monitoring-grid.hidden {
+  display: none;
+}
+
+.oee-main-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sap-spacing-lg);
+  margin-bottom: var(--sap-spacing-xl);
+  align-items: start;
+  transition: all 0.3s ease;
+}
+
+.oee-main-layout.hidden {
+  display: none;
+}
+
+.oee-main-layout>* {
+  height: 100%;
+}
+
+.oee-details-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.oee-details-section .fiori-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.oee-details-section .fiori-card__content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.oee-charts-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sap-spacing-md);
+  flex: 1;
+}
+
+.oee-charts-section .fiori-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.oee-charts-section .fiori-card__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--sap-spacing-md);
+}
+
+.oee-charts-section .chart-container {
+  flex: 1;
+  height: auto !important;
+  padding: 0;
+}
+
+.oee-additional-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sap-spacing-lg);
+  margin-bottom: var(--sap-spacing-xl);
+  transition: all 0.3s ease;
+}
+
+.oee-additional-charts.hidden {
+  display: none;
+}
+
+/* Chart Styles */
+.oee-chart-small .chart-container {
+  height: 300px;
+}
+
+.oee-chart-card {
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.oee-chart-content {
+  flex: 1;
+  padding: var(--sap-spacing-md);
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-container {
+  position: relative;
+  height: 300px;
+  padding: var(--sap-spacing-md);
+}
+
+.oee-chart-content .chart-container {
+  flex: 1;
+  position: relative;
+  min-height: 280px;
+  padding: 0;
+}
+
+/* Real-time Status */
+.real-time-status {
+  display: flex;
+  align-items: center;
+  gap: var(--sap-spacing-xs);
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-status-success);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--sap-status-success);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.filter-section {
+  display: flex;
+  align-items: center;
+  gap: var(--sap-spacing-md);
+  flex-wrap: wrap;
+}
+
+.data-table-wrapper {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+/* OEE Components Styles */
+.oee-component-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sap-spacing-md);
+  border: 1px solid var(--sap-border-color);
+  border-radius: var(--sap-radius-md);
+  margin-bottom: var(--sap-spacing-sm);
+  background: var(--sap-surface-2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.oee-component-item:hover {
+  background: var(--sap-surface-3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+.oee-component-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.oee-component-name {
+  font-weight: var(--sap-font-weight-semibold);
+  color: var(--sap-text-primary);
+  font-size: var(--sap-font-size-md);
+  line-height: 1.2;
+}
+
+.oee-component-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.oee-detail-item {
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-secondary);
+}
+
+.oee-component-value {
+  font-weight: var(--sap-font-weight-bold);
+  font-size: var(--sap-font-size-xl);
+  color: var(--sap-brand-primary);
+}
+
+/* Connection Status Styles */
+.connection-status--error {
+  color: var(--sap-status-error) !important;
+}
+
+.connection-status--warning {
+  color: var(--sap-status-warning) !important;
+}
+
+.connection-status--success {
+  color: var(--sap-status-success) !important;
+}
+
+/* Modal Styles */
+.fiori-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.fiori-modal.show {
+  display: flex;
+}
+
+.fiori-modal__backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+.fiori-modal__content {
+  position: relative;
+  z-index: 1001;
+  max-width: 800px;
+  max-height: 90vh;
+  width: 90%;
+  overflow-y: auto;
+  animation: slideInScale 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.fiori-modal__content .fiori-card {
+  margin: 0;
+  border-radius: var(--sap-radius-lg);
+  border: 2px solid var(--sap-brand-primary);
+}
+
+.fiori-modal__content .fiori-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, var(--sap-brand-primary), var(--sap-brand-secondary));
+  color: white;
+  border-radius: var(--sap-radius-lg) var(--sap-radius-lg) 0 0;
+  padding: var(--sap-spacing-lg);
+}
+
+.fiori-modal__content .fiori-card__title {
+  color: white;
+  margin: 0;
+  font-size: var(--sap-font-size-lg);
+  font-weight: var(--sap-font-weight-semibold);
+}
+
+.fiori-btn--icon {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--sap-font-size-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fiori-btn--icon:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* OEE Detail Modal Styles */
+.oee-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sap-spacing-lg);
+  padding: var(--sap-spacing-lg);
+}
+
+.oee-detail-section {
+  background: var(--sap-surface-2);
+  border-radius: var(--sap-radius-md);
+  padding: var(--sap-spacing-md);
+  border: 1px solid var(--sap-border-color);
+}
+
+.oee-detail-section--full {
+  grid-column: 1 / -1;
+  background: var(--sap-surface-3);
+}
+
+.oee-detail-section-title {
+  font-size: var(--sap-font-size-md);
+  font-weight: var(--sap-font-weight-semibold);
+  color: var(--sap-brand-primary);
+  margin: 0 0 var(--sap-spacing-md) 0;
+  padding-bottom: var(--sap-spacing-xs);
+  border-bottom: 2px solid var(--sap-brand-primary);
+}
+
+.oee-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--sap-spacing-sm);
+  padding: var(--sap-spacing-xs) 0;
+  border-bottom: 1px solid var(--sap-border-color);
+}
+
+.oee-detail-row:last-child {
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.oee-detail-label {
+  font-weight: var(--sap-font-weight-medium);
+  color: var(--sap-text-secondary);
+  font-size: var(--sap-font-size-sm);
+  flex: 0 0 140px;
+}
+
+.oee-detail-value {
+  font-weight: var(--sap-font-weight-semibold);
+  color: var(--sap-text-primary);
+  font-size: var(--sap-font-size-sm);
+  text-align: right;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sap-spacing-xs);
+}
+
+.oee-detail-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sap-spacing-md);
+  padding: var(--sap-spacing-lg);
+  background: var(--sap-surface-2);
+  border-radius: 0 0 var(--sap-radius-lg) var(--sap-radius-lg);
+  border-top: 1px solid var(--sap-border-color);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutScale {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+}
+
+.fiori-modal.hide {
+  animation: fadeOut 0.3s ease;
+}
+
+.fiori-modal.hide .fiori-modal__content {
+  animation: slideOutScale 0.3s ease;
+}

@@ -1,0 +1,1192 @@
+/* SAP Fiori Work Time Management Styles */
+/* SAP Fiori Horizon Light 테마 기반 근무시간 관리 스타일 */
+
+:root {
+  /* SAP Fiori Design Tokens */
+  --sap-brand-primary: #0070f2;
+  --sap-brand-secondary: #1e88e5;
+  --sap-surface-1: #ffffff;
+  --sap-surface-2: #f7f8fa;
+  --sap-surface-3: #edeff3;
+  --sap-text-primary: #32363a;
+  --sap-text-secondary: #6a6d70;
+  --sap-border-1: #d9d9d9;
+  --sap-border-2: #e0e0e0;
+  --sap-status-success: #30914c;
+  --sap-status-warning: #e26b0a;
+  --sap-status-error: #da1e28;
+  --sap-focus-ring: #0070f2;
+  --sap-spacing-sm: 8px;
+  --sap-spacing-md: 16px;
+  --sap-spacing-lg: 24px;
+  --sap-font-family: "72", "Helvetica Neue", Arial, sans-serif;
+  --sap-border-radius: 4px;
+  --sap-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --sap-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Work Time 레이아웃 - SAP Fiori Dual Layout */
+.work-time-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sap-spacing-lg);
+  margin-top: var(--sap-spacing-md);
+  font-family: var(--sap-font-family);
+}
+
+.calendar-section {
+  background: var(--sap-surface-1);
+  border: 1px solid var(--sap-border-1);
+  border-radius: var(--sap-border-radius);
+  padding: var(--sap-spacing-md);
+  box-shadow: var(--sap-shadow-sm);
+  overflow: hidden;
+}
+
+.list-section {
+  background: var(--sap-surface-1);
+  border: 1px solid var(--sap-border-1);
+  border-radius: var(--sap-border-radius);
+  padding: var(--sap-spacing-md);
+  box-shadow: var(--sap-shadow-sm);
+  overflow: hidden;
+}
+
+/* SAP Fiori 캘린더 헤더 */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--sap-spacing-md);
+  padding-bottom: var(--sap-spacing-sm);
+  border-bottom: 1px solid var(--sap-border-2);
+}
+
+.calendar-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--sap-text-primary);
+  margin: 0;
+  font-family: var(--sap-font-family);
+}
+
+.calendar-nav {
+  display: flex;
+  gap: var(--sap-spacing-sm);
+}
+
+.calendar-nav .fiori-btn {
+  height: 36px;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  border-radius: var(--sap-border-radius);
+}
+
+/* SAP Fiori 캘린더 테이블 */
+#calendar {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--sap-surface-1);
+  border-radius: var(--sap-border-radius);
+  overflow: hidden;
+  table-layout: fixed;
+}
+
+#calendar th {
+  background: var(--sap-surface-2);
+  color: var(--sap-text-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--sap-border-1);
+  border-right: 1px solid var(--sap-border-1);
+  font-family: var(--sap-font-family);
+}
+
+#calendar th:last-child {
+  border-right: none;
+}
+
+#calendar td {
+  border-bottom: 1px solid var(--sap-border-1);
+  border-right: 1px solid var(--sap-border-1);
+  padding: 8px;
+  height: 95px;
+  min-height: 95px;
+  text-align: right;
+  vertical-align: top;
+  position: relative;
+  background: var(--sap-surface-1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#calendar td:last-child {
+  border-right: none;
+}
+
+#calendar td:hover {
+  background: var(--sap-surface-2);
+  transform: translateY(-1px);
+  box-shadow: var(--sap-shadow-sm);
+}
+
+#calendar td.empty {
+  background: var(--sap-surface-3);
+  cursor: default;
+  opacity: 0.6;
+}
+
+#calendar td.empty:hover {
+  background: var(--sap-surface-3);
+  transform: none;
+  box-shadow: none;
+}
+
+/* SAP Fiori 서버 생성 캘린더 스타일 */
+#calendar .day_cell {
+  background: var(--sap-surface-1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#calendar .day_cell:hover {
+  background: var(--sap-surface-2);
+  transform: translateY(-1px);
+  box-shadow: var(--sap-shadow-sm);
+}
+
+#calendar .day_cell.empty {
+  background: var(--sap-surface-3);
+  cursor: default;
+  opacity: 0.6;
+}
+
+#calendar .day_cell.empty:hover {
+  background: var(--sap-surface-3);
+  transform: none;
+  box-shadow: none;
+}
+
+#calendar .day_cell.today {
+  background: var(--sap-brand-primary);
+  color: var(--sap-surface-1);
+  font-weight: 600;
+}
+
+#calendar .day_cell.today:hover {
+  background: var(--sap-brand-secondary);
+}
+
+/* 서버 생성 캘린더 내용 스타일 */
+.day_name {
+  font-size: 0.875rem;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.day_kind {
+  font-size: 0.6rem;
+  color: var(--sap-status-success);
+  background: rgba(48, 145, 76, 0.1);
+  padding: 2px 4px;
+  border-radius: 2px;
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  right: 4px;
+  text-align: center;
+  font-family: var(--sap-font-family);
+}
+
+#calendar .today {
+  background: var(--sap-brand-primary);
+  color: var(--sap-surface-1);
+  font-weight: 600;
+}
+
+#calendar .today:hover {
+  background: var(--sap-brand-secondary);
+}
+
+/* SAP Fiori 캘린더 내용 스타일 */
+.calendar-day-number {
+  font-size: 0.875rem;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: var(--sap-text-primary);
+  font-family: var(--sap-font-family);
+}
+
+.calendar-work-info {
+  font-size: 0.6rem;
+  color: var(--sap-status-success);
+  background: rgba(48, 145, 76, 0.1);
+  padding: 2px 4px;
+  border-radius: 2px;
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  right: 4px;
+  text-align: center;
+  font-family: var(--sap-font-family);
+}
+
+/* SAP Fiori 필터 섹션 */
+.filter-section {
+  display: flex;
+  gap: var(--sap-spacing-sm);
+  margin-bottom: var(--sap-spacing-md);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-section .fiori-select {
+  min-width: 140px;
+  flex: 1;
+}
+
+/* 테이블 래퍼 오버플로우 처리 */
+.table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+}
+
+.table-wrapper table {
+  width: 100%;
+  table-layout: fixed;
+  min-width: 600px; /* 최소 너비 설정 */
+}
+
+/* list-section 테이블 컬럼 너비 설정 */
+.list-section .table-wrapper table {
+  table-layout: fixed;
+}
+
+.list-section .table-wrapper table th:nth-child(1),
+.list-section .table-wrapper table td:nth-child(1) {
+  width: 8%; /* NO. */
+}
+
+.list-section .table-wrapper table th:nth-child(2),
+.list-section .table-wrapper table td:nth-child(2) {
+  width: 20%; /* Period */
+}
+
+.list-section .table-wrapper table th:nth-child(3),
+.list-section .table-wrapper table td:nth-child(3) {
+  width: 22%; /* Location */
+}
+
+.list-section .table-wrapper table th:nth-child(4),
+.list-section .table-wrapper table td:nth-child(4) {
+  width: 20%; /* Day of Week/Type */
+}
+
+.list-section .table-wrapper table th:nth-child(5),
+.list-section .table-wrapper table td:nth-child(5) {
+  width: 12%; /* Status */
+}
+
+.list-section .table-wrapper table th:nth-child(6),
+.list-section .table-wrapper table td:nth-child(6) {
+  width: 18%; /* Actions */
+}
+
+/* 테이블 셀 텍스트 처리 */
+.list-section .table-wrapper table td {
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  white-space: normal;
+  vertical-align: top;
+  padding: 8px 4px;
+  line-height: 1.4;
+}
+
+.list-section .table-wrapper table th {
+  white-space: normal;
+  word-wrap: break-word;
+  padding: 8px 4px;
+  line-height: 1.3;
+}
+
+/* 특별한 컬럼들의 추가 스타일 */
+/* Location 컬럼 (3번째) - 긴 텍스트 처리 */
+.list-section .table-wrapper table td:nth-child(3) {
+  font-size: 0.875rem;
+  max-height: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Day of Week 컬럼 (4번째) - 요일 태그들 */
+.list-section .table-wrapper table td:nth-child(4) {
+  font-size: 0.8rem;
+}
+
+/* Actions 컬럼 버튼 스타일 개선 */
+.list-section .table-wrapper table td:nth-child(6) .btn {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  margin: 2px;
+  white-space: nowrap;
+}
+
+/* 긴 텍스트에 대한 툴팁 효과 */
+.list-section .table-wrapper table td[title] {
+  cursor: help;
+}
+
+/* 상태 배지 스타일 조정 */
+.status-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Day 태그들 스타일 개선 */
+.day-active, .day-inactive, .day-date, .day-period {
+  display: inline-block;
+  font-size: 0.7rem;
+  margin: 1px 2px;
+  padding: 1px 4px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+/* SAP Fiori 모달 - Work Time 전용 스타일 */
+.modal-xl {
+  max-width: 1200px;
+  width: 95%;
+}
+
+.modal-content {
+  background: var(--sap-surface-1);
+  border: 1px solid var(--sap-border-1);
+  border-radius: var(--sap-border-radius);
+  box-shadow: var(--sap-shadow-md);
+  max-height: none;
+  overflow: visible;
+  font-family: var(--sap-font-family);
+}
+
+/* SAP Fiori 모달 크기 디자인 */
+.modal-content {
+  max-width: 840px;
+  width: 90%;
+  background: var(--sap-surface-1);
+  color: var(--sap-text-primary);
+}
+
+/* SAP Fiori 모달 섹션 */
+.modal-section {
+  margin-bottom: 28px;
+  padding: var(--sap-spacing-md);
+  background: var(--sap-surface-2);
+  border: 1px solid var(--sap-border-1);
+  border-radius: var(--sap-border-radius);
+  box-shadow: var(--sap-shadow-sm);
+}
+
+.modal-section h3 {
+  color: var(--sap-text-primary);
+  margin-bottom: 18px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding-bottom: var(--sap-spacing-sm);
+  border-bottom: 1px solid var(--sap-border-1);
+  font-family: var(--sap-font-family);
+  display: flex;
+  align-items: center;
+}
+.modal-section h3::before {
+  content: "▶";
+  margin-right: var(--sap-spacing-sm);
+  color: var(--sap-brand-primary);
+  font-size: 0.9em;
+}
+
+/* SAP Fiori 폼 레이아웃 */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sap-spacing-md);
+  margin-bottom: var(--sap-spacing-md);
+}
+
+.form-row.single {
+  grid-template-columns: 1fr;
+}
+
+/* SAP Fiori 시프트 설정 */
+.shift-configuration {
+  background: var(--sap-surface-2);
+  border: 1px solid var(--sap-border-1);
+  border-radius: var(--sap-border-radius);
+  padding: var(--sap-spacing-lg);
+  margin-top: var(--sap-spacing-md);
+  box-shadow: var(--sap-shadow-sm);
+  font-family: var(--sap-font-family);
+}
+
+.shift-header {
+  display: grid;
+  grid-template-columns: 180px repeat(3, 1fr);
+  gap: var(--sap-spacing-md);
+  margin-bottom: var(--sap-spacing-md);
+  padding: var(--sap-spacing-md) 18px;
+  background: var(--sap-surface-3);
+  border-radius: var(--sap-border-radius);
+  box-shadow: var(--sap-shadow-sm);
+  border: 1px solid var(--sap-border-1);
+}
+
+.shift-row {
+  display: grid;
+  grid-template-columns: 140px repeat(7, 1fr);
+  gap: var(--sap-spacing-sm);
+  margin-bottom: var(--sap-spacing-sm);
+  padding: var(--sap-spacing-md);
+  background: var(--sap-surface-1);
+  border-radius: var(--sap-border-radius);
+  border: 1px solid var(--sap-border-1);
+  align-items: center;
+  transition: all 0.2s ease;
+  box-shadow: var(--sap-shadow-sm);
+}
+.shift-row:hover {
+  border-color: var(--sap-brand-primary);
+  box-shadow: 0 2px 8px rgba(0, 112, 242, 0.2);
+  transform: translateY(-1px);
+}
+
+/* SAP Fiori Shift Configuration 레이아웃 */
+.time-type-row {
+  display: grid;
+  grid-template-columns: 180px repeat(3, 1fr);
+  gap: var(--sap-spacing-md);
+  margin-bottom: var(--sap-spacing-sm);
+  padding: 18px;
+  background: var(--sap-surface-1);
+  border-radius: var(--sap-border-radius);
+  border: 1px solid var(--sap-border-1);
+  align-items: center;
+  transition: all 0.2s ease;
+  box-shadow: var(--sap-shadow-sm);
+}
+.time-type-row:hover {
+  border-color: var(--sap-brand-primary);
+  box-shadow: 0 2px 8px rgba(0, 112, 242, 0.2);
+  transform: translateY(-1px);
+}
+.time-type-label {
+  font-weight: 600;
+  color: var(--sap-text-primary);
+  text-align: center;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  background: var(--sap-surface-3);
+  border-radius: var(--sap-border-radius);
+  border: 1px solid var(--sap-border-1);
+  font-family: var(--sap-font-family);
+}
+.shift-header .time-type-label {
+  color: var(--sap-text-primary);
+  background: transparent;
+  border: none;
+  font-weight: 700;
+  font-size: 1rem;
+  font-family: var(--sap-font-family);
+}
+
+.shift-label {
+  font-weight: 600;
+  color: var(--sap-text-primary);
+  text-align: center;
+  padding: var(--sap-spacing-sm) 12px;
+  font-size: 0.85rem;
+  font-family: var(--sap-font-family);
+}
+.shift-row .shift-label {
+  color: var(--sap-text-primary);
+  background: var(--sap-surface-2);
+  border-radius: var(--sap-border-radius);
+  border: 1px solid var(--sap-border-1);
+  font-weight: 600;
+}
+
+.time-label {
+  font-size: 0.8rem;
+  color: var(--sap-text-secondary);
+  font-weight: 500;
+  text-align: center;
+  padding: var(--sap-spacing-sm) 4px;
+  font-family: var(--sap-font-family);
+}
+
+.time-inputs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+
+.time-inputs input {
+  width: 60px;
+  max-width: 60px;
+  padding: 6px 4px;
+  font-size: 0.8rem;
+  text-align: center;
+  border: 1px solid var(--sap-border-1);
+  border-radius: var(--sap-border-radius);
+  background: var(--sap-surface-1);
+  color: var(--sap-text-primary);
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-family: var(--sap-font-family);
+  box-sizing: border-box;
+}
+.time-inputs input:focus {
+  outline: none;
+  border-color: var(--sap-focus-ring);
+  box-shadow: 0 0 0 1px var(--sap-focus-ring);
+}
+.time-inputs input:hover {
+  border-color: var(--sap-brand-primary);
+}
+.time-inputs span {
+  color: var(--sap-text-secondary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  font-family: var(--sap-font-family);
+}
+
+
+.overtime-input {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.overtime-input input {
+  width: 60px;
+  height: 32px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  text-align: center;
+  border: 1px solid var(--sap-border-1);
+  border-radius: var(--sap-border-radius);
+  background: var(--sap-surface-1);
+  color: var(--sap-text-primary);
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-family: var(--sap-font-family);
+  box-sizing: border-box;
+}
+
+.overtime-input input:focus {
+  outline: none;
+  border-color: var(--sap-focus-ring);
+  box-shadow: 0 0 0 1px var(--sap-focus-ring);
+}
+
+.overtime-input input:hover {
+  border-color: var(--sap-brand-primary);
+}
+
+.overtime-input span {
+  color: var(--sap-text-secondary);
+  font-size: 0.75rem;
+  font-family: var(--sap-font-family);
+}
+
+/* SAP Fiori 주간 체크박스 */
+.week-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--sap-spacing-md);
+  margin-top: var(--sap-spacing-md);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: var(--sap-text-primary);
+  cursor: pointer;
+  padding: 12px var(--sap-spacing-md);
+  background: var(--sap-surface-2);
+  border: 1px solid var(--sap-border-1);
+  border-radius: var(--sap-border-radius);
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-family: var(--sap-font-family);
+}
+
+.checkbox-label:hover {
+  border-color: var(--sap-brand-primary);
+  background: var(--sap-surface-3);
+  transform: translateY(-1px);
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin-right: 10px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--sap-brand-primary);
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"]:checked + * {
+  font-weight: 600;
+}
+
+.checkbox-label:has(input[type="checkbox"]:checked) {
+  background: var(--sap-brand-primary);
+  color: var(--sap-surface-1);
+  border-color: var(--sap-brand-primary);
+}
+
+
+/* SAP Fiori 모달 컨테이너 */
+#resourceModal {
+  position: fixed !important;
+  z-index: 99999 !important;
+  display: none !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(2px) !important;
+  animation: fadeIn 0.2s ease !important;
+  font-family: var(--sap-font-family) !important;
+}
+
+/* 모달이 표시될 때 */
+#resourceModal[style*="display: block"] {
+  display: block !important;
+  z-index: 99999 !important; /* 표시 시에도 최고 우선순위 유지 */
+}
+
+/* 모달이 다른 모든 요소 위에 나타나도록 강제 */
+body:has(#resourceModal[style*="display: block"]) {
+  position: relative !important;
+}
+
+body:has(#resourceModal[style*="display: block"]) > *:not(#resourceModal) {
+  z-index: 1 !important;
+}
+
+/* footer 및 기타 요소들이 모달 아래 있도록 강제 */
+footer,
+.footer,
+nav,
+.nav,
+header,
+.header,
+main,
+.main {
+  z-index: 1 !important;
+  position: relative !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+#resourceModal .modal-content {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 90% !important;
+  max-width: 900px !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  background: var(--sap-surface-1) !important;
+  border-radius: var(--sap-border-radius) !important;
+  box-shadow: var(--sap-shadow-md) !important;
+  border: 1px solid var(--sap-border-1) !important;
+  color: var(--sap-text-primary) !important;
+  font-family: var(--sap-font-family) !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: var(--sap-spacing-md) !important;
+}
+
+/* 작은 화면에서의 모달 최적화 */
+@media screen and (max-width: 768px) {
+  #resourceModal .modal-content {
+    width: 95% !important;
+    max-height: 95vh !important;
+    padding: 15px !important;
+  }
+}
+
+/* 아주 작은 화면에서의 모달 최적화 */
+@media screen and (max-width: 480px) {
+  #resourceModal .modal-content {
+    width: 98% !important;
+    max-height: 98vh !important;
+    padding: 10px !important;
+    border-radius: 4px !important;
+  }
+}
+
+/* 모달 폼 컨테이너 설정 */
+#resourceModal #resourceForm {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+/* SAP Fiori 커스텀 날짜 선택기 */
+.custom-date-picker {
+  position: absolute !important;
+  background: var(--sap-surface-1) !important;
+  border: 1px solid var(--sap-border-1) !important;
+  border-radius: var(--sap-border-radius) !important;
+  box-shadow: var(--sap-shadow-md) !important;
+  z-index: 999999 !important;
+  font-family: var(--sap-font-family) !important;
+  min-width: 280px !important;
+  max-width: 320px !important;
+  user-select: none !important;
+  color: var(--sap-text-primary) !important;
+}
+
+/* SAP Fiori 커스텀 캘린더 헤더 */
+.custom-picker-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: var(--sap-spacing-md) var(--sap-spacing-md) !important;
+  border-bottom: 1px solid var(--sap-border-1) !important;
+  background: var(--sap-surface-2) !important;
+}
+
+.picker-title {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: var(--sap-text-primary) !important;
+  font-family: var(--sap-font-family) !important;
+  margin: 0 !important;
+}
+
+.picker-nav-btn {
+  background: none !important;
+  border: 1px solid var(--sap-border-1) !important;
+  padding: 4px !important;
+  cursor: pointer !important;
+  color: var(--sap-text-secondary) !important;
+  border-radius: var(--sap-border-radius) !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: var(--sap-font-family) !important;
+}
+
+.picker-nav-btn:hover {
+  background: var(--sap-surface-2) !important;
+  border-color: var(--sap-brand-primary) !important;
+  color: var(--sap-brand-primary) !important;
+}
+
+/* SAP Fiori 커스텀 캘린더 바디 */
+.custom-picker-body {
+  padding: var(--sap-spacing-md) var(--sap-spacing-md) !important;
+}
+
+.picker-weekdays {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 4px !important;
+  margin-bottom: 8px !important;
+}
+
+.picker-weekday {
+  text-align: center !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: var(--sap-text-secondary) !important;
+  font-family: var(--sap-font-family) !important;
+  padding: var(--sap-spacing-sm) 4px !important;
+}
+
+.picker-days {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 2px !important;
+}
+
+.picker-day {
+  text-align: center !important;
+  padding: var(--sap-spacing-sm) 4px !important;
+  font-size: 14px !important;
+  color: var(--sap-text-primary) !important;
+  font-family: var(--sap-font-family) !important;
+  cursor: pointer !important;
+  border-radius: var(--sap-border-radius) !important;
+  transition: all 0.2s ease !important;
+  min-height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.picker-day:hover {
+  background: var(--sap-surface-2) !important;
+}
+
+.picker-day-other {
+  color: var(--sap-text-secondary) !important;
+  cursor: default !important;
+  opacity: 0.5 !important;
+}
+
+.picker-day-other:hover {
+  background: transparent !important;
+}
+
+.picker-day-today {
+  background: var(--sap-surface-3) !important;
+  color: var(--sap-brand-primary) !important;
+  font-weight: 600 !important;
+}
+
+.picker-day-selected {
+  background: var(--sap-brand-primary) !important;
+  color: var(--sap-surface-1) !important;
+  font-weight: 600 !important;
+}
+
+.picker-day-start {
+  background: var(--sap-brand-primary) !important;
+  color: var(--sap-surface-1) !important;
+}
+
+.picker-day-end {
+  background: var(--sap-brand-primary) !important;
+  color: var(--sap-surface-1) !important;
+}
+
+.picker-day-range {
+  background: rgba(0, 112, 242, 0.1) !important;
+  color: var(--sap-brand-primary) !important;
+}
+
+/* SAP Fiori 커스텀 캘린더 푸터 */
+.custom-picker-footer {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: var(--sap-spacing-sm) !important;
+  padding: var(--sap-spacing-md) var(--sap-spacing-md) !important;
+  border-top: 1px solid var(--sap-border-1) !important;
+  background: var(--sap-surface-2) !important;
+}
+
+.picker-btn {
+  padding: var(--sap-spacing-sm) var(--sap-spacing-md) !important;
+  border: 1px solid var(--sap-border-1) !important;
+  background: var(--sap-surface-1) !important;
+  color: var(--sap-text-primary) !important;
+  border-radius: var(--sap-border-radius) !important;
+  font-size: 14px !important;
+  font-family: var(--sap-font-family) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.picker-btn:hover {
+  background: var(--sap-surface-2) !important;
+  border-color: var(--sap-brand-primary) !important;
+}
+
+.picker-apply {
+  background: var(--sap-brand-primary) !important;
+  border-color: var(--sap-brand-primary) !important;
+  color: var(--sap-surface-1) !important;
+}
+
+.picker-apply:hover {
+  background: var(--sap-brand-secondary) !important;
+  border-color: var(--sap-brand-secondary) !important;
+}
+
+
+/* SAP Fiori 모달 폼 요소 스타일 */
+#resourceModal input[type="text"],
+#resourceModal input[type="date"],
+#resourceModal select,
+#resourceModal textarea {
+  background: var(--sap-surface-1) !important;
+  color: var(--sap-text-primary) !important;
+  border: 1px solid var(--sap-border-1) !important;
+  border-radius: var(--sap-border-radius) !important;
+  font-family: var(--sap-font-family) !important;
+}
+
+#resourceModal input[type="text"]:focus,
+#resourceModal input[type="date"]:focus,
+#resourceModal select:focus,
+#resourceModal textarea:focus {
+  border-color: var(--sap-focus-ring) !important;
+  box-shadow: 0 0 0 1px var(--sap-focus-ring) !important;
+  outline: none !important;
+}
+
+#resourceModal .form-group label {
+  color: var(--sap-text-primary) !important;
+  font-family: var(--sap-font-family) !important;
+}
+
+#resourceModal .close {
+  color: var(--sap-text-secondary) !important;
+  font-size: 24px !important;
+  font-weight: 400 !important;
+  font-family: var(--sap-font-family) !important;
+}
+
+#resourceModal .close:hover,
+#resourceModal .close:focus {
+  color: var(--sap-text-primary) !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+}
+
+#resourceModal h2 {
+  color: var(--sap-text-primary) !important;
+  font-family: var(--sap-font-family) !important;
+}
+
+/* SAP Fiori 모달 버튼 */
+#resourceModal .btn,
+#resourceModal .fiori-btn {
+  background: var(--sap-surface-1) !important;
+  color: var(--sap-text-primary) !important;
+  border: 1px solid var(--sap-border-1) !important;
+  font-family: var(--sap-font-family) !important;
+}
+
+#resourceModal .btn:hover,
+#resourceModal .fiori-btn:hover {
+  background: var(--sap-surface-2) !important;
+  border-color: var(--sap-brand-primary) !important;
+}
+
+#resourceModal .btn.btn-primary,
+#resourceModal .fiori-btn--primary {
+  background: var(--sap-brand-primary) !important;
+  border-color: var(--sap-brand-primary) !important;
+  color: var(--sap-surface-1) !important;
+}
+
+#resourceModal .btn.btn-primary:hover,
+#resourceModal .fiori-btn--primary:hover {
+  background: var(--sap-brand-secondary) !important;
+  border-color: var(--sap-brand-secondary) !important;
+}
+
+/* SAP Fiori Day of Week 스타일 */
+.day-active {
+  color: var(--sap-status-success);
+  font-weight: 600;
+  padding: 2px 4px;
+  border-radius: var(--sap-border-radius);
+  background: rgba(48, 145, 76, 0.1);
+  margin-right: 4px;
+  font-family: var(--sap-font-family);
+}
+
+.day-inactive {
+  color: var(--sap-text-secondary);
+  font-weight: 400;
+  padding: 2px 4px;
+  margin-right: 4px;
+  opacity: 0.7;
+  font-family: var(--sap-font-family);
+}
+
+.day-date {
+  color: var(--sap-status-warning);
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: var(--sap-border-radius);
+  background: rgba(226, 107, 10, 0.1);
+  font-family: var(--sap-font-family);
+}
+
+.day-period {
+  color: var(--sap-brand-primary);
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: var(--sap-border-radius);
+  background: rgba(0, 112, 242, 0.1);
+  font-family: var(--sap-font-family);
+}
+
+/* 반응형 디자인 */
+@media screen and (max-width: 1200px) {
+  .work-time-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .shift-header,
+  .shift-row {
+    grid-template-columns: 120px repeat(4, 1fr);
+    gap: 8px;
+  }
+  
+  .time-type-row {
+    grid-template-columns: 140px repeat(3, 1fr);
+    gap: 12px;
+  }
+  
+  .shift-header {
+    grid-template-columns: 140px repeat(3, 1fr);
+    gap: 12px;
+  }
+  
+  .time-inputs input {
+    width: 50px; /* 모바일에서 더 작게 */
+    max-width: 50px;
+    padding: 4px 2px; /* 더 작은 패딩 */
+    font-size: 0.7rem;
+  }
+
+  /* 1024px 이하에서 테이블 스타일 조정 */
+  .list-section .table-wrapper table {
+    min-width: 500px;
+  }
+
+  .list-section .table-wrapper table td,
+  .list-section .table-wrapper table th {
+    padding: 6px 3px;
+    font-size: 0.8rem;
+  }
+
+  .list-section .table-wrapper table td:nth-child(6) .btn {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+    margin: 1px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .filter-section {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .calendar-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .shift-header,
+  .shift-row,
+  .time-type-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    text-align: left;
+  }
+  
+  .time-inputs {
+    justify-content: space-between;
+  }
+  
+  .time-type-label {
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  
+  #calendar td {
+    height: 60px;
+    min-height: 60px;
+    font-size: 0.75rem;
+  }
+
+  /* 768px 이하에서 테이블 스타일 */
+  .list-section .table-wrapper table {
+    min-width: 400px;
+  }
+
+  .list-section .table-wrapper table td,
+  .list-section .table-wrapper table th {
+    padding: 4px 2px;
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+
+  /* 모바일에서 컬럼 너비 조정 */
+  .list-section .table-wrapper table th:nth-child(1),
+  .list-section .table-wrapper table td:nth-child(1) {
+    width: 10%; /* NO. */
+  }
+
+  .list-section .table-wrapper table th:nth-child(2),
+  .list-section .table-wrapper table td:nth-child(2) {
+    width: 25%; /* Period */
+  }
+
+  .list-section .table-wrapper table th:nth-child(3),
+  .list-section .table-wrapper table td:nth-child(3) {
+    width: 30%; /* Location */
+    font-size: 0.7rem;
+  }
+
+  .list-section .table-wrapper table th:nth-child(4),
+  .list-section .table-wrapper table td:nth-child(4) {
+    width: 15%; /* Day/Type */
+    font-size: 0.65rem;
+  }
+
+  .list-section .table-wrapper table th:nth-child(5),
+  .list-section .table-wrapper table td:nth-child(5) {
+    width: 10%; /* Status */
+  }
+
+  .list-section .table-wrapper table th:nth-child(6),
+  .list-section .table-wrapper table td:nth-child(6) {
+    width: 10%; /* Actions */
+  }
+
+  .list-section .table-wrapper table td:nth-child(6) .fiori-btn {
+    font-size: 0.65rem;
+    padding: 2px 4px;
+    margin: 1px 0;
+    display: block;
+    width: 100%;
+  }
+
+  /* 모바일에서 Day 태그들 크기 조정 */
+  .day-active, .day-inactive, .day-date, .day-period {
+    font-size: 0.6rem;
+    margin: 1px;
+    padding: 1px 3px;
+  }
+}
+
+/* fadeOut 애니메이션 */
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}

@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Co-Robot Simulation</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+    <!-- Mode Selection Screen -->
+    <div class="mode-selection" id="mode-selection">
+        <div class="mode-card">
+            <h1 class="mode-title">SunTech Co-Robot Sewing Simulation</h1>
+            <p class="mode-subtitle">Select the number of computer sewing machines to connect to the robot</p>
+            <div class="mode-options">
+                <button class="mode-btn" id="mode-btn-2" data-mode="2">
+                    <div class="mode-icon-num">2</div>
+                    <div class="mode-btn-title">2 Sewing Machines</div>
+                    <div class="mode-layout">
+                        <span class="layout-item layout-m1">M1</span>
+                        <span class="layout-item layout-robot">R</span>
+                        <span class="layout-item layout-m2">M2</span>
+                    </div>
+                    <div class="mode-desc">Left + Right layout</div>
+                </button>
+                <button class="mode-btn" id="mode-btn-3" data-mode="3">
+                    <div class="mode-icon-num">3</div>
+                    <div class="mode-btn-title">3 Sewing Machines</div>
+                    <div class="mode-layout mode-layout-3">
+                        <span class="layout-item layout-m2-top">M2</span>
+                        <div class="layout-row">
+                            <span class="layout-item layout-m1">M1</span>
+                            <span class="layout-item layout-robot">R</span>
+                            <span class="layout-item layout-m3">M3</span>
+                        </div>
+                    </div>
+                    <div class="mode-desc">Left + Top + Right layout</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App (hidden until mode selected) -->
+    <div id="app-wrapper" style="display:none;">
+        <div class="app">
+            <!-- Header -->
+            <header class="header">
+                <h1>SunTech Co-Robot Sewing Simulation</h1>
+                <p class="subtitle" id="header-subtitle">Co-robot 1 + Computer Sewing Machine 3 Simulator
+                    <button class="btn-mode-change" id="btn-mode-change">Change Mode</button>
+                    <button class="btn-mode-change btn-manual" id="btn-manual">Manual</button>
+                </p>
+            </header>
+
+            <!-- Basic Settings -->
+            <section class="basic-settings-section">
+                <h2>Basic Settings</h2>
+                <div class="basic-settings-grid">
+                    <div class="basic-setting-group">
+                        <label for="worker-count">Workers</label>
+                        <select id="worker-count">
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                    <div class="basic-setting-group">
+                        <label for="pallet-prep-time">Pallet Prep Time</label>
+                        <input type="number" id="pallet-prep-time" value="58" min="0" step="1">
+                        <span class="unit">sec</span>
+                    </div>
+                    <div class="basic-setting-group pallet-count-group">
+                        <label>Pallet Count</label>
+                        <div class="pallet-count-options" id="pallet-count-options">
+                            <button class="pallet-count-btn" data-pallet-count="3">3</button>
+                            <button class="pallet-count-btn" data-pallet-count="4">4</button>
+                            <button class="pallet-count-btn active" data-pallet-count="5">5</button>
+                            <button class="pallet-count-btn" data-pallet-count="6">6</button>
+                            <button class="pallet-count-btn" data-pallet-count="7">7</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Input Section -->
+            <section class="input-section">
+                <h2>Work Time Settings (Unit: seconds)</h2>
+                <div class="robot-speed-selector" id="robot-speed-selector">
+                    <span class="robot-speed-label">Robot Speed:</span>
+                    <div class="robot-speed-options">
+                        <button class="robot-speed-btn" data-robot-speed="manual">Manual</button>
+                        <button class="robot-speed-btn" data-robot-speed="75">75%</button>
+                        <button class="robot-speed-btn" data-robot-speed="80">80%</button>
+                        <button class="robot-speed-btn active" data-robot-speed="85">85%</button>
+                        <button class="robot-speed-btn" data-robot-speed="90">90%</button>
+                        <button class="robot-speed-btn" data-robot-speed="95">95%</button>
+                        <button class="robot-speed-btn" data-robot-speed="100">100%</button>
+                    </div>
+                </div>
+                <div class="input-grid" id="input-grid">
+                    <!-- Machine 1 -->
+                    <div class="machine-input" data-machine="1">
+                        <h3>&#x1f535; Machine 1 (Left)</h3>
+                        <div class="input-group">
+                            <label for="m1-init">Initial Load Time</label>
+                            <input type="number" id="m1-init" value="11" min="0.1" step="0.1">
+                            <span class="unit">sec</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="m1-ul">Unload & Load Time</label>
+                            <input type="number" id="m1-ul" value="15.5" min="0.1" step="0.1">
+                            <span class="unit">sec</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="m1-return">Return Time</label>
+                            <input type="number" id="m1-return" value="9" min="0.1" step="0.1">
+                            <span class="unit">sec</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="m1-sewing">Sewing Time</label>
+                            <input type="number" id="m1-sewing" value="63" min="0.1" step="0.1">
+                            <span class="unit">sec</span>
+                        </div>
+                    </div>
+
+                    <!-- Machine 2 -->
+                    <div class="machine-input" data-machine="2">
+                        <h3 id="m2-input-label">&#x1f7e2; Machine 2 (Top)</h3>
+                        <div class="input-group">
+                            <label for="m2-init">Initial Load Time</label>
+                            <input type="number" id="m2-init" value="12" min="0.1" step="0.1">
+                            <span class="unit">sec</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="m2-ul">Unload & Load Time</label>
+                            <input type="number" id="m2-ul" value="16.5" min="0.1" step="0.1">
+                            <span class="unit">sec</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="m2-return">Return Time</label>
+                            <input type="number" id="m2-return" value="10" min="0.1" step="0.1">
+                            <span class="unit">sec</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="m2-sewing">Sewing Time</label>
+                            <input type="number" id="m2-sewing" value="63" min="0.1" step="0.1">
+                            <span class="unit">sec</span>
+                        </div>
+                    </div>
+
+                    <!-- Machine 3 -->
+                    <div class="machine-input" data-machine="3" id="machine3-input">
+                        <h3>&#x1f534; Machine 3 (Right)</h3>
+                        <div class="input-group">
+                            <label for="m3-init">Initial Load Time</label>
+                            <input type="number" id="m3-init" value="11" min="0.1" step="0.1">
+                            <span class="unit">sec</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="m3-ul">Unload & Load Time</label>
+                            <input type="number" id="m3-ul" value="15.5" min="0.1" step="0.1">
+                            <span class="unit">sec</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="m3-return">Return Time</label>
+                            <input type="number" id="m3-return" value="9" min="0.1" step="0.1">
+                            <span class="unit">sec</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="m3-sewing">Sewing Time</label>
+                            <input type="number" id="m3-sewing" value="63" min="0.1" step="0.1">
+                            <span class="unit">sec</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Duration Selector -->
+            <section class="duration-section">
+                <h2>Simulation Duration</h2>
+                <div class="duration-selector">
+                    <div class="duration-group">
+                        <label for="sim-hours">Hours</label>
+                        <select id="sim-hours">
+                            <option value="1" selected>1 hr</option>
+                            <option value="2">2 hr</option>
+                            <option value="3">3 hr</option>
+                            <option value="4">4 hr</option>
+                            <option value="5">5 hr</option>
+                            <option value="6">6 hr</option>
+                            <option value="7">7 hr</option>
+                            <option value="8">8 hr</option>
+                            <option value="9">9 hr</option>
+                            <option value="10">10 hr</option>
+                            <option value="11">11 hr</option>
+                            <option value="12">12 hr</option>
+                            <option value="13">13 hr</option>
+                            <option value="14">14 hr</option>
+                            <option value="15">15 hr</option>
+                            <option value="16">16 hr</option>
+                            <option value="17">17 hr</option>
+                            <option value="18">18 hr</option>
+                            <option value="19">19 hr</option>
+                            <option value="20">20 hr</option>
+                            <option value="21">21 hr</option>
+                            <option value="22">22 hr</option>
+                            <option value="23">23 hr</option>
+                            <option value="24">24 hr</option>
+                        </select>
+                    </div>
+                    <div class="duration-group">
+                        <label for="sim-minutes">Minutes</label>
+                        <select id="sim-minutes">
+                            <option value="0" selected>00 min</option>
+                        </select>
+                    </div>
+                    <div class="duration-display">
+                        Total Simulation Time: <strong id="duration-total">1 hr 00 min</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Controls -->
+            <section class="controls">
+                <div class="btn-group">
+                    <button id="btn-quick" class="btn btn-primary">Quick Calc</button>
+                    <button id="btn-realtime" class="btn btn-success">Realtime Calc</button>
+                    <button id="btn-pause" class="btn btn-warning" disabled style="display:none;">Pause</button>
+                    <button id="btn-resume" class="btn btn-info" disabled style="display:none;">Resume</button>
+                    <button id="btn-stop" class="btn btn-danger" disabled>Stop</button>
+                </div>
+                <div class="speed-group" id="speed-group" style="display:none;">
+                    <span class="speed-label">Speed:</span>
+                    <div class="speed-presets">
+                        <button class="btn-speed" data-speed="0.1">0.1x</button>
+                        <button class="btn-speed" data-speed="0.5">0.5x</button>
+                        <button class="btn-speed active" data-speed="1">1x</button>
+                        <button class="btn-speed" data-speed="5">5x</button>
+                        <button class="btn-speed" data-speed="10">10x</button>
+                        <button class="btn-speed" data-speed="50">50x</button>
+                        <button class="btn-speed" data-speed="100">100x</button>
+                    </div>
+                    <div class="speed-slider-group">
+                        <input type="range" id="speed-slider" class="speed-slider" min="0" max="100" value="50" step="1">
+                        <span class="speed-display" id="speed-display">1.0x</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="results-section" style="display:none;">
+                <h2>Simulation Results
+                    <button id="btn-save-scenario" class="btn-scenario" title="Save Scenario">Save Scenario</button>
+                    <button id="btn-pdf" class="btn-pdf" title="Save as PDF">Save PDF</button>
+                </h2>
+                <div class="results-grid" id="results-grid">
+                    <div class="result-card" data-machine="1">
+                        <h3>Machine 1</h3>
+                        <div class="result-row">
+                            <span class="result-label">Total Production</span>
+                            <span class="result-value" id="res-m1-produced">0</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Total Wait Time</span>
+                            <span class="result-value" id="res-m1-wait">0</span>
+                            <span class="result-sub">sec</span>
+                        </div>
+                    </div>
+                    <div class="result-card" data-machine="2">
+                        <h3>Machine 2</h3>
+                        <div class="result-row">
+                            <span class="result-label">Total Production</span>
+                            <span class="result-value" id="res-m2-produced">0</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Total Wait Time</span>
+                            <span class="result-value" id="res-m2-wait">0</span>
+                            <span class="result-sub">sec</span>
+                        </div>
+                    </div>
+                    <div class="result-card" data-machine="3" id="result-card-m3">
+                        <h3>Machine 3</h3>
+                        <div class="result-row">
+                            <span class="result-label">Total Production</span>
+                            <span class="result-value" id="res-m3-produced">0</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Total Wait Time</span>
+                            <span class="result-value" id="res-m3-wait">0</span>
+                            <span class="result-sub">sec</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-summary">
+                    <div class="summary-item">
+                        <span>Total Production</span>
+                        <span class="summary-value" id="res-total-produced">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Robot Utilization</span>
+                        <span class="summary-value" id="res-robot-util">0%</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Robot Active Time</span>
+                        <span class="summary-value" id="res-robot-busy">0s</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Simulation Time</span>
+                        <span class="summary-value" id="res-sim-time">0s</span>
+                    </div>
+                </div>
+                <div class="result-summary result-summary-extra">
+                    <div class="summary-item">
+                        <span>PPH</span>
+                        <span class="summary-value" id="res-pph">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Machine Utilization</span>
+                        <span class="summary-value" id="res-machine-util">0%</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Machine Active Time</span>
+                        <span class="summary-value" id="res-machine-busy">0s</span>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section" id="charts-section">
+                    <h3>Result Charts</h3>
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <h4>Production by Machine</h4>
+                            <canvas id="chart-production"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h4>Wait Time by Machine</h4>
+                            <canvas id="chart-waittime"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h4>Robot Time Usage</h4>
+                            <canvas id="chart-robot-util"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h4>Machine Time Usage</h4>
+                            <canvas id="chart-machine-util"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scenario Comparison Section -->
+            <section class="scenario-comparison-section" id="scenario-comparison-section" style="display:none;">
+                <h2>Scenario Comparison
+                    <button id="btn-clear-scenarios" class="btn-clear-scenarios" title="Delete All">Delete All</button>
+                </h2>
+
+                <!-- Saved Scenarios List -->
+                <div class="scenario-list-container">
+                    <h3>Saved Scenarios <span id="scenario-count">(0/5)</span></h3>
+                    <div class="scenario-list" id="scenario-list"></div>
+                </div>
+
+                <!-- Comparison Guide Message -->
+                <p class="scenario-empty-message" id="scenario-empty-message" style="display:none;">
+                    Save 2 or more scenarios to compare.
+                </p>
+
+                <!-- Comparison Content -->
+                <div class="scenario-comparison-content" id="scenario-comparison-content" style="display:none;">
+                    <!-- Comparison Table -->
+                    <div class="scenario-table-container">
+                        <h3>Performance Comparison</h3>
+                        <table class="scenario-table" id="scenario-table">
+                            <thead id="scenario-table-head"></thead>
+                            <tbody id="scenario-table-body"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Comparison Charts -->
+                    <div class="scenario-charts-section">
+                        <h3>Comparison Charts</h3>
+                        <div class="scenario-charts-grid">
+                            <div class="chart-container">
+                                <h4>Total Production Comparison</h4>
+                                <canvas id="chart-scenario-production"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <h4>PPH Comparison</h4>
+                                <canvas id="chart-scenario-pph"></canvas>
+                            </div>
+                            <div class="chart-container chart-container-wide">
+                                <h4>Efficiency Comparison (Radar)</h4>
+                                <canvas id="chart-scenario-util"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Simulation View -->
+            <section class="sim-view" id="sim-view" style="display:none;">
+                <h2>Realtime Simulation <span class="sim-time" id="sim-elapsed">0.0s</span></h2>
+
+                <!-- Real-time Stats Bar -->
+                <div class="realtime-stats" id="realtime-stats">
+                    <div class="stat-item stat-m1">
+                        <span class="stat-label">Machine 1</span>
+                        <span>Prod: <strong id="rt-m1-prod">0</strong></span>
+                        <span>Wait: <strong id="rt-m1-wait">0.0</strong>s</span>
+                    </div>
+                    <div class="stat-item stat-m2">
+                        <span class="stat-label">Machine 2</span>
+                        <span>Prod: <strong id="rt-m2-prod">0</strong></span>
+                        <span>Wait: <strong id="rt-m2-wait">0.0</strong>s</span>
+                    </div>
+                    <div class="stat-item stat-m3" id="stat-m3-item">
+                        <span class="stat-label">Machine 3</span>
+                        <span>Prod: <strong id="rt-m3-prod">0</strong></span>
+                        <span>Wait: <strong id="rt-m3-wait">0.0</strong>s</span>
+                    </div>
+                    <div class="stat-item stat-robot">
+                        <span class="stat-label">Robot</span>
+                        <span>Active: <strong id="rt-robot-busy">0.0</strong>s</span>
+                        <span>Idle: <strong id="rt-robot-idle">0.0</strong>s</span>
+                    </div>
+                </div>
+
+                <!-- Visual Simulation Area -->
+                <div class="sim-arena" id="sim-arena">
+                    <!-- SVG Paths -->
+                    <svg class="sim-paths" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid meet">
+                        <!-- Robot to Machine 2 (up) - 3-machine mode only -->
+                        <g id="path-m2-top">
+                            <line x1="300" y1="270" x2="300" y2="120" class="path-line" />
+                            <polygon points="295,130 300,115 305,130" class="path-arrow" />
+                        </g>
+                        <!-- Robot to Machine 1 (left) -->
+                        <line x1="260" y1="300" x2="130" y2="300" class="path-line" />
+                        <polygon points="140,295 125,300 140,305" class="path-arrow" />
+                        <!-- Robot to Machine 3/2-right (right) -->
+                        <line x1="340" y1="300" x2="470" y2="300" class="path-line" />
+                        <polygon points="460,295 475,300 460,305" class="path-arrow" />
+                        <!-- Robot to Table (down) -->
+                        <line x1="300" y1="330" x2="300" y2="500" class="path-line" />
+                        <polygon points="295,490 300,505 305,490" class="path-arrow" />
+                    </svg>
+
+                    <!-- Machine 2 (top) - shown only in 3-machine mode -->
+                    <div class="sim-node machine-node" id="node-m2"
+                        style="top:10px; left:50%; transform:translateX(-50%);">
+                        <div class="node-label" id="sim-m2-label">Machine 2</div>
+                        <div class="node-icon machine-icon">M2</div>
+                        <div class="node-status" id="status-m2">Idle</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-m2"></div>
+                        </div>
+                    </div>
+
+                    <!-- Machine 1 (left) -->
+                    <div class="sim-node machine-node" id="node-m1"
+                        style="top:50%; left:30px; transform:translateY(-50%);">
+                        <div class="node-label">Machine 1</div>
+                        <div class="node-icon machine-icon">M1</div>
+                        <div class="node-status" id="status-m1">Idle</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-m1"></div>
+                        </div>
+                    </div>
+
+                    <!-- Co-Robot (center) -->
+                    <div class="sim-node robot-node" id="node-robot"
+                        style="top:50%; left:50%; transform:translate(-50%,-50%);">
+                        <div class="node-icon robot-icon"><img src="../image/icon_robot.png" alt="Co-Robot" class="robot-img">
+                        </div>
+                        <div class="robot-cargo" id="robot-cargo" style="display:none;">
+                            <span class="cargo-icon" id="cargo-icon"></span>
+                        </div>
+                        <div class="node-label">Co-Robot</div>
+                        <div class="node-status" id="status-robot">Idle</div>
+                    </div>
+
+                    <!-- Machine 3 (right) - shown only in 3-machine mode -->
+                    <div class="sim-node machine-node" id="node-m3"
+                        style="top:50%; left:auto; right:30px; transform:translateY(-50%);">
+                        <div class="node-label">Machine 3</div>
+                        <div class="node-icon machine-icon">M3</div>
+                        <div class="node-status" id="status-m3">Idle</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-m3"></div>
+                        </div>
+                    </div>
+
+                    <!-- Material Table (bottom) -->
+                    <div class="sim-node table-node" id="node-table"
+                        style="bottom:40px; left:50%; transform:translateX(-50%);">
+                        <div class="node-icon table-icon"><img src="../image/pallet.png" alt="Pallet" class="robot-img"></div>
+                        <div class="node-label">Material Table</div>
+                        <div class="node-status" id="status-table">Material Ready</div>
+                        <div class="pallet-info" id="pallet-info">
+                            <span class="pallet-ready">Ready: <strong id="pallet-ready-count">0</strong></span>
+                            <span class="pallet-timer" id="pallet-timer" style="display:none;">| Preparing: <strong
+                                    id="pallet-prep-remaining">0</strong>s</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Timeline Slider -->
+                <div class="timeline-container" id="timeline-container">
+                    <div class="timeline-controls">
+                        <button class="btn-timeline" id="btn-seek-back" title="Rewind 10s">-10s</button>
+                        <button class="btn-timeline" id="btn-seek-forward" title="Forward 10s">+10s</button>
+                    </div>
+                    <div class="timeline-slider-wrap">
+                        <input type="range" id="timeline-slider" class="timeline-slider" min="0" max="3600" value="0" step="0.1">
+                    </div>
+                    <div class="timeline-time">
+                        <span id="timeline-current">0:00</span> / <span id="timeline-total">1:00:00</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Event Log -->
+            <section class="log-section" id="log-section" style="display:none;">
+                <h2>Event Log <button id="btn-toggle-log" class="btn-sm">Collapse/Expand</button></h2>
+                <div class="log-container" id="log-container">
+                    <table class="log-table">
+                        <thead>
+                            <tr>
+                                <th>Time(sec)</th>
+                                <th>Event</th>
+                                <th>Machine</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody id="log-body">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer-copyright">
+            <p>&copy; SUNTECH 2026</p>
+        </footer>
+    </div>
+
+    <!-- Manual Modal -->
+    <div class="modal-overlay" id="manual-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>SunTech Co-Robot Sewing Simulation User Manual</h2>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+
+                <div class="manual-section">
+                    <h3>1. Introduction</h3>
+                    <p>This program simulates the workflow of a <strong>Co-Robot</strong> working together with <strong>Computer Sewing Machines</strong>.</p>
+                    <div class="manual-info-box">
+                        <strong>Target Product:</strong> Designed based on SunTech ST-ES612, ST-EA612 Robot models.
+                    </div>
+                </div>
+
+                <div class="manual-section">
+                    <h3>2. Getting Started - Mode Selection</h3>
+                    <p>When you start the program, a screen to select the <strong>number of sewing machines</strong> appears.</p>
+                    <table class="manual-table">
+                        <thead>
+                            <tr>
+                                <th>Mode</th>
+                                <th>Description</th>
+                                <th>Layout</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>2-Machine Mode</strong></td>
+                                <td>Operate 2 sewing machines</td>
+                                <td>Left(M1) + Right(M2)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>3-Machine Mode</strong></td>
+                                <td>Operate 3 sewing machines</td>
+                                <td>Left(M1) + Top(M2) + Right(M3)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="manual-tip">Tip: You can switch modes anytime using the <strong>[Change Mode]</strong> button in the header.</p>
+                </div>
+
+                <div class="manual-section">
+                    <h3>3. Basic Settings</h3>
+                    <table class="manual-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Description</th>
+                                <th>Default</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Workers</strong></td>
+                                <td>Number of workers operating simultaneously. Used for PPH (Productivity Per Hour) calculation.</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pallet Prep Time</strong></td>
+                                <td>Time for a worker to prepare new fabric (Pallet) on the material table.</td>
+                                <td>58 sec</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pallet Count</strong></td>
+                                <td>Total number of pallets circulating in the system (3-7). More pallets than machines allows advance material preparation, improving utilization.</td>
+                                <td>5-6</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="manual-info-box">
+                        <strong>Pallet Count:</strong><br>
+                        &bull; More pallets reduce material waiting time, improving productivity.
+                    </div>
+                </div>
+
+                <div class="manual-section">
+                    <h3>4. Work Time Settings</h3>
+
+                    <h4 style="margin-top:12px; color:#2563eb;">4-1. Robot Speed Selection</h4>
+                    <p>Set the robot's operating speed using <strong>presets</strong> or <strong>manual input</strong>.</p>
+                    <table class="manual-table">
+                        <thead>
+                            <tr>
+                                <th>Mode</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Manual</strong></td>
+                                <td>Freely enter time values for each machine (default)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>75% ~ 100%</strong></td>
+                                <td>Selecting a speed preset automatically sets <strong>Initial Load, Unload &amp; Load, and Return Time</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="manual-info-box">
+                        <strong>Note:</strong>
+                        <strong>Sewing Time</strong> is independent of robot speed and can always be manually modified.
+                    </div>
+                    <p style="margin-top:8px;">Reference values by speed (75% / 85% / 100%):</p>
+                    <table class="manual-table">
+                        <thead>
+                            <tr>
+                                <th>Machine</th>
+                                <th>Item</th>
+                                <th>75%</th>
+                                <th>85%</th>
+                                <th>100%</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td rowspan="3"><strong>Machine 1</strong></td>
+                                <td>Initial Load</td>
+                                <td>12.5s</td>
+                                <td>11s</td>
+                                <td>8.5s</td>
+                            </tr>
+                            <tr>
+                                <td>Unload &amp; Load</td>
+                                <td>17.5s</td>
+                                <td>15.5s</td>
+                                <td>13s</td>
+                            </tr>
+                            <tr>
+                                <td>Return</td>
+                                <td>10.5s</td>
+                                <td>9s</td>
+                                <td>7.5s</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="3"><strong>Machine 2</strong></td>
+                                <td>Initial Load</td>
+                                <td>13.5s</td>
+                                <td>11.8s</td>
+                                <td>9s</td>
+                            </tr>
+                            <tr>
+                                <td>Unload &amp; Load</td>
+                                <td>18.5s</td>
+                                <td>16.3s</td>
+                                <td>13.5s</td>
+                            </tr>
+                            <tr>
+                                <td>Return</td>
+                                <td>11.5s</td>
+                                <td>9.8s</td>
+                                <td>8s</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="3"><strong>Machine 3</strong></td>
+                                <td>Initial Load</td>
+                                <td>12.5s</td>
+                                <td>11s</td>
+                                <td>8.5s</td>
+                            </tr>
+                            <tr>
+                                <td>Unload &amp; Load</td>
+                                <td>17.5s</td>
+                                <td>15.5s</td>
+                                <td>13s</td>
+                            </tr>
+                            <tr>
+                                <td>Return</td>
+                                <td>10.5s</td>
+                                <td>9s</td>
+                                <td>7.5s</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="manual-tip">Tip: Intermediate values (80%, 90%, 95%) are automatically calculated by linear interpolation between 75-85 and 85-100 ranges.</p>
+
+                    <h4 style="margin-top:16px; color:#2563eb;">4-2. Time Item Description</h4>
+                    <p>Set 4 time values for each machine (in seconds):</p>
+                    <table class="manual-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Initial Load Time</strong></td>
+                                <td>Time for the robot to initially load a pallet onto the sewing machine</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Unload & Load Time</strong></td>
+                                <td>Time to unload completed pallet + load new pallet using 360-degree rotation (from 2nd cycle onwards)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Return Time</strong></td>
+                                <td>Time for the robot to return to its home position after retrieving the completed pallet</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Sewing Time</strong></td>
+                                <td>Time for the sewing machine to complete the sewing operation</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="manual-info-box">
+                        <strong>Note:</strong> Longer sewing time gives the robot more time to service other machines. Shorter sewing time makes the robot busier, increasing machine wait time.
+                    </div>
+                </div>
+
+                <div class="manual-section">
+                    <h3>5. Simulation Duration</h3>
+                    <p>Set the total time for the simulation to run.</p>
+                    <ul class="manual-list">
+                        <li>Can be set from minimum 1 hour to maximum 24 hours</li>
+                        <li>Hours and minutes can be selected separately</li>
+                        <li>When 24 hours is selected, only 00 minutes is available</li>
+                    </ul>
+                </div>
+
+                <div class="manual-section">
+                    <h3>6. Running the Simulation</h3>
+                    <p>There are two ways to run:</p>
+
+                    <div class="manual-mode-compare">
+                        <div class="manual-mode-box manual-mode-quick">
+                            <h4>Quick Calc</h4>
+                            <ul>
+                                <li>Calculates results <strong>instantly</strong></li>
+                                <li>Results only, no animation</li>
+                                <li>Use when you want quick results</li>
+                            </ul>
+                        </div>
+                        <div class="manual-mode-box manual-mode-realtime">
+                            <h4>Realtime Calc</h4>
+                            <ul>
+                                <li><strong>Visually</strong> observe robot movements</li>
+                                <li>Adjustable speed (0.1x ~ 100x log scale)</li>
+                                <li>Timeline slider for rewind/skip</li>
+                                <li>Pallet carrying state visualization</li>
+                                <li>Pause / Resume available</li>
+                                <li>Use to understand the process</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h4 style="margin-top:16px; color:#2563eb;">Realtime Calc Mode Details</h4>
+                    <table class="manual-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Realtime Stats Bar</strong></td>
+                                <td>Displays production, wait time, robot active/idle time for each machine in real-time during simulation</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Robot Movement Animation</strong></td>
+                                <td>Visually shows the robot's path and elapsed time between table and machines</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Machine Progress Bar</strong></td>
+                                <td>Shows sewing progress for each machine as a progress bar</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Status Display</strong></td>
+                                <td>Shows current status (Sewing, Waiting, Moving, etc.) as text for robot and machines</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Speed Fine Control</strong></td>
+                                <td>A log-scale slider allows fine-grained speed adjustment from 0.1x to 100x. Preset buttons (0.1x, 0.5x, 1x, 5x, 10x, 50x, 100x) are also available</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pallet Visualization</strong></td>
+                                <td>Shows the robot's carrying state during movement. A blue <strong>P</strong> badge appears when carrying a new pallet, and a gold <strong>&#10003;</strong> badge when carrying a completed item</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Timeline Slider</strong></td>
+                                <td>Displays simulation progress as a slider. Drag to jump to any point in time. Use -10s/+10s buttons for quick navigation</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4 style="margin-top:16px; color:#2563eb;">Event Log</h4>
+                    <p>All events are recorded in a table format during simulation.</p>
+                    <ul class="manual-list">
+                        <li><strong>Time(sec)</strong>: Event occurrence time</li>
+                        <li><strong>Event Type</strong>: Depart, Loading, Sewing Done, Production, etc.</li>
+                        <li><strong>Machine</strong>: Target machine for the event</li>
+                        <li><strong>[Collapse/Expand]</strong> button to collapse or expand long logs</li>
+                    </ul>
+                </div>
+
+                <div class="manual-section">
+                    <h3>7. Interpreting Results</h3>
+
+                    <h4 style="margin-top:12px; color:#2563eb;">7-1. Per-Machine Results</h4>
+                    <table class="manual-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Meaning</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Total Production</strong></td>
+                                <td>Number of completed products from each machine</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total Wait Time</strong></td>
+                                <td>Time waited for robot after sewing completion (shorter is better)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4 style="margin-top:12px; color:#2563eb;">7-2. Overall Metrics</h4>
+                    <table class="manual-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Meaning</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Total Production</strong></td>
+                                <td>Sum of completed products from all machines</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Robot Utilization</strong></td>
+                                <td>Percentage of time the robot was actually working (higher = better utilization)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Robot Active Time</strong></td>
+                                <td>Total time the robot spent on movement, loading, unloading, etc.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Simulation Time</strong></td>
+                                <td>Total simulation time configured</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PPH</strong></td>
+                                <td>Person Per Hour - Number of products per worker per hour<br><em>Formula: Total Production &divide; Hours &divide; Workers</em></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Machine Utilization</strong></td>
+                                <td>Average sewing utilization across all machines (higher = less idle time)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Machine Active Time</strong></td>
+                                <td>Total actual sewing time across all machines</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4 style="margin-top:16px; color:#2563eb;">7-3. Efficiency Improvement</h4>
+                    <p>If simulation results show high wait time or low utilization, consider the following:</p>
+
+                    <table class="manual-table">
+                        <thead>
+                            <tr>
+                                <th>Improvement</th>
+                                <th>Effect</th>
+                                <th>When to Apply</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Reduce Pallet Prep Time</strong></td>
+                                <td>Fewer Unload-only occurrences, reduced machine wait time</td>
+                                <td>When prep time is close to sewing time</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Increase Pallet Count</strong></td>
+                                <td>Less material waiting, continuous operation possible</td>
+                                <td>When robot frequently enters "Pallet Wait" state</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Increase Robot Speed</strong></td>
+                                <td>Shorter service interval between machines</td>
+                                <td>When robot utilization is low and machine wait time is high</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="manual-info-box" style="background:#fef3c7; border-color:#f59e0b;">
+                        <strong>&#x1f4a1; Understanding Unload-only</strong><br><br>
+                        <strong>What is Unload-only?</strong> When the robot retrieves a completed product but no new pallet is ready, it only unloads the product and leaves the machine EMPTY.<br><br>
+                        <strong>Cause:</strong> When Pallet Prep Time (e.g., 58s) is close to Sewing Time (e.g., 63s), new material may not be ready when the robot brings back the completed product.<br><br>
+                        <strong>Impact:</strong> Frequent Unload-only events cause machines to stay EMPTY longer, dramatically increasing total wait time.<br><br>
+                        <strong>Solutions:</strong>
+                        <ul style="margin:8px 0 0 20px;">
+                            <li>Reduce Pallet Prep Time to speed up material supply</li>
+                            <li>Increase Pallet Count to ensure spare materials</li>
+                            <li><strong>[Alternative]</strong> Increase workers to parallelize pallet preparation</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="manual-section">
+                    <h3>8. Result Charts</h3>
+                    <p>After running a simulation, <strong>4 charts</strong> are automatically displayed at the bottom of the results area.</p>
+                    <table class="manual-table">
+                        <thead>
+                            <tr>
+                                <th>Chart</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Production by Machine</strong></td>
+                                <td>Bar Chart</td>
+                                <td>Compares completed quantity per machine. Easily identify production variance between machines.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Wait Time by Machine</strong></td>
+                                <td>Bar Chart</td>
+                                <td>Compares total time each machine waited for the robot. Helps identify bottlenecks.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Robot Time Usage</strong></td>
+                                <td>Doughnut Chart</td>
+                                <td>Shows <strong>Active Time vs Idle Time</strong> ratio for the robot. Utilization(%) is displayed in the center.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Machine Time Usage</strong></td>
+                                <td>Doughnut Chart</td>
+                                <td>Shows <strong>Sewing Time vs Idle Time</strong> ratio for all machines. Utilization(%) is displayed in the center.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="manual-info-box">
+                        <strong>Tip:</strong> If a specific machine shows exceptionally long wait time in the bar chart, its sewing time may be shorter or it may have lower priority in the robot's travel path.
+                    </div>
+                </div>
+
+                <div class="manual-section">
+                    <h3>9. Scenario Save & Comparison</h3>
+                    <p>Run simulations with different settings, save the results, and compare them side by side.</p>
+
+                    <h4 style="margin-top:12px; color:#2563eb;">9-1. Saving Scenarios</h4>
+                    <table class="manual-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>How to Save</strong></td>
+                                <td>Click the <strong>[Save Scenario]</strong> button in the results area after running a simulation</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Scenario Name</strong></td>
+                                <td>Enter a name when saving (e.g., "Speed85% 3machines", "7pallets test")</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Max Scenarios</strong></td>
+                                <td>Up to <strong>5</strong> scenarios can be saved</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Saved Data</strong></td>
+                                <td>Basic settings, input time values, and simulation results are all saved together</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4 style="margin-top:16px; color:#2563eb;">9-2. Comparing Scenarios</h4>
+                    <p>When <strong>2 or more</strong> scenarios are saved, the comparison section is automatically displayed.</p>
+                    <table class="manual-table">
+                        <thead>
+                            <tr>
+                                <th>Comparison Item</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Performance Table</strong></td>
+                                <td>Compares key metrics (Total Production, PPH, Utilization, etc.) side by side. Best values are <strong>highlighted in green</strong>.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total Production</strong></td>
+                                <td>Compares total production across scenarios in a bar chart</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PPH Comparison</strong></td>
+                                <td>Compares productivity per worker per hour across scenarios in a bar chart</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Efficiency (Radar)</strong></td>
+                                <td>Compares robot utilization, machine utilization, etc. at a glance using a radar chart</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4 style="margin-top:16px; color:#2563eb;">9-3. Managing Scenarios</h4>
+                    <ul class="manual-list">
+                        <li>Delete individual scenarios using the <strong>&times;</strong> button on each scenario item</li>
+                        <li>Use the <strong>[Delete All]</strong> button to remove all saved scenarios at once</li>
+                        <li>Each scenario is color-coded in the saved list for easy identification</li>
+                    </ul>
+                    <div class="manual-info-box">
+                        <strong>Usage Example:</strong> Run simulations at robot speeds of 75%, 85%, and 100%, save each as a scenario, and instantly compare productivity differences across speed settings.
+                    </div>
+                </div>
+
+                <div class="manual-section">
+                    <h3>10. PDF Export</h3>
+                    <p>Simulation results can be saved as a <strong>PDF file</strong>.</p>
+                    <ul class="manual-list">
+                        <li>After running a simulation, the <strong>[Save PDF]</strong> button appears in the results area</li>
+                        <li>Filename is automatically generated as <em>CoRobot_[mode]_Report_date_time.pdf</em></li>
+                    </ul>
+                    <p style="margin-top:8px;"><strong>PDF Contents:</strong></p>
+                    <table class="manual-table">
+                        <thead>
+                            <tr>
+                                <th>Section</th>
+                                <th>Content</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Basic Settings</strong></td>
+                                <td>Workers, Pallet Prep Time, Pallet Count</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Input Values</strong></td>
+                                <td>Initial Load, Unload & Load, Return, Sewing Time per machine</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Simulation Results</strong></td>
+                                <td>Production, theoretical max, wait time, efficiency(%) per machine</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Summary</strong></td>
+                                <td>Total Production, PPH, Robot/Machine Utilization, Active Time</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Event Log</strong></td>
+                                <td>Full simulation event records (Time, Event, Machine, Description)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="manual-section">
+                    <h3>11. Workflow Summary</h3>
+                    <div class="manual-flow">
+                        <div class="flow-step"><span class="flow-num">1</span> Select Mode (2/3 Machines)</div>
+                        <div class="flow-arrow">&#8595;</div>
+                        <div class="flow-step"><span class="flow-num">2</span> Review Basic Settings</div>
+                        <div class="flow-arrow">&#8595;</div>
+                        <div class="flow-step"><span class="flow-num">3</span> Enter Work Times</div>
+                        <div class="flow-arrow">&#8595;</div>
+                        <div class="flow-step"><span class="flow-num">4</span> Set Simulation Duration</div>
+                        <div class="flow-arrow">&#8595;</div>
+                        <div class="flow-step"><span class="flow-num">5</span> Run Quick Calc or Realtime Calc</div>
+                        <div class="flow-arrow">&#8595;</div>
+                        <div class="flow-step"><span class="flow-num">6</span> Review Results & Analyze Charts</div>
+                        <div class="flow-arrow">&#8595;</div>
+                        <div class="flow-step"><span class="flow-num">7</span> Save & Compare Scenarios</div>
+                        <div class="flow-arrow">&#8595;</div>
+                        <div class="flow-step"><span class="flow-num">8</span> Save PDF</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/quickCalc.js"></script>
+    <script src="js/renderer.js"></script>
+    <script src="js/realtimeCalc.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/scenario.js"></script>
+    <script src="js/pdf.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,1196 @@
+/* SAP Fiori 컴포넌트 라이브러리 */
+
+/* ===== Enhanced Interactive Calendar Styles ===== */
+
+/* Calendar Controls */
+.fiori-calendar-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sap-spacing-md);
+  flex-wrap: wrap;
+}
+
+.fiori-template-group {
+  display: flex;
+  gap: var(--sap-spacing-xs);
+}
+
+.fiori-btn--template {
+  background: var(--sap-surface-1);
+  border: 1px solid var(--sap-surface-border);
+  color: var(--sap-text-primary);
+  padding: var(--sap-spacing-xs) var(--sap-spacing-sm);
+  font-size: var(--sap-font-size-xs);
+  height: auto;
+  min-width: auto;
+}
+
+.fiori-btn--template:hover {
+  background: var(--sap-surface-hover);
+  border-color: var(--sap-brand-primary);
+}
+
+.fiori-btn--template:active,
+.fiori-btn--template.active {
+  background: var(--sap-brand-primary);
+  color: white;
+  border-color: var(--sap-brand-primary);
+}
+
+/* Work Time Legend */
+.work-time-legend {
+  display: flex;
+  gap: var(--sap-spacing-md);
+  margin-bottom: var(--sap-spacing-md);
+  padding: var(--sap-spacing-sm);
+  background: var(--sap-surface-1);
+  border: 1px solid var(--sap-surface-border);
+  border-radius: var(--sap-radius-sm);
+  font-size: var(--sap-font-size-xs);
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sap-spacing-xs);
+  color: var(--sap-text-secondary);
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--sap-surface-border);
+}
+
+.legend-color--complete {
+  background: var(--sap-status-success);
+  border-color: var(--sap-status-success);
+}
+
+.legend-color--partial {
+  background: var(--sap-status-warning);
+  border-color: var(--sap-status-warning);
+}
+
+.legend-color--empty {
+  background: var(--sap-surface-3);
+  border-color: var(--sap-surface-border);
+}
+
+.legend-color--selected {
+  background: var(--sap-brand-primary);
+  border-color: var(--sap-brand-primary);
+}
+
+/* Enhanced Interactive Calendar */
+.fiori-calendar-table--interactive {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 2px;
+  margin-top: var(--sap-spacing-sm);
+}
+
+.fiori-calendar-table--interactive th {
+  background: var(--sap-surface-2);
+  color: var(--sap-text-secondary);
+  font-weight: var(--sap-font-weight-medium);
+  padding: var(--sap-spacing-sm);
+  text-align: center;
+  font-size: var(--sap-font-size-xs);
+  border-radius: var(--sap-radius-sm);
+}
+
+.calendar-day {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  border-radius: var(--sap-radius-sm);
+  background: var(--sap-surface-1);
+  height: 60px;
+  vertical-align: top;
+  user-select: none;
+}
+
+.calendar-day:hover:not(.calendar-day--other-month) {
+  border-color: var(--sap-brand-primary);
+  background: var(--sap-surface-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 112, 242, 0.1);
+}
+
+.calendar-day--selected {
+  background: var(--sap-brand-primary);
+  border-color: var(--sap-brand-primary);
+  color: white;
+}
+
+.calendar-day--today {
+  border-color: var(--sap-brand-accent);
+  background: rgba(0, 212, 170, 0.1);
+}
+
+.calendar-day--other-month {
+  color: var(--sap-text-disabled);
+  background: var(--sap-surface-2);
+  cursor: default;
+}
+
+.calendar-day--complete {
+  background: rgba(48, 145, 76, 0.1);
+  border-color: var(--sap-status-success);
+}
+
+.calendar-day--partial {
+  background: rgba(226, 107, 10, 0.1);
+  border-color: var(--sap-status-warning);
+}
+
+.calendar-day--filter-highlight {
+  box-shadow: 0 0 0 3px rgba(0, 112, 242, 0.3);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.calendar-day-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--sap-spacing-xs);
+  position: relative;
+}
+
+.calendar-day-number {
+  font-weight: var(--sap-font-weight-medium);
+  font-size: var(--sap-font-size-sm);
+  margin-bottom: var(--sap-spacing-xs);
+}
+
+.work-time-indicator {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.work-time-indicator--complete {
+  background: var(--sap-status-success);
+}
+
+.work-time-indicator--partial {
+  background: var(--sap-status-warning);
+}
+
+.work-time-indicator--empty {
+  background: var(--sap-surface-border);
+}
+
+.work-time-summary {
+  font-size: var(--sap-font-size-xs);
+  color: var(--sap-text-secondary);
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1px 3px;
+  border-radius: 2px;
+  line-height: 1;
+}
+
+/* Quick Edit Panel */
+.quick-edit-panel {
+  background: var(--sap-surface-1);
+  border: 1px solid var(--sap-surface-border);
+  border-radius: var(--sap-radius-lg);
+  box-shadow: var(--sap-shadow-xl);
+  margin-top: var(--sap-spacing-md);
+  overflow: hidden;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.quick-edit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sap-spacing-md);
+  background: var(--sap-surface-2);
+  border-bottom: 1px solid var(--sap-surface-border);
+}
+
+.quick-edit-header h4 {
+  margin: 0;
+  font-size: var(--sap-font-size-md);
+  font-weight: var(--sap-font-weight-medium);
+  color: var(--sap-text-primary);
+}
+
+.quick-edit-content {
+  padding: var(--sap-spacing-md);
+}
+
+.quick-edit-form .fiori-form-row {
+  display: flex;
+  gap: var(--sap-spacing-md);
+  margin-bottom: var(--sap-spacing-md);
+}
+
+.quick-edit-form .fiori-form-group {
+  flex: 1;
+}
+
+.quick-edit-form .fiori-label {
+  display: block;
+  font-size: var(--sap-font-size-xs);
+  font-weight: var(--sap-font-weight-medium);
+  color: var(--sap-text-secondary);
+  margin-bottom: var(--sap-spacing-xs);
+}
+
+.fiori-time-range {
+  display: flex;
+  align-items: center;
+  gap: var(--sap-spacing-xs);
+}
+
+.fiori-time-range .fiori-input--time {
+  width: 80px;
+  text-align: center;
+}
+
+.fiori-time-separator {
+  color: var(--sap-text-secondary);
+  font-weight: var(--sap-font-weight-medium);
+}
+
+.quick-edit-actions {
+  display: flex;
+  gap: var(--sap-spacing-sm);
+  justify-content: flex-end;
+  margin-top: var(--sap-spacing-md);
+  padding-top: var(--sap-spacing-md);
+  border-top: 1px solid var(--sap-surface-border);
+}
+
+/* Enhanced Notification System */
+.fiori-notification {
+  position: fixed;
+  top: var(--sap-spacing-lg);
+  right: var(--sap-spacing-lg);
+  z-index: 1000;
+  min-width: 300px;
+  max-width: 500px;
+  border-radius: var(--sap-radius-md);
+  box-shadow: var(--sap-shadow-xl);
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fiori-notification--success {
+  background: var(--sap-status-success);
+  color: white;
+}
+
+.fiori-notification--warning {
+  background: var(--sap-status-warning);
+  color: white;
+}
+
+.fiori-notification--error {
+  background: var(--sap-status-error);
+  color: white;
+}
+
+.fiori-notification--info {
+  background: var(--sap-status-info);
+  color: white;
+}
+
+.fiori-notification__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sap-spacing-md);
+}
+
+.fiori-notification__message {
+  flex: 1;
+  font-size: var(--sap-font-size-sm);
+}
+
+.fiori-notification__close {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: var(--sap-font-size-lg);
+  line-height: 1;
+  padding: 0;
+  margin-left: var(--sap-spacing-sm);
+}
+
+/* Enhanced Form Validation */
+.fiori-input--error,
+.fiori-select--error {
+  border-color: var(--sap-status-error);
+  box-shadow: 0 0 0 2px rgba(218, 30, 40, 0.1);
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.fiori-validation-tooltip {
+  position: absolute;
+  background: var(--sap-status-error);
+  color: white;
+  padding: var(--sap-spacing-xs) var(--sap-spacing-sm);
+  border-radius: var(--sap-radius-sm);
+  font-size: var(--sap-font-size-xs);
+  z-index: 1000;
+  pointer-events: none;
+  animation: fadeInUp 0.2s ease-out;
+  box-shadow: var(--sap-shadow-md);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fiori-validation-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 10px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid var(--sap-status-error);
+}
+
+/* Mobile Responsiveness for Work Time Management */
+@media (max-width: 768px) {
+  .fiori-calendar-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .fiori-template-group {
+    order: 2;
+    margin-top: var(--sap-spacing-sm);
+  }
+  
+  .fiori-calendar-nav {
+    order: 1;
+    justify-content: center;
+  }
+  
+  .work-time-legend {
+    flex-direction: column;
+    gap: var(--sap-spacing-xs);
+  }
+  
+  .fiori-work-time-layout {
+    flex-direction: column;
+  }
+  
+  .fiori-calendar-section,
+  .fiori-list-section {
+    width: 100%;
+  }
+  
+  .calendar-day {
+    height: 50px;
+  }
+  
+  .calendar-day-number {
+    font-size: var(--sap-font-size-xs);
+  }
+  
+  .work-time-summary {
+    font-size: 10px;
+  }
+  
+  .quick-edit-form .fiori-form-row {
+    flex-direction: column;
+    gap: var(--sap-spacing-sm);
+  }
+  
+  .fiori-time-range {
+    justify-content: center;
+  }
+  
+  .quick-edit-actions {
+    flex-direction: column;
+  }
+  
+  /* Touch-friendly calendar */
+  .calendar-day {
+    min-height: 48px; /* Minimum touch target size */
+  }
+  
+  .fiori-btn--template {
+    min-height: 44px;
+    padding: var(--sap-spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .fiori-container {
+    padding: var(--sap-spacing-sm);
+  }
+  
+  .fiori-notification {
+    left: var(--sap-spacing-sm);
+    right: var(--sap-spacing-sm);
+    top: var(--sap-spacing-sm);
+    min-width: auto;
+  }
+  
+  .calendar-day {
+    height: 45px;
+  }
+  
+  .work-time-indicator {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+/* Advanced Visualizations Styles */
+
+/* Heatmap Styles */
+.work-time-heatmap {
+  padding: var(--sap-spacing-md);
+}
+
+.heatmap-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--sap-spacing-md);
+}
+
+.heatmap-header h4 {
+  margin: 0;
+  font-size: var(--sap-font-size-md);
+  font-weight: var(--sap-font-weight-medium);
+}
+
+.heatmap-legend {
+  display: flex;
+  gap: var(--sap-spacing-sm);
+  align-items: center;
+}
+
+.heatmap-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sap-spacing-xs);
+  font-size: var(--sap-font-size-xs);
+  color: var(--sap-text-secondary);
+}
+
+.heatmap-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.heatmap-color--low {
+  background: rgba(0, 112, 242, 0.2);
+}
+
+.heatmap-color--medium {
+  background: rgba(0, 112, 242, 0.5);
+}
+
+.heatmap-color--high {
+  background: rgba(0, 112, 242, 0.8);
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: var(--sap-spacing-sm);
+}
+
+.heatmap-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--sap-radius-sm);
+  font-size: var(--sap-font-size-xs);
+  font-weight: var(--sap-font-weight-medium);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.1);
+  z-index: 1;
+}
+
+.heatmap-cell--empty {
+  background: var(--sap-surface-2);
+  color: var(--sap-text-disabled);
+}
+
+.heatmap-cell--low {
+  background: rgba(0, 112, 242, 0.2);
+  color: var(--sap-text-primary);
+}
+
+.heatmap-cell--medium {
+  background: rgba(0, 112, 242, 0.5);
+  color: white;
+}
+
+.heatmap-cell--high {
+  background: rgba(0, 112, 242, 0.8);
+  color: white;
+}
+
+.heatmap-labels {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.heatmap-label {
+  text-align: center;
+  font-size: var(--sap-font-size-xs);
+  color: var(--sap-text-secondary);
+  font-weight: var(--sap-font-weight-medium);
+}
+
+/* Pattern Analysis Styles */
+.pattern-analysis {
+  padding: var(--sap-spacing-md);
+}
+
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--sap-spacing-md);
+}
+
+.pattern-card {
+  background: var(--sap-surface-1);
+  border: 1px solid var(--sap-surface-border);
+  border-radius: var(--sap-radius-md);
+  padding: var(--sap-spacing-md);
+}
+
+.pattern-card h4 {
+  margin: 0 0 var(--sap-spacing-md) 0;
+  font-size: var(--sap-font-size-sm);
+  font-weight: var(--sap-font-weight-medium);
+  color: var(--sap-text-primary);
+}
+
+/* Time Slots Analysis */
+.time-slot-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sap-spacing-sm);
+  margin-bottom: var(--sap-spacing-sm);
+  padding: var(--sap-spacing-xs);
+  border-radius: var(--sap-radius-sm);
+  background: var(--sap-surface-2);
+}
+
+.time-slot-time {
+  font-size: var(--sap-font-size-xs);
+  font-weight: var(--sap-font-weight-medium);
+  min-width: 80px;
+  color: var(--sap-text-primary);
+}
+
+.time-slot-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--sap-surface-3);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.time-slot-fill {
+  height: 100%;
+  background: var(--sap-brand-primary);
+  transition: width 0.3s ease;
+}
+
+.time-slot-percentage {
+  font-size: var(--sap-font-size-xs);
+  font-weight: var(--sap-font-weight-medium);
+  color: var(--sap-text-secondary);
+  min-width: 30px;
+  text-align: right;
+}
+
+/* Shift Usage Chart */
+.shift-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sap-spacing-sm);
+  margin-bottom: var(--sap-spacing-sm);
+  padding: var(--sap-spacing-xs);
+}
+
+.shift-label {
+  font-size: var(--sap-font-size-xs);
+  font-weight: var(--sap-font-weight-medium);
+  min-width: 60px;
+  color: var(--sap-text-primary);
+}
+
+.shift-bar-container {
+  flex: 1;
+  height: 12px;
+  background: var(--sap-surface-3);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.shift-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--sap-brand-primary), var(--sap-brand-secondary));
+  transition: width 0.3s ease;
+}
+
+.shift-percentage {
+  font-size: var(--sap-font-size-xs);
+  font-weight: var(--sap-font-weight-medium);
+  color: var(--sap-text-secondary);
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Conflict Detection */
+.no-conflicts {
+  text-align: center;
+  padding: var(--sap-spacing-md);
+  color: var(--sap-status-success);
+  font-weight: var(--sap-font-weight-medium);
+}
+
+.conflict-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sap-spacing-sm);
+  padding: var(--sap-spacing-sm);
+  background: rgba(218, 30, 40, 0.1);
+  border: 1px solid var(--sap-status-error);
+  border-radius: var(--sap-radius-sm);
+  margin-bottom: var(--sap-spacing-xs);
+}
+
+.conflict-icon {
+  font-size: var(--sap-font-size-md);
+}
+
+.conflict-message {
+  flex: 1;
+  font-size: var(--sap-font-size-xs);
+  color: var(--sap-status-error);
+  font-weight: var(--sap-font-weight-medium);
+}
+
+.conflict-date {
+  font-size: var(--sap-font-size-xs);
+  color: var(--sap-text-secondary);
+}
+
+/* Button Active State */
+.fiori-btn--active {
+  background: var(--sap-brand-primary);
+  color: white;
+  border-color: var(--sap-brand-primary);
+}
+
+/* Stats Dashboard Enhancement */
+.fiori-stat-trend {
+  position: absolute;
+  top: var(--sap-spacing-xs);
+  right: var(--sap-spacing-xs);
+  font-size: var(--sap-font-size-sm);
+  opacity: 0.7;
+}
+
+.fiori-stats-dashboard .fiori-stat-card {
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .pattern-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .heatmap-grid {
+    font-size: var(--sap-font-size-xs);
+  }
+  
+  .heatmap-cell {
+    min-height: 30px;
+  }
+  
+  .time-slot-item,
+  .shift-bar {
+    flex-wrap: wrap;
+    gap: var(--sap-spacing-xs);
+  }
+}
+
+/* ===== 기본 리셋 및 글로벌 스타일 ===== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--sap-font-family);
+  font-size: var(--sap-font-size-md);
+  font-weight: var(--sap-font-weight-regular);
+  line-height: 1.5;
+  color: var(--sap-text-primary);
+  background-color: var(--sap-surface-1);
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== SAP Fiori 버튼 시스템 ===== */
+.fiori-btn {
+  font-family: var(--sap-font-family);
+  font-size: var(--sap-font-size-sm);
+  font-weight: var(--sap-font-weight-medium);
+  line-height: 1;
+  border: 1px solid transparent;
+  border-radius: var(--sap-radius-md);
+  padding: var(--sap-spacing-sm) var(--sap-spacing-md);
+  height: var(--sap-height-md);
+  min-width: 4rem;
+  cursor: pointer;
+  transition: all var(--sap-transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sap-spacing-xs);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.fiori-btn:focus {
+  outline: none;
+  box-shadow: var(--sap-focus-ring), var(--sap-focus-ring-offset);
+}
+
+.fiori-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Primary 버튼 */
+.fiori-btn--primary {
+  background-color: var(--sap-brand-primary);
+  color: var(--sap-text-inverted);
+  border-color: var(--sap-brand-primary);
+}
+
+.fiori-btn--primary:hover:not(:disabled) {
+  background-color: var(--sap-brand-secondary);
+  border-color: var(--sap-brand-secondary);
+  transform: translateY(-1px);
+  box-shadow: var(--sap-shadow-2);
+}
+
+/* Secondary 버튼 */
+.fiori-btn--secondary {
+  background-color: var(--sap-surface-1);
+  color: var(--sap-brand-primary);
+  border-color: var(--sap-border-interactive);
+}
+
+.fiori-btn--secondary:hover:not(:disabled) {
+  background-color: var(--sap-surface-2);
+  transform: translateY(-1px);
+  box-shadow: var(--sap-shadow-1);
+}
+
+/* Tertiary 버튼 */
+.fiori-btn--tertiary {
+  background-color: transparent;
+  color: var(--sap-brand-primary);
+  border-color: transparent;
+}
+
+.fiori-btn--tertiary:hover:not(:disabled) {
+  background-color: var(--sap-surface-2);
+}
+
+/* 버튼 크기 변형 */
+.fiori-btn--sm {
+  height: var(--sap-height-sm);
+  padding: var(--sap-spacing-xs) var(--sap-spacing-sm);
+  font-size: var(--sap-font-size-xs);
+  min-width: 3rem;
+}
+
+.fiori-btn--lg {
+  height: var(--sap-height-lg);
+  padding: var(--sap-spacing-md) var(--sap-spacing-lg);
+  font-size: var(--sap-font-size-md);
+  min-width: 5rem;
+}
+
+/* ===== SAP Fiori 입력 필드 ===== */
+.fiori-input {
+  font-family: var(--sap-font-family);
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-primary);
+  background-color: var(--sap-surface-1);
+  border: 1px solid var(--sap-border-neutral);
+  border-radius: var(--sap-radius-md);
+  padding: var(--sap-spacing-sm) var(--sap-spacing-md);
+  height: var(--sap-height-md);
+  width: 100%;
+  transition: all var(--sap-transition-fast);
+}
+
+.fiori-input:focus {
+  outline: none;
+  border-color: var(--sap-brand-primary);
+  box-shadow: var(--sap-focus-ring);
+}
+
+.fiori-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--sap-surface-3);
+}
+
+.fiori-input--error {
+  border-color: var(--sap-status-error);
+}
+
+.fiori-input--success {
+  border-color: var(--sap-status-success);
+}
+
+/* ===== SAP Fiori 선택 필드 ===== */
+.fiori-select {
+  font-family: var(--sap-font-family);
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-primary);
+  background-color: var(--sap-surface-1);
+  border: 1px solid var(--sap-border-neutral);
+  border-radius: var(--sap-radius-md);
+  padding: var(--sap-spacing-sm) var(--sap-spacing-md);
+  height: var(--sap-height-md);
+  width: 100%;
+  cursor: pointer;
+  transition: all var(--sap-transition-fast);
+}
+
+.fiori-select:focus {
+  outline: none;
+  border-color: var(--sap-brand-primary);
+  box-shadow: var(--sap-focus-ring);
+}
+
+/* ===== SAP Fiori 카드 컴포넌트 ===== */
+.fiori-card {
+  background-color: var(--sap-surface-1);
+  border: 1px solid var(--sap-border-neutral);
+  border-radius: var(--sap-radius-lg);
+  box-shadow: var(--sap-shadow-1);
+  overflow: hidden;
+  transition: all var(--sap-transition-medium);
+}
+
+.fiori-card:hover {
+  box-shadow: var(--sap-shadow-2);
+  transform: translateY(-2px);
+}
+
+.fiori-card__header {
+  padding: var(--sap-spacing-md) var(--sap-spacing-lg);
+  border-bottom: 1px solid var(--sap-border-neutral);
+  background-color: var(--sap-surface-2);
+}
+
+.fiori-card__title {
+  font-size: var(--sap-font-size-lg);
+  font-weight: var(--sap-font-weight-semibold);
+  color: var(--sap-text-primary);
+  margin: 0;
+}
+
+.fiori-card__subtitle {
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-secondary);
+  margin: var(--sap-spacing-xs) 0 0 0;
+}
+
+.fiori-card__content {
+  padding: var(--sap-spacing-lg);
+}
+
+.fiori-card__footer {
+  padding: var(--sap-spacing-md) var(--sap-spacing-lg);
+  border-top: 1px solid var(--sap-border-neutral);
+  background-color: var(--sap-surface-2);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sap-spacing-sm);
+}
+
+/* ===== SAP Fiori 테이블 ===== */
+.fiori-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--sap-surface-1);
+  border-radius: var(--sap-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--sap-shadow-2);
+  border: 1px solid var(--sap-border-neutral);
+}
+
+.fiori-table__header {
+  background: linear-gradient(135deg, var(--sap-surface-2) 0%, var(--sap-surface-3) 100%);
+  border-bottom: 2px solid var(--sap-brand-primary);
+}
+
+.fiori-table th {
+  padding: var(--sap-spacing-md) var(--sap-spacing-lg);
+  text-align: left;
+  font-size: var(--sap-font-size-sm);
+  font-weight: var(--sap-font-weight-bold);
+  color: var(--sap-brand-primary);
+  border-bottom: 1px solid var(--sap-border-neutral);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  position: relative;
+}
+
+.fiori-table th:first-child {
+  border-left: none;
+}
+
+.fiori-table th:last-child {
+  border-right: none;
+}
+
+/* 정렬 가능한 헤더 스타일 */
+.fiori-table th.sortable {
+  cursor: pointer;
+  transition: all var(--sap-transition-fast);
+  user-select: none;
+}
+
+.fiori-table th.sortable:hover {
+  background: linear-gradient(135deg, var(--sap-surface-3) 0%, var(--sap-surface-4) 100%);
+  color: var(--sap-brand-secondary);
+}
+
+.fiori-table th.sortable::after {
+  content: '⇅';
+  position: absolute;
+  right: var(--sap-spacing-sm);
+  color: var(--sap-text-tertiary);
+  font-size: var(--sap-font-size-xs);
+  transition: all var(--sap-transition-fast);
+}
+
+.fiori-table th.sortable.asc::after {
+  content: '↑';
+  color: var(--sap-brand-primary);
+}
+
+.fiori-table th.sortable.desc::after {
+  content: '↓';
+  color: var(--sap-brand-primary);
+}
+
+.fiori-table td {
+  padding: var(--sap-spacing-md) var(--sap-spacing-lg);
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-primary);
+  border-bottom: 1px solid var(--sap-border-neutral);
+  vertical-align: middle;
+  transition: all var(--sap-transition-fast);
+}
+
+.fiori-table td:first-child {
+  border-left: none;
+  font-weight: var(--sap-font-weight-medium);
+}
+
+.fiori-table td:last-child {
+  border-right: none;
+}
+
+.fiori-table tbody tr:hover {
+  background: linear-gradient(90deg, var(--sap-surface-2) 0%, var(--sap-surface-3) 100%);
+  transform: translateY(-2px);
+  box-shadow: var(--sap-shadow-2);
+  transition: all var(--sap-transition-medium);
+  cursor: pointer;
+  border-left: 3px solid var(--sap-brand-primary);
+}
+
+.fiori-table tbody tr:hover td {
+  /* border-color: var(--sap-border-interactive); */
+  color: var(--sap-text-primary);
+}
+
+.fiori-table tbody tr:active {
+  transform: translateY(0px) scale(0.998);
+  transition: all var(--sap-transition-fast);
+}
+
+.fiori-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ===== SAP Fiori 뱃지 ===== */
+.fiori-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--sap-spacing-xs) var(--sap-spacing-sm);
+  border-radius: var(--sap-radius-full);
+  /* font-size: var(--sap-font-size-xs); */
+  font-size: var(--sap-font-size-sm);
+  font-weight: var(--sap-font-weight-medium);
+  white-space: nowrap;
+}
+
+.fiori-badge--success {
+  /* background-color: var(--sap-status-success-bg); */
+  color: var(--sap-status-success);
+}
+
+.fiori-badge--warning {
+  /* background-color: var(--sap-status-warning-bg); */
+  color: var(--sap-status-warning);
+}
+
+.fiori-badge--error {
+  background-color: var(--sap-status-error-bg);
+  color: var(--sap-status-error);
+}
+
+.fiori-badge--info {
+  background-color: var(--sap-status-info-bg);
+  color: var(--sap-status-info);
+}
+
+/* ===== SAP Fiori 알림 ===== */
+.fiori-alert {
+  display: flex;
+  align-items: flex-start;
+  padding: var(--sap-spacing-md);
+  border-radius: var(--sap-radius-md);
+  border-left: 4px solid;
+  gap: var(--sap-spacing-sm);
+  margin-bottom: var(--sap-spacing-md);
+}
+
+.fiori-alert--success {
+  background-color: var(--sap-status-success-bg);
+  border-left-color: var(--sap-status-success);
+}
+
+.fiori-alert--warning {
+  background-color: var(--sap-status-warning-bg);
+  border-left-color: var(--sap-status-warning);
+}
+
+.fiori-alert--error {
+  background-color: var(--sap-status-error-bg);
+  border-left-color: var(--sap-status-error);
+}
+
+.fiori-alert--info {
+  background-color: var(--sap-status-info-bg);
+  border-left-color: var(--sap-status-info);
+}
+
+/* ===== SAP Fiori 로딩 스피너 ===== */
+.fiori-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--sap-border-neutral);
+  border-top: 2px solid var(--sap-brand-primary);
+  border-radius: var(--sap-radius-full);
+  animation: fiori-spin 1s linear infinite;
+}
+
+@keyframes fiori-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== 유틸리티 클래스 ===== */
+.fiori-text--primary { color: var(--sap-text-primary); }
+.fiori-text--secondary { color: var(--sap-text-secondary); }
+.fiori-text--tertiary { color: var(--sap-text-tertiary); }
+
+.fiori-bg--surface-1 { background-color: var(--sap-surface-1); }
+.fiori-bg--surface-2 { background-color: var(--sap-surface-2); }
+.fiori-bg--surface-3 { background-color: var(--sap-surface-3); }
+
+.fiori-shadow--1 { box-shadow: var(--sap-shadow-1); }
+.fiori-shadow--2 { box-shadow: var(--sap-shadow-2); }
+.fiori-shadow--3 { box-shadow: var(--sap-shadow-3); }
+
+.fiori-radius--sm { border-radius: var(--sap-radius-sm); }
+.fiori-radius--md { border-radius: var(--sap-radius-md); }
+.fiori-radius--lg { border-radius: var(--sap-radius-lg); }

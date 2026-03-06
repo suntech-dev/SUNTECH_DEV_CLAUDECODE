@@ -1,0 +1,230 @@
+/* SAP Fiori 네비게이션 컴포넌트 */
+
+/* ===== SAP Fiori 앱바 ===== */
+.fiori-app-bar {
+  background: linear-gradient(135deg, var(--sap-surface-1) 0%, var(--sap-surface-2) 100%);
+  border-bottom: 1px solid var(--sap-border-neutral);
+  padding: 0 var(--sap-spacing-sm);
+  box-shadow: var(--sap-shadow-1);
+  position: sticky;
+  top: 0;
+  z-index: var(--sap-z-sticky);
+  backdrop-filter: blur(8px);
+}
+
+.fiori-app-bar__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1920px;
+  margin: 0 auto;
+  height: 64px;
+}
+
+
+.fiori-app-bar__brand {
+  color: var(--sap-brand-primary);
+  text-decoration: none;
+  /* font-size: var(--sap-font-size-xl); */
+  font-size: var(--sap-font-size-2xl);
+  font-weight: var(--sap-font-weight-bold);
+  letter-spacing: -0.025em;
+  transition: all var(--sap-transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--sap-spacing-sm);
+}
+
+.fiori-app-bar__brand:hover {
+  color: var(--sap-brand-secondary);
+  transform: translateX(2px);
+}
+
+/* ===== SAP Fiori 네비게이션 메뉴 ===== */
+.fiori-nav-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: var(--sap-spacing-xs);
+}
+
+.fiori-nav-menu__item {
+  position: relative;
+}
+
+.fiori-nav-menu__link {
+  color: var(--sap-text-primary);
+  text-decoration: none;
+  padding: var(--sap-spacing-sm) var(--sap-spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--sap-spacing-xs);
+  border-radius: var(--sap-radius-md);
+  font-weight: var(--sap-font-weight-medium);
+  font-size: var(--sap-font-size-sm);
+  transition: all var(--sap-transition-fast);
+  position: relative;
+  white-space: nowrap;
+}
+
+.fiori-nav-menu__link:hover {
+  background-color: var(--sap-surface-3);
+  color: var(--sap-brand-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--sap-shadow-1);
+}
+
+.fiori-nav-menu__item--active .fiori-nav-menu__link {
+  background: linear-gradient(135deg, var(--sap-brand-primary) 0%, var(--sap-brand-secondary) 100%);
+  color: var(--sap-text-inverted);
+  box-shadow: var(--sap-shadow-2);
+}
+
+.fiori-nav-menu__item--active .fiori-nav-menu__link::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background-color: var(--sap-brand-primary);
+  border-radius: var(--sap-radius-full);
+}
+
+/* ===== SAP Fiori 드롭다운 메뉴 ===== */
+.fiori-nav-menu__item--dropdown .fiori-nav-menu__link::after {
+  content: '⌄';
+  font-size: var(--sap-font-size-xs);
+  margin-left: var(--sap-spacing-xs);
+  transition: transform var(--sap-transition-fast);
+}
+
+.fiori-nav-menu__item--dropdown:hover .fiori-nav-menu__link::after {
+  transform: rotate(180deg);
+}
+
+.fiori-dropdown-menu {
+  position: absolute;
+  top: calc(100% + var(--sap-spacing-xs));
+  left: auto;
+  right: 0;
+  /* left: 0; */
+  background-color: var(--sap-surface-1);
+  border: 1px solid var(--sap-border-neutral);
+  border-radius: var(--sap-radius-lg);
+  box-shadow: var(--sap-shadow-3);
+  z-index: var(--sap-z-dropdown);
+  min-width: 220px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px) scale(0.95);
+  transition: all var(--sap-transition-medium);
+  list-style: none;
+  margin: 0;
+  padding: var(--sap-spacing-sm);
+}
+
+.fiori-nav-menu__item--dropdown:hover .fiori-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.fiori-dropdown-menu__item {
+  margin-bottom: var(--sap-spacing-xs);
+}
+
+.fiori-dropdown-menu__item:last-child {
+  margin-bottom: 0;
+}
+
+.fiori-dropdown-menu__link {
+  display: flex;
+  align-items: center;
+  gap: var(--sap-spacing-sm);
+  padding: var(--sap-spacing-sm) var(--sap-spacing-md);
+  color: var(--sap-text-primary);
+  text-decoration: none;
+  border-radius: var(--sap-radius-md);
+  font-size: var(--sap-font-size-sm);
+  font-weight: var(--sap-font-weight-regular);
+  transition: all var(--sap-transition-fast);
+  position: relative;
+}
+
+.fiori-dropdown-menu__link:hover {
+  background: linear-gradient(90deg, var(--sap-accent-4) 0%, var(--sap-accent-3) 100%);
+  color: var(--sap-text-inverted);
+  transform: translateX(4px);
+  box-shadow: var(--sap-shadow-1);
+}
+
+.fiori-dropdown-menu__item--active .fiori-dropdown-menu__link {
+  background: linear-gradient(90deg, var(--sap-accent-2) 0%, var(--sap-accent-1) 100%);
+  color: var(--sap-text-inverted);
+  /* border-left: 3px solid var(--sap-accent-6); */
+  box-shadow: var(--sap-shadow-2);
+}
+
+/* ===== 드롭다운 구분선 ===== */
+.fiori-dropdown-menu__divider {
+  height: 1.5px;
+  background-color: var(--sap-border-neutral);
+  margin: var(--sap-spacing-xs) var(--sap-spacing-sm);
+  opacity: 0.9;
+}
+
+/* ===== 그룹 헤더 ===== */
+.fiori-dropdown-menu__group-header {
+  padding: var(--sap-spacing-xs) var(--sap-spacing-md);
+  color: var(--sap-text-tertiary);
+  font-size: var(--sap-font-size-xs);
+  font-weight: var(--sap-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--sap-spacing-xs);
+}
+
+/* ===== 반응형 디자인 ===== */
+@media (max-width: 768px) {
+  .fiori-app-bar__container {
+    padding: 0 var(--sap-spacing-md);
+    height: 56px;
+  }
+
+  .fiori-app-bar__brand {
+    font-size: var(--sap-font-size-lg);
+  }
+
+  .fiori-nav-menu {
+    gap: var(--sap-spacing-xs);
+  }
+
+  .fiori-nav-menu__link {
+    padding: var(--sap-spacing-xs) var(--sap-spacing-sm);
+    font-size: var(--sap-font-size-xs);
+  }
+
+  .fiori-dropdown-menu {
+    min-width: 200px;
+    left: -50px;
+  }
+}
+
+/* ===== 접근성 향상 ===== */
+.fiori-nav-menu__link:focus,
+.fiori-dropdown-menu__link:focus {
+  outline: none;
+  box-shadow: var(--sap-focus-ring);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .fiori-nav-menu__link,
+  .fiori-dropdown-menu__link,
+  .fiori-dropdown-menu {
+    transition: none;
+  }
+}

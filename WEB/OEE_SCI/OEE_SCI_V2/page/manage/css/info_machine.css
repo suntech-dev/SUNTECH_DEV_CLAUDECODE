@@ -1,0 +1,53 @@
+/* Machine Page Specific Styles */
+
+/* Quick actions moved to fiori-card__header right side */
+.fiori-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Quick actions style adjustment in header */
+.fiori-card__header .quick-actions {
+  padding: 0;
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+/* Modal scroll improvements */
+.fiori-modal {
+  overflow-y: auto !important;
+  padding: var(--sap-spacing-md) 0 !important;
+}
+
+.fiori-modal__content {
+  margin: auto;
+  max-height: calc(100vh - var(--sap-spacing-xl));
+  overflow-y: visible;
+  position: relative;
+}
+
+/* .fiori-card__content {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding-right: var(--sap-spacing-sm);
+} */
+
+/* Modal scrollbar styling */
+.fiori-card__content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.fiori-card__content::-webkit-scrollbar-track {
+  background: var(--sap-surface-2);
+  border-radius: 4px;
+}
+
+.fiori-card__content::-webkit-scrollbar-thumb {
+  background: var(--sap-border-neutral);
+  border-radius: 4px;
+}
+
+.fiori-card__content::-webkit-scrollbar-thumb:hover {
+  background: var(--sap-text-secondary);
+}

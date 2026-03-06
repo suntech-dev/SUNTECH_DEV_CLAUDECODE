@@ -1,0 +1,141 @@
+/* SAP Fiori Horizon 디자인 토큰 시스템 */
+:root {
+  /* ===== SAP Fiori 브랜딩 색상 ===== */
+  --sap-brand-primary: #0070f2;
+  --sap-brand-secondary: #1e88e5;
+  --sap-brand-accent: #00d4aa;
+  
+  /* ===== Horizon 표면 색상 ===== */
+  --sap-surface-1: #ffffff;
+  --sap-surface-2: #f7f8fa;
+  --sap-surface-3: #edeff3;
+  --sap-surface-4: #e5e8ed;
+  --sap-surface-emphasis: #0070f2;
+  
+  /* ===== 텍스트 색상 ===== */
+  --sap-text-primary: #32363b;
+  --sap-text-secondary: #6b7884;
+  --sap-text-tertiary: #9da4af;
+  --sap-text-inverted: #ffffff;
+  --sap-text-link: #0070f2;
+  
+  /* ===== 상태 색상 (의미론적) ===== */
+  --sap-status-success: #30914c;
+  --sap-status-success-bg: #e8f5ed;
+  --sap-status-warning: #e26b0a;  
+  --sap-status-warning-bg: #fef3e8;
+  --sap-status-error: #da1e28;
+  --sap-status-error-bg: #fbeaea;
+  --sap-status-info: #0070f2;
+  --sap-status-info-bg: #e8f4ff;
+  
+  /* ===== 강조 색상 ===== */
+  --sap-accent-1: #e26b0a;
+  --sap-accent-2: #d23273;
+  --sap-accent-3: #8a3ffc;
+  --sap-accent-4: #0070f2;
+  --sap-accent-5: #005d5d;
+  --sap-accent-6: #30914c;
+  
+  /* ===== 경계선 색상 ===== */  
+  --sap-border-neutral: #d6dae3;
+  --sap-border-interactive: #0070f2;
+  --sap-border-emphasis: #32363b;
+  
+  /* ===== 그림자 시스템 ===== */
+  --sap-shadow-1: 0 2px 4px rgba(50, 54, 59, 0.08);
+  --sap-shadow-2: 0 4px 8px rgba(50, 54, 59, 0.12);
+  --sap-shadow-3: 0 8px 16px rgba(50, 54, 59, 0.16);
+  --sap-shadow-4: 0 16px 32px rgba(50, 54, 59, 0.20);
+  
+  /* ===== 타이포그래피 시스템 ===== */
+  --sap-font-family: "72", "Helvetica Neue", Arial, sans-serif;
+  --sap-font-size-xs: 0.75rem;     /* 12px */
+  --sap-font-size-sm: 0.875rem;    /* 14px */
+  --sap-font-size-md: 1rem;        /* 16px */
+  --sap-font-size-lg: 1.125rem;    /* 18px */
+  --sap-font-size-xl: 1.25rem;     /* 20px */
+  --sap-font-size-2xl: 1.5rem;     /* 24px */
+  --sap-font-size-3xl: 1.875rem;   /* 30px */
+  
+  /* ===== 폰트 굵기 ===== */
+  --sap-font-weight-regular: 400;
+  --sap-font-weight-medium: 500;
+  --sap-font-weight-semibold: 600;
+  --sap-font-weight-bold: 700;
+  
+  /* ===== 간격 시스템 (8px 그리드) ===== */
+  --sap-spacing-xs: 0.25rem;   /* 4px */
+  --sap-spacing-sm: 0.5rem;    /* 8px */
+  --sap-spacing-md: 1rem;      /* 16px */
+  --sap-spacing-lg: 1.5rem;    /* 24px */
+  --sap-spacing-xl: 2rem;      /* 32px */
+  --sap-spacing-2xl: 3rem;     /* 48px */
+  --sap-spacing-3xl: 4rem;     /* 64px */
+  
+  /* ===== 모서리 반경 ===== */
+  --sap-radius-xs: 0.125rem;   /* 2px */
+  --sap-radius-sm: 0.25rem;    /* 4px */
+  --sap-radius-md: 0.5rem;     /* 8px */
+  --sap-radius-lg: 0.75rem;    /* 12px */
+  --sap-radius-xl: 1rem;       /* 16px */
+  --sap-radius-full: 50%;
+  
+  /* ===== 컴포넌트 높이 ===== */
+  --sap-height-xs: 1.5rem;     /* 24px */
+  --sap-height-sm: 2rem;       /* 32px */
+  --sap-height-md: 2.5rem;     /* 40px */
+  --sap-height-lg: 3rem;       /* 48px */
+  --sap-height-xl: 3.5rem;     /* 56px */
+  
+  /* ===== 포커스 링 ===== */
+  --sap-focus-ring: 0 0 0 2px var(--sap-brand-primary);
+  --sap-focus-ring-offset: 0 0 0 4px rgba(0, 112, 242, 0.3);
+  
+  /* ===== 애니메이션 ===== */
+  --sap-transition-fast: 150ms ease;
+  --sap-transition-medium: 250ms ease;
+  --sap-transition-slow: 350ms ease;
+  
+  /* ===== Z-Index 레이어 ===== */
+  --sap-z-dropdown: 1000;
+  --sap-z-sticky: 1010;
+  --sap-z-overlay: 1020;
+  --sap-z-modal: 1030;
+  --sap-z-tooltip: 1040;
+}
+
+/* ===== 다크 테마 지원 ===== */
+[data-theme="dark"] {
+  --sap-surface-1: #1b1f23;
+  --sap-surface-2: #22262a;
+  --sap-surface-3: #2a2e32;
+  --sap-surface-4: #32363b;
+  
+  --sap-text-primary: #ffffff;
+  --sap-text-secondary: #c1c7cd;
+  --sap-text-tertiary: #9da4af;
+  
+  --sap-border-neutral: #4a5056;
+  
+  --sap-shadow-1: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --sap-shadow-2: 0 4px 8px rgba(0, 0, 0, 0.4);
+  --sap-shadow-3: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --sap-shadow-4: 0 16px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* ===== 접근성 향상 ===== */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --sap-transition-fast: 0ms;
+    --sap-transition-medium: 0ms;
+    --sap-transition-slow: 0ms;
+  }
+}
+
+@media (prefers-contrast: high) {
+  :root {
+    --sap-border-neutral: #000000;
+    --sap-text-secondary: #000000;
+  }
+}

@@ -1,0 +1,117 @@
+/* SAP Fiori 페이지네이션 스타일 */
+
+.fiori-pagination {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sap-spacing-sm);
+  margin: var(--sap-spacing-xl) 0;
+  position: relative;
+}
+
+/* 페이지네이션 버튼들을 담는 컨테이너 - 중앙 정렬을 위해 독립적으로 배치 */
+.fiori-pagination__buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sap-spacing-xs);
+  flex-shrink: 0;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0 20px;
+  width: 100%;
+  position: relative;
+}
+
+.fiori-pagination__info {
+  color: var(--sap-text-secondary);
+  font-size: var(--sap-font-size-sm);
+  text-align: center;
+  order: -1;
+  width: 100%;
+  margin: 0;
+}
+
+.fiori-pagination__button {
+  min-width: var(--sap-height-sm);
+  height: var(--sap-height-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--sap-spacing-sm);
+  border: 1px solid var(--sap-border-neutral);
+  background-color: var(--sap-surface-1);
+  color: var(--sap-text-primary);
+  text-decoration: none;
+  border-radius: var(--sap-radius-md);
+  font-size: var(--sap-font-size-sm);
+  font-weight: var(--sap-font-weight-medium);
+  cursor: pointer;
+  transition: all var(--sap-transition-fast);
+  user-select: none;
+}
+
+.fiori-pagination__button:hover:not(.fiori-pagination__button--disabled) {
+  background-color: var(--sap-surface-2);
+  border-color: var(--sap-brand-primary);
+  color: var(--sap-brand-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--sap-shadow-1);
+}
+
+.fiori-pagination__button:focus {
+  outline: none;
+  box-shadow: var(--sap-focus-ring);
+}
+
+.fiori-pagination__button--active {
+  background-color: var(--sap-brand-primary);
+  border-color: var(--sap-brand-primary);
+  color: var(--sap-text-inverted);
+  box-shadow: var(--sap-shadow-2);
+}
+
+.fiori-pagination__button--active:hover {
+  background-color: var(--sap-brand-secondary);
+  border-color: var(--sap-brand-secondary);
+  transform: none;
+}
+
+.fiori-pagination__button--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.fiori-pagination__ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--sap-height-sm);
+  height: var(--sap-height-sm);
+  color: var(--sap-text-tertiary);
+  font-size: var(--sap-font-size-sm);
+  user-select: none;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+  .fiori-pagination {
+    gap: var(--sap-spacing-sm);
+  }
+  
+  .fiori-pagination__info {
+    padding: 0 var(--sap-spacing-sm);
+  }
+  
+  .fiori-pagination__buttons {
+    padding: 0 var(--sap-spacing-sm);
+    justify-content: center;
+  }
+  
+  .fiori-pagination__button {
+    min-width: var(--sap-height-md);
+    height: var(--sap-height-md);
+    flex-shrink: 0;
+  }
+}

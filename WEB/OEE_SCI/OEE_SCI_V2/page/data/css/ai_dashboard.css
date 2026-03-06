@@ -1,0 +1,681 @@
+/**
+ * AI Dashboard CSS Styles
+ * SAP Fiori Design System 기반 AI Intelligence Dashboard
+ */
+
+/* ===== AI 상단 요약 카드 (4개) ===== */
+.ai-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sap-spacing-lg);
+  margin-bottom: var(--sap-spacing-3xl);
+}
+
+@media (max-width: 1200px) {
+  .ai-summary-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .ai-summary-grid { grid-template-columns: 1fr; }
+}
+
+.ai-summary-card {
+  background-color: var(--sap-surface-1);
+  border: 1px solid var(--sap-border-neutral);
+  border-radius: var(--sap-radius-lg);
+  box-shadow: var(--sap-shadow-1);
+  padding: var(--sap-spacing-lg);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.ai-summary-card:hover {
+  box-shadow: var(--sap-shadow-2);
+}
+
+/* 좌측 컬러 스트라이프 */
+.ai-summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: var(--sap-radius-lg) 0 0 var(--sap-radius-lg);
+}
+
+.ai-summary-card--prediction::before  { background: var(--sap-informative); }
+.ai-summary-card--anomaly::before     { background: var(--sap-negative); }
+.ai-summary-card--maintenance::before { background: var(--sap-caution); }
+.ai-summary-card--health::before      { background: var(--sap-positive); }
+
+.ai-summary-card__icon {
+  font-size: 1.5rem;
+  margin-bottom: var(--sap-spacing-sm);
+  display: block;
+}
+
+.ai-summary-card__label {
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-secondary);
+  margin-bottom: var(--sap-spacing-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ai-summary-card__value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--sap-text-primary);
+  line-height: 1.1;
+  margin-bottom: var(--sap-spacing-xs);
+}
+
+.ai-summary-card__sub {
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-secondary);
+}
+
+/* 트렌드 배지 */
+.ai-trend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--sap-font-size-sm);
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 9999px;
+}
+.ai-trend-badge--up     { background: rgba(var(--sap-positive-rgb, 48,164,108), 0.15); color: var(--sap-positive); }
+.ai-trend-badge--down   { background: rgba(var(--sap-negative-rgb, 248,81,73),  0.15); color: var(--sap-negative); }
+.ai-trend-badge--stable { background: rgba(var(--sap-informative-rgb, 0,120,212), 0.15); color: var(--sap-informative); }
+
+/* ===== AI 메인 그리드 레이아웃 ===== */
+.ai-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: var(--sap-spacing-lg);
+  margin-bottom: var(--sap-spacing-3xl);
+}
+
+@media (max-width: 1100px) {
+  .ai-main-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== OEE 예측 차트 영역 ===== */
+.ai-prediction-chart-wrap {
+  position: relative;
+  height: 300px;
+}
+
+/* 예측 범례 */
+.ai-chart-legend {
+  display: flex;
+  gap: var(--sap-spacing-lg);
+  margin-top: var(--sap-spacing-sm);
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-secondary);
+}
+
+.ai-chart-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-chart-legend__dot {
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.ai-chart-legend__dot--actual   { background: #0070f3; }
+.ai-chart-legend__dot--forecast { background: #f5a623; border: 1px dashed #f5a623; }
+.ai-chart-legend__dot--ci       { background: rgba(245,166,35,0.3); }
+
+/* ===== 이상 감지 패널 ===== */
+.ai-anomaly-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sap-spacing-sm);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.ai-anomaly-item {
+  background: var(--sap-surface-2);
+  border: 1px solid var(--sap-border-neutral);
+  border-radius: var(--sap-radius-md);
+  padding: var(--sap-spacing-sm) var(--sap-spacing-md);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--sap-spacing-sm);
+}
+
+.ai-anomaly-item--critical {
+  border-left: 3px solid var(--sap-negative);
+  background: rgba(248,81,73,0.05);
+}
+
+.ai-anomaly-item--warning {
+  border-left: 3px solid var(--sap-caution);
+  background: rgba(210,153,34,0.05);
+}
+
+.ai-anomaly-item__machine {
+  font-weight: 600;
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-primary);
+}
+
+.ai-anomaly-item__line {
+  font-size: var(--sap-font-size-xs);
+  color: var(--sap-text-secondary);
+}
+
+.ai-anomaly-item__oee {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* ===== 예방정비 패널 ===== */
+.ai-maintenance-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sap-spacing-sm);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.ai-maintenance-item {
+  background: var(--sap-surface-2);
+  border: 1px solid var(--sap-border-neutral);
+  border-radius: var(--sap-radius-md);
+  padding: var(--sap-spacing-sm) var(--sap-spacing-md);
+}
+
+.ai-maintenance-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--sap-spacing-xs);
+}
+
+.ai-maintenance-item__machine {
+  font-weight: 600;
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-primary);
+}
+
+.ai-maintenance-item__line {
+  font-size: var(--sap-font-size-xs);
+  color: var(--sap-text-secondary);
+}
+
+/* 위험도 프로그레스 바 */
+.ai-risk-bar-wrap {
+  position: relative;
+  height: 6px;
+  background: var(--sap-surface-3, #2c2c2c);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: var(--sap-spacing-xs);
+}
+
+.ai-risk-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+.ai-risk-bar--danger  { background: var(--sap-negative); }
+.ai-risk-bar--warning { background: var(--sap-caution); }
+.ai-risk-bar--normal  { background: var(--sap-positive); }
+
+/* ===== 라인 건강지수 패널 ===== */
+.ai-health-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sap-spacing-md);
+}
+
+.ai-health-item {
+  display: grid;
+  grid-template-columns: 80px 1fr 60px 70px;
+  align-items: center;
+  gap: var(--sap-spacing-sm);
+}
+
+.ai-health-item__line {
+  font-size: var(--sap-font-size-sm);
+  font-weight: 600;
+  color: var(--sap-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ai-health-bar-wrap {
+  height: 8px;
+  background: var(--sap-surface-3, #2c2c2c);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ai-health-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.ai-health-item__pct {
+  font-size: var(--sap-font-size-sm);
+  font-weight: 700;
+  color: var(--sap-text-primary);
+  text-align: right;
+}
+
+/* 상태 뱃지 */
+.ai-status-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.ai-status-badge--danger  { background: rgba(248,81,73,0.2);  color: var(--sap-negative); }
+.ai-status-badge--warning { background: rgba(210,153,34,0.2); color: var(--sap-caution);  }
+.ai-status-badge--normal  { background: rgba(48,164,108,0.2); color: var(--sap-positive); }
+
+/* ===== 하단 그리드: 라인건강지수 + 예방정비 ===== */
+.ai-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sap-spacing-lg);
+  margin-bottom: var(--sap-spacing-3xl);
+}
+
+@media (max-width: 900px) {
+  .ai-bottom-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== 빈 상태 메시지 ===== */
+.ai-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sap-spacing-3xl);
+  color: var(--sap-text-secondary);
+  text-align: center;
+  gap: var(--sap-spacing-sm);
+}
+
+.ai-empty-state__icon {
+  font-size: 2rem;
+  opacity: 0.5;
+}
+
+/* ===== AI 배지 (페이지 제목 옆) ===== */
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #0070f3, #7928ca);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  letter-spacing: 0.08em;
+  vertical-align: middle;
+  margin-left: var(--sap-spacing-sm);
+}
+
+/* ===== 스피너 (로딩 상태) ===== */
+.ai-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--sap-border-neutral);
+  border-top-color: var(--sap-informative);
+  border-radius: 50%;
+  animation: ai-spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes ai-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== 스크롤바 커스텀 ===== */
+.ai-anomaly-list::-webkit-scrollbar,
+.ai-maintenance-list::-webkit-scrollbar {
+  width: 4px;
+}
+.ai-anomaly-list::-webkit-scrollbar-track,
+.ai-maintenance-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.ai-anomaly-list::-webkit-scrollbar-thumb,
+.ai-maintenance-list::-webkit-scrollbar-thumb {
+  background: var(--sap-border-neutral);
+  border-radius: 2px;
+}
+
+/* ===== 마지막 업데이트 시각 ===== */
+.ai-last-update {
+  font-size: var(--sap-font-size-xs);
+  color: var(--sap-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--sap-positive);
+  border-radius: 50%;
+  animation: ai-pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes ai-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* ===== 시간대 히트맵 그리드 ===== */
+.ai-hourly-heatmap {
+  width: 100%;
+}
+
+.ai-heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+}
+
+@media (max-width: 900px) {
+  .ai-heatmap-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.ai-heatmap-cell {
+  border-radius: var(--sap-radius-sm, 4px);
+  padding: 6px 4px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: default;
+  transition: filter 0.15s ease;
+  min-height: 48px;
+  justify-content: center;
+}
+
+.ai-heatmap-cell:hover {
+  filter: brightness(0.85);
+}
+
+.ai-heatmap-label {
+  font-size: 0.68rem;
+  color: #333;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.ai-heatmap-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #111;
+  line-height: 1;
+}
+
+/* ===== maintenance-item__name (Quality Sentinel 전용) ===== */
+.ai-maintenance-item__name {
+  font-weight: 600;
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-primary);
+}
+
+.ai-maintenance-item__detail {
+  font-size: 0.72rem;
+  color: var(--sap-text-secondary);
+  margin-top: 4px;
+}
+
+/* ===== F12 — 실시간 AI 스트리밍 피드 ===== */
+.ai-stream-feed {
+  max-height: 360px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ai-stream-feed::-webkit-scrollbar { width: 4px; }
+.ai-stream-feed::-webkit-scrollbar-track { background: transparent; }
+.ai-stream-feed::-webkit-scrollbar-thumb { background: var(--sap-border-neutral); border-radius: 2px; }
+
+.ai-stream-empty {
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-secondary);
+  padding: var(--sap-spacing-md);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ai-stream-event {
+  background: var(--sap-surface-1);
+  border: 1px solid var(--sap-border-neutral);
+  border-radius: var(--sap-radius-sm, 4px);
+  padding: 8px 12px;
+  animation: ai-stream-slide-in 0.25s ease;
+}
+
+@keyframes ai-stream-slide-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ai-stream-event__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.ai-stream-event__icon { font-size: 0.9rem; }
+
+.ai-stream-event__type {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--sap-text-primary);
+  flex: 1;
+}
+
+.ai-stream-event__time {
+  font-size: 0.68rem;
+  color: var(--sap-text-secondary);
+}
+
+.ai-stream-event__msg {
+  font-size: 0.78rem;
+  color: var(--sap-text-primary);
+  line-height: 1.4;
+}
+
+.ai-stream-event__meta {
+  font-size: 0.68rem;
+  color: var(--sap-text-secondary);
+  margin-top: 2px;
+}
+
+/* ===== F13 — 생산 최적화 제안 ===== */
+.ai-opt-summary-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-secondary);
+  flex-wrap: wrap;
+}
+
+.ai-opt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ai-opt-card {
+  background: var(--sap-surface-1);
+  border: 1px solid var(--sap-border-neutral);
+  border-radius: var(--sap-radius-md, 8px);
+  padding: var(--sap-spacing-md);
+  box-shadow: var(--sap-shadow-1);
+}
+
+.ai-opt-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  gap: 12px;
+}
+
+.ai-opt-card__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--sap-font-size-sm);
+  flex-wrap: wrap;
+}
+
+.ai-opt-card__oee {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  white-space: nowrap;
+}
+
+/* OEE 바 */
+.ai-opt-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.ai-opt-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-opt-bar-label {
+  font-size: 0.72rem;
+  color: var(--sap-text-secondary);
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.ai-opt-bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--sap-border-neutral);
+  border-radius: 4px;
+  position: relative;
+  overflow: visible;
+}
+
+.ai-opt-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.ai-opt-bar-fill--potential {
+  background: var(--sap-informative, #0070f2);
+  opacity: 0.65;
+}
+
+.ai-opt-bar-target {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 14px;
+  background: var(--sap-positive, #30914c);
+  border-radius: 1px;
+}
+
+.ai-opt-bar-val {
+  font-size: 0.75rem;
+  color: var(--sap-text-primary);
+  width: 100px;
+  flex-shrink: 0;
+}
+
+/* 병목 표시 */
+.ai-opt-bottleneck {
+  font-size: 0.78rem;
+  color: var(--sap-text-secondary);
+  padding: 6px 10px;
+  background: var(--sap-surface-2, #f5f6f7);
+  border-radius: var(--sap-radius-sm, 4px);
+  margin-bottom: 8px;
+}
+
+/* 컴포넌트 3개 */
+.ai-opt-components {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.75rem;
+  color: var(--sap-text-secondary);
+  margin-bottom: 8px;
+}
+
+.ai-opt-comp--highlight {
+  color: var(--sap-negative, #da1e28);
+  font-weight: 700;
+}
+
+/* 개선 제안 details */
+.ai-opt-suggestions {
+  font-size: 0.78rem;
+  color: var(--sap-text-secondary);
+}
+
+.ai-opt-suggestions summary {
+  cursor: pointer;
+  color: var(--sap-informative, #0070f2);
+  font-weight: 600;
+  padding: 4px 0;
+  user-select: none;
+}
+
+.ai-opt-suggestions ul {
+  margin: 6px 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ai-opt-suggestions li {
+  line-height: 1.4;
+}
+
+@media (max-width: 640px) {
+  .ai-opt-card__header { flex-direction: column; }
+  .ai-opt-card__oee    { align-items: flex-start; }
+  .ai-opt-bar-val      { width: auto; }
+}

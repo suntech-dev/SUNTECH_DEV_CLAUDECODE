@@ -1,0 +1,464 @@
+/* ================================
+   SAP Fiori Mobile Optimization
+   모바일 최적화 및 터치 인터페이스
+   ================================ */
+
+/* 모바일 기본 설정 */
+@media (max-width: 768px) {
+  :root {
+    /* 모바일 전용 간격 조정 */
+    --sap-spacing-mobile-xs: 0.25rem;  /* 4px */
+    --sap-spacing-mobile-sm: 0.5rem;   /* 8px */
+    --sap-spacing-mobile-md: 0.75rem;  /* 12px */
+    --sap-spacing-mobile-lg: 1rem;     /* 16px */
+    --sap-spacing-mobile-xl: 1.5rem;   /* 24px */
+
+    /* 모바일 터치 타겟 최소 크기 */
+    --sap-touch-target-min: 44px;
+
+    /* 모바일 폰트 크기 조정 */
+    --sap-font-size-mobile-xs: 0.875rem;  /* 14px */
+    --sap-font-size-mobile-sm: 1rem;      /* 16px */
+    --sap-font-size-mobile-md: 1.125rem;  /* 18px */
+    --sap-font-size-mobile-lg: 1.25rem;   /* 20px */
+  }
+
+  /* 기본 컨테이너 모바일 조정 */
+  .fiori-container {
+    padding: var(--sap-spacing-mobile-sm);
+    margin: 0;
+  }
+
+  /* 메인 헤더 모바일 최적화 */
+  .fiori-main-header {
+    flex-direction: column;
+    gap: var(--sap-spacing-mobile-md);
+    padding: var(--sap-spacing-mobile-md);
+  }
+
+  .fiori-header-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--sap-spacing-mobile-sm);
+  }
+
+  /* 버튼 모바일 최적화 */
+  .fiori-btn {
+    min-height: var(--sap-touch-target-min);
+    font-size: var(--sap-font-size-mobile-sm);
+    padding: var(--sap-spacing-mobile-sm) var(--sap-spacing-mobile-md);
+    border-radius: var(--sap-radius-md);
+  }
+
+  .fiori-btn--sm {
+    min-height: 36px;
+    font-size: var(--sap-font-size-mobile-xs);
+    padding: var(--sap-spacing-mobile-xs) var(--sap-spacing-mobile-sm);
+  }
+
+  .fiori-btn--lg {
+    min-height: 48px;
+    font-size: var(--sap-font-size-mobile-lg);
+    padding: var(--sap-spacing-mobile-md) var(--sap-spacing-mobile-lg);
+  }
+
+  /* 입력 필드 모바일 최적화 */
+  .fiori-input,
+  .fiori-select {
+    min-height: var(--sap-touch-target-min);
+    font-size: var(--sap-font-size-mobile-sm);
+    padding: var(--sap-spacing-mobile-sm);
+  }
+
+  /* 테이블 모바일 최적화 */
+  .fiori-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .fiori-table {
+    min-width: 100%;
+    font-size: var(--sap-font-size-mobile-xs);
+  }
+
+  .fiori-table th,
+  .fiori-table td {
+    padding: var(--sap-spacing-mobile-xs) var(--sap-spacing-mobile-sm);
+    white-space: nowrap;
+  }
+
+  /* 카드 모바일 최적화 */
+  .fiori-card {
+    margin-bottom: var(--sap-spacing-mobile-md);
+    box-shadow: var(--sap-shadow-sm);
+  }
+
+  .fiori-card__content {
+    padding: var(--sap-spacing-mobile-md);
+  }
+
+  /* 모달 모바일 최적화 */
+  .fiori-modal .fiori-modal__content {
+    margin: var(--sap-spacing-mobile-sm);
+    max-width: calc(100% - var(--sap-spacing-mobile-lg));
+    max-height: calc(100vh - var(--sap-spacing-mobile-lg));
+    border-radius: var(--sap-radius-lg);
+  }
+
+  /* 네비게이션 모바일 최적화 */
+  .demo-navbar {
+    flex-direction: column;
+    padding: var(--sap-spacing-mobile-sm);
+    gap: var(--sap-spacing-mobile-sm);
+  }
+
+  .navbar-brand {
+    justify-content: center;
+  }
+
+  .global-search {
+    width: 100%;
+  }
+
+  .navbar-nav {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--sap-spacing-mobile-xs);
+  }
+
+  .navbar-profile {
+    justify-content: center;
+  }
+
+  /* 햄버거 메뉴 */
+  .mobile-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--sap-touch-target-min);
+    height: var(--sap-touch-target-min);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.25rem;
+    color: var(--sap-text-primary);
+    border-radius: var(--sap-radius-sm);
+    transition: background-color 0.3s ease;
+  }
+
+  .mobile-menu-toggle:hover,
+  .mobile-menu-toggle:active {
+    background-color: var(--sap-surface-hover);
+  }
+
+  .mobile-menu-toggle:focus {
+    outline: 2px solid var(--sap-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* 모바일 메뉴 오버레이 */
+  .mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .mobile-menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: var(--sap-surface-1);
+    z-index: 1000;
+    padding: var(--sap-spacing-mobile-lg);
+    box-shadow: var(--sap-shadow-lg);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+  }
+
+  .mobile-menu.active {
+    transform: translateX(-300px);
+  }
+
+  .mobile-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--sap-spacing-mobile-lg);
+    padding-bottom: var(--sap-spacing-mobile-md);
+    border-bottom: 1px solid var(--sap-border-subtle);
+  }
+
+  .mobile-menu-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--sap-text-primary);
+    padding: var(--sap-spacing-mobile-xs);
+  }
+
+  .mobile-menu-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .mobile-menu-item {
+    margin-bottom: var(--sap-spacing-mobile-sm);
+  }
+
+  .mobile-menu-link {
+    display: flex;
+    align-items: center;
+    padding: var(--sap-spacing-mobile-md);
+    color: var(--sap-text-primary);
+    text-decoration: none;
+    border-radius: var(--sap-radius-sm);
+    transition: background-color 0.3s ease;
+    min-height: var(--sap-touch-target-min);
+  }
+
+  .mobile-menu-link:hover,
+  .mobile-menu-link:active {
+    background-color: var(--sap-surface-hover);
+  }
+
+  .mobile-menu-link:focus {
+    outline: 2px solid var(--sap-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+/* 태블릿/데스크톱 최적화 (769px ~ 1919px) */
+@media (min-width: 769px) and (max-width: 1919px) {
+  .fiori-container {
+    padding: var(--sap-spacing-md);
+  }
+
+  .demo-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  }
+
+  .fiori-btn {
+    font-size: var(--sap-font-size-sm);
+  }
+}
+
+/* 터치 인터페이스 최적화 */
+@media (pointer: coarse) {
+  /* 터치 타겟 크기 보장 */
+  .fiori-btn,
+  .fiori-input,
+  .fiori-select,
+  .fiori-dropdown__trigger,
+  .mobile-menu-toggle,
+  .mobile-menu-link {
+    min-height: var(--sap-touch-target-min);
+    min-width: var(--sap-touch-target-min);
+  }
+
+  /* 터치 피드백 향상 */
+  .fiori-btn:active {
+    transform: scale(0.96);
+    transition: transform 0.1s ease;
+  }
+
+  .fiori-table th,
+  .fiori-table td {
+    min-height: 40px;
+  }
+
+  /* 스크롤 개선 */
+  .fiori-table-wrapper {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .fiori-table-wrapper::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .fiori-table-wrapper::-webkit-scrollbar-thumb {
+    background-color: var(--sap-border-default);
+    border-radius: var(--sap-radius-xs);
+  }
+}
+
+/* 가로 모드 최적화 */
+@media (max-width: 768px) and (orientation: landscape) {
+  .fiori-main-header {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .demo-navbar {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .mobile-menu {
+    width: 250px;
+  }
+
+  .mobile-menu.active {
+    transform: translateX(-250px);
+  }
+}
+
+/* 다크 모드 모바일 최적화 */
+@media (max-width: 768px) and (prefers-color-scheme: dark) {
+  .mobile-menu {
+    background-color: var(--sap-surface-1-dark, #1a1a1a);
+    color: var(--sap-text-primary-dark, #ffffff);
+  }
+
+  .mobile-menu-overlay {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  .mobile-menu-link {
+    color: var(--sap-text-primary-dark, #ffffff);
+  }
+
+  .mobile-menu-link:hover,
+  .mobile-menu-link:active {
+    background-color: var(--sap-surface-hover-dark, #333333);
+  }
+}
+
+/* 접근성 향상 (모바일) */
+@media (max-width: 768px) {
+  /* 포커스 표시 개선 */
+  .fiori-btn:focus,
+  .fiori-input:focus,
+  .fiori-select:focus {
+    outline: 3px solid var(--sap-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* 고대비 모드 지원 */
+  @media (prefers-contrast: high) {
+    .fiori-btn {
+      border: 2px solid var(--sap-text-primary);
+    }
+
+    .mobile-menu {
+      border: 1px solid var(--sap-border-default);
+    }
+  }
+
+  /* 모션 감소 설정 */
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu,
+    .mobile-menu-overlay,
+    .fiori-btn:active {
+      transition: none;
+      transform: none;
+    }
+
+    .mobile-menu.active {
+      transform: translateX(-300px);
+      transition: none;
+    }
+  }
+}
+
+/* 모바일 전용 유틸리티 클래스 */
+@media (max-width: 768px) {
+  .mobile-hidden {
+    display: none !important;
+  }
+
+  .mobile-visible {
+    display: block !important;
+  }
+
+  .mobile-center {
+    text-align: center !important;
+  }
+
+  .mobile-full-width {
+    width: 100% !important;
+  }
+
+  .mobile-margin-sm {
+    margin: var(--sap-spacing-mobile-sm) !important;
+  }
+
+  .mobile-padding-sm {
+    padding: var(--sap-spacing-mobile-sm) !important;
+  }
+
+  .mobile-text-sm {
+    font-size: var(--sap-font-size-mobile-xs) !important;
+  }
+}
+
+/* 스와이프 제스처 지원 */
+.swipe-container {
+  touch-action: pan-x;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 풀투리프레시 스타일 */
+.pull-to-refresh {
+  position: relative;
+  overflow: hidden;
+}
+
+.pull-to-refresh-indicator {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--sap-brand-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
+.pull-to-refresh.pulling .pull-to-refresh-indicator {
+  opacity: 1;
+  transform: translateX(-50%) translateY(80px);
+}
+
+/* iOS 스타일 바운스 효과 */
+.ios-bounce {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 안전 영역 지원 (iPhone X 등) */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .fiori-container {
+    padding-top: max(var(--sap-spacing-md), env(safe-area-inset-top));
+    padding-left: max(var(--sap-spacing-md), env(safe-area-inset-left));
+    padding-right: max(var(--sap-spacing-md), env(safe-area-inset-right));
+    padding-bottom: max(var(--sap-spacing-md), env(safe-area-inset-bottom));
+  }
+
+  .mobile-menu {
+    padding-top: max(var(--sap-spacing-lg), env(safe-area-inset-top));
+  }
+}
