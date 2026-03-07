@@ -11,7 +11,6 @@
  *   { code, machines: [{machine_no, line_name, risk_score, risk_level, details}] }
  */
 
-date_default_timezone_set('Asia/Jakarta');
 
 require_once(__DIR__ . '/../../../lib/db.php');
 require_once(__DIR__ . '/../../../lib/statistics.lib.php');

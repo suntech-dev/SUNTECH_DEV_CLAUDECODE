@@ -4,7 +4,6 @@
  * 불량 패턴 분석: Pareto, 시간대별 히트맵, 기계 위험 순위, OEE 상관관계
  */
 
-date_default_timezone_set('Asia/Jakarta');
 require_once(__DIR__ . '/../../../lib/db.php');
 
 header('Content-Type: application/json; charset=utf-8');

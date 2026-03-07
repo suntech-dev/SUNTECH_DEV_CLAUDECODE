@@ -5,9 +5,6 @@
 // require_once('./db.php');
 // require_once('./worktime.lib.php');
 
-// 시간대 설정
-date_default_timezone_set('Asia/Jajarta');
-
 /**
  * 주어진 날짜와 시간, 설비 정보를 바탕으로 현재 진행 중인 근무조(Shift) 정보를 찾습니다.
  * 야간 근무조를 고려하여 어제와 오늘 근무 목록을 모두 확인합니다.

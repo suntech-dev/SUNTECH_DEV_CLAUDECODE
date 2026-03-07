@@ -4,7 +4,6 @@
  * Server-Sent Events (SSE) 기반 통합 데이터 제공
  */
 
-date_default_timezone_set('Asia/Jakarta');
 
 require_once(__DIR__ . '/../../../lib/db.php');
 require_once(__DIR__ . '/../../../lib/api_helper.lib.php');

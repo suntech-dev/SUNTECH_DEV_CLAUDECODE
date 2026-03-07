@@ -10,7 +10,6 @@
  */
 
 // 타임존 설정
-date_default_timezone_set('Asia/Jakarta');
 
 // 공통 라이브러리 로드
 require_once(__DIR__ . '/../../../lib/db.php');

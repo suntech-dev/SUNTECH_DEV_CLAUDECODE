@@ -1,6 +1,6 @@
 > 최초 작성: 2026-03-07
 > 분석 버전: OEE_SCI_V2
-> 마지막 업데이트: 2026-03-07 (Phase 1-B 완료 + SSE 500 근본 원인 해결)
+> 마지막 업데이트: 2026-03-07 (Phase 4 완료: 타임존 중앙화 + report_stream 버그 수정)
 
 # OEE_SCI_V2 성능 최적화 계획
 
@@ -216,6 +216,9 @@ ALTER TABLE data_andon ADD INDEX idx_andon_status (status, reg_date);
 | 3-A | lib/stream_helper.lib.php 신규 | 완료 | 2026-03-07 |
 | 3-B | 모든 stream 파일 공통화 (9개 파일) | 완료 | 2026-03-07 |
 | 3-C | log_oee_hourly/row 해시 버그 수정 | 완료 | 2026-03-07 |
+| 4-A | date_default_timezone_set 중앙화 (27→1곳, lib/db.php) | 완료 | 2026-03-07 |
+| 4-B | lib/worktime_database.php → lib/db.php 대체 후 삭제 | 완료 | 2026-03-07 |
+| 4-C | report_stream.php getDBConnection() 미선언 버그 수정 | 완료 | 2026-03-07 |
 
 ---
 
@@ -285,6 +288,37 @@ FcgidOutputBufferSize 0
 | data_defective_stream.php | `parseFilterParams('dd', 'reg_date',  false, '2 DAY')` |
 
 제거된 중복 코드: 약 **350줄** (파일당 약 70줄 × 5파일)
+
+---
+
+## 5-3. Phase 4 완료 기록 (2026-03-07)
+
+### 배경
+`date_default_timezone_set('Asia/Jakarta')` 가 27개 파일에 중복 선언되어 있었음.
+오타 버그(`Asia/Jajarta`) 1건 포함.
+
+### Phase 4-A: 타임존 중앙화
+- **유지**: `lib/db.php:5` (주석 추가 — "중앙 설정, 개별 파일 중복 선언 금지")
+- **제거**: proc 22개, inc 1개, lib 2개 → 총 **26개 파일**에서 제거
+- **오타 수정**: `lib/get_shift.lib.php` `'Asia/Jajarta'` → `'Asia/Jakarta'` (타임존 설정 자체도 제거)
+
+### Phase 4-B: worktime_database.php 통합
+- `lib/worktime_database.php` — `lib/db.php`와 내용 동일 (PDO 연결 + config.php)
+- 에러 처리만 상이 (echo+exit vs 로그+JSON 응답) → `db.php`가 더 정교
+- 사용 파일 5개 경로 변경 후 `worktime_database.php` 삭제
+
+| 파일 | 변경 내용 |
+|------|-----------|
+| `inc/worktime_head.php` | `../../lib/worktime_database.php` → `__DIR__.'/../lib/db.php'` + 타임존 제거 |
+| `page/manage/proc/ajax_factory_line.php` | `worktime_database.php` → `db.php` |
+| `page/manage/proc/set_work_time_insert.php` | 동일 |
+| `page/manage/proc/set_work_time_fetch.php` | 동일 |
+| `page/manage/proc/set_work_time_fetch_month.php` | 동일 |
+
+### Phase 4-C: report_stream.php 버그 수정
+- `getDBConnection()` 함수가 프로젝트 어디에도 선언되지 않아 Fatal error 발생
+- `global $pdo; $this->pdo = $pdo;` 로 수정 (db.php 전역 변수 직접 참조)
+- 중복 null 체크 `if (!$this->pdo) die(...)` 제거 (db.php에서 이미 처리)
 
 ---
 

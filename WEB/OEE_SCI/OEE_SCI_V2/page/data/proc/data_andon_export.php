@@ -21,7 +21,6 @@ set_error_handler(function($severity, $message, $file, $line) {
     exit;
 });
 
-date_default_timezone_set('Asia/Jakarta');
 
 // Load common libraries and configuration files
 require_once(__DIR__ . '/../../../lib/config.php');

@@ -4,7 +4,6 @@
  * Real-time OEE hourly data log streaming from data_oee_rows_hourly table
  */
 
-date_default_timezone_set('Asia/Jakarta');
 
 // Load required libraries
 require_once(__DIR__ . '/../../../lib/db.php');

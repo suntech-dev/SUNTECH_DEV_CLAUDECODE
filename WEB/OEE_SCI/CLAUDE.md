@@ -67,6 +67,12 @@ $hours = getWorkHoursForDate($pdo, $targetDate);
 
 **주의**: `dashboard_stream.php`는 날짜 로직이 다르므로 내부 `parseDashboardFilterParams` 사용 (stream_helper의 `parseFilterParams`와 인터페이스 불일치).
 
+### 타임존 설정 규칙
+- **`date_default_timezone_set('Asia/Jakarta')`는 `lib/db.php` 단 한 곳에만 선언한다.**
+- 개별 파일에 중복 선언 금지 — `require_once db.php` 시 자동 적용됨
+- 클래스 생성자에서 `$pdo`가 필요한 경우: `global $pdo; $this->pdo = $pdo;`
+- `lib/worktime_database.php`는 삭제됨 — `lib/db.php`로 대체
+
 ### 파일 경로 규칙
 - 절대경로: `__DIR__ . '/../../lib/db.php'` 형식 사용
 

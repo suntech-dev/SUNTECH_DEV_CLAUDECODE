@@ -4,7 +4,7 @@
 ## init = 옵션 리스트의 첫번째 항목의 이름 ex) None, Line, AllLine (None이면 사용안함)
 ## kind = factoryData 값이 없을 경우 처리할 방법. 'ALL' 이면 전체 Line 리턴
 
-require_once(__DIR__ . '/../../../lib/worktime_database.php');
+require_once(__DIR__ . '/../../../lib/db.php');
 
 $factoryData = isset($_POST['factoryData']) ? trim($_POST['factoryData']) : '';
 $init        = isset($_POST['init']) ? trim($_POST['init']) : 'Line';            // 그룹 OPTION 의 첫번째 항목 이름

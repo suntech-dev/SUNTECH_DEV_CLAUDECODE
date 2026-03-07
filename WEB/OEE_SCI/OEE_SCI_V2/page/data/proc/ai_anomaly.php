@@ -10,7 +10,6 @@
  *   { code, anomalies: [...], summary: {...} }
  */
 
-date_default_timezone_set('Asia/Jakarta');
 
 require_once(__DIR__ . '/../../../lib/db.php');
 require_once(__DIR__ . '/../../../lib/statistics.lib.php');

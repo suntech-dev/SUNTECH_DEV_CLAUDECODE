@@ -1,6 +1,7 @@
 <?php
 ## New CPU 패턴재봉기 & Andon 디바이스
 
+// 타임존 중앙 설정 — 개별 파일에 중복 선언하지 말 것
 date_default_timezone_set('Asia/Jakarta');
 
 require_once('config.php');

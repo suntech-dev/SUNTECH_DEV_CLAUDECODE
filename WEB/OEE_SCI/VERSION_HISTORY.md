@@ -1,7 +1,7 @@
 # OEE_SCI 버전 이력
 
 > 최초 작성: 2026-03-06
-> 마지막 업데이트: 2026-03-07 (Phase 2-C~3-C 완료: stream 파일 쿼리 최적화 및 공통 라이브러리 통합)
+> 마지막 업데이트: 2026-03-07 (Phase 4 완료: 타임존 중앙화, worktime_database.php 통합, report_stream 버그 수정)
 
 ---
 
@@ -71,6 +71,9 @@
 | 2026-03-07 | **[Phase 3-B 완료]** 9개 stream 파일(`data_oee`, `log_oee`, `data_downtime`, `data_andon`, `data_defective`, `log_oee_hourly`, `log_oee_row`, `oee_report`, `dashboard`) `stream_helper.lib.php` 통합 — 중복 코드 약 350줄 제거 |
 | 2026-03-07 | **[Phase 3-C 완료]** `log_oee_hourly_stream.php`, `log_oee_row_stream.php` 해시 버그 수정 (`\|\| count($data) > 0` 조건 제거 — 데이터 미변경 시 불필요한 SSE 전송 방지) |
 | 2026-03-07 | `dashboard_stream.php` 내부 `parseFilterParams` → `parseDashboardFilterParams` rename (`stream_helper.lib.php` 함수명 충돌 방지) |
+| 2026-03-07 | **[Phase 4-A 완료]** `date_default_timezone_set('Asia/Jakarta')` 중앙화 — 27개 파일 → `lib/db.php` 단 1곳 관리, `lib/get_shift.lib.php` 오타(`Jajarta`) 수정 포함 |
+| 2026-03-07 | **[Phase 4-B 완료]** `lib/worktime_database.php` → `lib/db.php` 통합 후 삭제 — 5개 파일 경로 업데이트, `inc/worktime_head.php` 타임존 중복 제거 |
+| 2026-03-07 | **[Phase 4-C 완료]** `report_stream.php` `getDBConnection()` 미선언 Fatal error 버그 수정 → `global $pdo` 사용 |
 
 ---
 

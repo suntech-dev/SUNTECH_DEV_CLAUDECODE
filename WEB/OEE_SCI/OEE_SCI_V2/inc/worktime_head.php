@@ -1,11 +1,9 @@
 <?php
 ## CSG version (2023.03.09 Start. dev@suntech.asia)
 ## Bootstrap 사용 안함. Factory, Zone, Line 적용.
-date_default_timezone_set('Asia/Jakarta');
-
 // $page_title = $page_title ?? 'Management';
 // require_once('./lib/session.php');
-require_once('../../lib/worktime_database.php');
+require_once(__DIR__ . '/../lib/db.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">

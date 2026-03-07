@@ -9,7 +9,6 @@
  * - Removed unnecessary info_factory/info_line JOINs from type stats query
  */
 
-date_default_timezone_set('Asia/Jakarta');
 
 require_once(__DIR__ . '/../../../lib/db.php');
 require_once(__DIR__ . '/../../../lib/api_helper.lib.php');

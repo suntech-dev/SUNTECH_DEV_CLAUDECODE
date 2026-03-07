@@ -1,7 +1,7 @@
 <?php
 ## CSG version (2023.03.09 Start. dev@suntech.asia)
 ## Bootstrap 사용 안함. Factory, Zone, Line 적용.
-require_once(__DIR__ . '/../../../lib/worktime_database.php');
+require_once(__DIR__ . '/../../../lib/db.php');
 require_once(__DIR__ . '/../../../lib/worktime_common.php');
 // require_once('../lib/database.php');
 // require_once('../lib/common.php');

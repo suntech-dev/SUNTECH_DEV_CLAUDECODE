@@ -1,6 +1,6 @@
 <?php
 ## CSG version (2023.03.09 Start. dev@suntech.asia)
-require_once(__DIR__ . '/../../../lib/worktime_database.php');
+require_once(__DIR__ . '/../../../lib/db.php');
 require_once(__DIR__ . '/../../../lib/worktime_common.php');
 
 $now_date = date('Y-m-d', $_SERVER['REQUEST_TIME']);    // korea date type

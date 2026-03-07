@@ -4,7 +4,6 @@
  * Real-time OEE data streaming with 3-level filtering support
  */
 
-date_default_timezone_set('Asia/Jakarta');
 
 // Load required libraries
 require_once(__DIR__ . '/../../../lib/db.php');

@@ -16,14 +16,9 @@ class AIReportStreamer {
     private $maxExecutionTime = 3600; // 1시간
     
     public function __construct() {
-        // 시간대 설정
-        date_default_timezone_set('Asia/Jakarta');
-        
-        // 데이터베이스 연결
-        $this->pdo = getDBConnection();
-        if (!$this->pdo) {
-            die('Database connection failed');
-        }
+        // 데이터베이스 연결 (db.php의 전역 $pdo 사용)
+        global $pdo;
+        $this->pdo = $pdo;
         
         // 필터 파라미터 수집
         $this->filters = $this->collectFilters();
