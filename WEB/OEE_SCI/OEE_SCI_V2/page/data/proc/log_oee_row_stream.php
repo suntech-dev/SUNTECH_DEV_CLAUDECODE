@@ -11,6 +11,7 @@ require_once(__DIR__ . '/../../../lib/db.php');
 require_once(__DIR__ . '/../../../lib/api_helper.lib.php');
 require_once(__DIR__ . '/../../../lib/worktime.lib.php');
 require_once(__DIR__ . '/../../../lib/get_shift.lib.php');
+require_once(__DIR__ . '/../../../lib/stream_helper.lib.php');
 
 // SSE headers
 header('Content-Type: text/event-stream');
@@ -26,48 +27,7 @@ if (ob_get_level()) ob_end_clean();
 // Initialize API helper
 $apiHelper = new ApiHelper($pdo);
 
-function parseFilterParams() {
-  $params = [];
-  $where_clauses = [];
-
-  if (!empty($_GET['factory_filter'])) {
-    $where_clauses[] = 'dor.factory_idx = ?';
-    $params[] = $_GET['factory_filter'];
-  }
-
-  if (!empty($_GET['line_filter'])) {
-    $where_clauses[] = 'dor.line_idx = ?';
-    $params[] = $_GET['line_filter'];
-  }
-
-  if (!empty($_GET['machine_filter'])) {
-    $where_clauses[] = 'dor.machine_idx = ?';
-    $params[] = $_GET['machine_filter'];
-  }
-
-  if (!empty($_GET['shift_filter'])) {
-    $where_clauses[] = 'dor.shift_idx = ?';
-    $params[] = $_GET['shift_filter'];
-  }
-
-  if (!empty($_GET['start_date'])) {
-    $where_clauses[] = 'dor.work_date >= ?';
-    $params[] = $_GET['start_date'];
-  }
-
-  if (!empty($_GET['end_date'])) {
-    $where_clauses[] = 'dor.work_date <= ?';
-    $params[] = $_GET['end_date'];
-  }
-
-  if (empty($_GET['start_date']) && empty($_GET['end_date'])) {
-    $where_clauses[] = 'dor.work_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)';
-  }
-
-  $where_sql = count($where_clauses) > 0 ? ' WHERE ' . implode(' AND ', $where_clauses) : '';
-
-  return ['where_sql' => $where_sql, 'params' => $params];
-}
+// parseFilterParams(), sendSSEData() → stream_helper.lib.php
 
 function getOeeRowDataLog($pdo, $where_sql, $params, $limit = 1000) {
   try {
@@ -238,18 +198,12 @@ function getOeeRowStats($pdo, $where_sql, $params) {
   }
 }
 
-function sendSSEData($eventType, $data) {
-  echo "event: {$eventType}\n";
-  echo "data: " . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n\n";
-  flush();
-}
-
 function startStreaming($pdo) {
   $lastDataHash = '';
   $startTime = time();
   $maxRunTime = 3600;
 
-  $filterConfig = parseFilterParams();
+  $filterConfig = parseFilterParams('dor', 'work_date', true, '7 DAY');
   $limit = !empty($_GET['limit']) ? (int)$_GET['limit'] : 1000;
 
   sendSSEData('connected', [
@@ -324,7 +278,7 @@ function startStreaming($pdo) {
 
       $currentDataHash = md5(serialize($hashData));
 
-      if ($currentDataHash !== $lastDataHash || count($oeeRowDataLog) > 0) {
+      if ($currentDataHash !== $lastDataHash) {
         $responseData = [
           'timestamp' => date('Y-m-d H:i:s'),
           'stats' => $stats,

@@ -1,7 +1,7 @@
 # OEE_SCI 버전 이력
 
 > 최초 작성: 2026-03-06
-> 마지막 업데이트: 2026-03-06 (F5~F7 완료: 품질파수꾼·OEE오버레이·다운타임위험도 / F12~F13 완료: 스트리밍·최적화)
+> 마지막 업데이트: 2026-03-07 (Phase 2-C~3-C 완료: stream 파일 쿼리 최적화 및 공통 라이브러리 통합)
 
 ---
 
@@ -66,6 +66,11 @@
 | 2026-03-06 | `page/data/js/ai_optimization.js` — 최적화 제안 프론트엔드: 우선순위 카드 + 현재/잠재 OEE 바 시각화 + 병목 하이라이트 + 개선 제안 접기/펼치기 |
 | 2026-03-06 | `page/data/ai_dashboard.php` — 섹션 4(실시간 AI 스트리밍) + 섹션 5(생산 최적화 제안) 추가, `ai_stream_monitor.js` · `ai_optimization.js` 로드 |
 | 2026-03-06 | `page/data/css/ai_dashboard.css` — F12 스트림 피드(.ai-stream-feed/event/event__header 등) + F13 최적화 카드(.ai-opt-card/bar-wrap/bottleneck/components/suggestions 등) 스타일 추가 |
+| 2026-03-07 | **[Phase 2-C 완료]** `page/data/proc/data_defective_stream.php` `getDefectiveTypeStats()` N+1 쿼리 → `info_defective LEFT JOIN data_defective` 단일 쿼리로 최적화 |
+| 2026-03-07 | **[Phase 3-A 완료]** `lib/stream_helper.lib.php` 신규 생성 — `sendSSEData`, `parseFilterParams`, `getWorkHoursForDate` 3개 공통 함수 중앙화 |
+| 2026-03-07 | **[Phase 3-B 완료]** 9개 stream 파일(`data_oee`, `log_oee`, `data_downtime`, `data_andon`, `data_defective`, `log_oee_hourly`, `log_oee_row`, `oee_report`, `dashboard`) `stream_helper.lib.php` 통합 — 중복 코드 약 350줄 제거 |
+| 2026-03-07 | **[Phase 3-C 완료]** `log_oee_hourly_stream.php`, `log_oee_row_stream.php` 해시 버그 수정 (`\|\| count($data) > 0` 조건 제거 — 데이터 미변경 시 불필요한 SSE 전송 방지) |
+| 2026-03-07 | `dashboard_stream.php` 내부 `parseFilterParams` → `parseDashboardFilterParams` rename (`stream_helper.lib.php` 함수명 충돌 방지) |
 
 ---
 

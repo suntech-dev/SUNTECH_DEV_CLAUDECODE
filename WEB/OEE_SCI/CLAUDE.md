@@ -32,6 +32,41 @@ echo "data: " . json_encode($data) . "\n\n";
 flush();
 ```
 
+### SSE Stream 공통 라이브러리 (`lib/stream_helper.lib.php`)
+
+모든 SSE stream 파일은 아래 공통 라이브러리를 사용한다. 로컬 중복 정의 금지.
+
+```php
+require_once(__DIR__ . '/../../../lib/stream_helper.lib.php');
+
+// sendSSEData($eventType, $data)
+sendSSEData('oee_data', $payload);
+
+// parseFilterParams($tableAlias, $dateColumn, $isDateOnly, $defaultInterval)
+// 반환: ['where_sql' => string, 'params' => array]
+$filter = parseFilterParams('do', 'work_date', true, '7 DAY');
+$stmt = $pdo->prepare("SELECT ... FROM data_oee do" . $filter['where_sql']);
+$stmt->execute($filter['params']);
+
+// getWorkHoursForDate($pdo, $targetDate) — Worktime 클래스 래퍼
+$hours = getWorkHoursForDate($pdo, $targetDate);
+```
+
+**파일별 parseFilterParams 호출 규칙:**
+
+| 파일 | tableAlias | dateColumn | isDateOnly | defaultInterval |
+| ---- | ---------- | ---------- | ---------- | --------------- |
+| data_oee_stream | `do` | `work_date` | true | `7 DAY` |
+| log_oee_stream | `do` | `work_date` | true | `7 DAY` |
+| log_oee_hourly_stream | `doh` | `work_date` | true | `7 DAY` |
+| log_oee_row_stream | `dor` | `work_date` | true | `7 DAY` |
+| oee_report_stream | `do` | `work_date` | true | `7 DAY` |
+| data_downtime_stream | `dd` | `reg_date` | false | `2 DAY` |
+| data_andon_stream | `da` | `reg_date` | false | `2 DAY` |
+| data_defective_stream | `dd` | `reg_date` | false | `2 DAY` |
+
+**주의**: `dashboard_stream.php`는 날짜 로직이 다르므로 내부 `parseDashboardFilterParams` 사용 (stream_helper의 `parseFilterParams`와 인터페이스 불일치).
+
 ### 파일 경로 규칙
 - 절대경로: `__DIR__ . '/../../lib/db.php'` 형식 사용
 

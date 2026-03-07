@@ -1,23 +1,12 @@
 <?php
 /**
- * Downtime 데이터 실시간 스트리밍 API (Server-Sent Events)
- * 
- * 기능:
- * - data_downtime 테이블의 실시간 데이터를 SSE 방식으로 스트리밍
- * - Factory → Line → Machine 3단계 필터링 지원
- * - 날짜 범위 필터링 지원
- * - 실시간 상태 변화 감지 및 전송
- * 
- * 사용법:
- * GET /data/proc/data_downtime_stream.php
- * 
- * 파라미터:
- * - factory_filter: 공장 필터 (선택)
- * - line_filter: 라인 필터 (선택)  
- * - machine_filter: 기계 필터 (선택)
- * - start_date: 시작 날짜 (YYYY-MM-DD, 선택)
- * - end_date: 종료 날짜 (YYYY-MM-DD, 선택)
- * - limit: 조회 개수 제한 (기본: 100)
+ * Downtime Data Real-time Streaming API (Server-Sent Events)
+ * Real-time downtime data streaming with 3-level filtering support.
+ *
+ * Optimized (2026-03-07):
+ * - Merged getDowntimeTypeStats: 2 queries (info_downtime + data_downtime) + PHP merge
+ *   → 1 query (info_downtime LEFT JOIN data_downtime, filter in ON clause)
+ * - Removed unnecessary info_factory/info_line JOINs from type stats query
  */
 
 // 타임존 설정
@@ -28,6 +17,7 @@ require_once(__DIR__ . '/../../../lib/db.php');
 require_once(__DIR__ . '/../../../lib/api_helper.lib.php');
 require_once(__DIR__ . '/../../../lib/worktime.lib.php');
 require_once(__DIR__ . '/../../../lib/get_shift.lib.php');
+require_once(__DIR__ . '/../../../lib/stream_helper.lib.php');
 
 // SSE 헤더 설정
 header('Content-Type: text/event-stream');
@@ -43,57 +33,7 @@ if (ob_get_level()) ob_end_clean();
 // API 헬퍼 초기화
 $apiHelper = new ApiHelper($pdo);
 
-/**
- * 필터 파라미터 파싱 함수
- */
-function parseFilterParams() {
-  $params = [];
-  $where_clauses = [];
-  
-  // Factory 필터
-  if (!empty($_GET['factory_filter'])) {
-    $where_clauses[] = 'dd.factory_idx = ?';
-    $params[] = $_GET['factory_filter'];
-  }
-  
-  // Line 필터  
-  if (!empty($_GET['line_filter'])) {
-    $where_clauses[] = 'dd.line_idx = ?';
-    $params[] = $_GET['line_filter'];
-  }
-  
-  // Machine 필터
-  if (!empty($_GET['machine_filter'])) {
-    $where_clauses[] = 'dd.machine_idx = ?';
-    $params[] = $_GET['machine_filter'];
-  }
-  
-  // Shift 필터
-  if (!empty($_GET['shift_filter'])) {
-    $where_clauses[] = 'dd.shift_idx = ?';
-    $params[] = $_GET['shift_filter'];
-  }
-  
-  // 날짜 범위 필터
-  if (!empty($_GET['start_date'])) {
-    $where_clauses[] = 'dd.reg_date >= ?';
-    $params[] = $_GET['start_date'] . ' 00:00:00';
-  }
-  
-  if (!empty($_GET['end_date'])) {
-    $where_clauses[] = 'dd.reg_date <= ?';
-    $params[] = $_GET['end_date'] . ' 23:59:59';
-  }
-  
-  // 날짜 필터가 없을 때만 기본 범위 적용 (최근 2일)
-  if (empty($_GET['start_date']) && empty($_GET['end_date'])) {
-    $where_clauses[] = 'dd.reg_date >= DATE_SUB(NOW(), INTERVAL 2 DAY)';
-  }
-  
-  $where_sql = count($where_clauses) > 0 ? ' WHERE ' . implode(' AND ', $where_clauses) : '';
-  
-  return ['where_sql' => $where_sql, 'params' => $params];
-}
+// parseFilterParams(), getWorkHoursForDate(), sendSSEData() → stream_helper.lib.php
 
 /**
  * Downtime 데이터 조회 함수
@@ -236,167 +176,40 @@ function getDowntimeStats($pdo, $where_sql, $params) {
 }
 
 /**
- * 다운타임 유형별 통계 데이터 조회 (차트용)
+ * Downtime type statistics for charts
+ * Optimized: info_downtime LEFT JOIN data_downtime (was 2 queries + PHP merge)
+ * Filter conditions moved to ON clause so all active types appear even with no data.
  */
 function getDowntimeTypeStats($pdo, $where_sql, $params) {
   try {
-    // 먼저 모든 활성 다운타임 유형 조회
-    $allDowntimesQuery = "SELECT downtime_name FROM info_downtime WHERE status = 'Y' ORDER BY downtime_name";
-    $allDowntimesStmt = $pdo->prepare($allDowntimesQuery);
-    $allDowntimesStmt->execute();
-    $allDowntimes = $allDowntimesStmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    // info_downtime 테이블에 데이터가 없으면 data_downtime에서 고유한 다운타임 유형 조회 후 0으로 채우기
-    if (empty($allDowntimes)) {
-      // 먼저 data_downtime에 있는 모든 고유한 downtime_name 조회
-      $uniqueDowntimesQuery = "SELECT DISTINCT dd.downtime_name FROM data_downtime dd ORDER BY dd.downtime_name";
-      $uniqueDowntimesStmt = $pdo->prepare($uniqueDowntimesQuery);
-      $uniqueDowntimesStmt->execute();
-      $uniqueDowntimes = $uniqueDowntimesStmt->fetchAll(PDO::FETCH_ASSOC);
-      
-      // 각 다운타임 유형을 allDowntimes 형태로 변환
-      $allDowntimes = $uniqueDowntimes;
-    }
-    
-    // 실제 데이터가 있는 다운타임 유형별 통계 조회
-    $dataQuery = "
+    // Convert WHERE clause to ON conditions for LEFT JOIN
+    $on_conditions = !empty(trim($where_sql))
+      ? ' AND ' . trim(preg_replace('/^\s*WHERE\s*/i', '', $where_sql))
+      : '';
+
+    $sql = "
       SELECT
-        dd.downtime_name,
-        COUNT(*) as count,
-        SUM(CASE WHEN dd.status = 'Warning' THEN 1 ELSE 0 END) as warning_count,
-        SUM(CASE WHEN dd.status = 'Completed' THEN 1 ELSE 0 END) as completed_count,
-        -- 총 다운타임 지속시간 (초 단위)
-        SUM(COALESCE(dd.duration_sec, 0)) as total_duration_sec,
-        -- 총 다운타임 지속시간 (분 단위, 소수점 1자리)
-        ROUND(SUM(COALESCE(dd.duration_sec, 0)) / 60.0, 1) as total_duration_min
-      FROM data_downtime dd
-      LEFT JOIN info_factory f ON dd.factory_idx = f.idx
-      LEFT JOIN info_line l ON dd.line_idx = l.idx
-      {$where_sql}
-      GROUP BY dd.downtime_name
-      ORDER BY dd.downtime_name ASC
+        id.downtime_name,
+        COALESCE(COUNT(dd.idx), 0) as count,
+        COALESCE(SUM(CASE WHEN dd.status = 'Warning' THEN 1 ELSE 0 END), 0) as warning_count,
+        COALESCE(SUM(CASE WHEN dd.status = 'Completed' THEN 1 ELSE 0 END), 0) as completed_count,
+        COALESCE(SUM(dd.duration_sec), 0) as total_duration_sec,
+        COALESCE(ROUND(SUM(COALESCE(dd.duration_sec, 0)) / 60.0, 1), 0.0) as total_duration_min
+      FROM info_downtime id
+      LEFT JOIN data_downtime dd
+        ON id.downtime_name = dd.downtime_name{$on_conditions}
+      WHERE id.status = 'Y'
+      GROUP BY id.downtime_name
+      ORDER BY id.downtime_name ASC
     ";
-    
-    $dataStmt = $pdo->prepare($dataQuery);
-    $dataStmt->execute($params);
-    $actualData = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    // 실제 데이터를 downtime_name으로 인덱싱
-    $dataByName = [];
-    foreach ($actualData as $item) {
-      $dataByName[$item['downtime_name']] = $item;
-    }
-    
-    // 모든 다운타임 유형에 대해 결과 구성
-    $result = [];
-    foreach ($allDowntimes as $downtime) {
-      $downtimeName = $downtime['downtime_name'];
-      if (isset($dataByName[$downtimeName])) {
-        // 실제 데이터가 있는 경우
-        $result[] = $dataByName[$downtimeName];
-      } else {
-        // 데이터가 없는 경우 0으로 설정
-        $result[] = [
-          'downtime_name' => $downtimeName,
-          'count' => 0,
-          'warning_count' => 0,
-          'completed_count' => 0,
-          'total_duration_sec' => 0,
-          'total_duration_min' => 0.0
-        ];
-      }
-    }
-    
-    // 다운타임 이름(downtime_name) 기준으로 알파벳순 정렬
-    usort($result, function($a, $b) {
-      return strcmp($a['downtime_name'], $b['downtime_name']);
-    });
-    
-    return $result;
-    
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
   } catch (PDOException $e) {
-    error_log("다운타임 유형별 통계 조회 오류: " . $e->getMessage());
+    error_log("Downtime type stats query error: " . $e->getMessage());
     return [];
-  }
-}
-
-/**
- * Get work hours information for a specific date
- * @param PDO $pdo Database connection
- * @param string $targetDate Target date in Y-m-d format
- * @return array|null Work hours information
- */
-function getWorkHoursForDate($pdo, $targetDate) {
-  try {
-    $worktime = new Worktime($pdo);
-    $factory_idx = '';
-    $line_idx = '';
-
-    // Get shift information for target date
-    $dayShifts = $worktime->getDayShift($targetDate, $factory_idx, $line_idx);
-
-    if (!$dayShifts || !isset($dayShifts['shift']) || empty($dayShifts['shift'])) {
-      return null;
-    }
-
-    $shifts = $dayShifts['shift'];
-
-    // Process all shifts to find earliest start and latest end
-    $earliestStartMinutes = 24 * 60; // Initialize to end of day
-    $latestEndMinutes = 0;
-
-    foreach ($shifts as $shift) {
-      if (empty($shift['available_stime']) || empty($shift['available_etime'])) {
-        continue;
-      }
-
-      // Convert start time to minutes since midnight
-      list($startHour, $startMin) = explode(':', $shift['available_stime']);
-      $startMinutes = (int)$startHour * 60 + (int)$startMin;
-
-      // Convert end time to minutes since midnight
-      list($endHour, $endMin) = explode(':', $shift['available_etime']);
-      $endMinutes = (int)$endHour * 60 + (int)$endMin;
-
-      // Add over_time to end minutes
-      if (isset($shift['over_time']) && $shift['over_time'] > 0) {
-        $endMinutes += (int)$shift['over_time'];
-      }
-
-      // Handle overnight shifts (end time < start time)
-      if ($endMinutes <= $startMinutes) {
-        $endMinutes += 24 * 60; // Add 24 hours
-      }
-
-      // Track earliest start and latest end
-      if ($startMinutes < $earliestStartMinutes) {
-        $earliestStartMinutes = $startMinutes;
-      }
-      if ($endMinutes > $latestEndMinutes) {
-        $latestEndMinutes = $endMinutes;
-      }
-    }
-
-    // Convert back to HH:mm format
-    $startHour = floor($earliestStartMinutes / 60);
-    $startMin = $earliestStartMinutes % 60;
-    $workStartTime = sprintf('%02d:%02d', $startHour, $startMin);
-
-    $endHour = floor($latestEndMinutes / 60) % 24; // Modulo 24 for display
-    $endMin = $latestEndMinutes % 60;
-    $workEndTime = sprintf('%02d:%02d', $endHour, $endMin);
-
-    return [
-      'start_time' => $workStartTime,
-      'end_time' => $workEndTime,
-      'start_minutes' => $earliestStartMinutes,
-      'end_minutes' => $latestEndMinutes,
-      'shifts' => array_values($shifts)
-    ];
-
-  } catch (Exception $e) {
-    error_log("Work hours query error: " . $e->getMessage());
-    return null;
   }
 }
 
@@ -647,15 +460,6 @@ function getActiveDowntimes($pdo, $where_sql, $params) {
 }
 
 /**
- * SSE 데이터 전송 함수
- */
-function sendSSEData($eventType, $data) {
-  echo "event: {$eventType}\n";
-  echo "data: " . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n\n";
-  flush();
-}
-
-/**
  * 메인 스트리밍 로직
  */
 function startStreaming($pdo) {
@@ -664,7 +468,7 @@ function startStreaming($pdo) {
   $maxRunTime = 3600; // 1시간 최대 실행
 
   // 필터 파라미터 파싱
-  $filterConfig = parseFilterParams();
+  $filterConfig = parseFilterParams('dd', 'reg_date', false, '2 DAY');
   $limit = !empty($_GET['limit']) ? (int)$_GET['limit'] : 100;
 
   // 성능 측정을 위한 초기 로깅

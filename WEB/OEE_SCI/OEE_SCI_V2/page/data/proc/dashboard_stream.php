@@ -10,6 +10,7 @@ require_once(__DIR__ . '/../../../lib/db.php');
 require_once(__DIR__ . '/../../../lib/api_helper.lib.php');
 require_once(__DIR__ . '/../../../lib/worktime.lib.php');
 require_once(__DIR__ . '/../../../lib/get_shift.lib.php');
+require_once(__DIR__ . '/../../../lib/stream_helper.lib.php');
 
 // SSE 헤더 설정
 header('Content-Type: text/event-stream');
@@ -25,9 +26,9 @@ if (ob_get_level()) ob_end_clean();
 $apiHelper = new ApiHelper($pdo);
 
 /**
- * 필터 파라미터 파싱
+ * 필터 파라미터 파싱 (dashboard 전용: BETWEEN/= 날짜 로직, 반환 키 'where')
  */
-function parseFilterParams($tableAlias = '') {
+function parseDashboardFilterParams($tableAlias = '') {
   $params = [];
   $where_clauses = [];
 
@@ -750,85 +751,7 @@ function getRateStatusText($startRate, $endRate) {
   }
 }
 
-/**
- * Get work hours information for a specific date
- * @param PDO $pdo Database connection
- * @param string $targetDate Target date in Y-m-d format
- * @return array|null Work hours information
- */
-function getWorkHoursForDate($pdo, $targetDate) {
-  try {
-    $worktime = new Worktime($pdo);
-    $factory_idx = '';
-    $line_idx = '';
-
-    // Get shift information for target date
-    $dayShifts = $worktime->getDayShift($targetDate, $factory_idx, $line_idx);
-
-    if (!$dayShifts || !isset($dayShifts['shift']) || empty($dayShifts['shift'])) {
-      return null;
-    }
-
-    $shifts = $dayShifts['shift'];
-
-    // Process all shifts to find earliest start and latest end
-    $earliestStartMinutes = 24 * 60; // Initialize to end of day
-    $latestEndMinutes = 0;
-
-    foreach ($shifts as $shift) {
-      if (empty($shift['available_stime']) || empty($shift['available_etime'])) {
-        continue;
-      }
-
-      // Convert start time to minutes since midnight
-      list($startHour, $startMin) = explode(':', $shift['available_stime']);
-      $startMinutes = (int)$startHour * 60 + (int)$startMin;
-
-      // Convert end time to minutes since midnight
-      list($endHour, $endMin) = explode(':', $shift['available_etime']);
-      $endMinutes = (int)$endHour * 60 + (int)$endMin;
-
-      // Add over_time to end minutes
-      if (isset($shift['over_time']) && $shift['over_time'] > 0) {
-        $endMinutes += (int)$shift['over_time'];
-      }
-
-      // Handle overnight shifts (end time < start time)
-      if ($endMinutes <= $startMinutes) {
-        $endMinutes += 24 * 60; // Add 24 hours
-      }
-
-      // Track earliest start and latest end
-      if ($startMinutes < $earliestStartMinutes) {
-        $earliestStartMinutes = $startMinutes;
-      }
-      if ($endMinutes > $latestEndMinutes) {
-        $latestEndMinutes = $endMinutes;
-      }
-    }
-
-    // Convert back to HH:mm format
-    $startHour = floor($earliestStartMinutes / 60);
-    $startMin = $earliestStartMinutes % 60;
-    $workStartTime = sprintf('%02d:%02d', $startHour, $startMin);
-
-    $endHour = floor($latestEndMinutes / 60) % 24; // Modulo 24 for display
-    $endMin = $latestEndMinutes % 60;
-    $workEndTime = sprintf('%02d:%02d', $endHour, $endMin);
-
-    return [
-      'start_time' => $workStartTime,
-      'end_time' => $workEndTime,
-      'start_minutes' => $earliestStartMinutes,
-      'end_minutes' => $latestEndMinutes,
-      'shifts' => array_values($shifts)
-    ];
-
-  } catch (Exception $e) {
-    error_log("Work hours query error: " . $e->getMessage());
-    return null;
-  }
-}
+// getWorkHoursForDate() → stream_helper.lib.php
 
 /**
  * OEE Trend 데이터 조회
@@ -1272,11 +1195,11 @@ function getProductionData($pdo, $filter) {
  */
 function sendDashboardData($pdo) {
   // 각 테이블에 맞는 alias로 필터 생성
-  $oeeFilter = parseFilterParams(); // data_oee는 alias 없이 사용
-  $andonFilter = parseFilterParams('da'); // data_andon은 'da' alias 사용
-  $downtimeFilter = parseFilterParams('dd'); // data_downtime은 'dd' alias 사용
-  $defectiveFilter = parseFilterParams('dd'); // data_defective는 'dd' alias 사용
-  $productionFilter = parseFilterParams(); // data_oee는 alias 없이 사용
+  $oeeFilter = parseDashboardFilterParams(); // data_oee는 alias 없이 사용
+  $andonFilter = parseDashboardFilterParams('da'); // data_andon은 'da' alias 사용
+  $downtimeFilter = parseDashboardFilterParams('dd'); // data_downtime은 'dd' alias 사용
+  $defectiveFilter = parseDashboardFilterParams('dd'); // data_defective는 'dd' alias 사용
+  $productionFilter = parseDashboardFilterParams(); // data_oee는 alias 없이 사용
 
   $dashboard_data = [
     'timestamp' => time(),

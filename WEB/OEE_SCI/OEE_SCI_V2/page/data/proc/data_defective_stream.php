@@ -1,7 +1,11 @@
 <?php
 /**
  * Defective Data Real-time Streaming API (Server-Sent Events)
- * 
+ * Optimized (2026-03-07):
+ * - Merged getDefectiveTypeStats: 2 queries (info_defective + data_defective) + PHP merge
+ *   → 1 query (info_defective LEFT JOIN data_defective, filter in ON clause)
+ * - Removed unnecessary info_factory/info_line JOINs from type stats query
+ *
  * Features:
  * - Real-time data streaming from data_defective table via SSE
  * - 3-level filtering support (Factory → Line → Machine)
@@ -16,6 +20,7 @@ require_once(__DIR__ . '/../../../lib/db.php');
 require_once(__DIR__ . '/../../../lib/api_helper.lib.php');
 require_once(__DIR__ . '/../../../lib/worktime.lib.php');
 require_once(__DIR__ . '/../../../lib/get_shift.lib.php');
+require_once(__DIR__ . '/../../../lib/stream_helper.lib.php');
 
 header('Content-Type: text/event-stream');
 header('Cache-Control: no-cache');
@@ -28,48 +33,7 @@ if (ob_get_level()) ob_end_clean();
 
 $apiHelper = new ApiHelper($pdo);
 
-function parseFilterParams() {
-  $params = [];
-  $where_clauses = [];
-  
-  if (!empty($_GET['factory_filter'])) {
-    $where_clauses[] = 'dd.factory_idx = ?';
-    $params[] = $_GET['factory_filter'];
-  }
-  
-  if (!empty($_GET['line_filter'])) {
-    $where_clauses[] = 'dd.line_idx = ?';
-    $params[] = $_GET['line_filter'];
-  }
-  
-  if (!empty($_GET['machine_filter'])) {
-    $where_clauses[] = 'dd.machine_idx = ?';
-    $params[] = $_GET['machine_filter'];
-  }
-  
-  if (!empty($_GET['shift_filter'])) {
-    $where_clauses[] = 'dd.shift_idx = ?';
-    $params[] = $_GET['shift_filter'];
-  }
-  
-  if (!empty($_GET['start_date'])) {
-    $where_clauses[] = 'dd.reg_date >= ?';
-    $params[] = $_GET['start_date'] . ' 00:00:00';
-  }
-  
-  if (!empty($_GET['end_date'])) {
-    $where_clauses[] = 'dd.reg_date <= ?';
-    $params[] = $_GET['end_date'] . ' 23:59:59';
-  }
-  
-  if (empty($_GET['start_date']) && empty($_GET['end_date'])) {
-    $where_clauses[] = 'dd.reg_date >= DATE_SUB(NOW(), INTERVAL 2 DAY)';
-  }
-  
-  $where_sql = count($where_clauses) > 0 ? ' WHERE ' . implode(' AND ', $where_clauses) : '';
-  
-  return ['where_sql' => $where_sql, 'params' => $params];
-}
+// parseFilterParams(), getWorkHoursForDate(), sendSSEData() → stream_helper.lib.php
 
 function getDefectiveData($pdo, $where_sql, $params, $limit = 100) {
   try {
@@ -256,145 +220,30 @@ function getDefectiveStats($pdo, $where_sql, $params) {
 
 function getDefectiveTypeStats($pdo, $where_sql, $params) {
   try {
-    $allDefectivesQuery = "SELECT defective_name FROM info_defective WHERE status = 'Y' ORDER BY defective_name";
-    $allDefectivesStmt = $pdo->prepare($allDefectivesQuery);
-    $allDefectivesStmt->execute();
-    $allDefectives = $allDefectivesStmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    if (empty($allDefectives)) {
-      $uniqueDefectivesQuery = "SELECT DISTINCT dd.defective_name FROM data_defective dd ORDER BY dd.defective_name";
-      $uniqueDefectivesStmt = $pdo->prepare($uniqueDefectivesQuery);
-      $uniqueDefectivesStmt->execute();
-      $uniqueDefectives = $uniqueDefectivesStmt->fetchAll(PDO::FETCH_ASSOC);
-      
-      $allDefectives = $uniqueDefectives;
-    }
-    
-    $dataQuery = "
-      SELECT 
-        dd.defective_name,
-        COUNT(*) as count,
-        SUM(CASE WHEN dd.status = 'Warning' THEN 1 ELSE 0 END) as warning_count
-      FROM data_defective dd
-      LEFT JOIN info_factory f ON dd.factory_idx = f.idx
-      LEFT JOIN info_line l ON dd.line_idx = l.idx  
-      {$where_sql}
-      GROUP BY dd.defective_name
-      ORDER BY count DESC
+    $on_conditions = !empty(trim($where_sql))
+      ? ' AND ' . trim(preg_replace('/^\s*WHERE\s*/i', '', $where_sql))
+      : '';
+
+    $sql = "
+      SELECT
+        id.defective_name,
+        COALESCE(COUNT(dd.idx), 0) as count,
+        COALESCE(SUM(CASE WHEN dd.status = 'Warning' THEN 1 ELSE 0 END), 0) as warning_count
+      FROM info_defective id
+      LEFT JOIN data_defective dd
+        ON id.idx = dd.defective_idx{$on_conditions}
+      WHERE id.status = 'Y'
+      GROUP BY id.idx, id.defective_name
+      ORDER BY id.defective_name ASC
     ";
-    
-    $dataStmt = $pdo->prepare($dataQuery);
-    $dataStmt->execute($params);
-    $actualData = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    $dataByName = [];
-    foreach ($actualData as $item) {
-      $dataByName[$item['defective_name']] = $item;
-    }
-    
-    $result = [];
-    foreach ($allDefectives as $defective) {
-      $defectiveName = $defective['defective_name'];
-      if (isset($dataByName[$defectiveName])) {
-        $result[] = $dataByName[$defectiveName];
-      } else {
-        $result[] = [
-          'defective_name' => $defectiveName,
-          'count' => 0,
-          'warning_count' => 0
-        ];
-      }
-    }
-    
-    // Sort by defective_name alphabetically (maintain alphabetical order)
-    usort($result, function($a, $b) {
-      return strcmp($a['defective_name'], $b['defective_name']);
-    });
-    
-    return $result;
-    
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
   } catch (PDOException $e) {
     error_log("Defective type stats query error: " . $e->getMessage());
     return [];
-  }
-}
-
-/**
- * Get work hours information for a specific date
- * Returns the shift start and end times to display on chart X-axis
- * Handles multiple shifts and overnight shifts properly
- */
-function getWorkHoursForDate($pdo, $targetDate) {
-  try {
-    $worktime = new Worktime($pdo);
-    $factory_idx = '';
-    $line_idx = '';
-
-    // Get shift information for target date
-    $dayShifts = $worktime->getDayShift($targetDate, $factory_idx, $line_idx);
-
-    if (!$dayShifts || !isset($dayShifts['shift']) || empty($dayShifts['shift'])) {
-      return null;
-    }
-
-    $shifts = $dayShifts['shift'];
-
-    // Process all shifts to find earliest start and latest end
-    $earliestStartMinutes = 24 * 60; // Initialize to end of day
-    $latestEndMinutes = 0;
-
-    foreach ($shifts as $shift) {
-      if (empty($shift['available_stime']) || empty($shift['available_etime'])) {
-        continue;
-      }
-
-      // Convert start time to minutes since midnight
-      list($startHour, $startMin) = explode(':', $shift['available_stime']);
-      $startMinutes = (int)$startHour * 60 + (int)$startMin;
-
-      // Convert end time to minutes since midnight
-      list($endHour, $endMin) = explode(':', $shift['available_etime']);
-      $endMinutes = (int)$endHour * 60 + (int)$endMin;
-
-      // Add over_time to end minutes
-      if (isset($shift['over_time']) && $shift['over_time'] > 0) {
-        $endMinutes += (int)$shift['over_time'];
-      }
-
-      // Handle overnight shifts (end time < start time)
-      if ($endMinutes <= $startMinutes) {
-        $endMinutes += 24 * 60; // Add 24 hours
-      }
-
-      // Track earliest start and latest end
-      if ($startMinutes < $earliestStartMinutes) {
-        $earliestStartMinutes = $startMinutes;
-      }
-      if ($endMinutes > $latestEndMinutes) {
-        $latestEndMinutes = $endMinutes;
-      }
-    }
-
-    // Convert back to HH:mm format
-    $startHour = floor($earliestStartMinutes / 60);
-    $startMin = $earliestStartMinutes % 60;
-    $workStartTime = sprintf('%02d:%02d', $startHour, $startMin);
-
-    $endHour = floor($latestEndMinutes / 60) % 24; // Modulo 24 for display
-    $endMin = $latestEndMinutes % 60;
-    $workEndTime = sprintf('%02d:%02d', $endHour, $endMin);
-
-    return [
-      'start_time' => $workStartTime,
-      'end_time' => $workEndTime,
-      'start_minutes' => $earliestStartMinutes,
-      'end_minutes' => $latestEndMinutes,
-      'shifts' => array_values($shifts)
-    ];
-
-  } catch (Exception $e) {
-    error_log("Work hours query error: " . $e->getMessage());
-    return null;
   }
 }
 
@@ -609,18 +458,12 @@ function getActiveDefectives($pdo, $where_sql, $params) {
   }
 }
 
-function sendSSEData($eventType, $data) {
-  echo "event: {$eventType}\n";
-  echo "data: " . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n\n";
-  flush();
-}
-
 function startStreaming($pdo) {
   $lastDataHash = '';
   $startTime = time();
   $maxRunTime = 3600;
   
-  $filterConfig = parseFilterParams();
+  $filterConfig = parseFilterParams('dd', 'reg_date', false, '2 DAY');
   $limit = !empty($_GET['limit']) ? (int)$_GET['limit'] : 100;
   
   sendSSEData('connected', [
