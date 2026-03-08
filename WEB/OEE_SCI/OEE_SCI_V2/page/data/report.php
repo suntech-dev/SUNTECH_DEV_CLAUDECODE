@@ -483,10 +483,10 @@ require_once(__DIR__ . '/../../inc/nav-fiori.php');
 </footer>
 
 <!-- JavaScript 라이브러리 -->
-<script src="../assets/js/jquery-3.6.1.min.js"></script>
-<script src="../assets/js/moment.min.js"></script>
-<script src="../assets/js/daterangepicker.js"></script>
-<script src="../assets/js/chart.js"></script>
-<script src="js/report.js"></script>
+<script src="../../assets/js/jquery-3.6.1.min.js"></script>
+<script src="../../assets/js/moment.min.js"></script>
+<script src="../../assets/js/daterangepicker.js"></script>
+<script src="../../assets/js/chart.js"></script>
+<script src="js/ai_report.js"></script>
 
-<?php require_once(__DIR__ . '/../inc/foot.php'); ?>
+<?php require_once(__DIR__ . '/../../inc/foot.php'); ?>

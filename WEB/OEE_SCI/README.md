@@ -2,7 +2,7 @@
 
 > 최초 작성: 2026-03-06
 > 분석 버전: OEE_SCI_V2
-> 마지막 업데이트: 2026-03-08 (OEE_SCI_V2 사이니지 대시보드 2종 추가)
+> 마지막 업데이트: 2026-03-08 (AI 전략서 업데이트본 + 제안서 랜딩 페이지 신규 추가)
 
 ---
 
@@ -321,6 +321,8 @@ http://oee-sci.test/
 | 2026-03-06 | OEE_SCI_V2 | V1 기반 V2 생성, AI 통계 엔진 + AI Dashboard 구현 (F5~F13) |
 | 2026-03-07 | OEE_SCI_V2 | SSE stream 성능 최적화, 공통 라이브러리 통합, 타임존 중앙화 (Phase 2~4) |
 | 2026-03-08 | OEE_SCI_V2 | 1920×1080 사이니지 전용 dashboard_2.php + ai_dashboard_2.php 신규 생성 |
+| 2026-03-08 | OEE_SCI_V2 | F11 AI 리포트 엔진(ai_report_engine.php) + HTML Export(ai_report_export.php) 구현 |
+| 2026-03-08 | OEE_SCI_V2 | ai_dashboard_2.php Export 버튼 + 날짜 선택 모달 추가, linearRegression 버그 수정 |
 
 ---
 

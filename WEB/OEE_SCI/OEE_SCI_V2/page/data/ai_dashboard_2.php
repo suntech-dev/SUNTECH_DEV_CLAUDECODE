@@ -37,6 +37,7 @@ require_once(__DIR__ . '/../../inc/head.php');
       <option value="">All Machine</option>
     </select>
     <button id="aiRefreshBtn" class="fiori-btn fiori-btn--tertiary">Refresh</button>
+    <button id="exportReportBtn" class="fiori-btn fiori-btn--ghost">Export</button>
     <a href="ai_dashboard_manual_kor.html" target="_blank" class="fiori-btn fiori-btn--ghost" style="text-decoration:none;">Help</a>
   </div>
 
@@ -266,6 +267,106 @@ require_once(__DIR__ . '/../../inc/head.php');
 <script src="js/ai_dashboard.js"></script>
 <script src="js/ai_stream_monitor.js"></script>
 <script src="js/ai_optimization.js"></script>
+
+<!-- Export Report Modal -->
+<div id="exportModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;">
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:24px 28px;min-width:340px;box-shadow:0 8px 32px #000a;">
+    <div style="font-size:1rem;font-weight:600;color:#58a6ff;margin-bottom:16px;">Export Report — Select Period</div>
+
+    <!-- Preset buttons -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="export-preset fiori-btn fiori-btn--tertiary" data-range="today">Today</button>
+      <button class="export-preset fiori-btn fiori-btn--tertiary" data-range="yesterday">Yesterday</button>
+      <button class="export-preset fiori-btn fiori-btn--tertiary" data-range="1w">Last 7 Days</button>
+      <button class="export-preset fiori-btn fiori-btn--tertiary" data-range="1m">Last 30 Days</button>
+    </div>
+
+    <!-- Custom date range -->
+    <div style="font-size:.8rem;color:#8b949e;margin-bottom:6px;">Custom Range</div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:20px;">
+      <input type="date" id="exportDateFrom" class="fiori-input" style="flex:1;background:#21262d;color:#e6edf3;border:1px solid #30363d;border-radius:4px;padding:5px 8px;">
+      <span style="color:#8b949e;">~</span>
+      <input type="date" id="exportDateTo" class="fiori-input" style="flex:1;background:#21262d;color:#e6edf3;border:1px solid #30363d;border-radius:4px;padding:5px 8px;">
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button id="exportCancelBtn" class="fiori-btn fiori-btn--ghost">Cancel</button>
+      <button id="exportConfirmBtn" class="fiori-btn fiori-btn--primary">Export</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var modal = document.getElementById('exportModal');
+
+  function fmtDate(d) { return d.toISOString().slice(0, 10); }
+  function calcRange(range) {
+    var now = new Date(), ms = 86400000;
+    var map = {
+      today:     { from: fmtDate(now),                    to: fmtDate(now) },
+      yesterday: { from: fmtDate(new Date(now - ms)),     to: fmtDate(new Date(now - ms)) },
+      '1w':      { from: fmtDate(new Date(now - 6*ms)),   to: fmtDate(now) },
+      '1m':      { from: fmtDate(new Date(now - 29*ms)),  to: fmtDate(now) }
+    };
+    return map[range] || map['today'];
+  }
+
+  function setPreset(range) {
+    var r = calcRange(range);
+    document.getElementById('exportDateFrom').value = r.from;
+    document.getElementById('exportDateTo').value   = r.to;
+    document.querySelectorAll('.export-preset').forEach(function(b) {
+      b.classList.toggle('fiori-btn--emphasized', b.dataset.range === range);
+      b.classList.toggle('fiori-btn--tertiary',   b.dataset.range !== range);
+    });
+  }
+
+  // Export 버튼 → 모달 열기 (Today 기본)
+  document.getElementById('exportReportBtn').addEventListener('click', function() {
+    setPreset('today');
+    modal.style.display = 'flex';
+  });
+
+  // 프리셋 클릭 → 실제 날짜 입력에 반영
+  document.querySelectorAll('.export-preset').forEach(function(btn) {
+    btn.addEventListener('click', function() { setPreset(this.dataset.range); });
+  });
+
+  // 날짜 직접 수정 → 프리셋 강조 해제
+  ['exportDateFrom', 'exportDateTo'].forEach(function(id) {
+    document.getElementById(id).addEventListener('change', function() {
+      document.querySelectorAll('.export-preset').forEach(function(b) {
+        b.classList.remove('fiori-btn--emphasized');
+        b.classList.add('fiori-btn--tertiary');
+      });
+    });
+  });
+
+  // 확인 — 항상 date_from/date_to 명시 전송
+  document.getElementById('exportConfirmBtn').addEventListener('click', function() {
+    var from = document.getElementById('exportDateFrom').value;
+    var to   = document.getElementById('exportDateTo').value;
+    if (!from || !to) { alert('Please select a date range.'); return; }
+    var p = getFilterParams();
+    p.range     = 'custom';
+    p.date_from = from;
+    p.date_to   = to;
+    window.open('proc/ai_report_export.php?' + new URLSearchParams(p), '_blank');
+    modal.style.display = 'none';
+  });
+
+  // 취소
+  document.getElementById('exportCancelBtn').addEventListener('click', function() {
+    modal.style.display = 'none';
+  });
+
+  // 배경 클릭 닫기
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) modal.style.display = 'none';
+  });
+})();
+</script>
 
 <!-- 사이니지 전용: 실시간 시계 -->
 <script>

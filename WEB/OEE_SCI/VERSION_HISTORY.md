@@ -1,7 +1,7 @@
 # OEE_SCI 버전 이력
 
 > 최초 작성: 2026-03-06
-> 마지막 업데이트: 2026-03-08 (사이니지 전용 대시보드 2종 신규 + PDF 변환 정책 수립)
+> 마지막 업데이트: 2026-03-08 (AI 전략서 업데이트본 + 제안서 랜딩 페이지 신규 추가)
 
 ---
 
@@ -78,6 +78,14 @@
 | 2026-03-08 | `page/data/dashboard_2.php` + `page/data/css/dashboard_2.css` 신규 생성 — 1920×1080 사이니지 전용 대시보드 (nav 제거, 52px 슬림 헤더, 4행 CSS Grid, `js/dashboard.js` 100% 재사용) |
 | 2026-03-08 | `page/data/ai_dashboard_2.php` + `page/data/css/ai_dashboard_2.css` 신규 생성 — 1920×1080 사이니지 전용 AI 대시보드 (4행 Grid, ai_dashboard.js · ai_stream_monitor.js · ai_optimization.js 100% 재사용) |
 | 2026-03-08 | `AI_STRATEGY_V2_ENG.pdf` 생성 — Chrome headless + Node.js gen_pdf.js로 다크 테마 PDF 변환 (242KB), `WEB/CLAUDE.md`에 HTML→PDF 변환 정책 문서화 |
+| 2026-03-08 | **[F11 구현 완료]** `page/data/proc/ai_report_engine.php` 신규 생성 — 규칙 기반 AI 리포트 통합 API (Claude API 없이): OEE 요약, 다운타임 집계, 지수평활법 7일 예측, Z-Score 이상 감지(Top5), 정비 위험도(Top5), 병목 최적화, `buildInsights()` 자연어 인사이트 6종 자동 생성 |
+| 2026-03-08 | `page/data/js/ai_report.js` 신규 생성 — ai_report_engine.php 단일 호출, KPI 게이지(Chart.js Doughnut 180°), 추세 차트, 이상/정비/최적화 렌더링, Export 버튼 연결 |
+| 2026-03-08 | `page/data/proc/ai_report_export.php` 신규 생성 — 독립형 HTML 리포트 다운로드 (Content-Disposition attachment), 다크 테마 + @media print 내장 → Ctrl+P PDF 변환 가능 |
+| 2026-03-08 | `page/data/ai_dashboard_2.php` — signage 헤더에 **Export 버튼** 추가: 날짜 선택 모달 (Today/Yesterday/Last 7 Days/Last 30 Days 프리셋 + Custom Range date input), 선택 시 실제 날짜를 date input에 표시, 항상 `range=custom&date_from=...&date_to=...` 명시 전송 |
+| 2026-03-08 | `page/data/proc/ai_report_engine.php` 버그 수정 — `linearRegression(range(...), $oee_series)` → `linearRegression($oee_series, 30)` (함수 시그니처 `(array $data, int $steps)` 오호출, Argument 2 TypeError 해결) |
+| 2026-03-08 | `AI_STRATEGY_V2_KOR_2.html` 신규 생성 — 한국어 AI 전략서 구현 완료 반영본: Hero 상태 "구현 완료", Phase 2 완료 배지, Signage Dashboard 섹션 추가, F6 Export 버튼 위치/방식 수정, 실시간 스트리밍 AI + 생산 최적화 카드 추가 |
+| 2026-03-08 | `AI_STRATEGY_V2_ENG_2.html` 신규 생성 — 영문 AI 전략서 구현 완료 반영본 (KOR_2와 동일 내용, 영문 표기) |
+| 2026-03-08 | `sci_ai_project_proposal.html` 신규 생성 (`OEE_SCI/` 루트) — AI 전략서 랜딩 페이지: 한국어/영문 제안서 새 창 열기, 업데이트 버전(_2) 링크 포함 |
 
 ---
 
