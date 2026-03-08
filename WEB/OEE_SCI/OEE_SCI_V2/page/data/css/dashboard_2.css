@@ -1,0 +1,310 @@
+/**
+ * dashboard_2.css — 1920x1080 Signage Layout
+ * dashboard.css 를 override 하는 사이니지 전용 스타일
+ * js/dashboard.js 는 그대로 재사용 (Chart.js responsive 자동 맞춤)
+ */
+
+/* ─── 전체 고정 ─────────────────────────────────────────── */
+html, body {
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.fiori-container {
+  padding: 0;
+  margin: 0;
+}
+
+/* ─── 사이니지 헤더 (nav 대체) ──────────────────────────── */
+.signage-header {
+  height: 52px;
+  background: var(--sap-surface-1);
+  border-bottom: 1px solid var(--sap-border-neutral);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 10px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.signage-header__title {
+  font-size: var(--sap-font-size-lg);
+  font-weight: var(--sap-font-weight-semibold);
+  color: var(--sap-text-primary);
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+.signage-header__filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.signage-header__filters .fiori-select,
+.signage-header__filters .fiori-input {
+  height: 30px;
+  font-size: var(--sap-font-size-sm);
+  padding: 0 6px;
+}
+
+.signage-header__filters #factoryFilterSelect,
+.signage-header__filters #factoryLineFilterSelect,
+.signage-header__filters #factoryLineMachineFilterSelect {
+  width: 140px;
+}
+
+.signage-header__filters #timeRangeSelect,
+.signage-header__filters #shiftSelect {
+  width: 110px;
+}
+
+.signage-header__filters #dateRangePicker {
+  width: 190px;
+}
+
+.signage-header__filters #refreshBtn {
+  height: 30px;
+  padding: 0 10px;
+  font-size: var(--sap-font-size-sm);
+}
+
+.signage-header__clock {
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-secondary);
+  white-space: nowrap;
+  margin-left: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.signage-header__status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--sap-font-size-xs);
+  color: var(--sap-status-success);
+  white-space: nowrap;
+}
+
+/* ─── 메인 4행 그리드 ───────────────────────────────────── */
+.signage-main {
+  height: calc(100vh - 52px);
+  display: grid;
+  grid-template-rows: 30fr 23fr 23fr 24fr;
+  gap: 5px;
+  padding: 5px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* ─── Row A: OEE 4 metrics (3fr) + Active Andon (1fr) ── */
+.signage-row-a {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 5px;
+  min-height: 0;
+}
+
+.signage-oee-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  min-height: 0;
+}
+
+/* OEE 메트릭 카드 */
+.signage-main .oee-metric-card {
+  min-width: 0;
+  min-height: 0;
+  padding: 8px;
+  border-radius: var(--sap-radius-md);
+}
+
+.signage-main .oee-metric-label {
+  font-size: var(--sap-font-size-lg);
+  margin-bottom: 2px;
+}
+
+.signage-main .oee-metric-gauge {
+  width: 100px;
+  height: 100px;
+  margin: 4px auto;
+}
+
+.signage-main .oee-metric-card--overall .oee-metric-gauge {
+  width: 130px;
+  height: 130px;
+}
+
+.signage-main .oee-metric-change {
+  font-size: var(--sap-font-size-sm);
+}
+
+.signage-main .metric-row {
+  font-size: var(--sap-font-size-sm);
+}
+
+.signage-main .metric-progress {
+  margin-top: 2px;
+}
+
+/* Active Andon 카드 */
+.signage-andon-feed {
+  min-height: 0;
+}
+
+/* ─── Row B: 차트 4개 균등 ──────────────────────────────── */
+.signage-row-b {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  min-height: 0;
+}
+
+/* ─── Row C: OEE Trend (2fr) + OEE Timeline (1fr) ──────── */
+.signage-row-c {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 5px;
+  min-height: 0;
+}
+
+/* ─── Row D: Production Heatmap 전체 너비 ───────────────── */
+.signage-row-d {
+  min-height: 0;
+}
+
+/* ─── 공통 카드 (사이니지) ──────────────────────────────── */
+.signage-main .fiori-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-bottom: 0;
+  border-radius: var(--sap-radius-md);
+  box-sizing: border-box;
+}
+
+.signage-main .fiori-card__header {
+  flex-shrink: 0;
+  padding: 5px 10px;
+}
+
+.signage-main .fiori-card__title {
+  font-size: var(--sap-font-size-md);
+}
+
+.signage-main .fiori-card__subtitle {
+  font-size: var(--sap-font-size-xs);
+  margin: 0;
+}
+
+.signage-main .fiori-card__content {
+  flex: 1;
+  min-height: 0;
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 차트 canvas 래퍼 */
+.signage-main .fiori-card__content > div {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+
+/* ─── Heatmap Row D 내부 스크롤 ─────────────────────────── */
+.signage-row-d .fiori-card__content {
+  overflow-y: auto;
+}
+
+.signage-row-d .heatmap {
+  padding: 2px 6px;
+}
+
+.signage-row-d .heatmap-cell {
+  height: 16px;
+}
+
+.signage-row-d .heatmap-row {
+  gap: 1px;
+}
+
+.signage-row-d .heatmap-axis {
+  font-size: 9px;
+}
+
+/* ─── OEE Timeline (Row C 우측) ────────────────────────── */
+.signage-row-c .production-timeline {
+  padding: 2px 6px;
+}
+
+.signage-row-c .timeline-legend {
+  gap: 4px;
+  font-size: 10px;
+}
+
+/* ─── 실시간 상태 소형화 ────────────────────────────────── */
+.signage-main .real-time-status {
+  font-size: var(--sap-font-size-xs);
+}
+
+.signage-main .real-time-status-header {
+  font-size: var(--sap-font-size-xs);
+}
+
+/* ─── Active Andon item 소형화 ──────────────────────────── */
+.signage-main .active-andon-item {
+  padding: 5px 8px;
+  margin-bottom: 3px;
+}
+
+.signage-main .andon-machine-name {
+  font-size: var(--sap-font-size-sm);
+}
+
+.signage-main .andon-location {
+  font-size: 10px;
+}
+
+.signage-main #andonAlarmFeed {
+  gap: 3px;
+}
+
+/* ─── 스크롤바 (내부 허용 영역만) ──────────────────────── */
+.signage-main ::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.signage-main ::-webkit-scrollbar-track {
+  background: var(--sap-surface-3);
+}
+
+.signage-main ::-webkit-scrollbar-thumb {
+  background: var(--sap-border-neutral);
+  border-radius: 2px;
+}
+
+/* ─── hover 효과 제거 (사이니지 = 터치/마우스 없음) ─────── */
+.signage-main .oee-metric-card:hover {
+  transform: none;
+  box-shadow: var(--sap-shadow-1);
+}
+
+.signage-main .active-andon-item:hover {
+  transform: none;
+}
+
+.signage-main .bar-segment:hover {
+  transform: none;
+}
+
+.signage-main .heatmap-cell:hover {
+  transform: none;
+}

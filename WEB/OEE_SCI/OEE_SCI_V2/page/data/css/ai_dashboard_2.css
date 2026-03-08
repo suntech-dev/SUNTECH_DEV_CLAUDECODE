@@ -1,0 +1,345 @@
+/**
+ * ai_dashboard_2.css — 1920x1080 Signage Layout
+ * ai_dashboard.css 를 override 하는 사이니지 전용 스타일
+ * js/ai_dashboard.js, ai_stream_monitor.js, ai_optimization.js 100% 재사용
+ */
+
+/* ─── 전체 고정 ─────────────────────────────────────────── */
+html, body {
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.fiori-container {
+  padding: 0;
+  margin: 0;
+}
+
+/* ─── 사이니지 헤더 (nav 대체) ──────────────────────────── */
+.signage-header {
+  height: 52px;
+  background: var(--sap-surface-1);
+  border-bottom: 1px solid var(--sap-border-neutral);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 10px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.signage-header__title {
+  font-size: var(--sap-font-size-lg);
+  font-weight: var(--sap-font-weight-semibold);
+  color: var(--sap-text-primary);
+  white-space: nowrap;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.signage-header__filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.signage-header__filters .fiori-select {
+  height: 30px;
+  font-size: var(--sap-font-size-sm);
+  padding: 0 6px;
+  width: 140px;
+}
+
+.signage-header__filters .fiori-btn {
+  height: 30px;
+  padding: 0 10px;
+  font-size: var(--sap-font-size-sm);
+}
+
+.signage-header__clock {
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-secondary);
+  white-space: nowrap;
+  margin-left: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.signage-header__status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--sap-font-size-xs);
+  color: var(--sap-text-secondary);
+  white-space: nowrap;
+}
+
+/* ─── 메인 4행 그리드 ───────────────────────────────────── */
+.ai-signage-main {
+  height: calc(100vh - 52px);
+  display: grid;
+  grid-template-rows: 18fr 32fr 26fr 24fr;
+  gap: 5px;
+  padding: 5px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* ─── Row A: AI Summary 카드 4개 ────────────────────────── */
+.ai-signage-row-a {
+  min-height: 0;
+}
+
+/* summary grid를 4열 고정 */
+.ai-signage-row-a .ai-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  height: 100%;
+  margin-bottom: 0;
+}
+
+/* AI summary 카드 소형화 */
+.ai-signage-row-a .ai-summary-card {
+  padding: 8px 10px 8px 14px;
+  border-radius: var(--sap-radius-md);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+}
+
+.ai-signage-row-a .ai-summary-card__label {
+  font-size: 10px;
+  margin-bottom: 2px;
+}
+
+.ai-signage-row-a .ai-summary-card__value {
+  font-size: 1.6rem;
+  margin-bottom: 2px;
+}
+
+.ai-signage-row-a .ai-summary-card__sub {
+  font-size: 11px;
+}
+
+.ai-signage-row-a .ai-trend-badge {
+  font-size: 10px;
+  padding: 1px 6px;
+}
+
+/* ─── Row B: OEE Forecast (2fr) + Anomaly Detection (1fr) ─ */
+.ai-signage-row-b {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 5px;
+  min-height: 0;
+}
+
+/* OEE 예측 차트 높이 축소 */
+.ai-signage-row-b .ai-prediction-chart-wrap {
+  height: auto;
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+
+.ai-signage-row-b .ai-chart-legend {
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+/* Anomaly 리스트 높이 제한 해제 → 카드 높이 100% 사용 */
+.ai-signage-row-b .ai-anomaly-list {
+  max-height: none;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ─── Row C: Line Health (1fr) + Predictive Maintenance (1fr) */
+.ai-signage-row-c {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  min-height: 0;
+}
+
+/* 리스트 최대 높이 해제 */
+.ai-signage-row-c .ai-maintenance-list {
+  max-height: none;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ─── Row D: AI Streaming (1fr) + Production Optimization (2fr) */
+.ai-signage-row-d {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 5px;
+  min-height: 0;
+}
+
+/* 스트리밍 피드 높이 해제 */
+.ai-signage-row-d .ai-stream-feed {
+  max-height: none;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Production Optimization 리스트 */
+.ai-signage-row-d .ai-opt-list {
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ─── 공통 카드 스타일 ──────────────────────────────────── */
+.ai-signage-main .fiori-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-bottom: 0;
+  border-radius: var(--sap-radius-md);
+  box-sizing: border-box;
+}
+
+.ai-signage-main .fiori-card__header {
+  flex-shrink: 0;
+  padding: 5px 10px;
+}
+
+.ai-signage-main .fiori-card__title {
+  font-size: var(--sap-font-size-md);
+}
+
+.ai-signage-main .fiori-card__subtitle {
+  font-size: var(--sap-font-size-xs);
+  margin: 0;
+}
+
+.ai-signage-main .fiori-card__content {
+  flex: 1;
+  min-height: 0;
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── 리스트 아이템 소형화 ──────────────────────────────── */
+.ai-signage-main .ai-anomaly-item {
+  padding: 5px 8px;
+  gap: 6px;
+}
+
+.ai-signage-main .ai-anomaly-item__machine {
+  font-size: 11px;
+}
+
+.ai-signage-main .ai-anomaly-item__line {
+  font-size: 10px;
+}
+
+.ai-signage-main .ai-anomaly-item__oee {
+  font-size: 0.9rem;
+}
+
+.ai-signage-main .ai-maintenance-item {
+  padding: 5px 8px;
+  margin-bottom: 2px;
+}
+
+.ai-signage-main .ai-maintenance-item__machine {
+  font-size: 11px;
+}
+
+.ai-signage-main .ai-maintenance-item__line {
+  font-size: 10px;
+}
+
+.ai-signage-main .ai-health-item {
+  grid-template-columns: 70px 1fr 50px 60px;
+  gap: 6px;
+}
+
+.ai-signage-main .ai-health-item__line {
+  font-size: 11px;
+}
+
+/* ─── 스트리밍 이벤트 소형화 ────────────────────────────── */
+.ai-signage-main .ai-stream-event {
+  padding: 5px 8px;
+}
+
+.ai-signage-main .ai-stream-event__type {
+  font-size: 11px;
+}
+
+.ai-signage-main .ai-stream-event__msg {
+  font-size: 11px;
+}
+
+.ai-signage-main .ai-stream-event__time {
+  font-size: 10px;
+}
+
+/* ─── Optimization 카드 소형화 ──────────────────────────── */
+.ai-signage-main .ai-opt-card {
+  padding: 6px 10px;
+}
+
+.ai-signage-main .ai-opt-card__header {
+  margin-bottom: 6px;
+}
+
+.ai-signage-main .ai-opt-bottleneck {
+  padding: 3px 6px;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.ai-signage-main .ai-opt-components {
+  font-size: 11px;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+/* ─── 스크롤바 ──────────────────────────────────────────── */
+.ai-signage-main ::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.ai-signage-main ::-webkit-scrollbar-track {
+  background: var(--sap-surface-3);
+}
+
+.ai-signage-main ::-webkit-scrollbar-thumb {
+  background: var(--sap-border-neutral);
+  border-radius: 2px;
+}
+
+/* ─── hover 효과 제거 ───────────────────────────────────── */
+.ai-signage-main .ai-summary-card:hover {
+  box-shadow: var(--sap-shadow-1);
+}
+
+.ai-signage-main .ai-heatmap-cell:hover {
+  filter: none;
+}
+
+/* ─── last-update 표시 소형화 ───────────────────────────── */
+.ai-signage-main .ai-last-update {
+  font-size: 10px;
+}
+
+.ai-signage-main .ai-badge {
+  font-size: 9px;
+  padding: 2px 6px;
+}
