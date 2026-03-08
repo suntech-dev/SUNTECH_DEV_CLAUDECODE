@@ -1,7 +1,7 @@
 # OEE_SCI 버전 이력
 
 > 최초 작성: 2026-03-06
-> 마지막 업데이트: 2026-03-07 (Phase 4 완료: 타임존 중앙화, worktime_database.php 통합, report_stream 버그 수정)
+> 마지막 업데이트: 2026-03-08 (사이니지 전용 대시보드 2종 신규 + PDF 변환 정책 수립)
 
 ---
 
@@ -74,6 +74,10 @@
 | 2026-03-07 | **[Phase 4-A 완료]** `date_default_timezone_set('Asia/Jakarta')` 중앙화 — 27개 파일 → `lib/db.php` 단 1곳 관리, `lib/get_shift.lib.php` 오타(`Jajarta`) 수정 포함 |
 | 2026-03-07 | **[Phase 4-B 완료]** `lib/worktime_database.php` → `lib/db.php` 통합 후 삭제 — 5개 파일 경로 업데이트, `inc/worktime_head.php` 타임존 중복 제거 |
 | 2026-03-07 | **[Phase 4-C 완료]** `report_stream.php` `getDBConnection()` 미선언 Fatal error 버그 수정 → `global $pdo` 사용 |
+| 2026-03-07 | `inc/worktime_head.php` 보존 결정 — `common.js` vs Fiori 충돌 분석 완료, 두 환경 완전 분리 확인, `OEE_SCI/CLAUDE.md`에 보존 규칙 명시 |
+| 2026-03-08 | `page/data/dashboard_2.php` + `page/data/css/dashboard_2.css` 신규 생성 — 1920×1080 사이니지 전용 대시보드 (nav 제거, 52px 슬림 헤더, 4행 CSS Grid, `js/dashboard.js` 100% 재사용) |
+| 2026-03-08 | `page/data/ai_dashboard_2.php` + `page/data/css/ai_dashboard_2.css` 신규 생성 — 1920×1080 사이니지 전용 AI 대시보드 (4행 Grid, ai_dashboard.js · ai_stream_monitor.js · ai_optimization.js 100% 재사용) |
+| 2026-03-08 | `AI_STRATEGY_V2_ENG.pdf` 생성 — Chrome headless + Node.js gen_pdf.js로 다크 테마 PDF 변환 (242KB), `WEB/CLAUDE.md`에 HTML→PDF 변환 정책 문서화 |
 
 ---
 

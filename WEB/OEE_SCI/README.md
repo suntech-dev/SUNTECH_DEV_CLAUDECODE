@@ -1,8 +1,8 @@
 # OEE_SCI 프로젝트 분석 문서
 
 > 최초 작성: 2026-03-06
-> 분석 버전: OEE_SCI_V1
-> 마지막 업데이트: 2026-03-06 (수정: 2026-03-06)
+> 분석 버전: OEE_SCI_V2
+> 마지막 업데이트: 2026-03-08 (OEE_SCI_V2 사이니지 대시보드 2종 추가)
 
 ---
 
@@ -318,6 +318,9 @@ http://oee-sci.test/
 | ---- | ---- | -------------- |
 | 2026-03-06 | OEE_SCI_V1 | 최초 분석 문서 작성, 기본 기능 구현 완료 |
 | 2026-03-06 | OEE_SCI_V1 | nav-fiori.php 동적 경로 수정, PWA manifest 제거 |
+| 2026-03-06 | OEE_SCI_V2 | V1 기반 V2 생성, AI 통계 엔진 + AI Dashboard 구현 (F5~F13) |
+| 2026-03-07 | OEE_SCI_V2 | SSE stream 성능 최적화, 공통 라이브러리 통합, 타임존 중앙화 (Phase 2~4) |
+| 2026-03-08 | OEE_SCI_V2 | 1920×1080 사이니지 전용 dashboard_2.php + ai_dashboard_2.php 신규 생성 |
 
 ---
 
@@ -336,3 +339,8 @@ http://oee-sci.test/
 | 장비 등록 API | `OEE_SCI_V1\api\sewing\start.php` |
 | 근무시간 클래스 | `OEE_SCI_V1\lib\worktime.lib.php` |
 | 로컬 환경 가이드 | `C:\SUNTECH_DEV_CLAUDECODE\WEB\local-dev-environment.md` |
+| AI Dashboard | `OEE_SCI_V2\page\data\ai_dashboard.php` |
+| AI Dashboard (사이니지) | `OEE_SCI_V2\page\data\ai_dashboard_2.php` |
+| 통합 대시보드 (사이니지) | `OEE_SCI_V2\page\data\dashboard_2.php` |
+| AI 통계 엔진 | `OEE_SCI_V2\lib\statistics.lib.php` |
+| SSE 공통 헬퍼 | `OEE_SCI_V2\lib\stream_helper.lib.php` |

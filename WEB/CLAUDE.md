@@ -217,6 +217,87 @@ DB_NAME={데이터베이스명}
 
 ---
 
+## HTML → PDF 변환 정책
+
+### 변환 도구
+- **Chrome headless** 사용 (`C:\Program Files\Google\Chrome\Application\chrome.exe`)
+- Playwright `page.pdf()` 사용 불가 — MCP Playwright는 브라우저 컨텍스트 JS만 실행 가능
+- Node.js `child_process.execSync`로 Chrome headless 호출
+
+### 변환 절차
+
+1. **print CSS 삽입** — Node.js 스크립트에서 원본 HTML을 읽어 `</style>` 직전에 삽입 후 임시 파일로 저장
+2. **Chrome headless 실행** — `--print-background` 옵션으로 배경색 포함 PDF 생성
+3. **임시 파일 삭제** — 변환 후 `os.tmpdir()` 임시 HTML 삭제
+4. **스크립트 삭제** — 작업 완료 후 `gen_pdf.js` 삭제 (일회성 스크립트)
+
+### 필수 print CSS 규칙 (다크 테마 HTML 공통)
+
+```css
+@media print {
+  html, body {
+    background: #0d1117 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  #sidebar, #menu-btn, #overlay { display: none !important; }
+  #main { margin-left: 0 !important; }
+  .hero    { padding: 40px 32px 32px !important; break-inside: avoid; }
+  .content { padding: 0 32px !important; }
+  section, .feature-card, .phase-card, .card, .tbl-wrap { break-inside: avoid; }
+  a { color: #58a6ff !important; text-decoration: none; }
+}
+```
+
+### Chrome headless 명령 옵션
+
+```
+chrome.exe
+  --headless=new
+  --no-sandbox
+  --disable-gpu
+  --print-background          ← 배경색 포함 필수
+  --run-all-compositor-stages-before-draw
+  --print-to-pdf="출력경로.pdf"
+  "file:///임시HTML경로"
+```
+
+### 출력 파일 규칙
+- PDF 저장 위치: 원본 HTML과 동일 폴더
+- 파일명: 원본 HTML 파일명 그대로 확장자만 `.pdf`로 변경
+  - 예: `AI_STRATEGY_V2_ENG.html` → `AI_STRATEGY_V2_ENG.pdf`
+
+### gen_pdf.js 템플릿 (재사용)
+
+```javascript
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
+const os = require('os');
+
+const SRC_HTML = 'C:\\...\\file.html';
+const OUT_PDF  = SRC_HTML.replace('.html', '.pdf');
+const CHROME   = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+
+const PRINT_CSS = `/* @media print { ... } */`;
+const TMP_HTML  = path.join(os.tmpdir(), 'print_tmp.html');
+
+try {
+  let html = fs.readFileSync(SRC_HTML, 'utf8');
+  html = html.replace('</style>', PRINT_CSS + '\n</style>');
+  fs.writeFileSync(TMP_HTML, html, 'utf8');
+
+  const fileUrl = 'file:///' + TMP_HTML.replace(/\\/g, '/');
+  execSync(`"${CHROME}" --headless=new --no-sandbox --disable-gpu --print-background --run-all-compositor-stages-before-draw --print-to-pdf="${OUT_PDF}" "${fileUrl}"`, { timeout: 30000 });
+
+  console.log('PDF saved:', OUT_PDF, Math.round(fs.statSync(OUT_PDF).size / 1024) + 'KB');
+} finally {
+  if (fs.existsSync(TMP_HTML)) fs.unlinkSync(TMP_HTML);
+}
+```
+
+---
+
 ## 기존 프로젝트 참조 경로
 
 | 프로젝트 | 위치           | 참고 용도                    |

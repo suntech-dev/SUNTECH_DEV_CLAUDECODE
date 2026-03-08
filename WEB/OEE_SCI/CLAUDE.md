@@ -78,6 +78,30 @@ $hours = getWorkHoursForDate($pdo, $targetDate);
 
 ---
 
+## 헤더 파일 분리 규칙 (`inc/head.php` vs `inc/worktime_head.php`)
+
+### 사용 구분
+
+| 헤더 파일 | 사용 페이지 | CSS/JS 스택 |
+| --------- | ----------- | ----------- |
+| `inc/head.php` | 모든 일반 관리/데이터 페이지 | SAP Fiori CSS + `fiori-advanced-interactions.js` |
+| `inc/worktime_head.php` | 근무시간 관리 페이지 (`info_worktime.php` 등) | jQuery DataTables + daterangepicker + `worktime_style.css` |
+
+### worktime_head.php — 보존 대상
+
+- **절대 수정/삭제/통합 금지**
+- 수년간 사용자가 다듬어온 캘린더·팝업 UI(`daterangepicker`, 다크 테마)가 이 파일에 묶여 있음
+- Fiori 디자인 시스템으로 동등한 수준의 UI 재구현이 불가능하여 별도 유지
+
+### common.js 충돌 여부 (분석 완료 — 2026-03-07)
+
+- `assets/js/common.js`는 `worktime_head.php`에서만 로드됨 (jQuery `$()` 의존)
+- `fiori-advanced-interactions.js`는 `head.php`에서만 로드됨 (순수 JS IIFE 패턴)
+- 두 환경은 완전 분리 — **직접 충돌 없음** (동일 페이지에서 혼재 구조 없음)
+- `common.js`의 전역 함수(`showDialogWindow`, `hideDialogWindow` 등)는 Fiori 네임스페이스와 충돌하지 않음
+
+---
+
 ## 버전 히스토리 관리 (`VERSION_HISTORY.md`)
 
 - 버전 히스토리 파일: `VERSION_HISTORY.md` (프로젝트 루트 `OEE_SCI/`)
