@@ -169,7 +169,8 @@ body {
 /* ─── Row C: OEE Trend (2fr) + OEE Timeline (1fr) ──────── */
 .signage-row-c {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  /* grid-template-columns: 2fr 1fr; */
+  grid-template-columns: 2fr 1.2fr;
   gap: 5px;
   min-height: 0;
 }
@@ -325,6 +326,7 @@ body {
   border-radius: var(--sap-radius-sm);
   flex-shrink: 0;
 }
+
 .nav-drawer-btn:hover {
   background: var(--sap-surface-3);
 }
@@ -334,9 +336,10 @@ body {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.3);
   z-index: 900;
 }
+
 .nav-drawer-overlay.is-open {
   display: block;
 }
@@ -350,7 +353,7 @@ body {
   height: 100vh;
   background: var(--sap-surface-1);
   border-right: 1px solid var(--sap-border-neutral);
-  box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
   z-index: 901;
   transform: translateX(-100%);
   transition: transform 0.25s ease;
@@ -358,6 +361,7 @@ body {
   flex-direction: column;
   overflow: hidden;
 }
+
 .nav-drawer.is-open {
   transform: translateX(0);
 }
@@ -393,9 +397,11 @@ body {
   color: var(--sap-text-primary);
   text-decoration: none;
 }
+
 .nav-drawer__link:hover {
   background: var(--sap-surface-3);
 }
+
 .nav-drawer__link--active {
   color: var(--sap-color-accent);
   font-weight: var(--sap-font-weight-semibold);

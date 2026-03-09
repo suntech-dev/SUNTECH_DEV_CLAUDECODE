@@ -1,6 +1,6 @@
 <?php
 $page_title = 'Andon Management';
-$page_css_files = ['../../assets/css/fiori-page.css', 'css/info_andon.css'];
+$page_css_files = ['../../assets/css/fiori-page.css', 'css/info_andon.css', '../../assets/css/spectrum.css'];
 $page_styles = '';
 
 // 공통 헤더 로드
@@ -181,8 +181,8 @@ require_once(__DIR__ . '/../../inc/nav-fiori.php');
   </div>
 
 
-  <script src="../assets/js/jquery-3.6.1.min.js"></script>
-  <script src="../assets/js/spectrum.js"></script>
+  <script src="../../assets/js/jquery-3.6.1.min.js"></script>
+  <script src="../../assets/js/spectrum.js"></script>
   
   <script type="module">
     import { createResourceManager } from '../../assets/js/resource-manager.js';
