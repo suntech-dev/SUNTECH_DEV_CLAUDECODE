@@ -8,7 +8,8 @@
  */
 
 /* ─── 전체 고정 ─────────────────────────────────────────── */
-html, body {
+html,
+body {
   height: 100vh;
   overflow: hidden;
   margin: 0;
@@ -93,7 +94,8 @@ html, body {
 .ai-signage-main {
   height: calc(100vh - 52px);
   display: grid;
-  grid-template-rows: 15fr 33fr 27fr 25fr;
+  /* grid-template-rows: 15fr 33fr 27fr 25fr; */
+  grid-template-rows: 15fr 29fr 28fr 28fr;
   gap: 5px;
   padding: 5px;
   box-sizing: border-box;
@@ -389,6 +391,7 @@ html, body {
   border-radius: var(--sap-radius-sm);
   flex-shrink: 0;
 }
+
 .nav-drawer-btn:hover {
   background: var(--sap-surface-3);
 }
@@ -398,9 +401,10 @@ html, body {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.3);
   z-index: 900;
 }
+
 .nav-drawer-overlay.is-open {
   display: block;
 }
@@ -414,7 +418,7 @@ html, body {
   height: 100vh;
   background: var(--sap-surface-1);
   border-right: 1px solid var(--sap-border-neutral);
-  box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
   z-index: 901;
   transform: translateX(-100%);
   transition: transform 0.25s ease;
@@ -422,6 +426,7 @@ html, body {
   flex-direction: column;
   overflow: hidden;
 }
+
 .nav-drawer.is-open {
   transform: translateX(0);
 }
@@ -457,9 +462,11 @@ html, body {
   color: var(--sap-text-primary);
   text-decoration: none;
 }
+
 .nav-drawer__link:hover {
   background: var(--sap-surface-3);
 }
+
 .nav-drawer__link--active {
   color: var(--sap-color-accent);
   font-weight: var(--sap-font-weight-semibold);

@@ -417,7 +417,7 @@
 <div id="main">
 
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
-    <a href="ai_dashboard.php" class="back-link" style="margin-bottom:0;">&#8592; Back to Dashboard</a>
+    <a href="ai_dashboard_3.php" class="back-link" style="margin-bottom:0;">&#8592; Back to Dashboard</a>
     <div class="lang-switch">
       <a href="ai_dashboard_manual.html" class="active">EN</a>
       <a href="ai_dashboard_manual_kor.html">KOR</a>
@@ -430,7 +430,7 @@
     <div class="meta">
       <span class="tag info">OEE_SCI V2</span>
       <span class="tag ok">AI Powered</span>
-      <span class="tag info">v2026.03</span>
+      <span class="tag info">v2026.03.09</span>
     </div>
   </div>
 
@@ -467,6 +467,7 @@
           <tr><td>Predictive Maintenance</td><td>Machines ranked by failure risk score</td><td>Every 60s</td></tr>
           <tr><td>Real-time Streaming</td><td>Live event feed — anomalies, downtime, risk alerts</td><td>Real-time (SSE)</td></tr>
           <tr><td>Production Optimization</td><td>Bottleneck analysis &amp; improvement suggestions</td><td>Every ~2s on load</td></tr>
+          <tr><td>Hamburger Menu / Export</td><td>Toggle sidebar · export dashboard data to CSV or PDF</td><td>On demand</td></tr>
         </tbody>
       </table>
     </div>
@@ -485,7 +486,45 @@
       <li><strong>All Factory</strong> — Shows data across all factories. Select a specific factory to drill down.</li>
       <li><strong>All Line</strong> — Available after selecting a factory. Filters to a single production line.</li>
       <li><strong>All Machine</strong> — Available after selecting a line. Filters to a specific machine.</li>
+      <li><strong>Date Range</strong> — Pick a custom date range to analyze historical data (up to 30 days).</li>
     </ol>
+
+    <div class="tbl-wrap" style="margin-top: 20px;">
+      <table>
+        <thead>
+          <tr><th>Date Range Option</th><th>Period</th><th>Use case</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Today</td><td>Current day</td><td>Real-time monitoring of today's performance</td></tr>
+          <tr><td>Yesterday</td><td>Previous day</td><td>Review previous shift results</td></tr>
+          <tr><td>Last 7 Days</td><td>Past 7 days</td><td>Weekly trend analysis</td></tr>
+          <tr><td>Last 30 Days</td><td>Past 30 days</td><td>Monthly performance review</td></tr>
+          <tr><td>Custom Range</td><td>User-defined</td><td>Targeted analysis of a specific period</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-size: 1rem; margin: 24px 0 12px; color: var(--text-muted);">Hamburger Menu (&thinsp;&#9776;&thinsp;)</h3>
+    <p style="margin-bottom: 12px;">Click the hamburger icon (&#9776;) in the top-right corner of the dashboard to open the side panel. From here you can:</p>
+    <ul style="margin: 0 0 16px 20px; font-size: 0.9rem; line-height: 2;">
+      <li>Navigate between dashboard pages</li>
+      <li>Adjust display settings</li>
+      <li>Access Export functions</li>
+    </ul>
+
+    <h3 style="font-size: 1rem; margin: 24px 0 12px; color: var(--text-muted);">Export</h3>
+    <p style="margin-bottom: 12px;">Use the Export button to download the current dashboard data.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Format</th><th>Contents</th><th>Use case</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="tag info">CSV</span></td><td>Raw data table</td><td>Further analysis in Excel or BI tools</td></tr>
+          <tr><td><span class="tag warn">PDF</span></td><td>Dashboard snapshot</td><td>Sharing reports with stakeholders</td></tr>
+        </tbody>
+      </table>
+    </div>
 
     <div class="callout">
       <strong>Tip:</strong> Click the <strong>Refresh</strong> button to manually reload all sections without changing filters. Useful when you want the latest data immediately.
@@ -516,7 +555,7 @@
       </div>
       <div class="card">
         <h4>High-Risk Machines</h4>
-        <p>Number of machines with a risk score &ge; 70. These machines are candidates for immediate preventive maintenance.</p>
+        <p>Total number of machines at <span class="tag error">DANGER</span> (risk &ge; 70) or <span class="tag warn">CAUTION</span> (risk 40–69) level. The badge color indicates the highest active severity: red for DANGER, orange for CAUTION.</p>
       </div>
       <div class="card">
         <h4>Line Health Index (Avg)</h4>
@@ -883,12 +922,22 @@
     </div>
 
     <div class="card" style="margin-bottom: 12px;">
+      <h4>The "Last 30 Days" filter loads slowly. Is that normal?</h4>
+      <p>Yes. A 30-day query processes a significantly larger dataset than shorter ranges. Loading typically takes 3–5 seconds. If it exceeds 15 seconds, check network connectivity or contact your system administrator.</p>
+    </div>
+
+    <div class="card" style="margin-bottom: 12px;">
+      <h4>The High-Risk Machines card shows a number, but the badge says "CAUTION" — is that correct?</h4>
+      <p>Yes. The card value is the <strong>total</strong> of DANGER + CAUTION machines. If no DANGER machines exist, the badge shows orange CAUTION. The badge turns red DANGER only when at least one machine exceeds a risk score of 70.</p>
+    </div>
+
+    <div class="card" style="margin-bottom: 12px;">
       <h4>What does "vs. best line" mean on an optimization card?</h4>
       <p>It shows how many OEE percentage points this line is behind the best-performing line in the same factory. This helps benchmark realistic improvement targets based on what is already being achieved in your own plant.</p>
     </div>
 
     <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 0.82rem; color: var(--text-muted);">
-      &copy; 2025 SUNTECH. All Rights Reserved. &nbsp;|&nbsp; OEE_SCI V2 &nbsp;|&nbsp; AI Intelligence Dashboard Manual
+      &copy; 2026 SUNTECH. All Rights Reserved. &nbsp;|&nbsp; OEE_SCI V2 &nbsp;|&nbsp; AI Intelligence Dashboard Manual &nbsp;|&nbsp; 2026-03-09 updated
     </div>
   </section>
 
