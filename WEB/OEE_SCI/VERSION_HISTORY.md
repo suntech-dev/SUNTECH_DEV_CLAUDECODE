@@ -1,7 +1,7 @@
 # OEE_SCI 버전 이력
 
 > 최초 작성: 2026-03-06
-> 마지막 업데이트: 2026-03-08 (AI 전략서 업데이트본 + 제안서 랜딩 페이지 신규 추가)
+> 마지막 업데이트: 2026-03-09 (사이니지 대시보드 V3 + 햄버거 메뉴 드로어 추가)
 
 ---
 
@@ -86,6 +86,10 @@
 | 2026-03-08 | `AI_STRATEGY_V2_KOR_2.html` 신규 생성 — 한국어 AI 전략서 구현 완료 반영본: Hero 상태 "구현 완료", Phase 2 완료 배지, Signage Dashboard 섹션 추가, F6 Export 버튼 위치/방식 수정, 실시간 스트리밍 AI + 생산 최적화 카드 추가 |
 | 2026-03-08 | `AI_STRATEGY_V2_ENG_2.html` 신규 생성 — 영문 AI 전략서 구현 완료 반영본 (KOR_2와 동일 내용, 영문 표기) |
 | 2026-03-08 | `sci_ai_project_proposal.html` 신규 생성 (`OEE_SCI/` 루트) — AI 전략서 랜딩 페이지: 한국어/영문 제안서 새 창 열기, 업데이트 버전(_2) 링크 포함 |
+| 2026-03-09 | `page/data/ai_dashboard_3.php` + `page/data/css/ai_dashboard_3.css` 신규 생성 — 1920×1080 사이니지 전용 AI 대시보드 V3: Grid 행 비율 `15fr 33fr 27fr 25fr` 개선 (ai_dashboard_2 대비 Row D 잘림 해소), `.card-title-row` 타이틀+서브타이틀 인라인화, `.date-range-select` 날짜 필터 스타일 추가 |
+| 2026-03-09 | `page/data/dashboard_2.php` Row A 레이아웃 개선 — OEE 4개 지표 카드 전체 너비(`grid-template-columns: repeat(4,1fr)`), Currently Active Andon 섹션을 Row B로 이동, 게이지 폰트 동적 크기 조정(`clamp`) |
+| 2026-03-09 | `page/data/dashboard_2.php` + `page/data/css/dashboard_2.css` — 햄버거 슬라이드 드로어 메뉴 추가: 좌측 240px 오버레이 패널, Setting/Monitoring/Report/Dashboard/AI Dashboard 전체 네비게이션, Dashboard 항목 active 하이라이트 |
+| 2026-03-09 | `page/data/ai_dashboard_3.php` + `page/data/css/ai_dashboard_3.css` — 햄버거 슬라이드 드로어 메뉴 추가 (AI Dashboard 항목 active 하이라이트, dashboard_2와 동일 드로어 구조) |
 
 ---
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * dashboard_2.php — 1920x1080 Signage Dashboard
  * dashboard.php 의 사이니지 전용 버전
@@ -19,9 +20,49 @@ require_once(__DIR__ . '/../../inc/head.php');
 /* nav-fiori.php 제거 — 사이니지에는 네비게이션 불필요 */
 ?>
 
+<!-- Hamburger Drawer -->
+<div id="navDrawerOverlay" class="nav-drawer-overlay"></div>
+<div id="navDrawer" class="nav-drawer">
+  <div class="nav-drawer__header">OEE SYSTEM</div>
+  <nav class="nav-drawer__menu">
+    <div class="nav-drawer__group">
+      <div class="nav-drawer__group-title">Setting</div>
+      <a href="../manage/info_factory.php" class="nav-drawer__link">Factory</a>
+      <a href="../manage/info_line.php" class="nav-drawer__link">Line</a>
+      <a href="../manage/info_machine_model.php" class="nav-drawer__link">Machine Model</a>
+      <a href="../manage/info_machine.php" class="nav-drawer__link">Machine</a>
+      <a href="../manage/info_design_process.php" class="nav-drawer__link">Design Process</a>
+      <a href="../manage/info_andon.php" class="nav-drawer__link">Andon</a>
+      <a href="../manage/info_downtime.php" class="nav-drawer__link">Downtime</a>
+      <a href="../manage/info_defective.php" class="nav-drawer__link">Defective</a>
+      <a href="../manage/info_rate_color.php" class="nav-drawer__link">Rate Color</a>
+      <a href="../manage/info_worktime.php" class="nav-drawer__link">Work Time</a>
+    </div>
+    <div class="nav-drawer__divider"></div>
+    <div class="nav-drawer__group">
+      <div class="nav-drawer__group-title">Monitoring</div>
+      <a href="data_oee.php" class="nav-drawer__link">OEE Monitoring</a>
+      <a href="data_andon.php" class="nav-drawer__link">Andon Monitoring</a>
+      <a href="data_downtime.php" class="nav-drawer__link">Downtime Monitoring</a>
+      <a href="data_defective.php" class="nav-drawer__link">Defective Monitoring</a>
+    </div>
+    <div class="nav-drawer__divider"></div>
+    <div class="nav-drawer__group">
+      <div class="nav-drawer__group-title">Report</div>
+      <a href="log_oee.php" class="nav-drawer__link">OEE Report by Shift</a>
+      <a href="log_oee_hourly.php" class="nav-drawer__link">OEE Report by Hourly</a>
+      <a href="log_oee_row.php" class="nav-drawer__link">OEE Report by Row data</a>
+    </div>
+    <div class="nav-drawer__divider"></div>
+    <a href="dashboard_2.php" class="nav-drawer__link nav-drawer__link--active">Dashboard</a>
+    <a href="ai_dashboard_3.php" class="nav-drawer__link">AI Dashboard</a>
+  </nav>
+</div>
+
 <!-- Signage Header (nav 대체, 52px) -->
 <div class="signage-header">
-  <span class="signage-header__title">AI OEE CS DASHBOARD</span>
+  <button id="navDrawerBtn" class="nav-drawer-btn" aria-label="Menu">&#9776;</button>
+  <span class="signage-header__title">OEE CS DASHBOARD</span>
 
   <div class="signage-header__filters">
     <select id="factoryFilterSelect" class="fiori-select">
@@ -164,29 +205,9 @@ require_once(__DIR__ . '/../../inc/head.php');
 
     </div><!-- /signage-oee-metrics -->
 
-    <!-- Active Andon Feed -->
-    <div class="signage-andon-feed">
-      <div class="fiori-card">
-        <div class="fiori-card__header">
-          <h3 class="fiori-card__title fiori-text-primary">Currently active Andon</h3>
-          <div class="real-time-status real-time-status-header">
-            <div class="status-dot"></div>
-            <span id="activeAndonCount">0 active alerts</span>
-          </div>
-        </div>
-        <div class="fiori-card__content">
-          <div id="andonAlarmFeed" style="flex:1; display:flex; flex-direction:column; overflow-y:auto;">
-            <div class="fiori-alert fiori-alert--info">
-              <strong>Info:</strong> No active Andon. Real-time monitoring active.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div><!-- /signage-row-a -->
 
-  <!-- Row B: Downtime / Defective / Andon Warning Qty / Weekly Andon Trend -->
+  <!-- Row B: Downtime / Defective / Andon Warning Qty / Currently active Andon -->
   <div class="signage-row-b">
 
     <div class="fiori-card">
@@ -225,14 +246,25 @@ require_once(__DIR__ . '/../../inc/head.php');
       </div>
     </div>
 
+    <!-- Weekly Andon Warning (hidden — moved to Row B slot 4 with Andon Feed) -->
+    <div style="display:none;">
+      <canvas id="weeklyAndonTrendChart"></canvas>
+    </div>
+
+    <!-- Currently active Andon (moved from Row A) -->
     <div class="fiori-card">
       <div class="fiori-card__header">
-        <h3 class="fiori-card__title fiori-text-primary">Weekly Andon Warning</h3>
-        <p class="fiori-card__subtitle fiori-text-secondary">Last 7 days trend</p>
+        <h3 class="fiori-card__title fiori-text-primary">Currently active Andon</h3>
+        <div class="real-time-status real-time-status-header">
+          <div class="status-dot"></div>
+          <span id="activeAndonCount">0 active alerts</span>
+        </div>
       </div>
       <div class="fiori-card__content">
-        <div style="flex:1; position:relative; min-height:0;">
-          <canvas id="weeklyAndonTrendChart"></canvas>
+        <div id="andonAlarmFeed" style="flex:1; display:flex; flex-direction:column; overflow-y:auto;">
+          <div class="fiori-alert fiori-alert--info">
+            <strong>Info:</strong> No active Andon. Real-time monitoring active.
+          </div>
         </div>
       </div>
     </div>
@@ -310,21 +342,35 @@ require_once(__DIR__ . '/../../inc/head.php');
 <!-- Dashboard JS (100% 재사용) -->
 <script src="js/dashboard.js"></script>
 
+<!-- 햄버거 드로어 -->
+<script>
+  (function() {
+    var btn = document.getElementById('navDrawerBtn');
+    var drawer = document.getElementById('navDrawer');
+    var overlay = document.getElementById('navDrawerOverlay');
+    function open() { drawer.classList.add('is-open'); overlay.classList.add('is-open'); }
+    function close() { drawer.classList.remove('is-open'); overlay.classList.remove('is-open'); }
+    btn.addEventListener('click', function() { drawer.classList.contains('is-open') ? close() : open(); });
+    overlay.addEventListener('click', close);
+  })();
+</script>
+
 <!-- 사이니지 전용: 실시간 시계 -->
 <script>
-(function() {
-  function updateClock() {
-    var now = new Date();
-    var h = String(now.getHours()).padStart(2, '0');
-    var m = String(now.getMinutes()).padStart(2, '0');
-    var s = String(now.getSeconds()).padStart(2, '0');
-    var el = document.getElementById('signageClock');
-    if (el) el.textContent = h + ':' + m + ':' + s;
-  }
-  updateClock();
-  setInterval(updateClock, 1000);
-})();
+  (function() {
+    function updateClock() {
+      var now = new Date();
+      var h = String(now.getHours()).padStart(2, '0');
+      var m = String(now.getMinutes()).padStart(2, '0');
+      var s = String(now.getSeconds()).padStart(2, '0');
+      var el = document.getElementById('signageClock');
+      if (el) el.textContent = h + ':' + m + ':' + s;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+  })();
 </script>
 
 </body>
+
 </html>

@@ -20,6 +20,22 @@ header('Cache-Control: no-cache');
 $factory_filter = isset($_GET['factory_filter']) ? trim($_GET['factory_filter']) : '';
 $line_filter    = isset($_GET['line_filter'])    ? trim($_GET['line_filter'])    : '';
 $machine_filter = isset($_GET['machine_filter']) ? trim($_GET['machine_filter']) : '';
+$date_range     = isset($_GET['date_range'])     ? trim($_GET['date_range'])     : 'today';
+
+// date_range → SQL 날짜 조건 (data_oee alias: do)
+switch ($date_range) {
+  case 'yesterday':
+    $actual_date_where = "do.work_date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+    break;
+  case '7d':
+    $actual_date_where = "do.work_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)";
+    break;
+  case '30d':
+    $actual_date_where = "do.work_date >= DATE_SUB(CURDATE(), INTERVAL 29 DAY)";
+    break;
+  default:
+    $actual_date_where = "do.work_date = CURDATE()";
+}
 
 $where_parts = [];
 $params      = [];
@@ -95,7 +111,7 @@ try {
     FROM data_oee do
     JOIN info_machine im ON do.machine_idx = im.idx
     JOIN info_line    il ON do.line_idx = il.idx
-    WHERE do.work_date = CURDATE()
+    WHERE $actual_date_where
       $where_sql
     ORDER BY do.machine_idx, do.shift_idx DESC
   ";

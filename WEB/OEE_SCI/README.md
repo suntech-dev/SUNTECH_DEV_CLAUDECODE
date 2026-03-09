@@ -2,7 +2,7 @@
 
 > 최초 작성: 2026-03-06
 > 분석 버전: OEE_SCI_V2
-> 마지막 업데이트: 2026-03-08 (AI 전략서 업데이트본 + 제안서 랜딩 페이지 신규 추가)
+> 마지막 업데이트: 2026-03-09 (사이니지 대시보드 V3 + 햄버거 메뉴 드로어 추가)
 
 ---
 
@@ -323,6 +323,9 @@ http://oee-sci.test/
 | 2026-03-08 | OEE_SCI_V2 | 1920×1080 사이니지 전용 dashboard_2.php + ai_dashboard_2.php 신규 생성 |
 | 2026-03-08 | OEE_SCI_V2 | F11 AI 리포트 엔진(ai_report_engine.php) + HTML Export(ai_report_export.php) 구현 |
 | 2026-03-08 | OEE_SCI_V2 | ai_dashboard_2.php Export 버튼 + 날짜 선택 모달 추가, linearRegression 버그 수정 |
+| 2026-03-09 | OEE_SCI_V2 | ai_dashboard_3.php + ai_dashboard_3.css 신규 생성 — 사이니지 AI 대시보드 V3 (Grid 비율 개선, Row D 잘림 해소) |
+| 2026-03-09 | OEE_SCI_V2 | dashboard_2.php Row A 레이아웃 개선 (OEE 4지표 전체 너비, Andon→Row B 이동) |
+| 2026-03-09 | OEE_SCI_V2 | dashboard_2.php + ai_dashboard_3.php 햄버거 슬라이드 드로어 메뉴 추가 (전체 네비게이션, active 하이라이트) |
 
 ---
 
@@ -342,7 +345,8 @@ http://oee-sci.test/
 | 근무시간 클래스 | `OEE_SCI_V1\lib\worktime.lib.php` |
 | 로컬 환경 가이드 | `C:\SUNTECH_DEV_CLAUDECODE\WEB\local-dev-environment.md` |
 | AI Dashboard | `OEE_SCI_V2\page\data\ai_dashboard.php` |
-| AI Dashboard (사이니지) | `OEE_SCI_V2\page\data\ai_dashboard_2.php` |
+| AI Dashboard (사이니지 V2) | `OEE_SCI_V2\page\data\ai_dashboard_2.php` |
+| AI Dashboard (사이니지 V3) | `OEE_SCI_V2\page\data\ai_dashboard_3.php` |
 | 통합 대시보드 (사이니지) | `OEE_SCI_V2\page\data\dashboard_2.php` |
 | AI 통계 엔진 | `OEE_SCI_V2\lib\statistics.lib.php` |
 | SSE 공통 헬퍼 | `OEE_SCI_V2\lib\stream_helper.lib.php` |

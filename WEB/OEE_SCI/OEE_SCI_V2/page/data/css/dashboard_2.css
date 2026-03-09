@@ -5,7 +5,8 @@
  */
 
 /* ─── 전체 고정 ─────────────────────────────────────────── */
-html, body {
+html,
+body {
   height: 100vh;
   overflow: hidden;
   margin: 0;
@@ -94,19 +95,17 @@ html, body {
 .signage-main {
   height: calc(100vh - 52px);
   display: grid;
-  grid-template-rows: 30fr 23fr 23fr 24fr;
+  grid-template-rows: 28fr 24fr 24fr 24fr;
   gap: 5px;
   padding: 5px;
   box-sizing: border-box;
   overflow: hidden;
 }
 
-/* ─── Row A: OEE 4 metrics (3fr) + Active Andon (1fr) ── */
+/* ─── Row A: OEE 4 metrics (full width, Andon moved to Row B) ── */
 .signage-row-a {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 5px;
   min-height: 0;
+  display: flex;
 }
 
 .signage-oee-metrics {
@@ -114,6 +113,8 @@ html, body {
   grid-template-columns: repeat(4, 1fr);
   gap: 5px;
   min-height: 0;
+  flex: 1;
+  height: 100%;
 }
 
 /* OEE 메트릭 카드 */
@@ -212,7 +213,7 @@ html, body {
 }
 
 /* 차트 canvas 래퍼 */
-.signage-main .fiori-card__content > div {
+.signage-main .fiori-card__content>div {
   flex: 1;
   position: relative;
   min-height: 0;
@@ -307,4 +308,101 @@ html, body {
 
 .signage-main .heatmap-cell:hover {
   transform: none;
+}
+
+/* ─── 햄버거 버튼 ───────────────────────────────────────── */
+.nav-drawer-btn {
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--sap-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--sap-radius-sm);
+  flex-shrink: 0;
+}
+.nav-drawer-btn:hover {
+  background: var(--sap-surface-3);
+}
+
+/* ─── 드로어 오버레이 ───────────────────────────────────── */
+.nav-drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 900;
+}
+.nav-drawer-overlay.is-open {
+  display: block;
+}
+
+/* ─── 드로어 패널 ───────────────────────────────────────── */
+.nav-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100vh;
+  background: var(--sap-surface-1);
+  border-right: 1px solid var(--sap-border-neutral);
+  box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+  z-index: 901;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.nav-drawer.is-open {
+  transform: translateX(0);
+}
+
+.nav-drawer__header {
+  padding: 14px 16px;
+  font-size: var(--sap-font-size-md);
+  font-weight: var(--sap-font-weight-semibold);
+  color: var(--sap-text-primary);
+  border-bottom: 1px solid var(--sap-border-neutral);
+  flex-shrink: 0;
+}
+
+.nav-drawer__menu {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.nav-drawer__group-title {
+  padding: 6px 16px 2px;
+  font-size: var(--sap-font-size-xs);
+  color: var(--sap-text-secondary);
+  font-weight: var(--sap-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.nav-drawer__link {
+  display: block;
+  padding: 7px 16px 7px 24px;
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-primary);
+  text-decoration: none;
+}
+.nav-drawer__link:hover {
+  background: var(--sap-surface-3);
+}
+.nav-drawer__link--active {
+  color: var(--sap-color-accent);
+  font-weight: var(--sap-font-weight-semibold);
+}
+
+.nav-drawer__divider {
+  height: 1px;
+  background: var(--sap-border-neutral);
+  margin: 6px 0;
 }

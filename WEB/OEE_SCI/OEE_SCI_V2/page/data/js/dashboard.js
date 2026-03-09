@@ -74,8 +74,10 @@ class OEEGaugeChart {
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
 
-          // 값 표시
-          ctx.font = 'bold 2.2rem Arial';
+          // 값 표시 — 차트 크기에 따라 폰트 동적 조정
+          const radius = (chart.chartArea.right - chart.chartArea.left) / 2;
+          const fontSize = Math.max(12, Math.min(28, radius * 0.50));
+          ctx.font = `bold ${fontSize}px Arial`;
           ctx.fillStyle = this.color;
           ctx.fillText(`${this.value}%`, centerX, centerY);
 

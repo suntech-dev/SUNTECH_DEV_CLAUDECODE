@@ -20,6 +20,22 @@ header('Cache-Control: no-cache');
 $factory_filter = isset($_GET['factory_filter']) ? trim($_GET['factory_filter']) : '';
 $line_filter    = isset($_GET['line_filter'])    ? trim($_GET['line_filter'])    : '';
 $machine_filter = isset($_GET['machine_filter']) ? trim($_GET['machine_filter']) : '';
+$date_range     = isset($_GET['date_range'])     ? trim($_GET['date_range'])     : 'today';
+
+// date_range → SQL 날짜 조건 (data_oee_rows_hourly alias: doh)
+switch ($date_range) {
+  case 'yesterday':
+    $actual_date_where = "doh.work_date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+    break;
+  case '7d':
+    $actual_date_where = "doh.work_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)";
+    break;
+  case '30d':
+    $actual_date_where = "doh.work_date >= DATE_SUB(CURDATE(), INTERVAL 29 DAY)";
+    break;
+  default:
+    $actual_date_where = "doh.work_date = CURDATE()";
+}
 
 // 필터 조건 구성 (data_oee_rows_hourly 는 독립 테이블 - JOIN 불필요)
 $where_parts = [];
@@ -77,7 +93,7 @@ try {
       doh.work_hour AS hour,
       AVG(doh.oee)  AS avg_oee
     FROM data_oee_rows_hourly doh
-    WHERE doh.work_date = CURDATE()
+    WHERE $actual_date_where
       AND doh.oee IS NOT NULL
       $where_sql
     GROUP BY doh.work_hour

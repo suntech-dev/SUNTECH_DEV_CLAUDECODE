@@ -22,6 +22,22 @@ $factory_filter = isset($_GET['factory_filter']) ? trim($_GET['factory_filter'])
 $line_filter    = isset($_GET['line_filter'])    ? trim($_GET['line_filter'])    : '';
 $machine_filter = isset($_GET['machine_filter']) ? trim($_GET['machine_filter']) : '';
 $limit          = isset($_GET['limit'])          ? max(1, min(50, (int)$_GET['limit'])) : 10;
+$date_range     = isset($_GET['date_range'])     ? trim($_GET['date_range'])     : 'today';
+
+// date_range → OEE 조회 날짜 조건
+switch ($date_range) {
+  case 'yesterday':
+    $oee_date_where = "work_date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+    break;
+  case '7d':
+    $oee_date_where = "work_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)";
+    break;
+  case '30d':
+    $oee_date_where = "work_date >= DATE_SUB(CURDATE(), INTERVAL 29 DAY)";
+    break;
+  default:
+    $oee_date_where = "work_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)"; // today → 7일 기본
+}
 
 $where_parts = [];
 $params      = [];
@@ -116,7 +132,7 @@ try {
       STDDEV(oee)     AS std_oee_7d
     FROM data_oee
     WHERE machine_idx IN ($placeholders)
-      AND work_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+      AND $oee_date_where
     GROUP BY machine_idx
   ";
   $stmt4 = $pdo->prepare($sql_oee);
