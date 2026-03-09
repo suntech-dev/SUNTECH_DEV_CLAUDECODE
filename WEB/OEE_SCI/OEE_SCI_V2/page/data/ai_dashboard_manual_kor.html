@@ -413,7 +413,7 @@
 <div id="main">
 
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
-    <a href="ai_dashboard.php" class="back-link" style="margin-bottom:0;">&#8592; 대시보드로 돌아가기</a>
+    <a href="ai_dashboard_3.php" class="back-link" style="margin-bottom:0;">&#8592; 대시보드로 돌아가기</a>
     <div class="lang-switch">
       <a href="ai_dashboard_manual.html">EN</a>
       <a href="ai_dashboard_manual_kor.html" class="active">KOR</a>
@@ -426,7 +426,7 @@
     <div class="meta">
       <span class="tag info">OEE_SCI V2</span>
       <span class="tag ok">AI 기반</span>
-      <span class="tag info">v2026.03</span>
+      <span class="tag info">v2026.03.09</span>
     </div>
   </div>
 
@@ -456,6 +456,7 @@
           </tr>
         </thead>
         <tbody>
+          <tr><td>햄버거 메뉴 / Export</td><td>전체 페이지 내비게이션·리포트 내보내기</td><td>—</td></tr>
           <tr><td>요약 카드</td><td>핵심 AI 지표 빠른 요약</td><td>60초마다</td></tr>
           <tr><td>OEE 트렌드 &amp; 예측</td><td>과거 OEE + AI 4시간 예측</td><td>60초마다</td></tr>
           <tr><td>이상 감지</td><td>오늘 OEE가 통계적으로 이상한 라인 표시</td><td>60초마다</td></tr>
@@ -475,13 +476,28 @@
       <h2>필터 사용법</h2>
     </div>
 
-    <p>대시보드 상단의 3개 필터를 사용하면 특정 범위의 데이터만 조회할 수 있습니다. 필터를 변경하면 모든 섹션이 동시에 갱신됩니다.</p>
+    <p>대시보드 상단의 필터를 사용하면 특정 범위의 데이터만 조회할 수 있습니다. 필터를 변경하면 모든 섹션이 동시에 갱신됩니다.</p>
 
     <ol class="steps">
       <li><strong>전체 공장 (All Factory)</strong> — 전체 공장 데이터를 표시합니다. 특정 공장을 선택하면 해당 공장 데이터만 조회됩니다.</li>
       <li><strong>전체 라인 (All Line)</strong> — 공장 선택 후 활성화됩니다. 특정 생산 라인을 선택할 수 있습니다.</li>
       <li><strong>전체 설비 (All Machine)</strong> — 라인 선택 후 활성화됩니다. 특정 설비를 선택할 수 있습니다.</li>
+      <li><strong>날짜 범위 (Today / Yesterday / Last 7 Days / Last 30 Days)</strong> — 분석 기간을 선택합니다. 선택 즉시 모든 AI 섹션이 해당 기간 기준으로 갱신됩니다.</li>
     </ol>
+
+    <div class="tbl-wrap" style="margin-top: 16px;">
+      <table>
+        <thead>
+          <tr><th>날짜 범위 옵션</th><th>기준</th><th>권장 용도</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Today</strong></td><td>오늘 하루</td><td>당일 실시간 모니터링 (기본값)</td></tr>
+          <tr><td><strong>Yesterday</strong></td><td>전일</td><td>전날 마감 후 이상 여부 확인</td></tr>
+          <tr><td><strong>Last 7 Days</strong></td><td>최근 7일</td><td>주간 트렌드 분석</td></tr>
+          <tr><td><strong>Last 30 Days</strong></td><td>최근 30일</td><td>월간 성과 및 장기 패턴 분석</td></tr>
+        </tbody>
+      </table>
+    </div>
 
     <div class="callout">
       <strong>팁:</strong> <strong>Refresh</strong> 버튼을 클릭하면 필터 변경 없이 모든 섹션의 최신 데이터를 즉시 불러옵니다.
@@ -490,6 +506,17 @@
     <div class="callout warn" style="margin-top: 16px;">
       <strong>참고:</strong> 필터를 변경하면 실시간 스트리밍 피드(섹션 8)가 자동으로 재연결됩니다. 잠시 "연결 중..." 상태가 표시될 수 있으며, 이는 정상적인 동작입니다.
     </div>
+
+    <h3 style="font-size: 1rem; margin: 28px 0 12px; color: var(--text-muted);">내비게이션 메뉴 (햄버거 버튼)</h3>
+    <p>헤더 좌측 상단의 <strong>☰ (햄버거) 버튼</strong>을 클릭하면 좌측 드로어 메뉴가 열립니다. Setting·Monitoring·Report 등 모든 관리 페이지로 이동할 수 있습니다.</p>
+
+    <h3 style="font-size: 1rem; margin: 28px 0 12px; color: var(--text-muted);">Export (리포트 내보내기)</h3>
+    <p>헤더의 <strong>Export</strong> 버튼을 클릭하면 분석 리포트를 내보낼 수 있습니다.</p>
+    <ol class="steps">
+      <li>Export 버튼 클릭 → 기간 선택 모달 표시</li>
+      <li>프리셋 버튼(Today / Yesterday / Last 7 Days / Last 30 Days) 또는 직접 날짜 범위 입력</li>
+      <li><strong>Export</strong> 클릭 → 새 탭에서 PDF 리포트 생성</li>
+    </ol>
   </section>
 
   <!-- ===== 3. 요약 카드 ===== -->
@@ -511,8 +538,8 @@
         <p>오늘 OEE가 통계적으로 비정상적인 생산 라인의 수입니다. 고위험 이상이 발생하면 빨간색 "CRITICAL" 배지가 표시됩니다.</p>
       </div>
       <div class="card">
-        <h4>고위험 설비</h4>
-        <p>위험 점수 70 이상인 설비 수입니다. 즉시 예방정비가 필요한 설비입니다.</p>
+        <h4>고위험 설비 (High-Risk Machines)</h4>
+        <p><strong>DANGER</strong>(위험, 점수 70+) + <strong>CAUTION</strong>(주의, 점수 40~69) 설비의 합계입니다. 서브 텍스트에 각 수준별 개수가 표시되며, 배지는 DANGER가 있으면 빨간색, CAUTION만 있으면 노란색으로 구분됩니다.</p>
       </div>
       <div class="card">
         <h4>라인 건강지수 (평균)</h4>
@@ -879,12 +906,22 @@
     </div>
 
     <div class="card" style="margin-bottom: 12px;">
+      <h4>날짜 범위를 "Last 30 Days"로 선택하면 데이터가 느리게 로드됩니다. 정상인가요?</h4>
+      <p>장기 기간(30일)은 분석 데이터 양이 많아 로딩 시간이 다소 길 수 있습니다. 실시간 모니터링에는 <strong>Today</strong>를 사용하고, 장기 분석이 필요할 때만 30일을 선택하시는 것을 권장합니다.</p>
+    </div>
+
+    <div class="card" style="margin-bottom: 12px;">
+      <h4>High-Risk Machines 값과 배지 숫자가 다를 수 있나요?</h4>
+      <p>카드 값은 <strong>DANGER + CAUTION 합계</strong>이며, 배지는 수준별로 별도 표시됩니다. 예: DANGER 0개·CAUTION 1개일 때 카드 값=1, 배지="1 CAUTION". 각 수준의 개수는 카드 서브 텍스트("N danger · M caution")에서 확인할 수 있습니다.</p>
+    </div>
+
+    <div class="card" style="margin-bottom: 12px;">
       <h4>최적화 카드의 "vs. best line"은 무슨 의미인가요?</h4>
       <p>같은 공장 내 최고 성과 라인 대비 해당 라인의 OEE가 몇 %p 낮은지를 나타냅니다. 자사 공장에서 이미 달성하고 있는 수준을 기준으로 현실적인 목표를 설정하는 데 도움이 됩니다.</p>
     </div>
 
     <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 0.82rem; color: var(--text-muted);">
-      &copy; 2025 SUNTECH. All Rights Reserved. &nbsp;|&nbsp; OEE_SCI V2 &nbsp;|&nbsp; AI 인텔리전스 대시보드 매뉴얼
+      &copy; 2026 SUNTECH. All Rights Reserved. &nbsp;|&nbsp; OEE_SCI V2 &nbsp;|&nbsp; AI 인텔리전스 대시보드 매뉴얼 &nbsp;|&nbsp; 2026-03-09 업데이트
     </div>
   </section>
 
