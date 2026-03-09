@@ -403,11 +403,16 @@ function loadMaintenanceRisk() {
     }
 
     const summary = data.summary || {};
-    $('#aiMaintDanger').text(summary.danger || 0);
-    $('#aiMaintSub').text((summary.warning || 0) + ' caution · ' + (summary.normal || 0) + ' normal');
+    const totalHighRisk = (summary.danger || 0) + (summary.warning || 0);
+    $('#aiMaintDanger').text(totalHighRisk);
+    $('#aiMaintSub').text((summary.danger || 0) + ' danger · ' + (summary.warning || 0) + ' caution');
 
-    if (summary.warning > 0) {
-      $('#aiMaintWarnBadge').show().text(summary.warning + ' CAUTION');
+    if (summary.danger > 0) {
+      $('#aiMaintWarnBadge').show().text(summary.danger + ' DANGER')
+        .removeClass('ai-status-badge--warning').addClass('ai-status-badge--danger');
+    } else if (summary.warning > 0) {
+      $('#aiMaintWarnBadge').show().text(summary.warning + ' CAUTION')
+        .removeClass('ai-status-badge--danger').addClass('ai-status-badge--warning');
     } else {
       $('#aiMaintWarnBadge').hide();
     }
