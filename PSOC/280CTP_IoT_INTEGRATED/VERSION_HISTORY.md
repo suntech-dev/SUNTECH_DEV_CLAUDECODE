@@ -17,7 +17,7 @@
 | **개발 목적** | PATTERN_MACHINE 전용 (BLACK CPU 보드) — SEWING/전류센서 제거 |
 | **계획 수립일** | 2026-03-10 |
 | **코드 수정 완료** | 2026-03-17 ✅ |
-| **상태** | 빌드 완료 — PSoC Creator TopDesign ADC 제거 잔여 |
+| **상태** | ✅ 완전 완료 (TopDesign ADC_SAR_Seq 제거 + currentSensor.c 프로젝트 제거 완료) |
 
 ### 메모리 사용량
 
@@ -43,13 +43,13 @@
 | `PROJECT_FIRMWARE_VERSION` | `"Integrated REV 9.8.3"` | `"BLACK_CPU V1"` |
 | `PATTERN_MACHINE` | 지원 | **고정 (유일 타입)** |
 | `SEWING_MACHINE` (TrimPin ISR) | 지원 | **제거** |
-| 전류센서 (ADC_SAR_Seq) | 지원 (옵션) | **제거 (stub 처리)** |
+| 전류센서 (ADC_SAR_Seq) | 지원 (옵션) | **제거 (TopDesign + 프로젝트 소스 모두 제거)** |
 | `machineType` 설정 | 사용자 선택 | **PATTERN_MACHINE 고정** |
 | `Trim_Interrupt_Routine` ISR | 있음 | **제거** |
 | `SewingCountLoop()` | 있음 | **제거** |
 | `CountFunc` 초기화 | `&SewingCountLoop` | **`&PatternCountLoop` 고정** |
 | `makeAndonSewingCount2()` | 있음 | **제거** |
-| `currentSensor.c` | 전체 로직 | **stub (빈 함수)** |
+| `currentSensor.c` | 전체 로직 | **프로젝트 소스에서 완전 제거** |
 
 ### 하드웨어 구성
 
@@ -90,8 +90,10 @@ V1과 동일하나 아래 항목 비활성화:
 
 ### 잔여 작업
 
-- [ ] PSoC Creator TopDesign에서 `ADC_SAR_Seq` 컴포넌트 제거 → 재빌드
-- [ ] 프로젝트 소스 목록에서 `currentSensor.c` 제거 (우클릭 → Remove from Build)
+- [x] PSoC Creator TopDesign에서 `ADC_SAR_Seq` 컴포넌트 제거 → 재빌드 ✅ 2026-03-17
+- [x] 프로젝트 소스 목록에서 `currentSensor.c` 제거 (우클릭 → Remove from Build) ✅ 2026-03-17
+
+> **모든 작업 완료** — Flash 46.8% / SRAM 68.8% (ADC stub이 이미 ADC 참조 없었으므로 메모리 수치 동일)
 
 ### 변경 이력
 

@@ -108,8 +108,10 @@
 
 ### 잔여 작업 (PSoC Creator 수동)
 
-- [ ] TopDesign에서 `ADC_SAR_Seq` 컴포넌트 제거 후 재빌드
-- [ ] 프로젝트 소스 목록에서 `currentSensor.c` 제거 (우클릭 → Remove from Build)
+- [x] TopDesign에서 `ADC_SAR_Seq` 컴포넌트 제거 후 재빌드 ✅ 2026-03-17
+- [x] 프로젝트 소스 목록에서 `currentSensor.c` 제거 (우클릭 → Remove from Build) ✅ 2026-03-17
+
+> **모든 작업 완료** — Flash 46.8% / SRAM 68.8% (ADC 제거 후 동일, stub이 이미 ADC 참조 없었음)
 
 ---
 
