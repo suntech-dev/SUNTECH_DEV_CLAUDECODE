@@ -1,0 +1,513 @@
+/**
+ * ai_dashboard_4.css — 1920x1080 Signage Layout (v4)
+ * ai_dashboard_3.css 개선본
+ * 변경사항:
+ * - Row A: 5카드 (Real-time OEE 신규 추가 + Next 4H Forecast 역할 명확화)
+ * - .ai-summary-card--realtime: 라이브 OEE 카드 스트라이프 색상
+ * - .ai-realtime-live: LIVE 펄스 인디케이터
+ */
+
+/* ─── 전체 고정 ─────────────────────────────────────────── */
+html,
+body {
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.fiori-container {
+  padding: 0;
+  margin: 0;
+}
+
+/* ─── 사이니지 헤더 (nav 대체) ──────────────────────────── */
+.signage-header {
+  height: 52px;
+  background: var(--sap-surface-1);
+  border-bottom: 1px solid var(--sap-border-neutral);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 10px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.signage-header__title {
+  font-size: var(--sap-font-size-lg);
+  font-weight: var(--sap-font-weight-semibold);
+  color: var(--sap-text-primary);
+  white-space: nowrap;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.signage-header__filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.signage-header__filters .fiori-select {
+  height: 30px;
+  font-size: var(--sap-font-size-sm);
+  padding: 0 6px;
+  width: 140px;
+}
+
+/* 날짜 필터 — 너비 축소 */
+.signage-header__filters .date-range-select {
+  width: 120px;
+  border-left: 1px solid var(--sap-border-neutral);
+  padding-left: 8px;
+  margin-left: 2px;
+}
+
+.signage-header__filters .fiori-btn {
+  height: 30px;
+  padding: 0 10px;
+  font-size: var(--sap-font-size-sm);
+}
+
+.signage-header__clock {
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-secondary);
+  white-space: nowrap;
+  margin-left: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.signage-header__status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--sap-font-size-xs);
+  color: var(--sap-text-secondary);
+  white-space: nowrap;
+}
+
+/* ─── 메인 4행 그리드 ────────────────────────────────────── */
+.ai-signage-main {
+  height: calc(100vh - 52px);
+  display: grid;
+  grid-template-rows: 15fr 29fr 28fr 28fr;
+  gap: 5px;
+  padding: 5px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* ─── Row A: AI Summary 카드 5개 (v4 변경) ──────────────── */
+.ai-signage-row-a {
+  min-height: 0;
+}
+
+.ai-signage-row-a .ai-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);  /* v3: 4 → v4: 5 */
+  gap: 5px;
+  height: 100%;
+  margin-bottom: 0;
+}
+
+.ai-signage-row-a .ai-summary-card {
+  padding: 8px 10px 8px 14px;
+  border-radius: var(--sap-radius-md);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+}
+
+.ai-signage-row-a .ai-summary-card__label {
+  font-size: 10px;
+  margin-bottom: 2px;
+}
+
+.ai-signage-row-a .ai-summary-card__value {
+  font-size: 1.6rem;
+  margin-bottom: 2px;
+}
+
+.ai-signage-row-a .ai-summary-card__sub {
+  font-size: 11px;
+}
+
+.ai-signage-row-a .ai-trend-badge {
+  font-size: 10px;
+  padding: 1px 6px;
+}
+
+/* ─── Real-time OEE 카드 스트라이프 (v4 신규) ───────────── */
+.ai-summary-card--realtime::before {
+  background: #06b6d4;  /* teal — 구분색 */
+}
+
+/* LIVE 펄스 인디케이터 */
+.ai-realtime-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: #06b6d4;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.ai-realtime-live__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #06b6d4;
+  animation: rtLivePulse 1.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes rtLivePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.35; transform: scale(0.7); }
+}
+
+/* OEE 상태 색상 — Real-time 카드 값 */
+.ai-oee-good    { color: var(--sap-positive) !important; }
+.ai-oee-warning { color: var(--sap-caution) !important; }
+.ai-oee-danger  { color: var(--sap-negative) !important; }
+
+/* ─── Row B: OEE Forecast (2fr) + Anomaly Detection (1fr) ─ */
+.ai-signage-row-b {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 5px;
+  min-height: 0;
+}
+
+.ai-signage-row-b .ai-prediction-chart-wrap {
+  height: auto;
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+
+.ai-signage-row-b .ai-chart-legend {
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.ai-signage-row-b .ai-anomaly-list {
+  max-height: none;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ─── Row C: Line Health (1fr) + Predictive Maintenance (1fr) */
+.ai-signage-row-c {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  min-height: 0;
+}
+
+.ai-signage-row-c .ai-maintenance-list {
+  max-height: none;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ─── Row D: AI Streaming (1fr) + Production Optimization (2fr) */
+.ai-signage-row-d {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 5px;
+  min-height: 0;
+}
+
+.ai-signage-row-d .ai-stream-feed {
+  max-height: none;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.ai-signage-row-d .ai-opt-list {
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ─── 카드 헤더 타이틀+서브타이틀 인라인화 ─────────────── */
+.card-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.card-title-row .fiori-card__title {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.card-subtitle-inline {
+  font-size: var(--sap-font-size-xs);
+  color: var(--sap-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-self: center;
+}
+
+/* ─── 공통 카드 스타일 ──────────────────────────────────── */
+.ai-signage-main .fiori-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-bottom: 0;
+  border-radius: var(--sap-radius-md);
+  box-sizing: border-box;
+}
+
+.ai-signage-main .fiori-card__header {
+  flex-shrink: 0;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-signage-main .fiori-card__title {
+  font-size: var(--sap-font-size-md);
+}
+
+.ai-signage-main .fiori-card__subtitle {
+  font-size: var(--sap-font-size-xs);
+  margin: 0;
+}
+
+.ai-signage-main .fiori-card__content {
+  flex: 1;
+  min-height: 0;
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── 리스트 아이템 소형화 ──────────────────────────────── */
+.ai-signage-main .ai-anomaly-item {
+  padding: 5px 8px;
+  gap: 6px;
+}
+
+.ai-signage-main .ai-anomaly-item__machine {
+  font-size: 11px;
+}
+
+.ai-signage-main .ai-anomaly-item__line {
+  font-size: 10px;
+}
+
+.ai-signage-main .ai-anomaly-item__oee {
+  font-size: 0.9rem;
+}
+
+.ai-signage-main .ai-maintenance-item {
+  padding: 5px 8px;
+  margin-bottom: 2px;
+}
+
+.ai-signage-main .ai-maintenance-item__machine {
+  font-size: 11px;
+}
+
+.ai-signage-main .ai-maintenance-item__line {
+  font-size: 10px;
+}
+
+.ai-signage-main .ai-health-item {
+  grid-template-columns: 70px 1fr 50px 60px;
+  gap: 6px;
+}
+
+.ai-signage-main .ai-health-item__line {
+  font-size: 11px;
+}
+
+/* ─── 스트리밍 이벤트 소형화 ────────────────────────────── */
+.ai-signage-main .ai-stream-event {
+  padding: 5px 8px;
+}
+
+.ai-signage-main .ai-stream-event__type {
+  font-size: 11px;
+}
+
+.ai-signage-main .ai-stream-event__msg {
+  font-size: 11px;
+}
+
+.ai-signage-main .ai-stream-event__time {
+  font-size: 10px;
+}
+
+/* ─── Optimization 카드 소형화 ──────────────────────────── */
+.ai-signage-main .ai-opt-card {
+  padding: 6px 10px;
+}
+
+.ai-signage-main .ai-opt-card__header {
+  margin-bottom: 6px;
+}
+
+.ai-signage-main .ai-opt-bottleneck {
+  padding: 3px 6px;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.ai-signage-main .ai-opt-components {
+  font-size: 11px;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+/* ─── 스크롤바 ──────────────────────────────────────────── */
+.ai-signage-main ::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.ai-signage-main ::-webkit-scrollbar-track {
+  background: var(--sap-surface-3);
+}
+
+.ai-signage-main ::-webkit-scrollbar-thumb {
+  background: var(--sap-border-neutral);
+  border-radius: 2px;
+}
+
+/* ─── hover 효과 제거 ───────────────────────────────────── */
+.ai-signage-main .ai-summary-card:hover {
+  box-shadow: var(--sap-shadow-1);
+}
+
+.ai-signage-main .ai-heatmap-cell:hover {
+  filter: none;
+}
+
+/* ─── last-update 표시 소형화 ───────────────────────────── */
+.ai-signage-main .ai-last-update {
+  font-size: 10px;
+}
+
+.ai-signage-main .ai-badge {
+  font-size: 9px;
+  padding: 2px 6px;
+}
+
+/* ─── 햄버거 버튼 ───────────────────────────────────────── */
+.nav-drawer-btn {
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--sap-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--sap-radius-sm);
+  flex-shrink: 0;
+}
+
+.nav-drawer-btn:hover {
+  background: var(--sap-surface-3);
+}
+
+/* ─── 드로어 오버레이 ───────────────────────────────────── */
+.nav-drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 900;
+}
+
+.nav-drawer-overlay.is-open {
+  display: block;
+}
+
+/* ─── 드로어 패널 ───────────────────────────────────────── */
+.nav-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100vh;
+  background: var(--sap-surface-1);
+  border-right: 1px solid var(--sap-border-neutral);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  z-index: 901;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.nav-drawer.is-open {
+  transform: translateX(0);
+}
+
+.nav-drawer__header {
+  padding: 14px 16px;
+  font-size: var(--sap-font-size-md);
+  font-weight: var(--sap-font-weight-semibold);
+  color: var(--sap-text-primary);
+  border-bottom: 1px solid var(--sap-border-neutral);
+  flex-shrink: 0;
+}
+
+.nav-drawer__menu {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.nav-drawer__group-title {
+  padding: 6px 16px 2px;
+  font-size: var(--sap-font-size-xs);
+  color: var(--sap-text-secondary);
+  font-weight: var(--sap-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.nav-drawer__link {
+  display: block;
+  padding: 7px 16px 7px 24px;
+  font-size: var(--sap-font-size-sm);
+  color: var(--sap-text-primary);
+  text-decoration: none;
+}
+
+.nav-drawer__link:hover {
+  background: var(--sap-surface-3);
+}
+
+.nav-drawer__link--active {
+  color: var(--sap-color-accent);
+  font-weight: var(--sap-font-weight-semibold);
+}
+
+.nav-drawer__divider {
+  height: 1px;
+  background: var(--sap-border-neutral);
+  margin: 6px 0;
+}

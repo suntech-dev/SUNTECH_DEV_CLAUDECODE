@@ -1,0 +1,3125 @@
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"eeprom.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.checkSum,"ax",%progbits
+  20              		.align	2
+  21              		.global	checkSum
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	checkSum, %function
+  25              	checkSum:
+  26              	.LFB61:
+  27              		.file 1 "eeprom.c"
+   1:eeprom.c      **** /* ========================================
+   2:eeprom.c      ****  *
+   3:eeprom.c      ****  * Copyright YOUR COMPANY, THE YEAR
+   4:eeprom.c      ****  * All Rights Reserved
+   5:eeprom.c      ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:eeprom.c      ****  *
+   7:eeprom.c      ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:eeprom.c      ****  * WHICH IS THE PROPERTY OF your company.
+   9:eeprom.c      ****  *
+  10:eeprom.c      ****  * ========================================
+  11:eeprom.c      **** */
+  12:eeprom.c      **** #include "eeprom.h"
+  13:eeprom.c      **** #include "w25qxx.h"
+  14:eeprom.c      **** 
+  15:eeprom.c      **** //CONFIG_SAVE g_ConfigSave;
+  16:eeprom.c      **** //CONFIG_META g_ConfigMeta;
+  17:eeprom.c      **** 
+  18:eeprom.c      **** WORKING_DATA g_WorkingData;
+  19:eeprom.c      **** 
+  20:eeprom.c      **** void initEEPROM();
+  21:eeprom.c      **** 
+  22:eeprom.c      **** #define WATER_MARK              123
+  23:eeprom.c      **** 
+  24:eeprom.c      **** uint16 checkSum(uint8 *data, uint16 size)
+  25:eeprom.c      **** {
+  28              		.loc 1 25 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 2
+
+
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  37              	.LVL1:
+  38              	.LBB2:
+  26:eeprom.c      ****     uint16 checkSum = 0;
+  27:eeprom.c      ****     for(int i=1; i < size; i++)
+  39              		.loc 1 27 0
+  40 0002 0122     		movs	r2, #1
+  41              	.LBE2:
+  26:eeprom.c      ****     uint16 checkSum = 0;
+  42              		.loc 1 26 0
+  43 0004 0023     		movs	r3, #0
+  44              	.LBB3:
+  45              		.loc 1 27 0
+  46 0006 03E0     		b	.L2
+  47              	.LVL2:
+  48              	.L3:
+  28:eeprom.c      ****     {
+  29:eeprom.c      ****         checkSum += data[i];
+  49              		.loc 1 29 0 discriminator 3
+  50 0008 845C     		ldrb	r4, [r0, r2]
+  51 000a 1B19     		adds	r3, r3, r4
+  52              	.LVL3:
+  53 000c 9BB2     		uxth	r3, r3
+  54              	.LVL4:
+  27:eeprom.c      ****     {
+  55              		.loc 1 27 0 discriminator 3
+  56 000e 0132     		adds	r2, r2, #1
+  57              	.LVL5:
+  58              	.L2:
+  27:eeprom.c      ****     {
+  59              		.loc 1 27 0 is_stmt 0 discriminator 1
+  60 0010 8A42     		cmp	r2, r1
+  61 0012 F9DB     		blt	.L3
+  62              	.LBE3:
+  30:eeprom.c      ****     }
+  31:eeprom.c      ****     return (~checkSum + 1);
+  63              		.loc 1 31 0 is_stmt 1
+  64 0014 5842     		rsbs	r0, r3, #0
+  65              	.LVL6:
+  66 0016 80B2     		uxth	r0, r0
+  32:eeprom.c      **** }
+  67              		.loc 1 32 0
+  68              		@ sp needed
+  69 0018 10BD     		pop	{r4, pc}
+  70              		.cfi_endproc
+  71              	.LFE61:
+  72              		.size	checkSum, .-checkSum
+  73 001a C046     		.section	.text.IsAvaliableConfig,"ax",%progbits
+  74              		.align	2
+  75              		.global	IsAvaliableConfig
+  76              		.code	16
+  77              		.thumb_func
+  78              		.type	IsAvaliableConfig, %function
+  79              	IsAvaliableConfig:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 3
+
+
+  80              	.LFB62:
+  33:eeprom.c      **** 
+  34:eeprom.c      **** uint8 IsAvaliableConfig()
+  35:eeprom.c      **** {
+  81              		.loc 1 35 0
+  82              		.cfi_startproc
+  83              		@ args = 0, pretend = 0, frame = 0
+  84              		@ frame_needed = 0, uses_anonymous_args = 0
+  85              		@ link register save eliminated.
+  36:eeprom.c      **** //    if(g_ConfigSave.WaterMark != WATER_MARK)
+  37:eeprom.c      **** //    {
+  38:eeprom.c      **** //        DEBUG_printf("WaterMark Error of EEPROM\r\n");
+  39:eeprom.c      **** //        return FALSE;
+  40:eeprom.c      **** //    }
+  41:eeprom.c      **** //
+  42:eeprom.c      **** //    if(g_ConfigSave.checksum != checkSum((uint8*) &g_ConfigSave, sizeof(g_ConfigSave)-2))
+  43:eeprom.c      **** //    {
+  44:eeprom.c      **** //        DEBUG_printf("CRC Error of EEPROM\r\n");        
+  45:eeprom.c      **** //        return FALSE;
+  46:eeprom.c      **** //    }
+  47:eeprom.c      **** 
+  48:eeprom.c      ****     return TRUE;
+  49:eeprom.c      **** }
+  86              		.loc 1 49 0
+  87 0000 0120     		movs	r0, #1
+  88              		@ sp needed
+  89 0002 7047     		bx	lr
+  90              		.cfi_endproc
+  91              	.LFE62:
+  92              		.size	IsAvaliableConfig, .-IsAvaliableConfig
+  93              		.section	.text.SaveConfig,"ax",%progbits
+  94              		.align	2
+  95              		.global	SaveConfig
+  96              		.code	16
+  97              		.thumb_func
+  98              		.type	SaveConfig, %function
+  99              	SaveConfig:
+ 100              	.LFB65:
+  50:eeprom.c      **** 
+  51:eeprom.c      **** #ifdef EXTERNAL_FLASH
+  52:eeprom.c      **** 
+  53:eeprom.c      **** uint32_t g_uAddressOfConfig=0;
+  54:eeprom.c      **** uint32_t g_uSectorOfConfig=0;
+  55:eeprom.c      **** 
+  56:eeprom.c      **** void initFLASH()
+  57:eeprom.c      **** {
+  58:eeprom.c      ****     while(!W25qxx_Init());    
+  59:eeprom.c      ****     
+  60:eeprom.c      ****     initEEPROM();  
+  61:eeprom.c      ****     
+  62:eeprom.c      ****     g_uSectorOfConfig = (w25qxx.SectorCount-1);
+  63:eeprom.c      ****     g_uAddressOfConfig = g_uSectorOfConfig * w25qxx.SectorSize;
+  64:eeprom.c      ****     
+  65:eeprom.c      ****     LoadConfig();
+  66:eeprom.c      ****    
+  67:eeprom.c      **** }    
+  68:eeprom.c      **** 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 4
+
+
+  69:eeprom.c      **** uint8 LoadConfig()
+  70:eeprom.c      **** {
+  71:eeprom.c      ****     uint32_t g_uSectorOfWifiConfig = w25qxx.SectorCount-1;
+  72:eeprom.c      ****     uint32_t g_uAddressOfWifiConfig = g_uSectorOfWifiConfig * w25qxx.SectorSize;
+  73:eeprom.c      **** 
+  74:eeprom.c      **** //    uint8_t *p = (uint8 *) & g_ConfigSave;
+  75:eeprom.c      **** //    
+  76:eeprom.c      **** //    W25qxx_ReadBytes(p, g_uAddressOfWifiConfig,sizeof(g_ConfigSave));
+  77:eeprom.c      ****   
+  78:eeprom.c      ****     if(!IsAvaliableConfig())
+  79:eeprom.c      ****     {
+  80:eeprom.c      **** //        memset(&g_ConfigSave,0,sizeof(g_ConfigSave));
+  81:eeprom.c      **** //        
+  82:eeprom.c      **** //        g_WorkingData.trimCount = 0;
+  83:eeprom.c      **** //        g_ConfigSave.target        = DEFAULT_TARGET;
+  84:eeprom.c      **** //        g_ConfigSave.minTarget     = DEFAULT_MIN_TARGET;
+  85:eeprom.c      **** //        g_ConfigSave.maxTarget     = DEFULAT_MAX_TARGET;
+  86:eeprom.c      **** //        g_ConfigSave.LedBrightness = 10;
+  87:eeprom.c      ****         
+  88:eeprom.c      ****         DEBUG_printf("Default Config.\r\n");
+  89:eeprom.c      ****         
+  90:eeprom.c      ****         SaveConfig(0);         
+  91:eeprom.c      ****         return FALSE;
+  92:eeprom.c      ****     }
+  93:eeprom.c      ****     
+  94:eeprom.c      **** //    g_ConfigSave.minTarget     = DEFAULT_MIN_TARGET;
+  95:eeprom.c      **** //    g_ConfigSave.maxTarget     = DEFULAT_MAX_TARGET;
+  96:eeprom.c      ****     
+  97:eeprom.c      ****     PrintConfig();    
+  98:eeprom.c      ****     return TRUE;
+  99:eeprom.c      **** }
+ 100:eeprom.c      **** 
+ 101:eeprom.c      **** uint8 SaveConfig(uint8 mode)
+ 102:eeprom.c      **** {
+ 101              		.loc 1 102 0
+ 102              		.cfi_startproc
+ 103              		@ args = 0, pretend = 0, frame = 0
+ 104              		@ frame_needed = 0, uses_anonymous_args = 0
+ 105              		@ link register save eliminated.
+ 106              	.LVL7:
+ 107              	.LVL8:
+ 103:eeprom.c      **** //    uint32_t g_uSectorOfWifiConfig = w25qxx.SectorCount-1;
+ 104:eeprom.c      **** //    uint32_t g_uAddressOfWifiConfig = g_uSectorOfWifiConfig * w25qxx.SectorSize;
+ 105:eeprom.c      **** //    
+ 106:eeprom.c      **** //    uint8 WATERMARK;
+ 107:eeprom.c      **** //    uint16 CHECKSUM;
+ 108:eeprom.c      **** //    
+ 109:eeprom.c      **** //    PrintConfig();
+ 110:eeprom.c      **** //    
+ 111:eeprom.c      **** //    g_ConfigSave.Stat = mode;  
+ 112:eeprom.c      **** //    WATERMARK = g_ConfigSave.WaterMark = WATER_MARK;    
+ 113:eeprom.c      **** //    CHECKSUM  = g_ConfigSave.checksum = checkSum((uint8*) &g_ConfigSave, sizeof(g_ConfigSave)-2);
+ 114:eeprom.c      **** //    
+ 115:eeprom.c      **** //    PrintConfig();
+ 116:eeprom.c      **** //    
+ 117:eeprom.c      **** //    uint8_t *p = (uint8 *) & g_ConfigSave;
+ 118:eeprom.c      **** //    
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 5
+
+
+ 119:eeprom.c      **** //    W25qxx_EraseSector(g_uSectorOfWifiConfig);
+ 120:eeprom.c      **** //    
+ 121:eeprom.c      **** //    for(uint i=0; i < sizeof(g_ConfigSave); i++)
+ 122:eeprom.c      **** //    {
+ 123:eeprom.c      **** //        W25qxx_WriteByte(p[i], g_uAddressOfWifiConfig+i);
+ 124:eeprom.c      **** //    }
+ 125:eeprom.c      **** // 
+ 126:eeprom.c      **** //    PrintConfig();
+ 127:eeprom.c      **** //    CONFIG_SAVE g_ConfigSaveOld;
+ 128:eeprom.c      **** //    memcpy(&g_ConfigSaveOld, &g_ConfigSave, sizeof(g_ConfigSave));
+ 129:eeprom.c      **** //    memset(&g_ConfigSave,0,sizeof(g_ConfigSave));
+ 130:eeprom.c      **** //    
+ 131:eeprom.c      **** //    LoadConfig();
+ 132:eeprom.c      **** //
+ 133:eeprom.c      **** //    DEBUG_printf("CRC %d:%d, CheckSum %x:%x\r\n", WATERMARK, g_ConfigSave.WaterMark, CHECKSUM, g_
+ 134:eeprom.c      **** // //   DEBUG_printf("Save Config [%s, %s, %s, %s]\r\n",g_ConfigSave.SSID, g_ConfigSave.Password, g
+ 135:eeprom.c      **** // 
+ 136:eeprom.c      **** //    CyDelay(10);
+ 137:eeprom.c      **** //    
+ 138:eeprom.c      **** //    return memcmp(&g_ConfigSaveOld,&g_ConfigSave, sizeof(g_ConfigSave)) == 0 ? TRUE : FALSE;    
+ 139:eeprom.c      **** }
+ 108              		.loc 1 139 0
+ 109              		@ sp needed
+ 110 0000 7047     		bx	lr
+ 111              		.cfi_endproc
+ 112              	.LFE65:
+ 113              		.size	SaveConfig, .-SaveConfig
+ 114 0002 C046     		.section	.text.PrintConfig,"ax",%progbits
+ 115              		.align	2
+ 116              		.global	PrintConfig
+ 117              		.code	16
+ 118              		.thumb_func
+ 119              		.type	PrintConfig, %function
+ 120              	PrintConfig:
+ 121              	.LFB66:
+ 140:eeprom.c      **** 
+ 141:eeprom.c      **** void PrintConfig()
+ 142:eeprom.c      **** {
+ 122              		.loc 1 142 0
+ 123              		.cfi_startproc
+ 124              		@ args = 0, pretend = 0, frame = 0
+ 125              		@ frame_needed = 0, uses_anonymous_args = 0
+ 126 0000 10B5     		push	{r4, lr}
+ 127              		.cfi_def_cfa_offset 8
+ 128              		.cfi_offset 4, -8
+ 129              		.cfi_offset 14, -4
+ 143:eeprom.c      ****     
+ 144:eeprom.c      ****     DEBUG_printf("\r\nConfig :\r\n");
+ 130              		.loc 1 144 0
+ 131 0002 0C48     		ldr	r0, .L7
+ 132 0004 FFF7FEFF 		bl	DEBUG_printf
+ 133              	.LVL9:
+ 145:eeprom.c      ****     DEBUG_printf("\t Target        : %d\r\n",g_WorkingData.target);
+ 134              		.loc 1 145 0
+ 135 0008 0B4C     		ldr	r4, .L7+4
+ 136 000a A189     		ldrh	r1, [r4, #12]
+ 137 000c 0B48     		ldr	r0, .L7+8
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 6
+
+
+ 138 000e FFF7FEFF 		bl	DEBUG_printf
+ 139              	.LVL10:
+ 146:eeprom.c      ****     DEBUG_printf("\t min Target    : %d\r\n",g_WorkingData.minTarget);
+ 140              		.loc 1 146 0
+ 141 0012 E189     		ldrh	r1, [r4, #14]
+ 142 0014 0A48     		ldr	r0, .L7+12
+ 143 0016 FFF7FEFF 		bl	DEBUG_printf
+ 144              	.LVL11:
+ 147:eeprom.c      ****     DEBUG_printf("\t max Target    : %d\r\n",g_WorkingData.maxTarget);
+ 145              		.loc 1 147 0
+ 146 001a 218A     		ldrh	r1, [r4, #16]
+ 147 001c 0948     		ldr	r0, .L7+16
+ 148 001e FFF7FEFF 		bl	DEBUG_printf
+ 149              	.LVL12:
+ 148:eeprom.c      ****     DEBUG_printf("\t Trim          : %d\r\n",g_WorkingData.trimCount);
+ 150              		.loc 1 148 0
+ 151 0022 A188     		ldrh	r1, [r4, #4]
+ 152 0024 0848     		ldr	r0, .L7+20
+ 153 0026 FFF7FEFF 		bl	DEBUG_printf
+ 154              	.LVL13:
+ 149:eeprom.c      ****     DEBUG_printf("\t LED Brightness: %d\r\n",g_WorkingData.LedBrightness);
+ 155              		.loc 1 149 0
+ 156 002a 6189     		ldrh	r1, [r4, #10]
+ 157 002c 0748     		ldr	r0, .L7+24
+ 158 002e FFF7FEFF 		bl	DEBUG_printf
+ 159              	.LVL14:
+ 150:eeprom.c      **** 
+ 151:eeprom.c      **** //    DEBUG_printf("\r\n Stat : %d\r\n", g_WorkingData.Stat);
+ 152:eeprom.c      ****  
+ 153:eeprom.c      **** }
+ 160              		.loc 1 153 0
+ 161              		@ sp needed
+ 162 0032 10BD     		pop	{r4, pc}
+ 163              	.L8:
+ 164              		.align	2
+ 165              	.L7:
+ 166 0034 00000000 		.word	.LC0
+ 167 0038 00000000 		.word	g_WorkingData
+ 168 003c 10000000 		.word	.LC3
+ 169 0040 28000000 		.word	.LC5
+ 170 0044 40000000 		.word	.LC7
+ 171 0048 58000000 		.word	.LC9
+ 172 004c 70000000 		.word	.LC11
+ 173              		.cfi_endproc
+ 174              	.LFE66:
+ 175              		.size	PrintConfig, .-PrintConfig
+ 176              		.section	.text.LoadConfig,"ax",%progbits
+ 177              		.align	2
+ 178              		.global	LoadConfig
+ 179              		.code	16
+ 180              		.thumb_func
+ 181              		.type	LoadConfig, %function
+ 182              	LoadConfig:
+ 183              	.LFB64:
+  70:eeprom.c      ****     uint32_t g_uSectorOfWifiConfig = w25qxx.SectorCount-1;
+ 184              		.loc 1 70 0
+ 185              		.cfi_startproc
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 7
+
+
+ 186              		@ args = 0, pretend = 0, frame = 0
+ 187              		@ frame_needed = 0, uses_anonymous_args = 0
+ 188 0000 10B5     		push	{r4, lr}
+ 189              		.cfi_def_cfa_offset 8
+ 190              		.cfi_offset 4, -8
+ 191              		.cfi_offset 14, -4
+ 192              	.LVL15:
+  78:eeprom.c      ****     {
+ 193              		.loc 1 78 0
+ 194 0002 FFF7FEFF 		bl	IsAvaliableConfig
+ 195              	.LVL16:
+ 196 0006 041E     		subs	r4, r0, #0
+ 197 0008 03D1     		bne	.L10
+  88:eeprom.c      ****         
+ 198              		.loc 1 88 0
+ 199 000a 0448     		ldr	r0, .L12
+ 200 000c FFF7FEFF 		bl	DEBUG_printf
+ 201              	.LVL17:
+  91:eeprom.c      ****     }
+ 202              		.loc 1 91 0
+ 203 0010 02E0     		b	.L11
+ 204              	.L10:
+  97:eeprom.c      ****     return TRUE;
+ 205              		.loc 1 97 0
+ 206 0012 FFF7FEFF 		bl	PrintConfig
+ 207              	.LVL18:
+  98:eeprom.c      **** }
+ 208              		.loc 1 98 0
+ 209 0016 0124     		movs	r4, #1
+ 210              	.L11:
+  99:eeprom.c      **** 
+ 211              		.loc 1 99 0
+ 212 0018 2000     		movs	r0, r4
+ 213              		@ sp needed
+ 214 001a 10BD     		pop	{r4, pc}
+ 215              	.L13:
+ 216              		.align	2
+ 217              	.L12:
+ 218 001c 88000000 		.word	.LC13
+ 219              		.cfi_endproc
+ 220              	.LFE64:
+ 221              		.size	LoadConfig, .-LoadConfig
+ 222              		.section	.text.PrintConfigUSBUART,"ax",%progbits
+ 223              		.align	2
+ 224              		.global	PrintConfigUSBUART
+ 225              		.code	16
+ 226              		.thumb_func
+ 227              		.type	PrintConfigUSBUART, %function
+ 228              	PrintConfigUSBUART:
+ 229              	.LFB67:
+ 154:eeprom.c      **** 
+ 155:eeprom.c      **** void PrintConfigUSBUART()
+ 156:eeprom.c      **** {  
+ 230              		.loc 1 156 0
+ 231              		.cfi_startproc
+ 232              		@ args = 0, pretend = 0, frame = 0
+ 233              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 8
+
+
+ 234              		@ link register save eliminated.
+ 157:eeprom.c      **** }
+ 235              		.loc 1 157 0
+ 236              		@ sp needed
+ 237 0000 7047     		bx	lr
+ 238              		.cfi_endproc
+ 239              	.LFE67:
+ 240              		.size	PrintConfigUSBUART, .-PrintConfigUSBUART
+ 241 0002 C046     		.section	.text.LoadWorkData,"ax",%progbits
+ 242              		.align	2
+ 243              		.global	LoadWorkData
+ 244              		.code	16
+ 245              		.thumb_func
+ 246              		.type	LoadWorkData, %function
+ 247              	LoadWorkData:
+ 248              	.LFB68:
+ 158:eeprom.c      **** 
+ 159:eeprom.c      **** /*Logical Size of Em_EEPROM*/
+ 160:eeprom.c      **** #define LOGICAL_EEPROM_SIZE     128u
+ 161:eeprom.c      **** #define LOGICAL_EEPROM_START    0u
+ 162:eeprom.c      **** cy_en_em_eeprom_status_t eepromReturnValue;
+ 163:eeprom.c      **** 
+ 164:eeprom.c      **** /* EEPROM storage in work flash, this is defined in Em_EEPROM.c*/
+ 165:eeprom.c      **** #if defined (__ICCARM__)
+ 166:eeprom.c      **** #pragma data_alignment = CY_FLASH_SIZEOF_ROW
+ 167:eeprom.c      **** const uint8_t Em_EEPROM_em_EepromStorage[Em_EEPROM_PHYSICAL_SIZE] = {0u};
+ 168:eeprom.c      **** #else
+ 169:eeprom.c      **** const uint8_t Em_EEPROM_em_EepromStorage[Em_EEPROM_PHYSICAL_SIZE]
+ 170:eeprom.c      **** __ALIGNED(CY_FLASH_SIZEOF_ROW) = {0u};
+ 171:eeprom.c      **** #endif /* defined (__ICCARM__) */
+ 172:eeprom.c      **** 
+ 173:eeprom.c      **** 
+ 174:eeprom.c      **** void LoadWorkData()
+ 175:eeprom.c      **** {
+ 249              		.loc 1 175 0
+ 250              		.cfi_startproc
+ 251              		@ args = 0, pretend = 0, frame = 0
+ 252              		@ frame_needed = 0, uses_anonymous_args = 0
+ 253 0000 10B5     		push	{r4, lr}
+ 254              		.cfi_def_cfa_offset 8
+ 255              		.cfi_offset 4, -8
+ 256              		.cfi_offset 14, -4
+ 176:eeprom.c      ****     memset(&g_WorkingData, 0, sizeof(g_WorkingData));
+ 257              		.loc 1 176 0
+ 258 0002 174C     		ldr	r4, .L18
+ 259 0004 8022     		movs	r2, #128
+ 260 0006 0021     		movs	r1, #0
+ 261 0008 2000     		movs	r0, r4
+ 262 000a FFF7FEFF 		bl	memset
+ 263              	.LVL19:
+ 177:eeprom.c      ****     
+ 178:eeprom.c      ****     eepromReturnValue = Em_EEPROM_Read(LOGICAL_EEPROM_START, &g_WorkingData, LOGICAL_EEPROM_SIZE);
+ 264              		.loc 1 178 0
+ 265 000e 154B     		ldr	r3, .L18+4
+ 266 0010 8022     		movs	r2, #128
+ 267 0012 2100     		movs	r1, r4
+ 268 0014 0020     		movs	r0, #0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 9
+
+
+ 269 0016 FFF7FEFF 		bl	Cy_Em_EEPROM_Read
+ 270              	.LVL20:
+ 271 001a 134B     		ldr	r3, .L18+8
+ 272 001c 1870     		strb	r0, [r3]
+ 179:eeprom.c      ****     //eepromReturnValue = Em_EEPROM_Read(LOGICAL_EEPROM_START, &g_WorkingData, LOGICAL_EEPROM_SIZE)
+ 180:eeprom.c      ****     if(eepromReturnValue != CY_EM_EEPROM_SUCCESS)
+ 273              		.loc 1 180 0
+ 274 001e 0028     		cmp	r0, #0
+ 275 0020 08D0     		beq	.L16
+ 181:eeprom.c      ****     {
+ 182:eeprom.c      ****         DEBUG_printf("Load ERRRRR\r\n");
+ 276              		.loc 1 182 0
+ 277 0022 1248     		ldr	r0, .L18+12
+ 278 0024 FFF7FEFF 		bl	DEBUG_printf
+ 279              	.LVL21:
+ 183:eeprom.c      ****         memset(&g_WorkingData, 0, sizeof(g_WorkingData));      
+ 280              		.loc 1 183 0
+ 281 0028 8022     		movs	r2, #128
+ 282 002a 0021     		movs	r1, #0
+ 283 002c 0C48     		ldr	r0, .L18
+ 284 002e FFF7FEFF 		bl	memset
+ 285              	.LVL22:
+ 184:eeprom.c      ****         return;
+ 286              		.loc 1 184 0
+ 287 0032 13E0     		b	.L15
+ 288              	.L16:
+ 185:eeprom.c      ****     }
+ 186:eeprom.c      ****     
+ 187:eeprom.c      ****     if(g_WorkingData.WaterMark != WORKING_DATA_WATERMARK)
+ 289              		.loc 1 187 0
+ 290 0034 0A4B     		ldr	r3, .L18
+ 291 0036 1A88     		ldrh	r2, [r3]
+ 292 0038 0D4B     		ldr	r3, .L18+16
+ 293 003a 9A42     		cmp	r2, r3
+ 294 003c 0ED0     		beq	.L15
+ 188:eeprom.c      ****     {
+ 189:eeprom.c      ****         memset(&g_WorkingData, 0, sizeof(g_WorkingData));
+ 295              		.loc 1 189 0
+ 296 003e 084C     		ldr	r4, .L18
+ 297 0040 8022     		movs	r2, #128
+ 298 0042 0021     		movs	r1, #0
+ 299 0044 2000     		movs	r0, r4
+ 300 0046 FFF7FEFF 		bl	memset
+ 301              	.LVL23:
+ 190:eeprom.c      ****         g_WorkingData.maxTarget = DEFULAT_MAX_TARGET;
+ 302              		.loc 1 190 0
+ 303 004a 0A4B     		ldr	r3, .L18+20
+ 304 004c 2382     		strh	r3, [r4, #16]
+ 191:eeprom.c      ****         g_WorkingData.minTarget = DEFAULT_MIN_TARGET;
+ 305              		.loc 1 191 0
+ 306 004e 0123     		movs	r3, #1
+ 307 0050 E381     		strh	r3, [r4, #14]
+ 192:eeprom.c      ****         g_WorkingData.target    = DEFAULT_TARGET;
+ 308              		.loc 1 192 0
+ 309 0052 FA22     		movs	r2, #250
+ 310 0054 9200     		lsls	r2, r2, #2
+ 311 0056 A281     		strh	r2, [r4, #12]
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 10
+
+
+ 193:eeprom.c      ****         g_WorkingData.noOfPairActual = DEFAULT_NO_OF_PAIR_ACTUAL;
+ 312              		.loc 1 193 0
+ 313 0058 E380     		strh	r3, [r4, #6]
+ 194:eeprom.c      ****         g_WorkingData.noOfPairTrim   = DEFAULT_NO_OF_PAIR_TRIM;
+ 314              		.loc 1 194 0
+ 315 005a 2381     		strh	r3, [r4, #8]
+ 316              	.L15:
+ 195:eeprom.c      ****     }        
+ 196:eeprom.c      **** }
+ 317              		.loc 1 196 0
+ 318              		@ sp needed
+ 319 005c 10BD     		pop	{r4, pc}
+ 320              	.L19:
+ 321 005e C046     		.align	2
+ 322              	.L18:
+ 323 0060 00000000 		.word	g_WorkingData
+ 324 0064 00000000 		.word	Em_EEPROM_context
+ 325 0068 00000000 		.word	eepromReturnValue
+ 326 006c 9C000000 		.word	.LC18
+ 327 0070 39300000 		.word	12345
+ 328 0074 60EAFFFF 		.word	-5536
+ 329              		.cfi_endproc
+ 330              	.LFE68:
+ 331              		.size	LoadWorkData, .-LoadWorkData
+ 332              		.section	.text.SaveWorkData,"ax",%progbits
+ 333              		.align	2
+ 334              		.global	SaveWorkData
+ 335              		.code	16
+ 336              		.thumb_func
+ 337              		.type	SaveWorkData, %function
+ 338              	SaveWorkData:
+ 339              	.LFB69:
+ 197:eeprom.c      **** 
+ 198:eeprom.c      **** void SaveWorkData()
+ 199:eeprom.c      **** {    
+ 340              		.loc 1 199 0
+ 341              		.cfi_startproc
+ 342              		@ args = 0, pretend = 0, frame = 0
+ 343              		@ frame_needed = 0, uses_anonymous_args = 0
+ 344 0000 10B5     		push	{r4, lr}
+ 345              		.cfi_def_cfa_offset 8
+ 346              		.cfi_offset 4, -8
+ 347              		.cfi_offset 14, -4
+ 200:eeprom.c      ****     g_WorkingData.WaterMark = WORKING_DATA_WATERMARK;
+ 348              		.loc 1 200 0
+ 349 0002 0749     		ldr	r1, .L22
+ 350 0004 074B     		ldr	r3, .L22+4
+ 351 0006 0B80     		strh	r3, [r1]
+ 201:eeprom.c      ****     cy_en_em_eeprom_status_t eepromReturnValue = Em_EEPROM_Write(LOGICAL_EEPROM_START, &g_WorkingDa
+ 352              		.loc 1 201 0
+ 353 0008 074B     		ldr	r3, .L22+8
+ 354 000a 8022     		movs	r2, #128
+ 355 000c 0020     		movs	r0, #0
+ 356 000e FFF7FEFF 		bl	Cy_Em_EEPROM_Write
+ 357              	.LVL24:
+ 202:eeprom.c      **** 
+ 203:eeprom.c      ****     if(eepromReturnValue != CY_EM_EEPROM_SUCCESS)
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 11
+
+
+ 358              		.loc 1 203 0
+ 359 0012 0028     		cmp	r0, #0
+ 360 0014 02D0     		beq	.L20
+ 204:eeprom.c      ****     {
+ 205:eeprom.c      ****         DEBUG_printf("Can't Save WORKING DATA\r\n");
+ 361              		.loc 1 205 0
+ 362 0016 0548     		ldr	r0, .L22+12
+ 363              	.LVL25:
+ 364 0018 FFF7FEFF 		bl	DEBUG_printf
+ 365              	.LVL26:
+ 366              	.L20:
+ 206:eeprom.c      ****         return;
+ 207:eeprom.c      ****     }       
+ 208:eeprom.c      **** }
+ 367              		.loc 1 208 0
+ 368              		@ sp needed
+ 369 001c 10BD     		pop	{r4, pc}
+ 370              	.L23:
+ 371 001e C046     		.align	2
+ 372              	.L22:
+ 373 0020 00000000 		.word	g_WorkingData
+ 374 0024 39300000 		.word	12345
+ 375 0028 00000000 		.word	Em_EEPROM_context
+ 376 002c AC000000 		.word	.LC22
+ 377              		.cfi_endproc
+ 378              	.LFE69:
+ 379              		.size	SaveWorkData, .-SaveWorkData
+ 380              		.section	.text.initEEPROM,"ax",%progbits
+ 381              		.align	2
+ 382              		.global	initEEPROM
+ 383              		.code	16
+ 384              		.thumb_func
+ 385              		.type	initEEPROM, %function
+ 386              	initEEPROM:
+ 387              	.LFB70:
+ 209:eeprom.c      **** 
+ 210:eeprom.c      **** void initEEPROM()
+ 211:eeprom.c      **** {
+ 388              		.loc 1 211 0
+ 389              		.cfi_startproc
+ 390              		@ args = 0, pretend = 0, frame = 0
+ 391              		@ frame_needed = 0, uses_anonymous_args = 0
+ 392 0000 10B5     		push	{r4, lr}
+ 393              		.cfi_def_cfa_offset 8
+ 394              		.cfi_offset 4, -8
+ 395              		.cfi_offset 14, -4
+ 212:eeprom.c      ****     if(LOGICAL_EEPROM_SIZE != sizeof(WORKING_DATA))
+ 213:eeprom.c      ****     {
+ 214:eeprom.c      ****         DEBUG_printf("WORKING_DATA size is not same as Em_EEPROM_PHYSICAL_SIZE, %d != %d\r\n",LOGIC
+ 215:eeprom.c      ****         return;
+ 216:eeprom.c      ****     }
+ 217:eeprom.c      ****     
+ 218:eeprom.c      ****     cy_en_em_eeprom_status_t eepromReturnValue = Em_EEPROM_Init((uint32_t)Em_EEPROM_em_EepromStorag
+ 396              		.loc 1 218 0
+ 397 0002 0648     		ldr	r0, .L27
+ 398 0004 FFF7FEFF 		bl	Em_EEPROM_Init
+ 399              	.LVL27:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 12
+
+
+ 219:eeprom.c      ****     if(eepromReturnValue != CY_EM_EEPROM_SUCCESS)
+ 400              		.loc 1 219 0
+ 401 0008 0028     		cmp	r0, #0
+ 402 000a 03D0     		beq	.L25
+ 220:eeprom.c      ****     {
+ 221:eeprom.c      ****         DEBUG_printf("ERROR in initEEPROM()\r\n");
+ 403              		.loc 1 221 0
+ 404 000c 0448     		ldr	r0, .L27+4
+ 405              	.LVL28:
+ 406 000e FFF7FEFF 		bl	DEBUG_printf
+ 407              	.LVL29:
+ 222:eeprom.c      ****         return;
+ 408              		.loc 1 222 0
+ 409 0012 01E0     		b	.L24
+ 410              	.LVL30:
+ 411              	.L25:
+ 223:eeprom.c      ****     }    
+ 224:eeprom.c      ****     
+ 225:eeprom.c      ****     LoadWorkData();
+ 412              		.loc 1 225 0
+ 413 0014 FFF7FEFF 		bl	LoadWorkData
+ 414              	.LVL31:
+ 415              	.L24:
+ 226:eeprom.c      **** }
+ 416              		.loc 1 226 0
+ 417              		@ sp needed
+ 418 0018 10BD     		pop	{r4, pc}
+ 419              	.L28:
+ 420 001a C046     		.align	2
+ 421              	.L27:
+ 422 001c 00000000 		.word	.LANCHOR0
+ 423 0020 C8000000 		.word	.LC25
+ 424              		.cfi_endproc
+ 425              	.LFE70:
+ 426              		.size	initEEPROM, .-initEEPROM
+ 427              		.section	.text.initFLASH,"ax",%progbits
+ 428              		.align	2
+ 429              		.global	initFLASH
+ 430              		.code	16
+ 431              		.thumb_func
+ 432              		.type	initFLASH, %function
+ 433              	initFLASH:
+ 434              	.LFB63:
+  57:eeprom.c      ****     while(!W25qxx_Init());    
+ 435              		.loc 1 57 0
+ 436              		.cfi_startproc
+ 437              		@ args = 0, pretend = 0, frame = 0
+ 438              		@ frame_needed = 0, uses_anonymous_args = 0
+ 439 0000 10B5     		push	{r4, lr}
+ 440              		.cfi_def_cfa_offset 8
+ 441              		.cfi_offset 4, -8
+ 442              		.cfi_offset 14, -4
+ 443              	.L30:
+  58:eeprom.c      ****     
+ 444              		.loc 1 58 0 discriminator 1
+ 445 0002 FFF7FEFF 		bl	W25qxx_Init
+ 446              	.LVL32:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 13
+
+
+ 447 0006 0028     		cmp	r0, #0
+ 448 0008 FBD0     		beq	.L30
+  60:eeprom.c      ****     
+ 449              		.loc 1 60 0
+ 450 000a FFF7FEFF 		bl	initEEPROM
+ 451              	.LVL33:
+  62:eeprom.c      ****     g_uAddressOfConfig = g_uSectorOfConfig * w25qxx.SectorSize;
+ 452              		.loc 1 62 0
+ 453 000e 054A     		ldr	r2, .L31
+ 454 0010 5369     		ldr	r3, [r2, #20]
+ 455 0012 013B     		subs	r3, r3, #1
+ 456 0014 0449     		ldr	r1, .L31+4
+ 457 0016 0B60     		str	r3, [r1]
+  63:eeprom.c      ****     
+ 458              		.loc 1 63 0
+ 459 0018 1269     		ldr	r2, [r2, #16]
+ 460 001a 5343     		muls	r3, r2
+ 461 001c 4B60     		str	r3, [r1, #4]
+  65:eeprom.c      ****    
+ 462              		.loc 1 65 0
+ 463 001e FFF7FEFF 		bl	LoadConfig
+ 464              	.LVL34:
+  67:eeprom.c      **** 
+ 465              		.loc 1 67 0
+ 466              		@ sp needed
+ 467 0022 10BD     		pop	{r4, pc}
+ 468              	.L32:
+ 469              		.align	2
+ 470              	.L31:
+ 471 0024 00000000 		.word	w25qxx
+ 472 0028 00000000 		.word	.LANCHOR1
+ 473              		.cfi_endproc
+ 474              	.LFE63:
+ 475              		.size	initFLASH, .-initFLASH
+ 476              		.global	Em_EEPROM_em_EepromStorage
+ 477              		.comm	eepromReturnValue,1,1
+ 478              		.global	g_uSectorOfConfig
+ 479              		.global	g_uAddressOfConfig
+ 480              		.comm	g_WorkingData,128,4
+ 481              		.comm	Param,6,4
+ 482              		.section	.rodata
+ 483              		.align	8
+ 484              		.set	.LANCHOR0,. + 0
+ 485              		.type	Em_EEPROM_em_EepromStorage, %object
+ 486              		.size	Em_EEPROM_em_EepromStorage, 2560
+ 487              	Em_EEPROM_em_EepromStorage:
+ 488 0000 00000000 		.space	2560
+ 488      00000000 
+ 488      00000000 
+ 488      00000000 
+ 488      00000000 
+ 489              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 490              		.align	2
+ 491              	.LC0:
+ 492 0000 0D0A436F 		.ascii	"\015\012Config :\015\012\000"
+ 492      6E666967 
+ 492      203A0D0A 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 14
+
+
+ 492      00
+ 493 000d 000000   		.space	3
+ 494              	.LC3:
+ 495 0010 09205461 		.ascii	"\011 Target        : %d\015\012\000"
+ 495      72676574 
+ 495      20202020 
+ 495      20202020 
+ 495      3A202564 
+ 496 0027 00       		.space	1
+ 497              	.LC5:
+ 498 0028 09206D69 		.ascii	"\011 min Target    : %d\015\012\000"
+ 498      6E205461 
+ 498      72676574 
+ 498      20202020 
+ 498      3A202564 
+ 499 003f 00       		.space	1
+ 500              	.LC7:
+ 501 0040 09206D61 		.ascii	"\011 max Target    : %d\015\012\000"
+ 501      78205461 
+ 501      72676574 
+ 501      20202020 
+ 501      3A202564 
+ 502 0057 00       		.space	1
+ 503              	.LC9:
+ 504 0058 09205472 		.ascii	"\011 Trim          : %d\015\012\000"
+ 504      696D2020 
+ 504      20202020 
+ 504      20202020 
+ 504      3A202564 
+ 505 006f 00       		.space	1
+ 506              	.LC11:
+ 507 0070 09204C45 		.ascii	"\011 LED Brightness: %d\015\012\000"
+ 507      44204272 
+ 507      69676874 
+ 507      6E657373 
+ 507      3A202564 
+ 508 0087 00       		.space	1
+ 509              	.LC13:
+ 510 0088 44656661 		.ascii	"Default Config.\015\012\000"
+ 510      756C7420 
+ 510      436F6E66 
+ 510      69672E0D 
+ 510      0A00
+ 511 009a 0000     		.space	2
+ 512              	.LC18:
+ 513 009c 4C6F6164 		.ascii	"Load ERRRRR\015\012\000"
+ 513      20455252 
+ 513      5252520D 
+ 513      0A00
+ 514 00aa 0000     		.space	2
+ 515              	.LC22:
+ 516 00ac 43616E27 		.ascii	"Can't Save WORKING DATA\015\012\000"
+ 516      74205361 
+ 516      76652057 
+ 516      4F524B49 
+ 516      4E472044 
+ 517 00c6 0000     		.space	2
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 15
+
+
+ 518              	.LC25:
+ 519 00c8 4552524F 		.ascii	"ERROR in initEEPROM()\015\012\000"
+ 519      5220696E 
+ 519      20696E69 
+ 519      74454550 
+ 519      524F4D28 
+ 520              		.bss
+ 521              		.align	2
+ 522              		.set	.LANCHOR1,. + 0
+ 523              		.type	g_uSectorOfConfig, %object
+ 524              		.size	g_uSectorOfConfig, 4
+ 525              	g_uSectorOfConfig:
+ 526 0000 00000000 		.space	4
+ 527              		.type	g_uAddressOfConfig, %object
+ 528              		.size	g_uAddressOfConfig, 4
+ 529              	g_uAddressOfConfig:
+ 530 0004 00000000 		.space	4
+ 531              		.text
+ 532              	.Letext0:
+ 533              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 534              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 535              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 536              		.file 5 "Generated_Source\\PSoC4/cy_em_eeprom.h"
+ 537              		.file 6 "main.h"
+ 538              		.file 7 "eeprom.h"
+ 539              		.file 8 "w25qxx.h"
+ 540              		.file 9 "Generated_Source\\PSoC4/Em_EEPROM.h"
+ 541              		.file 10 "debug.h"
+ 542              		.section	.debug_info,"",%progbits
+ 543              	.Ldebug_info0:
+ 544 0000 8E070000 		.4byte	0x78e
+ 545 0004 0400     		.2byte	0x4
+ 546 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 547 000a 04       		.byte	0x4
+ 548 000b 01       		.uleb128 0x1
+ 549 000c 27010000 		.4byte	.LASF101
+ 550 0010 0C       		.byte	0xc
+ 551 0011 AC030000 		.4byte	.LASF102
+ 552 0015 67050000 		.4byte	.LASF103
+ 553 0019 18000000 		.4byte	.Ldebug_ranges0+0x18
+ 554 001d 00000000 		.4byte	0
+ 555 0021 00000000 		.4byte	.Ldebug_line0
+ 556 0025 02       		.uleb128 0x2
+ 557 0026 01       		.byte	0x1
+ 558 0027 06       		.byte	0x6
+ 559 0028 12020000 		.4byte	.LASF0
+ 560 002c 03       		.uleb128 0x3
+ 561 002d C0020000 		.4byte	.LASF3
+ 562 0031 02       		.byte	0x2
+ 563 0032 1D       		.byte	0x1d
+ 564 0033 37000000 		.4byte	0x37
+ 565 0037 02       		.uleb128 0x2
+ 566 0038 01       		.byte	0x1
+ 567 0039 08       		.byte	0x8
+ 568 003a 11030000 		.4byte	.LASF1
+ 569 003e 02       		.uleb128 0x2
+ 570 003f 02       		.byte	0x2
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 16
+
+
+ 571 0040 05       		.byte	0x5
+ 572 0041 97000000 		.4byte	.LASF2
+ 573 0045 03       		.uleb128 0x3
+ 574 0046 FC000000 		.4byte	.LASF4
+ 575 004a 02       		.byte	0x2
+ 576 004b 2B       		.byte	0x2b
+ 577 004c 50000000 		.4byte	0x50
+ 578 0050 02       		.uleb128 0x2
+ 579 0051 02       		.byte	0x2
+ 580 0052 07       		.byte	0x7
+ 581 0053 D3030000 		.4byte	.LASF5
+ 582 0057 02       		.uleb128 0x2
+ 583 0058 04       		.byte	0x4
+ 584 0059 05       		.byte	0x5
+ 585 005a 6E020000 		.4byte	.LASF6
+ 586 005e 03       		.uleb128 0x3
+ 587 005f D6000000 		.4byte	.LASF7
+ 588 0063 02       		.byte	0x2
+ 589 0064 41       		.byte	0x41
+ 590 0065 69000000 		.4byte	0x69
+ 591 0069 02       		.uleb128 0x2
+ 592 006a 04       		.byte	0x4
+ 593 006b 07       		.byte	0x7
+ 594 006c 97020000 		.4byte	.LASF8
+ 595 0070 02       		.uleb128 0x2
+ 596 0071 08       		.byte	0x8
+ 597 0072 05       		.byte	0x5
+ 598 0073 30020000 		.4byte	.LASF9
+ 599 0077 02       		.uleb128 0x2
+ 600 0078 08       		.byte	0x8
+ 601 0079 07       		.byte	0x7
+ 602 007a 3F030000 		.4byte	.LASF10
+ 603 007e 04       		.uleb128 0x4
+ 604 007f 04       		.byte	0x4
+ 605 0080 05       		.byte	0x5
+ 606 0081 696E7400 		.ascii	"int\000"
+ 607 0085 02       		.uleb128 0x2
+ 608 0086 04       		.byte	0x4
+ 609 0087 07       		.byte	0x7
+ 610 0088 79030000 		.4byte	.LASF11
+ 611 008c 03       		.uleb128 0x3
+ 612 008d 07050000 		.4byte	.LASF12
+ 613 0091 03       		.byte	0x3
+ 614 0092 18       		.byte	0x18
+ 615 0093 2C000000 		.4byte	0x2c
+ 616 0097 03       		.uleb128 0x3
+ 617 0098 99030000 		.4byte	.LASF13
+ 618 009c 03       		.byte	0x3
+ 619 009d 24       		.byte	0x24
+ 620 009e 45000000 		.4byte	0x45
+ 621 00a2 03       		.uleb128 0x3
+ 622 00a3 56030000 		.4byte	.LASF14
+ 623 00a7 03       		.byte	0x3
+ 624 00a8 30       		.byte	0x30
+ 625 00a9 5E000000 		.4byte	0x5e
+ 626 00ad 05       		.uleb128 0x5
+ 627 00ae D2010000 		.4byte	.LASF15
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 17
+
+
+ 628 00b2 04       		.byte	0x4
+ 629 00b3 FC01     		.2byte	0x1fc
+ 630 00b5 37000000 		.4byte	0x37
+ 631 00b9 05       		.uleb128 0x5
+ 632 00ba 53040000 		.4byte	.LASF16
+ 633 00be 04       		.byte	0x4
+ 634 00bf FD01     		.2byte	0x1fd
+ 635 00c1 50000000 		.4byte	0x50
+ 636 00c5 05       		.uleb128 0x5
+ 637 00c6 CC040000 		.4byte	.LASF17
+ 638 00ca 04       		.byte	0x4
+ 639 00cb FE01     		.2byte	0x1fe
+ 640 00cd 69000000 		.4byte	0x69
+ 641 00d1 02       		.uleb128 0x2
+ 642 00d2 04       		.byte	0x4
+ 643 00d3 04       		.byte	0x4
+ 644 00d4 1E020000 		.4byte	.LASF18
+ 645 00d8 02       		.uleb128 0x2
+ 646 00d9 08       		.byte	0x8
+ 647 00da 04       		.byte	0x4
+ 648 00db 59000000 		.4byte	.LASF19
+ 649 00df 02       		.uleb128 0x2
+ 650 00e0 01       		.byte	0x1
+ 651 00e1 08       		.byte	0x8
+ 652 00e2 E6030000 		.4byte	.LASF20
+ 653 00e6 02       		.uleb128 0x2
+ 654 00e7 08       		.byte	0x8
+ 655 00e8 04       		.byte	0x4
+ 656 00e9 05030000 		.4byte	.LASF21
+ 657 00ed 02       		.uleb128 0x2
+ 658 00ee 04       		.byte	0x4
+ 659 00ef 07       		.byte	0x7
+ 660 00f0 A1000000 		.4byte	.LASF22
+ 661 00f4 06       		.uleb128 0x6
+ 662 00f5 04       		.byte	0x4
+ 663 00f6 AD000000 		.4byte	0xad
+ 664 00fa 07       		.uleb128 0x7
+ 665 00fb 1C       		.byte	0x1c
+ 666 00fc 05       		.byte	0x5
+ 667 00fd 1601     		.2byte	0x116
+ 668 00ff 6C010000 		.4byte	0x16c
+ 669 0103 08       		.uleb128 0x8
+ 670 0104 1E040000 		.4byte	.LASF23
+ 671 0108 05       		.byte	0x5
+ 672 0109 1B01     		.2byte	0x11b
+ 673 010b C5000000 		.4byte	0xc5
+ 674 010f 00       		.byte	0
+ 675 0110 08       		.uleb128 0x8
+ 676 0111 E6050000 		.4byte	.LASF24
+ 677 0115 05       		.byte	0x5
+ 678 0116 2001     		.2byte	0x120
+ 679 0118 C5000000 		.4byte	0xc5
+ 680 011c 04       		.byte	0x4
+ 681 011d 08       		.uleb128 0x8
+ 682 011e CE050000 		.4byte	.LASF25
+ 683 0122 05       		.byte	0x5
+ 684 0123 2301     		.2byte	0x123
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 18
+
+
+ 685 0125 C5000000 		.4byte	0xc5
+ 686 0129 08       		.byte	0x8
+ 687 012a 08       		.uleb128 0x8
+ 688 012b 73000000 		.4byte	.LASF26
+ 689 012f 05       		.byte	0x5
+ 690 0130 2601     		.2byte	0x126
+ 691 0132 C5000000 		.4byte	0xc5
+ 692 0136 0C       		.byte	0xc
+ 693 0137 08       		.uleb128 0x8
+ 694 0138 54050000 		.4byte	.LASF27
+ 695 013c 05       		.byte	0x5
+ 696 013d 2B01     		.2byte	0x12b
+ 697 013f C5000000 		.4byte	0xc5
+ 698 0143 10       		.byte	0x10
+ 699 0144 08       		.uleb128 0x8
+ 700 0145 28040000 		.4byte	.LASF28
+ 701 0149 05       		.byte	0x5
+ 702 014a 2E01     		.2byte	0x12e
+ 703 014c AD000000 		.4byte	0xad
+ 704 0150 14       		.byte	0x14
+ 705 0151 08       		.uleb128 0x8
+ 706 0152 07010000 		.4byte	.LASF29
+ 707 0156 05       		.byte	0x5
+ 708 0157 3301     		.2byte	0x133
+ 709 0159 AD000000 		.4byte	0xad
+ 710 015d 15       		.byte	0x15
+ 711 015e 08       		.uleb128 0x8
+ 712 015f 86030000 		.4byte	.LASF30
+ 713 0163 05       		.byte	0x5
+ 714 0164 3601     		.2byte	0x136
+ 715 0166 C5000000 		.4byte	0xc5
+ 716 016a 18       		.byte	0x18
+ 717 016b 00       		.byte	0
+ 718 016c 05       		.uleb128 0x5
+ 719 016d 36040000 		.4byte	.LASF31
+ 720 0171 05       		.byte	0x5
+ 721 0172 3701     		.2byte	0x137
+ 722 0174 FA000000 		.4byte	0xfa
+ 723 0178 09       		.uleb128 0x9
+ 724 0179 01       		.byte	0x1
+ 725 017a 37000000 		.4byte	0x37
+ 726 017e 05       		.byte	0x5
+ 727 017f 5401     		.2byte	0x154
+ 728 0181 A4010000 		.4byte	0x1a4
+ 729 0185 0A       		.uleb128 0xa
+ 730 0186 02040000 		.4byte	.LASF32
+ 731 018a 00       		.byte	0
+ 732 018b 0A       		.uleb128 0xa
+ 733 018c B5040000 		.4byte	.LASF33
+ 734 0190 01       		.byte	0x1
+ 735 0191 0A       		.uleb128 0xa
+ 736 0192 5F030000 		.4byte	.LASF34
+ 737 0196 02       		.byte	0x2
+ 738 0197 0A       		.uleb128 0xa
+ 739 0198 E6000000 		.4byte	.LASF35
+ 740 019c 03       		.byte	0x3
+ 741 019d 0A       		.uleb128 0xa
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 19
+
+
+ 742 019e 23050000 		.4byte	.LASF36
+ 743 01a2 04       		.byte	0x4
+ 744 01a3 00       		.byte	0
+ 745 01a4 05       		.uleb128 0x5
+ 746 01a5 8E040000 		.4byte	.LASF37
+ 747 01a9 05       		.byte	0x5
+ 748 01aa 5A01     		.2byte	0x15a
+ 749 01ac 78010000 		.4byte	0x178
+ 750 01b0 0B       		.uleb128 0xb
+ 751 01b1 B5030000 		.4byte	.LASF104
+ 752 01b5 06       		.byte	0x6
+ 753 01b6 06       		.byte	0x6
+ 754 01b7 31       		.byte	0x31
+ 755 01b8 E1010000 		.4byte	0x1e1
+ 756 01bc 0C       		.uleb128 0xc
+ 757 01bd D3040000 		.4byte	.LASF38
+ 758 01c1 06       		.byte	0x6
+ 759 01c2 33       		.byte	0x33
+ 760 01c3 AD000000 		.4byte	0xad
+ 761 01c7 00       		.byte	0
+ 762 01c8 0C       		.uleb128 0xc
+ 763 01c9 F5010000 		.4byte	.LASF39
+ 764 01cd 06       		.byte	0x6
+ 765 01ce 34       		.byte	0x34
+ 766 01cf B9000000 		.4byte	0xb9
+ 767 01d3 02       		.byte	0x2
+ 768 01d4 0C       		.uleb128 0xc
+ 769 01d5 1F030000 		.4byte	.LASF40
+ 770 01d9 06       		.byte	0x6
+ 771 01da 35       		.byte	0x35
+ 772 01db B9000000 		.4byte	0xb9
+ 773 01df 04       		.byte	0x4
+ 774 01e0 00       		.byte	0
+ 775 01e1 0D       		.uleb128 0xd
+ 776 01e2 80       		.byte	0x80
+ 777 01e3 07       		.byte	0x7
+ 778 01e4 2D       		.byte	0x2d
+ 779 01e5 62020000 		.4byte	0x262
+ 780 01e9 0C       		.uleb128 0xc
+ 781 01ea A9020000 		.4byte	.LASF41
+ 782 01ee 07       		.byte	0x7
+ 783 01ef 2E       		.byte	0x2e
+ 784 01f0 B9000000 		.4byte	0xb9
+ 785 01f4 00       		.byte	0
+ 786 01f5 0C       		.uleb128 0xc
+ 787 01f6 17050000 		.4byte	.LASF42
+ 788 01fa 07       		.byte	0x7
+ 789 01fb 2F       		.byte	0x2f
+ 790 01fc B9000000 		.4byte	0xb9
+ 791 0200 02       		.byte	0x2
+ 792 0201 0C       		.uleb128 0xc
+ 793 0202 C8010000 		.4byte	.LASF43
+ 794 0206 07       		.byte	0x7
+ 795 0207 30       		.byte	0x30
+ 796 0208 B9000000 		.4byte	0xb9
+ 797 020c 04       		.byte	0x4
+ 798 020d 0C       		.uleb128 0xc
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 20
+
+
+ 799 020e 4A000000 		.4byte	.LASF44
+ 800 0212 07       		.byte	0x7
+ 801 0213 31       		.byte	0x31
+ 802 0214 B9000000 		.4byte	0xb9
+ 803 0218 06       		.byte	0x6
+ 804 0219 0C       		.uleb128 0xc
+ 805 021a B6000000 		.4byte	.LASF45
+ 806 021e 07       		.byte	0x7
+ 807 021f 32       		.byte	0x32
+ 808 0220 B9000000 		.4byte	0xb9
+ 809 0224 08       		.byte	0x8
+ 810 0225 0C       		.uleb128 0xc
+ 811 0226 75040000 		.4byte	.LASF46
+ 812 022a 07       		.byte	0x7
+ 813 022b 33       		.byte	0x33
+ 814 022c B9000000 		.4byte	0xb9
+ 815 0230 0A       		.byte	0xa
+ 816 0231 0C       		.uleb128 0xc
+ 817 0232 90000000 		.4byte	.LASF47
+ 818 0236 07       		.byte	0x7
+ 819 0237 34       		.byte	0x34
+ 820 0238 B9000000 		.4byte	0xb9
+ 821 023c 0C       		.byte	0xc
+ 822 023d 0C       		.uleb128 0xc
+ 823 023e FB010000 		.4byte	.LASF48
+ 824 0242 07       		.byte	0x7
+ 825 0243 35       		.byte	0x35
+ 826 0244 B9000000 		.4byte	0xb9
+ 827 0248 0E       		.byte	0xe
+ 828 0249 0C       		.uleb128 0xc
+ 829 024a DC050000 		.4byte	.LASF49
+ 830 024e 07       		.byte	0x7
+ 831 024f 36       		.byte	0x36
+ 832 0250 B9000000 		.4byte	0xb9
+ 833 0254 10       		.byte	0x10
+ 834 0255 0C       		.uleb128 0xc
+ 835 0256 B3020000 		.4byte	.LASF50
+ 836 025a 07       		.byte	0x7
+ 837 025b 37       		.byte	0x37
+ 838 025c 62020000 		.4byte	0x262
+ 839 0260 12       		.byte	0x12
+ 840 0261 00       		.byte	0
+ 841 0262 0E       		.uleb128 0xe
+ 842 0263 B9000000 		.4byte	0xb9
+ 843 0267 72020000 		.4byte	0x272
+ 844 026b 0F       		.uleb128 0xf
+ 845 026c ED000000 		.4byte	0xed
+ 846 0270 36       		.byte	0x36
+ 847 0271 00       		.byte	0
+ 848 0272 03       		.uleb128 0x3
+ 849 0273 05020000 		.4byte	.LASF51
+ 850 0277 07       		.byte	0x7
+ 851 0278 38       		.byte	0x38
+ 852 0279 E1010000 		.4byte	0x1e1
+ 853 027d 10       		.uleb128 0x10
+ 854 027e 01       		.byte	0x1
+ 855 027f 37000000 		.4byte	0x37
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 21
+
+
+ 856 0283 08       		.byte	0x8
+ 857 0284 08       		.byte	0x8
+ 858 0285 C6020000 		.4byte	0x2c6
+ 859 0289 0A       		.uleb128 0xa
+ 860 028a B9020000 		.4byte	.LASF52
+ 861 028e 01       		.byte	0x1
+ 862 028f 0A       		.uleb128 0xa
+ 863 0290 F4030000 		.4byte	.LASF53
+ 864 0294 02       		.byte	0x2
+ 865 0295 0A       		.uleb128 0xa
+ 866 0296 15010000 		.4byte	.LASF54
+ 867 029a 03       		.byte	0x3
+ 868 029b 0A       		.uleb128 0xa
+ 869 029c D8010000 		.4byte	.LASF55
+ 870 02a0 04       		.byte	0x4
+ 871 02a1 0A       		.uleb128 0xa
+ 872 02a2 CA020000 		.4byte	.LASF56
+ 873 02a6 05       		.byte	0x5
+ 874 02a7 0A       		.uleb128 0xa
+ 875 02a8 FB030000 		.4byte	.LASF57
+ 876 02ac 06       		.byte	0x6
+ 877 02ad 0A       		.uleb128 0xa
+ 878 02ae AE040000 		.4byte	.LASF58
+ 879 02b2 07       		.byte	0x7
+ 880 02b3 0A       		.uleb128 0xa
+ 881 02b4 0F050000 		.4byte	.LASF59
+ 882 02b8 08       		.byte	0x8
+ 883 02b9 0A       		.uleb128 0xa
+ 884 02ba 37030000 		.4byte	.LASF60
+ 885 02be 09       		.byte	0x9
+ 886 02bf 0A       		.uleb128 0xa
+ 887 02c0 8F020000 		.4byte	.LASF61
+ 888 02c4 0A       		.byte	0xa
+ 889 02c5 00       		.byte	0
+ 890 02c6 03       		.uleb128 0x3
+ 891 02c7 48050000 		.4byte	.LASF62
+ 892 02cb 08       		.byte	0x8
+ 893 02cc 14       		.byte	0x14
+ 894 02cd 7D020000 		.4byte	0x27d
+ 895 02d1 0D       		.uleb128 0xd
+ 896 02d2 28       		.byte	0x28
+ 897 02d3 08       		.byte	0x8
+ 898 02d4 16       		.byte	0x16
+ 899 02d5 75030000 		.4byte	0x375
+ 900 02d9 11       		.uleb128 0x11
+ 901 02da 494400   		.ascii	"ID\000"
+ 902 02dd 08       		.byte	0x8
+ 903 02de 18       		.byte	0x18
+ 904 02df C6020000 		.4byte	0x2c6
+ 905 02e3 00       		.byte	0
+ 906 02e4 0C       		.uleb128 0xc
+ 907 02e5 A7040000 		.4byte	.LASF63
+ 908 02e9 08       		.byte	0x8
+ 909 02ea 19       		.byte	0x19
+ 910 02eb 75030000 		.4byte	0x375
+ 911 02ef 01       		.byte	0x1
+ 912 02f0 0C       		.uleb128 0xc
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 22
+
+
+ 913 02f1 FE040000 		.4byte	.LASF64
+ 914 02f5 08       		.byte	0x8
+ 915 02f6 1A       		.byte	0x1a
+ 916 02f7 97000000 		.4byte	0x97
+ 917 02fb 0A       		.byte	0xa
+ 918 02fc 0C       		.uleb128 0xc
+ 919 02fd A2030000 		.4byte	.LASF65
+ 920 0301 08       		.byte	0x8
+ 921 0302 1B       		.byte	0x1b
+ 922 0303 A2000000 		.4byte	0xa2
+ 923 0307 0C       		.byte	0xc
+ 924 0308 0C       		.uleb128 0xc
+ 925 0309 1C010000 		.4byte	.LASF66
+ 926 030d 08       		.byte	0x8
+ 927 030e 1C       		.byte	0x1c
+ 928 030f A2000000 		.4byte	0xa2
+ 929 0313 10       		.byte	0x10
+ 930 0314 0C       		.uleb128 0xc
+ 931 0315 AA000000 		.4byte	.LASF67
+ 932 0319 08       		.byte	0x8
+ 933 031a 1D       		.byte	0x1d
+ 934 031b A2000000 		.4byte	0xa2
+ 935 031f 14       		.byte	0x14
+ 936 0320 0C       		.uleb128 0xc
+ 937 0321 09000000 		.4byte	.LASF68
+ 938 0325 08       		.byte	0x8
+ 939 0326 1E       		.byte	0x1e
+ 940 0327 A2000000 		.4byte	0xa2
+ 941 032b 18       		.byte	0x18
+ 942 032c 0C       		.uleb128 0xc
+ 943 032d E4040000 		.4byte	.LASF69
+ 944 0331 08       		.byte	0x8
+ 945 0332 1F       		.byte	0x1f
+ 946 0333 A2000000 		.4byte	0xa2
+ 947 0337 1C       		.byte	0x1c
+ 948 0338 0C       		.uleb128 0xc
+ 949 0339 C0030000 		.4byte	.LASF70
+ 950 033d 08       		.byte	0x8
+ 951 033e 20       		.byte	0x20
+ 952 033f A2000000 		.4byte	0xa2
+ 953 0343 20       		.byte	0x20
+ 954 0344 0C       		.uleb128 0xc
+ 955 0345 9E050000 		.4byte	.LASF71
+ 956 0349 08       		.byte	0x8
+ 957 034a 21       		.byte	0x21
+ 958 034b 8C000000 		.4byte	0x8c
+ 959 034f 24       		.byte	0x24
+ 960 0350 0C       		.uleb128 0xc
+ 961 0351 AE050000 		.4byte	.LASF72
+ 962 0355 08       		.byte	0x8
+ 963 0356 22       		.byte	0x22
+ 964 0357 8C000000 		.4byte	0x8c
+ 965 035b 25       		.byte	0x25
+ 966 035c 0C       		.uleb128 0xc
+ 967 035d BE050000 		.4byte	.LASF73
+ 968 0361 08       		.byte	0x8
+ 969 0362 23       		.byte	0x23
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 23
+
+
+ 970 0363 8C000000 		.4byte	0x8c
+ 971 0367 26       		.byte	0x26
+ 972 0368 0C       		.uleb128 0xc
+ 973 0369 8A020000 		.4byte	.LASF74
+ 974 036d 08       		.byte	0x8
+ 975 036e 24       		.byte	0x24
+ 976 036f 8C000000 		.4byte	0x8c
+ 977 0373 27       		.byte	0x27
+ 978 0374 00       		.byte	0
+ 979 0375 0E       		.uleb128 0xe
+ 980 0376 8C000000 		.4byte	0x8c
+ 981 037a 85030000 		.4byte	0x385
+ 982 037e 0F       		.uleb128 0xf
+ 983 037f ED000000 		.4byte	0xed
+ 984 0383 07       		.byte	0x7
+ 985 0384 00       		.byte	0
+ 986 0385 03       		.uleb128 0x3
+ 987 0386 00000000 		.4byte	.LASF75
+ 988 038a 08       		.byte	0x8
+ 989 038b 26       		.byte	0x26
+ 990 038c D1020000 		.4byte	0x2d1
+ 991 0390 12       		.uleb128 0x12
+ 992 0391 EB030000 		.4byte	.LASF78
+ 993 0395 01       		.byte	0x1
+ 994 0396 18       		.byte	0x18
+ 995 0397 B9000000 		.4byte	0xb9
+ 996 039b 00000000 		.4byte	.LFB61
+ 997 039f 1A000000 		.4byte	.LFE61-.LFB61
+ 998 03a3 01       		.uleb128 0x1
+ 999 03a4 9C       		.byte	0x9c
+ 1000 03a5 E8030000 		.4byte	0x3e8
+ 1001 03a9 13       		.uleb128 0x13
+ 1002 03aa 4E040000 		.4byte	.LASF76
+ 1003 03ae 01       		.byte	0x1
+ 1004 03af 18       		.byte	0x18
+ 1005 03b0 F4000000 		.4byte	0xf4
+ 1006 03b4 00000000 		.4byte	.LLST0
+ 1007 03b8 14       		.uleb128 0x14
+ 1008 03b9 DF040000 		.4byte	.LASF77
+ 1009 03bd 01       		.byte	0x1
+ 1010 03be 18       		.byte	0x18
+ 1011 03bf B9000000 		.4byte	0xb9
+ 1012 03c3 01       		.uleb128 0x1
+ 1013 03c4 51       		.byte	0x51
+ 1014 03c5 15       		.uleb128 0x15
+ 1015 03c6 EB030000 		.4byte	.LASF78
+ 1016 03ca 01       		.byte	0x1
+ 1017 03cb 1A       		.byte	0x1a
+ 1018 03cc B9000000 		.4byte	0xb9
+ 1019 03d0 21000000 		.4byte	.LLST1
+ 1020 03d4 16       		.uleb128 0x16
+ 1021 03d5 00000000 		.4byte	.Ldebug_ranges0+0
+ 1022 03d9 17       		.uleb128 0x17
+ 1023 03da 6900     		.ascii	"i\000"
+ 1024 03dc 01       		.byte	0x1
+ 1025 03dd 1B       		.byte	0x1b
+ 1026 03de 7E000000 		.4byte	0x7e
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 24
+
+
+ 1027 03e2 4B000000 		.4byte	.LLST2
+ 1028 03e6 00       		.byte	0
+ 1029 03e7 00       		.byte	0
+ 1030 03e8 18       		.uleb128 0x18
+ 1031 03e9 21000000 		.4byte	.LASF105
+ 1032 03ed 01       		.byte	0x1
+ 1033 03ee 22       		.byte	0x22
+ 1034 03ef AD000000 		.4byte	0xad
+ 1035 03f3 00000000 		.4byte	.LFB62
+ 1036 03f7 04000000 		.4byte	.LFE62-.LFB62
+ 1037 03fb 01       		.uleb128 0x1
+ 1038 03fc 9C       		.byte	0x9c
+ 1039 03fd 12       		.uleb128 0x12
+ 1040 03fe FA020000 		.4byte	.LASF79
+ 1041 0402 01       		.byte	0x1
+ 1042 0403 65       		.byte	0x65
+ 1043 0404 AD000000 		.4byte	0xad
+ 1044 0408 00000000 		.4byte	.LFB65
+ 1045 040c 02000000 		.4byte	.LFE65-.LFB65
+ 1046 0410 01       		.uleb128 0x1
+ 1047 0411 9C       		.byte	0x9c
+ 1048 0412 26040000 		.4byte	0x426
+ 1049 0416 13       		.uleb128 0x13
+ 1050 0417 E1000000 		.4byte	.LASF80
+ 1051 041b 01       		.byte	0x1
+ 1052 041c 65       		.byte	0x65
+ 1053 041d AD000000 		.4byte	0xad
+ 1054 0421 6A000000 		.4byte	.LLST3
+ 1055 0425 00       		.byte	0
+ 1056 0426 19       		.uleb128 0x19
+ 1057 0427 24020000 		.4byte	.LASF83
+ 1058 042b 01       		.byte	0x1
+ 1059 042c 8D       		.byte	0x8d
+ 1060 042d 00000000 		.4byte	.LFB66
+ 1061 0431 50000000 		.4byte	.LFE66-.LFB66
+ 1062 0435 01       		.uleb128 0x1
+ 1063 0436 9C       		.byte	0x9c
+ 1064 0437 C2040000 		.4byte	0x4c2
+ 1065 043b 1A       		.uleb128 0x1a
+ 1066 043c 08000000 		.4byte	.LVL9
+ 1067 0440 4F070000 		.4byte	0x74f
+ 1068 0444 52040000 		.4byte	0x452
+ 1069 0448 1B       		.uleb128 0x1b
+ 1070 0449 01       		.uleb128 0x1
+ 1071 044a 50       		.byte	0x50
+ 1072 044b 05       		.uleb128 0x5
+ 1073 044c 03       		.byte	0x3
+ 1074 044d 00000000 		.4byte	.LC0
+ 1075 0451 00       		.byte	0
+ 1076 0452 1A       		.uleb128 0x1a
+ 1077 0453 12000000 		.4byte	.LVL10
+ 1078 0457 4F070000 		.4byte	0x74f
+ 1079 045b 69040000 		.4byte	0x469
+ 1080 045f 1B       		.uleb128 0x1b
+ 1081 0460 01       		.uleb128 0x1
+ 1082 0461 50       		.byte	0x50
+ 1083 0462 05       		.uleb128 0x5
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 25
+
+
+ 1084 0463 03       		.byte	0x3
+ 1085 0464 10000000 		.4byte	.LC3
+ 1086 0468 00       		.byte	0
+ 1087 0469 1A       		.uleb128 0x1a
+ 1088 046a 1A000000 		.4byte	.LVL11
+ 1089 046e 4F070000 		.4byte	0x74f
+ 1090 0472 80040000 		.4byte	0x480
+ 1091 0476 1B       		.uleb128 0x1b
+ 1092 0477 01       		.uleb128 0x1
+ 1093 0478 50       		.byte	0x50
+ 1094 0479 05       		.uleb128 0x5
+ 1095 047a 03       		.byte	0x3
+ 1096 047b 28000000 		.4byte	.LC5
+ 1097 047f 00       		.byte	0
+ 1098 0480 1A       		.uleb128 0x1a
+ 1099 0481 22000000 		.4byte	.LVL12
+ 1100 0485 4F070000 		.4byte	0x74f
+ 1101 0489 97040000 		.4byte	0x497
+ 1102 048d 1B       		.uleb128 0x1b
+ 1103 048e 01       		.uleb128 0x1
+ 1104 048f 50       		.byte	0x50
+ 1105 0490 05       		.uleb128 0x5
+ 1106 0491 03       		.byte	0x3
+ 1107 0492 40000000 		.4byte	.LC7
+ 1108 0496 00       		.byte	0
+ 1109 0497 1A       		.uleb128 0x1a
+ 1110 0498 2A000000 		.4byte	.LVL13
+ 1111 049c 4F070000 		.4byte	0x74f
+ 1112 04a0 AE040000 		.4byte	0x4ae
+ 1113 04a4 1B       		.uleb128 0x1b
+ 1114 04a5 01       		.uleb128 0x1
+ 1115 04a6 50       		.byte	0x50
+ 1116 04a7 05       		.uleb128 0x5
+ 1117 04a8 03       		.byte	0x3
+ 1118 04a9 58000000 		.4byte	.LC9
+ 1119 04ad 00       		.byte	0
+ 1120 04ae 1C       		.uleb128 0x1c
+ 1121 04af 32000000 		.4byte	.LVL14
+ 1122 04b3 4F070000 		.4byte	0x74f
+ 1123 04b7 1B       		.uleb128 0x1b
+ 1124 04b8 01       		.uleb128 0x1
+ 1125 04b9 50       		.byte	0x50
+ 1126 04ba 05       		.uleb128 0x5
+ 1127 04bb 03       		.byte	0x3
+ 1128 04bc 70000000 		.4byte	.LC11
+ 1129 04c0 00       		.byte	0
+ 1130 04c1 00       		.byte	0
+ 1131 04c2 1D       		.uleb128 0x1d
+ 1132 04c3 45020000 		.4byte	.LASF106
+ 1133 04c7 01       		.byte	0x1
+ 1134 04c8 45       		.byte	0x45
+ 1135 04c9 AD000000 		.4byte	0xad
+ 1136 04cd 00000000 		.4byte	.LFB64
+ 1137 04d1 20000000 		.4byte	.LFE64-.LFB64
+ 1138 04d5 01       		.uleb128 0x1
+ 1139 04d6 9C       		.byte	0x9c
+ 1140 04d7 1B050000 		.4byte	0x51b
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 26
+
+
+ 1141 04db 1E       		.uleb128 0x1e
+ 1142 04dc DF010000 		.4byte	.LASF81
+ 1143 04e0 01       		.byte	0x1
+ 1144 04e1 47       		.byte	0x47
+ 1145 04e2 A2000000 		.4byte	0xa2
+ 1146 04e6 1E       		.uleb128 0x1e
+ 1147 04e7 E3020000 		.4byte	.LASF82
+ 1148 04eb 01       		.byte	0x1
+ 1149 04ec 48       		.byte	0x48
+ 1150 04ed A2000000 		.4byte	0xa2
+ 1151 04f1 1F       		.uleb128 0x1f
+ 1152 04f2 06000000 		.4byte	.LVL16
+ 1153 04f6 E8030000 		.4byte	0x3e8
+ 1154 04fa 1A       		.uleb128 0x1a
+ 1155 04fb 10000000 		.4byte	.LVL17
+ 1156 04ff 4F070000 		.4byte	0x74f
+ 1157 0503 11050000 		.4byte	0x511
+ 1158 0507 1B       		.uleb128 0x1b
+ 1159 0508 01       		.uleb128 0x1
+ 1160 0509 50       		.byte	0x50
+ 1161 050a 05       		.uleb128 0x5
+ 1162 050b 03       		.byte	0x3
+ 1163 050c 88000000 		.4byte	.LC13
+ 1164 0510 00       		.byte	0
+ 1165 0511 1F       		.uleb128 0x1f
+ 1166 0512 16000000 		.4byte	.LVL18
+ 1167 0516 26040000 		.4byte	0x426
+ 1168 051a 00       		.byte	0
+ 1169 051b 20       		.uleb128 0x20
+ 1170 051c 60000000 		.4byte	.LASF107
+ 1171 0520 01       		.byte	0x1
+ 1172 0521 9B       		.byte	0x9b
+ 1173 0522 00000000 		.4byte	.LFB67
+ 1174 0526 02000000 		.4byte	.LFE67-.LFB67
+ 1175 052a 01       		.uleb128 0x1
+ 1176 052b 9C       		.byte	0x9c
+ 1177 052c 19       		.uleb128 0x19
+ 1178 052d 77020000 		.4byte	.LASF84
+ 1179 0531 01       		.byte	0x1
+ 1180 0532 AE       		.byte	0xae
+ 1181 0533 00000000 		.4byte	.LFB68
+ 1182 0537 78000000 		.4byte	.LFE68-.LFB68
+ 1183 053b 01       		.uleb128 0x1
+ 1184 053c 9C       		.byte	0x9c
+ 1185 053d D1050000 		.4byte	0x5d1
+ 1186 0541 1A       		.uleb128 0x1a
+ 1187 0542 0E000000 		.4byte	.LVL19
+ 1188 0546 5A070000 		.4byte	0x75a
+ 1189 054a 60050000 		.4byte	0x560
+ 1190 054e 1B       		.uleb128 0x1b
+ 1191 054f 01       		.uleb128 0x1
+ 1192 0550 50       		.byte	0x50
+ 1193 0551 02       		.uleb128 0x2
+ 1194 0552 74       		.byte	0x74
+ 1195 0553 00       		.sleb128 0
+ 1196 0554 1B       		.uleb128 0x1b
+ 1197 0555 01       		.uleb128 0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 27
+
+
+ 1198 0556 51       		.byte	0x51
+ 1199 0557 01       		.uleb128 0x1
+ 1200 0558 30       		.byte	0x30
+ 1201 0559 1B       		.uleb128 0x1b
+ 1202 055a 01       		.uleb128 0x1
+ 1203 055b 52       		.byte	0x52
+ 1204 055c 02       		.uleb128 0x2
+ 1205 055d 08       		.byte	0x8
+ 1206 055e 80       		.byte	0x80
+ 1207 055f 00       		.byte	0
+ 1208 0560 1A       		.uleb128 0x1a
+ 1209 0561 1A000000 		.4byte	.LVL20
+ 1210 0565 63070000 		.4byte	0x763
+ 1211 0569 7F050000 		.4byte	0x57f
+ 1212 056d 1B       		.uleb128 0x1b
+ 1213 056e 01       		.uleb128 0x1
+ 1214 056f 50       		.byte	0x50
+ 1215 0570 01       		.uleb128 0x1
+ 1216 0571 30       		.byte	0x30
+ 1217 0572 1B       		.uleb128 0x1b
+ 1218 0573 01       		.uleb128 0x1
+ 1219 0574 51       		.byte	0x51
+ 1220 0575 02       		.uleb128 0x2
+ 1221 0576 74       		.byte	0x74
+ 1222 0577 00       		.sleb128 0
+ 1223 0578 1B       		.uleb128 0x1b
+ 1224 0579 01       		.uleb128 0x1
+ 1225 057a 52       		.byte	0x52
+ 1226 057b 02       		.uleb128 0x2
+ 1227 057c 08       		.byte	0x8
+ 1228 057d 80       		.byte	0x80
+ 1229 057e 00       		.byte	0
+ 1230 057f 1A       		.uleb128 0x1a
+ 1231 0580 28000000 		.4byte	.LVL21
+ 1232 0584 4F070000 		.4byte	0x74f
+ 1233 0588 96050000 		.4byte	0x596
+ 1234 058c 1B       		.uleb128 0x1b
+ 1235 058d 01       		.uleb128 0x1
+ 1236 058e 50       		.byte	0x50
+ 1237 058f 05       		.uleb128 0x5
+ 1238 0590 03       		.byte	0x3
+ 1239 0591 9C000000 		.4byte	.LC18
+ 1240 0595 00       		.byte	0
+ 1241 0596 1A       		.uleb128 0x1a
+ 1242 0597 32000000 		.4byte	.LVL22
+ 1243 059b 5A070000 		.4byte	0x75a
+ 1244 059f B5050000 		.4byte	0x5b5
+ 1245 05a3 1B       		.uleb128 0x1b
+ 1246 05a4 01       		.uleb128 0x1
+ 1247 05a5 50       		.byte	0x50
+ 1248 05a6 02       		.uleb128 0x2
+ 1249 05a7 74       		.byte	0x74
+ 1250 05a8 00       		.sleb128 0
+ 1251 05a9 1B       		.uleb128 0x1b
+ 1252 05aa 01       		.uleb128 0x1
+ 1253 05ab 51       		.byte	0x51
+ 1254 05ac 01       		.uleb128 0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 28
+
+
+ 1255 05ad 30       		.byte	0x30
+ 1256 05ae 1B       		.uleb128 0x1b
+ 1257 05af 01       		.uleb128 0x1
+ 1258 05b0 52       		.byte	0x52
+ 1259 05b1 02       		.uleb128 0x2
+ 1260 05b2 08       		.byte	0x8
+ 1261 05b3 80       		.byte	0x80
+ 1262 05b4 00       		.byte	0
+ 1263 05b5 1C       		.uleb128 0x1c
+ 1264 05b6 4A000000 		.4byte	.LVL23
+ 1265 05ba 5A070000 		.4byte	0x75a
+ 1266 05be 1B       		.uleb128 0x1b
+ 1267 05bf 01       		.uleb128 0x1
+ 1268 05c0 50       		.byte	0x50
+ 1269 05c1 02       		.uleb128 0x2
+ 1270 05c2 74       		.byte	0x74
+ 1271 05c3 00       		.sleb128 0
+ 1272 05c4 1B       		.uleb128 0x1b
+ 1273 05c5 01       		.uleb128 0x1
+ 1274 05c6 51       		.byte	0x51
+ 1275 05c7 01       		.uleb128 0x1
+ 1276 05c8 30       		.byte	0x30
+ 1277 05c9 1B       		.uleb128 0x1b
+ 1278 05ca 01       		.uleb128 0x1
+ 1279 05cb 52       		.byte	0x52
+ 1280 05cc 02       		.uleb128 0x2
+ 1281 05cd 08       		.byte	0x8
+ 1282 05ce 80       		.byte	0x80
+ 1283 05cf 00       		.byte	0
+ 1284 05d0 00       		.byte	0
+ 1285 05d1 19       		.uleb128 0x19
+ 1286 05d2 3B050000 		.4byte	.LASF85
+ 1287 05d6 01       		.byte	0x1
+ 1288 05d7 C6       		.byte	0xc6
+ 1289 05d8 00000000 		.4byte	.LFB69
+ 1290 05dc 30000000 		.4byte	.LFE69-.LFB69
+ 1291 05e0 01       		.uleb128 0x1
+ 1292 05e1 9C       		.byte	0x9c
+ 1293 05e2 2B060000 		.4byte	0x62b
+ 1294 05e6 15       		.uleb128 0x15
+ 1295 05e7 25030000 		.4byte	.LASF86
+ 1296 05eb 01       		.byte	0x1
+ 1297 05ec C9       		.byte	0xc9
+ 1298 05ed A4010000 		.4byte	0x1a4
+ 1299 05f1 8B000000 		.4byte	.LLST4
+ 1300 05f5 1A       		.uleb128 0x1a
+ 1301 05f6 12000000 		.4byte	.LVL24
+ 1302 05fa 6F070000 		.4byte	0x76f
+ 1303 05fe 17060000 		.4byte	0x617
+ 1304 0602 1B       		.uleb128 0x1b
+ 1305 0603 01       		.uleb128 0x1
+ 1306 0604 50       		.byte	0x50
+ 1307 0605 01       		.uleb128 0x1
+ 1308 0606 30       		.byte	0x30
+ 1309 0607 1B       		.uleb128 0x1b
+ 1310 0608 01       		.uleb128 0x1
+ 1311 0609 51       		.byte	0x51
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 29
+
+
+ 1312 060a 05       		.uleb128 0x5
+ 1313 060b 03       		.byte	0x3
+ 1314 060c 00000000 		.4byte	g_WorkingData
+ 1315 0610 1B       		.uleb128 0x1b
+ 1316 0611 01       		.uleb128 0x1
+ 1317 0612 52       		.byte	0x52
+ 1318 0613 02       		.uleb128 0x2
+ 1319 0614 08       		.byte	0x8
+ 1320 0615 80       		.byte	0x80
+ 1321 0616 00       		.byte	0
+ 1322 0617 1C       		.uleb128 0x1c
+ 1323 0618 1C000000 		.4byte	.LVL26
+ 1324 061c 4F070000 		.4byte	0x74f
+ 1325 0620 1B       		.uleb128 0x1b
+ 1326 0621 01       		.uleb128 0x1
+ 1327 0622 50       		.byte	0x50
+ 1328 0623 05       		.uleb128 0x5
+ 1329 0624 03       		.byte	0x3
+ 1330 0625 AC000000 		.4byte	.LC22
+ 1331 0629 00       		.byte	0
+ 1332 062a 00       		.byte	0
+ 1333 062b 19       		.uleb128 0x19
+ 1334 062c 83040000 		.4byte	.LASF87
+ 1335 0630 01       		.byte	0x1
+ 1336 0631 D2       		.byte	0xd2
+ 1337 0632 00000000 		.4byte	.LFB70
+ 1338 0636 24000000 		.4byte	.LFE70-.LFB70
+ 1339 063a 01       		.uleb128 0x1
+ 1340 063b 9C       		.byte	0x9c
+ 1341 063c 87060000 		.4byte	0x687
+ 1342 0640 15       		.uleb128 0x15
+ 1343 0641 25030000 		.4byte	.LASF86
+ 1344 0645 01       		.byte	0x1
+ 1345 0646 DA       		.byte	0xda
+ 1346 0647 A4010000 		.4byte	0x1a4
+ 1347 064b 9E000000 		.4byte	.LLST5
+ 1348 064f 1A       		.uleb128 0x1a
+ 1349 0650 08000000 		.4byte	.LVL27
+ 1350 0654 7B070000 		.4byte	0x77b
+ 1351 0658 66060000 		.4byte	0x666
+ 1352 065c 1B       		.uleb128 0x1b
+ 1353 065d 01       		.uleb128 0x1
+ 1354 065e 50       		.byte	0x50
+ 1355 065f 05       		.uleb128 0x5
+ 1356 0660 03       		.byte	0x3
+ 1357 0661 00000000 		.4byte	.LANCHOR0
+ 1358 0665 00       		.byte	0
+ 1359 0666 1A       		.uleb128 0x1a
+ 1360 0667 12000000 		.4byte	.LVL29
+ 1361 066b 4F070000 		.4byte	0x74f
+ 1362 066f 7D060000 		.4byte	0x67d
+ 1363 0673 1B       		.uleb128 0x1b
+ 1364 0674 01       		.uleb128 0x1
+ 1365 0675 50       		.byte	0x50
+ 1366 0676 05       		.uleb128 0x5
+ 1367 0677 03       		.byte	0x3
+ 1368 0678 C8000000 		.4byte	.LC25
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 30
+
+
+ 1369 067c 00       		.byte	0
+ 1370 067d 1F       		.uleb128 0x1f
+ 1371 067e 18000000 		.4byte	.LVL31
+ 1372 0682 2C050000 		.4byte	0x52c
+ 1373 0686 00       		.byte	0
+ 1374 0687 19       		.uleb128 0x19
+ 1375 0688 33000000 		.4byte	.LASF88
+ 1376 068c 01       		.byte	0x1
+ 1377 068d 38       		.byte	0x38
+ 1378 068e 00000000 		.4byte	.LFB63
+ 1379 0692 2C000000 		.4byte	.LFE63-.LFB63
+ 1380 0696 01       		.uleb128 0x1
+ 1381 0697 9C       		.byte	0x9c
+ 1382 0698 B8060000 		.4byte	0x6b8
+ 1383 069c 1F       		.uleb128 0x1f
+ 1384 069d 06000000 		.4byte	.LVL32
+ 1385 06a1 86070000 		.4byte	0x786
+ 1386 06a5 1F       		.uleb128 0x1f
+ 1387 06a6 0E000000 		.4byte	.LVL33
+ 1388 06aa 2B060000 		.4byte	0x62b
+ 1389 06ae 1F       		.uleb128 0x1f
+ 1390 06af 22000000 		.4byte	.LVL34
+ 1391 06b3 C2040000 		.4byte	0x4c2
+ 1392 06b7 00       		.byte	0
+ 1393 06b8 21       		.uleb128 0x21
+ 1394 06b9 D1020000 		.4byte	.LASF89
+ 1395 06bd 09       		.byte	0x9
+ 1396 06be 82       		.byte	0x82
+ 1397 06bf 6C010000 		.4byte	0x16c
+ 1398 06c3 0E       		.uleb128 0xe
+ 1399 06c4 D4060000 		.4byte	0x6d4
+ 1400 06c8 D4060000 		.4byte	0x6d4
+ 1401 06cc 22       		.uleb128 0x22
+ 1402 06cd ED000000 		.4byte	0xed
+ 1403 06d1 FF09     		.2byte	0x9ff
+ 1404 06d3 00       		.byte	0
+ 1405 06d4 23       		.uleb128 0x23
+ 1406 06d5 8C000000 		.4byte	0x8c
+ 1407 06d9 24       		.uleb128 0x24
+ 1408 06da 5A040000 		.4byte	.LASF90
+ 1409 06de 01       		.byte	0x1
+ 1410 06df A9       		.byte	0xa9
+ 1411 06e0 EA060000 		.4byte	0x6ea
+ 1412 06e4 05       		.uleb128 0x5
+ 1413 06e5 03       		.byte	0x3
+ 1414 06e6 00000000 		.4byte	Em_EEPROM_em_EepromStorage
+ 1415 06ea 23       		.uleb128 0x23
+ 1416 06eb C3060000 		.4byte	0x6c3
+ 1417 06ef 24       		.uleb128 0x24
+ 1418 06f0 84020000 		.4byte	.LASF91
+ 1419 06f4 06       		.byte	0x6
+ 1420 06f5 38       		.byte	0x38
+ 1421 06f6 B0010000 		.4byte	0x1b0
+ 1422 06fa 05       		.uleb128 0x5
+ 1423 06fb 03       		.byte	0x3
+ 1424 06fc 00000000 		.4byte	Param
+ 1425 0700 24       		.uleb128 0x24
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 31
+
+
+ 1426 0701 13000000 		.4byte	.LASF92
+ 1427 0705 01       		.byte	0x1
+ 1428 0706 12       		.byte	0x12
+ 1429 0707 72020000 		.4byte	0x272
+ 1430 070b 05       		.uleb128 0x5
+ 1431 070c 03       		.byte	0x3
+ 1432 070d 00000000 		.4byte	g_WorkingData
+ 1433 0711 21       		.uleb128 0x21
+ 1434 0712 17040000 		.4byte	.LASF93
+ 1435 0716 08       		.byte	0x8
+ 1436 0717 28       		.byte	0x28
+ 1437 0718 85030000 		.4byte	0x385
+ 1438 071c 24       		.uleb128 0x24
+ 1439 071d C3000000 		.4byte	.LASF94
+ 1440 0721 01       		.byte	0x1
+ 1441 0722 35       		.byte	0x35
+ 1442 0723 A2000000 		.4byte	0xa2
+ 1443 0727 05       		.uleb128 0x5
+ 1444 0728 03       		.byte	0x3
+ 1445 0729 00000000 		.4byte	g_uAddressOfConfig
+ 1446 072d 24       		.uleb128 0x24
+ 1447 072e 5C020000 		.4byte	.LASF95
+ 1448 0732 01       		.byte	0x1
+ 1449 0733 36       		.byte	0x36
+ 1450 0734 A2000000 		.4byte	0xa2
+ 1451 0738 05       		.uleb128 0x5
+ 1452 0739 03       		.byte	0x3
+ 1453 073a 00000000 		.4byte	g_uSectorOfConfig
+ 1454 073e 24       		.uleb128 0x24
+ 1455 073f 25030000 		.4byte	.LASF86
+ 1456 0743 01       		.byte	0x1
+ 1457 0744 A2       		.byte	0xa2
+ 1458 0745 A4010000 		.4byte	0x1a4
+ 1459 0749 05       		.uleb128 0x5
+ 1460 074a 03       		.byte	0x3
+ 1461 074b 00000000 		.4byte	eepromReturnValue
+ 1462 074f 25       		.uleb128 0x25
+ 1463 0750 3D000000 		.4byte	.LASF96
+ 1464 0754 3D000000 		.4byte	.LASF96
+ 1465 0758 0A       		.byte	0xa
+ 1466 0759 11       		.byte	0x11
+ 1467 075a 26       		.uleb128 0x26
+ 1468 075b 3E020000 		.4byte	.LASF108
+ 1469 075f 3E020000 		.4byte	.LASF108
+ 1470 0763 27       		.uleb128 0x27
+ 1471 0764 7E000000 		.4byte	.LASF97
+ 1472 0768 7E000000 		.4byte	.LASF97
+ 1473 076c 05       		.byte	0x5
+ 1474 076d 6801     		.2byte	0x168
+ 1475 076f 27       		.uleb128 0x27
+ 1476 0770 B5010000 		.4byte	.LASF98
+ 1477 0774 B5010000 		.4byte	.LASF98
+ 1478 0778 05       		.byte	0x5
+ 1479 0779 6C01     		.2byte	0x16c
+ 1480 077b 25       		.uleb128 0x25
+ 1481 077c EF040000 		.4byte	.LASF99
+ 1482 0780 EF040000 		.4byte	.LASF99
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 32
+
+
+ 1483 0784 09       		.byte	0x9
+ 1484 0785 31       		.byte	0x31
+ 1485 0786 25       		.uleb128 0x25
+ 1486 0787 50020000 		.4byte	.LASF100
+ 1487 078b 50020000 		.4byte	.LASF100
+ 1488 078f 08       		.byte	0x8
+ 1489 0790 2C       		.byte	0x2c
+ 1490 0791 00       		.byte	0
+ 1491              		.section	.debug_abbrev,"",%progbits
+ 1492              	.Ldebug_abbrev0:
+ 1493 0000 01       		.uleb128 0x1
+ 1494 0001 11       		.uleb128 0x11
+ 1495 0002 01       		.byte	0x1
+ 1496 0003 25       		.uleb128 0x25
+ 1497 0004 0E       		.uleb128 0xe
+ 1498 0005 13       		.uleb128 0x13
+ 1499 0006 0B       		.uleb128 0xb
+ 1500 0007 03       		.uleb128 0x3
+ 1501 0008 0E       		.uleb128 0xe
+ 1502 0009 1B       		.uleb128 0x1b
+ 1503 000a 0E       		.uleb128 0xe
+ 1504 000b 55       		.uleb128 0x55
+ 1505 000c 17       		.uleb128 0x17
+ 1506 000d 11       		.uleb128 0x11
+ 1507 000e 01       		.uleb128 0x1
+ 1508 000f 10       		.uleb128 0x10
+ 1509 0010 17       		.uleb128 0x17
+ 1510 0011 00       		.byte	0
+ 1511 0012 00       		.byte	0
+ 1512 0013 02       		.uleb128 0x2
+ 1513 0014 24       		.uleb128 0x24
+ 1514 0015 00       		.byte	0
+ 1515 0016 0B       		.uleb128 0xb
+ 1516 0017 0B       		.uleb128 0xb
+ 1517 0018 3E       		.uleb128 0x3e
+ 1518 0019 0B       		.uleb128 0xb
+ 1519 001a 03       		.uleb128 0x3
+ 1520 001b 0E       		.uleb128 0xe
+ 1521 001c 00       		.byte	0
+ 1522 001d 00       		.byte	0
+ 1523 001e 03       		.uleb128 0x3
+ 1524 001f 16       		.uleb128 0x16
+ 1525 0020 00       		.byte	0
+ 1526 0021 03       		.uleb128 0x3
+ 1527 0022 0E       		.uleb128 0xe
+ 1528 0023 3A       		.uleb128 0x3a
+ 1529 0024 0B       		.uleb128 0xb
+ 1530 0025 3B       		.uleb128 0x3b
+ 1531 0026 0B       		.uleb128 0xb
+ 1532 0027 49       		.uleb128 0x49
+ 1533 0028 13       		.uleb128 0x13
+ 1534 0029 00       		.byte	0
+ 1535 002a 00       		.byte	0
+ 1536 002b 04       		.uleb128 0x4
+ 1537 002c 24       		.uleb128 0x24
+ 1538 002d 00       		.byte	0
+ 1539 002e 0B       		.uleb128 0xb
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 33
+
+
+ 1540 002f 0B       		.uleb128 0xb
+ 1541 0030 3E       		.uleb128 0x3e
+ 1542 0031 0B       		.uleb128 0xb
+ 1543 0032 03       		.uleb128 0x3
+ 1544 0033 08       		.uleb128 0x8
+ 1545 0034 00       		.byte	0
+ 1546 0035 00       		.byte	0
+ 1547 0036 05       		.uleb128 0x5
+ 1548 0037 16       		.uleb128 0x16
+ 1549 0038 00       		.byte	0
+ 1550 0039 03       		.uleb128 0x3
+ 1551 003a 0E       		.uleb128 0xe
+ 1552 003b 3A       		.uleb128 0x3a
+ 1553 003c 0B       		.uleb128 0xb
+ 1554 003d 3B       		.uleb128 0x3b
+ 1555 003e 05       		.uleb128 0x5
+ 1556 003f 49       		.uleb128 0x49
+ 1557 0040 13       		.uleb128 0x13
+ 1558 0041 00       		.byte	0
+ 1559 0042 00       		.byte	0
+ 1560 0043 06       		.uleb128 0x6
+ 1561 0044 0F       		.uleb128 0xf
+ 1562 0045 00       		.byte	0
+ 1563 0046 0B       		.uleb128 0xb
+ 1564 0047 0B       		.uleb128 0xb
+ 1565 0048 49       		.uleb128 0x49
+ 1566 0049 13       		.uleb128 0x13
+ 1567 004a 00       		.byte	0
+ 1568 004b 00       		.byte	0
+ 1569 004c 07       		.uleb128 0x7
+ 1570 004d 13       		.uleb128 0x13
+ 1571 004e 01       		.byte	0x1
+ 1572 004f 0B       		.uleb128 0xb
+ 1573 0050 0B       		.uleb128 0xb
+ 1574 0051 3A       		.uleb128 0x3a
+ 1575 0052 0B       		.uleb128 0xb
+ 1576 0053 3B       		.uleb128 0x3b
+ 1577 0054 05       		.uleb128 0x5
+ 1578 0055 01       		.uleb128 0x1
+ 1579 0056 13       		.uleb128 0x13
+ 1580 0057 00       		.byte	0
+ 1581 0058 00       		.byte	0
+ 1582 0059 08       		.uleb128 0x8
+ 1583 005a 0D       		.uleb128 0xd
+ 1584 005b 00       		.byte	0
+ 1585 005c 03       		.uleb128 0x3
+ 1586 005d 0E       		.uleb128 0xe
+ 1587 005e 3A       		.uleb128 0x3a
+ 1588 005f 0B       		.uleb128 0xb
+ 1589 0060 3B       		.uleb128 0x3b
+ 1590 0061 05       		.uleb128 0x5
+ 1591 0062 49       		.uleb128 0x49
+ 1592 0063 13       		.uleb128 0x13
+ 1593 0064 38       		.uleb128 0x38
+ 1594 0065 0B       		.uleb128 0xb
+ 1595 0066 00       		.byte	0
+ 1596 0067 00       		.byte	0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 34
+
+
+ 1597 0068 09       		.uleb128 0x9
+ 1598 0069 04       		.uleb128 0x4
+ 1599 006a 01       		.byte	0x1
+ 1600 006b 0B       		.uleb128 0xb
+ 1601 006c 0B       		.uleb128 0xb
+ 1602 006d 49       		.uleb128 0x49
+ 1603 006e 13       		.uleb128 0x13
+ 1604 006f 3A       		.uleb128 0x3a
+ 1605 0070 0B       		.uleb128 0xb
+ 1606 0071 3B       		.uleb128 0x3b
+ 1607 0072 05       		.uleb128 0x5
+ 1608 0073 01       		.uleb128 0x1
+ 1609 0074 13       		.uleb128 0x13
+ 1610 0075 00       		.byte	0
+ 1611 0076 00       		.byte	0
+ 1612 0077 0A       		.uleb128 0xa
+ 1613 0078 28       		.uleb128 0x28
+ 1614 0079 00       		.byte	0
+ 1615 007a 03       		.uleb128 0x3
+ 1616 007b 0E       		.uleb128 0xe
+ 1617 007c 1C       		.uleb128 0x1c
+ 1618 007d 0B       		.uleb128 0xb
+ 1619 007e 00       		.byte	0
+ 1620 007f 00       		.byte	0
+ 1621 0080 0B       		.uleb128 0xb
+ 1622 0081 13       		.uleb128 0x13
+ 1623 0082 01       		.byte	0x1
+ 1624 0083 03       		.uleb128 0x3
+ 1625 0084 0E       		.uleb128 0xe
+ 1626 0085 0B       		.uleb128 0xb
+ 1627 0086 0B       		.uleb128 0xb
+ 1628 0087 3A       		.uleb128 0x3a
+ 1629 0088 0B       		.uleb128 0xb
+ 1630 0089 3B       		.uleb128 0x3b
+ 1631 008a 0B       		.uleb128 0xb
+ 1632 008b 01       		.uleb128 0x1
+ 1633 008c 13       		.uleb128 0x13
+ 1634 008d 00       		.byte	0
+ 1635 008e 00       		.byte	0
+ 1636 008f 0C       		.uleb128 0xc
+ 1637 0090 0D       		.uleb128 0xd
+ 1638 0091 00       		.byte	0
+ 1639 0092 03       		.uleb128 0x3
+ 1640 0093 0E       		.uleb128 0xe
+ 1641 0094 3A       		.uleb128 0x3a
+ 1642 0095 0B       		.uleb128 0xb
+ 1643 0096 3B       		.uleb128 0x3b
+ 1644 0097 0B       		.uleb128 0xb
+ 1645 0098 49       		.uleb128 0x49
+ 1646 0099 13       		.uleb128 0x13
+ 1647 009a 38       		.uleb128 0x38
+ 1648 009b 0B       		.uleb128 0xb
+ 1649 009c 00       		.byte	0
+ 1650 009d 00       		.byte	0
+ 1651 009e 0D       		.uleb128 0xd
+ 1652 009f 13       		.uleb128 0x13
+ 1653 00a0 01       		.byte	0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 35
+
+
+ 1654 00a1 0B       		.uleb128 0xb
+ 1655 00a2 0B       		.uleb128 0xb
+ 1656 00a3 3A       		.uleb128 0x3a
+ 1657 00a4 0B       		.uleb128 0xb
+ 1658 00a5 3B       		.uleb128 0x3b
+ 1659 00a6 0B       		.uleb128 0xb
+ 1660 00a7 01       		.uleb128 0x1
+ 1661 00a8 13       		.uleb128 0x13
+ 1662 00a9 00       		.byte	0
+ 1663 00aa 00       		.byte	0
+ 1664 00ab 0E       		.uleb128 0xe
+ 1665 00ac 01       		.uleb128 0x1
+ 1666 00ad 01       		.byte	0x1
+ 1667 00ae 49       		.uleb128 0x49
+ 1668 00af 13       		.uleb128 0x13
+ 1669 00b0 01       		.uleb128 0x1
+ 1670 00b1 13       		.uleb128 0x13
+ 1671 00b2 00       		.byte	0
+ 1672 00b3 00       		.byte	0
+ 1673 00b4 0F       		.uleb128 0xf
+ 1674 00b5 21       		.uleb128 0x21
+ 1675 00b6 00       		.byte	0
+ 1676 00b7 49       		.uleb128 0x49
+ 1677 00b8 13       		.uleb128 0x13
+ 1678 00b9 2F       		.uleb128 0x2f
+ 1679 00ba 0B       		.uleb128 0xb
+ 1680 00bb 00       		.byte	0
+ 1681 00bc 00       		.byte	0
+ 1682 00bd 10       		.uleb128 0x10
+ 1683 00be 04       		.uleb128 0x4
+ 1684 00bf 01       		.byte	0x1
+ 1685 00c0 0B       		.uleb128 0xb
+ 1686 00c1 0B       		.uleb128 0xb
+ 1687 00c2 49       		.uleb128 0x49
+ 1688 00c3 13       		.uleb128 0x13
+ 1689 00c4 3A       		.uleb128 0x3a
+ 1690 00c5 0B       		.uleb128 0xb
+ 1691 00c6 3B       		.uleb128 0x3b
+ 1692 00c7 0B       		.uleb128 0xb
+ 1693 00c8 01       		.uleb128 0x1
+ 1694 00c9 13       		.uleb128 0x13
+ 1695 00ca 00       		.byte	0
+ 1696 00cb 00       		.byte	0
+ 1697 00cc 11       		.uleb128 0x11
+ 1698 00cd 0D       		.uleb128 0xd
+ 1699 00ce 00       		.byte	0
+ 1700 00cf 03       		.uleb128 0x3
+ 1701 00d0 08       		.uleb128 0x8
+ 1702 00d1 3A       		.uleb128 0x3a
+ 1703 00d2 0B       		.uleb128 0xb
+ 1704 00d3 3B       		.uleb128 0x3b
+ 1705 00d4 0B       		.uleb128 0xb
+ 1706 00d5 49       		.uleb128 0x49
+ 1707 00d6 13       		.uleb128 0x13
+ 1708 00d7 38       		.uleb128 0x38
+ 1709 00d8 0B       		.uleb128 0xb
+ 1710 00d9 00       		.byte	0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 36
+
+
+ 1711 00da 00       		.byte	0
+ 1712 00db 12       		.uleb128 0x12
+ 1713 00dc 2E       		.uleb128 0x2e
+ 1714 00dd 01       		.byte	0x1
+ 1715 00de 3F       		.uleb128 0x3f
+ 1716 00df 19       		.uleb128 0x19
+ 1717 00e0 03       		.uleb128 0x3
+ 1718 00e1 0E       		.uleb128 0xe
+ 1719 00e2 3A       		.uleb128 0x3a
+ 1720 00e3 0B       		.uleb128 0xb
+ 1721 00e4 3B       		.uleb128 0x3b
+ 1722 00e5 0B       		.uleb128 0xb
+ 1723 00e6 27       		.uleb128 0x27
+ 1724 00e7 19       		.uleb128 0x19
+ 1725 00e8 49       		.uleb128 0x49
+ 1726 00e9 13       		.uleb128 0x13
+ 1727 00ea 11       		.uleb128 0x11
+ 1728 00eb 01       		.uleb128 0x1
+ 1729 00ec 12       		.uleb128 0x12
+ 1730 00ed 06       		.uleb128 0x6
+ 1731 00ee 40       		.uleb128 0x40
+ 1732 00ef 18       		.uleb128 0x18
+ 1733 00f0 9742     		.uleb128 0x2117
+ 1734 00f2 19       		.uleb128 0x19
+ 1735 00f3 01       		.uleb128 0x1
+ 1736 00f4 13       		.uleb128 0x13
+ 1737 00f5 00       		.byte	0
+ 1738 00f6 00       		.byte	0
+ 1739 00f7 13       		.uleb128 0x13
+ 1740 00f8 05       		.uleb128 0x5
+ 1741 00f9 00       		.byte	0
+ 1742 00fa 03       		.uleb128 0x3
+ 1743 00fb 0E       		.uleb128 0xe
+ 1744 00fc 3A       		.uleb128 0x3a
+ 1745 00fd 0B       		.uleb128 0xb
+ 1746 00fe 3B       		.uleb128 0x3b
+ 1747 00ff 0B       		.uleb128 0xb
+ 1748 0100 49       		.uleb128 0x49
+ 1749 0101 13       		.uleb128 0x13
+ 1750 0102 02       		.uleb128 0x2
+ 1751 0103 17       		.uleb128 0x17
+ 1752 0104 00       		.byte	0
+ 1753 0105 00       		.byte	0
+ 1754 0106 14       		.uleb128 0x14
+ 1755 0107 05       		.uleb128 0x5
+ 1756 0108 00       		.byte	0
+ 1757 0109 03       		.uleb128 0x3
+ 1758 010a 0E       		.uleb128 0xe
+ 1759 010b 3A       		.uleb128 0x3a
+ 1760 010c 0B       		.uleb128 0xb
+ 1761 010d 3B       		.uleb128 0x3b
+ 1762 010e 0B       		.uleb128 0xb
+ 1763 010f 49       		.uleb128 0x49
+ 1764 0110 13       		.uleb128 0x13
+ 1765 0111 02       		.uleb128 0x2
+ 1766 0112 18       		.uleb128 0x18
+ 1767 0113 00       		.byte	0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 37
+
+
+ 1768 0114 00       		.byte	0
+ 1769 0115 15       		.uleb128 0x15
+ 1770 0116 34       		.uleb128 0x34
+ 1771 0117 00       		.byte	0
+ 1772 0118 03       		.uleb128 0x3
+ 1773 0119 0E       		.uleb128 0xe
+ 1774 011a 3A       		.uleb128 0x3a
+ 1775 011b 0B       		.uleb128 0xb
+ 1776 011c 3B       		.uleb128 0x3b
+ 1777 011d 0B       		.uleb128 0xb
+ 1778 011e 49       		.uleb128 0x49
+ 1779 011f 13       		.uleb128 0x13
+ 1780 0120 02       		.uleb128 0x2
+ 1781 0121 17       		.uleb128 0x17
+ 1782 0122 00       		.byte	0
+ 1783 0123 00       		.byte	0
+ 1784 0124 16       		.uleb128 0x16
+ 1785 0125 0B       		.uleb128 0xb
+ 1786 0126 01       		.byte	0x1
+ 1787 0127 55       		.uleb128 0x55
+ 1788 0128 17       		.uleb128 0x17
+ 1789 0129 00       		.byte	0
+ 1790 012a 00       		.byte	0
+ 1791 012b 17       		.uleb128 0x17
+ 1792 012c 34       		.uleb128 0x34
+ 1793 012d 00       		.byte	0
+ 1794 012e 03       		.uleb128 0x3
+ 1795 012f 08       		.uleb128 0x8
+ 1796 0130 3A       		.uleb128 0x3a
+ 1797 0131 0B       		.uleb128 0xb
+ 1798 0132 3B       		.uleb128 0x3b
+ 1799 0133 0B       		.uleb128 0xb
+ 1800 0134 49       		.uleb128 0x49
+ 1801 0135 13       		.uleb128 0x13
+ 1802 0136 02       		.uleb128 0x2
+ 1803 0137 17       		.uleb128 0x17
+ 1804 0138 00       		.byte	0
+ 1805 0139 00       		.byte	0
+ 1806 013a 18       		.uleb128 0x18
+ 1807 013b 2E       		.uleb128 0x2e
+ 1808 013c 00       		.byte	0
+ 1809 013d 3F       		.uleb128 0x3f
+ 1810 013e 19       		.uleb128 0x19
+ 1811 013f 03       		.uleb128 0x3
+ 1812 0140 0E       		.uleb128 0xe
+ 1813 0141 3A       		.uleb128 0x3a
+ 1814 0142 0B       		.uleb128 0xb
+ 1815 0143 3B       		.uleb128 0x3b
+ 1816 0144 0B       		.uleb128 0xb
+ 1817 0145 49       		.uleb128 0x49
+ 1818 0146 13       		.uleb128 0x13
+ 1819 0147 11       		.uleb128 0x11
+ 1820 0148 01       		.uleb128 0x1
+ 1821 0149 12       		.uleb128 0x12
+ 1822 014a 06       		.uleb128 0x6
+ 1823 014b 40       		.uleb128 0x40
+ 1824 014c 18       		.uleb128 0x18
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 38
+
+
+ 1825 014d 9742     		.uleb128 0x2117
+ 1826 014f 19       		.uleb128 0x19
+ 1827 0150 00       		.byte	0
+ 1828 0151 00       		.byte	0
+ 1829 0152 19       		.uleb128 0x19
+ 1830 0153 2E       		.uleb128 0x2e
+ 1831 0154 01       		.byte	0x1
+ 1832 0155 3F       		.uleb128 0x3f
+ 1833 0156 19       		.uleb128 0x19
+ 1834 0157 03       		.uleb128 0x3
+ 1835 0158 0E       		.uleb128 0xe
+ 1836 0159 3A       		.uleb128 0x3a
+ 1837 015a 0B       		.uleb128 0xb
+ 1838 015b 3B       		.uleb128 0x3b
+ 1839 015c 0B       		.uleb128 0xb
+ 1840 015d 11       		.uleb128 0x11
+ 1841 015e 01       		.uleb128 0x1
+ 1842 015f 12       		.uleb128 0x12
+ 1843 0160 06       		.uleb128 0x6
+ 1844 0161 40       		.uleb128 0x40
+ 1845 0162 18       		.uleb128 0x18
+ 1846 0163 9742     		.uleb128 0x2117
+ 1847 0165 19       		.uleb128 0x19
+ 1848 0166 01       		.uleb128 0x1
+ 1849 0167 13       		.uleb128 0x13
+ 1850 0168 00       		.byte	0
+ 1851 0169 00       		.byte	0
+ 1852 016a 1A       		.uleb128 0x1a
+ 1853 016b 898201   		.uleb128 0x4109
+ 1854 016e 01       		.byte	0x1
+ 1855 016f 11       		.uleb128 0x11
+ 1856 0170 01       		.uleb128 0x1
+ 1857 0171 31       		.uleb128 0x31
+ 1858 0172 13       		.uleb128 0x13
+ 1859 0173 01       		.uleb128 0x1
+ 1860 0174 13       		.uleb128 0x13
+ 1861 0175 00       		.byte	0
+ 1862 0176 00       		.byte	0
+ 1863 0177 1B       		.uleb128 0x1b
+ 1864 0178 8A8201   		.uleb128 0x410a
+ 1865 017b 00       		.byte	0
+ 1866 017c 02       		.uleb128 0x2
+ 1867 017d 18       		.uleb128 0x18
+ 1868 017e 9142     		.uleb128 0x2111
+ 1869 0180 18       		.uleb128 0x18
+ 1870 0181 00       		.byte	0
+ 1871 0182 00       		.byte	0
+ 1872 0183 1C       		.uleb128 0x1c
+ 1873 0184 898201   		.uleb128 0x4109
+ 1874 0187 01       		.byte	0x1
+ 1875 0188 11       		.uleb128 0x11
+ 1876 0189 01       		.uleb128 0x1
+ 1877 018a 31       		.uleb128 0x31
+ 1878 018b 13       		.uleb128 0x13
+ 1879 018c 00       		.byte	0
+ 1880 018d 00       		.byte	0
+ 1881 018e 1D       		.uleb128 0x1d
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 39
+
+
+ 1882 018f 2E       		.uleb128 0x2e
+ 1883 0190 01       		.byte	0x1
+ 1884 0191 3F       		.uleb128 0x3f
+ 1885 0192 19       		.uleb128 0x19
+ 1886 0193 03       		.uleb128 0x3
+ 1887 0194 0E       		.uleb128 0xe
+ 1888 0195 3A       		.uleb128 0x3a
+ 1889 0196 0B       		.uleb128 0xb
+ 1890 0197 3B       		.uleb128 0x3b
+ 1891 0198 0B       		.uleb128 0xb
+ 1892 0199 49       		.uleb128 0x49
+ 1893 019a 13       		.uleb128 0x13
+ 1894 019b 11       		.uleb128 0x11
+ 1895 019c 01       		.uleb128 0x1
+ 1896 019d 12       		.uleb128 0x12
+ 1897 019e 06       		.uleb128 0x6
+ 1898 019f 40       		.uleb128 0x40
+ 1899 01a0 18       		.uleb128 0x18
+ 1900 01a1 9742     		.uleb128 0x2117
+ 1901 01a3 19       		.uleb128 0x19
+ 1902 01a4 01       		.uleb128 0x1
+ 1903 01a5 13       		.uleb128 0x13
+ 1904 01a6 00       		.byte	0
+ 1905 01a7 00       		.byte	0
+ 1906 01a8 1E       		.uleb128 0x1e
+ 1907 01a9 34       		.uleb128 0x34
+ 1908 01aa 00       		.byte	0
+ 1909 01ab 03       		.uleb128 0x3
+ 1910 01ac 0E       		.uleb128 0xe
+ 1911 01ad 3A       		.uleb128 0x3a
+ 1912 01ae 0B       		.uleb128 0xb
+ 1913 01af 3B       		.uleb128 0x3b
+ 1914 01b0 0B       		.uleb128 0xb
+ 1915 01b1 49       		.uleb128 0x49
+ 1916 01b2 13       		.uleb128 0x13
+ 1917 01b3 00       		.byte	0
+ 1918 01b4 00       		.byte	0
+ 1919 01b5 1F       		.uleb128 0x1f
+ 1920 01b6 898201   		.uleb128 0x4109
+ 1921 01b9 00       		.byte	0
+ 1922 01ba 11       		.uleb128 0x11
+ 1923 01bb 01       		.uleb128 0x1
+ 1924 01bc 31       		.uleb128 0x31
+ 1925 01bd 13       		.uleb128 0x13
+ 1926 01be 00       		.byte	0
+ 1927 01bf 00       		.byte	0
+ 1928 01c0 20       		.uleb128 0x20
+ 1929 01c1 2E       		.uleb128 0x2e
+ 1930 01c2 00       		.byte	0
+ 1931 01c3 3F       		.uleb128 0x3f
+ 1932 01c4 19       		.uleb128 0x19
+ 1933 01c5 03       		.uleb128 0x3
+ 1934 01c6 0E       		.uleb128 0xe
+ 1935 01c7 3A       		.uleb128 0x3a
+ 1936 01c8 0B       		.uleb128 0xb
+ 1937 01c9 3B       		.uleb128 0x3b
+ 1938 01ca 0B       		.uleb128 0xb
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 40
+
+
+ 1939 01cb 11       		.uleb128 0x11
+ 1940 01cc 01       		.uleb128 0x1
+ 1941 01cd 12       		.uleb128 0x12
+ 1942 01ce 06       		.uleb128 0x6
+ 1943 01cf 40       		.uleb128 0x40
+ 1944 01d0 18       		.uleb128 0x18
+ 1945 01d1 9742     		.uleb128 0x2117
+ 1946 01d3 19       		.uleb128 0x19
+ 1947 01d4 00       		.byte	0
+ 1948 01d5 00       		.byte	0
+ 1949 01d6 21       		.uleb128 0x21
+ 1950 01d7 34       		.uleb128 0x34
+ 1951 01d8 00       		.byte	0
+ 1952 01d9 03       		.uleb128 0x3
+ 1953 01da 0E       		.uleb128 0xe
+ 1954 01db 3A       		.uleb128 0x3a
+ 1955 01dc 0B       		.uleb128 0xb
+ 1956 01dd 3B       		.uleb128 0x3b
+ 1957 01de 0B       		.uleb128 0xb
+ 1958 01df 49       		.uleb128 0x49
+ 1959 01e0 13       		.uleb128 0x13
+ 1960 01e1 3F       		.uleb128 0x3f
+ 1961 01e2 19       		.uleb128 0x19
+ 1962 01e3 3C       		.uleb128 0x3c
+ 1963 01e4 19       		.uleb128 0x19
+ 1964 01e5 00       		.byte	0
+ 1965 01e6 00       		.byte	0
+ 1966 01e7 22       		.uleb128 0x22
+ 1967 01e8 21       		.uleb128 0x21
+ 1968 01e9 00       		.byte	0
+ 1969 01ea 49       		.uleb128 0x49
+ 1970 01eb 13       		.uleb128 0x13
+ 1971 01ec 2F       		.uleb128 0x2f
+ 1972 01ed 05       		.uleb128 0x5
+ 1973 01ee 00       		.byte	0
+ 1974 01ef 00       		.byte	0
+ 1975 01f0 23       		.uleb128 0x23
+ 1976 01f1 26       		.uleb128 0x26
+ 1977 01f2 00       		.byte	0
+ 1978 01f3 49       		.uleb128 0x49
+ 1979 01f4 13       		.uleb128 0x13
+ 1980 01f5 00       		.byte	0
+ 1981 01f6 00       		.byte	0
+ 1982 01f7 24       		.uleb128 0x24
+ 1983 01f8 34       		.uleb128 0x34
+ 1984 01f9 00       		.byte	0
+ 1985 01fa 03       		.uleb128 0x3
+ 1986 01fb 0E       		.uleb128 0xe
+ 1987 01fc 3A       		.uleb128 0x3a
+ 1988 01fd 0B       		.uleb128 0xb
+ 1989 01fe 3B       		.uleb128 0x3b
+ 1990 01ff 0B       		.uleb128 0xb
+ 1991 0200 49       		.uleb128 0x49
+ 1992 0201 13       		.uleb128 0x13
+ 1993 0202 3F       		.uleb128 0x3f
+ 1994 0203 19       		.uleb128 0x19
+ 1995 0204 02       		.uleb128 0x2
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 41
+
+
+ 1996 0205 18       		.uleb128 0x18
+ 1997 0206 00       		.byte	0
+ 1998 0207 00       		.byte	0
+ 1999 0208 25       		.uleb128 0x25
+ 2000 0209 2E       		.uleb128 0x2e
+ 2001 020a 00       		.byte	0
+ 2002 020b 3F       		.uleb128 0x3f
+ 2003 020c 19       		.uleb128 0x19
+ 2004 020d 3C       		.uleb128 0x3c
+ 2005 020e 19       		.uleb128 0x19
+ 2006 020f 6E       		.uleb128 0x6e
+ 2007 0210 0E       		.uleb128 0xe
+ 2008 0211 03       		.uleb128 0x3
+ 2009 0212 0E       		.uleb128 0xe
+ 2010 0213 3A       		.uleb128 0x3a
+ 2011 0214 0B       		.uleb128 0xb
+ 2012 0215 3B       		.uleb128 0x3b
+ 2013 0216 0B       		.uleb128 0xb
+ 2014 0217 00       		.byte	0
+ 2015 0218 00       		.byte	0
+ 2016 0219 26       		.uleb128 0x26
+ 2017 021a 2E       		.uleb128 0x2e
+ 2018 021b 00       		.byte	0
+ 2019 021c 3F       		.uleb128 0x3f
+ 2020 021d 19       		.uleb128 0x19
+ 2021 021e 3C       		.uleb128 0x3c
+ 2022 021f 19       		.uleb128 0x19
+ 2023 0220 6E       		.uleb128 0x6e
+ 2024 0221 0E       		.uleb128 0xe
+ 2025 0222 03       		.uleb128 0x3
+ 2026 0223 0E       		.uleb128 0xe
+ 2027 0224 00       		.byte	0
+ 2028 0225 00       		.byte	0
+ 2029 0226 27       		.uleb128 0x27
+ 2030 0227 2E       		.uleb128 0x2e
+ 2031 0228 00       		.byte	0
+ 2032 0229 3F       		.uleb128 0x3f
+ 2033 022a 19       		.uleb128 0x19
+ 2034 022b 3C       		.uleb128 0x3c
+ 2035 022c 19       		.uleb128 0x19
+ 2036 022d 6E       		.uleb128 0x6e
+ 2037 022e 0E       		.uleb128 0xe
+ 2038 022f 03       		.uleb128 0x3
+ 2039 0230 0E       		.uleb128 0xe
+ 2040 0231 3A       		.uleb128 0x3a
+ 2041 0232 0B       		.uleb128 0xb
+ 2042 0233 3B       		.uleb128 0x3b
+ 2043 0234 05       		.uleb128 0x5
+ 2044 0235 00       		.byte	0
+ 2045 0236 00       		.byte	0
+ 2046 0237 00       		.byte	0
+ 2047              		.section	.debug_loc,"",%progbits
+ 2048              	.Ldebug_loc0:
+ 2049              	.LLST0:
+ 2050 0000 00000000 		.4byte	.LVL0
+ 2051 0004 16000000 		.4byte	.LVL6
+ 2052 0008 0100     		.2byte	0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 42
+
+
+ 2053 000a 50       		.byte	0x50
+ 2054 000b 16000000 		.4byte	.LVL6
+ 2055 000f 1A000000 		.4byte	.LFE61
+ 2056 0013 0400     		.2byte	0x4
+ 2057 0015 F3       		.byte	0xf3
+ 2058 0016 01       		.uleb128 0x1
+ 2059 0017 50       		.byte	0x50
+ 2060 0018 9F       		.byte	0x9f
+ 2061 0019 00000000 		.4byte	0
+ 2062 001d 00000000 		.4byte	0
+ 2063              	.LLST1:
+ 2064 0021 02000000 		.4byte	.LVL1
+ 2065 0025 08000000 		.4byte	.LVL2
+ 2066 0029 0200     		.2byte	0x2
+ 2067 002b 30       		.byte	0x30
+ 2068 002c 9F       		.byte	0x9f
+ 2069 002d 08000000 		.4byte	.LVL2
+ 2070 0031 0C000000 		.4byte	.LVL3
+ 2071 0035 0100     		.2byte	0x1
+ 2072 0037 53       		.byte	0x53
+ 2073 0038 0E000000 		.4byte	.LVL4
+ 2074 003c 1A000000 		.4byte	.LFE61
+ 2075 0040 0100     		.2byte	0x1
+ 2076 0042 53       		.byte	0x53
+ 2077 0043 00000000 		.4byte	0
+ 2078 0047 00000000 		.4byte	0
+ 2079              	.LLST2:
+ 2080 004b 02000000 		.4byte	.LVL1
+ 2081 004f 08000000 		.4byte	.LVL2
+ 2082 0053 0200     		.2byte	0x2
+ 2083 0055 31       		.byte	0x31
+ 2084 0056 9F       		.byte	0x9f
+ 2085 0057 08000000 		.4byte	.LVL2
+ 2086 005b 1A000000 		.4byte	.LFE61
+ 2087 005f 0100     		.2byte	0x1
+ 2088 0061 52       		.byte	0x52
+ 2089 0062 00000000 		.4byte	0
+ 2090 0066 00000000 		.4byte	0
+ 2091              	.LLST3:
+ 2092 006a 00000000 		.4byte	.LVL7
+ 2093 006e 00000000 		.4byte	.LVL8
+ 2094 0072 0100     		.2byte	0x1
+ 2095 0074 50       		.byte	0x50
+ 2096 0075 00000000 		.4byte	.LVL8
+ 2097 0079 02000000 		.4byte	.LFE65
+ 2098 007d 0400     		.2byte	0x4
+ 2099 007f F3       		.byte	0xf3
+ 2100 0080 01       		.uleb128 0x1
+ 2101 0081 50       		.byte	0x50
+ 2102 0082 9F       		.byte	0x9f
+ 2103 0083 00000000 		.4byte	0
+ 2104 0087 00000000 		.4byte	0
+ 2105              	.LLST4:
+ 2106 008b 12000000 		.4byte	.LVL24
+ 2107 008f 18000000 		.4byte	.LVL25
+ 2108 0093 0100     		.2byte	0x1
+ 2109 0095 50       		.byte	0x50
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 43
+
+
+ 2110 0096 00000000 		.4byte	0
+ 2111 009a 00000000 		.4byte	0
+ 2112              	.LLST5:
+ 2113 009e 08000000 		.4byte	.LVL27
+ 2114 00a2 0E000000 		.4byte	.LVL28
+ 2115 00a6 0100     		.2byte	0x1
+ 2116 00a8 50       		.byte	0x50
+ 2117 00a9 14000000 		.4byte	.LVL30
+ 2118 00ad 17000000 		.4byte	.LVL31-1
+ 2119 00b1 0100     		.2byte	0x1
+ 2120 00b3 50       		.byte	0x50
+ 2121 00b4 00000000 		.4byte	0
+ 2122 00b8 00000000 		.4byte	0
+ 2123              		.section	.debug_aranges,"",%progbits
+ 2124 0000 64000000 		.4byte	0x64
+ 2125 0004 0200     		.2byte	0x2
+ 2126 0006 00000000 		.4byte	.Ldebug_info0
+ 2127 000a 04       		.byte	0x4
+ 2128 000b 00       		.byte	0
+ 2129 000c 0000     		.2byte	0
+ 2130 000e 0000     		.2byte	0
+ 2131 0010 00000000 		.4byte	.LFB61
+ 2132 0014 1A000000 		.4byte	.LFE61-.LFB61
+ 2133 0018 00000000 		.4byte	.LFB62
+ 2134 001c 04000000 		.4byte	.LFE62-.LFB62
+ 2135 0020 00000000 		.4byte	.LFB65
+ 2136 0024 02000000 		.4byte	.LFE65-.LFB65
+ 2137 0028 00000000 		.4byte	.LFB66
+ 2138 002c 50000000 		.4byte	.LFE66-.LFB66
+ 2139 0030 00000000 		.4byte	.LFB64
+ 2140 0034 20000000 		.4byte	.LFE64-.LFB64
+ 2141 0038 00000000 		.4byte	.LFB67
+ 2142 003c 02000000 		.4byte	.LFE67-.LFB67
+ 2143 0040 00000000 		.4byte	.LFB68
+ 2144 0044 78000000 		.4byte	.LFE68-.LFB68
+ 2145 0048 00000000 		.4byte	.LFB69
+ 2146 004c 30000000 		.4byte	.LFE69-.LFB69
+ 2147 0050 00000000 		.4byte	.LFB70
+ 2148 0054 24000000 		.4byte	.LFE70-.LFB70
+ 2149 0058 00000000 		.4byte	.LFB63
+ 2150 005c 2C000000 		.4byte	.LFE63-.LFB63
+ 2151 0060 00000000 		.4byte	0
+ 2152 0064 00000000 		.4byte	0
+ 2153              		.section	.debug_ranges,"",%progbits
+ 2154              	.Ldebug_ranges0:
+ 2155 0000 02000000 		.4byte	.LBB2
+ 2156 0004 04000000 		.4byte	.LBE2
+ 2157 0008 06000000 		.4byte	.LBB3
+ 2158 000c 14000000 		.4byte	.LBE3
+ 2159 0010 00000000 		.4byte	0
+ 2160 0014 00000000 		.4byte	0
+ 2161 0018 00000000 		.4byte	.LFB61
+ 2162 001c 1A000000 		.4byte	.LFE61
+ 2163 0020 00000000 		.4byte	.LFB62
+ 2164 0024 04000000 		.4byte	.LFE62
+ 2165 0028 00000000 		.4byte	.LFB65
+ 2166 002c 02000000 		.4byte	.LFE65
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 44
+
+
+ 2167 0030 00000000 		.4byte	.LFB66
+ 2168 0034 50000000 		.4byte	.LFE66
+ 2169 0038 00000000 		.4byte	.LFB64
+ 2170 003c 20000000 		.4byte	.LFE64
+ 2171 0040 00000000 		.4byte	.LFB67
+ 2172 0044 02000000 		.4byte	.LFE67
+ 2173 0048 00000000 		.4byte	.LFB68
+ 2174 004c 78000000 		.4byte	.LFE68
+ 2175 0050 00000000 		.4byte	.LFB69
+ 2176 0054 30000000 		.4byte	.LFE69
+ 2177 0058 00000000 		.4byte	.LFB70
+ 2178 005c 24000000 		.4byte	.LFE70
+ 2179 0060 00000000 		.4byte	.LFB63
+ 2180 0064 2C000000 		.4byte	.LFE63
+ 2181 0068 00000000 		.4byte	0
+ 2182 006c 00000000 		.4byte	0
+ 2183              		.section	.debug_line,"",%progbits
+ 2184              	.Ldebug_line0:
+ 2185 0000 80020000 		.section	.debug_str,"MS",%progbits,1
+ 2185      02008E01 
+ 2185      00000201 
+ 2185      FB0E0D00 
+ 2185      01010101 
+ 2186              	.LASF75:
+ 2187 0000 77323571 		.ascii	"w25qxx_t\000"
+ 2187      78785F74 
+ 2187      00
+ 2188              	.LASF68:
+ 2189 0009 426C6F63 		.ascii	"BlockSize\000"
+ 2189      6B53697A 
+ 2189      6500
+ 2190              	.LASF92:
+ 2191 0013 675F576F 		.ascii	"g_WorkingData\000"
+ 2191      726B696E 
+ 2191      67446174 
+ 2191      6100
+ 2192              	.LASF105:
+ 2193 0021 49734176 		.ascii	"IsAvaliableConfig\000"
+ 2193      616C6961 
+ 2193      626C6543 
+ 2193      6F6E6669 
+ 2193      6700
+ 2194              	.LASF88:
+ 2195 0033 696E6974 		.ascii	"initFLASH\000"
+ 2195      464C4153 
+ 2195      4800
+ 2196              	.LASF96:
+ 2197 003d 44454255 		.ascii	"DEBUG_printf\000"
+ 2197      475F7072 
+ 2197      696E7466 
+ 2197      00
+ 2198              	.LASF44:
+ 2199 004a 6E6F4F66 		.ascii	"noOfPairActual\000"
+ 2199      50616972 
+ 2199      41637475 
+ 2199      616C00
+ 2200              	.LASF19:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 45
+
+
+ 2201 0059 646F7562 		.ascii	"double\000"
+ 2201      6C6500
+ 2202              	.LASF107:
+ 2203 0060 5072696E 		.ascii	"PrintConfigUSBUART\000"
+ 2203      74436F6E 
+ 2203      66696755 
+ 2203      53425541 
+ 2203      525400
+ 2204              	.LASF26:
+ 2205 0073 65657072 		.ascii	"eepromSize\000"
+ 2205      6F6D5369 
+ 2205      7A6500
+ 2206              	.LASF97:
+ 2207 007e 43795F45 		.ascii	"Cy_Em_EEPROM_Read\000"
+ 2207      6D5F4545 
+ 2207      50524F4D 
+ 2207      5F526561 
+ 2207      6400
+ 2208              	.LASF47:
+ 2209 0090 74617267 		.ascii	"target\000"
+ 2209      657400
+ 2210              	.LASF2:
+ 2211 0097 73686F72 		.ascii	"short int\000"
+ 2211      7420696E 
+ 2211      7400
+ 2212              	.LASF22:
+ 2213 00a1 73697A65 		.ascii	"sizetype\000"
+ 2213      74797065 
+ 2213      00
+ 2214              	.LASF67:
+ 2215 00aa 53656374 		.ascii	"SectorCount\000"
+ 2215      6F72436F 
+ 2215      756E7400 
+ 2216              	.LASF45:
+ 2217 00b6 6E6F4F66 		.ascii	"noOfPairTrim\000"
+ 2217      50616972 
+ 2217      5472696D 
+ 2217      00
+ 2218              	.LASF94:
+ 2219 00c3 675F7541 		.ascii	"g_uAddressOfConfig\000"
+ 2219      64647265 
+ 2219      73734F66 
+ 2219      436F6E66 
+ 2219      696700
+ 2220              	.LASF7:
+ 2221 00d6 5F5F7569 		.ascii	"__uint32_t\000"
+ 2221      6E743332 
+ 2221      5F7400
+ 2222              	.LASF80:
+ 2223 00e1 6D6F6465 		.ascii	"mode\000"
+ 2223      00
+ 2224              	.LASF35:
+ 2225 00e6 43595F45 		.ascii	"CY_EM_EEPROM_BAD_DATA\000"
+ 2225      4D5F4545 
+ 2225      50524F4D 
+ 2225      5F424144 
+ 2225      5F444154 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 46
+
+
+ 2226              	.LASF4:
+ 2227 00fc 5F5F7569 		.ascii	"__uint16_t\000"
+ 2227      6E743136 
+ 2227      5F7400
+ 2228              	.LASF29:
+ 2229 0107 626C6F63 		.ascii	"blockingWrite\000"
+ 2229      6B696E67 
+ 2229      57726974 
+ 2229      6500
+ 2230              	.LASF54:
+ 2231 0115 57323551 		.ascii	"W25Q40\000"
+ 2231      343000
+ 2232              	.LASF66:
+ 2233 011c 53656374 		.ascii	"SectorSize\000"
+ 2233      6F725369 
+ 2233      7A6500
+ 2234              	.LASF101:
+ 2235 0127 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2235      43313120 
+ 2235      352E342E 
+ 2235      31203230 
+ 2235      31363036 
+ 2236 015a 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 2236      20726576 
+ 2236      6973696F 
+ 2236      6E203233 
+ 2236      37373135 
+ 2237 018d 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2237      66756E63 
+ 2237      74696F6E 
+ 2237      2D736563 
+ 2237      74696F6E 
+ 2238              	.LASF98:
+ 2239 01b5 43795F45 		.ascii	"Cy_Em_EEPROM_Write\000"
+ 2239      6D5F4545 
+ 2239      50524F4D 
+ 2239      5F577269 
+ 2239      746500
+ 2240              	.LASF43:
+ 2241 01c8 7472696D 		.ascii	"trimCount\000"
+ 2241      436F756E 
+ 2241      7400
+ 2242              	.LASF15:
+ 2243 01d2 75696E74 		.ascii	"uint8\000"
+ 2243      3800
+ 2244              	.LASF55:
+ 2245 01d8 57323551 		.ascii	"W25Q80\000"
+ 2245      383000
+ 2246              	.LASF81:
+ 2247 01df 675F7553 		.ascii	"g_uSectorOfWifiConfig\000"
+ 2247      6563746F 
+ 2247      724F6657 
+ 2247      69666943 
+ 2247      6F6E6669 
+ 2248              	.LASF39:
+ 2249 01f5 706F735F 		.ascii	"pos_X\000"
+ 2249      5800
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 47
+
+
+ 2250              	.LASF48:
+ 2251 01fb 6D696E54 		.ascii	"minTarget\000"
+ 2251      61726765 
+ 2251      7400
+ 2252              	.LASF51:
+ 2253 0205 574F524B 		.ascii	"WORKING_DATA\000"
+ 2253      494E475F 
+ 2253      44415441 
+ 2253      00
+ 2254              	.LASF0:
+ 2255 0212 7369676E 		.ascii	"signed char\000"
+ 2255      65642063 
+ 2255      68617200 
+ 2256              	.LASF18:
+ 2257 021e 666C6F61 		.ascii	"float\000"
+ 2257      7400
+ 2258              	.LASF83:
+ 2259 0224 5072696E 		.ascii	"PrintConfig\000"
+ 2259      74436F6E 
+ 2259      66696700 
+ 2260              	.LASF9:
+ 2261 0230 6C6F6E67 		.ascii	"long long int\000"
+ 2261      206C6F6E 
+ 2261      6720696E 
+ 2261      7400
+ 2262              	.LASF108:
+ 2263 023e 6D656D73 		.ascii	"memset\000"
+ 2263      657400
+ 2264              	.LASF106:
+ 2265 0245 4C6F6164 		.ascii	"LoadConfig\000"
+ 2265      436F6E66 
+ 2265      696700
+ 2266              	.LASF100:
+ 2267 0250 57323571 		.ascii	"W25qxx_Init\000"
+ 2267      78785F49 
+ 2267      6E697400 
+ 2268              	.LASF95:
+ 2269 025c 675F7553 		.ascii	"g_uSectorOfConfig\000"
+ 2269      6563746F 
+ 2269      724F6643 
+ 2269      6F6E6669 
+ 2269      6700
+ 2270              	.LASF6:
+ 2271 026e 6C6F6E67 		.ascii	"long int\000"
+ 2271      20696E74 
+ 2271      00
+ 2272              	.LASF84:
+ 2273 0277 4C6F6164 		.ascii	"LoadWorkData\000"
+ 2273      576F726B 
+ 2273      44617461 
+ 2273      00
+ 2274              	.LASF91:
+ 2275 0284 50617261 		.ascii	"Param\000"
+ 2275      6D00
+ 2276              	.LASF74:
+ 2277 028a 4C6F636B 		.ascii	"Lock\000"
+ 2277      00
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 48
+
+
+ 2278              	.LASF61:
+ 2279 028f 57323551 		.ascii	"W25Q512\000"
+ 2279      35313200 
+ 2280              	.LASF8:
+ 2281 0297 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2281      20756E73 
+ 2281      69676E65 
+ 2281      6420696E 
+ 2281      7400
+ 2282              	.LASF41:
+ 2283 02a9 57617465 		.ascii	"WaterMark\000"
+ 2283      724D6172 
+ 2283      6B00
+ 2284              	.LASF50:
+ 2285 02b3 64756D6D 		.ascii	"dummy\000"
+ 2285      7900
+ 2286              	.LASF52:
+ 2287 02b9 57323551 		.ascii	"W25Q10\000"
+ 2287      313000
+ 2288              	.LASF3:
+ 2289 02c0 5F5F7569 		.ascii	"__uint8_t\000"
+ 2289      6E74385F 
+ 2289      7400
+ 2290              	.LASF56:
+ 2291 02ca 57323551 		.ascii	"W25Q16\000"
+ 2291      313600
+ 2292              	.LASF89:
+ 2293 02d1 456D5F45 		.ascii	"Em_EEPROM_context\000"
+ 2293      4550524F 
+ 2293      4D5F636F 
+ 2293      6E746578 
+ 2293      7400
+ 2294              	.LASF82:
+ 2295 02e3 675F7541 		.ascii	"g_uAddressOfWifiConfig\000"
+ 2295      64647265 
+ 2295      73734F66 
+ 2295      57696669 
+ 2295      436F6E66 
+ 2296              	.LASF79:
+ 2297 02fa 53617665 		.ascii	"SaveConfig\000"
+ 2297      436F6E66 
+ 2297      696700
+ 2298              	.LASF21:
+ 2299 0305 6C6F6E67 		.ascii	"long double\000"
+ 2299      20646F75 
+ 2299      626C6500 
+ 2300              	.LASF1:
+ 2301 0311 756E7369 		.ascii	"unsigned char\000"
+ 2301      676E6564 
+ 2301      20636861 
+ 2301      7200
+ 2302              	.LASF40:
+ 2303 031f 706F735F 		.ascii	"pos_Y\000"
+ 2303      5900
+ 2304              	.LASF86:
+ 2305 0325 65657072 		.ascii	"eepromReturnValue\000"
+ 2305      6F6D5265 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 49
+
+
+ 2305      7475726E 
+ 2305      56616C75 
+ 2305      6500
+ 2306              	.LASF60:
+ 2307 0337 57323551 		.ascii	"W25Q256\000"
+ 2307      32353600 
+ 2308              	.LASF10:
+ 2309 033f 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2309      206C6F6E 
+ 2309      6720756E 
+ 2309      7369676E 
+ 2309      65642069 
+ 2310              	.LASF14:
+ 2311 0356 75696E74 		.ascii	"uint32_t\000"
+ 2311      33325F74 
+ 2311      00
+ 2312              	.LASF34:
+ 2313 035f 43595F45 		.ascii	"CY_EM_EEPROM_BAD_CHECKSUM\000"
+ 2313      4D5F4545 
+ 2313      50524F4D 
+ 2313      5F424144 
+ 2313      5F434845 
+ 2314              	.LASF11:
+ 2315 0379 756E7369 		.ascii	"unsigned int\000"
+ 2315      676E6564 
+ 2315      20696E74 
+ 2315      00
+ 2316              	.LASF30:
+ 2317 0386 75736572 		.ascii	"userFlashStartAddr\000"
+ 2317      466C6173 
+ 2317      68537461 
+ 2317      72744164 
+ 2317      647200
+ 2318              	.LASF13:
+ 2319 0399 75696E74 		.ascii	"uint16_t\000"
+ 2319      31365F74 
+ 2319      00
+ 2320              	.LASF65:
+ 2321 03a2 50616765 		.ascii	"PageCount\000"
+ 2321      436F756E 
+ 2321      7400
+ 2322              	.LASF102:
+ 2323 03ac 65657072 		.ascii	"eeprom.c\000"
+ 2323      6F6D2E63 
+ 2323      00
+ 2324              	.LASF104:
+ 2325 03b5 73506172 		.ascii	"sParameter\000"
+ 2325      616D6574 
+ 2325      657200
+ 2326              	.LASF70:
+ 2327 03c0 43617061 		.ascii	"CapacityInKiloByte\000"
+ 2327      63697479 
+ 2327      496E4B69 
+ 2327      6C6F4279 
+ 2327      746500
+ 2328              	.LASF5:
+ 2329 03d3 73686F72 		.ascii	"short unsigned int\000"
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 50
+
+
+ 2329      7420756E 
+ 2329      7369676E 
+ 2329      65642069 
+ 2329      6E7400
+ 2330              	.LASF20:
+ 2331 03e6 63686172 		.ascii	"char\000"
+ 2331      00
+ 2332              	.LASF78:
+ 2333 03eb 63686563 		.ascii	"checkSum\000"
+ 2333      6B53756D 
+ 2333      00
+ 2334              	.LASF53:
+ 2335 03f4 57323551 		.ascii	"W25Q20\000"
+ 2335      323000
+ 2336              	.LASF57:
+ 2337 03fb 57323551 		.ascii	"W25Q32\000"
+ 2337      333200
+ 2338              	.LASF32:
+ 2339 0402 43595F45 		.ascii	"CY_EM_EEPROM_SUCCESS\000"
+ 2339      4D5F4545 
+ 2339      50524F4D 
+ 2339      5F535543 
+ 2339      43455353 
+ 2340              	.LASF93:
+ 2341 0417 77323571 		.ascii	"w25qxx\000"
+ 2341      787800
+ 2342              	.LASF23:
+ 2343 041e 776C456E 		.ascii	"wlEndAddr\000"
+ 2343      64416464 
+ 2343      7200
+ 2344              	.LASF28:
+ 2345 0428 72656475 		.ascii	"redundantCopy\000"
+ 2345      6E64616E 
+ 2345      74436F70 
+ 2345      7900
+ 2346              	.LASF31:
+ 2347 0436 63795F73 		.ascii	"cy_stc_eeprom_context_t\000"
+ 2347      74635F65 
+ 2347      6570726F 
+ 2347      6D5F636F 
+ 2347      6E746578 
+ 2348              	.LASF76:
+ 2349 044e 64617461 		.ascii	"data\000"
+ 2349      00
+ 2350              	.LASF16:
+ 2351 0453 75696E74 		.ascii	"uint16\000"
+ 2351      313600
+ 2352              	.LASF90:
+ 2353 045a 456D5F45 		.ascii	"Em_EEPROM_em_EepromStorage\000"
+ 2353      4550524F 
+ 2353      4D5F656D 
+ 2353      5F456570 
+ 2353      726F6D53 
+ 2354              	.LASF46:
+ 2355 0475 4C656442 		.ascii	"LedBrightness\000"
+ 2355      72696768 
+ 2355      746E6573 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 51
+
+
+ 2355      7300
+ 2356              	.LASF87:
+ 2357 0483 696E6974 		.ascii	"initEEPROM\000"
+ 2357      45455052 
+ 2357      4F4D00
+ 2358              	.LASF37:
+ 2359 048e 63795F65 		.ascii	"cy_en_em_eeprom_status_t\000"
+ 2359      6E5F656D 
+ 2359      5F656570 
+ 2359      726F6D5F 
+ 2359      73746174 
+ 2360              	.LASF63:
+ 2361 04a7 556E6971 		.ascii	"UniqID\000"
+ 2361      494400
+ 2362              	.LASF58:
+ 2363 04ae 57323551 		.ascii	"W25Q64\000"
+ 2363      363400
+ 2364              	.LASF33:
+ 2365 04b5 43595F45 		.ascii	"CY_EM_EEPROM_BAD_PARAM\000"
+ 2365      4D5F4545 
+ 2365      50524F4D 
+ 2365      5F424144 
+ 2365      5F504152 
+ 2366              	.LASF17:
+ 2367 04cc 75696E74 		.ascii	"uint32\000"
+ 2367      333200
+ 2368              	.LASF38:
+ 2369 04d3 73746174 		.ascii	"stat_TC_INT\000"
+ 2369      5F54435F 
+ 2369      494E5400 
+ 2370              	.LASF77:
+ 2371 04df 73697A65 		.ascii	"size\000"
+ 2371      00
+ 2372              	.LASF69:
+ 2373 04e4 426C6F63 		.ascii	"BlockCount\000"
+ 2373      6B436F75 
+ 2373      6E7400
+ 2374              	.LASF99:
+ 2375 04ef 456D5F45 		.ascii	"Em_EEPROM_Init\000"
+ 2375      4550524F 
+ 2375      4D5F496E 
+ 2375      697400
+ 2376              	.LASF64:
+ 2377 04fe 50616765 		.ascii	"PageSize\000"
+ 2377      53697A65 
+ 2377      00
+ 2378              	.LASF12:
+ 2379 0507 75696E74 		.ascii	"uint8_t\000"
+ 2379      385F7400 
+ 2380              	.LASF59:
+ 2381 050f 57323551 		.ascii	"W25Q128\000"
+ 2381      31323800 
+ 2382              	.LASF42:
+ 2383 0517 61637475 		.ascii	"actualCount\000"
+ 2383      616C436F 
+ 2383      756E7400 
+ 2384              	.LASF36:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 52
+
+
+ 2385 0523 43595F45 		.ascii	"CY_EM_EEPROM_WRITE_FAIL\000"
+ 2385      4D5F4545 
+ 2385      50524F4D 
+ 2385      5F575249 
+ 2385      54455F46 
+ 2386              	.LASF85:
+ 2387 053b 53617665 		.ascii	"SaveWorkData\000"
+ 2387      576F726B 
+ 2387      44617461 
+ 2387      00
+ 2388              	.LASF62:
+ 2389 0548 57323551 		.ascii	"W25QXX_ID_t\000"
+ 2389      58585F49 
+ 2389      445F7400 
+ 2390              	.LASF27:
+ 2391 0554 77656172 		.ascii	"wearLevelingFactor\000"
+ 2391      4C657665 
+ 2391      6C696E67 
+ 2391      46616374 
+ 2391      6F7200
+ 2392              	.LASF103:
+ 2393 0567 443A5C44 		.ascii	"D:\\DATA\\IoT\\TouchIoT-Integrated\\TrimCount\\Desi"
+ 2393      4154415C 
+ 2393      496F545C 
+ 2393      546F7563 
+ 2393      68496F54 
+ 2394 0595 676E2E63 		.ascii	"gn.cydsn\000"
+ 2394      7964736E 
+ 2394      00
+ 2395              	.LASF71:
+ 2396 059e 53746174 		.ascii	"StatusRegister1\000"
+ 2396      75735265 
+ 2396      67697374 
+ 2396      65723100 
+ 2397              	.LASF72:
+ 2398 05ae 53746174 		.ascii	"StatusRegister2\000"
+ 2398      75735265 
+ 2398      67697374 
+ 2398      65723200 
+ 2399              	.LASF73:
+ 2400 05be 53746174 		.ascii	"StatusRegister3\000"
+ 2400      75735265 
+ 2400      67697374 
+ 2400      65723300 
+ 2401              	.LASF25:
+ 2402 05ce 6C617374 		.ascii	"lastWrRowAddr\000"
+ 2402      5772526F 
+ 2402      77416464 
+ 2402      7200
+ 2403              	.LASF49:
+ 2404 05dc 6D617854 		.ascii	"maxTarget\000"
+ 2404      61726765 
+ 2404      7400
+ 2405              	.LASF24:
+ 2406 05e6 6E756D62 		.ascii	"numberOfRows\000"
+ 2406      65724F66 
+ 2406      526F7773 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccyUZ0As.s 			page 53
+
+
+ 2406      00
+ 2407              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

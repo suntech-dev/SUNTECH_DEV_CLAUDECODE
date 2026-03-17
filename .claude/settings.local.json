@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -v --max-time 3 \"http://localhost/dev/OEE_SCI/OEE_SCI_V2/page/data/proc/data_oee_stream.php?factory_filter=&line_filter=&machine_filter=&shift_filter=&start_date=2026-02-28&end_date=2026-03-07&limit=5\")",
+      "Bash(\"/c/laragon/bin/php/php-7.4.33-nts-Win32-vc15-x64/php.exe\" -d display_errors=1 -d error_reporting=32767 -r \":*)",
+      "Bash(\"/c/laragon/bin/php/php-7.4.33-nts-Win32-vc15-x64/php.exe\" -d display_errors=1 test_single_cycle.php)",
+      "Bash(/tmp/check_tables.php:*)",
+      "Bash(\"/c/laragon/bin/php/php-7.4.33-nts-Win32-vc15-x64/php.exe\" /tmp/check_tables.php)",
+      "Bash(/tmp/fetch_stream.php:*)",
+      "Bash(\"/c/laragon/bin/php/php-7.4.33-nts-Win32-vc15-x64/php.exe\" /tmp/fetch_stream.php)",
+      "Bash(timeout 10 \"/c/laragon/bin/php/php-7.4.33-nts-Win32-vc15-x64/php.exe\" -d display_errors=1 -d error_reporting=32767 data_oee_stream.php)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_select_option",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_run_code",
+      "Bash(tasklist /FI \"IMAGENAME eq php-cgi.exe\" /FO CSV)",
+      "Bash(tasklist.exe /FI \"IMAGENAME eq php-cgi.exe\")",
+      "Bash(cmd.exe /c \"tasklist /FI \"\"IMAGENAME eq php-cgi.exe\"\"\")",
+      "Bash(cmd.exe /c \"tasklist\")",
+      "Bash(cmd.exe /c tasklist)",
+      "Bash(cmd.exe /c \"tasklist | findstr php\")",
+      "Bash(powershell.exe -Command \"Get-Process | Where-Object { $_.Name -like ''*php*'' }\")",
+      "mcp__playwright__browser_network_requests",
+      "Bash(cat /c/laragon/etc/nginx/sites-enabled/*.conf)",
+      "Bash(grep -v \"^$\")",
+      "Bash(xargs grep -l \"fastcgi_buffering\\\\|X-Accel-Buffering\\\\|stream\\\\|sse\")",
+      "Bash(powershell.exe -Command \"Get-Process\")",
+      "Bash(netstat -ano)",
+      "Bash(curl -v --max-time 5 \"http://localhost/dev/OEE_SCI/OEE_SCI_V2/page/data/proc/data_oee_stream.php?factory_filter=&line_filter=&machine_filter=&shift_filter=&start_date=2026-02-28&end_date=2026-03-07&limit=5\")",
+      "Bash(curl --max-time 12 \"http://localhost/dev/OEE_SCI/OEE_SCI_V2/page/data/proc/data_oee_stream.php?factory_filter=&line_filter=&machine_filter=&shift_filter=&start_date=2026-02-28&end_date=2026-03-07&limit=5\" -i)",
+      "Bash(php -r \"echo ''max_execution_time: '' . ini_get\\(''max_execution_time''\\) . PHP_EOL; echo ''output_buffering: '' . ini_get\\(''output_buffering''\\) . PHP_EOL; echo ''display_errors: '' . ini_get\\(''display_errors''\\) . PHP_EOL;\")",
+      "Bash(\"/c/laragon/bin/php/php-7.4.33-nts-Win32-vc15-x64/php-cgi.exe\" -r \"echo ''max_execution_time: '' . ini_get\\(''max_execution_time''\\) . PHP_EOL; echo ''output_buffering: '' . ini_get\\(''output_buffering''\\) . PHP_EOL;\")",
+      "Bash(\"/c/laragon/bin/php/php-7.4.33-nts-Win32-vc15-x64/php-cgi.exe\" -i)",
+      "Bash(curl -v --max-time 15 \"http://localhost/dev/OEE_SCI/OEE_SCI_V2/page/data/proc/data_oee_stream.php?start_date=2026-02-28&end_date=2026-03-07&limit=5\")",
+      "Bash(APACHE_BIN=\"/c/laragon/bin/apache/httpd-2.4.66-260107-Win64-VS18/bin/httpd.exe\")",
+      "Bash(\"$APACHE_BIN\" -t)"
+    ]
+  }
+}

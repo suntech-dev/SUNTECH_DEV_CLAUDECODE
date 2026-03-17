@@ -1,0 +1,1729 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"sysTick.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.SysTickISRCallback_1ms,"ax",%progbits
+  20              		.align	2
+  21              		.global	SysTickISRCallback_1ms
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	SysTickISRCallback_1ms, %function
+  25              	SysTickISRCallback_1ms:
+  26              	.LFB67:
+  27              		.file 1 "lib\\sysTick.c"
+   1:lib/sysTick.c **** /* ========================================
+   2:lib/sysTick.c ****  *
+   3:lib/sysTick.c ****  * Copyright Suntech, 2023.02.01
+   4:lib/sysTick.c ****  * All Rights Reserved
+   5:lib/sysTick.c ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:lib/sysTick.c ****  *
+   7:lib/sysTick.c ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:lib/sysTick.c ****  * WHICH IS THE PROPERTY OF Suntech.
+   9:lib/sysTick.c ****  *
+  10:lib/sysTick.c ****  * ========================================
+  11:lib/sysTick.c **** */
+  12:lib/sysTick.c **** #include "main.h"
+  13:lib/sysTick.c **** #include "lib/sysTick.h"
+  14:lib/sysTick.c **** 
+  15:lib/sysTick.c **** #define MAX_NO_MILISECOND_COUNTER  16u
+  16:lib/sysTick.c **** 
+  17:lib/sysTick.c **** typedef struct {
+  18:lib/sysTick.c ****     uint32 max;
+  19:lib/sysTick.c ****     uint32 current;
+  20:lib/sysTick.c **** } TIMER_COUNTER;
+  21:lib/sysTick.c **** 
+  22:lib/sysTick.c **** //////////////////////////////////////////////////////////////
+  23:lib/sysTick.c **** // 1ms에 관련된 것들  //////////////////////////////////////////////
+  24:lib/sysTick.c **** ///////////////////////////////////////////////////////////////
+  25:lib/sysTick.c **** static uint8 g_uNoMiliSecondCounter=0;                              /* sysTick.c 내부 전용 */
+  26:lib/sysTick.c **** static TIMER_COUNTER g_timerCounter_1ms[MAX_NO_MILISECOND_COUNTER]; /* 접근자 함수로만 외�
+  27:lib/sysTick.c **** 
+  28:lib/sysTick.c **** // 1ms count의 목표에 도달 했는지 여부, index는 ONE_MILISECOND_COUNTER enum값
+  29:lib/sysTick.c **** // 주의 : main loop의  총 수행시간이 1ms 보다 크면 목표값에 도달한 것을 놓�
+  30:lib/sysTick.c **** uint8 isFinishCounter_1ms(uint16 index)
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 2
+
+
+  31:lib/sysTick.c **** {
+  32:lib/sysTick.c ****    return g_timerCounter_1ms[index].current == 0 ? TRUE : FALSE;
+  33:lib/sysTick.c **** }
+  34:lib/sysTick.c **** 
+  35:lib/sysTick.c **** void resetCounter_1ms(uint16 index)
+  36:lib/sysTick.c **** {
+  37:lib/sysTick.c ****     g_timerCounter_1ms[index].current = 
+  38:lib/sysTick.c ****     g_timerCounter_1ms[index].max;
+  39:lib/sysTick.c **** }
+  40:lib/sysTick.c **** 
+  41:lib/sysTick.c **** void setCountMax_1ms(uint16 index, uint32 maxCount)
+  42:lib/sysTick.c **** {
+  43:lib/sysTick.c ****     g_timerCounter_1ms[index].current = 0;
+  44:lib/sysTick.c ****     g_timerCounter_1ms[index].max     = maxCount;
+  45:lib/sysTick.c **** }
+  46:lib/sysTick.c **** 
+  47:lib/sysTick.c **** // 1s timer counter 등록 
+  48:lib/sysTick.c **** uint8 registerCounter_1ms(uint32 maxCount)
+  49:lib/sysTick.c **** {
+  50:lib/sysTick.c ****     if(g_uNoMiliSecondCounter < MAX_NO_MILISECOND_COUNTER-1)
+  51:lib/sysTick.c ****     {
+  52:lib/sysTick.c ****         g_timerCounter_1ms[g_uNoMiliSecondCounter].current = 
+  53:lib/sysTick.c ****         g_timerCounter_1ms[g_uNoMiliSecondCounter].max = maxCount;
+  54:lib/sysTick.c ****         
+  55:lib/sysTick.c ****         return g_uNoMiliSecondCounter++;
+  56:lib/sysTick.c ****     } else {
+  57:lib/sysTick.c ****         printf("Warning : resisterCounter_1ms()\r\n"); 
+  58:lib/sysTick.c ****     }
+  59:lib/sysTick.c ****     return 0xFF;   
+  60:lib/sysTick.c **** }
+  61:lib/sysTick.c **** 
+  62:lib/sysTick.c **** // 현재 counter 값을 알아낸다. 
+  63:lib/sysTick.c **** // 주의 counter is Decreasing..
+  64:lib/sysTick.c **** uint16 getCurrentTimerCounter_1ms(uint16 index) { return g_timerCounter_1ms[index].current; }
+  65:lib/sysTick.c **** 
+  66:lib/sysTick.c **** /*******************************************************************************
+  67:lib/sysTick.c **** * Function Definitions
+  68:lib/sysTick.c **** *******************************************************************************/
+  69:lib/sysTick.c **** // 1ms 마다 인터럽트에 의한 호출되는 ISR
+  70:lib/sysTick.c **** void SysTickISRCallback_1ms(void)
+  71:lib/sysTick.c **** {
+  28              		.loc 1 71 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 10B5     		push	{r4, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  72:lib/sysTick.c ****     OneMilliSecond_ISR(); 
+  36              		.loc 1 72 0
+  37 0002 FFF7FEFF 		bl	OneMilliSecond_ISR
+  38              	.LVL0:
+  39              	.LBB2:
+  73:lib/sysTick.c ****     
+  74:lib/sysTick.c ****     for(int i=0; i < g_uNoMiliSecondCounter; i++)
+  40              		.loc 1 74 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 3
+
+
+  41 0006 0022     		movs	r2, #0
+  42 0008 10E0     		b	.L2
+  43              	.LVL1:
+  44              	.L5:
+  75:lib/sysTick.c ****     {
+  76:lib/sysTick.c ****         if(g_timerCounter_1ms[i].current == 0)
+  45              		.loc 1 76 0
+  46 000a D300     		lsls	r3, r2, #3
+  47 000c 0A49     		ldr	r1, .L6
+  48 000e CB18     		adds	r3, r1, r3
+  49 0010 5B68     		ldr	r3, [r3, #4]
+  50 0012 002B     		cmp	r3, #0
+  51 0014 04D1     		bne	.L3
+  77:lib/sysTick.c ****             g_timerCounter_1ms[i].current = g_timerCounter_1ms[i].max;
+  52              		.loc 1 77 0
+  53 0016 D300     		lsls	r3, r2, #3
+  54 0018 5858     		ldr	r0, [r3, r1]
+  55 001a CB18     		adds	r3, r1, r3
+  56 001c 5860     		str	r0, [r3, #4]
+  57 001e 04E0     		b	.L4
+  58              	.L3:
+  78:lib/sysTick.c ****         else
+  79:lib/sysTick.c ****             g_timerCounter_1ms[i].current--;            
+  59              		.loc 1 79 0
+  60 0020 D100     		lsls	r1, r2, #3
+  61 0022 0548     		ldr	r0, .L6
+  62 0024 4118     		adds	r1, r0, r1
+  63 0026 013B     		subs	r3, r3, #1
+  64 0028 4B60     		str	r3, [r1, #4]
+  65              	.L4:
+  74:lib/sysTick.c ****     {
+  66              		.loc 1 74 0 discriminator 2
+  67 002a 0132     		adds	r2, r2, #1
+  68              	.LVL2:
+  69              	.L2:
+  74:lib/sysTick.c ****     {
+  70              		.loc 1 74 0 is_stmt 0 discriminator 1
+  71 002c 034B     		ldr	r3, .L6+4
+  72 002e 1B78     		ldrb	r3, [r3]
+  73 0030 9A42     		cmp	r2, r3
+  74 0032 EADB     		blt	.L5
+  75              	.LBE2:
+  80:lib/sysTick.c ****     }
+  81:lib/sysTick.c **** }
+  76              		.loc 1 81 0 is_stmt 1
+  77              		@ sp needed
+  78 0034 10BD     		pop	{r4, pc}
+  79              	.L7:
+  80 0036 C046     		.align	2
+  81              	.L6:
+  82 0038 00000000 		.word	.LANCHOR0
+  83 003c 80000000 		.word	.LANCHOR1
+  84              		.cfi_endproc
+  85              	.LFE67:
+  86              		.size	SysTickISRCallback_1ms, .-SysTickISRCallback_1ms
+  87              		.section	.text.isFinishCounter_1ms,"ax",%progbits
+  88              		.align	2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 4
+
+
+  89              		.global	isFinishCounter_1ms
+  90              		.code	16
+  91              		.thumb_func
+  92              		.type	isFinishCounter_1ms, %function
+  93              	isFinishCounter_1ms:
+  94              	.LFB62:
+  31:lib/sysTick.c ****    return g_timerCounter_1ms[index].current == 0 ? TRUE : FALSE;
+  95              		.loc 1 31 0
+  96              		.cfi_startproc
+  97              		@ args = 0, pretend = 0, frame = 0
+  98              		@ frame_needed = 0, uses_anonymous_args = 0
+  99              		@ link register save eliminated.
+ 100              	.LVL3:
+  32:lib/sysTick.c **** }
+ 101              		.loc 1 32 0
+ 102 0000 C000     		lsls	r0, r0, #3
+ 103              	.LVL4:
+ 104 0002 044B     		ldr	r3, .L11
+ 105 0004 1818     		adds	r0, r3, r0
+ 106 0006 4368     		ldr	r3, [r0, #4]
+ 107 0008 002B     		cmp	r3, #0
+ 108 000a 01D1     		bne	.L10
+ 109 000c 0120     		movs	r0, #1
+ 110 000e 00E0     		b	.L9
+ 111              	.L10:
+ 112 0010 0020     		movs	r0, #0
+ 113              	.L9:
+  33:lib/sysTick.c **** 
+ 114              		.loc 1 33 0 discriminator 4
+ 115              		@ sp needed
+ 116 0012 7047     		bx	lr
+ 117              	.L12:
+ 118              		.align	2
+ 119              	.L11:
+ 120 0014 00000000 		.word	.LANCHOR0
+ 121              		.cfi_endproc
+ 122              	.LFE62:
+ 123              		.size	isFinishCounter_1ms, .-isFinishCounter_1ms
+ 124              		.section	.text.resetCounter_1ms,"ax",%progbits
+ 125              		.align	2
+ 126              		.global	resetCounter_1ms
+ 127              		.code	16
+ 128              		.thumb_func
+ 129              		.type	resetCounter_1ms, %function
+ 130              	resetCounter_1ms:
+ 131              	.LFB63:
+  36:lib/sysTick.c ****     g_timerCounter_1ms[index].current = 
+ 132              		.loc 1 36 0
+ 133              		.cfi_startproc
+ 134              		@ args = 0, pretend = 0, frame = 0
+ 135              		@ frame_needed = 0, uses_anonymous_args = 0
+ 136              		@ link register save eliminated.
+ 137              	.LVL5:
+  38:lib/sysTick.c **** }
+ 138              		.loc 1 38 0
+ 139 0000 024B     		ldr	r3, .L14
+ 140 0002 C000     		lsls	r0, r0, #3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 5
+
+
+ 141              	.LVL6:
+ 142 0004 C258     		ldr	r2, [r0, r3]
+  37:lib/sysTick.c ****     g_timerCounter_1ms[index].max;
+ 143              		.loc 1 37 0
+ 144 0006 1818     		adds	r0, r3, r0
+ 145 0008 4260     		str	r2, [r0, #4]
+  39:lib/sysTick.c **** 
+ 146              		.loc 1 39 0
+ 147              		@ sp needed
+ 148 000a 7047     		bx	lr
+ 149              	.L15:
+ 150              		.align	2
+ 151              	.L14:
+ 152 000c 00000000 		.word	.LANCHOR0
+ 153              		.cfi_endproc
+ 154              	.LFE63:
+ 155              		.size	resetCounter_1ms, .-resetCounter_1ms
+ 156              		.section	.text.setCountMax_1ms,"ax",%progbits
+ 157              		.align	2
+ 158              		.global	setCountMax_1ms
+ 159              		.code	16
+ 160              		.thumb_func
+ 161              		.type	setCountMax_1ms, %function
+ 162              	setCountMax_1ms:
+ 163              	.LFB64:
+  42:lib/sysTick.c ****     g_timerCounter_1ms[index].current = 0;
+ 164              		.loc 1 42 0
+ 165              		.cfi_startproc
+ 166              		@ args = 0, pretend = 0, frame = 0
+ 167              		@ frame_needed = 0, uses_anonymous_args = 0
+ 168              	.LVL7:
+ 169 0000 10B5     		push	{r4, lr}
+ 170              		.cfi_def_cfa_offset 8
+ 171              		.cfi_offset 4, -8
+ 172              		.cfi_offset 14, -4
+  43:lib/sysTick.c ****     g_timerCounter_1ms[index].max     = maxCount;
+ 173              		.loc 1 43 0
+ 174 0002 034B     		ldr	r3, .L17
+ 175 0004 C000     		lsls	r0, r0, #3
+ 176              	.LVL8:
+ 177 0006 1A18     		adds	r2, r3, r0
+ 178 0008 0024     		movs	r4, #0
+ 179 000a 5460     		str	r4, [r2, #4]
+  44:lib/sysTick.c **** }
+ 180              		.loc 1 44 0
+ 181 000c C150     		str	r1, [r0, r3]
+  45:lib/sysTick.c **** 
+ 182              		.loc 1 45 0
+ 183              		@ sp needed
+ 184 000e 10BD     		pop	{r4, pc}
+ 185              	.L18:
+ 186              		.align	2
+ 187              	.L17:
+ 188 0010 00000000 		.word	.LANCHOR0
+ 189              		.cfi_endproc
+ 190              	.LFE64:
+ 191              		.size	setCountMax_1ms, .-setCountMax_1ms
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 6
+
+
+ 192              		.section	.text.registerCounter_1ms,"ax",%progbits
+ 193              		.align	2
+ 194              		.global	registerCounter_1ms
+ 195              		.code	16
+ 196              		.thumb_func
+ 197              		.type	registerCounter_1ms, %function
+ 198              	registerCounter_1ms:
+ 199              	.LFB65:
+  49:lib/sysTick.c ****     if(g_uNoMiliSecondCounter < MAX_NO_MILISECOND_COUNTER-1)
+ 200              		.loc 1 49 0
+ 201              		.cfi_startproc
+ 202              		@ args = 0, pretend = 0, frame = 0
+ 203              		@ frame_needed = 0, uses_anonymous_args = 0
+ 204              	.LVL9:
+ 205 0000 10B5     		push	{r4, lr}
+ 206              		.cfi_def_cfa_offset 8
+ 207              		.cfi_offset 4, -8
+ 208              		.cfi_offset 14, -4
+  50:lib/sysTick.c ****     {
+ 209              		.loc 1 50 0
+ 210 0002 094B     		ldr	r3, .L22
+ 211 0004 1B78     		ldrb	r3, [r3]
+ 212 0006 0E2B     		cmp	r3, #14
+ 213 0008 08D8     		bhi	.L20
+  53:lib/sysTick.c ****         
+ 214              		.loc 1 53 0
+ 215 000a 0849     		ldr	r1, .L22+4
+ 216 000c DA00     		lsls	r2, r3, #3
+ 217 000e 5050     		str	r0, [r2, r1]
+  52:lib/sysTick.c ****         g_timerCounter_1ms[g_uNoMiliSecondCounter].max = maxCount;
+ 218              		.loc 1 52 0
+ 219 0010 8A18     		adds	r2, r1, r2
+ 220 0012 5060     		str	r0, [r2, #4]
+  55:lib/sysTick.c ****     } else {
+ 221              		.loc 1 55 0
+ 222 0014 5A1C     		adds	r2, r3, #1
+ 223 0016 0449     		ldr	r1, .L22
+ 224 0018 0A70     		strb	r2, [r1]
+ 225 001a 03E0     		b	.L21
+ 226              	.L20:
+  57:lib/sysTick.c ****     }
+ 227              		.loc 1 57 0
+ 228 001c 0448     		ldr	r0, .L22+8
+ 229              	.LVL10:
+ 230 001e FFF7FEFF 		bl	puts
+ 231              	.LVL11:
+  59:lib/sysTick.c **** }
+ 232              		.loc 1 59 0
+ 233 0022 FF23     		movs	r3, #255
+ 234              	.L21:
+  60:lib/sysTick.c **** 
+ 235              		.loc 1 60 0
+ 236 0024 1800     		movs	r0, r3
+ 237              		@ sp needed
+ 238 0026 10BD     		pop	{r4, pc}
+ 239              	.L23:
+ 240              		.align	2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 7
+
+
+ 241              	.L22:
+ 242 0028 80000000 		.word	.LANCHOR1
+ 243 002c 00000000 		.word	.LANCHOR0
+ 244 0030 00000000 		.word	.LC7
+ 245              		.cfi_endproc
+ 246              	.LFE65:
+ 247              		.size	registerCounter_1ms, .-registerCounter_1ms
+ 248              		.section	.text.getCurrentTimerCounter_1ms,"ax",%progbits
+ 249              		.align	2
+ 250              		.global	getCurrentTimerCounter_1ms
+ 251              		.code	16
+ 252              		.thumb_func
+ 253              		.type	getCurrentTimerCounter_1ms, %function
+ 254              	getCurrentTimerCounter_1ms:
+ 255              	.LFB66:
+  64:lib/sysTick.c **** 
+ 256              		.loc 1 64 0
+ 257              		.cfi_startproc
+ 258              		@ args = 0, pretend = 0, frame = 0
+ 259              		@ frame_needed = 0, uses_anonymous_args = 0
+ 260              		@ link register save eliminated.
+ 261              	.LVL12:
+  64:lib/sysTick.c **** 
+ 262              		.loc 1 64 0
+ 263 0000 C000     		lsls	r0, r0, #3
+ 264              	.LVL13:
+ 265 0002 024B     		ldr	r3, .L25
+ 266 0004 1818     		adds	r0, r3, r0
+ 267 0006 8088     		ldrh	r0, [r0, #4]
+ 268              		@ sp needed
+ 269 0008 7047     		bx	lr
+ 270              	.L26:
+ 271 000a C046     		.align	2
+ 272              	.L25:
+ 273 000c 00000000 		.word	.LANCHOR0
+ 274              		.cfi_endproc
+ 275              	.LFE66:
+ 276              		.size	getCurrentTimerCounter_1ms, .-getCurrentTimerCounter_1ms
+ 277              		.section	.text.setSysTick,"ax",%progbits
+ 278              		.align	2
+ 279              		.global	setSysTick
+ 280              		.code	16
+ 281              		.thumb_func
+ 282              		.type	setSysTick, %function
+ 283              	setSysTick:
+ 284              	.LFB68:
+  82:lib/sysTick.c **** 
+  83:lib/sysTick.c **** void setSysTick(void)
+  84:lib/sysTick.c **** {
+ 285              		.loc 1 84 0
+ 286              		.cfi_startproc
+ 287              		@ args = 0, pretend = 0, frame = 0
+ 288              		@ frame_needed = 0, uses_anonymous_args = 0
+ 289 0000 10B5     		push	{r4, lr}
+ 290              		.cfi_def_cfa_offset 8
+ 291              		.cfi_offset 4, -8
+ 292              		.cfi_offset 14, -4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 8
+
+
+  85:lib/sysTick.c ****     uint32 i;
+  86:lib/sysTick.c ****     
+  87:lib/sysTick.c ****     CySysTickStart();
+ 293              		.loc 1 87 0
+ 294 0002 FFF7FEFF 		bl	CySysTickStart
+ 295              	.LVL14:
+  88:lib/sysTick.c ****     
+  89:lib/sysTick.c ****     /* Find unused callback slot and assign the callback. */
+  90:lib/sysTick.c ****     for (i = 0u; i < CY_SYS_SYST_NUM_OF_CALLBACKS; ++i)
+ 296              		.loc 1 90 0
+ 297 0006 0024     		movs	r4, #0
+ 298 0008 0AE0     		b	.L28
+ 299              	.LVL15:
+ 300              	.L31:
+  91:lib/sysTick.c ****     {
+  92:lib/sysTick.c ****         if (CySysTickGetCallback(i) == NULL)
+ 301              		.loc 1 92 0
+ 302 000a 2000     		movs	r0, r4
+ 303 000c FFF7FEFF 		bl	CySysTickGetCallback
+ 304              	.LVL16:
+ 305 0010 0028     		cmp	r0, #0
+ 306 0012 04D1     		bne	.L29
+  93:lib/sysTick.c ****         {
+  94:lib/sysTick.c ****             /* Set callback */
+  95:lib/sysTick.c ****             CySysTickSetCallback(i, SysTickISRCallback_1ms);
+ 307              		.loc 1 95 0
+ 308 0014 0449     		ldr	r1, .L32
+ 309 0016 2000     		movs	r0, r4
+ 310 0018 FFF7FEFF 		bl	CySysTickSetCallback
+ 311              	.LVL17:
+  96:lib/sysTick.c ****             break;
+ 312              		.loc 1 96 0
+ 313 001c 02E0     		b	.L27
+ 314              	.L29:
+  90:lib/sysTick.c ****     {
+ 315              		.loc 1 90 0 discriminator 2
+ 316 001e 0134     		adds	r4, r4, #1
+ 317              	.LVL18:
+ 318              	.L28:
+  90:lib/sysTick.c ****     {
+ 319              		.loc 1 90 0 is_stmt 0 discriminator 1
+ 320 0020 042C     		cmp	r4, #4
+ 321 0022 F2D9     		bls	.L31
+ 322              	.L27:
+  97:lib/sysTick.c ****         }
+  98:lib/sysTick.c ****     }
+  99:lib/sysTick.c **** }
+ 323              		.loc 1 99 0 is_stmt 1
+ 324              		@ sp needed
+ 325              	.LVL19:
+ 326 0024 10BD     		pop	{r4, pc}
+ 327              	.L33:
+ 328 0026 C046     		.align	2
+ 329              	.L32:
+ 330 0028 00000000 		.word	SysTickISRCallback_1ms
+ 331              		.cfi_endproc
+ 332              	.LFE68:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 9
+
+
+ 333              		.size	setSysTick, .-setSysTick
+ 334              		.comm	Param,6,4
+ 335              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 336              		.align	2
+ 337              	.LC7:
+ 338 0000 5761726E 		.ascii	"Warning : resisterCounter_1ms()\015\000"
+ 338      696E6720 
+ 338      3A207265 
+ 338      73697374 
+ 338      6572436F 
+ 339              		.bss
+ 340              		.align	2
+ 341              		.set	.LANCHOR0,. + 0
+ 342              		.set	.LANCHOR1,. + 128
+ 343              		.type	g_timerCounter_1ms, %object
+ 344              		.size	g_timerCounter_1ms, 128
+ 345              	g_timerCounter_1ms:
+ 346 0000 00000000 		.space	128
+ 346      00000000 
+ 346      00000000 
+ 346      00000000 
+ 346      00000000 
+ 347              		.type	g_uNoMiliSecondCounter, %object
+ 348              		.size	g_uNoMiliSecondCounter, 1
+ 349              	g_uNoMiliSecondCounter:
+ 350 0080 00       		.space	1
+ 351              		.text
+ 352              	.Letext0:
+ 353              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 354              		.file 3 "./main.h"
+ 355              		.file 4 "Generated_Source\\PSoC4/RTC.h"
+ 356              		.file 5 "./lib/sysTick.h"
+ 357              		.file 6 "Generated_Source\\PSoC4/CyLib.h"
+ 358              		.file 7 "<built-in>"
+ 359              		.section	.debug_info,"",%progbits
+ 360              	.Ldebug_info0:
+ 361 0000 2B030000 		.4byte	0x32b
+ 362 0004 0400     		.2byte	0x4
+ 363 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 364 000a 04       		.byte	0x4
+ 365 000b 01       		.uleb128 0x1
+ 366 000c B1010000 		.4byte	.LASF39
+ 367 0010 0C       		.byte	0xc
+ 368 0011 4F010000 		.4byte	.LASF40
+ 369 0015 D0020000 		.4byte	.LASF41
+ 370 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 371 001d 00000000 		.4byte	0
+ 372 0021 00000000 		.4byte	.Ldebug_line0
+ 373 0025 02       		.uleb128 0x2
+ 374 0026 01       		.byte	0x1
+ 375 0027 06       		.byte	0x6
+ 376 0028 C4020000 		.4byte	.LASF0
+ 377 002c 02       		.uleb128 0x2
+ 378 002d 01       		.byte	0x1
+ 379 002e 08       		.byte	0x8
+ 380 002f 92000000 		.4byte	.LASF1
+ 381 0033 02       		.uleb128 0x2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 10
+
+
+ 382 0034 02       		.byte	0x2
+ 383 0035 05       		.byte	0x5
+ 384 0036 37010000 		.4byte	.LASF2
+ 385 003a 02       		.uleb128 0x2
+ 386 003b 02       		.byte	0x2
+ 387 003c 07       		.byte	0x7
+ 388 003d CE000000 		.4byte	.LASF3
+ 389 0041 02       		.uleb128 0x2
+ 390 0042 04       		.byte	0x4
+ 391 0043 05       		.byte	0x5
+ 392 0044 9F020000 		.4byte	.LASF4
+ 393 0048 02       		.uleb128 0x2
+ 394 0049 04       		.byte	0x4
+ 395 004a 07       		.byte	0x7
+ 396 004b 08010000 		.4byte	.LASF5
+ 397 004f 02       		.uleb128 0x2
+ 398 0050 08       		.byte	0x8
+ 399 0051 05       		.byte	0x5
+ 400 0052 54020000 		.4byte	.LASF6
+ 401 0056 02       		.uleb128 0x2
+ 402 0057 08       		.byte	0x8
+ 403 0058 07       		.byte	0x7
+ 404 0059 8E010000 		.4byte	.LASF7
+ 405 005d 03       		.uleb128 0x3
+ 406 005e 04       		.byte	0x4
+ 407 005f 05       		.byte	0x5
+ 408 0060 696E7400 		.ascii	"int\000"
+ 409 0064 02       		.uleb128 0x2
+ 410 0065 04       		.byte	0x4
+ 411 0066 07       		.byte	0x7
+ 412 0067 6E010000 		.4byte	.LASF8
+ 413 006b 04       		.uleb128 0x4
+ 414 006c 90020000 		.4byte	.LASF9
+ 415 0070 02       		.byte	0x2
+ 416 0071 FC01     		.2byte	0x1fc
+ 417 0073 2C000000 		.4byte	0x2c
+ 418 0077 04       		.uleb128 0x4
+ 419 0078 41010000 		.4byte	.LASF10
+ 420 007c 02       		.byte	0x2
+ 421 007d FD01     		.2byte	0x1fd
+ 422 007f 3A000000 		.4byte	0x3a
+ 423 0083 04       		.uleb128 0x4
+ 424 0084 48010000 		.4byte	.LASF11
+ 425 0088 02       		.byte	0x2
+ 426 0089 FE01     		.2byte	0x1fe
+ 427 008b 48000000 		.4byte	0x48
+ 428 008f 02       		.uleb128 0x2
+ 429 0090 04       		.byte	0x4
+ 430 0091 04       		.byte	0x4
+ 431 0092 7D000000 		.4byte	.LASF12
+ 432 0096 02       		.uleb128 0x2
+ 433 0097 08       		.byte	0x8
+ 434 0098 04       		.byte	0x4
+ 435 0099 5F000000 		.4byte	.LASF13
+ 436 009d 02       		.uleb128 0x2
+ 437 009e 01       		.byte	0x1
+ 438 009f 08       		.byte	0x8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 11
+
+
+ 439 00a0 62020000 		.4byte	.LASF14
+ 440 00a4 02       		.uleb128 0x2
+ 441 00a5 08       		.byte	0x8
+ 442 00a6 04       		.byte	0x4
+ 443 00a7 3F020000 		.4byte	.LASF15
+ 444 00ab 02       		.uleb128 0x2
+ 445 00ac 04       		.byte	0x4
+ 446 00ad 07       		.byte	0x7
+ 447 00ae 4B020000 		.4byte	.LASF16
+ 448 00b2 05       		.uleb128 0x5
+ 449 00b3 C3000000 		.4byte	.LASF42
+ 450 00b7 06       		.byte	0x6
+ 451 00b8 03       		.byte	0x3
+ 452 00b9 2E       		.byte	0x2e
+ 453 00ba E3000000 		.4byte	0xe3
+ 454 00be 06       		.uleb128 0x6
+ 455 00bf 00000000 		.4byte	.LASF17
+ 456 00c3 03       		.byte	0x3
+ 457 00c4 30       		.byte	0x30
+ 458 00c5 6B000000 		.4byte	0x6b
+ 459 00c9 00       		.byte	0
+ 460 00ca 06       		.uleb128 0x6
+ 461 00cb AB010000 		.4byte	.LASF18
+ 462 00cf 03       		.byte	0x3
+ 463 00d0 31       		.byte	0x31
+ 464 00d1 77000000 		.4byte	0x77
+ 465 00d5 02       		.byte	0x2
+ 466 00d6 06       		.uleb128 0x6
+ 467 00d7 1A010000 		.4byte	.LASF19
+ 468 00db 03       		.byte	0x3
+ 469 00dc 32       		.byte	0x32
+ 470 00dd 77000000 		.4byte	0x77
+ 471 00e1 04       		.byte	0x4
+ 472 00e2 00       		.byte	0
+ 473 00e3 07       		.uleb128 0x7
+ 474 00e4 08       		.byte	0x8
+ 475 00e5 01       		.byte	0x1
+ 476 00e6 11       		.byte	0x11
+ 477 00e7 04010000 		.4byte	0x104
+ 478 00eb 08       		.uleb128 0x8
+ 479 00ec 6D617800 		.ascii	"max\000"
+ 480 00f0 01       		.byte	0x1
+ 481 00f1 12       		.byte	0x12
+ 482 00f2 83000000 		.4byte	0x83
+ 483 00f6 00       		.byte	0
+ 484 00f7 06       		.uleb128 0x6
+ 485 00f8 27000000 		.4byte	.LASF20
+ 486 00fc 01       		.byte	0x1
+ 487 00fd 13       		.byte	0x13
+ 488 00fe 83000000 		.4byte	0x83
+ 489 0102 04       		.byte	0x4
+ 490 0103 00       		.byte	0
+ 491 0104 09       		.uleb128 0x9
+ 492 0105 6D020000 		.4byte	.LASF21
+ 493 0109 01       		.byte	0x1
+ 494 010a 14       		.byte	0x14
+ 495 010b E3000000 		.4byte	0xe3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 12
+
+
+ 496 010f 0A       		.uleb128 0xa
+ 497 0110 20010000 		.4byte	.LASF22
+ 498 0114 01       		.byte	0x1
+ 499 0115 46       		.byte	0x46
+ 500 0116 00000000 		.4byte	.LFB67
+ 501 011a 40000000 		.4byte	.LFE67-.LFB67
+ 502 011e 01       		.uleb128 0x1
+ 503 011f 9C       		.byte	0x9c
+ 504 0120 49010000 		.4byte	0x149
+ 505 0124 0B       		.uleb128 0xb
+ 506 0125 06000000 		.4byte	.LBB2
+ 507 0129 2E000000 		.4byte	.LBE2-.LBB2
+ 508 012d 3F010000 		.4byte	0x13f
+ 509 0131 0C       		.uleb128 0xc
+ 510 0132 6900     		.ascii	"i\000"
+ 511 0134 01       		.byte	0x1
+ 512 0135 4A       		.byte	0x4a
+ 513 0136 5D000000 		.4byte	0x5d
+ 514 013a 00000000 		.4byte	.LLST0
+ 515 013e 00       		.byte	0
+ 516 013f 0D       		.uleb128 0xd
+ 517 0140 06000000 		.4byte	.LVL0
+ 518 0144 F0020000 		.4byte	0x2f0
+ 519 0148 00       		.byte	0
+ 520 0149 0E       		.uleb128 0xe
+ 521 014a A0000000 		.4byte	.LASF27
+ 522 014e 01       		.byte	0x1
+ 523 014f 1E       		.byte	0x1e
+ 524 0150 6B000000 		.4byte	0x6b
+ 525 0154 00000000 		.4byte	.LFB62
+ 526 0158 18000000 		.4byte	.LFE62-.LFB62
+ 527 015c 01       		.uleb128 0x1
+ 528 015d 9C       		.byte	0x9c
+ 529 015e 72010000 		.4byte	0x172
+ 530 0162 0F       		.uleb128 0xf
+ 531 0163 67020000 		.4byte	.LASF24
+ 532 0167 01       		.byte	0x1
+ 533 0168 1E       		.byte	0x1e
+ 534 0169 77000000 		.4byte	0x77
+ 535 016d 1F000000 		.4byte	.LLST1
+ 536 0171 00       		.byte	0
+ 537 0172 0A       		.uleb128 0xa
+ 538 0173 5D010000 		.4byte	.LASF23
+ 539 0177 01       		.byte	0x1
+ 540 0178 23       		.byte	0x23
+ 541 0179 00000000 		.4byte	.LFB63
+ 542 017d 10000000 		.4byte	.LFE63-.LFB63
+ 543 0181 01       		.uleb128 0x1
+ 544 0182 9C       		.byte	0x9c
+ 545 0183 97010000 		.4byte	0x197
+ 546 0187 0F       		.uleb128 0xf
+ 547 0188 67020000 		.4byte	.LASF24
+ 548 018c 01       		.byte	0x1
+ 549 018d 23       		.byte	0x23
+ 550 018e 77000000 		.4byte	0x77
+ 551 0192 40000000 		.4byte	.LLST2
+ 552 0196 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 13
+
+
+ 553 0197 0A       		.uleb128 0xa
+ 554 0198 44000000 		.4byte	.LASF25
+ 555 019c 01       		.byte	0x1
+ 556 019d 29       		.byte	0x29
+ 557 019e 00000000 		.4byte	.LFB64
+ 558 01a2 14000000 		.4byte	.LFE64-.LFB64
+ 559 01a6 01       		.uleb128 0x1
+ 560 01a7 9C       		.byte	0x9c
+ 561 01a8 C9010000 		.4byte	0x1c9
+ 562 01ac 0F       		.uleb128 0xf
+ 563 01ad 67020000 		.4byte	.LASF24
+ 564 01b1 01       		.byte	0x1
+ 565 01b2 29       		.byte	0x29
+ 566 01b3 77000000 		.4byte	0x77
+ 567 01b7 61000000 		.4byte	.LLST3
+ 568 01bb 10       		.uleb128 0x10
+ 569 01bc 96020000 		.4byte	.LASF26
+ 570 01c0 01       		.byte	0x1
+ 571 01c1 29       		.byte	0x29
+ 572 01c2 83000000 		.4byte	0x83
+ 573 01c6 01       		.uleb128 0x1
+ 574 01c7 51       		.byte	0x51
+ 575 01c8 00       		.byte	0
+ 576 01c9 0E       		.uleb128 0xe
+ 577 01ca E1000000 		.4byte	.LASF28
+ 578 01ce 01       		.byte	0x1
+ 579 01cf 30       		.byte	0x30
+ 580 01d0 6B000000 		.4byte	0x6b
+ 581 01d4 00000000 		.4byte	.LFB65
+ 582 01d8 34000000 		.4byte	.LFE65-.LFB65
+ 583 01dc 01       		.uleb128 0x1
+ 584 01dd 9C       		.byte	0x9c
+ 585 01de 05020000 		.4byte	0x205
+ 586 01e2 0F       		.uleb128 0xf
+ 587 01e3 96020000 		.4byte	.LASF26
+ 588 01e7 01       		.byte	0x1
+ 589 01e8 30       		.byte	0x30
+ 590 01e9 83000000 		.4byte	0x83
+ 591 01ed 82000000 		.4byte	.LLST4
+ 592 01f1 11       		.uleb128 0x11
+ 593 01f2 22000000 		.4byte	.LVL11
+ 594 01f6 FB020000 		.4byte	0x2fb
+ 595 01fa 12       		.uleb128 0x12
+ 596 01fb 01       		.uleb128 0x1
+ 597 01fc 50       		.byte	0x50
+ 598 01fd 05       		.uleb128 0x5
+ 599 01fe 03       		.byte	0x3
+ 600 01ff 00000000 		.4byte	.LC7
+ 601 0203 00       		.byte	0
+ 602 0204 00       		.byte	0
+ 603 0205 0E       		.uleb128 0xe
+ 604 0206 0C000000 		.4byte	.LASF29
+ 605 020a 01       		.byte	0x1
+ 606 020b 40       		.byte	0x40
+ 607 020c 77000000 		.4byte	0x77
+ 608 0210 00000000 		.4byte	.LFB66
+ 609 0214 10000000 		.4byte	.LFE66-.LFB66
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 14
+
+
+ 610 0218 01       		.uleb128 0x1
+ 611 0219 9C       		.byte	0x9c
+ 612 021a 2E020000 		.4byte	0x22e
+ 613 021e 0F       		.uleb128 0xf
+ 614 021f 67020000 		.4byte	.LASF24
+ 615 0223 01       		.byte	0x1
+ 616 0224 40       		.byte	0x40
+ 617 0225 77000000 		.4byte	0x77
+ 618 0229 A3000000 		.4byte	.LLST5
+ 619 022d 00       		.byte	0
+ 620 022e 0A       		.uleb128 0xa
+ 621 022f 54000000 		.4byte	.LASF30
+ 622 0233 01       		.byte	0x1
+ 623 0234 53       		.byte	0x53
+ 624 0235 00000000 		.4byte	.LFB68
+ 625 0239 2C000000 		.4byte	.LFE68-.LFB68
+ 626 023d 01       		.uleb128 0x1
+ 627 023e 9C       		.byte	0x9c
+ 628 023f 87020000 		.4byte	0x287
+ 629 0243 0C       		.uleb128 0xc
+ 630 0244 6900     		.ascii	"i\000"
+ 631 0246 01       		.byte	0x1
+ 632 0247 55       		.byte	0x55
+ 633 0248 83000000 		.4byte	0x83
+ 634 024c C4000000 		.4byte	.LLST6
+ 635 0250 0D       		.uleb128 0xd
+ 636 0251 06000000 		.4byte	.LVL14
+ 637 0255 0A030000 		.4byte	0x30a
+ 638 0259 13       		.uleb128 0x13
+ 639 025a 10000000 		.4byte	.LVL16
+ 640 025e 16030000 		.4byte	0x316
+ 641 0262 6D020000 		.4byte	0x26d
+ 642 0266 12       		.uleb128 0x12
+ 643 0267 01       		.uleb128 0x1
+ 644 0268 50       		.byte	0x50
+ 645 0269 02       		.uleb128 0x2
+ 646 026a 74       		.byte	0x74
+ 647 026b 00       		.sleb128 0
+ 648 026c 00       		.byte	0
+ 649 026d 11       		.uleb128 0x11
+ 650 026e 1C000000 		.4byte	.LVL17
+ 651 0272 22030000 		.4byte	0x322
+ 652 0276 12       		.uleb128 0x12
+ 653 0277 01       		.uleb128 0x1
+ 654 0278 50       		.byte	0x50
+ 655 0279 02       		.uleb128 0x2
+ 656 027a 74       		.byte	0x74
+ 657 027b 00       		.sleb128 0
+ 658 027c 12       		.uleb128 0x12
+ 659 027d 01       		.uleb128 0x1
+ 660 027e 51       		.byte	0x51
+ 661 027f 05       		.uleb128 0x5
+ 662 0280 03       		.byte	0x3
+ 663 0281 00000000 		.4byte	SysTickISRCallback_1ms
+ 664 0285 00       		.byte	0
+ 665 0286 00       		.byte	0
+ 666 0287 14       		.uleb128 0x14
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 15
+
+
+ 667 0288 66000000 		.4byte	.LASF31
+ 668 028c 01       		.byte	0x1
+ 669 028d 19       		.byte	0x19
+ 670 028e 6B000000 		.4byte	0x6b
+ 671 0292 05       		.uleb128 0x5
+ 672 0293 03       		.byte	0x3
+ 673 0294 80000000 		.4byte	g_uNoMiliSecondCounter
+ 674 0298 15       		.uleb128 0x15
+ 675 0299 04010000 		.4byte	0x104
+ 676 029d A8020000 		.4byte	0x2a8
+ 677 02a1 16       		.uleb128 0x16
+ 678 02a2 AB000000 		.4byte	0xab
+ 679 02a6 0F       		.byte	0xf
+ 680 02a7 00       		.byte	0
+ 681 02a8 14       		.uleb128 0x14
+ 682 02a9 F5000000 		.4byte	.LASF32
+ 683 02ad 01       		.byte	0x1
+ 684 02ae 1A       		.byte	0x1a
+ 685 02af 98020000 		.4byte	0x298
+ 686 02b3 05       		.uleb128 0x5
+ 687 02b4 03       		.byte	0x3
+ 688 02b5 00000000 		.4byte	g_timerCounter_1ms
+ 689 02b9 15       		.uleb128 0x15
+ 690 02ba C9020000 		.4byte	0x2c9
+ 691 02be C9020000 		.4byte	0x2c9
+ 692 02c2 16       		.uleb128 0x16
+ 693 02c3 AB000000 		.4byte	0xab
+ 694 02c7 0B       		.byte	0xb
+ 695 02c8 00       		.byte	0
+ 696 02c9 17       		.uleb128 0x17
+ 697 02ca 77000000 		.4byte	0x77
+ 698 02ce 18       		.uleb128 0x18
+ 699 02cf A8020000 		.4byte	.LASF33
+ 700 02d3 04       		.byte	0x4
+ 701 02d4 E001     		.2byte	0x1e0
+ 702 02d6 DA020000 		.4byte	0x2da
+ 703 02da 17       		.uleb128 0x17
+ 704 02db B9020000 		.4byte	0x2b9
+ 705 02df 19       		.uleb128 0x19
+ 706 02e0 A5010000 		.4byte	.LASF34
+ 707 02e4 03       		.byte	0x3
+ 708 02e5 35       		.byte	0x35
+ 709 02e6 B2000000 		.4byte	0xb2
+ 710 02ea 05       		.uleb128 0x5
+ 711 02eb 03       		.byte	0x3
+ 712 02ec 00000000 		.4byte	Param
+ 713 02f0 1A       		.uleb128 0x1a
+ 714 02f1 7B010000 		.4byte	.LASF35
+ 715 02f5 7B010000 		.4byte	.LASF35
+ 716 02f9 05       		.byte	0x5
+ 717 02fa 13       		.byte	0x13
+ 718 02fb 1B       		.uleb128 0x1b
+ 719 02fc BF020000 		.4byte	.LASF43
+ 720 0300 83000000 		.4byte	.LASF44
+ 721 0304 07       		.byte	0x7
+ 722 0305 00       		.byte	0
+ 723 0306 BF020000 		.4byte	.LASF43
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 16
+
+
+ 724 030a 1C       		.uleb128 0x1c
+ 725 030b B4000000 		.4byte	.LASF36
+ 726 030f B4000000 		.4byte	.LASF36
+ 727 0313 06       		.byte	0x6
+ 728 0314 0A01     		.2byte	0x10a
+ 729 0316 1C       		.uleb128 0x1c
+ 730 0317 7B020000 		.4byte	.LASF37
+ 731 031b 7B020000 		.4byte	.LASF37
+ 732 031f 06       		.byte	0x6
+ 733 0320 1401     		.2byte	0x114
+ 734 0322 1C       		.uleb128 0x1c
+ 735 0323 2F000000 		.4byte	.LASF38
+ 736 0327 2F000000 		.4byte	.LASF38
+ 737 032b 06       		.byte	0x6
+ 738 032c 1301     		.2byte	0x113
+ 739 032e 00       		.byte	0
+ 740              		.section	.debug_abbrev,"",%progbits
+ 741              	.Ldebug_abbrev0:
+ 742 0000 01       		.uleb128 0x1
+ 743 0001 11       		.uleb128 0x11
+ 744 0002 01       		.byte	0x1
+ 745 0003 25       		.uleb128 0x25
+ 746 0004 0E       		.uleb128 0xe
+ 747 0005 13       		.uleb128 0x13
+ 748 0006 0B       		.uleb128 0xb
+ 749 0007 03       		.uleb128 0x3
+ 750 0008 0E       		.uleb128 0xe
+ 751 0009 1B       		.uleb128 0x1b
+ 752 000a 0E       		.uleb128 0xe
+ 753 000b 55       		.uleb128 0x55
+ 754 000c 17       		.uleb128 0x17
+ 755 000d 11       		.uleb128 0x11
+ 756 000e 01       		.uleb128 0x1
+ 757 000f 10       		.uleb128 0x10
+ 758 0010 17       		.uleb128 0x17
+ 759 0011 00       		.byte	0
+ 760 0012 00       		.byte	0
+ 761 0013 02       		.uleb128 0x2
+ 762 0014 24       		.uleb128 0x24
+ 763 0015 00       		.byte	0
+ 764 0016 0B       		.uleb128 0xb
+ 765 0017 0B       		.uleb128 0xb
+ 766 0018 3E       		.uleb128 0x3e
+ 767 0019 0B       		.uleb128 0xb
+ 768 001a 03       		.uleb128 0x3
+ 769 001b 0E       		.uleb128 0xe
+ 770 001c 00       		.byte	0
+ 771 001d 00       		.byte	0
+ 772 001e 03       		.uleb128 0x3
+ 773 001f 24       		.uleb128 0x24
+ 774 0020 00       		.byte	0
+ 775 0021 0B       		.uleb128 0xb
+ 776 0022 0B       		.uleb128 0xb
+ 777 0023 3E       		.uleb128 0x3e
+ 778 0024 0B       		.uleb128 0xb
+ 779 0025 03       		.uleb128 0x3
+ 780 0026 08       		.uleb128 0x8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 17
+
+
+ 781 0027 00       		.byte	0
+ 782 0028 00       		.byte	0
+ 783 0029 04       		.uleb128 0x4
+ 784 002a 16       		.uleb128 0x16
+ 785 002b 00       		.byte	0
+ 786 002c 03       		.uleb128 0x3
+ 787 002d 0E       		.uleb128 0xe
+ 788 002e 3A       		.uleb128 0x3a
+ 789 002f 0B       		.uleb128 0xb
+ 790 0030 3B       		.uleb128 0x3b
+ 791 0031 05       		.uleb128 0x5
+ 792 0032 49       		.uleb128 0x49
+ 793 0033 13       		.uleb128 0x13
+ 794 0034 00       		.byte	0
+ 795 0035 00       		.byte	0
+ 796 0036 05       		.uleb128 0x5
+ 797 0037 13       		.uleb128 0x13
+ 798 0038 01       		.byte	0x1
+ 799 0039 03       		.uleb128 0x3
+ 800 003a 0E       		.uleb128 0xe
+ 801 003b 0B       		.uleb128 0xb
+ 802 003c 0B       		.uleb128 0xb
+ 803 003d 3A       		.uleb128 0x3a
+ 804 003e 0B       		.uleb128 0xb
+ 805 003f 3B       		.uleb128 0x3b
+ 806 0040 0B       		.uleb128 0xb
+ 807 0041 01       		.uleb128 0x1
+ 808 0042 13       		.uleb128 0x13
+ 809 0043 00       		.byte	0
+ 810 0044 00       		.byte	0
+ 811 0045 06       		.uleb128 0x6
+ 812 0046 0D       		.uleb128 0xd
+ 813 0047 00       		.byte	0
+ 814 0048 03       		.uleb128 0x3
+ 815 0049 0E       		.uleb128 0xe
+ 816 004a 3A       		.uleb128 0x3a
+ 817 004b 0B       		.uleb128 0xb
+ 818 004c 3B       		.uleb128 0x3b
+ 819 004d 0B       		.uleb128 0xb
+ 820 004e 49       		.uleb128 0x49
+ 821 004f 13       		.uleb128 0x13
+ 822 0050 38       		.uleb128 0x38
+ 823 0051 0B       		.uleb128 0xb
+ 824 0052 00       		.byte	0
+ 825 0053 00       		.byte	0
+ 826 0054 07       		.uleb128 0x7
+ 827 0055 13       		.uleb128 0x13
+ 828 0056 01       		.byte	0x1
+ 829 0057 0B       		.uleb128 0xb
+ 830 0058 0B       		.uleb128 0xb
+ 831 0059 3A       		.uleb128 0x3a
+ 832 005a 0B       		.uleb128 0xb
+ 833 005b 3B       		.uleb128 0x3b
+ 834 005c 0B       		.uleb128 0xb
+ 835 005d 01       		.uleb128 0x1
+ 836 005e 13       		.uleb128 0x13
+ 837 005f 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 18
+
+
+ 838 0060 00       		.byte	0
+ 839 0061 08       		.uleb128 0x8
+ 840 0062 0D       		.uleb128 0xd
+ 841 0063 00       		.byte	0
+ 842 0064 03       		.uleb128 0x3
+ 843 0065 08       		.uleb128 0x8
+ 844 0066 3A       		.uleb128 0x3a
+ 845 0067 0B       		.uleb128 0xb
+ 846 0068 3B       		.uleb128 0x3b
+ 847 0069 0B       		.uleb128 0xb
+ 848 006a 49       		.uleb128 0x49
+ 849 006b 13       		.uleb128 0x13
+ 850 006c 38       		.uleb128 0x38
+ 851 006d 0B       		.uleb128 0xb
+ 852 006e 00       		.byte	0
+ 853 006f 00       		.byte	0
+ 854 0070 09       		.uleb128 0x9
+ 855 0071 16       		.uleb128 0x16
+ 856 0072 00       		.byte	0
+ 857 0073 03       		.uleb128 0x3
+ 858 0074 0E       		.uleb128 0xe
+ 859 0075 3A       		.uleb128 0x3a
+ 860 0076 0B       		.uleb128 0xb
+ 861 0077 3B       		.uleb128 0x3b
+ 862 0078 0B       		.uleb128 0xb
+ 863 0079 49       		.uleb128 0x49
+ 864 007a 13       		.uleb128 0x13
+ 865 007b 00       		.byte	0
+ 866 007c 00       		.byte	0
+ 867 007d 0A       		.uleb128 0xa
+ 868 007e 2E       		.uleb128 0x2e
+ 869 007f 01       		.byte	0x1
+ 870 0080 3F       		.uleb128 0x3f
+ 871 0081 19       		.uleb128 0x19
+ 872 0082 03       		.uleb128 0x3
+ 873 0083 0E       		.uleb128 0xe
+ 874 0084 3A       		.uleb128 0x3a
+ 875 0085 0B       		.uleb128 0xb
+ 876 0086 3B       		.uleb128 0x3b
+ 877 0087 0B       		.uleb128 0xb
+ 878 0088 27       		.uleb128 0x27
+ 879 0089 19       		.uleb128 0x19
+ 880 008a 11       		.uleb128 0x11
+ 881 008b 01       		.uleb128 0x1
+ 882 008c 12       		.uleb128 0x12
+ 883 008d 06       		.uleb128 0x6
+ 884 008e 40       		.uleb128 0x40
+ 885 008f 18       		.uleb128 0x18
+ 886 0090 9742     		.uleb128 0x2117
+ 887 0092 19       		.uleb128 0x19
+ 888 0093 01       		.uleb128 0x1
+ 889 0094 13       		.uleb128 0x13
+ 890 0095 00       		.byte	0
+ 891 0096 00       		.byte	0
+ 892 0097 0B       		.uleb128 0xb
+ 893 0098 0B       		.uleb128 0xb
+ 894 0099 01       		.byte	0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 19
+
+
+ 895 009a 11       		.uleb128 0x11
+ 896 009b 01       		.uleb128 0x1
+ 897 009c 12       		.uleb128 0x12
+ 898 009d 06       		.uleb128 0x6
+ 899 009e 01       		.uleb128 0x1
+ 900 009f 13       		.uleb128 0x13
+ 901 00a0 00       		.byte	0
+ 902 00a1 00       		.byte	0
+ 903 00a2 0C       		.uleb128 0xc
+ 904 00a3 34       		.uleb128 0x34
+ 905 00a4 00       		.byte	0
+ 906 00a5 03       		.uleb128 0x3
+ 907 00a6 08       		.uleb128 0x8
+ 908 00a7 3A       		.uleb128 0x3a
+ 909 00a8 0B       		.uleb128 0xb
+ 910 00a9 3B       		.uleb128 0x3b
+ 911 00aa 0B       		.uleb128 0xb
+ 912 00ab 49       		.uleb128 0x49
+ 913 00ac 13       		.uleb128 0x13
+ 914 00ad 02       		.uleb128 0x2
+ 915 00ae 17       		.uleb128 0x17
+ 916 00af 00       		.byte	0
+ 917 00b0 00       		.byte	0
+ 918 00b1 0D       		.uleb128 0xd
+ 919 00b2 898201   		.uleb128 0x4109
+ 920 00b5 00       		.byte	0
+ 921 00b6 11       		.uleb128 0x11
+ 922 00b7 01       		.uleb128 0x1
+ 923 00b8 31       		.uleb128 0x31
+ 924 00b9 13       		.uleb128 0x13
+ 925 00ba 00       		.byte	0
+ 926 00bb 00       		.byte	0
+ 927 00bc 0E       		.uleb128 0xe
+ 928 00bd 2E       		.uleb128 0x2e
+ 929 00be 01       		.byte	0x1
+ 930 00bf 3F       		.uleb128 0x3f
+ 931 00c0 19       		.uleb128 0x19
+ 932 00c1 03       		.uleb128 0x3
+ 933 00c2 0E       		.uleb128 0xe
+ 934 00c3 3A       		.uleb128 0x3a
+ 935 00c4 0B       		.uleb128 0xb
+ 936 00c5 3B       		.uleb128 0x3b
+ 937 00c6 0B       		.uleb128 0xb
+ 938 00c7 27       		.uleb128 0x27
+ 939 00c8 19       		.uleb128 0x19
+ 940 00c9 49       		.uleb128 0x49
+ 941 00ca 13       		.uleb128 0x13
+ 942 00cb 11       		.uleb128 0x11
+ 943 00cc 01       		.uleb128 0x1
+ 944 00cd 12       		.uleb128 0x12
+ 945 00ce 06       		.uleb128 0x6
+ 946 00cf 40       		.uleb128 0x40
+ 947 00d0 18       		.uleb128 0x18
+ 948 00d1 9742     		.uleb128 0x2117
+ 949 00d3 19       		.uleb128 0x19
+ 950 00d4 01       		.uleb128 0x1
+ 951 00d5 13       		.uleb128 0x13
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 20
+
+
+ 952 00d6 00       		.byte	0
+ 953 00d7 00       		.byte	0
+ 954 00d8 0F       		.uleb128 0xf
+ 955 00d9 05       		.uleb128 0x5
+ 956 00da 00       		.byte	0
+ 957 00db 03       		.uleb128 0x3
+ 958 00dc 0E       		.uleb128 0xe
+ 959 00dd 3A       		.uleb128 0x3a
+ 960 00de 0B       		.uleb128 0xb
+ 961 00df 3B       		.uleb128 0x3b
+ 962 00e0 0B       		.uleb128 0xb
+ 963 00e1 49       		.uleb128 0x49
+ 964 00e2 13       		.uleb128 0x13
+ 965 00e3 02       		.uleb128 0x2
+ 966 00e4 17       		.uleb128 0x17
+ 967 00e5 00       		.byte	0
+ 968 00e6 00       		.byte	0
+ 969 00e7 10       		.uleb128 0x10
+ 970 00e8 05       		.uleb128 0x5
+ 971 00e9 00       		.byte	0
+ 972 00ea 03       		.uleb128 0x3
+ 973 00eb 0E       		.uleb128 0xe
+ 974 00ec 3A       		.uleb128 0x3a
+ 975 00ed 0B       		.uleb128 0xb
+ 976 00ee 3B       		.uleb128 0x3b
+ 977 00ef 0B       		.uleb128 0xb
+ 978 00f0 49       		.uleb128 0x49
+ 979 00f1 13       		.uleb128 0x13
+ 980 00f2 02       		.uleb128 0x2
+ 981 00f3 18       		.uleb128 0x18
+ 982 00f4 00       		.byte	0
+ 983 00f5 00       		.byte	0
+ 984 00f6 11       		.uleb128 0x11
+ 985 00f7 898201   		.uleb128 0x4109
+ 986 00fa 01       		.byte	0x1
+ 987 00fb 11       		.uleb128 0x11
+ 988 00fc 01       		.uleb128 0x1
+ 989 00fd 31       		.uleb128 0x31
+ 990 00fe 13       		.uleb128 0x13
+ 991 00ff 00       		.byte	0
+ 992 0100 00       		.byte	0
+ 993 0101 12       		.uleb128 0x12
+ 994 0102 8A8201   		.uleb128 0x410a
+ 995 0105 00       		.byte	0
+ 996 0106 02       		.uleb128 0x2
+ 997 0107 18       		.uleb128 0x18
+ 998 0108 9142     		.uleb128 0x2111
+ 999 010a 18       		.uleb128 0x18
+ 1000 010b 00       		.byte	0
+ 1001 010c 00       		.byte	0
+ 1002 010d 13       		.uleb128 0x13
+ 1003 010e 898201   		.uleb128 0x4109
+ 1004 0111 01       		.byte	0x1
+ 1005 0112 11       		.uleb128 0x11
+ 1006 0113 01       		.uleb128 0x1
+ 1007 0114 31       		.uleb128 0x31
+ 1008 0115 13       		.uleb128 0x13
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 21
+
+
+ 1009 0116 01       		.uleb128 0x1
+ 1010 0117 13       		.uleb128 0x13
+ 1011 0118 00       		.byte	0
+ 1012 0119 00       		.byte	0
+ 1013 011a 14       		.uleb128 0x14
+ 1014 011b 34       		.uleb128 0x34
+ 1015 011c 00       		.byte	0
+ 1016 011d 03       		.uleb128 0x3
+ 1017 011e 0E       		.uleb128 0xe
+ 1018 011f 3A       		.uleb128 0x3a
+ 1019 0120 0B       		.uleb128 0xb
+ 1020 0121 3B       		.uleb128 0x3b
+ 1021 0122 0B       		.uleb128 0xb
+ 1022 0123 49       		.uleb128 0x49
+ 1023 0124 13       		.uleb128 0x13
+ 1024 0125 02       		.uleb128 0x2
+ 1025 0126 18       		.uleb128 0x18
+ 1026 0127 00       		.byte	0
+ 1027 0128 00       		.byte	0
+ 1028 0129 15       		.uleb128 0x15
+ 1029 012a 01       		.uleb128 0x1
+ 1030 012b 01       		.byte	0x1
+ 1031 012c 49       		.uleb128 0x49
+ 1032 012d 13       		.uleb128 0x13
+ 1033 012e 01       		.uleb128 0x1
+ 1034 012f 13       		.uleb128 0x13
+ 1035 0130 00       		.byte	0
+ 1036 0131 00       		.byte	0
+ 1037 0132 16       		.uleb128 0x16
+ 1038 0133 21       		.uleb128 0x21
+ 1039 0134 00       		.byte	0
+ 1040 0135 49       		.uleb128 0x49
+ 1041 0136 13       		.uleb128 0x13
+ 1042 0137 2F       		.uleb128 0x2f
+ 1043 0138 0B       		.uleb128 0xb
+ 1044 0139 00       		.byte	0
+ 1045 013a 00       		.byte	0
+ 1046 013b 17       		.uleb128 0x17
+ 1047 013c 26       		.uleb128 0x26
+ 1048 013d 00       		.byte	0
+ 1049 013e 49       		.uleb128 0x49
+ 1050 013f 13       		.uleb128 0x13
+ 1051 0140 00       		.byte	0
+ 1052 0141 00       		.byte	0
+ 1053 0142 18       		.uleb128 0x18
+ 1054 0143 34       		.uleb128 0x34
+ 1055 0144 00       		.byte	0
+ 1056 0145 03       		.uleb128 0x3
+ 1057 0146 0E       		.uleb128 0xe
+ 1058 0147 3A       		.uleb128 0x3a
+ 1059 0148 0B       		.uleb128 0xb
+ 1060 0149 3B       		.uleb128 0x3b
+ 1061 014a 05       		.uleb128 0x5
+ 1062 014b 49       		.uleb128 0x49
+ 1063 014c 13       		.uleb128 0x13
+ 1064 014d 3F       		.uleb128 0x3f
+ 1065 014e 19       		.uleb128 0x19
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 22
+
+
+ 1066 014f 3C       		.uleb128 0x3c
+ 1067 0150 19       		.uleb128 0x19
+ 1068 0151 00       		.byte	0
+ 1069 0152 00       		.byte	0
+ 1070 0153 19       		.uleb128 0x19
+ 1071 0154 34       		.uleb128 0x34
+ 1072 0155 00       		.byte	0
+ 1073 0156 03       		.uleb128 0x3
+ 1074 0157 0E       		.uleb128 0xe
+ 1075 0158 3A       		.uleb128 0x3a
+ 1076 0159 0B       		.uleb128 0xb
+ 1077 015a 3B       		.uleb128 0x3b
+ 1078 015b 0B       		.uleb128 0xb
+ 1079 015c 49       		.uleb128 0x49
+ 1080 015d 13       		.uleb128 0x13
+ 1081 015e 3F       		.uleb128 0x3f
+ 1082 015f 19       		.uleb128 0x19
+ 1083 0160 02       		.uleb128 0x2
+ 1084 0161 18       		.uleb128 0x18
+ 1085 0162 00       		.byte	0
+ 1086 0163 00       		.byte	0
+ 1087 0164 1A       		.uleb128 0x1a
+ 1088 0165 2E       		.uleb128 0x2e
+ 1089 0166 00       		.byte	0
+ 1090 0167 3F       		.uleb128 0x3f
+ 1091 0168 19       		.uleb128 0x19
+ 1092 0169 3C       		.uleb128 0x3c
+ 1093 016a 19       		.uleb128 0x19
+ 1094 016b 6E       		.uleb128 0x6e
+ 1095 016c 0E       		.uleb128 0xe
+ 1096 016d 03       		.uleb128 0x3
+ 1097 016e 0E       		.uleb128 0xe
+ 1098 016f 3A       		.uleb128 0x3a
+ 1099 0170 0B       		.uleb128 0xb
+ 1100 0171 3B       		.uleb128 0x3b
+ 1101 0172 0B       		.uleb128 0xb
+ 1102 0173 00       		.byte	0
+ 1103 0174 00       		.byte	0
+ 1104 0175 1B       		.uleb128 0x1b
+ 1105 0176 2E       		.uleb128 0x2e
+ 1106 0177 00       		.byte	0
+ 1107 0178 3F       		.uleb128 0x3f
+ 1108 0179 19       		.uleb128 0x19
+ 1109 017a 3C       		.uleb128 0x3c
+ 1110 017b 19       		.uleb128 0x19
+ 1111 017c 6E       		.uleb128 0x6e
+ 1112 017d 0E       		.uleb128 0xe
+ 1113 017e 03       		.uleb128 0x3
+ 1114 017f 0E       		.uleb128 0xe
+ 1115 0180 3A       		.uleb128 0x3a
+ 1116 0181 0B       		.uleb128 0xb
+ 1117 0182 3B       		.uleb128 0x3b
+ 1118 0183 0B       		.uleb128 0xb
+ 1119 0184 6E       		.uleb128 0x6e
+ 1120 0185 0E       		.uleb128 0xe
+ 1121 0186 00       		.byte	0
+ 1122 0187 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 23
+
+
+ 1123 0188 1C       		.uleb128 0x1c
+ 1124 0189 2E       		.uleb128 0x2e
+ 1125 018a 00       		.byte	0
+ 1126 018b 3F       		.uleb128 0x3f
+ 1127 018c 19       		.uleb128 0x19
+ 1128 018d 3C       		.uleb128 0x3c
+ 1129 018e 19       		.uleb128 0x19
+ 1130 018f 6E       		.uleb128 0x6e
+ 1131 0190 0E       		.uleb128 0xe
+ 1132 0191 03       		.uleb128 0x3
+ 1133 0192 0E       		.uleb128 0xe
+ 1134 0193 3A       		.uleb128 0x3a
+ 1135 0194 0B       		.uleb128 0xb
+ 1136 0195 3B       		.uleb128 0x3b
+ 1137 0196 05       		.uleb128 0x5
+ 1138 0197 00       		.byte	0
+ 1139 0198 00       		.byte	0
+ 1140 0199 00       		.byte	0
+ 1141              		.section	.debug_loc,"",%progbits
+ 1142              	.Ldebug_loc0:
+ 1143              	.LLST0:
+ 1144 0000 06000000 		.4byte	.LVL0
+ 1145 0004 0A000000 		.4byte	.LVL1
+ 1146 0008 0200     		.2byte	0x2
+ 1147 000a 30       		.byte	0x30
+ 1148 000b 9F       		.byte	0x9f
+ 1149 000c 0A000000 		.4byte	.LVL1
+ 1150 0010 40000000 		.4byte	.LFE67
+ 1151 0014 0100     		.2byte	0x1
+ 1152 0016 52       		.byte	0x52
+ 1153 0017 00000000 		.4byte	0
+ 1154 001b 00000000 		.4byte	0
+ 1155              	.LLST1:
+ 1156 001f 00000000 		.4byte	.LVL3
+ 1157 0023 02000000 		.4byte	.LVL4
+ 1158 0027 0100     		.2byte	0x1
+ 1159 0029 50       		.byte	0x50
+ 1160 002a 02000000 		.4byte	.LVL4
+ 1161 002e 18000000 		.4byte	.LFE62
+ 1162 0032 0400     		.2byte	0x4
+ 1163 0034 F3       		.byte	0xf3
+ 1164 0035 01       		.uleb128 0x1
+ 1165 0036 50       		.byte	0x50
+ 1166 0037 9F       		.byte	0x9f
+ 1167 0038 00000000 		.4byte	0
+ 1168 003c 00000000 		.4byte	0
+ 1169              	.LLST2:
+ 1170 0040 00000000 		.4byte	.LVL5
+ 1171 0044 04000000 		.4byte	.LVL6
+ 1172 0048 0100     		.2byte	0x1
+ 1173 004a 50       		.byte	0x50
+ 1174 004b 04000000 		.4byte	.LVL6
+ 1175 004f 10000000 		.4byte	.LFE63
+ 1176 0053 0400     		.2byte	0x4
+ 1177 0055 F3       		.byte	0xf3
+ 1178 0056 01       		.uleb128 0x1
+ 1179 0057 50       		.byte	0x50
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 24
+
+
+ 1180 0058 9F       		.byte	0x9f
+ 1181 0059 00000000 		.4byte	0
+ 1182 005d 00000000 		.4byte	0
+ 1183              	.LLST3:
+ 1184 0061 00000000 		.4byte	.LVL7
+ 1185 0065 06000000 		.4byte	.LVL8
+ 1186 0069 0100     		.2byte	0x1
+ 1187 006b 50       		.byte	0x50
+ 1188 006c 06000000 		.4byte	.LVL8
+ 1189 0070 14000000 		.4byte	.LFE64
+ 1190 0074 0400     		.2byte	0x4
+ 1191 0076 F3       		.byte	0xf3
+ 1192 0077 01       		.uleb128 0x1
+ 1193 0078 50       		.byte	0x50
+ 1194 0079 9F       		.byte	0x9f
+ 1195 007a 00000000 		.4byte	0
+ 1196 007e 00000000 		.4byte	0
+ 1197              	.LLST4:
+ 1198 0082 00000000 		.4byte	.LVL9
+ 1199 0086 1E000000 		.4byte	.LVL10
+ 1200 008a 0100     		.2byte	0x1
+ 1201 008c 50       		.byte	0x50
+ 1202 008d 1E000000 		.4byte	.LVL10
+ 1203 0091 34000000 		.4byte	.LFE65
+ 1204 0095 0400     		.2byte	0x4
+ 1205 0097 F3       		.byte	0xf3
+ 1206 0098 01       		.uleb128 0x1
+ 1207 0099 50       		.byte	0x50
+ 1208 009a 9F       		.byte	0x9f
+ 1209 009b 00000000 		.4byte	0
+ 1210 009f 00000000 		.4byte	0
+ 1211              	.LLST5:
+ 1212 00a3 00000000 		.4byte	.LVL12
+ 1213 00a7 02000000 		.4byte	.LVL13
+ 1214 00ab 0100     		.2byte	0x1
+ 1215 00ad 50       		.byte	0x50
+ 1216 00ae 02000000 		.4byte	.LVL13
+ 1217 00b2 10000000 		.4byte	.LFE66
+ 1218 00b6 0400     		.2byte	0x4
+ 1219 00b8 F3       		.byte	0xf3
+ 1220 00b9 01       		.uleb128 0x1
+ 1221 00ba 50       		.byte	0x50
+ 1222 00bb 9F       		.byte	0x9f
+ 1223 00bc 00000000 		.4byte	0
+ 1224 00c0 00000000 		.4byte	0
+ 1225              	.LLST6:
+ 1226 00c4 06000000 		.4byte	.LVL14
+ 1227 00c8 0A000000 		.4byte	.LVL15
+ 1228 00cc 0200     		.2byte	0x2
+ 1229 00ce 30       		.byte	0x30
+ 1230 00cf 9F       		.byte	0x9f
+ 1231 00d0 0A000000 		.4byte	.LVL15
+ 1232 00d4 24000000 		.4byte	.LVL19
+ 1233 00d8 0100     		.2byte	0x1
+ 1234 00da 54       		.byte	0x54
+ 1235 00db 00000000 		.4byte	0
+ 1236 00df 00000000 		.4byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 25
+
+
+ 1237              		.section	.debug_aranges,"",%progbits
+ 1238 0000 4C000000 		.4byte	0x4c
+ 1239 0004 0200     		.2byte	0x2
+ 1240 0006 00000000 		.4byte	.Ldebug_info0
+ 1241 000a 04       		.byte	0x4
+ 1242 000b 00       		.byte	0
+ 1243 000c 0000     		.2byte	0
+ 1244 000e 0000     		.2byte	0
+ 1245 0010 00000000 		.4byte	.LFB67
+ 1246 0014 40000000 		.4byte	.LFE67-.LFB67
+ 1247 0018 00000000 		.4byte	.LFB62
+ 1248 001c 18000000 		.4byte	.LFE62-.LFB62
+ 1249 0020 00000000 		.4byte	.LFB63
+ 1250 0024 10000000 		.4byte	.LFE63-.LFB63
+ 1251 0028 00000000 		.4byte	.LFB64
+ 1252 002c 14000000 		.4byte	.LFE64-.LFB64
+ 1253 0030 00000000 		.4byte	.LFB65
+ 1254 0034 34000000 		.4byte	.LFE65-.LFB65
+ 1255 0038 00000000 		.4byte	.LFB66
+ 1256 003c 10000000 		.4byte	.LFE66-.LFB66
+ 1257 0040 00000000 		.4byte	.LFB68
+ 1258 0044 2C000000 		.4byte	.LFE68-.LFB68
+ 1259 0048 00000000 		.4byte	0
+ 1260 004c 00000000 		.4byte	0
+ 1261              		.section	.debug_ranges,"",%progbits
+ 1262              	.Ldebug_ranges0:
+ 1263 0000 00000000 		.4byte	.LFB67
+ 1264 0004 40000000 		.4byte	.LFE67
+ 1265 0008 00000000 		.4byte	.LFB62
+ 1266 000c 18000000 		.4byte	.LFE62
+ 1267 0010 00000000 		.4byte	.LFB63
+ 1268 0014 10000000 		.4byte	.LFE63
+ 1269 0018 00000000 		.4byte	.LFB64
+ 1270 001c 14000000 		.4byte	.LFE64
+ 1271 0020 00000000 		.4byte	.LFB65
+ 1272 0024 34000000 		.4byte	.LFE65
+ 1273 0028 00000000 		.4byte	.LFB66
+ 1274 002c 10000000 		.4byte	.LFE66
+ 1275 0030 00000000 		.4byte	.LFB68
+ 1276 0034 2C000000 		.4byte	.LFE68
+ 1277 0038 00000000 		.4byte	0
+ 1278 003c 00000000 		.4byte	0
+ 1279              		.section	.debug_line,"",%progbits
+ 1280              	.Ldebug_line0:
+ 1281 0000 36010000 		.section	.debug_str,"MS",%progbits,1
+ 1281      02008900 
+ 1281      00000201 
+ 1281      FB0E0D00 
+ 1281      01010101 
+ 1282              	.LASF17:
+ 1283 0000 73746174 		.ascii	"stat_TC_INT\000"
+ 1283      5F54435F 
+ 1283      494E5400 
+ 1284              	.LASF29:
+ 1285 000c 67657443 		.ascii	"getCurrentTimerCounter_1ms\000"
+ 1285      75727265 
+ 1285      6E745469 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 26
+
+
+ 1285      6D657243 
+ 1285      6F756E74 
+ 1286              	.LASF20:
+ 1287 0027 63757272 		.ascii	"current\000"
+ 1287      656E7400 
+ 1288              	.LASF38:
+ 1289 002f 43795379 		.ascii	"CySysTickSetCallback\000"
+ 1289      73546963 
+ 1289      6B536574 
+ 1289      43616C6C 
+ 1289      6261636B 
+ 1290              	.LASF25:
+ 1291 0044 73657443 		.ascii	"setCountMax_1ms\000"
+ 1291      6F756E74 
+ 1291      4D61785F 
+ 1291      316D7300 
+ 1292              	.LASF30:
+ 1293 0054 73657453 		.ascii	"setSysTick\000"
+ 1293      79735469 
+ 1293      636B00
+ 1294              	.LASF13:
+ 1295 005f 646F7562 		.ascii	"double\000"
+ 1295      6C6500
+ 1296              	.LASF31:
+ 1297 0066 675F754E 		.ascii	"g_uNoMiliSecondCounter\000"
+ 1297      6F4D696C 
+ 1297      69536563 
+ 1297      6F6E6443 
+ 1297      6F756E74 
+ 1298              	.LASF12:
+ 1299 007d 666C6F61 		.ascii	"float\000"
+ 1299      7400
+ 1300              	.LASF44:
+ 1301 0083 5F5F6275 		.ascii	"__builtin_puts\000"
+ 1301      696C7469 
+ 1301      6E5F7075 
+ 1301      747300
+ 1302              	.LASF1:
+ 1303 0092 756E7369 		.ascii	"unsigned char\000"
+ 1303      676E6564 
+ 1303      20636861 
+ 1303      7200
+ 1304              	.LASF27:
+ 1305 00a0 69734669 		.ascii	"isFinishCounter_1ms\000"
+ 1305      6E697368 
+ 1305      436F756E 
+ 1305      7465725F 
+ 1305      316D7300 
+ 1306              	.LASF36:
+ 1307 00b4 43795379 		.ascii	"CySysTickStart\000"
+ 1307      73546963 
+ 1307      6B537461 
+ 1307      727400
+ 1308              	.LASF42:
+ 1309 00c3 73506172 		.ascii	"sParameter\000"
+ 1309      616D6574 
+ 1309      657200
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 27
+
+
+ 1310              	.LASF3:
+ 1311 00ce 73686F72 		.ascii	"short unsigned int\000"
+ 1311      7420756E 
+ 1311      7369676E 
+ 1311      65642069 
+ 1311      6E7400
+ 1312              	.LASF28:
+ 1313 00e1 72656769 		.ascii	"registerCounter_1ms\000"
+ 1313      73746572 
+ 1313      436F756E 
+ 1313      7465725F 
+ 1313      316D7300 
+ 1314              	.LASF32:
+ 1315 00f5 675F7469 		.ascii	"g_timerCounter_1ms\000"
+ 1315      6D657243 
+ 1315      6F756E74 
+ 1315      65725F31 
+ 1315      6D7300
+ 1316              	.LASF5:
+ 1317 0108 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1317      20756E73 
+ 1317      69676E65 
+ 1317      6420696E 
+ 1317      7400
+ 1318              	.LASF19:
+ 1319 011a 706F735F 		.ascii	"pos_Y\000"
+ 1319      5900
+ 1320              	.LASF22:
+ 1321 0120 53797354 		.ascii	"SysTickISRCallback_1ms\000"
+ 1321      69636B49 
+ 1321      53524361 
+ 1321      6C6C6261 
+ 1321      636B5F31 
+ 1322              	.LASF2:
+ 1323 0137 73686F72 		.ascii	"short int\000"
+ 1323      7420696E 
+ 1323      7400
+ 1324              	.LASF10:
+ 1325 0141 75696E74 		.ascii	"uint16\000"
+ 1325      313600
+ 1326              	.LASF11:
+ 1327 0148 75696E74 		.ascii	"uint32\000"
+ 1327      333200
+ 1328              	.LASF40:
+ 1329 014f 6C69625C 		.ascii	"lib\\sysTick.c\000"
+ 1329      73797354 
+ 1329      69636B2E 
+ 1329      6300
+ 1330              	.LASF23:
+ 1331 015d 72657365 		.ascii	"resetCounter_1ms\000"
+ 1331      74436F75 
+ 1331      6E746572 
+ 1331      5F316D73 
+ 1331      00
+ 1332              	.LASF8:
+ 1333 016e 756E7369 		.ascii	"unsigned int\000"
+ 1333      676E6564 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 28
+
+
+ 1333      20696E74 
+ 1333      00
+ 1334              	.LASF35:
+ 1335 017b 4F6E654D 		.ascii	"OneMilliSecond_ISR\000"
+ 1335      696C6C69 
+ 1335      5365636F 
+ 1335      6E645F49 
+ 1335      535200
+ 1336              	.LASF7:
+ 1337 018e 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1337      206C6F6E 
+ 1337      6720756E 
+ 1337      7369676E 
+ 1337      65642069 
+ 1338              	.LASF34:
+ 1339 01a5 50617261 		.ascii	"Param\000"
+ 1339      6D00
+ 1340              	.LASF18:
+ 1341 01ab 706F735F 		.ascii	"pos_X\000"
+ 1341      5800
+ 1342              	.LASF39:
+ 1343 01b1 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1343      43313120 
+ 1343      352E342E 
+ 1343      31203230 
+ 1343      31363036 
+ 1344 01e4 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1344      20726576 
+ 1344      6973696F 
+ 1344      6E203233 
+ 1344      37373135 
+ 1345 0217 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1345      66756E63 
+ 1345      74696F6E 
+ 1345      2D736563 
+ 1345      74696F6E 
+ 1346              	.LASF15:
+ 1347 023f 6C6F6E67 		.ascii	"long double\000"
+ 1347      20646F75 
+ 1347      626C6500 
+ 1348              	.LASF16:
+ 1349 024b 73697A65 		.ascii	"sizetype\000"
+ 1349      74797065 
+ 1349      00
+ 1350              	.LASF6:
+ 1351 0254 6C6F6E67 		.ascii	"long long int\000"
+ 1351      206C6F6E 
+ 1351      6720696E 
+ 1351      7400
+ 1352              	.LASF14:
+ 1353 0262 63686172 		.ascii	"char\000"
+ 1353      00
+ 1354              	.LASF24:
+ 1355 0267 696E6465 		.ascii	"index\000"
+ 1355      7800
+ 1356              	.LASF21:
+ 1357 026d 54494D45 		.ascii	"TIMER_COUNTER\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccYNkZDN.s 			page 29
+
+
+ 1357      525F434F 
+ 1357      554E5445 
+ 1357      5200
+ 1358              	.LASF37:
+ 1359 027b 43795379 		.ascii	"CySysTickGetCallback\000"
+ 1359      73546963 
+ 1359      6B476574 
+ 1359      43616C6C 
+ 1359      6261636B 
+ 1360              	.LASF9:
+ 1361 0290 75696E74 		.ascii	"uint8\000"
+ 1361      3800
+ 1362              	.LASF26:
+ 1363 0296 6D617843 		.ascii	"maxCount\000"
+ 1363      6F756E74 
+ 1363      00
+ 1364              	.LASF4:
+ 1365 029f 6C6F6E67 		.ascii	"long int\000"
+ 1365      20696E74 
+ 1365      00
+ 1366              	.LASF33:
+ 1367 02a8 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 1367      64617973 
+ 1367      4265666F 
+ 1367      72654D6F 
+ 1367      6E746854 
+ 1368              	.LASF43:
+ 1369 02bf 70757473 		.ascii	"puts\000"
+ 1369      00
+ 1370              	.LASF0:
+ 1371 02c4 7369676E 		.ascii	"signed char\000"
+ 1371      65642063 
+ 1371      68617200 
+ 1372              	.LASF41:
+ 1373 02d0 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_UART_T"
+ 1373      554E5445 
+ 1373      43485F44 
+ 1373      45565F43 
+ 1373      4C415544 
+ 1374 0300 4553545C 		.ascii	"EST\\280CTP_IoT_UART_TEST_V1\\Project\\Design.cydsn"
+ 1374      32383043 
+ 1374      54505F49 
+ 1374      6F545F55 
+ 1374      4152545F 
+ 1375 0330 00       		.ascii	"\000"
+ 1376              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

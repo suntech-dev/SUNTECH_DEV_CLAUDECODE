@@ -1,0 +1,1651 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"WarningLight.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.initWarning,"ax",%progbits
+  20              		.align	2
+  21              		.global	initWarning
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	initWarning, %function
+  25              	initWarning:
+  26              	.LFB62:
+  27              		.file 1 "WarningLight.c"
+   1:WarningLight.c **** 
+   2:WarningLight.c **** #include "WarningLight.h"
+   3:WarningLight.c **** #include "lib/sysTick.h"
+   4:WarningLight.c **** 
+   5:WarningLight.c **** static WARNING_LIGHT  g_warning = {  /* WarningLight.c 내부 전용 */
+   6:WarningLight.c ****     .bRED = FALSE, 
+   7:WarningLight.c ****     .uBlinkTimeRED = 0,
+   8:WarningLight.c ****     
+   9:WarningLight.c ****     .bGREEN = FALSE,
+  10:WarningLight.c ****     .uBlinkTimeGREEN = 0,
+  11:WarningLight.c ****     
+  12:WarningLight.c ****     .bBUZZER = FALSE,
+  13:WarningLight.c ****     .uBlinkTimeBUZZER = 0,
+  14:WarningLight.c **** };
+  15:WarningLight.c **** 
+  16:WarningLight.c **** void initWarning()
+  17:WarningLight.c **** {
+  28              		.loc 1 17 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 70B5     		push	{r4, r5, r6, lr}
+  33              		.cfi_def_cfa_offset 16
+  34              		.cfi_offset 4, -16
+  35              		.cfi_offset 5, -12
+  36              		.cfi_offset 6, -8
+  37              		.cfi_offset 14, -4
+  18:WarningLight.c ****    g_warning.index_RED    = registerCounter_1ms(500);
+  38              		.loc 1 18 0
+  39 0002 FA25     		movs	r5, #250
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 2
+
+
+  40 0004 6D00     		lsls	r5, r5, #1
+  41 0006 2800     		movs	r0, r5
+  42 0008 FFF7FEFF 		bl	registerCounter_1ms
+  43              	.LVL0:
+  44 000c 054C     		ldr	r4, .L2
+  45 000e A081     		strh	r0, [r4, #12]
+  19:WarningLight.c ****    g_warning.index_GREEN  = registerCounter_1ms(500);  
+  46              		.loc 1 19 0
+  47 0010 2800     		movs	r0, r5
+  48 0012 FFF7FEFF 		bl	registerCounter_1ms
+  49              	.LVL1:
+  50 0016 E081     		strh	r0, [r4, #14]
+  20:WarningLight.c **** #ifdef USE_BUZZER     
+  21:WarningLight.c ****    g_warning.index_BUZZER = registerCounter_1ms(BUZZER_ON_OFF_TIME_INTERVAL); 
+  51              		.loc 1 21 0
+  52 0018 2800     		movs	r0, r5
+  53 001a FFF7FEFF 		bl	registerCounter_1ms
+  54              	.LVL2:
+  55 001e 2082     		strh	r0, [r4, #16]
+  22:WarningLight.c ****    g_warning.uBlinkTimeBUZZER = BUZZER_ON_OFF_TIME_INTERVAL;
+  56              		.loc 1 22 0
+  57 0020 6581     		strh	r5, [r4, #10]
+  23:WarningLight.c **** #endif
+  24:WarningLight.c **** }
+  58              		.loc 1 24 0
+  59              		@ sp needed
+  60 0022 70BD     		pop	{r4, r5, r6, pc}
+  61              	.L3:
+  62              		.align	2
+  63              	.L2:
+  64 0024 00000000 		.word	.LANCHOR0
+  65              		.cfi_endproc
+  66              	.LFE62:
+  67              		.size	initWarning, .-initWarning
+  68              		.section	.text.WarningLightSet,"ax",%progbits
+  69              		.align	2
+  70              		.global	WarningLightSet
+  71              		.code	16
+  72              		.thumb_func
+  73              		.type	WarningLightSet, %function
+  74              	WarningLightSet:
+  75              	.LFB63:
+  25:WarningLight.c **** 
+  26:WarningLight.c **** void WarningLightSet(int16 index, uint8 OnOff, uint16 blinkTimeInterval)
+  27:WarningLight.c **** {
+  76              		.loc 1 27 0
+  77              		.cfi_startproc
+  78              		@ args = 0, pretend = 0, frame = 0
+  79              		@ frame_needed = 0, uses_anonymous_args = 0
+  80              	.LVL3:
+  81 0000 10B5     		push	{r4, lr}
+  82              		.cfi_def_cfa_offset 8
+  83              		.cfi_offset 4, -8
+  84              		.cfi_offset 14, -4
+  28:WarningLight.c ****     switch(index)
+  85              		.loc 1 28 0
+  86 0002 0128     		cmp	r0, #1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 3
+
+
+  87 0004 02D0     		beq	.L6
+  88 0006 0228     		cmp	r0, #2
+  89 0008 08D0     		beq	.L7
+  90 000a 0EE0     		b	.L5
+  91              	.L6:
+  29:WarningLight.c ****     {
+  30:WarningLight.c ****         case 1: 
+  31:WarningLight.c ****            g_warning.bRED = OnOff;
+  92              		.loc 1 31 0
+  93 000c 0A4B     		ldr	r3, .L8
+  94 000e 1970     		strb	r1, [r3]
+  32:WarningLight.c ****            g_warning.uBlinkTimeRED = blinkTimeInterval;
+  95              		.loc 1 32 0
+  96 0010 5A80     		strh	r2, [r3, #2]
+  33:WarningLight.c ****            setCountMax_1ms(g_warning.index_RED, blinkTimeInterval);
+  97              		.loc 1 33 0
+  98 0012 9889     		ldrh	r0, [r3, #12]
+  99              	.LVL4:
+ 100 0014 1100     		movs	r1, r2
+ 101              	.LVL5:
+ 102 0016 FFF7FEFF 		bl	setCountMax_1ms
+ 103              	.LVL6:
+  34:WarningLight.c ****            break;
+ 104              		.loc 1 34 0
+ 105 001a 06E0     		b	.L5
+ 106              	.LVL7:
+ 107              	.L7:
+  35:WarningLight.c ****         case 2:
+  36:WarningLight.c ****            g_warning.bGREEN = OnOff;
+ 108              		.loc 1 36 0
+ 109 001c 064B     		ldr	r3, .L8
+ 110 001e 1971     		strb	r1, [r3, #4]
+  37:WarningLight.c ****            g_warning.uBlinkTimeGREEN = blinkTimeInterval;        
+ 111              		.loc 1 37 0
+ 112 0020 DA80     		strh	r2, [r3, #6]
+  38:WarningLight.c ****            setCountMax_1ms(g_warning.index_GREEN, blinkTimeInterval);        
+ 113              		.loc 1 38 0
+ 114 0022 D889     		ldrh	r0, [r3, #14]
+ 115              	.LVL8:
+ 116 0024 1100     		movs	r1, r2
+ 117              	.LVL9:
+ 118 0026 FFF7FEFF 		bl	setCountMax_1ms
+ 119              	.LVL10:
+ 120              	.L5:
+  39:WarningLight.c ****            break;        
+  40:WarningLight.c ****     }
+  41:WarningLight.c ****     
+  42:WarningLight.c **** #ifdef USE_BUZZER      
+  43:WarningLight.c ****     g_warning.bBUZZER = g_warning.bRED | g_warning.bGREEN;
+ 121              		.loc 1 43 0
+ 122 002a 034B     		ldr	r3, .L8
+ 123 002c 1978     		ldrb	r1, [r3]
+ 124 002e 1A79     		ldrb	r2, [r3, #4]
+ 125 0030 0A43     		orrs	r2, r1
+ 126 0032 1A72     		strb	r2, [r3, #8]
+  44:WarningLight.c ****    // g_warning.uBlinkTimeBUZZER = BUZZER_ON_OFF_TIME_INTERVAL;
+  45:WarningLight.c ****    // setCountMax_1ms(g_warning.index_BUZZER, g_warning.uBlinkTimeBUZZER);
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 4
+
+
+  46:WarningLight.c **** #endif    
+  47:WarningLight.c **** }
+ 127              		.loc 1 47 0
+ 128              		@ sp needed
+ 129 0034 10BD     		pop	{r4, pc}
+ 130              	.L9:
+ 131 0036 C046     		.align	2
+ 132              	.L8:
+ 133 0038 00000000 		.word	.LANCHOR0
+ 134              		.cfi_endproc
+ 135              	.LFE63:
+ 136              		.size	WarningLightSet, .-WarningLightSet
+ 137              		.section	.text.WarningLight,"ax",%progbits
+ 138              		.align	2
+ 139              		.global	WarningLight
+ 140              		.code	16
+ 141              		.thumb_func
+ 142              		.type	WarningLight, %function
+ 143              	WarningLight:
+ 144              	.LFB64:
+  48:WarningLight.c **** 
+  49:WarningLight.c **** void WarningLight()
+  50:WarningLight.c **** {
+ 145              		.loc 1 50 0
+ 146              		.cfi_startproc
+ 147              		@ args = 0, pretend = 0, frame = 0
+ 148              		@ frame_needed = 0, uses_anonymous_args = 0
+ 149 0000 10B5     		push	{r4, lr}
+ 150              		.cfi_def_cfa_offset 8
+ 151              		.cfi_offset 4, -8
+ 152              		.cfi_offset 14, -4
+  51:WarningLight.c ****     // For RED LIGHT
+  52:WarningLight.c ****     if(g_warning.bRED)
+ 153              		.loc 1 52 0
+ 154 0002 304B     		ldr	r3, .L20
+ 155 0004 1B78     		ldrb	r3, [r3]
+ 156 0006 002B     		cmp	r3, #0
+ 157 0008 18D0     		beq	.L11
+  53:WarningLight.c ****     {
+  54:WarningLight.c ****        if(isFinishCounter_1ms(g_warning.index_RED))
+ 158              		.loc 1 54 0
+ 159 000a 2E4B     		ldr	r3, .L20
+ 160 000c 9889     		ldrh	r0, [r3, #12]
+ 161 000e FFF7FEFF 		bl	isFinishCounter_1ms
+ 162              	.LVL11:
+ 163 0012 0028     		cmp	r0, #0
+ 164 0014 15D0     		beq	.L12
+  55:WarningLight.c ****        {
+  56:WarningLight.c ****            resetCounter_1ms(g_warning.index_RED);
+ 165              		.loc 1 56 0
+ 166 0016 2B4C     		ldr	r4, .L20
+ 167 0018 A089     		ldrh	r0, [r4, #12]
+ 168 001a FFF7FEFF 		bl	resetCounter_1ms
+ 169              	.LVL12:
+  57:WarningLight.c **** 
+  58:WarningLight.c ****            if(g_warning.uBlinkTimeRED == 0) RESERVED_OUT_2_Write(TRUE);
+ 170              		.loc 1 58 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 5
+
+
+ 171 001e 6388     		ldrh	r3, [r4, #2]
+ 172 0020 002B     		cmp	r3, #0
+ 173 0022 03D1     		bne	.L13
+ 174              		.loc 1 58 0 is_stmt 0 discriminator 1
+ 175 0024 0120     		movs	r0, #1
+ 176 0026 FFF7FEFF 		bl	RESERVED_OUT_2_Write
+ 177              	.LVL13:
+ 178 002a 0AE0     		b	.L12
+ 179              	.L13:
+  59:WarningLight.c ****            else                             RESERVED_OUT_2_Write(!RESERVED_OUT_2_ReadDataReg());
+ 180              		.loc 1 59 0 is_stmt 1
+ 181 002c FFF7FEFF 		bl	RESERVED_OUT_2_ReadDataReg
+ 182              	.LVL14:
+ 183 0030 4342     		rsbs	r3, r0, #0
+ 184 0032 5841     		adcs	r0, r0, r3
+ 185 0034 C0B2     		uxtb	r0, r0
+ 186 0036 FFF7FEFF 		bl	RESERVED_OUT_2_Write
+ 187              	.LVL15:
+ 188 003a 02E0     		b	.L12
+ 189              	.L11:
+  60:WarningLight.c ****        }
+  61:WarningLight.c ****     } else {
+  62:WarningLight.c ****         RESERVED_OUT_2_Write(FALSE);
+ 190              		.loc 1 62 0
+ 191 003c 0020     		movs	r0, #0
+ 192 003e FFF7FEFF 		bl	RESERVED_OUT_2_Write
+ 193              	.LVL16:
+ 194              	.L12:
+  63:WarningLight.c ****     }
+  64:WarningLight.c ****     
+  65:WarningLight.c ****     // For GREEN LIGHT
+  66:WarningLight.c ****     if(g_warning.bGREEN)
+ 195              		.loc 1 66 0
+ 196 0042 204B     		ldr	r3, .L20
+ 197 0044 1B79     		ldrb	r3, [r3, #4]
+ 198 0046 002B     		cmp	r3, #0
+ 199 0048 18D0     		beq	.L14
+  67:WarningLight.c ****     {
+  68:WarningLight.c ****        if(isFinishCounter_1ms(g_warning.index_GREEN))
+ 200              		.loc 1 68 0
+ 201 004a 1E4B     		ldr	r3, .L20
+ 202 004c D889     		ldrh	r0, [r3, #14]
+ 203 004e FFF7FEFF 		bl	isFinishCounter_1ms
+ 204              	.LVL17:
+ 205 0052 0028     		cmp	r0, #0
+ 206 0054 15D0     		beq	.L15
+  69:WarningLight.c ****        {
+  70:WarningLight.c ****            resetCounter_1ms(g_warning.index_GREEN);
+ 207              		.loc 1 70 0
+ 208 0056 1B4C     		ldr	r4, .L20
+ 209 0058 E089     		ldrh	r0, [r4, #14]
+ 210 005a FFF7FEFF 		bl	resetCounter_1ms
+ 211              	.LVL18:
+  71:WarningLight.c ****            if(g_warning.uBlinkTimeGREEN == 0) RESERVED_OUT_1_Write(TRUE);
+ 212              		.loc 1 71 0
+ 213 005e E388     		ldrh	r3, [r4, #6]
+ 214 0060 002B     		cmp	r3, #0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 6
+
+
+ 215 0062 03D1     		bne	.L16
+ 216              		.loc 1 71 0 is_stmt 0 discriminator 1
+ 217 0064 0120     		movs	r0, #1
+ 218 0066 FFF7FEFF 		bl	RESERVED_OUT_1_Write
+ 219              	.LVL19:
+ 220 006a 0AE0     		b	.L15
+ 221              	.L16:
+  72:WarningLight.c ****            else                               RESERVED_OUT_1_Write(!RESERVED_OUT_1_ReadDataReg()); 
+ 222              		.loc 1 72 0 is_stmt 1
+ 223 006c FFF7FEFF 		bl	RESERVED_OUT_1_ReadDataReg
+ 224              	.LVL20:
+ 225 0070 4342     		rsbs	r3, r0, #0
+ 226 0072 5841     		adcs	r0, r0, r3
+ 227 0074 C0B2     		uxtb	r0, r0
+ 228 0076 FFF7FEFF 		bl	RESERVED_OUT_1_Write
+ 229              	.LVL21:
+ 230 007a 02E0     		b	.L15
+ 231              	.L14:
+  73:WarningLight.c ****        }
+  74:WarningLight.c ****     } else {
+  75:WarningLight.c ****         RESERVED_OUT_1_Write(FALSE);
+ 232              		.loc 1 75 0
+ 233 007c 0020     		movs	r0, #0
+ 234 007e FFF7FEFF 		bl	RESERVED_OUT_1_Write
+ 235              	.LVL22:
+ 236              	.L15:
+  76:WarningLight.c ****     }
+  77:WarningLight.c ****     
+  78:WarningLight.c **** #ifdef USE_BUZZER    
+  79:WarningLight.c ****     // For BUZZER   
+  80:WarningLight.c ****     if(g_warning.bBUZZER)
+ 237              		.loc 1 80 0
+ 238 0082 104B     		ldr	r3, .L20
+ 239 0084 1B7A     		ldrb	r3, [r3, #8]
+ 240 0086 002B     		cmp	r3, #0
+ 241 0088 18D0     		beq	.L17
+  81:WarningLight.c ****     {
+  82:WarningLight.c ****        if(isFinishCounter_1ms(g_warning.index_BUZZER))
+ 242              		.loc 1 82 0
+ 243 008a 0E4B     		ldr	r3, .L20
+ 244 008c 188A     		ldrh	r0, [r3, #16]
+ 245 008e FFF7FEFF 		bl	isFinishCounter_1ms
+ 246              	.LVL23:
+ 247 0092 0028     		cmp	r0, #0
+ 248 0094 15D0     		beq	.L10
+  83:WarningLight.c ****        {
+  84:WarningLight.c ****            resetCounter_1ms(g_warning.index_BUZZER);
+ 249              		.loc 1 84 0
+ 250 0096 0B4C     		ldr	r4, .L20
+ 251 0098 208A     		ldrh	r0, [r4, #16]
+ 252 009a FFF7FEFF 		bl	resetCounter_1ms
+ 253              	.LVL24:
+  85:WarningLight.c ****            if(g_warning.uBlinkTimeBUZZER == 0) RESERVED_OUT_3_Write(TRUE);
+ 254              		.loc 1 85 0
+ 255 009e 6389     		ldrh	r3, [r4, #10]
+ 256 00a0 002B     		cmp	r3, #0
+ 257 00a2 03D1     		bne	.L19
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 7
+
+
+ 258              		.loc 1 85 0 is_stmt 0 discriminator 1
+ 259 00a4 0120     		movs	r0, #1
+ 260 00a6 FFF7FEFF 		bl	RESERVED_OUT_3_Write
+ 261              	.LVL25:
+ 262 00aa 0AE0     		b	.L10
+ 263              	.L19:
+  86:WarningLight.c ****            else                                RESERVED_OUT_3_Write(!RESERVED_OUT_3_ReadDataReg());
+ 264              		.loc 1 86 0 is_stmt 1
+ 265 00ac FFF7FEFF 		bl	RESERVED_OUT_3_ReadDataReg
+ 266              	.LVL26:
+ 267 00b0 4342     		rsbs	r3, r0, #0
+ 268 00b2 5841     		adcs	r0, r0, r3
+ 269 00b4 C0B2     		uxtb	r0, r0
+ 270 00b6 FFF7FEFF 		bl	RESERVED_OUT_3_Write
+ 271              	.LVL27:
+ 272 00ba 02E0     		b	.L10
+ 273              	.L17:
+  87:WarningLight.c ****        }
+  88:WarningLight.c ****     } else {
+  89:WarningLight.c ****         RESERVED_OUT_3_Write(FALSE);
+ 274              		.loc 1 89 0
+ 275 00bc 0020     		movs	r0, #0
+ 276 00be FFF7FEFF 		bl	RESERVED_OUT_3_Write
+ 277              	.LVL28:
+ 278              	.L10:
+  90:WarningLight.c ****     }
+  91:WarningLight.c **** #endif    
+  92:WarningLight.c **** }
+ 279              		.loc 1 92 0
+ 280              		@ sp needed
+ 281 00c2 10BD     		pop	{r4, pc}
+ 282              	.L21:
+ 283              		.align	2
+ 284              	.L20:
+ 285 00c4 00000000 		.word	.LANCHOR0
+ 286              		.cfi_endproc
+ 287              	.LFE64:
+ 288              		.size	WarningLight, .-WarningLight
+ 289              		.comm	Param,6,4
+ 290              		.bss
+ 291              		.align	2
+ 292              		.set	.LANCHOR0,. + 0
+ 293              		.type	g_warning, %object
+ 294              		.size	g_warning, 18
+ 295              	g_warning:
+ 296 0000 00000000 		.space	18
+ 296      00000000 
+ 296      00000000 
+ 296      00000000 
+ 296      0000
+ 297              		.text
+ 298              	.Letext0:
+ 299              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 300              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 301              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 302              		.file 5 "main.h"
+ 303              		.file 6 "WarningLight.h"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 8
+
+
+ 304              		.file 7 "Generated_Source\\PSoC4/RTC.h"
+ 305              		.file 8 "lib/sysTick.h"
+ 306              		.file 9 "Generated_Source\\PSoC4/RESERVED_OUT_2.h"
+ 307              		.file 10 "Generated_Source\\PSoC4/RESERVED_OUT_1.h"
+ 308              		.file 11 "Generated_Source\\PSoC4/RESERVED_OUT_3.h"
+ 309              		.section	.debug_info,"",%progbits
+ 310              	.Ldebug_info0:
+ 311 0000 D5030000 		.4byte	0x3d5
+ 312 0004 0400     		.2byte	0x4
+ 313 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 314 000a 04       		.byte	0x4
+ 315 000b 01       		.uleb128 0x1
+ 316 000c D4010000 		.4byte	.LASF51
+ 317 0010 0C       		.byte	0xc
+ 318 0011 F7020000 		.4byte	.LASF52
+ 319 0015 41030000 		.4byte	.LASF53
+ 320 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 321 001d 00000000 		.4byte	0
+ 322 0021 00000000 		.4byte	.Ldebug_line0
+ 323 0025 02       		.uleb128 0x2
+ 324 0026 01       		.byte	0x1
+ 325 0027 06       		.byte	0x6
+ 326 0028 BA010000 		.4byte	.LASF0
+ 327 002c 03       		.uleb128 0x3
+ 328 002d 0C000000 		.4byte	.LASF3
+ 329 0031 02       		.byte	0x2
+ 330 0032 1D       		.byte	0x1d
+ 331 0033 37000000 		.4byte	0x37
+ 332 0037 02       		.uleb128 0x2
+ 333 0038 01       		.byte	0x1
+ 334 0039 08       		.byte	0x8
+ 335 003a 7A000000 		.4byte	.LASF1
+ 336 003e 02       		.uleb128 0x2
+ 337 003f 02       		.byte	0x2
+ 338 0040 05       		.byte	0x5
+ 339 0041 3F010000 		.4byte	.LASF2
+ 340 0045 03       		.uleb128 0x3
+ 341 0046 1C010000 		.4byte	.LASF4
+ 342 004a 02       		.byte	0x2
+ 343 004b 2B       		.byte	0x2b
+ 344 004c 50000000 		.4byte	0x50
+ 345 0050 02       		.uleb128 0x2
+ 346 0051 02       		.byte	0x2
+ 347 0052 07       		.byte	0x7
+ 348 0053 DA000000 		.4byte	.LASF5
+ 349 0057 02       		.uleb128 0x2
+ 350 0058 04       		.byte	0x4
+ 351 0059 05       		.byte	0x5
+ 352 005a 2C000000 		.4byte	.LASF6
+ 353 005e 02       		.uleb128 0x2
+ 354 005f 04       		.byte	0x4
+ 355 0060 07       		.byte	0x7
+ 356 0061 BD000000 		.4byte	.LASF7
+ 357 0065 02       		.uleb128 0x2
+ 358 0066 08       		.byte	0x8
+ 359 0067 05       		.byte	0x5
+ 360 0068 9B020000 		.4byte	.LASF8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 9
+
+
+ 361 006c 02       		.uleb128 0x2
+ 362 006d 08       		.byte	0x8
+ 363 006e 07       		.byte	0x7
+ 364 006f 8A010000 		.4byte	.LASF9
+ 365 0073 04       		.uleb128 0x4
+ 366 0074 04       		.byte	0x4
+ 367 0075 05       		.byte	0x5
+ 368 0076 696E7400 		.ascii	"int\000"
+ 369 007a 02       		.uleb128 0x2
+ 370 007b 04       		.byte	0x4
+ 371 007c 07       		.byte	0x7
+ 372 007d 6D010000 		.4byte	.LASF10
+ 373 0081 03       		.uleb128 0x3
+ 374 0082 A1010000 		.4byte	.LASF11
+ 375 0086 03       		.byte	0x3
+ 376 0087 18       		.byte	0x18
+ 377 0088 2C000000 		.4byte	0x2c
+ 378 008c 03       		.uleb128 0x3
+ 379 008d EE020000 		.4byte	.LASF12
+ 380 0091 03       		.byte	0x3
+ 381 0092 24       		.byte	0x24
+ 382 0093 45000000 		.4byte	0x45
+ 383 0097 05       		.uleb128 0x5
+ 384 0098 52000000 		.4byte	.LASF13
+ 385 009c 04       		.byte	0x4
+ 386 009d FC01     		.2byte	0x1fc
+ 387 009f 37000000 		.4byte	0x37
+ 388 00a3 05       		.uleb128 0x5
+ 389 00a4 49010000 		.4byte	.LASF14
+ 390 00a8 04       		.byte	0x4
+ 391 00a9 FD01     		.2byte	0x1fd
+ 392 00ab 50000000 		.4byte	0x50
+ 393 00af 05       		.uleb128 0x5
+ 394 00b0 B7000000 		.4byte	.LASF15
+ 395 00b4 04       		.byte	0x4
+ 396 00b5 0002     		.2byte	0x200
+ 397 00b7 3E000000 		.4byte	0x3e
+ 398 00bb 02       		.uleb128 0x2
+ 399 00bc 04       		.byte	0x4
+ 400 00bd 04       		.byte	0x4
+ 401 00be 16000000 		.4byte	.LASF16
+ 402 00c2 02       		.uleb128 0x2
+ 403 00c3 08       		.byte	0x8
+ 404 00c4 04       		.byte	0x4
+ 405 00c5 4B000000 		.4byte	.LASF17
+ 406 00c9 02       		.uleb128 0x2
+ 407 00ca 01       		.byte	0x1
+ 408 00cb 08       		.byte	0x8
+ 409 00cc 06030000 		.4byte	.LASF18
+ 410 00d0 02       		.uleb128 0x2
+ 411 00d1 08       		.byte	0x8
+ 412 00d2 04       		.byte	0x4
+ 413 00d3 33010000 		.4byte	.LASF19
+ 414 00d7 02       		.uleb128 0x2
+ 415 00d8 04       		.byte	0x4
+ 416 00d9 07       		.byte	0x7
+ 417 00da 7D020000 		.4byte	.LASF20
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 10
+
+
+ 418 00de 06       		.uleb128 0x6
+ 419 00df CF000000 		.4byte	.LASF54
+ 420 00e3 06       		.byte	0x6
+ 421 00e4 05       		.byte	0x5
+ 422 00e5 2E       		.byte	0x2e
+ 423 00e6 0F010000 		.4byte	0x10f
+ 424 00ea 07       		.uleb128 0x7
+ 425 00eb 00000000 		.4byte	.LASF21
+ 426 00ef 05       		.byte	0x5
+ 427 00f0 30       		.byte	0x30
+ 428 00f1 97000000 		.4byte	0x97
+ 429 00f5 00       		.byte	0
+ 430 00f6 07       		.uleb128 0x7
+ 431 00f7 27010000 		.4byte	.LASF22
+ 432 00fb 05       		.byte	0x5
+ 433 00fc 31       		.byte	0x31
+ 434 00fd A3000000 		.4byte	0xa3
+ 435 0101 02       		.byte	0x2
+ 436 0102 07       		.uleb128 0x7
+ 437 0103 2D010000 		.4byte	.LASF23
+ 438 0107 05       		.byte	0x5
+ 439 0108 32       		.byte	0x32
+ 440 0109 A3000000 		.4byte	0xa3
+ 441 010d 04       		.byte	0x4
+ 442 010e 00       		.byte	0
+ 443 010f 08       		.uleb128 0x8
+ 444 0110 12       		.byte	0x12
+ 445 0111 06       		.byte	0x6
+ 446 0112 10       		.byte	0x10
+ 447 0113 84010000 		.4byte	0x184
+ 448 0117 07       		.uleb128 0x7
+ 449 0118 B5010000 		.4byte	.LASF24
+ 450 011c 06       		.byte	0x6
+ 451 011d 11       		.byte	0x11
+ 452 011e 81000000 		.4byte	0x81
+ 453 0122 00       		.byte	0
+ 454 0123 07       		.uleb128 0x7
+ 455 0124 C6010000 		.4byte	.LASF25
+ 456 0128 06       		.byte	0x6
+ 457 0129 12       		.byte	0x12
+ 458 012a 8C000000 		.4byte	0x8c
+ 459 012e 02       		.byte	0x2
+ 460 012f 07       		.uleb128 0x7
+ 461 0130 A9020000 		.4byte	.LASF26
+ 462 0134 06       		.byte	0x6
+ 463 0135 14       		.byte	0x14
+ 464 0136 81000000 		.4byte	0x81
+ 465 013a 04       		.byte	0x4
+ 466 013b 07       		.uleb128 0x7
+ 467 013c 6A000000 		.4byte	.LASF27
+ 468 0140 06       		.byte	0x6
+ 469 0141 15       		.byte	0x15
+ 470 0142 8C000000 		.4byte	0x8c
+ 471 0146 06       		.byte	0x6
+ 472 0147 07       		.uleb128 0x7
+ 473 0148 B6020000 		.4byte	.LASF28
+ 474 014c 06       		.byte	0x6
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 11
+
+
+ 475 014d 17       		.byte	0x17
+ 476 014e 81000000 		.4byte	0x81
+ 477 0152 08       		.byte	0x8
+ 478 0153 07       		.uleb128 0x7
+ 479 0154 AF030000 		.4byte	.LASF29
+ 480 0158 06       		.byte	0x6
+ 481 0159 18       		.byte	0x18
+ 482 015a 8C000000 		.4byte	0x8c
+ 483 015e 0A       		.byte	0xa
+ 484 015f 07       		.uleb128 0x7
+ 485 0160 35000000 		.4byte	.LASF30
+ 486 0164 06       		.byte	0x6
+ 487 0165 1A       		.byte	0x1a
+ 488 0166 A3000000 		.4byte	0xa3
+ 489 016a 0C       		.byte	0xc
+ 490 016b 07       		.uleb128 0x7
+ 491 016c A9010000 		.4byte	.LASF31
+ 492 0170 06       		.byte	0x6
+ 493 0171 1B       		.byte	0x1b
+ 494 0172 A3000000 		.4byte	0xa3
+ 495 0176 0E       		.byte	0xe
+ 496 0177 07       		.uleb128 0x7
+ 497 0178 A2030000 		.4byte	.LASF32
+ 498 017c 06       		.byte	0x6
+ 499 017d 1C       		.byte	0x1c
+ 500 017e A3000000 		.4byte	0xa3
+ 501 0182 10       		.byte	0x10
+ 502 0183 00       		.byte	0
+ 503 0184 03       		.uleb128 0x3
+ 504 0185 0E010000 		.4byte	.LASF33
+ 505 0189 06       		.byte	0x6
+ 506 018a 1E       		.byte	0x1e
+ 507 018b 0F010000 		.4byte	0x10f
+ 508 018f 09       		.uleb128 0x9
+ 509 0190 3F000000 		.4byte	.LASF37
+ 510 0194 01       		.byte	0x1
+ 511 0195 10       		.byte	0x10
+ 512 0196 00000000 		.4byte	.LFB62
+ 513 019a 28000000 		.4byte	.LFE62-.LFB62
+ 514 019e 01       		.uleb128 0x1
+ 515 019f 9C       		.byte	0x9c
+ 516 01a0 DD010000 		.4byte	0x1dd
+ 517 01a4 0A       		.uleb128 0xa
+ 518 01a5 0C000000 		.4byte	.LVL0
+ 519 01a9 6A030000 		.4byte	0x36a
+ 520 01ad B8010000 		.4byte	0x1b8
+ 521 01b1 0B       		.uleb128 0xb
+ 522 01b2 01       		.uleb128 0x1
+ 523 01b3 50       		.byte	0x50
+ 524 01b4 02       		.uleb128 0x2
+ 525 01b5 75       		.byte	0x75
+ 526 01b6 00       		.sleb128 0
+ 527 01b7 00       		.byte	0
+ 528 01b8 0A       		.uleb128 0xa
+ 529 01b9 16000000 		.4byte	.LVL1
+ 530 01bd 6A030000 		.4byte	0x36a
+ 531 01c1 CC010000 		.4byte	0x1cc
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 12
+
+
+ 532 01c5 0B       		.uleb128 0xb
+ 533 01c6 01       		.uleb128 0x1
+ 534 01c7 50       		.byte	0x50
+ 535 01c8 02       		.uleb128 0x2
+ 536 01c9 75       		.byte	0x75
+ 537 01ca 00       		.sleb128 0
+ 538 01cb 00       		.byte	0
+ 539 01cc 0C       		.uleb128 0xc
+ 540 01cd 1E000000 		.4byte	.LVL2
+ 541 01d1 6A030000 		.4byte	0x36a
+ 542 01d5 0B       		.uleb128 0xb
+ 543 01d6 01       		.uleb128 0x1
+ 544 01d7 50       		.byte	0x50
+ 545 01d8 02       		.uleb128 0x2
+ 546 01d9 75       		.byte	0x75
+ 547 01da 00       		.sleb128 0
+ 548 01db 00       		.byte	0
+ 549 01dc 00       		.byte	0
+ 550 01dd 0D       		.uleb128 0xd
+ 551 01de 7A010000 		.4byte	.LASF55
+ 552 01e2 01       		.byte	0x1
+ 553 01e3 1A       		.byte	0x1a
+ 554 01e4 00000000 		.4byte	.LFB63
+ 555 01e8 3C000000 		.4byte	.LFE63-.LFB63
+ 556 01ec 01       		.uleb128 0x1
+ 557 01ed 9C       		.byte	0x9c
+ 558 01ee 32020000 		.4byte	0x232
+ 559 01f2 0E       		.uleb128 0xe
+ 560 01f3 B0020000 		.4byte	.LASF34
+ 561 01f7 01       		.byte	0x1
+ 562 01f8 1A       		.byte	0x1a
+ 563 01f9 AF000000 		.4byte	0xaf
+ 564 01fd 00000000 		.4byte	.LLST0
+ 565 0201 0E       		.uleb128 0xe
+ 566 0202 50010000 		.4byte	.LASF35
+ 567 0206 01       		.byte	0x1
+ 568 0207 1A       		.byte	0x1a
+ 569 0208 97000000 		.4byte	0x97
+ 570 020c 3A000000 		.4byte	.LLST1
+ 571 0210 0E       		.uleb128 0xe
+ 572 0211 58000000 		.4byte	.LASF36
+ 573 0215 01       		.byte	0x1
+ 574 0216 1A       		.byte	0x1a
+ 575 0217 A3000000 		.4byte	0xa3
+ 576 021b 92000000 		.4byte	.LLST2
+ 577 021f 0F       		.uleb128 0xf
+ 578 0220 1A000000 		.4byte	.LVL6
+ 579 0224 75030000 		.4byte	0x375
+ 580 0228 0F       		.uleb128 0xf
+ 581 0229 2A000000 		.4byte	.LVL10
+ 582 022d 75030000 		.4byte	0x375
+ 583 0231 00       		.byte	0
+ 584 0232 09       		.uleb128 0x9
+ 585 0233 01010000 		.4byte	.LASF38
+ 586 0237 01       		.byte	0x1
+ 587 0238 31       		.byte	0x31
+ 588 0239 00000000 		.4byte	.LFB64
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 13
+
+
+ 589 023d C8000000 		.4byte	.LFE64-.LFB64
+ 590 0241 01       		.uleb128 0x1
+ 591 0242 9C       		.byte	0x9c
+ 592 0243 22030000 		.4byte	0x322
+ 593 0247 0F       		.uleb128 0xf
+ 594 0248 12000000 		.4byte	.LVL11
+ 595 024c 80030000 		.4byte	0x380
+ 596 0250 0F       		.uleb128 0xf
+ 597 0251 1E000000 		.4byte	.LVL12
+ 598 0255 8B030000 		.4byte	0x38b
+ 599 0259 0A       		.uleb128 0xa
+ 600 025a 2A000000 		.4byte	.LVL13
+ 601 025e 96030000 		.4byte	0x396
+ 602 0262 6C020000 		.4byte	0x26c
+ 603 0266 0B       		.uleb128 0xb
+ 604 0267 01       		.uleb128 0x1
+ 605 0268 50       		.byte	0x50
+ 606 0269 01       		.uleb128 0x1
+ 607 026a 31       		.byte	0x31
+ 608 026b 00       		.byte	0
+ 609 026c 0F       		.uleb128 0xf
+ 610 026d 30000000 		.4byte	.LVL14
+ 611 0271 A1030000 		.4byte	0x3a1
+ 612 0275 0F       		.uleb128 0xf
+ 613 0276 3A000000 		.4byte	.LVL15
+ 614 027a 96030000 		.4byte	0x396
+ 615 027e 0A       		.uleb128 0xa
+ 616 027f 42000000 		.4byte	.LVL16
+ 617 0283 96030000 		.4byte	0x396
+ 618 0287 91020000 		.4byte	0x291
+ 619 028b 0B       		.uleb128 0xb
+ 620 028c 01       		.uleb128 0x1
+ 621 028d 50       		.byte	0x50
+ 622 028e 01       		.uleb128 0x1
+ 623 028f 30       		.byte	0x30
+ 624 0290 00       		.byte	0
+ 625 0291 0F       		.uleb128 0xf
+ 626 0292 52000000 		.4byte	.LVL17
+ 627 0296 80030000 		.4byte	0x380
+ 628 029a 0F       		.uleb128 0xf
+ 629 029b 5E000000 		.4byte	.LVL18
+ 630 029f 8B030000 		.4byte	0x38b
+ 631 02a3 0A       		.uleb128 0xa
+ 632 02a4 6A000000 		.4byte	.LVL19
+ 633 02a8 AC030000 		.4byte	0x3ac
+ 634 02ac B6020000 		.4byte	0x2b6
+ 635 02b0 0B       		.uleb128 0xb
+ 636 02b1 01       		.uleb128 0x1
+ 637 02b2 50       		.byte	0x50
+ 638 02b3 01       		.uleb128 0x1
+ 639 02b4 31       		.byte	0x31
+ 640 02b5 00       		.byte	0
+ 641 02b6 0F       		.uleb128 0xf
+ 642 02b7 70000000 		.4byte	.LVL20
+ 643 02bb B7030000 		.4byte	0x3b7
+ 644 02bf 0F       		.uleb128 0xf
+ 645 02c0 7A000000 		.4byte	.LVL21
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 14
+
+
+ 646 02c4 AC030000 		.4byte	0x3ac
+ 647 02c8 0A       		.uleb128 0xa
+ 648 02c9 82000000 		.4byte	.LVL22
+ 649 02cd AC030000 		.4byte	0x3ac
+ 650 02d1 DB020000 		.4byte	0x2db
+ 651 02d5 0B       		.uleb128 0xb
+ 652 02d6 01       		.uleb128 0x1
+ 653 02d7 50       		.byte	0x50
+ 654 02d8 01       		.uleb128 0x1
+ 655 02d9 30       		.byte	0x30
+ 656 02da 00       		.byte	0
+ 657 02db 0F       		.uleb128 0xf
+ 658 02dc 92000000 		.4byte	.LVL23
+ 659 02e0 80030000 		.4byte	0x380
+ 660 02e4 0F       		.uleb128 0xf
+ 661 02e5 9E000000 		.4byte	.LVL24
+ 662 02e9 8B030000 		.4byte	0x38b
+ 663 02ed 0A       		.uleb128 0xa
+ 664 02ee AA000000 		.4byte	.LVL25
+ 665 02f2 C2030000 		.4byte	0x3c2
+ 666 02f6 00030000 		.4byte	0x300
+ 667 02fa 0B       		.uleb128 0xb
+ 668 02fb 01       		.uleb128 0x1
+ 669 02fc 50       		.byte	0x50
+ 670 02fd 01       		.uleb128 0x1
+ 671 02fe 31       		.byte	0x31
+ 672 02ff 00       		.byte	0
+ 673 0300 0F       		.uleb128 0xf
+ 674 0301 B0000000 		.4byte	.LVL26
+ 675 0305 CD030000 		.4byte	0x3cd
+ 676 0309 0F       		.uleb128 0xf
+ 677 030a BA000000 		.4byte	.LVL27
+ 678 030e C2030000 		.4byte	0x3c2
+ 679 0312 0C       		.uleb128 0xc
+ 680 0313 C2000000 		.4byte	.LVL28
+ 681 0317 C2030000 		.4byte	0x3c2
+ 682 031b 0B       		.uleb128 0xb
+ 683 031c 01       		.uleb128 0x1
+ 684 031d 50       		.byte	0x50
+ 685 031e 01       		.uleb128 0x1
+ 686 031f 30       		.byte	0x30
+ 687 0320 00       		.byte	0
+ 688 0321 00       		.byte	0
+ 689 0322 10       		.uleb128 0x10
+ 690 0323 37030000 		.4byte	.LASF56
+ 691 0327 01       		.byte	0x1
+ 692 0328 05       		.byte	0x5
+ 693 0329 84010000 		.4byte	0x184
+ 694 032d 05       		.uleb128 0x5
+ 695 032e 03       		.byte	0x3
+ 696 032f 00000000 		.4byte	g_warning
+ 697 0333 11       		.uleb128 0x11
+ 698 0334 43030000 		.4byte	0x343
+ 699 0338 43030000 		.4byte	0x343
+ 700 033c 12       		.uleb128 0x12
+ 701 033d D7000000 		.4byte	0xd7
+ 702 0341 0B       		.byte	0xb
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 15
+
+
+ 703 0342 00       		.byte	0
+ 704 0343 13       		.uleb128 0x13
+ 705 0344 A3000000 		.4byte	0xa3
+ 706 0348 14       		.uleb128 0x14
+ 707 0349 0B030000 		.4byte	.LASF39
+ 708 034d 07       		.byte	0x7
+ 709 034e E001     		.2byte	0x1e0
+ 710 0350 54030000 		.4byte	0x354
+ 711 0354 13       		.uleb128 0x13
+ 712 0355 33030000 		.4byte	0x333
+ 713 0359 15       		.uleb128 0x15
+ 714 035a 56010000 		.4byte	.LASF40
+ 715 035e 05       		.byte	0x5
+ 716 035f 35       		.byte	0x35
+ 717 0360 DE000000 		.4byte	0xde
+ 718 0364 05       		.uleb128 0x5
+ 719 0365 03       		.byte	0x3
+ 720 0366 00000000 		.4byte	Param
+ 721 036a 16       		.uleb128 0x16
+ 722 036b ED000000 		.4byte	.LASF41
+ 723 036f ED000000 		.4byte	.LASF41
+ 724 0373 08       		.byte	0x8
+ 725 0374 1A       		.byte	0x1a
+ 726 0375 16       		.uleb128 0x16
+ 727 0376 1C000000 		.4byte	.LASF42
+ 728 037a 1C000000 		.4byte	.LASF42
+ 729 037e 08       		.byte	0x8
+ 730 037f 1D       		.byte	0x1d
+ 731 0380 16       		.uleb128 0x16
+ 732 0381 88000000 		.4byte	.LASF43
+ 733 0385 88000000 		.4byte	.LASF43
+ 734 0389 08       		.byte	0x8
+ 735 038a 17       		.byte	0x17
+ 736 038b 16       		.uleb128 0x16
+ 737 038c 5C010000 		.4byte	.LASF44
+ 738 0390 5C010000 		.4byte	.LASF44
+ 739 0394 08       		.byte	0x8
+ 740 0395 20       		.byte	0x20
+ 741 0396 16       		.uleb128 0x16
+ 742 0397 D9020000 		.4byte	.LASF45
+ 743 039b D9020000 		.4byte	.LASF45
+ 744 039f 09       		.byte	0x9
+ 745 03a0 33       		.byte	0x33
+ 746 03a1 16       		.uleb128 0x16
+ 747 03a2 9C000000 		.4byte	.LASF46
+ 748 03a6 9C000000 		.4byte	.LASF46
+ 749 03aa 09       		.byte	0x9
+ 750 03ab 34       		.byte	0x34
+ 751 03ac 16       		.uleb128 0x16
+ 752 03ad 86020000 		.4byte	.LASF47
+ 753 03b1 86020000 		.4byte	.LASF47
+ 754 03b5 0A       		.byte	0xa
+ 755 03b6 33       		.byte	0x33
+ 756 03b7 16       		.uleb128 0x16
+ 757 03b8 BE020000 		.4byte	.LASF48
+ 758 03bc BE020000 		.4byte	.LASF48
+ 759 03c0 0A       		.byte	0xa
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 16
+
+
+ 760 03c1 34       		.byte	0x34
+ 761 03c2 16       		.uleb128 0x16
+ 762 03c3 22030000 		.4byte	.LASF49
+ 763 03c7 22030000 		.4byte	.LASF49
+ 764 03cb 0B       		.byte	0xb
+ 765 03cc 33       		.byte	0x33
+ 766 03cd 16       		.uleb128 0x16
+ 767 03ce 62020000 		.4byte	.LASF50
+ 768 03d2 62020000 		.4byte	.LASF50
+ 769 03d6 0B       		.byte	0xb
+ 770 03d7 34       		.byte	0x34
+ 771 03d8 00       		.byte	0
+ 772              		.section	.debug_abbrev,"",%progbits
+ 773              	.Ldebug_abbrev0:
+ 774 0000 01       		.uleb128 0x1
+ 775 0001 11       		.uleb128 0x11
+ 776 0002 01       		.byte	0x1
+ 777 0003 25       		.uleb128 0x25
+ 778 0004 0E       		.uleb128 0xe
+ 779 0005 13       		.uleb128 0x13
+ 780 0006 0B       		.uleb128 0xb
+ 781 0007 03       		.uleb128 0x3
+ 782 0008 0E       		.uleb128 0xe
+ 783 0009 1B       		.uleb128 0x1b
+ 784 000a 0E       		.uleb128 0xe
+ 785 000b 55       		.uleb128 0x55
+ 786 000c 17       		.uleb128 0x17
+ 787 000d 11       		.uleb128 0x11
+ 788 000e 01       		.uleb128 0x1
+ 789 000f 10       		.uleb128 0x10
+ 790 0010 17       		.uleb128 0x17
+ 791 0011 00       		.byte	0
+ 792 0012 00       		.byte	0
+ 793 0013 02       		.uleb128 0x2
+ 794 0014 24       		.uleb128 0x24
+ 795 0015 00       		.byte	0
+ 796 0016 0B       		.uleb128 0xb
+ 797 0017 0B       		.uleb128 0xb
+ 798 0018 3E       		.uleb128 0x3e
+ 799 0019 0B       		.uleb128 0xb
+ 800 001a 03       		.uleb128 0x3
+ 801 001b 0E       		.uleb128 0xe
+ 802 001c 00       		.byte	0
+ 803 001d 00       		.byte	0
+ 804 001e 03       		.uleb128 0x3
+ 805 001f 16       		.uleb128 0x16
+ 806 0020 00       		.byte	0
+ 807 0021 03       		.uleb128 0x3
+ 808 0022 0E       		.uleb128 0xe
+ 809 0023 3A       		.uleb128 0x3a
+ 810 0024 0B       		.uleb128 0xb
+ 811 0025 3B       		.uleb128 0x3b
+ 812 0026 0B       		.uleb128 0xb
+ 813 0027 49       		.uleb128 0x49
+ 814 0028 13       		.uleb128 0x13
+ 815 0029 00       		.byte	0
+ 816 002a 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 17
+
+
+ 817 002b 04       		.uleb128 0x4
+ 818 002c 24       		.uleb128 0x24
+ 819 002d 00       		.byte	0
+ 820 002e 0B       		.uleb128 0xb
+ 821 002f 0B       		.uleb128 0xb
+ 822 0030 3E       		.uleb128 0x3e
+ 823 0031 0B       		.uleb128 0xb
+ 824 0032 03       		.uleb128 0x3
+ 825 0033 08       		.uleb128 0x8
+ 826 0034 00       		.byte	0
+ 827 0035 00       		.byte	0
+ 828 0036 05       		.uleb128 0x5
+ 829 0037 16       		.uleb128 0x16
+ 830 0038 00       		.byte	0
+ 831 0039 03       		.uleb128 0x3
+ 832 003a 0E       		.uleb128 0xe
+ 833 003b 3A       		.uleb128 0x3a
+ 834 003c 0B       		.uleb128 0xb
+ 835 003d 3B       		.uleb128 0x3b
+ 836 003e 05       		.uleb128 0x5
+ 837 003f 49       		.uleb128 0x49
+ 838 0040 13       		.uleb128 0x13
+ 839 0041 00       		.byte	0
+ 840 0042 00       		.byte	0
+ 841 0043 06       		.uleb128 0x6
+ 842 0044 13       		.uleb128 0x13
+ 843 0045 01       		.byte	0x1
+ 844 0046 03       		.uleb128 0x3
+ 845 0047 0E       		.uleb128 0xe
+ 846 0048 0B       		.uleb128 0xb
+ 847 0049 0B       		.uleb128 0xb
+ 848 004a 3A       		.uleb128 0x3a
+ 849 004b 0B       		.uleb128 0xb
+ 850 004c 3B       		.uleb128 0x3b
+ 851 004d 0B       		.uleb128 0xb
+ 852 004e 01       		.uleb128 0x1
+ 853 004f 13       		.uleb128 0x13
+ 854 0050 00       		.byte	0
+ 855 0051 00       		.byte	0
+ 856 0052 07       		.uleb128 0x7
+ 857 0053 0D       		.uleb128 0xd
+ 858 0054 00       		.byte	0
+ 859 0055 03       		.uleb128 0x3
+ 860 0056 0E       		.uleb128 0xe
+ 861 0057 3A       		.uleb128 0x3a
+ 862 0058 0B       		.uleb128 0xb
+ 863 0059 3B       		.uleb128 0x3b
+ 864 005a 0B       		.uleb128 0xb
+ 865 005b 49       		.uleb128 0x49
+ 866 005c 13       		.uleb128 0x13
+ 867 005d 38       		.uleb128 0x38
+ 868 005e 0B       		.uleb128 0xb
+ 869 005f 00       		.byte	0
+ 870 0060 00       		.byte	0
+ 871 0061 08       		.uleb128 0x8
+ 872 0062 13       		.uleb128 0x13
+ 873 0063 01       		.byte	0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 18
+
+
+ 874 0064 0B       		.uleb128 0xb
+ 875 0065 0B       		.uleb128 0xb
+ 876 0066 3A       		.uleb128 0x3a
+ 877 0067 0B       		.uleb128 0xb
+ 878 0068 3B       		.uleb128 0x3b
+ 879 0069 0B       		.uleb128 0xb
+ 880 006a 01       		.uleb128 0x1
+ 881 006b 13       		.uleb128 0x13
+ 882 006c 00       		.byte	0
+ 883 006d 00       		.byte	0
+ 884 006e 09       		.uleb128 0x9
+ 885 006f 2E       		.uleb128 0x2e
+ 886 0070 01       		.byte	0x1
+ 887 0071 3F       		.uleb128 0x3f
+ 888 0072 19       		.uleb128 0x19
+ 889 0073 03       		.uleb128 0x3
+ 890 0074 0E       		.uleb128 0xe
+ 891 0075 3A       		.uleb128 0x3a
+ 892 0076 0B       		.uleb128 0xb
+ 893 0077 3B       		.uleb128 0x3b
+ 894 0078 0B       		.uleb128 0xb
+ 895 0079 11       		.uleb128 0x11
+ 896 007a 01       		.uleb128 0x1
+ 897 007b 12       		.uleb128 0x12
+ 898 007c 06       		.uleb128 0x6
+ 899 007d 40       		.uleb128 0x40
+ 900 007e 18       		.uleb128 0x18
+ 901 007f 9742     		.uleb128 0x2117
+ 902 0081 19       		.uleb128 0x19
+ 903 0082 01       		.uleb128 0x1
+ 904 0083 13       		.uleb128 0x13
+ 905 0084 00       		.byte	0
+ 906 0085 00       		.byte	0
+ 907 0086 0A       		.uleb128 0xa
+ 908 0087 898201   		.uleb128 0x4109
+ 909 008a 01       		.byte	0x1
+ 910 008b 11       		.uleb128 0x11
+ 911 008c 01       		.uleb128 0x1
+ 912 008d 31       		.uleb128 0x31
+ 913 008e 13       		.uleb128 0x13
+ 914 008f 01       		.uleb128 0x1
+ 915 0090 13       		.uleb128 0x13
+ 916 0091 00       		.byte	0
+ 917 0092 00       		.byte	0
+ 918 0093 0B       		.uleb128 0xb
+ 919 0094 8A8201   		.uleb128 0x410a
+ 920 0097 00       		.byte	0
+ 921 0098 02       		.uleb128 0x2
+ 922 0099 18       		.uleb128 0x18
+ 923 009a 9142     		.uleb128 0x2111
+ 924 009c 18       		.uleb128 0x18
+ 925 009d 00       		.byte	0
+ 926 009e 00       		.byte	0
+ 927 009f 0C       		.uleb128 0xc
+ 928 00a0 898201   		.uleb128 0x4109
+ 929 00a3 01       		.byte	0x1
+ 930 00a4 11       		.uleb128 0x11
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 19
+
+
+ 931 00a5 01       		.uleb128 0x1
+ 932 00a6 31       		.uleb128 0x31
+ 933 00a7 13       		.uleb128 0x13
+ 934 00a8 00       		.byte	0
+ 935 00a9 00       		.byte	0
+ 936 00aa 0D       		.uleb128 0xd
+ 937 00ab 2E       		.uleb128 0x2e
+ 938 00ac 01       		.byte	0x1
+ 939 00ad 3F       		.uleb128 0x3f
+ 940 00ae 19       		.uleb128 0x19
+ 941 00af 03       		.uleb128 0x3
+ 942 00b0 0E       		.uleb128 0xe
+ 943 00b1 3A       		.uleb128 0x3a
+ 944 00b2 0B       		.uleb128 0xb
+ 945 00b3 3B       		.uleb128 0x3b
+ 946 00b4 0B       		.uleb128 0xb
+ 947 00b5 27       		.uleb128 0x27
+ 948 00b6 19       		.uleb128 0x19
+ 949 00b7 11       		.uleb128 0x11
+ 950 00b8 01       		.uleb128 0x1
+ 951 00b9 12       		.uleb128 0x12
+ 952 00ba 06       		.uleb128 0x6
+ 953 00bb 40       		.uleb128 0x40
+ 954 00bc 18       		.uleb128 0x18
+ 955 00bd 9742     		.uleb128 0x2117
+ 956 00bf 19       		.uleb128 0x19
+ 957 00c0 01       		.uleb128 0x1
+ 958 00c1 13       		.uleb128 0x13
+ 959 00c2 00       		.byte	0
+ 960 00c3 00       		.byte	0
+ 961 00c4 0E       		.uleb128 0xe
+ 962 00c5 05       		.uleb128 0x5
+ 963 00c6 00       		.byte	0
+ 964 00c7 03       		.uleb128 0x3
+ 965 00c8 0E       		.uleb128 0xe
+ 966 00c9 3A       		.uleb128 0x3a
+ 967 00ca 0B       		.uleb128 0xb
+ 968 00cb 3B       		.uleb128 0x3b
+ 969 00cc 0B       		.uleb128 0xb
+ 970 00cd 49       		.uleb128 0x49
+ 971 00ce 13       		.uleb128 0x13
+ 972 00cf 02       		.uleb128 0x2
+ 973 00d0 17       		.uleb128 0x17
+ 974 00d1 00       		.byte	0
+ 975 00d2 00       		.byte	0
+ 976 00d3 0F       		.uleb128 0xf
+ 977 00d4 898201   		.uleb128 0x4109
+ 978 00d7 00       		.byte	0
+ 979 00d8 11       		.uleb128 0x11
+ 980 00d9 01       		.uleb128 0x1
+ 981 00da 31       		.uleb128 0x31
+ 982 00db 13       		.uleb128 0x13
+ 983 00dc 00       		.byte	0
+ 984 00dd 00       		.byte	0
+ 985 00de 10       		.uleb128 0x10
+ 986 00df 34       		.uleb128 0x34
+ 987 00e0 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 20
+
+
+ 988 00e1 03       		.uleb128 0x3
+ 989 00e2 0E       		.uleb128 0xe
+ 990 00e3 3A       		.uleb128 0x3a
+ 991 00e4 0B       		.uleb128 0xb
+ 992 00e5 3B       		.uleb128 0x3b
+ 993 00e6 0B       		.uleb128 0xb
+ 994 00e7 49       		.uleb128 0x49
+ 995 00e8 13       		.uleb128 0x13
+ 996 00e9 02       		.uleb128 0x2
+ 997 00ea 18       		.uleb128 0x18
+ 998 00eb 00       		.byte	0
+ 999 00ec 00       		.byte	0
+ 1000 00ed 11       		.uleb128 0x11
+ 1001 00ee 01       		.uleb128 0x1
+ 1002 00ef 01       		.byte	0x1
+ 1003 00f0 49       		.uleb128 0x49
+ 1004 00f1 13       		.uleb128 0x13
+ 1005 00f2 01       		.uleb128 0x1
+ 1006 00f3 13       		.uleb128 0x13
+ 1007 00f4 00       		.byte	0
+ 1008 00f5 00       		.byte	0
+ 1009 00f6 12       		.uleb128 0x12
+ 1010 00f7 21       		.uleb128 0x21
+ 1011 00f8 00       		.byte	0
+ 1012 00f9 49       		.uleb128 0x49
+ 1013 00fa 13       		.uleb128 0x13
+ 1014 00fb 2F       		.uleb128 0x2f
+ 1015 00fc 0B       		.uleb128 0xb
+ 1016 00fd 00       		.byte	0
+ 1017 00fe 00       		.byte	0
+ 1018 00ff 13       		.uleb128 0x13
+ 1019 0100 26       		.uleb128 0x26
+ 1020 0101 00       		.byte	0
+ 1021 0102 49       		.uleb128 0x49
+ 1022 0103 13       		.uleb128 0x13
+ 1023 0104 00       		.byte	0
+ 1024 0105 00       		.byte	0
+ 1025 0106 14       		.uleb128 0x14
+ 1026 0107 34       		.uleb128 0x34
+ 1027 0108 00       		.byte	0
+ 1028 0109 03       		.uleb128 0x3
+ 1029 010a 0E       		.uleb128 0xe
+ 1030 010b 3A       		.uleb128 0x3a
+ 1031 010c 0B       		.uleb128 0xb
+ 1032 010d 3B       		.uleb128 0x3b
+ 1033 010e 05       		.uleb128 0x5
+ 1034 010f 49       		.uleb128 0x49
+ 1035 0110 13       		.uleb128 0x13
+ 1036 0111 3F       		.uleb128 0x3f
+ 1037 0112 19       		.uleb128 0x19
+ 1038 0113 3C       		.uleb128 0x3c
+ 1039 0114 19       		.uleb128 0x19
+ 1040 0115 00       		.byte	0
+ 1041 0116 00       		.byte	0
+ 1042 0117 15       		.uleb128 0x15
+ 1043 0118 34       		.uleb128 0x34
+ 1044 0119 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 21
+
+
+ 1045 011a 03       		.uleb128 0x3
+ 1046 011b 0E       		.uleb128 0xe
+ 1047 011c 3A       		.uleb128 0x3a
+ 1048 011d 0B       		.uleb128 0xb
+ 1049 011e 3B       		.uleb128 0x3b
+ 1050 011f 0B       		.uleb128 0xb
+ 1051 0120 49       		.uleb128 0x49
+ 1052 0121 13       		.uleb128 0x13
+ 1053 0122 3F       		.uleb128 0x3f
+ 1054 0123 19       		.uleb128 0x19
+ 1055 0124 02       		.uleb128 0x2
+ 1056 0125 18       		.uleb128 0x18
+ 1057 0126 00       		.byte	0
+ 1058 0127 00       		.byte	0
+ 1059 0128 16       		.uleb128 0x16
+ 1060 0129 2E       		.uleb128 0x2e
+ 1061 012a 00       		.byte	0
+ 1062 012b 3F       		.uleb128 0x3f
+ 1063 012c 19       		.uleb128 0x19
+ 1064 012d 3C       		.uleb128 0x3c
+ 1065 012e 19       		.uleb128 0x19
+ 1066 012f 6E       		.uleb128 0x6e
+ 1067 0130 0E       		.uleb128 0xe
+ 1068 0131 03       		.uleb128 0x3
+ 1069 0132 0E       		.uleb128 0xe
+ 1070 0133 3A       		.uleb128 0x3a
+ 1071 0134 0B       		.uleb128 0xb
+ 1072 0135 3B       		.uleb128 0x3b
+ 1073 0136 0B       		.uleb128 0xb
+ 1074 0137 00       		.byte	0
+ 1075 0138 00       		.byte	0
+ 1076 0139 00       		.byte	0
+ 1077              		.section	.debug_loc,"",%progbits
+ 1078              	.Ldebug_loc0:
+ 1079              	.LLST0:
+ 1080 0000 00000000 		.4byte	.LVL3
+ 1081 0004 14000000 		.4byte	.LVL4
+ 1082 0008 0100     		.2byte	0x1
+ 1083 000a 50       		.byte	0x50
+ 1084 000b 14000000 		.4byte	.LVL4
+ 1085 000f 1C000000 		.4byte	.LVL7
+ 1086 0013 0400     		.2byte	0x4
+ 1087 0015 F3       		.byte	0xf3
+ 1088 0016 01       		.uleb128 0x1
+ 1089 0017 50       		.byte	0x50
+ 1090 0018 9F       		.byte	0x9f
+ 1091 0019 1C000000 		.4byte	.LVL7
+ 1092 001d 24000000 		.4byte	.LVL8
+ 1093 0021 0100     		.2byte	0x1
+ 1094 0023 50       		.byte	0x50
+ 1095 0024 24000000 		.4byte	.LVL8
+ 1096 0028 3C000000 		.4byte	.LFE63
+ 1097 002c 0400     		.2byte	0x4
+ 1098 002e F3       		.byte	0xf3
+ 1099 002f 01       		.uleb128 0x1
+ 1100 0030 50       		.byte	0x50
+ 1101 0031 9F       		.byte	0x9f
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 22
+
+
+ 1102 0032 00000000 		.4byte	0
+ 1103 0036 00000000 		.4byte	0
+ 1104              	.LLST1:
+ 1105 003a 00000000 		.4byte	.LVL3
+ 1106 003e 16000000 		.4byte	.LVL5
+ 1107 0042 0100     		.2byte	0x1
+ 1108 0044 51       		.byte	0x51
+ 1109 0045 16000000 		.4byte	.LVL5
+ 1110 0049 19000000 		.4byte	.LVL6-1
+ 1111 004d 0500     		.2byte	0x5
+ 1112 004f 03       		.byte	0x3
+ 1113 0050 00000000 		.4byte	g_warning
+ 1114 0054 19000000 		.4byte	.LVL6-1
+ 1115 0058 1C000000 		.4byte	.LVL7
+ 1116 005c 0400     		.2byte	0x4
+ 1117 005e F3       		.byte	0xf3
+ 1118 005f 01       		.uleb128 0x1
+ 1119 0060 51       		.byte	0x51
+ 1120 0061 9F       		.byte	0x9f
+ 1121 0062 1C000000 		.4byte	.LVL7
+ 1122 0066 26000000 		.4byte	.LVL9
+ 1123 006a 0100     		.2byte	0x1
+ 1124 006c 51       		.byte	0x51
+ 1125 006d 26000000 		.4byte	.LVL9
+ 1126 0071 29000000 		.4byte	.LVL10-1
+ 1127 0075 0500     		.2byte	0x5
+ 1128 0077 03       		.byte	0x3
+ 1129 0078 04000000 		.4byte	g_warning+4
+ 1130 007c 29000000 		.4byte	.LVL10-1
+ 1131 0080 3C000000 		.4byte	.LFE63
+ 1132 0084 0400     		.2byte	0x4
+ 1133 0086 F3       		.byte	0xf3
+ 1134 0087 01       		.uleb128 0x1
+ 1135 0088 51       		.byte	0x51
+ 1136 0089 9F       		.byte	0x9f
+ 1137 008a 00000000 		.4byte	0
+ 1138 008e 00000000 		.4byte	0
+ 1139              	.LLST2:
+ 1140 0092 00000000 		.4byte	.LVL3
+ 1141 0096 19000000 		.4byte	.LVL6-1
+ 1142 009a 0100     		.2byte	0x1
+ 1143 009c 52       		.byte	0x52
+ 1144 009d 19000000 		.4byte	.LVL6-1
+ 1145 00a1 1C000000 		.4byte	.LVL7
+ 1146 00a5 0400     		.2byte	0x4
+ 1147 00a7 F3       		.byte	0xf3
+ 1148 00a8 01       		.uleb128 0x1
+ 1149 00a9 52       		.byte	0x52
+ 1150 00aa 9F       		.byte	0x9f
+ 1151 00ab 1C000000 		.4byte	.LVL7
+ 1152 00af 29000000 		.4byte	.LVL10-1
+ 1153 00b3 0100     		.2byte	0x1
+ 1154 00b5 52       		.byte	0x52
+ 1155 00b6 29000000 		.4byte	.LVL10-1
+ 1156 00ba 3C000000 		.4byte	.LFE63
+ 1157 00be 0400     		.2byte	0x4
+ 1158 00c0 F3       		.byte	0xf3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 23
+
+
+ 1159 00c1 01       		.uleb128 0x1
+ 1160 00c2 52       		.byte	0x52
+ 1161 00c3 9F       		.byte	0x9f
+ 1162 00c4 00000000 		.4byte	0
+ 1163 00c8 00000000 		.4byte	0
+ 1164              		.section	.debug_aranges,"",%progbits
+ 1165 0000 2C000000 		.4byte	0x2c
+ 1166 0004 0200     		.2byte	0x2
+ 1167 0006 00000000 		.4byte	.Ldebug_info0
+ 1168 000a 04       		.byte	0x4
+ 1169 000b 00       		.byte	0
+ 1170 000c 0000     		.2byte	0
+ 1171 000e 0000     		.2byte	0
+ 1172 0010 00000000 		.4byte	.LFB62
+ 1173 0014 28000000 		.4byte	.LFE62-.LFB62
+ 1174 0018 00000000 		.4byte	.LFB63
+ 1175 001c 3C000000 		.4byte	.LFE63-.LFB63
+ 1176 0020 00000000 		.4byte	.LFB64
+ 1177 0024 C8000000 		.4byte	.LFE64-.LFB64
+ 1178 0028 00000000 		.4byte	0
+ 1179 002c 00000000 		.4byte	0
+ 1180              		.section	.debug_ranges,"",%progbits
+ 1181              	.Ldebug_ranges0:
+ 1182 0000 00000000 		.4byte	.LFB62
+ 1183 0004 28000000 		.4byte	.LFE62
+ 1184 0008 00000000 		.4byte	.LFB63
+ 1185 000c 3C000000 		.4byte	.LFE63
+ 1186 0010 00000000 		.4byte	.LFB64
+ 1187 0014 C8000000 		.4byte	.LFE64
+ 1188 0018 00000000 		.4byte	0
+ 1189 001c 00000000 		.4byte	0
+ 1190              		.section	.debug_line,"",%progbits
+ 1191              	.Ldebug_line0:
+ 1192 0000 22020000 		.section	.debug_str,"MS",%progbits,1
+ 1192      0200B801 
+ 1192      00000201 
+ 1192      FB0E0D00 
+ 1192      01010101 
+ 1193              	.LASF21:
+ 1194 0000 73746174 		.ascii	"stat_TC_INT\000"
+ 1194      5F54435F 
+ 1194      494E5400 
+ 1195              	.LASF3:
+ 1196 000c 5F5F7569 		.ascii	"__uint8_t\000"
+ 1196      6E74385F 
+ 1196      7400
+ 1197              	.LASF16:
+ 1198 0016 666C6F61 		.ascii	"float\000"
+ 1198      7400
+ 1199              	.LASF42:
+ 1200 001c 73657443 		.ascii	"setCountMax_1ms\000"
+ 1200      6F756E74 
+ 1200      4D61785F 
+ 1200      316D7300 
+ 1201              	.LASF6:
+ 1202 002c 6C6F6E67 		.ascii	"long int\000"
+ 1202      20696E74 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 24
+
+
+ 1202      00
+ 1203              	.LASF30:
+ 1204 0035 696E6465 		.ascii	"index_RED\000"
+ 1204      785F5245 
+ 1204      4400
+ 1205              	.LASF37:
+ 1206 003f 696E6974 		.ascii	"initWarning\000"
+ 1206      5761726E 
+ 1206      696E6700 
+ 1207              	.LASF17:
+ 1208 004b 646F7562 		.ascii	"double\000"
+ 1208      6C6500
+ 1209              	.LASF13:
+ 1210 0052 75696E74 		.ascii	"uint8\000"
+ 1210      3800
+ 1211              	.LASF36:
+ 1212 0058 626C696E 		.ascii	"blinkTimeInterval\000"
+ 1212      6B54696D 
+ 1212      65496E74 
+ 1212      65727661 
+ 1212      6C00
+ 1213              	.LASF27:
+ 1214 006a 75426C69 		.ascii	"uBlinkTimeGREEN\000"
+ 1214      6E6B5469 
+ 1214      6D654752 
+ 1214      45454E00 
+ 1215              	.LASF1:
+ 1216 007a 756E7369 		.ascii	"unsigned char\000"
+ 1216      676E6564 
+ 1216      20636861 
+ 1216      7200
+ 1217              	.LASF43:
+ 1218 0088 69734669 		.ascii	"isFinishCounter_1ms\000"
+ 1218      6E697368 
+ 1218      436F756E 
+ 1218      7465725F 
+ 1218      316D7300 
+ 1219              	.LASF46:
+ 1220 009c 52455345 		.ascii	"RESERVED_OUT_2_ReadDataReg\000"
+ 1220      52564544 
+ 1220      5F4F5554 
+ 1220      5F325F52 
+ 1220      65616444 
+ 1221              	.LASF15:
+ 1222 00b7 696E7431 		.ascii	"int16\000"
+ 1222      3600
+ 1223              	.LASF7:
+ 1224 00bd 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1224      20756E73 
+ 1224      69676E65 
+ 1224      6420696E 
+ 1224      7400
+ 1225              	.LASF54:
+ 1226 00cf 73506172 		.ascii	"sParameter\000"
+ 1226      616D6574 
+ 1226      657200
+ 1227              	.LASF5:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 25
+
+
+ 1228 00da 73686F72 		.ascii	"short unsigned int\000"
+ 1228      7420756E 
+ 1228      7369676E 
+ 1228      65642069 
+ 1228      6E7400
+ 1229              	.LASF41:
+ 1230 00ed 72656769 		.ascii	"registerCounter_1ms\000"
+ 1230      73746572 
+ 1230      436F756E 
+ 1230      7465725F 
+ 1230      316D7300 
+ 1231              	.LASF38:
+ 1232 0101 5761726E 		.ascii	"WarningLight\000"
+ 1232      696E674C 
+ 1232      69676874 
+ 1232      00
+ 1233              	.LASF33:
+ 1234 010e 5741524E 		.ascii	"WARNING_LIGHT\000"
+ 1234      494E475F 
+ 1234      4C494748 
+ 1234      5400
+ 1235              	.LASF4:
+ 1236 011c 5F5F7569 		.ascii	"__uint16_t\000"
+ 1236      6E743136 
+ 1236      5F7400
+ 1237              	.LASF22:
+ 1238 0127 706F735F 		.ascii	"pos_X\000"
+ 1238      5800
+ 1239              	.LASF23:
+ 1240 012d 706F735F 		.ascii	"pos_Y\000"
+ 1240      5900
+ 1241              	.LASF19:
+ 1242 0133 6C6F6E67 		.ascii	"long double\000"
+ 1242      20646F75 
+ 1242      626C6500 
+ 1243              	.LASF2:
+ 1244 013f 73686F72 		.ascii	"short int\000"
+ 1244      7420696E 
+ 1244      7400
+ 1245              	.LASF14:
+ 1246 0149 75696E74 		.ascii	"uint16\000"
+ 1246      313600
+ 1247              	.LASF35:
+ 1248 0150 4F6E4F66 		.ascii	"OnOff\000"
+ 1248      6600
+ 1249              	.LASF40:
+ 1250 0156 50617261 		.ascii	"Param\000"
+ 1250      6D00
+ 1251              	.LASF44:
+ 1252 015c 72657365 		.ascii	"resetCounter_1ms\000"
+ 1252      74436F75 
+ 1252      6E746572 
+ 1252      5F316D73 
+ 1252      00
+ 1253              	.LASF10:
+ 1254 016d 756E7369 		.ascii	"unsigned int\000"
+ 1254      676E6564 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 26
+
+
+ 1254      20696E74 
+ 1254      00
+ 1255              	.LASF55:
+ 1256 017a 5761726E 		.ascii	"WarningLightSet\000"
+ 1256      696E674C 
+ 1256      69676874 
+ 1256      53657400 
+ 1257              	.LASF9:
+ 1258 018a 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1258      206C6F6E 
+ 1258      6720756E 
+ 1258      7369676E 
+ 1258      65642069 
+ 1259              	.LASF11:
+ 1260 01a1 75696E74 		.ascii	"uint8_t\000"
+ 1260      385F7400 
+ 1261              	.LASF31:
+ 1262 01a9 696E6465 		.ascii	"index_GREEN\000"
+ 1262      785F4752 
+ 1262      45454E00 
+ 1263              	.LASF24:
+ 1264 01b5 62524544 		.ascii	"bRED\000"
+ 1264      00
+ 1265              	.LASF0:
+ 1266 01ba 7369676E 		.ascii	"signed char\000"
+ 1266      65642063 
+ 1266      68617200 
+ 1267              	.LASF25:
+ 1268 01c6 75426C69 		.ascii	"uBlinkTimeRED\000"
+ 1268      6E6B5469 
+ 1268      6D655245 
+ 1268      4400
+ 1269              	.LASF51:
+ 1270 01d4 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1270      43313120 
+ 1270      352E342E 
+ 1270      31203230 
+ 1270      31363036 
+ 1271 0207 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1271      20726576 
+ 1271      6973696F 
+ 1271      6E203233 
+ 1271      37373135 
+ 1272 023a 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1272      66756E63 
+ 1272      74696F6E 
+ 1272      2D736563 
+ 1272      74696F6E 
+ 1273              	.LASF50:
+ 1274 0262 52455345 		.ascii	"RESERVED_OUT_3_ReadDataReg\000"
+ 1274      52564544 
+ 1274      5F4F5554 
+ 1274      5F335F52 
+ 1274      65616444 
+ 1275              	.LASF20:
+ 1276 027d 73697A65 		.ascii	"sizetype\000"
+ 1276      74797065 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 27
+
+
+ 1276      00
+ 1277              	.LASF47:
+ 1278 0286 52455345 		.ascii	"RESERVED_OUT_1_Write\000"
+ 1278      52564544 
+ 1278      5F4F5554 
+ 1278      5F315F57 
+ 1278      72697465 
+ 1279              	.LASF8:
+ 1280 029b 6C6F6E67 		.ascii	"long long int\000"
+ 1280      206C6F6E 
+ 1280      6720696E 
+ 1280      7400
+ 1281              	.LASF26:
+ 1282 02a9 62475245 		.ascii	"bGREEN\000"
+ 1282      454E00
+ 1283              	.LASF34:
+ 1284 02b0 696E6465 		.ascii	"index\000"
+ 1284      7800
+ 1285              	.LASF28:
+ 1286 02b6 6242555A 		.ascii	"bBUZZER\000"
+ 1286      5A455200 
+ 1287              	.LASF48:
+ 1288 02be 52455345 		.ascii	"RESERVED_OUT_1_ReadDataReg\000"
+ 1288      52564544 
+ 1288      5F4F5554 
+ 1288      5F315F52 
+ 1288      65616444 
+ 1289              	.LASF45:
+ 1290 02d9 52455345 		.ascii	"RESERVED_OUT_2_Write\000"
+ 1290      52564544 
+ 1290      5F4F5554 
+ 1290      5F325F57 
+ 1290      72697465 
+ 1291              	.LASF12:
+ 1292 02ee 75696E74 		.ascii	"uint16_t\000"
+ 1292      31365F74 
+ 1292      00
+ 1293              	.LASF52:
+ 1294 02f7 5761726E 		.ascii	"WarningLight.c\000"
+ 1294      696E674C 
+ 1294      69676874 
+ 1294      2E6300
+ 1295              	.LASF18:
+ 1296 0306 63686172 		.ascii	"char\000"
+ 1296      00
+ 1297              	.LASF39:
+ 1298 030b 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 1298      64617973 
+ 1298      4265666F 
+ 1298      72654D6F 
+ 1298      6E746854 
+ 1299              	.LASF49:
+ 1300 0322 52455345 		.ascii	"RESERVED_OUT_3_Write\000"
+ 1300      52564544 
+ 1300      5F4F5554 
+ 1300      5F335F57 
+ 1300      72697465 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccGNi8Vz.s 			page 28
+
+
+ 1301              	.LASF56:
+ 1302 0337 675F7761 		.ascii	"g_warning\000"
+ 1302      726E696E 
+ 1302      6700
+ 1303              	.LASF53:
+ 1304 0341 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_UART_T"
+ 1304      554E5445 
+ 1304      43485F44 
+ 1304      45565F43 
+ 1304      4C415544 
+ 1305 0371 4553545C 		.ascii	"EST\\280CTP_IoT_UART_TEST_V1\\Project\\Design.cydsn"
+ 1305      32383043 
+ 1305      54505F49 
+ 1305      6F545F55 
+ 1305      4152545F 
+ 1306 03a1 00       		.ascii	"\000"
+ 1307              	.LASF32:
+ 1308 03a2 696E6465 		.ascii	"index_BUZZER\000"
+ 1308      785F4255 
+ 1308      5A5A4552 
+ 1308      00
+ 1309              	.LASF29:
+ 1310 03af 75426C69 		.ascii	"uBlinkTimeBUZZER\000"
+ 1310      6E6B5469 
+ 1310      6D654255 
+ 1310      5A5A4552 
+ 1310      00
+ 1311              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

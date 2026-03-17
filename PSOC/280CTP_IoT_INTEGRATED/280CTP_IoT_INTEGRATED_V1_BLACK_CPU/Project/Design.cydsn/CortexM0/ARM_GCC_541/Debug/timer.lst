@@ -1,0 +1,1030 @@
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"timer.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.OneMilliSecond_ISR,"ax",%progbits
+  20              		.align	2
+  21              		.global	OneMilliSecond_ISR
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	OneMilliSecond_ISR, %function
+  25              	OneMilliSecond_ISR:
+  26              	.LFB61:
+  27              		.file 1 "timer.c"
+   1:timer.c       **** /* ========================================
+   2:timer.c       ****  *
+   3:timer.c       ****  * Copyright YOUR COMPANY, THE YEAR
+   4:timer.c       ****  * All Rights Reserved
+   5:timer.c       ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:timer.c       ****  *
+   7:timer.c       ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:timer.c       ****  * WHICH IS THE PROPERTY OF your company.
+   9:timer.c       ****  *
+  10:timer.c       ****  * ========================================
+  11:timer.c       **** */
+  12:timer.c       **** #include "lib/sysTick.h"
+  13:timer.c       **** #include "lib/RealTimeClock.h"
+  14:timer.c       **** #include "timer.h"
+  15:timer.c       **** #include "main.h"
+  16:timer.c       **** 
+  17:timer.c       **** ///////////////////////////////////////////////////////////////
+  18:timer.c       **** // 1ms에 관련된 것들  //////////////////////////////////////////////
+  19:timer.c       **** ///////////////////////////////////////////////////////////////
+  20:timer.c       **** uint8 g_bIsElapsed_1ms = FALSE;
+  21:timer.c       **** 
+  22:timer.c       **** // sysTick.h에서 사용 1ms마다 인터럽트에서 호출된다. (정확한 시간)
+  23:timer.c       **** void OneMilliSecond_ISR() 
+  24:timer.c       **** {
+  28              		.loc 1 24 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  25:timer.c       ****     g_bIsElapsed_1ms = TRUE;    
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 2
+
+
+  33              		.loc 1 25 0
+  34 0000 0122     		movs	r2, #1
+  35 0002 014B     		ldr	r3, .L2
+  36 0004 1A70     		strb	r2, [r3]
+  26:timer.c       **** }
+  37              		.loc 1 26 0
+  38              		@ sp needed
+  39 0006 7047     		bx	lr
+  40              	.L3:
+  41              		.align	2
+  42              	.L2:
+  43 0008 00000000 		.word	.LANCHOR0
+  44              		.cfi_endproc
+  45              	.LFE61:
+  46              		.size	OneMilliSecond_ISR, .-OneMilliSecond_ISR
+  47              		.section	.text.isElasped_1ms,"ax",%progbits
+  48              		.align	2
+  49              		.global	isElasped_1ms
+  50              		.code	16
+  51              		.thumb_func
+  52              		.type	isElasped_1ms, %function
+  53              	isElasped_1ms:
+  54              	.LFB62:
+  27:timer.c       **** 
+  28:timer.c       **** uint8 isElasped_1ms()
+  29:timer.c       **** {
+  55              		.loc 1 29 0
+  56              		.cfi_startproc
+  57              		@ args = 0, pretend = 0, frame = 0
+  58              		@ frame_needed = 0, uses_anonymous_args = 0
+  59              		@ link register save eliminated.
+  30:timer.c       ****     return g_bIsElapsed_1ms;
+  60              		.loc 1 30 0
+  61 0000 014B     		ldr	r3, .L5
+  62 0002 1878     		ldrb	r0, [r3]
+  31:timer.c       **** }
+  63              		.loc 1 31 0
+  64              		@ sp needed
+  65 0004 7047     		bx	lr
+  66              	.L6:
+  67 0006 C046     		.align	2
+  68              	.L5:
+  69 0008 00000000 		.word	.LANCHOR0
+  70              		.cfi_endproc
+  71              	.LFE62:
+  72              		.size	isElasped_1ms, .-isElasped_1ms
+  73              		.section	.text.OneMilliSecond_MainLoop,"ax",%progbits
+  74              		.align	2
+  75              		.global	OneMilliSecond_MainLoop
+  76              		.code	16
+  77              		.thumb_func
+  78              		.type	OneMilliSecond_MainLoop, %function
+  79              	OneMilliSecond_MainLoop:
+  80              	.LFB63:
+  32:timer.c       **** 
+  33:timer.c       **** 
+  34:timer.c       **** // main loop에서 1ms 마다 작동하는 함수 (delay 발생할 수 있음, 정확한 시간이 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 3
+
+
+  35:timer.c       **** void OneMilliSecond_MainLoop() 
+  36:timer.c       **** {
+  81              		.loc 1 36 0
+  82              		.cfi_startproc
+  83              		@ args = 0, pretend = 0, frame = 0
+  84              		@ frame_needed = 0, uses_anonymous_args = 0
+  85              		@ link register save eliminated.
+  37:timer.c       ****     if(g_bIsElapsed_1ms)
+  86              		.loc 1 37 0
+  87 0000 034B     		ldr	r3, .L9
+  88 0002 1B78     		ldrb	r3, [r3]
+  89 0004 002B     		cmp	r3, #0
+  90 0006 02D0     		beq	.L7
+  38:timer.c       ****     {
+  39:timer.c       ****         g_bIsElapsed_1ms = FALSE;    
+  91              		.loc 1 39 0
+  92 0008 0022     		movs	r2, #0
+  93 000a 014B     		ldr	r3, .L9
+  94 000c 1A70     		strb	r2, [r3]
+  95              	.L7:
+  40:timer.c       ****     }
+  41:timer.c       **** }
+  96              		.loc 1 41 0
+  97              		@ sp needed
+  98 000e 7047     		bx	lr
+  99              	.L10:
+ 100              		.align	2
+ 101              	.L9:
+ 102 0010 00000000 		.word	.LANCHOR0
+ 103              		.cfi_endproc
+ 104              	.LFE63:
+ 105              		.size	OneMilliSecond_MainLoop, .-OneMilliSecond_MainLoop
+ 106              		.section	.text.OneSecond_ISR,"ax",%progbits
+ 107              		.align	2
+ 108              		.global	OneSecond_ISR
+ 109              		.code	16
+ 110              		.thumb_func
+ 111              		.type	OneSecond_ISR, %function
+ 112              	OneSecond_ISR:
+ 113              	.LFB64:
+  42:timer.c       **** 
+  43:timer.c       **** ///////////////////////////////////////////////////////////////
+  44:timer.c       **** // 1s에 관련된 것들  ///////////////////////////////////////////////
+  45:timer.c       **** ///////////////////////////////////////////////////////////////
+  46:timer.c       **** uint8 g_bIsElapsed_1s  = FALSE;
+  47:timer.c       **** void OneSecond_ISR() 
+  48:timer.c       **** {
+ 114              		.loc 1 48 0
+ 115              		.cfi_startproc
+ 116              		@ args = 0, pretend = 0, frame = 0
+ 117              		@ frame_needed = 0, uses_anonymous_args = 0
+ 118              		@ link register save eliminated.
+  49:timer.c       ****     g_bIsElapsed_1s = TRUE;    
+ 119              		.loc 1 49 0
+ 120 0000 0122     		movs	r2, #1
+ 121 0002 014B     		ldr	r3, .L12
+ 122 0004 5A70     		strb	r2, [r3, #1]
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 4
+
+
+  50:timer.c       **** }
+ 123              		.loc 1 50 0
+ 124              		@ sp needed
+ 125 0006 7047     		bx	lr
+ 126              	.L13:
+ 127              		.align	2
+ 128              	.L12:
+ 129 0008 00000000 		.word	.LANCHOR0
+ 130              		.cfi_endproc
+ 131              	.LFE64:
+ 132              		.size	OneSecond_ISR, .-OneSecond_ISR
+ 133              		.section	.text.isElasped_1s,"ax",%progbits
+ 134              		.align	2
+ 135              		.global	isElasped_1s
+ 136              		.code	16
+ 137              		.thumb_func
+ 138              		.type	isElasped_1s, %function
+ 139              	isElasped_1s:
+ 140              	.LFB65:
+  51:timer.c       **** 
+  52:timer.c       **** uint8 isElasped_1s()
+  53:timer.c       **** {
+ 141              		.loc 1 53 0
+ 142              		.cfi_startproc
+ 143              		@ args = 0, pretend = 0, frame = 0
+ 144              		@ frame_needed = 0, uses_anonymous_args = 0
+ 145              		@ link register save eliminated.
+  54:timer.c       ****     return g_bIsElapsed_1s;
+ 146              		.loc 1 54 0
+ 147 0000 014B     		ldr	r3, .L15
+ 148 0002 5878     		ldrb	r0, [r3, #1]
+  55:timer.c       **** }
+ 149              		.loc 1 55 0
+ 150              		@ sp needed
+ 151 0004 7047     		bx	lr
+ 152              	.L16:
+ 153 0006 C046     		.align	2
+ 154              	.L15:
+ 155 0008 00000000 		.word	.LANCHOR0
+ 156              		.cfi_endproc
+ 157              	.LFE65:
+ 158              		.size	isElasped_1s, .-isElasped_1s
+ 159              		.section	.text.OneSecond_MainLoop,"ax",%progbits
+ 160              		.align	2
+ 161              		.global	OneSecond_MainLoop
+ 162              		.code	16
+ 163              		.thumb_func
+ 164              		.type	OneSecond_MainLoop, %function
+ 165              	OneSecond_MainLoop:
+ 166              	.LFB66:
+  56:timer.c       **** 
+  57:timer.c       **** // main loop에서 1s 마다 작동하는 함수 (delay 발생할 수 있음, 정확한 시간이 �
+  58:timer.c       **** void OneSecond_MainLoop() 
+  59:timer.c       **** {
+ 167              		.loc 1 59 0
+ 168              		.cfi_startproc
+ 169              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 5
+
+
+ 170              		@ frame_needed = 0, uses_anonymous_args = 0
+ 171 0000 10B5     		push	{r4, lr}
+ 172              		.cfi_def_cfa_offset 8
+ 173              		.cfi_offset 4, -8
+ 174              		.cfi_offset 14, -4
+  60:timer.c       ****     if(g_bIsElapsed_1s)
+ 175              		.loc 1 60 0
+ 176 0002 054B     		ldr	r3, .L19
+ 177 0004 5B78     		ldrb	r3, [r3, #1]
+ 178 0006 002B     		cmp	r3, #0
+ 179 0008 04D0     		beq	.L17
+  61:timer.c       ****     {
+  62:timer.c       ****         g_bIsElapsed_1s = FALSE;
+ 180              		.loc 1 62 0
+ 181 000a 0022     		movs	r2, #0
+ 182 000c 024B     		ldr	r3, .L19
+ 183 000e 5A70     		strb	r2, [r3, #1]
+  63:timer.c       ****         
+  64:timer.c       ****         RTC_Update();
+ 184              		.loc 1 64 0
+ 185 0010 FFF7FEFF 		bl	RTC_Update
+ 186              	.LVL0:
+ 187              	.L17:
+  65:timer.c       ****     }    
+  66:timer.c       **** }
+ 188              		.loc 1 66 0
+ 189              		@ sp needed
+ 190 0014 10BD     		pop	{r4, pc}
+ 191              	.L20:
+ 192 0016 C046     		.align	2
+ 193              	.L19:
+ 194 0018 00000000 		.word	.LANCHOR0
+ 195              		.cfi_endproc
+ 196              	.LFE66:
+ 197              		.size	OneSecond_MainLoop, .-OneSecond_MainLoop
+ 198              		.section	.text.initTimer,"ax",%progbits
+ 199              		.align	2
+ 200              		.global	initTimer
+ 201              		.code	16
+ 202              		.thumb_func
+ 203              		.type	initTimer, %function
+ 204              	initTimer:
+ 205              	.LFB67:
+  67:timer.c       **** ///////////////////////////////////////////////////////////////
+  68:timer.c       **** // 초기화  ///////////////////////////////////////////////
+  69:timer.c       **** ///////////////////////////////////////////////////////////////
+  70:timer.c       **** void initTimer()
+  71:timer.c       **** {
+ 206              		.loc 1 71 0
+ 207              		.cfi_startproc
+ 208              		@ args = 0, pretend = 0, frame = 0
+ 209              		@ frame_needed = 0, uses_anonymous_args = 0
+ 210 0000 10B5     		push	{r4, lr}
+ 211              		.cfi_def_cfa_offset 8
+ 212              		.cfi_offset 4, -8
+ 213              		.cfi_offset 14, -4
+  72:timer.c       ****     setSysTick();
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 6
+
+
+ 214              		.loc 1 72 0
+ 215 0002 FFF7FEFF 		bl	setSysTick
+ 216              	.LVL1:
+  73:timer.c       ****     initRealTimeClock();    
+ 217              		.loc 1 73 0
+ 218 0006 FFF7FEFF 		bl	initRealTimeClock
+ 219              	.LVL2:
+  74:timer.c       **** }
+ 220              		.loc 1 74 0
+ 221              		@ sp needed
+ 222 000a 10BD     		pop	{r4, pc}
+ 223              		.cfi_endproc
+ 224              	.LFE67:
+ 225              		.size	initTimer, .-initTimer
+ 226              		.global	g_bIsElapsed_1s
+ 227              		.global	g_bIsElapsed_1ms
+ 228              		.comm	Param,6,4
+ 229              		.bss
+ 230              		.set	.LANCHOR0,. + 0
+ 231              		.type	g_bIsElapsed_1ms, %object
+ 232              		.size	g_bIsElapsed_1ms, 1
+ 233              	g_bIsElapsed_1ms:
+ 234 0000 00       		.space	1
+ 235              		.type	g_bIsElapsed_1s, %object
+ 236              		.size	g_bIsElapsed_1s, 1
+ 237              	g_bIsElapsed_1s:
+ 238 0001 00       		.space	1
+ 239              		.text
+ 240              	.Letext0:
+ 241              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 242              		.file 3 "./main.h"
+ 243              		.file 4 "Generated_Source\\PSoC4/RTC.h"
+ 244              		.file 5 "lib/sysTick.h"
+ 245              		.file 6 "lib/RealTimeClock.h"
+ 246              		.section	.debug_info,"",%progbits
+ 247              	.Ldebug_info0:
+ 248 0000 CD010000 		.4byte	0x1cd
+ 249 0004 0400     		.2byte	0x4
+ 250 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 251 000a 04       		.byte	0x4
+ 252 000b 01       		.uleb128 0x1
+ 253 000c 60010000 		.4byte	.LASF32
+ 254 0010 0C       		.byte	0xc
+ 255 0011 53000000 		.4byte	.LASF33
+ 256 0015 E8000000 		.4byte	.LASF34
+ 257 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 258 001d 00000000 		.4byte	0
+ 259 0021 00000000 		.4byte	.Ldebug_line0
+ 260 0025 02       		.uleb128 0x2
+ 261 0026 01       		.byte	0x1
+ 262 0027 06       		.byte	0x6
+ 263 0028 4E020000 		.4byte	.LASF0
+ 264 002c 02       		.uleb128 0x2
+ 265 002d 01       		.byte	0x1
+ 266 002e 08       		.byte	0x8
+ 267 002f 61000000 		.4byte	.LASF1
+ 268 0033 02       		.uleb128 0x2
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 7
+
+
+ 269 0034 02       		.byte	0x2
+ 270 0035 05       		.byte	0x5
+ 271 0036 16020000 		.4byte	.LASF2
+ 272 003a 02       		.uleb128 0x2
+ 273 003b 02       		.byte	0x2
+ 274 003c 07       		.byte	0x7
+ 275 003d 35000000 		.4byte	.LASF3
+ 276 0041 02       		.uleb128 0x2
+ 277 0042 04       		.byte	0x4
+ 278 0043 05       		.byte	0x5
+ 279 0044 2C000000 		.4byte	.LASF4
+ 280 0048 02       		.uleb128 0x2
+ 281 0049 04       		.byte	0x4
+ 282 004a 07       		.byte	0x7
+ 283 004b 7C000000 		.4byte	.LASF5
+ 284 004f 02       		.uleb128 0x2
+ 285 0050 08       		.byte	0x8
+ 286 0051 05       		.byte	0x5
+ 287 0052 03020000 		.4byte	.LASF6
+ 288 0056 02       		.uleb128 0x2
+ 289 0057 08       		.byte	0x8
+ 290 0058 07       		.byte	0x7
+ 291 0059 38010000 		.4byte	.LASF7
+ 292 005d 03       		.uleb128 0x3
+ 293 005e 04       		.byte	0x4
+ 294 005f 05       		.byte	0x5
+ 295 0060 696E7400 		.ascii	"int\000"
+ 296 0064 02       		.uleb128 0x2
+ 297 0065 04       		.byte	0x4
+ 298 0066 07       		.byte	0x7
+ 299 0067 18010000 		.4byte	.LASF8
+ 300 006b 04       		.uleb128 0x4
+ 301 006c 20020000 		.4byte	.LASF9
+ 302 0070 02       		.byte	0x2
+ 303 0071 FC01     		.2byte	0x1fc
+ 304 0073 2C000000 		.4byte	0x2c
+ 305 0077 04       		.uleb128 0x4
+ 306 0078 DB000000 		.4byte	.LASF10
+ 307 007c 02       		.byte	0x2
+ 308 007d FD01     		.2byte	0x1fd
+ 309 007f 3A000000 		.4byte	0x3a
+ 310 0083 02       		.uleb128 0x2
+ 311 0084 04       		.byte	0x4
+ 312 0085 04       		.byte	0x4
+ 313 0086 5B000000 		.4byte	.LASF11
+ 314 008a 02       		.uleb128 0x2
+ 315 008b 08       		.byte	0x8
+ 316 008c 04       		.byte	0x4
+ 317 008d 5A020000 		.4byte	.LASF12
+ 318 0091 02       		.uleb128 0x2
+ 319 0092 01       		.byte	0x1
+ 320 0093 08       		.byte	0x8
+ 321 0094 11020000 		.4byte	.LASF13
+ 322 0098 02       		.uleb128 0x2
+ 323 0099 08       		.byte	0x8
+ 324 009a 04       		.byte	0x4
+ 325 009b EE010000 		.4byte	.LASF14
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 8
+
+
+ 326 009f 02       		.uleb128 0x2
+ 327 00a0 04       		.byte	0x4
+ 328 00a1 07       		.byte	0x7
+ 329 00a2 FA010000 		.4byte	.LASF15
+ 330 00a6 05       		.uleb128 0x5
+ 331 00a7 8E000000 		.4byte	.LASF35
+ 332 00ab 06       		.byte	0x6
+ 333 00ac 03       		.byte	0x3
+ 334 00ad 30       		.byte	0x30
+ 335 00ae D7000000 		.4byte	0xd7
+ 336 00b2 06       		.uleb128 0x6
+ 337 00b3 00000000 		.4byte	.LASF16
+ 338 00b7 03       		.byte	0x3
+ 339 00b8 32       		.byte	0x32
+ 340 00b9 6B000000 		.4byte	0x6b
+ 341 00bd 00       		.byte	0
+ 342 00be 06       		.uleb128 0x6
+ 343 00bf CF000000 		.4byte	.LASF17
+ 344 00c3 03       		.byte	0x3
+ 345 00c4 33       		.byte	0x33
+ 346 00c5 77000000 		.4byte	0x77
+ 347 00c9 02       		.byte	0x2
+ 348 00ca 06       		.uleb128 0x6
+ 349 00cb D5000000 		.4byte	.LASF18
+ 350 00cf 03       		.byte	0x3
+ 351 00d0 34       		.byte	0x34
+ 352 00d1 77000000 		.4byte	0x77
+ 353 00d5 04       		.byte	0x4
+ 354 00d6 00       		.byte	0
+ 355 00d7 07       		.uleb128 0x7
+ 356 00d8 25010000 		.4byte	.LASF19
+ 357 00dc 01       		.byte	0x1
+ 358 00dd 17       		.byte	0x17
+ 359 00de 00000000 		.4byte	.LFB61
+ 360 00e2 0C000000 		.4byte	.LFE61-.LFB61
+ 361 00e6 01       		.uleb128 0x1
+ 362 00e7 9C       		.byte	0x9c
+ 363 00e8 08       		.uleb128 0x8
+ 364 00e9 1E000000 		.4byte	.LASF22
+ 365 00ed 01       		.byte	0x1
+ 366 00ee 1C       		.byte	0x1c
+ 367 00ef 6B000000 		.4byte	0x6b
+ 368 00f3 00000000 		.4byte	.LFB62
+ 369 00f7 0C000000 		.4byte	.LFE62-.LFB62
+ 370 00fb 01       		.uleb128 0x1
+ 371 00fc 9C       		.byte	0x9c
+ 372 00fd 07       		.uleb128 0x7
+ 373 00fe 36020000 		.4byte	.LASF20
+ 374 0102 01       		.byte	0x1
+ 375 0103 23       		.byte	0x23
+ 376 0104 00000000 		.4byte	.LFB63
+ 377 0108 14000000 		.4byte	.LFE63-.LFB63
+ 378 010c 01       		.uleb128 0x1
+ 379 010d 9C       		.byte	0x9c
+ 380 010e 07       		.uleb128 0x7
+ 381 010f C1000000 		.4byte	.LASF21
+ 382 0113 01       		.byte	0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 9
+
+
+ 383 0114 2F       		.byte	0x2f
+ 384 0115 00000000 		.4byte	.LFB64
+ 385 0119 0C000000 		.4byte	.LFE64-.LFB64
+ 386 011d 01       		.uleb128 0x1
+ 387 011e 9C       		.byte	0x9c
+ 388 011f 08       		.uleb128 0x8
+ 389 0120 6F000000 		.4byte	.LASF23
+ 390 0124 01       		.byte	0x1
+ 391 0125 34       		.byte	0x34
+ 392 0126 6B000000 		.4byte	0x6b
+ 393 012a 00000000 		.4byte	.LFB65
+ 394 012e 0C000000 		.4byte	.LFE65-.LFB65
+ 395 0132 01       		.uleb128 0x1
+ 396 0133 9C       		.byte	0x9c
+ 397 0134 09       		.uleb128 0x9
+ 398 0135 AE000000 		.4byte	.LASF24
+ 399 0139 01       		.byte	0x1
+ 400 013a 3A       		.byte	0x3a
+ 401 013b 00000000 		.4byte	.LFB66
+ 402 013f 1C000000 		.4byte	.LFE66-.LFB66
+ 403 0143 01       		.uleb128 0x1
+ 404 0144 9C       		.byte	0x9c
+ 405 0145 53010000 		.4byte	0x153
+ 406 0149 0A       		.uleb128 0xa
+ 407 014a 14000000 		.4byte	.LVL0
+ 408 014e AE010000 		.4byte	0x1ae
+ 409 0152 00       		.byte	0
+ 410 0153 09       		.uleb128 0x9
+ 411 0154 A4000000 		.4byte	.LASF25
+ 412 0158 01       		.byte	0x1
+ 413 0159 46       		.byte	0x46
+ 414 015a 00000000 		.4byte	.LFB67
+ 415 015e 0C000000 		.4byte	.LFE67-.LFB67
+ 416 0162 01       		.uleb128 0x1
+ 417 0163 9C       		.byte	0x9c
+ 418 0164 7B010000 		.4byte	0x17b
+ 419 0168 0A       		.uleb128 0xa
+ 420 0169 06000000 		.4byte	.LVL1
+ 421 016d BA010000 		.4byte	0x1ba
+ 422 0171 0A       		.uleb128 0xa
+ 423 0172 0A000000 		.4byte	.LVL2
+ 424 0176 C5010000 		.4byte	0x1c5
+ 425 017a 00       		.byte	0
+ 426 017b 0B       		.uleb128 0xb
+ 427 017c E2000000 		.4byte	.LASF26
+ 428 0180 03       		.byte	0x3
+ 429 0181 37       		.byte	0x37
+ 430 0182 A6000000 		.4byte	0xa6
+ 431 0186 05       		.uleb128 0x5
+ 432 0187 03       		.byte	0x3
+ 433 0188 00000000 		.4byte	Param
+ 434 018c 0B       		.uleb128 0xb
+ 435 018d 4F010000 		.4byte	.LASF27
+ 436 0191 01       		.byte	0x1
+ 437 0192 14       		.byte	0x14
+ 438 0193 6B000000 		.4byte	0x6b
+ 439 0197 05       		.uleb128 0x5
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 10
+
+
+ 440 0198 03       		.byte	0x3
+ 441 0199 00000000 		.4byte	g_bIsElapsed_1ms
+ 442 019d 0B       		.uleb128 0xb
+ 443 019e 26020000 		.4byte	.LASF28
+ 444 01a2 01       		.byte	0x1
+ 445 01a3 2E       		.byte	0x2e
+ 446 01a4 6B000000 		.4byte	0x6b
+ 447 01a8 05       		.uleb128 0x5
+ 448 01a9 03       		.byte	0x3
+ 449 01aa 00000000 		.4byte	g_bIsElapsed_1s
+ 450 01ae 0C       		.uleb128 0xc
+ 451 01af 99000000 		.4byte	.LASF29
+ 452 01b3 99000000 		.4byte	.LASF29
+ 453 01b7 04       		.byte	0x4
+ 454 01b8 6701     		.2byte	0x167
+ 455 01ba 0D       		.uleb128 0xd
+ 456 01bb 48000000 		.4byte	.LASF30
+ 457 01bf 48000000 		.4byte	.LASF30
+ 458 01c3 05       		.byte	0x5
+ 459 01c4 11       		.byte	0x11
+ 460 01c5 0D       		.uleb128 0xd
+ 461 01c6 0C000000 		.4byte	.LASF31
+ 462 01ca 0C000000 		.4byte	.LASF31
+ 463 01ce 06       		.byte	0x6
+ 464 01cf 12       		.byte	0x12
+ 465 01d0 00       		.byte	0
+ 466              		.section	.debug_abbrev,"",%progbits
+ 467              	.Ldebug_abbrev0:
+ 468 0000 01       		.uleb128 0x1
+ 469 0001 11       		.uleb128 0x11
+ 470 0002 01       		.byte	0x1
+ 471 0003 25       		.uleb128 0x25
+ 472 0004 0E       		.uleb128 0xe
+ 473 0005 13       		.uleb128 0x13
+ 474 0006 0B       		.uleb128 0xb
+ 475 0007 03       		.uleb128 0x3
+ 476 0008 0E       		.uleb128 0xe
+ 477 0009 1B       		.uleb128 0x1b
+ 478 000a 0E       		.uleb128 0xe
+ 479 000b 55       		.uleb128 0x55
+ 480 000c 17       		.uleb128 0x17
+ 481 000d 11       		.uleb128 0x11
+ 482 000e 01       		.uleb128 0x1
+ 483 000f 10       		.uleb128 0x10
+ 484 0010 17       		.uleb128 0x17
+ 485 0011 00       		.byte	0
+ 486 0012 00       		.byte	0
+ 487 0013 02       		.uleb128 0x2
+ 488 0014 24       		.uleb128 0x24
+ 489 0015 00       		.byte	0
+ 490 0016 0B       		.uleb128 0xb
+ 491 0017 0B       		.uleb128 0xb
+ 492 0018 3E       		.uleb128 0x3e
+ 493 0019 0B       		.uleb128 0xb
+ 494 001a 03       		.uleb128 0x3
+ 495 001b 0E       		.uleb128 0xe
+ 496 001c 00       		.byte	0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 11
+
+
+ 497 001d 00       		.byte	0
+ 498 001e 03       		.uleb128 0x3
+ 499 001f 24       		.uleb128 0x24
+ 500 0020 00       		.byte	0
+ 501 0021 0B       		.uleb128 0xb
+ 502 0022 0B       		.uleb128 0xb
+ 503 0023 3E       		.uleb128 0x3e
+ 504 0024 0B       		.uleb128 0xb
+ 505 0025 03       		.uleb128 0x3
+ 506 0026 08       		.uleb128 0x8
+ 507 0027 00       		.byte	0
+ 508 0028 00       		.byte	0
+ 509 0029 04       		.uleb128 0x4
+ 510 002a 16       		.uleb128 0x16
+ 511 002b 00       		.byte	0
+ 512 002c 03       		.uleb128 0x3
+ 513 002d 0E       		.uleb128 0xe
+ 514 002e 3A       		.uleb128 0x3a
+ 515 002f 0B       		.uleb128 0xb
+ 516 0030 3B       		.uleb128 0x3b
+ 517 0031 05       		.uleb128 0x5
+ 518 0032 49       		.uleb128 0x49
+ 519 0033 13       		.uleb128 0x13
+ 520 0034 00       		.byte	0
+ 521 0035 00       		.byte	0
+ 522 0036 05       		.uleb128 0x5
+ 523 0037 13       		.uleb128 0x13
+ 524 0038 01       		.byte	0x1
+ 525 0039 03       		.uleb128 0x3
+ 526 003a 0E       		.uleb128 0xe
+ 527 003b 0B       		.uleb128 0xb
+ 528 003c 0B       		.uleb128 0xb
+ 529 003d 3A       		.uleb128 0x3a
+ 530 003e 0B       		.uleb128 0xb
+ 531 003f 3B       		.uleb128 0x3b
+ 532 0040 0B       		.uleb128 0xb
+ 533 0041 01       		.uleb128 0x1
+ 534 0042 13       		.uleb128 0x13
+ 535 0043 00       		.byte	0
+ 536 0044 00       		.byte	0
+ 537 0045 06       		.uleb128 0x6
+ 538 0046 0D       		.uleb128 0xd
+ 539 0047 00       		.byte	0
+ 540 0048 03       		.uleb128 0x3
+ 541 0049 0E       		.uleb128 0xe
+ 542 004a 3A       		.uleb128 0x3a
+ 543 004b 0B       		.uleb128 0xb
+ 544 004c 3B       		.uleb128 0x3b
+ 545 004d 0B       		.uleb128 0xb
+ 546 004e 49       		.uleb128 0x49
+ 547 004f 13       		.uleb128 0x13
+ 548 0050 38       		.uleb128 0x38
+ 549 0051 0B       		.uleb128 0xb
+ 550 0052 00       		.byte	0
+ 551 0053 00       		.byte	0
+ 552 0054 07       		.uleb128 0x7
+ 553 0055 2E       		.uleb128 0x2e
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 12
+
+
+ 554 0056 00       		.byte	0
+ 555 0057 3F       		.uleb128 0x3f
+ 556 0058 19       		.uleb128 0x19
+ 557 0059 03       		.uleb128 0x3
+ 558 005a 0E       		.uleb128 0xe
+ 559 005b 3A       		.uleb128 0x3a
+ 560 005c 0B       		.uleb128 0xb
+ 561 005d 3B       		.uleb128 0x3b
+ 562 005e 0B       		.uleb128 0xb
+ 563 005f 11       		.uleb128 0x11
+ 564 0060 01       		.uleb128 0x1
+ 565 0061 12       		.uleb128 0x12
+ 566 0062 06       		.uleb128 0x6
+ 567 0063 40       		.uleb128 0x40
+ 568 0064 18       		.uleb128 0x18
+ 569 0065 9742     		.uleb128 0x2117
+ 570 0067 19       		.uleb128 0x19
+ 571 0068 00       		.byte	0
+ 572 0069 00       		.byte	0
+ 573 006a 08       		.uleb128 0x8
+ 574 006b 2E       		.uleb128 0x2e
+ 575 006c 00       		.byte	0
+ 576 006d 3F       		.uleb128 0x3f
+ 577 006e 19       		.uleb128 0x19
+ 578 006f 03       		.uleb128 0x3
+ 579 0070 0E       		.uleb128 0xe
+ 580 0071 3A       		.uleb128 0x3a
+ 581 0072 0B       		.uleb128 0xb
+ 582 0073 3B       		.uleb128 0x3b
+ 583 0074 0B       		.uleb128 0xb
+ 584 0075 49       		.uleb128 0x49
+ 585 0076 13       		.uleb128 0x13
+ 586 0077 11       		.uleb128 0x11
+ 587 0078 01       		.uleb128 0x1
+ 588 0079 12       		.uleb128 0x12
+ 589 007a 06       		.uleb128 0x6
+ 590 007b 40       		.uleb128 0x40
+ 591 007c 18       		.uleb128 0x18
+ 592 007d 9742     		.uleb128 0x2117
+ 593 007f 19       		.uleb128 0x19
+ 594 0080 00       		.byte	0
+ 595 0081 00       		.byte	0
+ 596 0082 09       		.uleb128 0x9
+ 597 0083 2E       		.uleb128 0x2e
+ 598 0084 01       		.byte	0x1
+ 599 0085 3F       		.uleb128 0x3f
+ 600 0086 19       		.uleb128 0x19
+ 601 0087 03       		.uleb128 0x3
+ 602 0088 0E       		.uleb128 0xe
+ 603 0089 3A       		.uleb128 0x3a
+ 604 008a 0B       		.uleb128 0xb
+ 605 008b 3B       		.uleb128 0x3b
+ 606 008c 0B       		.uleb128 0xb
+ 607 008d 11       		.uleb128 0x11
+ 608 008e 01       		.uleb128 0x1
+ 609 008f 12       		.uleb128 0x12
+ 610 0090 06       		.uleb128 0x6
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 13
+
+
+ 611 0091 40       		.uleb128 0x40
+ 612 0092 18       		.uleb128 0x18
+ 613 0093 9742     		.uleb128 0x2117
+ 614 0095 19       		.uleb128 0x19
+ 615 0096 01       		.uleb128 0x1
+ 616 0097 13       		.uleb128 0x13
+ 617 0098 00       		.byte	0
+ 618 0099 00       		.byte	0
+ 619 009a 0A       		.uleb128 0xa
+ 620 009b 898201   		.uleb128 0x4109
+ 621 009e 00       		.byte	0
+ 622 009f 11       		.uleb128 0x11
+ 623 00a0 01       		.uleb128 0x1
+ 624 00a1 31       		.uleb128 0x31
+ 625 00a2 13       		.uleb128 0x13
+ 626 00a3 00       		.byte	0
+ 627 00a4 00       		.byte	0
+ 628 00a5 0B       		.uleb128 0xb
+ 629 00a6 34       		.uleb128 0x34
+ 630 00a7 00       		.byte	0
+ 631 00a8 03       		.uleb128 0x3
+ 632 00a9 0E       		.uleb128 0xe
+ 633 00aa 3A       		.uleb128 0x3a
+ 634 00ab 0B       		.uleb128 0xb
+ 635 00ac 3B       		.uleb128 0x3b
+ 636 00ad 0B       		.uleb128 0xb
+ 637 00ae 49       		.uleb128 0x49
+ 638 00af 13       		.uleb128 0x13
+ 639 00b0 3F       		.uleb128 0x3f
+ 640 00b1 19       		.uleb128 0x19
+ 641 00b2 02       		.uleb128 0x2
+ 642 00b3 18       		.uleb128 0x18
+ 643 00b4 00       		.byte	0
+ 644 00b5 00       		.byte	0
+ 645 00b6 0C       		.uleb128 0xc
+ 646 00b7 2E       		.uleb128 0x2e
+ 647 00b8 00       		.byte	0
+ 648 00b9 3F       		.uleb128 0x3f
+ 649 00ba 19       		.uleb128 0x19
+ 650 00bb 3C       		.uleb128 0x3c
+ 651 00bc 19       		.uleb128 0x19
+ 652 00bd 6E       		.uleb128 0x6e
+ 653 00be 0E       		.uleb128 0xe
+ 654 00bf 03       		.uleb128 0x3
+ 655 00c0 0E       		.uleb128 0xe
+ 656 00c1 3A       		.uleb128 0x3a
+ 657 00c2 0B       		.uleb128 0xb
+ 658 00c3 3B       		.uleb128 0x3b
+ 659 00c4 05       		.uleb128 0x5
+ 660 00c5 00       		.byte	0
+ 661 00c6 00       		.byte	0
+ 662 00c7 0D       		.uleb128 0xd
+ 663 00c8 2E       		.uleb128 0x2e
+ 664 00c9 00       		.byte	0
+ 665 00ca 3F       		.uleb128 0x3f
+ 666 00cb 19       		.uleb128 0x19
+ 667 00cc 3C       		.uleb128 0x3c
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 14
+
+
+ 668 00cd 19       		.uleb128 0x19
+ 669 00ce 6E       		.uleb128 0x6e
+ 670 00cf 0E       		.uleb128 0xe
+ 671 00d0 03       		.uleb128 0x3
+ 672 00d1 0E       		.uleb128 0xe
+ 673 00d2 3A       		.uleb128 0x3a
+ 674 00d3 0B       		.uleb128 0xb
+ 675 00d4 3B       		.uleb128 0x3b
+ 676 00d5 0B       		.uleb128 0xb
+ 677 00d6 00       		.byte	0
+ 678 00d7 00       		.byte	0
+ 679 00d8 00       		.byte	0
+ 680              		.section	.debug_aranges,"",%progbits
+ 681 0000 4C000000 		.4byte	0x4c
+ 682 0004 0200     		.2byte	0x2
+ 683 0006 00000000 		.4byte	.Ldebug_info0
+ 684 000a 04       		.byte	0x4
+ 685 000b 00       		.byte	0
+ 686 000c 0000     		.2byte	0
+ 687 000e 0000     		.2byte	0
+ 688 0010 00000000 		.4byte	.LFB61
+ 689 0014 0C000000 		.4byte	.LFE61-.LFB61
+ 690 0018 00000000 		.4byte	.LFB62
+ 691 001c 0C000000 		.4byte	.LFE62-.LFB62
+ 692 0020 00000000 		.4byte	.LFB63
+ 693 0024 14000000 		.4byte	.LFE63-.LFB63
+ 694 0028 00000000 		.4byte	.LFB64
+ 695 002c 0C000000 		.4byte	.LFE64-.LFB64
+ 696 0030 00000000 		.4byte	.LFB65
+ 697 0034 0C000000 		.4byte	.LFE65-.LFB65
+ 698 0038 00000000 		.4byte	.LFB66
+ 699 003c 1C000000 		.4byte	.LFE66-.LFB66
+ 700 0040 00000000 		.4byte	.LFB67
+ 701 0044 0C000000 		.4byte	.LFE67-.LFB67
+ 702 0048 00000000 		.4byte	0
+ 703 004c 00000000 		.4byte	0
+ 704              		.section	.debug_ranges,"",%progbits
+ 705              	.Ldebug_ranges0:
+ 706 0000 00000000 		.4byte	.LFB61
+ 707 0004 0C000000 		.4byte	.LFE61
+ 708 0008 00000000 		.4byte	.LFB62
+ 709 000c 0C000000 		.4byte	.LFE62
+ 710 0010 00000000 		.4byte	.LFB63
+ 711 0014 14000000 		.4byte	.LFE63
+ 712 0018 00000000 		.4byte	.LFB64
+ 713 001c 0C000000 		.4byte	.LFE64
+ 714 0020 00000000 		.4byte	.LFB65
+ 715 0024 0C000000 		.4byte	.LFE65
+ 716 0028 00000000 		.4byte	.LFB66
+ 717 002c 1C000000 		.4byte	.LFE66
+ 718 0030 00000000 		.4byte	.LFB67
+ 719 0034 0C000000 		.4byte	.LFE67
+ 720 0038 00000000 		.4byte	0
+ 721 003c 00000000 		.4byte	0
+ 722              		.section	.debug_line,"",%progbits
+ 723              	.Ldebug_line0:
+ 724 0000 FD000000 		.section	.debug_str,"MS",%progbits,1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 15
+
+
+ 724      02007B00 
+ 724      00000201 
+ 724      FB0E0D00 
+ 724      01010101 
+ 725              	.LASF16:
+ 726 0000 73746174 		.ascii	"stat_TC_INT\000"
+ 726      5F54435F 
+ 726      494E5400 
+ 727              	.LASF31:
+ 728 000c 696E6974 		.ascii	"initRealTimeClock\000"
+ 728      5265616C 
+ 728      54696D65 
+ 728      436C6F63 
+ 728      6B00
+ 729              	.LASF22:
+ 730 001e 6973456C 		.ascii	"isElasped_1ms\000"
+ 730      61737065 
+ 730      645F316D 
+ 730      7300
+ 731              	.LASF4:
+ 732 002c 6C6F6E67 		.ascii	"long int\000"
+ 732      20696E74 
+ 732      00
+ 733              	.LASF3:
+ 734 0035 73686F72 		.ascii	"short unsigned int\000"
+ 734      7420756E 
+ 734      7369676E 
+ 734      65642069 
+ 734      6E7400
+ 735              	.LASF30:
+ 736 0048 73657453 		.ascii	"setSysTick\000"
+ 736      79735469 
+ 736      636B00
+ 737              	.LASF33:
+ 738 0053 74696D65 		.ascii	"timer.c\000"
+ 738      722E6300 
+ 739              	.LASF11:
+ 740 005b 666C6F61 		.ascii	"float\000"
+ 740      7400
+ 741              	.LASF1:
+ 742 0061 756E7369 		.ascii	"unsigned char\000"
+ 742      676E6564 
+ 742      20636861 
+ 742      7200
+ 743              	.LASF23:
+ 744 006f 6973456C 		.ascii	"isElasped_1s\000"
+ 744      61737065 
+ 744      645F3173 
+ 744      00
+ 745              	.LASF5:
+ 746 007c 6C6F6E67 		.ascii	"long unsigned int\000"
+ 746      20756E73 
+ 746      69676E65 
+ 746      6420696E 
+ 746      7400
+ 747              	.LASF35:
+ 748 008e 73506172 		.ascii	"sParameter\000"
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 16
+
+
+ 748      616D6574 
+ 748      657200
+ 749              	.LASF29:
+ 750 0099 5254435F 		.ascii	"RTC_Update\000"
+ 750      55706461 
+ 750      746500
+ 751              	.LASF25:
+ 752 00a4 696E6974 		.ascii	"initTimer\000"
+ 752      54696D65 
+ 752      7200
+ 753              	.LASF24:
+ 754 00ae 4F6E6553 		.ascii	"OneSecond_MainLoop\000"
+ 754      65636F6E 
+ 754      645F4D61 
+ 754      696E4C6F 
+ 754      6F7000
+ 755              	.LASF21:
+ 756 00c1 4F6E6553 		.ascii	"OneSecond_ISR\000"
+ 756      65636F6E 
+ 756      645F4953 
+ 756      5200
+ 757              	.LASF17:
+ 758 00cf 706F735F 		.ascii	"pos_X\000"
+ 758      5800
+ 759              	.LASF18:
+ 760 00d5 706F735F 		.ascii	"pos_Y\000"
+ 760      5900
+ 761              	.LASF10:
+ 762 00db 75696E74 		.ascii	"uint16\000"
+ 762      313600
+ 763              	.LASF26:
+ 764 00e2 50617261 		.ascii	"Param\000"
+ 764      6D00
+ 765              	.LASF34:
+ 766 00e8 443A5C44 		.ascii	"D:\\DATA\\IoT\\IoT_Integrated\\Project\\Design.cyds"
+ 766      4154415C 
+ 766      496F545C 
+ 766      496F545F 
+ 766      496E7465 
+ 767 0116 6E00     		.ascii	"n\000"
+ 768              	.LASF8:
+ 769 0118 756E7369 		.ascii	"unsigned int\000"
+ 769      676E6564 
+ 769      20696E74 
+ 769      00
+ 770              	.LASF19:
+ 771 0125 4F6E654D 		.ascii	"OneMilliSecond_ISR\000"
+ 771      696C6C69 
+ 771      5365636F 
+ 771      6E645F49 
+ 771      535200
+ 772              	.LASF7:
+ 773 0138 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 773      206C6F6E 
+ 773      6720756E 
+ 773      7369676E 
+ 773      65642069 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 17
+
+
+ 774              	.LASF27:
+ 775 014f 675F6249 		.ascii	"g_bIsElapsed_1ms\000"
+ 775      73456C61 
+ 775      70736564 
+ 775      5F316D73 
+ 775      00
+ 776              	.LASF32:
+ 777 0160 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 777      43313120 
+ 777      352E342E 
+ 777      31203230 
+ 777      31363036 
+ 778 0193 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 778      20726576 
+ 778      6973696F 
+ 778      6E203233 
+ 778      37373135 
+ 779 01c6 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 779      66756E63 
+ 779      74696F6E 
+ 779      2D736563 
+ 779      74696F6E 
+ 780              	.LASF14:
+ 781 01ee 6C6F6E67 		.ascii	"long double\000"
+ 781      20646F75 
+ 781      626C6500 
+ 782              	.LASF15:
+ 783 01fa 73697A65 		.ascii	"sizetype\000"
+ 783      74797065 
+ 783      00
+ 784              	.LASF6:
+ 785 0203 6C6F6E67 		.ascii	"long long int\000"
+ 785      206C6F6E 
+ 785      6720696E 
+ 785      7400
+ 786              	.LASF13:
+ 787 0211 63686172 		.ascii	"char\000"
+ 787      00
+ 788              	.LASF2:
+ 789 0216 73686F72 		.ascii	"short int\000"
+ 789      7420696E 
+ 789      7400
+ 790              	.LASF9:
+ 791 0220 75696E74 		.ascii	"uint8\000"
+ 791      3800
+ 792              	.LASF28:
+ 793 0226 675F6249 		.ascii	"g_bIsElapsed_1s\000"
+ 793      73456C61 
+ 793      70736564 
+ 793      5F317300 
+ 794              	.LASF20:
+ 795 0236 4F6E654D 		.ascii	"OneMilliSecond_MainLoop\000"
+ 795      696C6C69 
+ 795      5365636F 
+ 795      6E645F4D 
+ 795      61696E4C 
+ 796              	.LASF0:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccKMZXht.s 			page 18
+
+
+ 797 024e 7369676E 		.ascii	"signed char\000"
+ 797      65642063 
+ 797      68617200 
+ 798              	.LASF12:
+ 799 025a 646F7562 		.ascii	"double\000"
+ 799      6C6500
+ 800              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

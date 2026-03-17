@@ -1,0 +1,2348 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"FT5x46.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.TouchReadRegister,"ax",%progbits
+  20              		.align	2
+  21              		.global	TouchReadRegister
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	TouchReadRegister, %function
+  25              	TouchReadRegister:
+  26              	.LFB62:
+  27              		.file 1 "lib\\FT5x46.c"
+   1:lib/FT5x46.c  **** /*****************************************************************************
+   2:lib/FT5x46.c  ****  *
+   3:lib/FT5x46.c  ****  * This document contains proprietary information and except with
+   4:lib/FT5x46.c  ****  * written permission of Displaytech, Ltd., such information shall
+   5:lib/FT5x46.c  ****  * not be published or disclosed to others or used for any purpose
+   6:lib/FT5x46.c  ****  * other than for the operation and maintenance of the equipment
+   7:lib/FT5x46.c  ****  * and software with which it was procured, and the document shall
+   8:lib/FT5x46.c  ****  * not be copied in whole or in part.
+   9:lib/FT5x46.c  ****  *
+  10:lib/FT5x46.c  ****  * Copyright 2008-2014 Displaytech, Ltd. All Rights Reserved.
+  11:lib/FT5x46.c  ****  *
+  12:lib/FT5x46.c  ****  *****************************************************************************/
+  13:lib/FT5x46.c  **** 
+  14:lib/FT5x46.c  **** #include <string.h>
+  15:lib/FT5x46.c  **** #include "main.h"
+  16:lib/FT5x46.c  **** #include "FT5x46.h"
+  17:lib/FT5x46.c  **** 
+  18:lib/FT5x46.c  **** uint8_t numTouches = 0;
+  19:lib/FT5x46.c  **** uint8_t gesture = 0;
+  20:lib/FT5x46.c  **** uint8_t touchActive = 0;
+  21:lib/FT5x46.c  **** struct sParamTouch ParamTouch;
+  22:lib/FT5x46.c  **** 
+  23:lib/FT5x46.c  **** uint8 TouchReadRegister(uint8_t reg, uint8_t *dest, uint8_t len)
+  24:lib/FT5x46.c  **** {
+  28              		.loc 1 24 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 2
+
+
+  34              		.cfi_def_cfa_offset 24
+  35              		.cfi_offset 3, -24
+  36              		.cfi_offset 4, -20
+  37              		.cfi_offset 5, -16
+  38              		.cfi_offset 6, -12
+  39              		.cfi_offset 7, -8
+  40              		.cfi_offset 14, -4
+  41 0002 0400     		movs	r4, r0
+  42 0004 0F00     		movs	r7, r1
+  43 0006 1600     		movs	r6, r2
+  25:lib/FT5x46.c  ****     uint8_t error;
+  26:lib/FT5x46.c  ****     uint8_t i;
+  27:lib/FT5x46.c  ****     
+  28:lib/FT5x46.c  ****     error = I2C_TC_I2CMasterSendStart(TC_I2C_SLAVE_ADDR,0, TC_I2C_READ_TIME);
+  44              		.loc 1 28 0
+  45 0008 3222     		movs	r2, #50
+  46              	.LVL1:
+  47 000a 0021     		movs	r1, #0
+  48              	.LVL2:
+  49 000c 3820     		movs	r0, #56
+  50              	.LVL3:
+  51 000e FFF7FEFF 		bl	I2C_TC_I2CMasterSendStart
+  52              	.LVL4:
+  53 0012 C5B2     		uxtb	r5, r0
+  54              	.LVL5:
+  29:lib/FT5x46.c  ****     if(error == I2C_TC_I2C_MSTR_NO_ERROR) error = I2C_TC_I2CMasterWriteByte(reg, TC_I2C_READ_TIME);
+  55              		.loc 1 29 0
+  56 0014 002D     		cmp	r5, #0
+  57 0016 04D1     		bne	.L2
+  58              		.loc 1 29 0 is_stmt 0 discriminator 1
+  59 0018 3221     		movs	r1, #50
+  60 001a 2000     		movs	r0, r4
+  61 001c FFF7FEFF 		bl	I2C_TC_I2CMasterWriteByte
+  62              	.LVL6:
+  63 0020 C5B2     		uxtb	r5, r0
+  64              	.LVL7:
+  65              	.L2:
+  30:lib/FT5x46.c  ****     if(error == I2C_TC_I2C_MSTR_NO_ERROR) error = I2C_TC_I2CMasterSendRestart(TC_I2C_SLAVE_ADDR,1, 
+  66              		.loc 1 30 0 is_stmt 1
+  67 0022 002D     		cmp	r5, #0
+  68 0024 05D1     		bne	.L3
+  69              		.loc 1 30 0 is_stmt 0 discriminator 1
+  70 0026 3222     		movs	r2, #50
+  71 0028 0121     		movs	r1, #1
+  72 002a 3820     		movs	r0, #56
+  73 002c FFF7FEFF 		bl	I2C_TC_I2CMasterSendRestart
+  74              	.LVL8:
+  75 0030 C5B2     		uxtb	r5, r0
+  76              	.LVL9:
+  77              	.L3:
+  31:lib/FT5x46.c  ****     for(i=0; i<len-1;i++)
+  78              		.loc 1 31 0 is_stmt 1
+  79 0032 0024     		movs	r4, #0
+  80 0034 08E0     		b	.L4
+  81              	.LVL10:
+  82              	.L6:
+  32:lib/FT5x46.c  ****     {
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 3
+
+
+  33:lib/FT5x46.c  ****         if(error ==  I2C_TC_I2C_MSTR_NO_ERROR) I2C_TC_I2CMasterReadByte(I2C_TC_I2C_ACK_DATA,dest + 
+  83              		.loc 1 33 0
+  84 0036 002D     		cmp	r5, #0
+  85 0038 04D1     		bne	.L5
+  86              		.loc 1 33 0 is_stmt 0 discriminator 1
+  87 003a 3919     		adds	r1, r7, r4
+  88 003c 3222     		movs	r2, #50
+  89 003e 0020     		movs	r0, #0
+  90 0040 FFF7FEFF 		bl	I2C_TC_I2CMasterReadByte
+  91              	.LVL11:
+  92              	.L5:
+  31:lib/FT5x46.c  ****     for(i=0; i<len-1;i++)
+  93              		.loc 1 31 0 is_stmt 1 discriminator 2
+  94 0044 0134     		adds	r4, r4, #1
+  95              	.LVL12:
+  96 0046 E4B2     		uxtb	r4, r4
+  97              	.LVL13:
+  98              	.L4:
+  31:lib/FT5x46.c  ****     for(i=0; i<len-1;i++)
+  99              		.loc 1 31 0 is_stmt 0 discriminator 1
+ 100 0048 731E     		subs	r3, r6, #1
+ 101 004a 9C42     		cmp	r4, r3
+ 102 004c F3DB     		blt	.L6
+  34:lib/FT5x46.c  ****     }
+  35:lib/FT5x46.c  ****     if(error ==  I2C_TC_I2C_MSTR_NO_ERROR) I2C_TC_I2CMasterReadByte(I2C_TC_I2C_NAK_DATA, dest+(i-1)
+ 103              		.loc 1 35 0 is_stmt 1
+ 104 004e 002D     		cmp	r5, #0
+ 105 0050 05D1     		bne	.L7
+ 106              		.loc 1 35 0 is_stmt 0 discriminator 1
+ 107 0052 611E     		subs	r1, r4, #1
+ 108 0054 7918     		adds	r1, r7, r1
+ 109 0056 3222     		movs	r2, #50
+ 110 0058 0120     		movs	r0, #1
+ 111 005a FFF7FEFF 		bl	I2C_TC_I2CMasterReadByte
+ 112              	.LVL14:
+ 113              	.L7:
+  36:lib/FT5x46.c  ****     
+  37:lib/FT5x46.c  ****     I2C_TC_I2CMasterSendStop(TC_I2C_READ_TIME);
+ 114              		.loc 1 37 0 is_stmt 1
+ 115 005e 3220     		movs	r0, #50
+ 116 0060 FFF7FEFF 		bl	I2C_TC_I2CMasterSendStop
+ 117              	.LVL15:
+  38:lib/FT5x46.c  ****     I2C_TC_I2CMasterClearStatus();
+ 118              		.loc 1 38 0
+ 119 0064 FFF7FEFF 		bl	I2C_TC_I2CMasterClearStatus
+ 120              	.LVL16:
+  39:lib/FT5x46.c  ****     CyDelayUs(100);
+ 121              		.loc 1 39 0
+ 122 0068 6420     		movs	r0, #100
+ 123 006a FFF7FEFF 		bl	CyDelayUs
+ 124              	.LVL17:
+  40:lib/FT5x46.c  ****     return error;
+  41:lib/FT5x46.c  **** }
+ 125              		.loc 1 41 0
+ 126 006e 2800     		movs	r0, r5
+ 127              		@ sp needed
+ 128              	.LVL18:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 4
+
+
+ 129              	.LVL19:
+ 130              	.LVL20:
+ 131 0070 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 132              		.cfi_endproc
+ 133              	.LFE62:
+ 134              		.size	TouchReadRegister, .-TouchReadRegister
+ 135 0072 C046     		.section	.text.byteReverse,"ax",%progbits
+ 136              		.align	2
+ 137              		.global	byteReverse
+ 138              		.code	16
+ 139              		.thumb_func
+ 140              		.type	byteReverse, %function
+ 141              	byteReverse:
+ 142              	.LFB63:
+  42:lib/FT5x46.c  **** 
+  43:lib/FT5x46.c  **** void byteReverse(uint8_t* dest, uint8_t* src, uint8_t len)
+  44:lib/FT5x46.c  **** {
+ 143              		.loc 1 44 0
+ 144              		.cfi_startproc
+ 145              		@ args = 0, pretend = 0, frame = 0
+ 146              		@ frame_needed = 0, uses_anonymous_args = 0
+ 147              		@ link register save eliminated.
+ 148              	.LVL21:
+  45:lib/FT5x46.c  ****     src += (len - 1);
+ 149              		.loc 1 45 0
+ 150 0000 531E     		subs	r3, r2, #1
+ 151 0002 C918     		adds	r1, r1, r3
+ 152              	.LVL22:
+  46:lib/FT5x46.c  **** 
+  47:lib/FT5x46.c  ****     while(len--)
+ 153              		.loc 1 47 0
+ 154 0004 04E0     		b	.L9
+ 155              	.LVL23:
+ 156              	.L10:
+  48:lib/FT5x46.c  ****         *dest++ = *src--;
+ 157              		.loc 1 48 0
+ 158 0006 0A78     		ldrb	r2, [r1]
+ 159 0008 0270     		strb	r2, [r0]
+  47:lib/FT5x46.c  ****         *dest++ = *src--;
+ 160              		.loc 1 47 0
+ 161 000a 1A00     		movs	r2, r3
+ 162              		.loc 1 48 0
+ 163 000c 0139     		subs	r1, r1, #1
+ 164              	.LVL24:
+ 165 000e 0130     		adds	r0, r0, #1
+ 166              	.LVL25:
+ 167              	.L9:
+  47:lib/FT5x46.c  ****         *dest++ = *src--;
+ 168              		.loc 1 47 0
+ 169 0010 531E     		subs	r3, r2, #1
+ 170 0012 DBB2     		uxtb	r3, r3
+ 171              	.LVL26:
+ 172 0014 002A     		cmp	r2, #0
+ 173 0016 F6D1     		bne	.L10
+  49:lib/FT5x46.c  **** }
+ 174              		.loc 1 49 0
+ 175              		@ sp needed
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 5
+
+
+ 176 0018 7047     		bx	lr
+ 177              		.cfi_endproc
+ 178              	.LFE63:
+ 179              		.size	byteReverse, .-byteReverse
+ 180 001a C046     		.section	.text.TouchHardwareInit,"ax",%progbits
+ 181              		.align	2
+ 182              		.global	TouchHardwareInit
+ 183              		.code	16
+ 184              		.thumb_func
+ 185              		.type	TouchHardwareInit, %function
+ 186              	TouchHardwareInit:
+ 187              	.LFB64:
+  50:lib/FT5x46.c  **** 
+  51:lib/FT5x46.c  **** void TouchHardwareInit(void)
+  52:lib/FT5x46.c  **** {
+ 188              		.loc 1 52 0
+ 189              		.cfi_startproc
+ 190              		@ args = 0, pretend = 0, frame = 0
+ 191              		@ frame_needed = 0, uses_anonymous_args = 0
+ 192 0000 10B5     		push	{r4, lr}
+ 193              		.cfi_def_cfa_offset 8
+ 194              		.cfi_offset 4, -8
+ 195              		.cfi_offset 14, -4
+  53:lib/FT5x46.c  ****     //Reset the device
+  54:lib/FT5x46.c  ****     TC_RESET_Write(0);
+ 196              		.loc 1 54 0
+ 197 0002 0020     		movs	r0, #0
+ 198 0004 FFF7FEFF 		bl	TC_RESET_Write
+ 199              	.LVL27:
+  55:lib/FT5x46.c  ****     CyDelay(10);
+ 200              		.loc 1 55 0
+ 201 0008 0A20     		movs	r0, #10
+ 202 000a FFF7FEFF 		bl	CyDelay
+ 203              	.LVL28:
+  56:lib/FT5x46.c  ****     TC_RESET_Write(1);
+ 204              		.loc 1 56 0
+ 205 000e 0120     		movs	r0, #1
+ 206 0010 FFF7FEFF 		bl	TC_RESET_Write
+ 207              	.LVL29:
+  57:lib/FT5x46.c  ****     CyDelay(500);
+ 208              		.loc 1 57 0
+ 209 0014 FA20     		movs	r0, #250
+ 210 0016 4000     		lsls	r0, r0, #1
+ 211 0018 FFF7FEFF 		bl	CyDelay
+ 212              	.LVL30:
+  58:lib/FT5x46.c  **** }
+ 213              		.loc 1 58 0
+ 214              		@ sp needed
+ 215 001c 10BD     		pop	{r4, pc}
+ 216              		.cfi_endproc
+ 217              	.LFE64:
+ 218              		.size	TouchHardwareInit, .-TouchHardwareInit
+ 219 001e C046     		.section	.text.TouchPos,"ax",%progbits
+ 220              		.align	2
+ 221              		.global	TouchPos
+ 222              		.code	16
+ 223              		.thumb_func
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 6
+
+
+ 224              		.type	TouchPos, %function
+ 225              	TouchPos:
+ 226              	.LFB65:
+  59:lib/FT5x46.c  **** 
+  60:lib/FT5x46.c  **** 
+  61:lib/FT5x46.c  **** void TouchPos(uint8_t* data, uint8_t touch_num)
+  62:lib/FT5x46.c  **** {
+ 227              		.loc 1 62 0
+ 228              		.cfi_startproc
+ 229              		@ args = 0, pretend = 0, frame = 0
+ 230              		@ frame_needed = 0, uses_anonymous_args = 0
+ 231              	.LVL31:
+ 232 0000 30B5     		push	{r4, r5, lr}
+ 233              		.cfi_def_cfa_offset 12
+ 234              		.cfi_offset 4, -12
+ 235              		.cfi_offset 5, -8
+ 236              		.cfi_offset 14, -4
+  63:lib/FT5x46.c  ****     uint16_t pos;
+  64:lib/FT5x46.c  ****    // char stBuf[100];
+  65:lib/FT5x46.c  ****   //DEBUG_printf("5");    
+  66:lib/FT5x46.c  ****     if((data[0] & 0x80) && ((data[2] & 0xF0) == (touch_num << 4)))
+ 237              		.loc 1 66 0
+ 238 0002 0378     		ldrb	r3, [r0]
+ 239 0004 5AB2     		sxtb	r2, r3
+ 240 0006 002A     		cmp	r2, #0
+ 241 0008 1BDA     		bge	.L12
+ 242              		.loc 1 66 0 is_stmt 0 discriminator 1
+ 243 000a 8278     		ldrb	r2, [r0, #2]
+ 244 000c 0F24     		movs	r4, #15
+ 245 000e A243     		bics	r2, r4
+ 246 0010 0C01     		lsls	r4, r1, #4
+ 247 0012 A242     		cmp	r2, r4
+ 248 0014 15D1     		bne	.L12
+  67:lib/FT5x46.c  ****     {     
+  68:lib/FT5x46.c  ****         pos  = (data[0] & 0x0F) << 8;
+ 249              		.loc 1 68 0 is_stmt 1
+ 250 0016 1B02     		lsls	r3, r3, #8
+ 251 0018 F022     		movs	r2, #240
+ 252 001a 1201     		lsls	r2, r2, #4
+ 253 001c 1340     		ands	r3, r2
+ 254              	.LVL32:
+  69:lib/FT5x46.c  ****         pos += data[1];    
+ 255              		.loc 1 69 0
+ 256 001e 4478     		ldrb	r4, [r0, #1]
+ 257 0020 1B19     		adds	r3, r3, r4
+ 258              	.LVL33:
+  70:lib/FT5x46.c  ****         ParamTouch.x[touch_num] = pos;
+ 259              		.loc 1 70 0
+ 260 0022 084D     		ldr	r5, .L14
+ 261 0024 4C00     		lsls	r4, r1, #1
+ 262 0026 2C19     		adds	r4, r5, r4
+ 263 0028 6380     		strh	r3, [r4, #2]
+  71:lib/FT5x46.c  ****         
+  72:lib/FT5x46.c  ****         pos  = (data[2] & 0x0F) << 8;
+ 264              		.loc 1 72 0
+ 265 002a 8378     		ldrb	r3, [r0, #2]
+ 266              	.LVL34:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 7
+
+
+ 267 002c 1B02     		lsls	r3, r3, #8
+ 268 002e 1A40     		ands	r2, r3
+ 269              	.LVL35:
+  73:lib/FT5x46.c  ****         pos += data[3];    
+ 270              		.loc 1 73 0
+ 271 0030 C378     		ldrb	r3, [r0, #3]
+ 272 0032 D218     		adds	r2, r2, r3
+ 273              	.LVL36:
+  74:lib/FT5x46.c  ****         ParamTouch.y[touch_num] = pos;
+ 274              		.loc 1 74 0
+ 275 0034 0431     		adds	r1, r1, #4
+ 276              	.LVL37:
+ 277 0036 4900     		lsls	r1, r1, #1
+ 278 0038 6918     		adds	r1, r5, r1
+ 279 003a 8A80     		strh	r2, [r1, #4]
+  75:lib/FT5x46.c  ****         
+  76:lib/FT5x46.c  ****         touchActive = 1;
+ 280              		.loc 1 76 0
+ 281 003c 0122     		movs	r2, #1
+ 282              	.LVL38:
+ 283 003e 024B     		ldr	r3, .L14+4
+ 284 0040 1A70     		strb	r2, [r3]
+ 285              	.LVL39:
+ 286              	.L12:
+  77:lib/FT5x46.c  ****       //  sprintf(stBuf,"Touch %i X: %i, Y: %i \r\n",touch_num, ParamTouch.x[touch_num], ParamTouch
+  78:lib/FT5x46.c  ****       //  UART_UartPutString(stBuf);
+  79:lib/FT5x46.c  ****     }
+  80:lib/FT5x46.c  ****     else
+  81:lib/FT5x46.c  ****     {
+  82:lib/FT5x46.c  ****       //  DEBUG_printf("Touch Error \r\n");
+  83:lib/FT5x46.c  ****     }
+  84:lib/FT5x46.c  **** }
+ 287              		.loc 1 84 0
+ 288              		@ sp needed
+ 289 0042 30BD     		pop	{r4, r5, pc}
+ 290              	.L15:
+ 291              		.align	2
+ 292              	.L14:
+ 293 0044 00000000 		.word	ParamTouch
+ 294 0048 00000000 		.word	.LANCHOR0
+ 295              		.cfi_endproc
+ 296              	.LFE65:
+ 297              		.size	TouchPos, .-TouchPos
+ 298              		.section	.text.TouchGetPosition,"ax",%progbits
+ 299              		.align	2
+ 300              		.global	TouchGetPosition
+ 301              		.code	16
+ 302              		.thumb_func
+ 303              		.type	TouchGetPosition, %function
+ 304              	TouchGetPosition:
+ 305              	.LFB66:
+  85:lib/FT5x46.c  **** 
+  86:lib/FT5x46.c  **** void TouchGetPosition(void)
+  87:lib/FT5x46.c  **** {
+ 306              		.loc 1 87 0
+ 307              		.cfi_startproc
+ 308              		@ args = 0, pretend = 0, frame = 16
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 8
+
+
+ 309              		@ frame_needed = 0, uses_anonymous_args = 0
+ 310 0000 10B5     		push	{r4, lr}
+ 311              		.cfi_def_cfa_offset 8
+ 312              		.cfi_offset 4, -8
+ 313              		.cfi_offset 14, -4
+ 314 0002 84B0     		sub	sp, sp, #16
+ 315              		.cfi_def_cfa_offset 24
+  88:lib/FT5x46.c  ****     uint8 error;
+  89:lib/FT5x46.c  ****     uint8_t i;
+  90:lib/FT5x46.c  ****     uint8_t rBuf[10];
+  91:lib/FT5x46.c  ****     
+  92:lib/FT5x46.c  ****     error = TouchReadRegister(FT5X46_REG_DEVICE_MODE, rBuf, 9);
+ 316              		.loc 1 92 0
+ 317 0004 0922     		movs	r2, #9
+ 318 0006 01A9     		add	r1, sp, #4
+ 319 0008 0020     		movs	r0, #0
+ 320 000a FFF7FEFF 		bl	TouchReadRegister
+ 321              	.LVL40:
+  93:lib/FT5x46.c  ****     if(error == I2C_TC_I2C_MSTR_NO_ERROR)
+ 322              		.loc 1 93 0
+ 323 000e 0028     		cmp	r0, #0
+ 324 0010 21D1     		bne	.L16
+  94:lib/FT5x46.c  ****     {
+  95:lib/FT5x46.c  ****         if(rBuf[FT5X46_REG_DEVICE_MODE] == 0x00)
+ 325              		.loc 1 95 0
+ 326 0012 01AB     		add	r3, sp, #4
+ 327 0014 1B78     		ldrb	r3, [r3]
+ 328 0016 002B     		cmp	r3, #0
+ 329 0018 1DD1     		bne	.L16
+  96:lib/FT5x46.c  ****         {
+  97:lib/FT5x46.c  ****             numTouches = rBuf[FT5X46_REG_TD_STATUS];
+ 330              		.loc 1 97 0
+ 331 001a 01AB     		add	r3, sp, #4
+ 332 001c 9B78     		ldrb	r3, [r3, #2]
+ 333 001e 0F4A     		ldr	r2, .L21
+ 334 0020 5370     		strb	r3, [r2, #1]
+  98:lib/FT5x46.c  ****             
+  99:lib/FT5x46.c  ****             if((numTouches > 0) && (numTouches <= MAX_TOUCHES))
+ 335              		.loc 1 99 0
+ 336 0022 013B     		subs	r3, r3, #1
+ 337 0024 DBB2     		uxtb	r3, r3
+ 338 0026 042B     		cmp	r3, #4
+ 339 0028 10D9     		bls	.L20
+ 340 002a 14E0     		b	.L16
+ 341              	.LVL41:
+ 342              	.L19:
+ 100:lib/FT5x46.c  ****             {
+ 101:lib/FT5x46.c  ****                 for( i = 0; i < numTouches; i++)
+ 102:lib/FT5x46.c  ****                 {
+ 103:lib/FT5x46.c  ****                     TouchReadRegister(FT5X46_REG_XH_POS + FT5X46_TOUCH_LENGTH*i, rBuf, 6);
+ 343              		.loc 1 103 0 discriminator 3
+ 344 002c 6300     		lsls	r3, r4, #1
+ 345 002e E318     		adds	r3, r4, r3
+ 346 0030 5800     		lsls	r0, r3, #1
+ 347 0032 0330     		adds	r0, r0, #3
+ 348 0034 C0B2     		uxtb	r0, r0
+ 349 0036 0622     		movs	r2, #6
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 9
+
+
+ 350 0038 01A9     		add	r1, sp, #4
+ 351 003a FFF7FEFF 		bl	TouchReadRegister
+ 352              	.LVL42:
+ 104:lib/FT5x46.c  ****                     
+ 105:lib/FT5x46.c  ****                     TouchPos(rBuf, i);      
+ 353              		.loc 1 105 0 discriminator 3
+ 354 003e 2100     		movs	r1, r4
+ 355 0040 01A8     		add	r0, sp, #4
+ 356 0042 FFF7FEFF 		bl	TouchPos
+ 357              	.LVL43:
+ 101:lib/FT5x46.c  ****                 {
+ 358              		.loc 1 101 0 discriminator 3
+ 359 0046 0134     		adds	r4, r4, #1
+ 360              	.LVL44:
+ 361 0048 E4B2     		uxtb	r4, r4
+ 362              	.LVL45:
+ 363 004a 00E0     		b	.L18
+ 364              	.LVL46:
+ 365              	.L20:
+ 366 004c 0024     		movs	r4, #0
+ 367              	.LVL47:
+ 368              	.L18:
+ 101:lib/FT5x46.c  ****                 {
+ 369              		.loc 1 101 0 is_stmt 0 discriminator 1
+ 370 004e 034B     		ldr	r3, .L21
+ 371 0050 5B78     		ldrb	r3, [r3, #1]
+ 372 0052 9C42     		cmp	r4, r3
+ 373 0054 EAD3     		bcc	.L19
+ 374              	.LVL48:
+ 375              	.L16:
+ 106:lib/FT5x46.c  ****                 }
+ 107:lib/FT5x46.c  ****             }            
+ 108:lib/FT5x46.c  ****         }
+ 109:lib/FT5x46.c  ****     }
+ 110:lib/FT5x46.c  ****     return;
+ 111:lib/FT5x46.c  **** }
+ 376              		.loc 1 111 0 is_stmt 1
+ 377 0056 04B0     		add	sp, sp, #16
+ 378              		@ sp needed
+ 379 0058 10BD     		pop	{r4, pc}
+ 380              	.L22:
+ 381 005a C046     		.align	2
+ 382              	.L21:
+ 383 005c 00000000 		.word	.LANCHOR0
+ 384              		.cfi_endproc
+ 385              	.LFE66:
+ 386              		.size	TouchGetPosition, .-TouchGetPosition
+ 387              		.section	.text.TouchStoreCalibration,"ax",%progbits
+ 388              		.align	2
+ 389              		.global	TouchStoreCalibration
+ 390              		.code	16
+ 391              		.thumb_func
+ 392              		.type	TouchStoreCalibration, %function
+ 393              	TouchStoreCalibration:
+ 394              	.LFB67:
+ 112:lib/FT5x46.c  **** 
+ 113:lib/FT5x46.c  **** uint16_t mchpTouchScreenVersion = 0x0000;
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 10
+
+
+ 114:lib/FT5x46.c  **** void TouchStoreCalibration(void) { return; }
+ 395              		.loc 1 114 0
+ 396              		.cfi_startproc
+ 397              		@ args = 0, pretend = 0, frame = 0
+ 398              		@ frame_needed = 0, uses_anonymous_args = 0
+ 399              		@ link register save eliminated.
+ 400              		.loc 1 114 0
+ 401              		@ sp needed
+ 402 0000 7047     		bx	lr
+ 403              		.cfi_endproc
+ 404              	.LFE67:
+ 405              		.size	TouchStoreCalibration, .-TouchStoreCalibration
+ 406 0002 C046     		.section	.text.TouchLoadCalibration,"ax",%progbits
+ 407              		.align	2
+ 408              		.global	TouchLoadCalibration
+ 409              		.code	16
+ 410              		.thumb_func
+ 411              		.type	TouchLoadCalibration, %function
+ 412              	TouchLoadCalibration:
+ 413              	.LFB68:
+ 115:lib/FT5x46.c  **** void TouchLoadCalibration(void)  { return; }
+ 414              		.loc 1 115 0
+ 415              		.cfi_startproc
+ 416              		@ args = 0, pretend = 0, frame = 0
+ 417              		@ frame_needed = 0, uses_anonymous_args = 0
+ 418              		@ link register save eliminated.
+ 419              		.loc 1 115 0
+ 420              		@ sp needed
+ 421 0000 7047     		bx	lr
+ 422              		.cfi_endproc
+ 423              	.LFE68:
+ 424              		.size	TouchLoadCalibration, .-TouchLoadCalibration
+ 425 0002 C046     		.section	.text.TouchCalHWGetPoints,"ax",%progbits
+ 426              		.align	2
+ 427              		.global	TouchCalHWGetPoints
+ 428              		.code	16
+ 429              		.thumb_func
+ 430              		.type	TouchCalHWGetPoints, %function
+ 431              	TouchCalHWGetPoints:
+ 432              	.LFB69:
+ 116:lib/FT5x46.c  **** void TouchCalHWGetPoints(void) { return; }
+ 433              		.loc 1 116 0
+ 434              		.cfi_startproc
+ 435              		@ args = 0, pretend = 0, frame = 0
+ 436              		@ frame_needed = 0, uses_anonymous_args = 0
+ 437              		@ link register save eliminated.
+ 438              		.loc 1 116 0
+ 439              		@ sp needed
+ 440 0000 7047     		bx	lr
+ 441              		.cfi_endproc
+ 442              	.LFE69:
+ 443              		.size	TouchCalHWGetPoints, .-TouchCalHWGetPoints
+ 444              		.global	mchpTouchScreenVersion
+ 445              		.comm	ParamTouch,22,4
+ 446              		.global	touchActive
+ 447              		.global	gesture
+ 448              		.global	numTouches
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 11
+
+
+ 449              		.comm	Param,6,4
+ 450 0002 C046     		.bss
+ 451              		.align	1
+ 452              		.set	.LANCHOR0,. + 0
+ 453              		.type	touchActive, %object
+ 454              		.size	touchActive, 1
+ 455              	touchActive:
+ 456 0000 00       		.space	1
+ 457              		.type	numTouches, %object
+ 458              		.size	numTouches, 1
+ 459              	numTouches:
+ 460 0001 00       		.space	1
+ 461              		.type	mchpTouchScreenVersion, %object
+ 462              		.size	mchpTouchScreenVersion, 2
+ 463              	mchpTouchScreenVersion:
+ 464 0002 0000     		.space	2
+ 465              		.type	gesture, %object
+ 466              		.size	gesture, 1
+ 467              	gesture:
+ 468 0004 00       		.space	1
+ 469              		.text
+ 470              	.Letext0:
+ 471              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 472              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 473              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 474              		.file 5 "./main.h"
+ 475              		.file 6 "lib\\FT5x46.h"
+ 476              		.file 7 "Generated_Source\\PSoC4/RTC.h"
+ 477              		.file 8 "Generated_Source\\PSoC4/I2C_TC_I2C.h"
+ 478              		.file 9 "Generated_Source\\PSoC4/CyLib.h"
+ 479              		.file 10 "Generated_Source\\PSoC4/TC_RESET.h"
+ 480              		.section	.debug_info,"",%progbits
+ 481              	.Ldebug_info0:
+ 482 0000 29050000 		.4byte	0x529
+ 483 0004 0400     		.2byte	0x4
+ 484 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 485 000a 04       		.byte	0x4
+ 486 000b 01       		.uleb128 0x1
+ 487 000c 7C000000 		.4byte	.LASF54
+ 488 0010 0C       		.byte	0xc
+ 489 0011 30010000 		.4byte	.LASF55
+ 490 0015 3A030000 		.4byte	.LASF56
+ 491 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 492 001d 00000000 		.4byte	0
+ 493 0021 00000000 		.4byte	.Ldebug_line0
+ 494 0025 02       		.uleb128 0x2
+ 495 0026 04       		.byte	0x4
+ 496 0027 05       		.byte	0x5
+ 497 0028 696E7400 		.ascii	"int\000"
+ 498 002c 03       		.uleb128 0x3
+ 499 002d 04       		.byte	0x4
+ 500 002e 07       		.byte	0x7
+ 501 002f 4E020000 		.4byte	.LASF0
+ 502 0033 03       		.uleb128 0x3
+ 503 0034 08       		.byte	0x8
+ 504 0035 05       		.byte	0x5
+ 505 0036 78010000 		.4byte	.LASF1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 12
+
+
+ 506 003a 03       		.uleb128 0x3
+ 507 003b 08       		.byte	0x8
+ 508 003c 04       		.byte	0x4
+ 509 003d F6010000 		.4byte	.LASF2
+ 510 0041 03       		.uleb128 0x3
+ 511 0042 01       		.byte	0x1
+ 512 0043 06       		.byte	0x6
+ 513 0044 2B020000 		.4byte	.LASF3
+ 514 0048 04       		.uleb128 0x4
+ 515 0049 C7010000 		.4byte	.LASF6
+ 516 004d 02       		.byte	0x2
+ 517 004e 1D       		.byte	0x1d
+ 518 004f 53000000 		.4byte	0x53
+ 519 0053 03       		.uleb128 0x3
+ 520 0054 01       		.byte	0x1
+ 521 0055 08       		.byte	0x8
+ 522 0056 0C020000 		.4byte	.LASF4
+ 523 005a 03       		.uleb128 0x3
+ 524 005b 02       		.byte	0x2
+ 525 005c 05       		.byte	0x5
+ 526 005d 2B000000 		.4byte	.LASF5
+ 527 0061 04       		.uleb128 0x4
+ 528 0062 55000000 		.4byte	.LASF7
+ 529 0066 02       		.byte	0x2
+ 530 0067 2B       		.byte	0x2b
+ 531 0068 6C000000 		.4byte	0x6c
+ 532 006c 03       		.uleb128 0x3
+ 533 006d 02       		.byte	0x2
+ 534 006e 07       		.byte	0x7
+ 535 006f 72020000 		.4byte	.LASF8
+ 536 0073 03       		.uleb128 0x3
+ 537 0074 04       		.byte	0x4
+ 538 0075 05       		.byte	0x5
+ 539 0076 9C010000 		.4byte	.LASF9
+ 540 007a 03       		.uleb128 0x3
+ 541 007b 04       		.byte	0x4
+ 542 007c 07       		.byte	0x7
+ 543 007d D7020000 		.4byte	.LASF10
+ 544 0081 03       		.uleb128 0x3
+ 545 0082 08       		.byte	0x8
+ 546 0083 07       		.byte	0x7
+ 547 0084 37020000 		.4byte	.LASF11
+ 548 0088 03       		.uleb128 0x3
+ 549 0089 04       		.byte	0x4
+ 550 008a 07       		.byte	0x7
+ 551 008b 35000000 		.4byte	.LASF12
+ 552 008f 03       		.uleb128 0x3
+ 553 0090 01       		.byte	0x1
+ 554 0091 08       		.byte	0x8
+ 555 0092 85020000 		.4byte	.LASF13
+ 556 0096 04       		.uleb128 0x4
+ 557 0097 0A010000 		.4byte	.LASF14
+ 558 009b 03       		.byte	0x3
+ 559 009c 18       		.byte	0x18
+ 560 009d 48000000 		.4byte	0x48
+ 561 00a1 04       		.uleb128 0x4
+ 562 00a2 06030000 		.4byte	.LASF15
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 13
+
+
+ 563 00a6 03       		.byte	0x3
+ 564 00a7 24       		.byte	0x24
+ 565 00a8 61000000 		.4byte	0x61
+ 566 00ac 05       		.uleb128 0x5
+ 567 00ad 99020000 		.4byte	.LASF16
+ 568 00b1 04       		.byte	0x4
+ 569 00b2 FC01     		.2byte	0x1fc
+ 570 00b4 53000000 		.4byte	0x53
+ 571 00b8 05       		.uleb128 0x5
+ 572 00b9 B4020000 		.4byte	.LASF17
+ 573 00bd 04       		.byte	0x4
+ 574 00be FD01     		.2byte	0x1fd
+ 575 00c0 6C000000 		.4byte	0x6c
+ 576 00c4 03       		.uleb128 0x3
+ 577 00c5 04       		.byte	0x4
+ 578 00c6 04       		.byte	0x4
+ 579 00c7 5D010000 		.4byte	.LASF18
+ 580 00cb 03       		.uleb128 0x3
+ 581 00cc 08       		.byte	0x8
+ 582 00cd 04       		.byte	0x4
+ 583 00ce F3020000 		.4byte	.LASF19
+ 584 00d2 06       		.uleb128 0x6
+ 585 00d3 9F020000 		.4byte	.LASF23
+ 586 00d7 06       		.byte	0x6
+ 587 00d8 05       		.byte	0x5
+ 588 00d9 2E       		.byte	0x2e
+ 589 00da 03010000 		.4byte	0x103
+ 590 00de 07       		.uleb128 0x7
+ 591 00df FA020000 		.4byte	.LASF20
+ 592 00e3 05       		.byte	0x5
+ 593 00e4 30       		.byte	0x30
+ 594 00e5 AC000000 		.4byte	0xac
+ 595 00e9 00       		.byte	0
+ 596 00ea 07       		.uleb128 0x7
+ 597 00eb 3D010000 		.4byte	.LASF21
+ 598 00ef 05       		.byte	0x5
+ 599 00f0 31       		.byte	0x31
+ 600 00f1 B8000000 		.4byte	0xb8
+ 601 00f5 02       		.byte	0x2
+ 602 00f6 07       		.uleb128 0x7
+ 603 00f7 1A020000 		.4byte	.LASF22
+ 604 00fb 05       		.byte	0x5
+ 605 00fc 32       		.byte	0x32
+ 606 00fd B8000000 		.4byte	0xb8
+ 607 0101 04       		.byte	0x4
+ 608 0102 00       		.byte	0
+ 609 0103 06       		.uleb128 0x6
+ 610 0104 24010000 		.4byte	.LASF24
+ 611 0108 16       		.byte	0x16
+ 612 0109 06       		.byte	0x6
+ 613 010a 29       		.byte	0x29
+ 614 010b 30010000 		.4byte	0x130
+ 615 010f 07       		.uleb128 0x7
+ 616 0110 BB030000 		.4byte	.LASF25
+ 617 0114 06       		.byte	0x6
+ 618 0115 2B       		.byte	0x2b
+ 619 0116 AC000000 		.4byte	0xac
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 14
+
+
+ 620 011a 00       		.byte	0
+ 621 011b 08       		.uleb128 0x8
+ 622 011c 7800     		.ascii	"x\000"
+ 623 011e 06       		.byte	0x6
+ 624 011f 2C       		.byte	0x2c
+ 625 0120 30010000 		.4byte	0x130
+ 626 0124 02       		.byte	0x2
+ 627 0125 08       		.uleb128 0x8
+ 628 0126 7900     		.ascii	"y\000"
+ 629 0128 06       		.byte	0x6
+ 630 0129 2D       		.byte	0x2d
+ 631 012a 30010000 		.4byte	0x130
+ 632 012e 0C       		.byte	0xc
+ 633 012f 00       		.byte	0
+ 634 0130 09       		.uleb128 0x9
+ 635 0131 B8000000 		.4byte	0xb8
+ 636 0135 40010000 		.4byte	0x140
+ 637 0139 0A       		.uleb128 0xa
+ 638 013a 88000000 		.4byte	0x88
+ 639 013e 04       		.byte	0x4
+ 640 013f 00       		.byte	0
+ 641 0140 0B       		.uleb128 0xb
+ 642 0141 12010000 		.4byte	.LASF57
+ 643 0145 01       		.byte	0x1
+ 644 0146 17       		.byte	0x17
+ 645 0147 AC000000 		.4byte	0xac
+ 646 014b 00000000 		.4byte	.LFB62
+ 647 014f 72000000 		.4byte	.LFE62-.LFB62
+ 648 0153 01       		.uleb128 0x1
+ 649 0154 9C       		.byte	0x9c
+ 650 0155 6E020000 		.4byte	0x26e
+ 651 0159 0C       		.uleb128 0xc
+ 652 015a 72656700 		.ascii	"reg\000"
+ 653 015e 01       		.byte	0x1
+ 654 015f 17       		.byte	0x17
+ 655 0160 96000000 		.4byte	0x96
+ 656 0164 00000000 		.4byte	.LLST0
+ 657 0168 0D       		.uleb128 0xd
+ 658 0169 1A000000 		.4byte	.LASF26
+ 659 016d 01       		.byte	0x1
+ 660 016e 17       		.byte	0x17
+ 661 016f 6E020000 		.4byte	0x26e
+ 662 0173 21000000 		.4byte	.LLST1
+ 663 0177 0C       		.uleb128 0xc
+ 664 0178 6C656E00 		.ascii	"len\000"
+ 665 017c 01       		.byte	0x1
+ 666 017d 17       		.byte	0x17
+ 667 017e 96000000 		.4byte	0x96
+ 668 0182 4D000000 		.4byte	.LLST2
+ 669 0186 0E       		.uleb128 0xe
+ 670 0187 B5030000 		.4byte	.LASF27
+ 671 018b 01       		.byte	0x1
+ 672 018c 19       		.byte	0x19
+ 673 018d 96000000 		.4byte	0x96
+ 674 0191 6E000000 		.4byte	.LLST3
+ 675 0195 0F       		.uleb128 0xf
+ 676 0196 6900     		.ascii	"i\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 15
+
+
+ 677 0198 01       		.byte	0x1
+ 678 0199 1A       		.byte	0x1a
+ 679 019a 96000000 		.4byte	0x96
+ 680 019e 81000000 		.4byte	.LLST4
+ 681 01a2 10       		.uleb128 0x10
+ 682 01a3 12000000 		.4byte	.LVL4
+ 683 01a7 C3040000 		.4byte	0x4c3
+ 684 01ab C1010000 		.4byte	0x1c1
+ 685 01af 11       		.uleb128 0x11
+ 686 01b0 01       		.uleb128 0x1
+ 687 01b1 50       		.byte	0x50
+ 688 01b2 02       		.uleb128 0x2
+ 689 01b3 08       		.byte	0x8
+ 690 01b4 38       		.byte	0x38
+ 691 01b5 11       		.uleb128 0x11
+ 692 01b6 01       		.uleb128 0x1
+ 693 01b7 51       		.byte	0x51
+ 694 01b8 01       		.uleb128 0x1
+ 695 01b9 30       		.byte	0x30
+ 696 01ba 11       		.uleb128 0x11
+ 697 01bb 01       		.uleb128 0x1
+ 698 01bc 52       		.byte	0x52
+ 699 01bd 02       		.uleb128 0x2
+ 700 01be 08       		.byte	0x8
+ 701 01bf 32       		.byte	0x32
+ 702 01c0 00       		.byte	0
+ 703 01c1 10       		.uleb128 0x10
+ 704 01c2 20000000 		.4byte	.LVL6
+ 705 01c6 CF040000 		.4byte	0x4cf
+ 706 01ca DB010000 		.4byte	0x1db
+ 707 01ce 11       		.uleb128 0x11
+ 708 01cf 01       		.uleb128 0x1
+ 709 01d0 50       		.byte	0x50
+ 710 01d1 02       		.uleb128 0x2
+ 711 01d2 74       		.byte	0x74
+ 712 01d3 00       		.sleb128 0
+ 713 01d4 11       		.uleb128 0x11
+ 714 01d5 01       		.uleb128 0x1
+ 715 01d6 51       		.byte	0x51
+ 716 01d7 02       		.uleb128 0x2
+ 717 01d8 08       		.byte	0x8
+ 718 01d9 32       		.byte	0x32
+ 719 01da 00       		.byte	0
+ 720 01db 10       		.uleb128 0x10
+ 721 01dc 30000000 		.4byte	.LVL8
+ 722 01e0 DB040000 		.4byte	0x4db
+ 723 01e4 FA010000 		.4byte	0x1fa
+ 724 01e8 11       		.uleb128 0x11
+ 725 01e9 01       		.uleb128 0x1
+ 726 01ea 50       		.byte	0x50
+ 727 01eb 02       		.uleb128 0x2
+ 728 01ec 08       		.byte	0x8
+ 729 01ed 38       		.byte	0x38
+ 730 01ee 11       		.uleb128 0x11
+ 731 01ef 01       		.uleb128 0x1
+ 732 01f0 51       		.byte	0x51
+ 733 01f1 01       		.uleb128 0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 16
+
+
+ 734 01f2 31       		.byte	0x31
+ 735 01f3 11       		.uleb128 0x11
+ 736 01f4 01       		.uleb128 0x1
+ 737 01f5 52       		.byte	0x52
+ 738 01f6 02       		.uleb128 0x2
+ 739 01f7 08       		.byte	0x8
+ 740 01f8 32       		.byte	0x32
+ 741 01f9 00       		.byte	0
+ 742 01fa 10       		.uleb128 0x10
+ 743 01fb 44000000 		.4byte	.LVL11
+ 744 01ff E7040000 		.4byte	0x4e7
+ 745 0203 1C020000 		.4byte	0x21c
+ 746 0207 11       		.uleb128 0x11
+ 747 0208 01       		.uleb128 0x1
+ 748 0209 50       		.byte	0x50
+ 749 020a 01       		.uleb128 0x1
+ 750 020b 30       		.byte	0x30
+ 751 020c 11       		.uleb128 0x11
+ 752 020d 01       		.uleb128 0x1
+ 753 020e 51       		.byte	0x51
+ 754 020f 05       		.uleb128 0x5
+ 755 0210 77       		.byte	0x77
+ 756 0211 00       		.sleb128 0
+ 757 0212 74       		.byte	0x74
+ 758 0213 00       		.sleb128 0
+ 759 0214 22       		.byte	0x22
+ 760 0215 11       		.uleb128 0x11
+ 761 0216 01       		.uleb128 0x1
+ 762 0217 52       		.byte	0x52
+ 763 0218 02       		.uleb128 0x2
+ 764 0219 08       		.byte	0x8
+ 765 021a 32       		.byte	0x32
+ 766 021b 00       		.byte	0
+ 767 021c 10       		.uleb128 0x10
+ 768 021d 5E000000 		.4byte	.LVL14
+ 769 0221 E7040000 		.4byte	0x4e7
+ 770 0225 40020000 		.4byte	0x240
+ 771 0229 11       		.uleb128 0x11
+ 772 022a 01       		.uleb128 0x1
+ 773 022b 50       		.byte	0x50
+ 774 022c 01       		.uleb128 0x1
+ 775 022d 31       		.byte	0x31
+ 776 022e 11       		.uleb128 0x11
+ 777 022f 01       		.uleb128 0x1
+ 778 0230 51       		.byte	0x51
+ 779 0231 07       		.uleb128 0x7
+ 780 0232 77       		.byte	0x77
+ 781 0233 00       		.sleb128 0
+ 782 0234 74       		.byte	0x74
+ 783 0235 00       		.sleb128 0
+ 784 0236 22       		.byte	0x22
+ 785 0237 31       		.byte	0x31
+ 786 0238 1C       		.byte	0x1c
+ 787 0239 11       		.uleb128 0x11
+ 788 023a 01       		.uleb128 0x1
+ 789 023b 52       		.byte	0x52
+ 790 023c 02       		.uleb128 0x2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 17
+
+
+ 791 023d 08       		.byte	0x8
+ 792 023e 32       		.byte	0x32
+ 793 023f 00       		.byte	0
+ 794 0240 10       		.uleb128 0x10
+ 795 0241 64000000 		.4byte	.LVL15
+ 796 0245 F3040000 		.4byte	0x4f3
+ 797 0249 54020000 		.4byte	0x254
+ 798 024d 11       		.uleb128 0x11
+ 799 024e 01       		.uleb128 0x1
+ 800 024f 50       		.byte	0x50
+ 801 0250 02       		.uleb128 0x2
+ 802 0251 08       		.byte	0x8
+ 803 0252 32       		.byte	0x32
+ 804 0253 00       		.byte	0
+ 805 0254 12       		.uleb128 0x12
+ 806 0255 68000000 		.4byte	.LVL16
+ 807 0259 FF040000 		.4byte	0x4ff
+ 808 025d 13       		.uleb128 0x13
+ 809 025e 6E000000 		.4byte	.LVL17
+ 810 0262 0B050000 		.4byte	0x50b
+ 811 0266 11       		.uleb128 0x11
+ 812 0267 01       		.uleb128 0x1
+ 813 0268 50       		.byte	0x50
+ 814 0269 02       		.uleb128 0x2
+ 815 026a 08       		.byte	0x8
+ 816 026b 64       		.byte	0x64
+ 817 026c 00       		.byte	0
+ 818 026d 00       		.byte	0
+ 819 026e 14       		.uleb128 0x14
+ 820 026f 04       		.byte	0x4
+ 821 0270 96000000 		.4byte	0x96
+ 822 0274 15       		.uleb128 0x15
+ 823 0275 EA010000 		.4byte	.LASF28
+ 824 0279 01       		.byte	0x1
+ 825 027a 2B       		.byte	0x2b
+ 826 027b 00000000 		.4byte	.LFB63
+ 827 027f 1A000000 		.4byte	.LFE63-.LFB63
+ 828 0283 01       		.uleb128 0x1
+ 829 0284 9C       		.byte	0x9c
+ 830 0285 B7020000 		.4byte	0x2b7
+ 831 0289 0D       		.uleb128 0xd
+ 832 028a 1A000000 		.4byte	.LASF26
+ 833 028e 01       		.byte	0x1
+ 834 028f 2B       		.byte	0x2b
+ 835 0290 6E020000 		.4byte	0x26e
+ 836 0294 AB000000 		.4byte	.LLST5
+ 837 0298 0C       		.uleb128 0xc
+ 838 0299 73726300 		.ascii	"src\000"
+ 839 029d 01       		.byte	0x1
+ 840 029e 2B       		.byte	0x2b
+ 841 029f 6E020000 		.4byte	0x26e
+ 842 02a3 D6000000 		.4byte	.LLST6
+ 843 02a7 0C       		.uleb128 0xc
+ 844 02a8 6C656E00 		.ascii	"len\000"
+ 845 02ac 01       		.byte	0x1
+ 846 02ad 2B       		.byte	0x2b
+ 847 02ae 96000000 		.4byte	0x96
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 18
+
+
+ 848 02b2 0C010000 		.4byte	.LLST7
+ 849 02b6 00       		.byte	0
+ 850 02b7 15       		.uleb128 0x15
+ 851 02b8 0F030000 		.4byte	.LASF29
+ 852 02bc 01       		.byte	0x1
+ 853 02bd 33       		.byte	0x33
+ 854 02be 00000000 		.4byte	.LFB64
+ 855 02c2 1E000000 		.4byte	.LFE64-.LFB64
+ 856 02c6 01       		.uleb128 0x1
+ 857 02c7 9C       		.byte	0x9c
+ 858 02c8 17030000 		.4byte	0x317
+ 859 02cc 10       		.uleb128 0x10
+ 860 02cd 08000000 		.4byte	.LVL27
+ 861 02d1 16050000 		.4byte	0x516
+ 862 02d5 DF020000 		.4byte	0x2df
+ 863 02d9 11       		.uleb128 0x11
+ 864 02da 01       		.uleb128 0x1
+ 865 02db 50       		.byte	0x50
+ 866 02dc 01       		.uleb128 0x1
+ 867 02dd 30       		.byte	0x30
+ 868 02de 00       		.byte	0
+ 869 02df 10       		.uleb128 0x10
+ 870 02e0 0E000000 		.4byte	.LVL28
+ 871 02e4 21050000 		.4byte	0x521
+ 872 02e8 F2020000 		.4byte	0x2f2
+ 873 02ec 11       		.uleb128 0x11
+ 874 02ed 01       		.uleb128 0x1
+ 875 02ee 50       		.byte	0x50
+ 876 02ef 01       		.uleb128 0x1
+ 877 02f0 3A       		.byte	0x3a
+ 878 02f1 00       		.byte	0
+ 879 02f2 10       		.uleb128 0x10
+ 880 02f3 14000000 		.4byte	.LVL29
+ 881 02f7 16050000 		.4byte	0x516
+ 882 02fb 05030000 		.4byte	0x305
+ 883 02ff 11       		.uleb128 0x11
+ 884 0300 01       		.uleb128 0x1
+ 885 0301 50       		.byte	0x50
+ 886 0302 01       		.uleb128 0x1
+ 887 0303 31       		.byte	0x31
+ 888 0304 00       		.byte	0
+ 889 0305 13       		.uleb128 0x13
+ 890 0306 1C000000 		.4byte	.LVL30
+ 891 030a 21050000 		.4byte	0x521
+ 892 030e 11       		.uleb128 0x11
+ 893 030f 01       		.uleb128 0x1
+ 894 0310 50       		.byte	0x50
+ 895 0311 03       		.uleb128 0x3
+ 896 0312 0A       		.byte	0xa
+ 897 0313 F401     		.2byte	0x1f4
+ 898 0315 00       		.byte	0
+ 899 0316 00       		.byte	0
+ 900 0317 15       		.uleb128 0x15
+ 901 0318 11000000 		.4byte	.LASF30
+ 902 031c 01       		.byte	0x1
+ 903 031d 3D       		.byte	0x3d
+ 904 031e 00000000 		.4byte	.LFB65
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 19
+
+
+ 905 0322 4C000000 		.4byte	.LFE65-.LFB65
+ 906 0326 01       		.uleb128 0x1
+ 907 0327 9C       		.byte	0x9c
+ 908 0328 58030000 		.4byte	0x358
+ 909 032c 16       		.uleb128 0x16
+ 910 032d AA020000 		.4byte	.LASF31
+ 911 0331 01       		.byte	0x1
+ 912 0332 3D       		.byte	0x3d
+ 913 0333 6E020000 		.4byte	0x26e
+ 914 0337 01       		.uleb128 0x1
+ 915 0338 50       		.byte	0x50
+ 916 0339 0D       		.uleb128 0xd
+ 917 033a E9020000 		.4byte	.LASF32
+ 918 033e 01       		.byte	0x1
+ 919 033f 3D       		.byte	0x3d
+ 920 0340 96000000 		.4byte	0x96
+ 921 0344 40010000 		.4byte	.LLST8
+ 922 0348 0F       		.uleb128 0xf
+ 923 0349 706F7300 		.ascii	"pos\000"
+ 924 034d 01       		.byte	0x1
+ 925 034e 3F       		.byte	0x3f
+ 926 034f A1000000 		.4byte	0xa1
+ 927 0353 61010000 		.4byte	.LLST9
+ 928 0357 00       		.byte	0
+ 929 0358 15       		.uleb128 0x15
+ 930 0359 00000000 		.4byte	.LASF33
+ 931 035d 01       		.byte	0x1
+ 932 035e 56       		.byte	0x56
+ 933 035f 00000000 		.4byte	.LFB66
+ 934 0363 60000000 		.4byte	.LFE66-.LFB66
+ 935 0367 01       		.uleb128 0x1
+ 936 0368 9C       		.byte	0x9c
+ 937 0369 F4030000 		.4byte	0x3f4
+ 938 036d 0E       		.uleb128 0xe
+ 939 036e B5030000 		.4byte	.LASF27
+ 940 0372 01       		.byte	0x1
+ 941 0373 58       		.byte	0x58
+ 942 0374 AC000000 		.4byte	0xac
+ 943 0378 97010000 		.4byte	.LLST10
+ 944 037c 0F       		.uleb128 0xf
+ 945 037d 6900     		.ascii	"i\000"
+ 946 037f 01       		.byte	0x1
+ 947 0380 59       		.byte	0x59
+ 948 0381 96000000 		.4byte	0x96
+ 949 0385 B5010000 		.4byte	.LLST11
+ 950 0389 17       		.uleb128 0x17
+ 951 038a AF020000 		.4byte	.LASF34
+ 952 038e 01       		.byte	0x1
+ 953 038f 5A       		.byte	0x5a
+ 954 0390 F4030000 		.4byte	0x3f4
+ 955 0394 02       		.uleb128 0x2
+ 956 0395 91       		.byte	0x91
+ 957 0396 6C       		.sleb128 -20
+ 958 0397 10       		.uleb128 0x10
+ 959 0398 0E000000 		.4byte	.LVL40
+ 960 039c 40010000 		.4byte	0x140
+ 961 03a0 B5030000 		.4byte	0x3b5
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 20
+
+
+ 962 03a4 11       		.uleb128 0x11
+ 963 03a5 01       		.uleb128 0x1
+ 964 03a6 50       		.byte	0x50
+ 965 03a7 01       		.uleb128 0x1
+ 966 03a8 30       		.byte	0x30
+ 967 03a9 11       		.uleb128 0x11
+ 968 03aa 01       		.uleb128 0x1
+ 969 03ab 51       		.byte	0x51
+ 970 03ac 02       		.uleb128 0x2
+ 971 03ad 91       		.byte	0x91
+ 972 03ae 6C       		.sleb128 -20
+ 973 03af 11       		.uleb128 0x11
+ 974 03b0 01       		.uleb128 0x1
+ 975 03b1 52       		.byte	0x52
+ 976 03b2 01       		.uleb128 0x1
+ 977 03b3 39       		.byte	0x39
+ 978 03b4 00       		.byte	0
+ 979 03b5 10       		.uleb128 0x10
+ 980 03b6 3E000000 		.4byte	.LVL42
+ 981 03ba 40010000 		.4byte	0x140
+ 982 03be DD030000 		.4byte	0x3dd
+ 983 03c2 11       		.uleb128 0x11
+ 984 03c3 01       		.uleb128 0x1
+ 985 03c4 50       		.byte	0x50
+ 986 03c5 0B       		.uleb128 0xb
+ 987 03c6 74       		.byte	0x74
+ 988 03c7 00       		.sleb128 0
+ 989 03c8 31       		.byte	0x31
+ 990 03c9 24       		.byte	0x24
+ 991 03ca 74       		.byte	0x74
+ 992 03cb 00       		.sleb128 0
+ 993 03cc 22       		.byte	0x22
+ 994 03cd 31       		.byte	0x31
+ 995 03ce 24       		.byte	0x24
+ 996 03cf 23       		.byte	0x23
+ 997 03d0 03       		.uleb128 0x3
+ 998 03d1 11       		.uleb128 0x11
+ 999 03d2 01       		.uleb128 0x1
+ 1000 03d3 51       		.byte	0x51
+ 1001 03d4 02       		.uleb128 0x2
+ 1002 03d5 91       		.byte	0x91
+ 1003 03d6 6C       		.sleb128 -20
+ 1004 03d7 11       		.uleb128 0x11
+ 1005 03d8 01       		.uleb128 0x1
+ 1006 03d9 52       		.byte	0x52
+ 1007 03da 01       		.uleb128 0x1
+ 1008 03db 36       		.byte	0x36
+ 1009 03dc 00       		.byte	0
+ 1010 03dd 13       		.uleb128 0x13
+ 1011 03de 46000000 		.4byte	.LVL43
+ 1012 03e2 17030000 		.4byte	0x317
+ 1013 03e6 11       		.uleb128 0x11
+ 1014 03e7 01       		.uleb128 0x1
+ 1015 03e8 50       		.byte	0x50
+ 1016 03e9 02       		.uleb128 0x2
+ 1017 03ea 91       		.byte	0x91
+ 1018 03eb 6C       		.sleb128 -20
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 21
+
+
+ 1019 03ec 11       		.uleb128 0x11
+ 1020 03ed 01       		.uleb128 0x1
+ 1021 03ee 51       		.byte	0x51
+ 1022 03ef 02       		.uleb128 0x2
+ 1023 03f0 74       		.byte	0x74
+ 1024 03f1 00       		.sleb128 0
+ 1025 03f2 00       		.byte	0
+ 1026 03f3 00       		.byte	0
+ 1027 03f4 09       		.uleb128 0x9
+ 1028 03f5 96000000 		.4byte	0x96
+ 1029 03f9 04040000 		.4byte	0x404
+ 1030 03fd 0A       		.uleb128 0xa
+ 1031 03fe 88000000 		.4byte	0x88
+ 1032 0402 09       		.byte	0x9
+ 1033 0403 00       		.byte	0
+ 1034 0404 18       		.uleb128 0x18
+ 1035 0405 86010000 		.4byte	.LASF35
+ 1036 0409 01       		.byte	0x1
+ 1037 040a 72       		.byte	0x72
+ 1038 040b 00000000 		.4byte	.LFB67
+ 1039 040f 02000000 		.4byte	.LFE67-.LFB67
+ 1040 0413 01       		.uleb128 0x1
+ 1041 0414 9C       		.byte	0x9c
+ 1042 0415 18       		.uleb128 0x18
+ 1043 0416 63010000 		.4byte	.LASF36
+ 1044 041a 01       		.byte	0x1
+ 1045 041b 73       		.byte	0x73
+ 1046 041c 00000000 		.4byte	.LFB68
+ 1047 0420 02000000 		.4byte	.LFE68-.LFB68
+ 1048 0424 01       		.uleb128 0x1
+ 1049 0425 9C       		.byte	0x9c
+ 1050 0426 18       		.uleb128 0x18
+ 1051 0427 AB010000 		.4byte	.LASF37
+ 1052 042b 01       		.byte	0x1
+ 1053 042c 74       		.byte	0x74
+ 1054 042d 00000000 		.4byte	.LFB69
+ 1055 0431 02000000 		.4byte	.LFE69-.LFB69
+ 1056 0435 01       		.uleb128 0x1
+ 1057 0436 9C       		.byte	0x9c
+ 1058 0437 09       		.uleb128 0x9
+ 1059 0438 47040000 		.4byte	0x447
+ 1060 043c 47040000 		.4byte	0x447
+ 1061 0440 0A       		.uleb128 0xa
+ 1062 0441 88000000 		.4byte	0x88
+ 1063 0445 0B       		.byte	0xb
+ 1064 0446 00       		.byte	0
+ 1065 0447 19       		.uleb128 0x19
+ 1066 0448 B8000000 		.4byte	0xb8
+ 1067 044c 1A       		.uleb128 0x1a
+ 1068 044d 3E000000 		.4byte	.LASF38
+ 1069 0451 07       		.byte	0x7
+ 1070 0452 E001     		.2byte	0x1e0
+ 1071 0454 58040000 		.4byte	0x458
+ 1072 0458 19       		.uleb128 0x19
+ 1073 0459 37040000 		.4byte	0x437
+ 1074 045d 1B       		.uleb128 0x1b
+ 1075 045e A5010000 		.4byte	.LASF39
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 22
+
+
+ 1076 0462 05       		.byte	0x5
+ 1077 0463 35       		.byte	0x35
+ 1078 0464 D2000000 		.4byte	0xd2
+ 1079 0468 05       		.uleb128 0x5
+ 1080 0469 03       		.byte	0x3
+ 1081 046a 00000000 		.4byte	Param
+ 1082 046e 1B       		.uleb128 0x1b
+ 1083 046f 1F000000 		.4byte	.LASF40
+ 1084 0473 01       		.byte	0x1
+ 1085 0474 14       		.byte	0x14
+ 1086 0475 96000000 		.4byte	0x96
+ 1087 0479 05       		.uleb128 0x5
+ 1088 047a 03       		.byte	0x3
+ 1089 047b 00000000 		.4byte	touchActive
+ 1090 047f 1B       		.uleb128 0x1b
+ 1091 0480 20020000 		.4byte	.LASF41
+ 1092 0484 01       		.byte	0x1
+ 1093 0485 15       		.byte	0x15
+ 1094 0486 03010000 		.4byte	0x103
+ 1095 048a 05       		.uleb128 0x5
+ 1096 048b 03       		.byte	0x3
+ 1097 048c 00000000 		.4byte	ParamTouch
+ 1098 0490 1B       		.uleb128 0x1b
+ 1099 0491 CE030000 		.4byte	.LASF42
+ 1100 0495 01       		.byte	0x1
+ 1101 0496 12       		.byte	0x12
+ 1102 0497 96000000 		.4byte	0x96
+ 1103 049b 05       		.uleb128 0x5
+ 1104 049c 03       		.byte	0x3
+ 1105 049d 00000000 		.4byte	numTouches
+ 1106 04a1 1B       		.uleb128 0x1b
+ 1107 04a2 BF010000 		.4byte	.LASF43
+ 1108 04a6 01       		.byte	0x1
+ 1109 04a7 13       		.byte	0x13
+ 1110 04a8 96000000 		.4byte	0x96
+ 1111 04ac 05       		.uleb128 0x5
+ 1112 04ad 03       		.byte	0x3
+ 1113 04ae 00000000 		.4byte	gesture
+ 1114 04b2 1B       		.uleb128 0x1b
+ 1115 04b3 5B020000 		.4byte	.LASF44
+ 1116 04b7 01       		.byte	0x1
+ 1117 04b8 71       		.byte	0x71
+ 1118 04b9 A1000000 		.4byte	0xa1
+ 1119 04bd 05       		.uleb128 0x5
+ 1120 04be 03       		.byte	0x3
+ 1121 04bf 00000000 		.4byte	mchpTouchScreenVersion
+ 1122 04c3 1C       		.uleb128 0x1c
+ 1123 04c4 9B030000 		.4byte	.LASF45
+ 1124 04c8 9B030000 		.4byte	.LASF45
+ 1125 04cc 08       		.byte	0x8
+ 1126 04cd 1B01     		.2byte	0x11b
+ 1127 04cf 1C       		.uleb128 0x1c
+ 1128 04d0 43010000 		.4byte	.LASF46
+ 1129 04d4 43010000 		.4byte	.LASF46
+ 1130 04d8 08       		.byte	0x8
+ 1131 04d9 1E01     		.2byte	0x11e
+ 1132 04db 1C       		.uleb128 0x1c
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 23
+
+
+ 1133 04dc 60000000 		.4byte	.LASF47
+ 1134 04e0 60000000 		.4byte	.LASF47
+ 1135 04e4 08       		.byte	0x8
+ 1136 04e5 1C01     		.2byte	0x11c
+ 1137 04e7 1C       		.uleb128 0x1c
+ 1138 04e8 D1010000 		.4byte	.LASF48
+ 1139 04ec D1010000 		.4byte	.LASF48
+ 1140 04f0 08       		.byte	0x8
+ 1141 04f1 1F01     		.2byte	0x11f
+ 1142 04f3 1C       		.uleb128 0x1c
+ 1143 04f4 21030000 		.4byte	.LASF49
+ 1144 04f8 21030000 		.4byte	.LASF49
+ 1145 04fc 08       		.byte	0x8
+ 1146 04fd 1D01     		.2byte	0x11d
+ 1147 04ff 1C       		.uleb128 0x1c
+ 1148 0500 BB020000 		.4byte	.LASF50
+ 1149 0504 BB020000 		.4byte	.LASF50
+ 1150 0508 08       		.byte	0x8
+ 1151 0509 1001     		.2byte	0x110
+ 1152 050b 1D       		.uleb128 0x1d
+ 1153 050c 02020000 		.4byte	.LASF51
+ 1154 0510 02020000 		.4byte	.LASF51
+ 1155 0514 09       		.byte	0x9
+ 1156 0515 ED       		.byte	0xed
+ 1157 0516 1D       		.uleb128 0x1d
+ 1158 0517 8A020000 		.4byte	.LASF52
+ 1159 051b 8A020000 		.4byte	.LASF52
+ 1160 051f 0A       		.byte	0xa
+ 1161 0520 33       		.byte	0x33
+ 1162 0521 1D       		.uleb128 0x1d
+ 1163 0522 C6030000 		.4byte	.LASF53
+ 1164 0526 C6030000 		.4byte	.LASF53
+ 1165 052a 09       		.byte	0x9
+ 1166 052b EC       		.byte	0xec
+ 1167 052c 00       		.byte	0
+ 1168              		.section	.debug_abbrev,"",%progbits
+ 1169              	.Ldebug_abbrev0:
+ 1170 0000 01       		.uleb128 0x1
+ 1171 0001 11       		.uleb128 0x11
+ 1172 0002 01       		.byte	0x1
+ 1173 0003 25       		.uleb128 0x25
+ 1174 0004 0E       		.uleb128 0xe
+ 1175 0005 13       		.uleb128 0x13
+ 1176 0006 0B       		.uleb128 0xb
+ 1177 0007 03       		.uleb128 0x3
+ 1178 0008 0E       		.uleb128 0xe
+ 1179 0009 1B       		.uleb128 0x1b
+ 1180 000a 0E       		.uleb128 0xe
+ 1181 000b 55       		.uleb128 0x55
+ 1182 000c 17       		.uleb128 0x17
+ 1183 000d 11       		.uleb128 0x11
+ 1184 000e 01       		.uleb128 0x1
+ 1185 000f 10       		.uleb128 0x10
+ 1186 0010 17       		.uleb128 0x17
+ 1187 0011 00       		.byte	0
+ 1188 0012 00       		.byte	0
+ 1189 0013 02       		.uleb128 0x2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 24
+
+
+ 1190 0014 24       		.uleb128 0x24
+ 1191 0015 00       		.byte	0
+ 1192 0016 0B       		.uleb128 0xb
+ 1193 0017 0B       		.uleb128 0xb
+ 1194 0018 3E       		.uleb128 0x3e
+ 1195 0019 0B       		.uleb128 0xb
+ 1196 001a 03       		.uleb128 0x3
+ 1197 001b 08       		.uleb128 0x8
+ 1198 001c 00       		.byte	0
+ 1199 001d 00       		.byte	0
+ 1200 001e 03       		.uleb128 0x3
+ 1201 001f 24       		.uleb128 0x24
+ 1202 0020 00       		.byte	0
+ 1203 0021 0B       		.uleb128 0xb
+ 1204 0022 0B       		.uleb128 0xb
+ 1205 0023 3E       		.uleb128 0x3e
+ 1206 0024 0B       		.uleb128 0xb
+ 1207 0025 03       		.uleb128 0x3
+ 1208 0026 0E       		.uleb128 0xe
+ 1209 0027 00       		.byte	0
+ 1210 0028 00       		.byte	0
+ 1211 0029 04       		.uleb128 0x4
+ 1212 002a 16       		.uleb128 0x16
+ 1213 002b 00       		.byte	0
+ 1214 002c 03       		.uleb128 0x3
+ 1215 002d 0E       		.uleb128 0xe
+ 1216 002e 3A       		.uleb128 0x3a
+ 1217 002f 0B       		.uleb128 0xb
+ 1218 0030 3B       		.uleb128 0x3b
+ 1219 0031 0B       		.uleb128 0xb
+ 1220 0032 49       		.uleb128 0x49
+ 1221 0033 13       		.uleb128 0x13
+ 1222 0034 00       		.byte	0
+ 1223 0035 00       		.byte	0
+ 1224 0036 05       		.uleb128 0x5
+ 1225 0037 16       		.uleb128 0x16
+ 1226 0038 00       		.byte	0
+ 1227 0039 03       		.uleb128 0x3
+ 1228 003a 0E       		.uleb128 0xe
+ 1229 003b 3A       		.uleb128 0x3a
+ 1230 003c 0B       		.uleb128 0xb
+ 1231 003d 3B       		.uleb128 0x3b
+ 1232 003e 05       		.uleb128 0x5
+ 1233 003f 49       		.uleb128 0x49
+ 1234 0040 13       		.uleb128 0x13
+ 1235 0041 00       		.byte	0
+ 1236 0042 00       		.byte	0
+ 1237 0043 06       		.uleb128 0x6
+ 1238 0044 13       		.uleb128 0x13
+ 1239 0045 01       		.byte	0x1
+ 1240 0046 03       		.uleb128 0x3
+ 1241 0047 0E       		.uleb128 0xe
+ 1242 0048 0B       		.uleb128 0xb
+ 1243 0049 0B       		.uleb128 0xb
+ 1244 004a 3A       		.uleb128 0x3a
+ 1245 004b 0B       		.uleb128 0xb
+ 1246 004c 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 25
+
+
+ 1247 004d 0B       		.uleb128 0xb
+ 1248 004e 01       		.uleb128 0x1
+ 1249 004f 13       		.uleb128 0x13
+ 1250 0050 00       		.byte	0
+ 1251 0051 00       		.byte	0
+ 1252 0052 07       		.uleb128 0x7
+ 1253 0053 0D       		.uleb128 0xd
+ 1254 0054 00       		.byte	0
+ 1255 0055 03       		.uleb128 0x3
+ 1256 0056 0E       		.uleb128 0xe
+ 1257 0057 3A       		.uleb128 0x3a
+ 1258 0058 0B       		.uleb128 0xb
+ 1259 0059 3B       		.uleb128 0x3b
+ 1260 005a 0B       		.uleb128 0xb
+ 1261 005b 49       		.uleb128 0x49
+ 1262 005c 13       		.uleb128 0x13
+ 1263 005d 38       		.uleb128 0x38
+ 1264 005e 0B       		.uleb128 0xb
+ 1265 005f 00       		.byte	0
+ 1266 0060 00       		.byte	0
+ 1267 0061 08       		.uleb128 0x8
+ 1268 0062 0D       		.uleb128 0xd
+ 1269 0063 00       		.byte	0
+ 1270 0064 03       		.uleb128 0x3
+ 1271 0065 08       		.uleb128 0x8
+ 1272 0066 3A       		.uleb128 0x3a
+ 1273 0067 0B       		.uleb128 0xb
+ 1274 0068 3B       		.uleb128 0x3b
+ 1275 0069 0B       		.uleb128 0xb
+ 1276 006a 49       		.uleb128 0x49
+ 1277 006b 13       		.uleb128 0x13
+ 1278 006c 38       		.uleb128 0x38
+ 1279 006d 0B       		.uleb128 0xb
+ 1280 006e 00       		.byte	0
+ 1281 006f 00       		.byte	0
+ 1282 0070 09       		.uleb128 0x9
+ 1283 0071 01       		.uleb128 0x1
+ 1284 0072 01       		.byte	0x1
+ 1285 0073 49       		.uleb128 0x49
+ 1286 0074 13       		.uleb128 0x13
+ 1287 0075 01       		.uleb128 0x1
+ 1288 0076 13       		.uleb128 0x13
+ 1289 0077 00       		.byte	0
+ 1290 0078 00       		.byte	0
+ 1291 0079 0A       		.uleb128 0xa
+ 1292 007a 21       		.uleb128 0x21
+ 1293 007b 00       		.byte	0
+ 1294 007c 49       		.uleb128 0x49
+ 1295 007d 13       		.uleb128 0x13
+ 1296 007e 2F       		.uleb128 0x2f
+ 1297 007f 0B       		.uleb128 0xb
+ 1298 0080 00       		.byte	0
+ 1299 0081 00       		.byte	0
+ 1300 0082 0B       		.uleb128 0xb
+ 1301 0083 2E       		.uleb128 0x2e
+ 1302 0084 01       		.byte	0x1
+ 1303 0085 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 26
+
+
+ 1304 0086 19       		.uleb128 0x19
+ 1305 0087 03       		.uleb128 0x3
+ 1306 0088 0E       		.uleb128 0xe
+ 1307 0089 3A       		.uleb128 0x3a
+ 1308 008a 0B       		.uleb128 0xb
+ 1309 008b 3B       		.uleb128 0x3b
+ 1310 008c 0B       		.uleb128 0xb
+ 1311 008d 27       		.uleb128 0x27
+ 1312 008e 19       		.uleb128 0x19
+ 1313 008f 49       		.uleb128 0x49
+ 1314 0090 13       		.uleb128 0x13
+ 1315 0091 11       		.uleb128 0x11
+ 1316 0092 01       		.uleb128 0x1
+ 1317 0093 12       		.uleb128 0x12
+ 1318 0094 06       		.uleb128 0x6
+ 1319 0095 40       		.uleb128 0x40
+ 1320 0096 18       		.uleb128 0x18
+ 1321 0097 9742     		.uleb128 0x2117
+ 1322 0099 19       		.uleb128 0x19
+ 1323 009a 01       		.uleb128 0x1
+ 1324 009b 13       		.uleb128 0x13
+ 1325 009c 00       		.byte	0
+ 1326 009d 00       		.byte	0
+ 1327 009e 0C       		.uleb128 0xc
+ 1328 009f 05       		.uleb128 0x5
+ 1329 00a0 00       		.byte	0
+ 1330 00a1 03       		.uleb128 0x3
+ 1331 00a2 08       		.uleb128 0x8
+ 1332 00a3 3A       		.uleb128 0x3a
+ 1333 00a4 0B       		.uleb128 0xb
+ 1334 00a5 3B       		.uleb128 0x3b
+ 1335 00a6 0B       		.uleb128 0xb
+ 1336 00a7 49       		.uleb128 0x49
+ 1337 00a8 13       		.uleb128 0x13
+ 1338 00a9 02       		.uleb128 0x2
+ 1339 00aa 17       		.uleb128 0x17
+ 1340 00ab 00       		.byte	0
+ 1341 00ac 00       		.byte	0
+ 1342 00ad 0D       		.uleb128 0xd
+ 1343 00ae 05       		.uleb128 0x5
+ 1344 00af 00       		.byte	0
+ 1345 00b0 03       		.uleb128 0x3
+ 1346 00b1 0E       		.uleb128 0xe
+ 1347 00b2 3A       		.uleb128 0x3a
+ 1348 00b3 0B       		.uleb128 0xb
+ 1349 00b4 3B       		.uleb128 0x3b
+ 1350 00b5 0B       		.uleb128 0xb
+ 1351 00b6 49       		.uleb128 0x49
+ 1352 00b7 13       		.uleb128 0x13
+ 1353 00b8 02       		.uleb128 0x2
+ 1354 00b9 17       		.uleb128 0x17
+ 1355 00ba 00       		.byte	0
+ 1356 00bb 00       		.byte	0
+ 1357 00bc 0E       		.uleb128 0xe
+ 1358 00bd 34       		.uleb128 0x34
+ 1359 00be 00       		.byte	0
+ 1360 00bf 03       		.uleb128 0x3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 27
+
+
+ 1361 00c0 0E       		.uleb128 0xe
+ 1362 00c1 3A       		.uleb128 0x3a
+ 1363 00c2 0B       		.uleb128 0xb
+ 1364 00c3 3B       		.uleb128 0x3b
+ 1365 00c4 0B       		.uleb128 0xb
+ 1366 00c5 49       		.uleb128 0x49
+ 1367 00c6 13       		.uleb128 0x13
+ 1368 00c7 02       		.uleb128 0x2
+ 1369 00c8 17       		.uleb128 0x17
+ 1370 00c9 00       		.byte	0
+ 1371 00ca 00       		.byte	0
+ 1372 00cb 0F       		.uleb128 0xf
+ 1373 00cc 34       		.uleb128 0x34
+ 1374 00cd 00       		.byte	0
+ 1375 00ce 03       		.uleb128 0x3
+ 1376 00cf 08       		.uleb128 0x8
+ 1377 00d0 3A       		.uleb128 0x3a
+ 1378 00d1 0B       		.uleb128 0xb
+ 1379 00d2 3B       		.uleb128 0x3b
+ 1380 00d3 0B       		.uleb128 0xb
+ 1381 00d4 49       		.uleb128 0x49
+ 1382 00d5 13       		.uleb128 0x13
+ 1383 00d6 02       		.uleb128 0x2
+ 1384 00d7 17       		.uleb128 0x17
+ 1385 00d8 00       		.byte	0
+ 1386 00d9 00       		.byte	0
+ 1387 00da 10       		.uleb128 0x10
+ 1388 00db 898201   		.uleb128 0x4109
+ 1389 00de 01       		.byte	0x1
+ 1390 00df 11       		.uleb128 0x11
+ 1391 00e0 01       		.uleb128 0x1
+ 1392 00e1 31       		.uleb128 0x31
+ 1393 00e2 13       		.uleb128 0x13
+ 1394 00e3 01       		.uleb128 0x1
+ 1395 00e4 13       		.uleb128 0x13
+ 1396 00e5 00       		.byte	0
+ 1397 00e6 00       		.byte	0
+ 1398 00e7 11       		.uleb128 0x11
+ 1399 00e8 8A8201   		.uleb128 0x410a
+ 1400 00eb 00       		.byte	0
+ 1401 00ec 02       		.uleb128 0x2
+ 1402 00ed 18       		.uleb128 0x18
+ 1403 00ee 9142     		.uleb128 0x2111
+ 1404 00f0 18       		.uleb128 0x18
+ 1405 00f1 00       		.byte	0
+ 1406 00f2 00       		.byte	0
+ 1407 00f3 12       		.uleb128 0x12
+ 1408 00f4 898201   		.uleb128 0x4109
+ 1409 00f7 00       		.byte	0
+ 1410 00f8 11       		.uleb128 0x11
+ 1411 00f9 01       		.uleb128 0x1
+ 1412 00fa 31       		.uleb128 0x31
+ 1413 00fb 13       		.uleb128 0x13
+ 1414 00fc 00       		.byte	0
+ 1415 00fd 00       		.byte	0
+ 1416 00fe 13       		.uleb128 0x13
+ 1417 00ff 898201   		.uleb128 0x4109
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 28
+
+
+ 1418 0102 01       		.byte	0x1
+ 1419 0103 11       		.uleb128 0x11
+ 1420 0104 01       		.uleb128 0x1
+ 1421 0105 31       		.uleb128 0x31
+ 1422 0106 13       		.uleb128 0x13
+ 1423 0107 00       		.byte	0
+ 1424 0108 00       		.byte	0
+ 1425 0109 14       		.uleb128 0x14
+ 1426 010a 0F       		.uleb128 0xf
+ 1427 010b 00       		.byte	0
+ 1428 010c 0B       		.uleb128 0xb
+ 1429 010d 0B       		.uleb128 0xb
+ 1430 010e 49       		.uleb128 0x49
+ 1431 010f 13       		.uleb128 0x13
+ 1432 0110 00       		.byte	0
+ 1433 0111 00       		.byte	0
+ 1434 0112 15       		.uleb128 0x15
+ 1435 0113 2E       		.uleb128 0x2e
+ 1436 0114 01       		.byte	0x1
+ 1437 0115 3F       		.uleb128 0x3f
+ 1438 0116 19       		.uleb128 0x19
+ 1439 0117 03       		.uleb128 0x3
+ 1440 0118 0E       		.uleb128 0xe
+ 1441 0119 3A       		.uleb128 0x3a
+ 1442 011a 0B       		.uleb128 0xb
+ 1443 011b 3B       		.uleb128 0x3b
+ 1444 011c 0B       		.uleb128 0xb
+ 1445 011d 27       		.uleb128 0x27
+ 1446 011e 19       		.uleb128 0x19
+ 1447 011f 11       		.uleb128 0x11
+ 1448 0120 01       		.uleb128 0x1
+ 1449 0121 12       		.uleb128 0x12
+ 1450 0122 06       		.uleb128 0x6
+ 1451 0123 40       		.uleb128 0x40
+ 1452 0124 18       		.uleb128 0x18
+ 1453 0125 9742     		.uleb128 0x2117
+ 1454 0127 19       		.uleb128 0x19
+ 1455 0128 01       		.uleb128 0x1
+ 1456 0129 13       		.uleb128 0x13
+ 1457 012a 00       		.byte	0
+ 1458 012b 00       		.byte	0
+ 1459 012c 16       		.uleb128 0x16
+ 1460 012d 05       		.uleb128 0x5
+ 1461 012e 00       		.byte	0
+ 1462 012f 03       		.uleb128 0x3
+ 1463 0130 0E       		.uleb128 0xe
+ 1464 0131 3A       		.uleb128 0x3a
+ 1465 0132 0B       		.uleb128 0xb
+ 1466 0133 3B       		.uleb128 0x3b
+ 1467 0134 0B       		.uleb128 0xb
+ 1468 0135 49       		.uleb128 0x49
+ 1469 0136 13       		.uleb128 0x13
+ 1470 0137 02       		.uleb128 0x2
+ 1471 0138 18       		.uleb128 0x18
+ 1472 0139 00       		.byte	0
+ 1473 013a 00       		.byte	0
+ 1474 013b 17       		.uleb128 0x17
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 29
+
+
+ 1475 013c 34       		.uleb128 0x34
+ 1476 013d 00       		.byte	0
+ 1477 013e 03       		.uleb128 0x3
+ 1478 013f 0E       		.uleb128 0xe
+ 1479 0140 3A       		.uleb128 0x3a
+ 1480 0141 0B       		.uleb128 0xb
+ 1481 0142 3B       		.uleb128 0x3b
+ 1482 0143 0B       		.uleb128 0xb
+ 1483 0144 49       		.uleb128 0x49
+ 1484 0145 13       		.uleb128 0x13
+ 1485 0146 02       		.uleb128 0x2
+ 1486 0147 18       		.uleb128 0x18
+ 1487 0148 00       		.byte	0
+ 1488 0149 00       		.byte	0
+ 1489 014a 18       		.uleb128 0x18
+ 1490 014b 2E       		.uleb128 0x2e
+ 1491 014c 00       		.byte	0
+ 1492 014d 3F       		.uleb128 0x3f
+ 1493 014e 19       		.uleb128 0x19
+ 1494 014f 03       		.uleb128 0x3
+ 1495 0150 0E       		.uleb128 0xe
+ 1496 0151 3A       		.uleb128 0x3a
+ 1497 0152 0B       		.uleb128 0xb
+ 1498 0153 3B       		.uleb128 0x3b
+ 1499 0154 0B       		.uleb128 0xb
+ 1500 0155 27       		.uleb128 0x27
+ 1501 0156 19       		.uleb128 0x19
+ 1502 0157 11       		.uleb128 0x11
+ 1503 0158 01       		.uleb128 0x1
+ 1504 0159 12       		.uleb128 0x12
+ 1505 015a 06       		.uleb128 0x6
+ 1506 015b 40       		.uleb128 0x40
+ 1507 015c 18       		.uleb128 0x18
+ 1508 015d 9742     		.uleb128 0x2117
+ 1509 015f 19       		.uleb128 0x19
+ 1510 0160 00       		.byte	0
+ 1511 0161 00       		.byte	0
+ 1512 0162 19       		.uleb128 0x19
+ 1513 0163 26       		.uleb128 0x26
+ 1514 0164 00       		.byte	0
+ 1515 0165 49       		.uleb128 0x49
+ 1516 0166 13       		.uleb128 0x13
+ 1517 0167 00       		.byte	0
+ 1518 0168 00       		.byte	0
+ 1519 0169 1A       		.uleb128 0x1a
+ 1520 016a 34       		.uleb128 0x34
+ 1521 016b 00       		.byte	0
+ 1522 016c 03       		.uleb128 0x3
+ 1523 016d 0E       		.uleb128 0xe
+ 1524 016e 3A       		.uleb128 0x3a
+ 1525 016f 0B       		.uleb128 0xb
+ 1526 0170 3B       		.uleb128 0x3b
+ 1527 0171 05       		.uleb128 0x5
+ 1528 0172 49       		.uleb128 0x49
+ 1529 0173 13       		.uleb128 0x13
+ 1530 0174 3F       		.uleb128 0x3f
+ 1531 0175 19       		.uleb128 0x19
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 30
+
+
+ 1532 0176 3C       		.uleb128 0x3c
+ 1533 0177 19       		.uleb128 0x19
+ 1534 0178 00       		.byte	0
+ 1535 0179 00       		.byte	0
+ 1536 017a 1B       		.uleb128 0x1b
+ 1537 017b 34       		.uleb128 0x34
+ 1538 017c 00       		.byte	0
+ 1539 017d 03       		.uleb128 0x3
+ 1540 017e 0E       		.uleb128 0xe
+ 1541 017f 3A       		.uleb128 0x3a
+ 1542 0180 0B       		.uleb128 0xb
+ 1543 0181 3B       		.uleb128 0x3b
+ 1544 0182 0B       		.uleb128 0xb
+ 1545 0183 49       		.uleb128 0x49
+ 1546 0184 13       		.uleb128 0x13
+ 1547 0185 3F       		.uleb128 0x3f
+ 1548 0186 19       		.uleb128 0x19
+ 1549 0187 02       		.uleb128 0x2
+ 1550 0188 18       		.uleb128 0x18
+ 1551 0189 00       		.byte	0
+ 1552 018a 00       		.byte	0
+ 1553 018b 1C       		.uleb128 0x1c
+ 1554 018c 2E       		.uleb128 0x2e
+ 1555 018d 00       		.byte	0
+ 1556 018e 3F       		.uleb128 0x3f
+ 1557 018f 19       		.uleb128 0x19
+ 1558 0190 3C       		.uleb128 0x3c
+ 1559 0191 19       		.uleb128 0x19
+ 1560 0192 6E       		.uleb128 0x6e
+ 1561 0193 0E       		.uleb128 0xe
+ 1562 0194 03       		.uleb128 0x3
+ 1563 0195 0E       		.uleb128 0xe
+ 1564 0196 3A       		.uleb128 0x3a
+ 1565 0197 0B       		.uleb128 0xb
+ 1566 0198 3B       		.uleb128 0x3b
+ 1567 0199 05       		.uleb128 0x5
+ 1568 019a 00       		.byte	0
+ 1569 019b 00       		.byte	0
+ 1570 019c 1D       		.uleb128 0x1d
+ 1571 019d 2E       		.uleb128 0x2e
+ 1572 019e 00       		.byte	0
+ 1573 019f 3F       		.uleb128 0x3f
+ 1574 01a0 19       		.uleb128 0x19
+ 1575 01a1 3C       		.uleb128 0x3c
+ 1576 01a2 19       		.uleb128 0x19
+ 1577 01a3 6E       		.uleb128 0x6e
+ 1578 01a4 0E       		.uleb128 0xe
+ 1579 01a5 03       		.uleb128 0x3
+ 1580 01a6 0E       		.uleb128 0xe
+ 1581 01a7 3A       		.uleb128 0x3a
+ 1582 01a8 0B       		.uleb128 0xb
+ 1583 01a9 3B       		.uleb128 0x3b
+ 1584 01aa 0B       		.uleb128 0xb
+ 1585 01ab 00       		.byte	0
+ 1586 01ac 00       		.byte	0
+ 1587 01ad 00       		.byte	0
+ 1588              		.section	.debug_loc,"",%progbits
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 31
+
+
+ 1589              	.Ldebug_loc0:
+ 1590              	.LLST0:
+ 1591 0000 00000000 		.4byte	.LVL0
+ 1592 0004 0E000000 		.4byte	.LVL3
+ 1593 0008 0100     		.2byte	0x1
+ 1594 000a 50       		.byte	0x50
+ 1595 000b 0E000000 		.4byte	.LVL3
+ 1596 000f 72000000 		.4byte	.LFE62
+ 1597 0013 0400     		.2byte	0x4
+ 1598 0015 F3       		.byte	0xf3
+ 1599 0016 01       		.uleb128 0x1
+ 1600 0017 50       		.byte	0x50
+ 1601 0018 9F       		.byte	0x9f
+ 1602 0019 00000000 		.4byte	0
+ 1603 001d 00000000 		.4byte	0
+ 1604              	.LLST1:
+ 1605 0021 00000000 		.4byte	.LVL0
+ 1606 0025 0C000000 		.4byte	.LVL2
+ 1607 0029 0100     		.2byte	0x1
+ 1608 002b 51       		.byte	0x51
+ 1609 002c 0C000000 		.4byte	.LVL2
+ 1610 0030 70000000 		.4byte	.LVL20
+ 1611 0034 0100     		.2byte	0x1
+ 1612 0036 57       		.byte	0x57
+ 1613 0037 70000000 		.4byte	.LVL20
+ 1614 003b 72000000 		.4byte	.LFE62
+ 1615 003f 0400     		.2byte	0x4
+ 1616 0041 F3       		.byte	0xf3
+ 1617 0042 01       		.uleb128 0x1
+ 1618 0043 51       		.byte	0x51
+ 1619 0044 9F       		.byte	0x9f
+ 1620 0045 00000000 		.4byte	0
+ 1621 0049 00000000 		.4byte	0
+ 1622              	.LLST2:
+ 1623 004d 00000000 		.4byte	.LVL0
+ 1624 0051 0A000000 		.4byte	.LVL1
+ 1625 0055 0100     		.2byte	0x1
+ 1626 0057 52       		.byte	0x52
+ 1627 0058 0A000000 		.4byte	.LVL1
+ 1628 005c 72000000 		.4byte	.LFE62
+ 1629 0060 0400     		.2byte	0x4
+ 1630 0062 F3       		.byte	0xf3
+ 1631 0063 01       		.uleb128 0x1
+ 1632 0064 52       		.byte	0x52
+ 1633 0065 9F       		.byte	0x9f
+ 1634 0066 00000000 		.4byte	0
+ 1635 006a 00000000 		.4byte	0
+ 1636              	.LLST3:
+ 1637 006e 14000000 		.4byte	.LVL5
+ 1638 0072 70000000 		.4byte	.LVL19
+ 1639 0076 0100     		.2byte	0x1
+ 1640 0078 55       		.byte	0x55
+ 1641 0079 00000000 		.4byte	0
+ 1642 007d 00000000 		.4byte	0
+ 1643              	.LLST4:
+ 1644 0081 32000000 		.4byte	.LVL9
+ 1645 0085 36000000 		.4byte	.LVL10
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 32
+
+
+ 1646 0089 0200     		.2byte	0x2
+ 1647 008b 30       		.byte	0x30
+ 1648 008c 9F       		.byte	0x9f
+ 1649 008d 36000000 		.4byte	.LVL10
+ 1650 0091 46000000 		.4byte	.LVL12
+ 1651 0095 0100     		.2byte	0x1
+ 1652 0097 54       		.byte	0x54
+ 1653 0098 48000000 		.4byte	.LVL13
+ 1654 009c 70000000 		.4byte	.LVL18
+ 1655 00a0 0100     		.2byte	0x1
+ 1656 00a2 54       		.byte	0x54
+ 1657 00a3 00000000 		.4byte	0
+ 1658 00a7 00000000 		.4byte	0
+ 1659              	.LLST5:
+ 1660 00ab 00000000 		.4byte	.LVL21
+ 1661 00af 06000000 		.4byte	.LVL23
+ 1662 00b3 0100     		.2byte	0x1
+ 1663 00b5 50       		.byte	0x50
+ 1664 00b6 06000000 		.4byte	.LVL23
+ 1665 00ba 10000000 		.4byte	.LVL25
+ 1666 00be 0300     		.2byte	0x3
+ 1667 00c0 70       		.byte	0x70
+ 1668 00c1 01       		.sleb128 1
+ 1669 00c2 9F       		.byte	0x9f
+ 1670 00c3 10000000 		.4byte	.LVL25
+ 1671 00c7 1A000000 		.4byte	.LFE63
+ 1672 00cb 0100     		.2byte	0x1
+ 1673 00cd 50       		.byte	0x50
+ 1674 00ce 00000000 		.4byte	0
+ 1675 00d2 00000000 		.4byte	0
+ 1676              	.LLST6:
+ 1677 00d6 00000000 		.4byte	.LVL21
+ 1678 00da 04000000 		.4byte	.LVL22
+ 1679 00de 0100     		.2byte	0x1
+ 1680 00e0 51       		.byte	0x51
+ 1681 00e1 04000000 		.4byte	.LVL22
+ 1682 00e5 06000000 		.4byte	.LVL23
+ 1683 00e9 0100     		.2byte	0x1
+ 1684 00eb 51       		.byte	0x51
+ 1685 00ec 06000000 		.4byte	.LVL23
+ 1686 00f0 0E000000 		.4byte	.LVL24
+ 1687 00f4 0300     		.2byte	0x3
+ 1688 00f6 71       		.byte	0x71
+ 1689 00f7 7F       		.sleb128 -1
+ 1690 00f8 9F       		.byte	0x9f
+ 1691 00f9 0E000000 		.4byte	.LVL24
+ 1692 00fd 1A000000 		.4byte	.LFE63
+ 1693 0101 0100     		.2byte	0x1
+ 1694 0103 51       		.byte	0x51
+ 1695 0104 00000000 		.4byte	0
+ 1696 0108 00000000 		.4byte	0
+ 1697              	.LLST7:
+ 1698 010c 00000000 		.4byte	.LVL21
+ 1699 0110 06000000 		.4byte	.LVL23
+ 1700 0114 0100     		.2byte	0x1
+ 1701 0116 52       		.byte	0x52
+ 1702 0117 06000000 		.4byte	.LVL23
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 33
+
+
+ 1703 011b 10000000 		.4byte	.LVL25
+ 1704 011f 0100     		.2byte	0x1
+ 1705 0121 53       		.byte	0x53
+ 1706 0122 10000000 		.4byte	.LVL25
+ 1707 0126 14000000 		.4byte	.LVL26
+ 1708 012a 0100     		.2byte	0x1
+ 1709 012c 52       		.byte	0x52
+ 1710 012d 14000000 		.4byte	.LVL26
+ 1711 0131 1A000000 		.4byte	.LFE63
+ 1712 0135 0100     		.2byte	0x1
+ 1713 0137 53       		.byte	0x53
+ 1714 0138 00000000 		.4byte	0
+ 1715 013c 00000000 		.4byte	0
+ 1716              	.LLST8:
+ 1717 0140 00000000 		.4byte	.LVL31
+ 1718 0144 36000000 		.4byte	.LVL37
+ 1719 0148 0100     		.2byte	0x1
+ 1720 014a 51       		.byte	0x51
+ 1721 014b 36000000 		.4byte	.LVL37
+ 1722 014f 4C000000 		.4byte	.LFE65
+ 1723 0153 0400     		.2byte	0x4
+ 1724 0155 F3       		.byte	0xf3
+ 1725 0156 01       		.uleb128 0x1
+ 1726 0157 51       		.byte	0x51
+ 1727 0158 9F       		.byte	0x9f
+ 1728 0159 00000000 		.4byte	0
+ 1729 015d 00000000 		.4byte	0
+ 1730              	.LLST9:
+ 1731 0161 1E000000 		.4byte	.LVL32
+ 1732 0165 2C000000 		.4byte	.LVL34
+ 1733 0169 0100     		.2byte	0x1
+ 1734 016b 53       		.byte	0x53
+ 1735 016c 2C000000 		.4byte	.LVL34
+ 1736 0170 30000000 		.4byte	.LVL35
+ 1737 0174 0200     		.2byte	0x2
+ 1738 0176 74       		.byte	0x74
+ 1739 0177 02       		.sleb128 2
+ 1740 0178 30000000 		.4byte	.LVL35
+ 1741 017c 3E000000 		.4byte	.LVL38
+ 1742 0180 0100     		.2byte	0x1
+ 1743 0182 52       		.byte	0x52
+ 1744 0183 3E000000 		.4byte	.LVL38
+ 1745 0187 42000000 		.4byte	.LVL39
+ 1746 018b 0200     		.2byte	0x2
+ 1747 018d 71       		.byte	0x71
+ 1748 018e 04       		.sleb128 4
+ 1749 018f 00000000 		.4byte	0
+ 1750 0193 00000000 		.4byte	0
+ 1751              	.LLST10:
+ 1752 0197 0E000000 		.4byte	.LVL40
+ 1753 019b 2C000000 		.4byte	.LVL41
+ 1754 019f 0100     		.2byte	0x1
+ 1755 01a1 50       		.byte	0x50
+ 1756 01a2 4C000000 		.4byte	.LVL46
+ 1757 01a6 4E000000 		.4byte	.LVL47
+ 1758 01aa 0100     		.2byte	0x1
+ 1759 01ac 50       		.byte	0x50
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 34
+
+
+ 1760 01ad 00000000 		.4byte	0
+ 1761 01b1 00000000 		.4byte	0
+ 1762              	.LLST11:
+ 1763 01b5 2C000000 		.4byte	.LVL41
+ 1764 01b9 48000000 		.4byte	.LVL44
+ 1765 01bd 0100     		.2byte	0x1
+ 1766 01bf 54       		.byte	0x54
+ 1767 01c0 4A000000 		.4byte	.LVL45
+ 1768 01c4 4C000000 		.4byte	.LVL46
+ 1769 01c8 0100     		.2byte	0x1
+ 1770 01ca 54       		.byte	0x54
+ 1771 01cb 4E000000 		.4byte	.LVL47
+ 1772 01cf 56000000 		.4byte	.LVL48
+ 1773 01d3 0100     		.2byte	0x1
+ 1774 01d5 54       		.byte	0x54
+ 1775 01d6 00000000 		.4byte	0
+ 1776 01da 00000000 		.4byte	0
+ 1777              		.section	.debug_aranges,"",%progbits
+ 1778 0000 54000000 		.4byte	0x54
+ 1779 0004 0200     		.2byte	0x2
+ 1780 0006 00000000 		.4byte	.Ldebug_info0
+ 1781 000a 04       		.byte	0x4
+ 1782 000b 00       		.byte	0
+ 1783 000c 0000     		.2byte	0
+ 1784 000e 0000     		.2byte	0
+ 1785 0010 00000000 		.4byte	.LFB62
+ 1786 0014 72000000 		.4byte	.LFE62-.LFB62
+ 1787 0018 00000000 		.4byte	.LFB63
+ 1788 001c 1A000000 		.4byte	.LFE63-.LFB63
+ 1789 0020 00000000 		.4byte	.LFB64
+ 1790 0024 1E000000 		.4byte	.LFE64-.LFB64
+ 1791 0028 00000000 		.4byte	.LFB65
+ 1792 002c 4C000000 		.4byte	.LFE65-.LFB65
+ 1793 0030 00000000 		.4byte	.LFB66
+ 1794 0034 60000000 		.4byte	.LFE66-.LFB66
+ 1795 0038 00000000 		.4byte	.LFB67
+ 1796 003c 02000000 		.4byte	.LFE67-.LFB67
+ 1797 0040 00000000 		.4byte	.LFB68
+ 1798 0044 02000000 		.4byte	.LFE68-.LFB68
+ 1799 0048 00000000 		.4byte	.LFB69
+ 1800 004c 02000000 		.4byte	.LFE69-.LFB69
+ 1801 0050 00000000 		.4byte	0
+ 1802 0054 00000000 		.4byte	0
+ 1803              		.section	.debug_ranges,"",%progbits
+ 1804              	.Ldebug_ranges0:
+ 1805 0000 00000000 		.4byte	.LFB62
+ 1806 0004 72000000 		.4byte	.LFE62
+ 1807 0008 00000000 		.4byte	.LFB63
+ 1808 000c 1A000000 		.4byte	.LFE63
+ 1809 0010 00000000 		.4byte	.LFB64
+ 1810 0014 1E000000 		.4byte	.LFE64
+ 1811 0018 00000000 		.4byte	.LFB65
+ 1812 001c 4C000000 		.4byte	.LFE65
+ 1813 0020 00000000 		.4byte	.LFB66
+ 1814 0024 60000000 		.4byte	.LFE66
+ 1815 0028 00000000 		.4byte	.LFB67
+ 1816 002c 02000000 		.4byte	.LFE67
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 35
+
+
+ 1817 0030 00000000 		.4byte	.LFB68
+ 1818 0034 02000000 		.4byte	.LFE68
+ 1819 0038 00000000 		.4byte	.LFB69
+ 1820 003c 02000000 		.4byte	.LFE69
+ 1821 0040 00000000 		.4byte	0
+ 1822 0044 00000000 		.4byte	0
+ 1823              		.section	.debug_line,"",%progbits
+ 1824              	.Ldebug_line0:
+ 1825 0000 7F020000 		.section	.debug_str,"MS",%progbits,1
+ 1825      02008E01 
+ 1825      00000201 
+ 1825      FB0E0D00 
+ 1825      01010101 
+ 1826              	.LASF33:
+ 1827 0000 546F7563 		.ascii	"TouchGetPosition\000"
+ 1827      68476574 
+ 1827      506F7369 
+ 1827      74696F6E 
+ 1827      00
+ 1828              	.LASF30:
+ 1829 0011 546F7563 		.ascii	"TouchPos\000"
+ 1829      68506F73 
+ 1829      00
+ 1830              	.LASF26:
+ 1831 001a 64657374 		.ascii	"dest\000"
+ 1831      00
+ 1832              	.LASF40:
+ 1833 001f 746F7563 		.ascii	"touchActive\000"
+ 1833      68416374 
+ 1833      69766500 
+ 1834              	.LASF5:
+ 1835 002b 73686F72 		.ascii	"short int\000"
+ 1835      7420696E 
+ 1835      7400
+ 1836              	.LASF12:
+ 1837 0035 73697A65 		.ascii	"sizetype\000"
+ 1837      74797065 
+ 1837      00
+ 1838              	.LASF38:
+ 1839 003e 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 1839      64617973 
+ 1839      4265666F 
+ 1839      72654D6F 
+ 1839      6E746854 
+ 1840              	.LASF7:
+ 1841 0055 5F5F7569 		.ascii	"__uint16_t\000"
+ 1841      6E743136 
+ 1841      5F7400
+ 1842              	.LASF47:
+ 1843 0060 4932435F 		.ascii	"I2C_TC_I2CMasterSendRestart\000"
+ 1843      54435F49 
+ 1843      32434D61 
+ 1843      73746572 
+ 1843      53656E64 
+ 1844              	.LASF54:
+ 1845 007c 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1845      43313120 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 36
+
+
+ 1845      352E342E 
+ 1845      31203230 
+ 1845      31363036 
+ 1846 00af 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1846      20726576 
+ 1846      6973696F 
+ 1846      6E203233 
+ 1846      37373135 
+ 1847 00e2 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1847      66756E63 
+ 1847      74696F6E 
+ 1847      2D736563 
+ 1847      74696F6E 
+ 1848              	.LASF14:
+ 1849 010a 75696E74 		.ascii	"uint8_t\000"
+ 1849      385F7400 
+ 1850              	.LASF57:
+ 1851 0112 546F7563 		.ascii	"TouchReadRegister\000"
+ 1851      68526561 
+ 1851      64526567 
+ 1851      69737465 
+ 1851      7200
+ 1852              	.LASF24:
+ 1853 0124 73506172 		.ascii	"sParamTouch\000"
+ 1853      616D546F 
+ 1853      75636800 
+ 1854              	.LASF55:
+ 1855 0130 6C69625C 		.ascii	"lib\\FT5x46.c\000"
+ 1855      46543578 
+ 1855      34362E63 
+ 1855      00
+ 1856              	.LASF21:
+ 1857 013d 706F735F 		.ascii	"pos_X\000"
+ 1857      5800
+ 1858              	.LASF46:
+ 1859 0143 4932435F 		.ascii	"I2C_TC_I2CMasterWriteByte\000"
+ 1859      54435F49 
+ 1859      32434D61 
+ 1859      73746572 
+ 1859      57726974 
+ 1860              	.LASF18:
+ 1861 015d 666C6F61 		.ascii	"float\000"
+ 1861      7400
+ 1862              	.LASF36:
+ 1863 0163 546F7563 		.ascii	"TouchLoadCalibration\000"
+ 1863      684C6F61 
+ 1863      6443616C 
+ 1863      69627261 
+ 1863      74696F6E 
+ 1864              	.LASF1:
+ 1865 0178 6C6F6E67 		.ascii	"long long int\000"
+ 1865      206C6F6E 
+ 1865      6720696E 
+ 1865      7400
+ 1866              	.LASF35:
+ 1867 0186 546F7563 		.ascii	"TouchStoreCalibration\000"
+ 1867      6853746F 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 37
+
+
+ 1867      72654361 
+ 1867      6C696272 
+ 1867      6174696F 
+ 1868              	.LASF9:
+ 1869 019c 6C6F6E67 		.ascii	"long int\000"
+ 1869      20696E74 
+ 1869      00
+ 1870              	.LASF39:
+ 1871 01a5 50617261 		.ascii	"Param\000"
+ 1871      6D00
+ 1872              	.LASF37:
+ 1873 01ab 546F7563 		.ascii	"TouchCalHWGetPoints\000"
+ 1873      6843616C 
+ 1873      48574765 
+ 1873      74506F69 
+ 1873      6E747300 
+ 1874              	.LASF43:
+ 1875 01bf 67657374 		.ascii	"gesture\000"
+ 1875      75726500 
+ 1876              	.LASF6:
+ 1877 01c7 5F5F7569 		.ascii	"__uint8_t\000"
+ 1877      6E74385F 
+ 1877      7400
+ 1878              	.LASF48:
+ 1879 01d1 4932435F 		.ascii	"I2C_TC_I2CMasterReadByte\000"
+ 1879      54435F49 
+ 1879      32434D61 
+ 1879      73746572 
+ 1879      52656164 
+ 1880              	.LASF28:
+ 1881 01ea 62797465 		.ascii	"byteReverse\000"
+ 1881      52657665 
+ 1881      72736500 
+ 1882              	.LASF2:
+ 1883 01f6 6C6F6E67 		.ascii	"long double\000"
+ 1883      20646F75 
+ 1883      626C6500 
+ 1884              	.LASF51:
+ 1885 0202 43794465 		.ascii	"CyDelayUs\000"
+ 1885      6C617955 
+ 1885      7300
+ 1886              	.LASF4:
+ 1887 020c 756E7369 		.ascii	"unsigned char\000"
+ 1887      676E6564 
+ 1887      20636861 
+ 1887      7200
+ 1888              	.LASF22:
+ 1889 021a 706F735F 		.ascii	"pos_Y\000"
+ 1889      5900
+ 1890              	.LASF41:
+ 1891 0220 50617261 		.ascii	"ParamTouch\000"
+ 1891      6D546F75 
+ 1891      636800
+ 1892              	.LASF3:
+ 1893 022b 7369676E 		.ascii	"signed char\000"
+ 1893      65642063 
+ 1893      68617200 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 38
+
+
+ 1894              	.LASF11:
+ 1895 0237 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1895      206C6F6E 
+ 1895      6720756E 
+ 1895      7369676E 
+ 1895      65642069 
+ 1896              	.LASF0:
+ 1897 024e 756E7369 		.ascii	"unsigned int\000"
+ 1897      676E6564 
+ 1897      20696E74 
+ 1897      00
+ 1898              	.LASF44:
+ 1899 025b 6D636870 		.ascii	"mchpTouchScreenVersion\000"
+ 1899      546F7563 
+ 1899      68536372 
+ 1899      65656E56 
+ 1899      65727369 
+ 1900              	.LASF8:
+ 1901 0272 73686F72 		.ascii	"short unsigned int\000"
+ 1901      7420756E 
+ 1901      7369676E 
+ 1901      65642069 
+ 1901      6E7400
+ 1902              	.LASF13:
+ 1903 0285 63686172 		.ascii	"char\000"
+ 1903      00
+ 1904              	.LASF52:
+ 1905 028a 54435F52 		.ascii	"TC_RESET_Write\000"
+ 1905      45534554 
+ 1905      5F577269 
+ 1905      746500
+ 1906              	.LASF16:
+ 1907 0299 75696E74 		.ascii	"uint8\000"
+ 1907      3800
+ 1908              	.LASF23:
+ 1909 029f 73506172 		.ascii	"sParameter\000"
+ 1909      616D6574 
+ 1909      657200
+ 1910              	.LASF31:
+ 1911 02aa 64617461 		.ascii	"data\000"
+ 1911      00
+ 1912              	.LASF34:
+ 1913 02af 72427566 		.ascii	"rBuf\000"
+ 1913      00
+ 1914              	.LASF17:
+ 1915 02b4 75696E74 		.ascii	"uint16\000"
+ 1915      313600
+ 1916              	.LASF50:
+ 1917 02bb 4932435F 		.ascii	"I2C_TC_I2CMasterClearStatus\000"
+ 1917      54435F49 
+ 1917      32434D61 
+ 1917      73746572 
+ 1917      436C6561 
+ 1918              	.LASF10:
+ 1919 02d7 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1919      20756E73 
+ 1919      69676E65 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 39
+
+
+ 1919      6420696E 
+ 1919      7400
+ 1920              	.LASF32:
+ 1921 02e9 746F7563 		.ascii	"touch_num\000"
+ 1921      685F6E75 
+ 1921      6D00
+ 1922              	.LASF19:
+ 1923 02f3 646F7562 		.ascii	"double\000"
+ 1923      6C6500
+ 1924              	.LASF20:
+ 1925 02fa 73746174 		.ascii	"stat_TC_INT\000"
+ 1925      5F54435F 
+ 1925      494E5400 
+ 1926              	.LASF15:
+ 1927 0306 75696E74 		.ascii	"uint16_t\000"
+ 1927      31365F74 
+ 1927      00
+ 1928              	.LASF29:
+ 1929 030f 546F7563 		.ascii	"TouchHardwareInit\000"
+ 1929      68486172 
+ 1929      64776172 
+ 1929      65496E69 
+ 1929      7400
+ 1930              	.LASF49:
+ 1931 0321 4932435F 		.ascii	"I2C_TC_I2CMasterSendStop\000"
+ 1931      54435F49 
+ 1931      32434D61 
+ 1931      73746572 
+ 1931      53656E64 
+ 1932              	.LASF56:
+ 1933 033a 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_UART_T"
+ 1933      554E5445 
+ 1933      43485F44 
+ 1933      45565F43 
+ 1933      4C415544 
+ 1934 036a 4553545C 		.ascii	"EST\\280CTP_IoT_UART_TEST_V1\\Project\\Design.cydsn"
+ 1934      32383043 
+ 1934      54505F49 
+ 1934      6F545F55 
+ 1934      4152545F 
+ 1935 039a 00       		.ascii	"\000"
+ 1936              	.LASF45:
+ 1937 039b 4932435F 		.ascii	"I2C_TC_I2CMasterSendStart\000"
+ 1937      54435F49 
+ 1937      32434D61 
+ 1937      73746572 
+ 1937      53656E64 
+ 1938              	.LASF27:
+ 1939 03b5 6572726F 		.ascii	"error\000"
+ 1939      7200
+ 1940              	.LASF25:
+ 1941 03bb 6E6F5F54 		.ascii	"no_Touches\000"
+ 1941      6F756368 
+ 1941      657300
+ 1942              	.LASF53:
+ 1943 03c6 43794465 		.ascii	"CyDelay\000"
+ 1943      6C617900 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccDjHdpr.s 			page 40
+
+
+ 1944              	.LASF42:
+ 1945 03ce 6E756D54 		.ascii	"numTouches\000"
+ 1945      6F756368 
+ 1945      657300
+ 1946              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

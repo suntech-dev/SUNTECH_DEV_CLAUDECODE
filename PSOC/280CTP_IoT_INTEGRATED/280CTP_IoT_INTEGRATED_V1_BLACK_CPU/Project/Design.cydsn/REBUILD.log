@@ -1,0 +1,636 @@
+--------------- Rebuild Started: 03/17/2026 11:52:29 Project: Design, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\FT5x46.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\IODefine.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\IOUtil.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LEDControl.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\RealTimeClock.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\ST7789V.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\stdout.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\sysTick.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\w25qxx.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\menu.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USB.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\jsmn.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UI.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\widget.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\button.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\internalFlash.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\externalFlash.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\manageMenu.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\WIFI.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\server.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\utility.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\main.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\setup.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\userTimer.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBJsonConfig.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\andonApi.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\andonMessageQueue.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\andonJson.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\jsonUtil.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\menuDesign.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\userMenuProject1.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\userMenuPatternSewingMachine.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\userProjectPatternSewing.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\count.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\uartJson.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\WarningLight.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\andonMenu.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\uartProcess.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\downtime.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\defective.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\resetMenu.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\cyfitter_cfg.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\cymetadata.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\RTC.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\TC_RESET.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\TC_RESET_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\TC_INT.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\TC_INT_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\I2C_TC.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C_INT.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C_BOOT.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C_MASTER.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\I2C_TC_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\I2C_TC_BOOT.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_SPI_UART.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_SPI_UART_INT.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_UART.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_BOOT.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_UART_BOOT.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Ctrl_LCD_RS.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Ctrl_LCD_RS_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LCD_MISO.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LCD_MISO_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LCD_RS.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LCD_RS_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LCD_Backlight.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LCD_Backlight_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\SPIM_LCD.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\SPIM_LCD_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\SPIM_LCD_INT.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LCD_RES.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LCD_RES_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\BUZZER.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\BUZZER_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_audio.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_boot.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_cdc.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_cls.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_descr.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_drv.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_episr.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_hid.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_pm.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_std.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_vnd.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_midi.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_msc.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\FLASH_MISO.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\FLASH_MISO_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH_INT.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\WIFI_EN.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\WIFI_EN_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LED2_B.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LED2_B_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LED2_G.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LED2_G_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LED2_R.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LED2_R_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LED1_B.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LED1_B_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LED1_G.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LED1_G_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LED1_R.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\LED1_R_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_2.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_2_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_1.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_1_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\RESERVED_IN_2.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\RESERVED_IN_2_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\I2C_TC_SCBCLK.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\I2C_TC_sda.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\I2C_TC_sda_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\I2C_TC_scl.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\I2C_TC_scl_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\I2C_TC_SCB_IRQ.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_SCBCLK.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_tx.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_tx_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_rx.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_rx_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\SPIM_LCD_IntClock.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_Dp.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_Dp_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_Dm.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\USBUART_Dm_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH_IntClock.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Cm0Start.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\CyFlash.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\CyLib.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\cyPm.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\cyutils.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\CyBootAsmGnu.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\CyDMA.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\CyLFClk.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\cy_em_eeprom.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_WIFI.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SPI_UART.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SPI_UART_INT.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_WIFI_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_WIFI_UART.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_WIFI_BOOT.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_WIFI_UART_BOOT.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SCBCLK.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_WIFI_tx.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_WIFI_tx_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SCB_IRQ.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_WIFI_rx.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_WIFI_rx_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\PWM_ONE_SECOND.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\PWM_ONE_SECOND_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\isr_ONE_SECOND.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\UART_SCB_IRQ.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\TCPWM_LED.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\TCPWM_LED_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_1.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_1_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Clock_LED.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_2.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_2_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Em_EEPROM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\cybootloader.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Bootloadable.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Ctrl_MEM_SS.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Ctrl_MEM_SS_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\trim_Int.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\SwClk.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\InputPin.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\InputPin_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\WIFI_RESET.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\WIFI_RESET_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\TrimPin.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\TrimPin_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Reg_Pattern.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Reg_Pattern_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\ADC_SAR_Seq.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\ADC_SAR_Seq_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\ADC_SAR_Seq_INT.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\ADC_SAR_Seq_IRQ.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\ADC_SAR_Seq_intClock.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_3.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_3_PM.o"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Design.hex"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Design.elf"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Design.map"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\Design.cyacd"
+Deleting file ".\Design.cycdx"
+Deleting file ".\Design.svd"
+Deleting file ".\Design.rpt"
+Deleting file ".\Design_timing.html"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\.deps\SOURCE_C__ARM_GCC_GENERIC.P"
+Deleting file ".\CortexM0\ARM_GCC_541\Debug\.deps\SOURCE_ASM__ARM_GCC_GENERIC.P"
+cydsfit.exe -.appdatapath "C:\Users\luvsd\AppData\Local\Cypress Semiconductor\PSoC Creator\4.4" -.fdsnotice -.fdswarpdepfile=warp_dependencies.txt -.fdselabdepfile=elab_dependencies.txt -.fdsbldfile=generated_files.txt -.fdsreffile=referenced_files.txt -p C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_BLACK_CPU\Project\Design.cydsn\Design.cyprj -d CY8C4248AZI-L485 -s C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_BLACK_CPU\Project\Design.cydsn\Generated_Source\PSoC4 -- -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE
+Elaborating Design...
+HDL Generation...
+Synthesis...
+Tech Mapping...
+ADD: pft.M0040: information: The following 2 pin(s) will be assigned a location by the fitter: \UART_WIFI:rx(0)\, \UART_WIFI:tx(0)\
+Analog Placement...
+Analog Routing...
+Analog Code Generation...
+Digital Placement...
+Digital Routing...
+Bitstream Generation...
+Bitstream Verification...
+Static timing analysis...
+Warning: sta.M0019: Design_timing.html: Warning-1366: Setup time violation found in a path from clock ( CyHFClk ) to clock ( CyHFClk ). (File=C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_BLACK_CPU\Project\Design.cydsn\Design_timing.html)
+API Generation...
+Dependency Generation...
+Cleanup...
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/FT5x46.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\FT5x46.c -o .\CortexM0\ARM_GCC_541\Debug\FT5x46.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/IODefine.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\IODefine.c -o .\CortexM0\ARM_GCC_541\Debug\IODefine.o
+lib\IODefine.c: In function 'getSensor':
+lib\IODefine.c:20:10: warning: unused variable 'shift' [-Wunused-variable]
+     char shift = 0;
+          ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/IOUtil.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\IOUtil.c -o .\CortexM0\ARM_GCC_541\Debug\IOUtil.o
+lib\IOUtil.c: In function 'updateIOTimer':
+lib\IOUtil.c:108:18: warning: implicit declaration of function 'get1msecTimerReset' [-Wimplicit-function-declaration]
+     uint8 b1ms = get1msecTimerReset();
+                  ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LEDControl.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\LEDControl.c -o .\CortexM0\ARM_GCC_541\Debug\LEDControl.o
+lib\LEDControl.c: In function 'LED_OneSecondControl':
+lib\LEDControl.c:37:18: warning: unused variable 'count' [-Wunused-variable]
+     static uint8 count =0;
+                  ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/RealTimeClock.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\RealTimeClock.c -o .\CortexM0\ARM_GCC_541\Debug\RealTimeClock.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/ST7789V.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\ST7789V.c -o .\CortexM0\ARM_GCC_541\Debug\ST7789V.o
+lib\ST7789V.c: In function 'LCD_DrawString':
+lib\ST7789V.c:292:9: warning: implicit declaration of function 'LCD_DrawChar_16' [-Wimplicit-function-declaration]
+         LCD_DrawChar_16(Xpos + 16 * i , Ypos, *st++);        
+         ^
+lib\ST7789V.c: At top level:
+lib\ST7789V.c:54:16: warning: 'init_ENH_OB130SB128' defined but not used [-Wunused-variable]
+ static uint8_t init_ENH_OB130SB128[30] = {  0x40, 0x81, 0x80, 0xA0, 0xA4, 0xA6, 0xA8, 0x3F, 0xC0,
+                ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/stdout.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\stdout.c -o .\CortexM0\ARM_GCC_541\Debug\stdout.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/sysTick.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\sysTick.c -o .\CortexM0\ARM_GCC_541\Debug\sysTick.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/w25qxx.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\w25qxx.c -o .\CortexM0\ARM_GCC_541\Debug\w25qxx.o
+lib\w25qxx.c: In function 'W25qxx_ReadID':
+lib\w25qxx.c:13:11: warning: unused variable 'len' [-Wunused-variable]
+     uint8 len;
+           ^
+lib\w25qxx.c: In function 'W25qxx_WriteStatusRegister':
+lib\w25qxx.c:127:10: warning: unused variable 'status' [-Wunused-variable]
+  uint8_t status=0;
+          ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/menu.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\menu.c -o .\CortexM0\ARM_GCC_541\Debug\menu.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USB.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\USB.c -o .\CortexM0\ARM_GCC_541\Debug\USB.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/jsmn.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c jsmn.c -o .\CortexM0\ARM_GCC_541\Debug\jsmn.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UI.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\UI.c -o .\CortexM0\ARM_GCC_541\Debug\UI.o
+lib\UI.c: In function 'FillRectangle':
+lib\UI.c:105:10: warning: unused variable 'rect' [-Wunused-variable]
+     RECT rect = ST7789V_setaddress_MapScreenCoordinate(x1, y1, x2, y2);
+          ^
+lib\UI.c: In function 'LCD_DrawFont':
+lib\UI.c:193:12: warning: unused variable 'noFont' [-Wunused-variable]
+     uint16 noFont = font[3];
+            ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/widget.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\widget.c -o .\CortexM0\ARM_GCC_541\Debug\widget.o
+lib\widget.c:15:14: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     .image = image_arrow_up,
+              ^
+lib\widget.c:22:14: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     .image = image_arrow_down,
+              ^
+lib\widget.c:29:14: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     .image = image_wifi_4,
+              ^
+lib\widget.c: In function 'doIncreseNumberMenu':
+lib\widget.c:546:19: warning: unused variable 'tmp' [-Wunused-variable]
+     static uint16 tmp;
+                   ^
+lib\widget.c: In function 'DrawWifi':
+lib\widget.c:1037:31: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+             g_imageWifi.image = image_wifi_0;
+                               ^
+lib\widget.c:1062:31: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+             g_imageWifi.image = image_wifi_4;  
+                               ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/button.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\button.c -o .\CortexM0\ARM_GCC_541\Debug\button.o
+lib\button.c: In function 'DrawButtonArray':
+lib\button.c:62:17: warning: unused variable 'btn' [-Wunused-variable]
+         BUTTON *btn = array->btn;
+                 ^
+lib\button.c: In function 'DrawButtonText':
+lib\button.c:78:12: warning: unused variable 'marginTopBottom' [-Wunused-variable]
+     uint16 marginTopBottom;
+            ^
+lib\button.c:77:12: warning: unused variable 'marginLeftRight' [-Wunused-variable]
+     uint16 marginLeftRight;
+            ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/internalFlash.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\internalFlash.c -o .\CortexM0\ARM_GCC_541\Debug\internalFlash.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/externalFlash.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\externalFlash.c -o .\CortexM0\ARM_GCC_541\Debug\externalFlash.o
+lib\externalFlash.c: In function 'LoadExternalFlashConfig':
+lib\externalFlash.c:64:12: warning: unused variable 'crc' [-Wunused-variable]
+     uint16 crc = externalFlashCRC();
+            ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/manageMenu.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\manageMenu.c -o .\CortexM0\ARM_GCC_541\Debug\manageMenu.o
+lib\manageMenu.c: In function 'DisplayDeviceInfoMenu':
+lib\manageMenu.c:117:12: warning: unused variable 'btnVersion' [-Wunused-variable]
+     BUTTON btnVersion; 
+            ^
+lib\manageMenu.c:99:12: warning: unused variable 'btnMac' [-Wunused-variable]
+     BUTTON btnMac;    
+            ^
+lib\manageMenu.c: In function 'doDisplayDir':
+lib\manageMenu.c:290:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;    
+               ^
+lib\manageMenu.c: In function 'doMonitoring':
+lib\manageMenu.c:413:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;
+               ^
+lib\manageMenu.c: In function 'manageMenuCreate':
+lib\manageMenu.c:503:19: warning: unused variable 'wifiInfo' [-Wunused-variable]
+         MENUNODE *wifiInfo            = createMENUNODE(root,      "WIFI INFO",     &doWifiInfo);       
+                   ^
+lib\manageMenu.c:502:19: warning: unused variable 'deviceInfo' [-Wunused-variable]
+         MENUNODE *deviceInfo          = createMENUNODE(root,      "DEVICE INFO",   &doDeviceInfo);
+                   ^
+lib\manageMenu.c:501:19: warning: unused variable 'reset' [-Wunused-variable]
+         MENUNODE *reset               = createMENUNODE(root,      "RESET",         &doReset);
+                   ^
+lib\manageMenu.c:500:23: warning: unused variable 'defectiveRequest' [-Wunused-variable]
+             MENUNODE *defectiveRequest= createMENUNODE(defective, "REQUEST",       &doDefectiveRequest);        
+                       ^
+lib\manageMenu.c:498:23: warning: unused variable 'downtimeRequest' [-Wunused-variable]
+             MENUNODE *downtimeRequest = createMENUNODE(downtime,  "REQUEST",       &doDowntimeRequest);
+                       ^
+lib\manageMenu.c:496:24: warning: unused variable 'brightness' [-Wunused-variable]
+              MENUNODE *brightness     = createMENUNODE(settings,  "LED BRIGHT",    &doBrightness);
+                        ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/WIFI.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\WIFI.c -o .\CortexM0\ARM_GCC_541\Debug\WIFI.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/server.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\server.c -o .\CortexM0\ARM_GCC_541\Debug\server.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/utility.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\utility.c -o .\CortexM0\ARM_GCC_541\Debug\utility.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/main.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c main.c -o .\CortexM0\ARM_GCC_541\Debug\main.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/setup.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c setup.c -o .\CortexM0\ARM_GCC_541\Debug\setup.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/userTimer.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c userTimer.c -o .\CortexM0\ARM_GCC_541\Debug\userTimer.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBJsonConfig.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c USBJsonConfig.c -o .\CortexM0\ARM_GCC_541\Debug\USBJsonConfig.o
+USBJsonConfig.c: In function 'USB_CommandProcess':
+USBJsonConfig.c:48:9: warning: unused variable 'nLoop' [-Wunused-variable]
+     int nLoop=0;
+         ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/andonApi.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c andonApi.c -o .\CortexM0\ARM_GCC_541\Debug\andonApi.o
+andonApi.c: In function 'makeAndonPatternCount':
+andonApi.c:122:12: warning: unused variable 'pts' [-Wunused-variable]
+     uint32 pts =   GetWorkingTimeCount();
+            ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/andonMessageQueue.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c andonMessageQueue.c -o .\CortexM0\ARM_GCC_541\Debug\andonMessageQueue.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/andonJson.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c andonJson.c -o .\CortexM0\ARM_GCC_541\Debug\andonJson.o
+andonJson.c: In function 'andonRequestItem':
+andonJson.c:322:10: warning: unused variable 'buff' [-Wunused-variable]
+     char buff[20];
+          ^
+andonJson.c: In function 'andonMenuParsing':
+andonJson.c:357:37: warning: unused variable 'status' [-Wunused-variable]
+     char tmpBuff[20], textBuff[20], status[10];    
+                                     ^
+andonJson.c: In function 'andonTextListParsing':
+andonJson.c:503:9: warning: variable 'r' set but not used [-Wunused-but-set-variable]
+     int r;
+         ^
+andonJson.c:502:9: warning: unused variable 'i' [-Wunused-variable]
+     int i;
+         ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/jsonUtil.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c jsonUtil.c -o .\CortexM0\ARM_GCC_541\Debug\jsonUtil.o
+jsonUtil.c: In function 'removeDoubleSlash':
+jsonUtil.c:99:18: warning: unused variable 'c' [-Wunused-variable]
+             char c = str[i];
+                  ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/menuDesign.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c menuDesign.c -o .\CortexM0\ARM_GCC_541\Debug\menuDesign.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/userMenuProject1.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c userMenuProject1.c -o .\CortexM0\ARM_GCC_541\Debug\userMenuProject1.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/userMenuPatternSewingMachine.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c userMenuPatternSewingMachine.c -o .\CortexM0\ARM_GCC_541\Debug\userMenuPatternSewingMachine.o
+userMenuPatternSewingMachine.c: In function 'doTopMenu':
+userMenuPatternSewingMachine.c:43:18: warning: unused variable 'sewingPage' [-Wunused-variable]
+     static uint8 sewingPage = 0;
+                  ^
+userMenuPatternSewingMachine.c:40:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;    
+               ^
+userMenuPatternSewingMachine.c: In function 'TopMenuPageUpdateValue':
+userMenuPatternSewingMachine.c:205:11: warning: variable 'rate100' set but not used [-Wunused-but-set-variable]
+     uint8 rate100 = FALSE;
+           ^
+userMenuPatternSewingMachine.c:203:13: warning: unused variable 'btn' [-Wunused-variable]
+     BUTTON *btn;
+             ^
+userMenuPatternSewingMachine.c: In function 'doPairsInfoMenu':
+userMenuPatternSewingMachine.c:263:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;    
+               ^
+userMenuPatternSewingMachine.c: In function 'doTargetInfoMenu':
+userMenuPatternSewingMachine.c:381:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;
+               ^
+userMenuPatternSewingMachine.c: In function 'doActualInfoMenu':
+userMenuPatternSewingMachine.c:406:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;
+               ^
+userMenuPatternSewingMachine.c: In function 'doMachine':
+userMenuPatternSewingMachine.c:453:19: warning: variable 'displayDir' set but not used [-Wunused-but-set-variable]
+     static uint16 displayDir;
+                   ^
+userMenuPatternSewingMachine.c:449:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;    
+               ^
+userMenuPatternSewingMachine.c: In function 'doAutoReset':
+userMenuPatternSewingMachine.c:572:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;    
+               ^
+userMenuPatternSewingMachine.c: In function 'menuCreate':
+userMenuPatternSewingMachine.c:627:30: warning: unused variable 'autoReset' [-Wunused-variable]
+             MENUNODE        *autoReset            = createMENUNODE  (node,  "AUTO RESET",   &doAutoReset);  
+                              ^
+userMenuPatternSewingMachine.c:625:30: warning: unused variable 'andonSetting' [-Wunused-variable]
+             MENUNODE        *andonSetting         = createMENUNODE  (node,  "ANDON",        &doAndonSet);  
+                              ^
+userMenuPatternSewingMachine.c:643:18: warning: unused variable 'actualtInfoMenuNode' [-Wunused-variable]
+     MENUNODE    *actualtInfoMenuNode      = createMENUNODE  (root,    "ACTUAL",       &doActualInfoMenu);
+                  ^
+userMenuPatternSewingMachine.c:642:18: warning: unused variable 'targetInfoMenuNode' [-Wunused-variable]
+     MENUNODE    *targetInfoMenuNode       = createMENUNODE  (root,    "TARGET",       &doTargetInfoMenu);
+                  ^
+userMenuPatternSewingMachine.c:641:18: warning: unused variable 'pairsInfoMenuNode' [-Wunused-variable]
+     MENUNODE    *pairsInfoMenuNode        = createMENUNODE  (root,    "PAIR(S) INFO", &doPairsInfoMenu);
+                  ^
+userMenuPatternSewingMachine.c:612:15: warning: variable 'g_ptrAndonMenuNode' set but not used [-Wunused-but-set-variable]
+     MENUNODE *g_ptrAndonMenuNode = NULL;
+               ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/userProjectPatternSewing.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c userProjectPatternSewing.c -o .\CortexM0\ARM_GCC_541\Debug\userProjectPatternSewing.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/count.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c count.c -o .\CortexM0\ARM_GCC_541\Debug\count.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/uartJson.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c uartJson.c -o .\CortexM0\ARM_GCC_541\Debug\uartJson.o
+uartJson.c: In function 'uartJsonLoop':
+uartJson.c:55:28: warning: unused variable 'tmp' [-Wunused-variable]
+                     uint32 tmp = CONVERT_TO_4BYTE(ptrCount->patternActualH, ptrCount->patternActualL) + g_ptrMachineParameter->patternPair;
+                            ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/WarningLight.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c WarningLight.c -o .\CortexM0\ARM_GCC_541\Debug\WarningLight.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/andonMenu.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c andonMenu.c -o .\CortexM0\ARM_GCC_541\Debug\andonMenu.o
+andonMenu.c: In function 'doAndonRequest':
+andonMenu.c:187:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;    
+               ^
+andonMenu.c: In function 'andonMenuCreate':
+andonMenu.c:263:24: warning: unused variable 'factoryReset' [-Wunused-variable]
+              MENUNODE *factoryReset    = createMENUNODE(menuMain,  "REQUEST",   &doAndonRequest);
+                        ^
+andonMenu.c: In function 'doAndonSet':
+andonMenu.c:271:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;    
+               ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/uartProcess.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c uartProcess.c -o .\CortexM0\ARM_GCC_541\Debug\uartProcess.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/downtime.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c downtime.c -o .\CortexM0\ARM_GCC_541\Debug\downtime.o
+downtime.c: In function 'doDowntime':
+downtime.c:88:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;
+               ^
+downtime.c: In function 'doDowntimeRequest':
+downtime.c:239:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;
+               ^
+downtime.c: In function 'downTimeRequestItem':
+downtime.c:339:10: warning: unused variable 'buff' [-Wunused-variable]
+     char buff[20];
+          ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/defective.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c defective.c -o .\CortexM0\ARM_GCC_541\Debug\defective.o
+defective.c: In function 'doDefective':
+defective.c:51:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;
+               ^
+defective.c: In function 'doDefectiveRequest':
+defective.c:177:11: warning: unused variable 'not_completed_qty' [-Wunused-variable]
+     int16 not_completed_qty = item->not_completed_qty;
+           ^
+defective.c:170:15: warning: unused variable 'thisMenu' [-Wunused-variable]
+     MENUNODE *thisMenu = (MENUNODE *) this;
+               ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/resetMenu.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c resetMenu.c -o .\CortexM0\ARM_GCC_541\Debug\resetMenu.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/cyfitter_cfg.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\cyfitter_cfg.c -o .\CortexM0\ARM_GCC_541\Debug\cyfitter_cfg.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/cymetadata.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\cymetadata.c -o .\CortexM0\ARM_GCC_541\Debug\cymetadata.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/RTC.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\RTC.c -o .\CortexM0\ARM_GCC_541\Debug\RTC.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/TC_RESET.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\TC_RESET.c -o .\CortexM0\ARM_GCC_541\Debug\TC_RESET.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/TC_RESET_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\TC_RESET_PM.c -o .\CortexM0\ARM_GCC_541\Debug\TC_RESET_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/TC_INT.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\TC_INT.c -o .\CortexM0\ARM_GCC_541\Debug\TC_INT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/TC_INT_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\TC_INT_PM.c -o .\CortexM0\ARM_GCC_541\Debug\TC_INT_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/I2C_TC.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\I2C_TC.c -o .\CortexM0\ARM_GCC_541\Debug\I2C_TC.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/I2C_TC_I2C_INT.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\I2C_TC_I2C_INT.c -o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C_INT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/I2C_TC_I2C.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\I2C_TC_I2C.c -o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/I2C_TC_I2C_BOOT.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\I2C_TC_I2C_BOOT.c -o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C_BOOT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/I2C_TC_I2C_MASTER.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\I2C_TC_I2C_MASTER.c -o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C_MASTER.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/I2C_TC_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\I2C_TC_PM.c -o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/I2C_TC_BOOT.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\I2C_TC_BOOT.c -o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_BOOT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART.c -o .\CortexM0\ARM_GCC_541\Debug\UART.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_SPI_UART.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_SPI_UART.c -o .\CortexM0\ARM_GCC_541\Debug\UART_SPI_UART.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_SPI_UART_INT.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_SPI_UART_INT.c -o .\CortexM0\ARM_GCC_541\Debug\UART_SPI_UART_INT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_PM.c -o .\CortexM0\ARM_GCC_541\Debug\UART_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_UART.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_UART.c -o .\CortexM0\ARM_GCC_541\Debug\UART_UART.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_BOOT.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_BOOT.c -o .\CortexM0\ARM_GCC_541\Debug\UART_BOOT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_UART_BOOT.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_UART_BOOT.c -o .\CortexM0\ARM_GCC_541\Debug\UART_UART_BOOT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/Ctrl_LCD_RS.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\Ctrl_LCD_RS.c -o .\CortexM0\ARM_GCC_541\Debug\Ctrl_LCD_RS.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/Ctrl_LCD_RS_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\Ctrl_LCD_RS_PM.c -o .\CortexM0\ARM_GCC_541\Debug\Ctrl_LCD_RS_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LCD_MISO.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LCD_MISO.c -o .\CortexM0\ARM_GCC_541\Debug\LCD_MISO.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LCD_MISO_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LCD_MISO_PM.c -o .\CortexM0\ARM_GCC_541\Debug\LCD_MISO_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LCD_RS.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LCD_RS.c -o .\CortexM0\ARM_GCC_541\Debug\LCD_RS.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LCD_RS_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LCD_RS_PM.c -o .\CortexM0\ARM_GCC_541\Debug\LCD_RS_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LCD_Backlight.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LCD_Backlight.c -o .\CortexM0\ARM_GCC_541\Debug\LCD_Backlight.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LCD_Backlight_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LCD_Backlight_PM.c -o .\CortexM0\ARM_GCC_541\Debug\LCD_Backlight_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/SPIM_LCD.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\SPIM_LCD.c -o .\CortexM0\ARM_GCC_541\Debug\SPIM_LCD.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/SPIM_LCD_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\SPIM_LCD_PM.c -o .\CortexM0\ARM_GCC_541\Debug\SPIM_LCD_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/SPIM_LCD_INT.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\SPIM_LCD_INT.c -o .\CortexM0\ARM_GCC_541\Debug\SPIM_LCD_INT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LCD_RES.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LCD_RES.c -o .\CortexM0\ARM_GCC_541\Debug\LCD_RES.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LCD_RES_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LCD_RES_PM.c -o .\CortexM0\ARM_GCC_541\Debug\LCD_RES_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/BUZZER.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\BUZZER.c -o .\CortexM0\ARM_GCC_541\Debug\BUZZER.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/BUZZER_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\BUZZER_PM.c -o .\CortexM0\ARM_GCC_541\Debug\BUZZER_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_audio.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_audio.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_audio.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_boot.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_boot.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_boot.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_cdc.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_cdc.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_cdc.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_cls.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_cls.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_cls.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_descr.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_descr.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_descr.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_drv.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_drv.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_drv.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_episr.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_episr.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_episr.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_hid.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_hid.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_hid.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_pm.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_pm.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_pm.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_std.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_std.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_std.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_vnd.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_vnd.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_vnd.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_midi.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_midi.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_midi.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_msc.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_msc.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_msc.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/FLASH_MISO.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\FLASH_MISO.c -o .\CortexM0\ARM_GCC_541\Debug\FLASH_MISO.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/FLASH_MISO_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\FLASH_MISO_PM.c -o .\CortexM0\ARM_GCC_541\Debug\FLASH_MISO_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/SPIM_FLASH.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\SPIM_FLASH.c -o .\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/SPIM_FLASH_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\SPIM_FLASH_PM.c -o .\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/SPIM_FLASH_INT.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\SPIM_FLASH_INT.c -o .\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH_INT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/WIFI_EN.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\WIFI_EN.c -o .\CortexM0\ARM_GCC_541\Debug\WIFI_EN.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/WIFI_EN_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\WIFI_EN_PM.c -o .\CortexM0\ARM_GCC_541\Debug\WIFI_EN_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LED2_B.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LED2_B.c -o .\CortexM0\ARM_GCC_541\Debug\LED2_B.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LED2_B_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LED2_B_PM.c -o .\CortexM0\ARM_GCC_541\Debug\LED2_B_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LED2_G.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LED2_G.c -o .\CortexM0\ARM_GCC_541\Debug\LED2_G.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LED2_G_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LED2_G_PM.c -o .\CortexM0\ARM_GCC_541\Debug\LED2_G_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LED2_R.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LED2_R.c -o .\CortexM0\ARM_GCC_541\Debug\LED2_R.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LED2_R_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LED2_R_PM.c -o .\CortexM0\ARM_GCC_541\Debug\LED2_R_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LED1_B.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LED1_B.c -o .\CortexM0\ARM_GCC_541\Debug\LED1_B.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LED1_B_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LED1_B_PM.c -o .\CortexM0\ARM_GCC_541\Debug\LED1_B_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LED1_G.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LED1_G.c -o .\CortexM0\ARM_GCC_541\Debug\LED1_G.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LED1_G_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LED1_G_PM.c -o .\CortexM0\ARM_GCC_541\Debug\LED1_G_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LED1_R.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LED1_R.c -o .\CortexM0\ARM_GCC_541\Debug\LED1_R.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LED1_R_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\LED1_R_PM.c -o .\CortexM0\ARM_GCC_541\Debug\LED1_R_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/RESERVED_OUT_2.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\RESERVED_OUT_2.c -o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_2.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/RESERVED_OUT_2_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\RESERVED_OUT_2_PM.c -o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_2_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/RESERVED_OUT_1.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\RESERVED_OUT_1.c -o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_1.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/RESERVED_OUT_1_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\RESERVED_OUT_1_PM.c -o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_1_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/RESERVED_IN_2.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\RESERVED_IN_2.c -o .\CortexM0\ARM_GCC_541\Debug\RESERVED_IN_2.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/RESERVED_IN_2_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\RESERVED_IN_2_PM.c -o .\CortexM0\ARM_GCC_541\Debug\RESERVED_IN_2_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/I2C_TC_SCBCLK.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\I2C_TC_SCBCLK.c -o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_SCBCLK.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/I2C_TC_sda.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\I2C_TC_sda.c -o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_sda.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/I2C_TC_sda_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\I2C_TC_sda_PM.c -o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_sda_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/I2C_TC_scl.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\I2C_TC_scl.c -o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_scl.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/I2C_TC_scl_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\I2C_TC_scl_PM.c -o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_scl_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/I2C_TC_SCB_IRQ.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\I2C_TC_SCB_IRQ.c -o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_SCB_IRQ.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_SCBCLK.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_SCBCLK.c -o .\CortexM0\ARM_GCC_541\Debug\UART_SCBCLK.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_tx.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_tx.c -o .\CortexM0\ARM_GCC_541\Debug\UART_tx.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_tx_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_tx_PM.c -o .\CortexM0\ARM_GCC_541\Debug\UART_tx_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_rx.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_rx.c -o .\CortexM0\ARM_GCC_541\Debug\UART_rx.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_rx_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_rx_PM.c -o .\CortexM0\ARM_GCC_541\Debug\UART_rx_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/SPIM_LCD_IntClock.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\SPIM_LCD_IntClock.c -o .\CortexM0\ARM_GCC_541\Debug\SPIM_LCD_IntClock.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_Dp.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_Dp.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_Dp.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_Dp_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_Dp_PM.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_Dp_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_Dm.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_Dm.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_Dm.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USBUART_Dm_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\USBUART_Dm_PM.c -o .\CortexM0\ARM_GCC_541\Debug\USBUART_Dm_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/SPIM_FLASH_IntClock.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\SPIM_FLASH_IntClock.c -o .\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH_IntClock.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/Cm0Start.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\Cm0Start.c -o .\CortexM0\ARM_GCC_541\Debug\Cm0Start.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/CyFlash.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\CyFlash.c -o .\CortexM0\ARM_GCC_541\Debug\CyFlash.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/CyLib.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\CyLib.c -o .\CortexM0\ARM_GCC_541\Debug\CyLib.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/cyPm.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\cyPm.c -o .\CortexM0\ARM_GCC_541\Debug\cyPm.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/cyutils.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\cyutils.c -o .\CortexM0\ARM_GCC_541\Debug\cyutils.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/CyDMA.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\CyDMA.c -o .\CortexM0\ARM_GCC_541\Debug\CyDMA.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/CyLFClk.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\CyLFClk.c -o .\CortexM0\ARM_GCC_541\Debug\CyLFClk.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/cy_em_eeprom.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\cy_em_eeprom.c -o .\CortexM0\ARM_GCC_541\Debug\cy_em_eeprom.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_WIFI.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_WIFI.c -o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_WIFI_SPI_UART.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_WIFI_SPI_UART.c -o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SPI_UART.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_WIFI_SPI_UART_INT.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_WIFI_SPI_UART_INT.c -o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SPI_UART_INT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_WIFI_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_WIFI_PM.c -o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_WIFI_UART.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_WIFI_UART.c -o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_UART.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_WIFI_BOOT.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_WIFI_BOOT.c -o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_BOOT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_WIFI_UART_BOOT.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_WIFI_UART_BOOT.c -o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_UART_BOOT.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_WIFI_SCBCLK.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_WIFI_SCBCLK.c -o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SCBCLK.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_WIFI_tx.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_WIFI_tx.c -o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_tx.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_WIFI_tx_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_WIFI_tx_PM.c -o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_tx_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_WIFI_SCB_IRQ.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_WIFI_SCB_IRQ.c -o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SCB_IRQ.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_WIFI_rx.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_WIFI_rx.c -o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_rx.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_WIFI_rx_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_WIFI_rx_PM.c -o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_rx_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/PWM_ONE_SECOND.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\PWM_ONE_SECOND.c -o .\CortexM0\ARM_GCC_541\Debug\PWM_ONE_SECOND.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/PWM_ONE_SECOND_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\PWM_ONE_SECOND_PM.c -o .\CortexM0\ARM_GCC_541\Debug\PWM_ONE_SECOND_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/isr_ONE_SECOND.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\isr_ONE_SECOND.c -o .\CortexM0\ARM_GCC_541\Debug\isr_ONE_SECOND.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UART_SCB_IRQ.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\UART_SCB_IRQ.c -o .\CortexM0\ARM_GCC_541\Debug\UART_SCB_IRQ.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/TCPWM_LED.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\TCPWM_LED.c -o .\CortexM0\ARM_GCC_541\Debug\TCPWM_LED.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/TCPWM_LED_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\TCPWM_LED_PM.c -o .\CortexM0\ARM_GCC_541\Debug\TCPWM_LED_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/Control_Reg_LED_1.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\Control_Reg_LED_1.c -o .\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_1.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/Control_Reg_LED_1_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\Control_Reg_LED_1_PM.c -o .\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_1_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/Clock_LED.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\Clock_LED.c -o .\CortexM0\ARM_GCC_541\Debug\Clock_LED.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/Control_Reg_LED_2.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\Control_Reg_LED_2.c -o .\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_2.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/Control_Reg_LED_2_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\Control_Reg_LED_2_PM.c -o .\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_2_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/Em_EEPROM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\Em_EEPROM.c -o .\CortexM0\ARM_GCC_541\Debug\Em_EEPROM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/cybootloader.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\cybootloader.c -o .\CortexM0\ARM_GCC_541\Debug\cybootloader.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/Bootloadable.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\Bootloadable.c -o .\CortexM0\ARM_GCC_541\Debug\Bootloadable.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/Ctrl_MEM_SS.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\Ctrl_MEM_SS.c -o .\CortexM0\ARM_GCC_541\Debug\Ctrl_MEM_SS.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/Ctrl_MEM_SS_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\Ctrl_MEM_SS_PM.c -o .\CortexM0\ARM_GCC_541\Debug\Ctrl_MEM_SS_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/trim_Int.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\trim_Int.c -o .\CortexM0\ARM_GCC_541\Debug\trim_Int.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/SwClk.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\SwClk.c -o .\CortexM0\ARM_GCC_541\Debug\SwClk.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/WIFI_RESET.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\WIFI_RESET.c -o .\CortexM0\ARM_GCC_541\Debug\WIFI_RESET.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/WIFI_RESET_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\WIFI_RESET_PM.c -o .\CortexM0\ARM_GCC_541\Debug\WIFI_RESET_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/TrimPin.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\TrimPin.c -o .\CortexM0\ARM_GCC_541\Debug\TrimPin.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/TrimPin_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\TrimPin_PM.c -o .\CortexM0\ARM_GCC_541\Debug\TrimPin_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/Reg_Pattern.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\Reg_Pattern.c -o .\CortexM0\ARM_GCC_541\Debug\Reg_Pattern.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/Reg_Pattern_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\Reg_Pattern_PM.c -o .\CortexM0\ARM_GCC_541\Debug\Reg_Pattern_PM.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/RESERVED_OUT_3.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\RESERVED_OUT_3.c -o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_3.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/RESERVED_OUT_3_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC4\RESERVED_OUT_3_PM.c -o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_3_PM.o
+arm-none-eabi-as.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -alh=.\CortexM0\ARM_GCC_541\Debug/CyBootAsmGnu.lst -g -W -o .\CortexM0\ARM_GCC_541\Debug\CyBootAsmGnu.o Generated_Source\PSoC4\CyBootAsmGnu.s
+arm-none-eabi-ar.exe -rs .\CortexM0\ARM_GCC_541\Debug\Design.a .\CortexM0\ARM_GCC_541\Debug\RTC.o .\CortexM0\ARM_GCC_541\Debug\TC_RESET.o .\CortexM0\ARM_GCC_541\Debug\TC_RESET_PM.o .\CortexM0\ARM_GCC_541\Debug\TC_INT.o .\CortexM0\ARM_GCC_541\Debug\TC_INT_PM.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C_INT.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C_BOOT.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_I2C_MASTER.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_PM.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_BOOT.o .\CortexM0\ARM_GCC_541\Debug\UART.o .\CortexM0\ARM_GCC_541\Debug\UART_SPI_UART.o .\CortexM0\ARM_GCC_541\Debug\UART_SPI_UART_INT.o .\CortexM0\ARM_GCC_541\Debug\UART_PM.o .\CortexM0\ARM_GCC_541\Debug\UART_UART.o .\CortexM0\ARM_GCC_541\Debug\UART_BOOT.o .\CortexM0\ARM_GCC_541\Debug\UART_UART_BOOT.o .\CortexM0\ARM_GCC_541\Debug\Ctrl_LCD_RS.o .\CortexM0\ARM_GCC_541\Debug\Ctrl_LCD_RS_PM.o .\CortexM0\ARM_GCC_541\Debug\LCD_MISO.o .\CortexM0\ARM_GCC_541\Debug\LCD_MISO_PM.o .\CortexM0\ARM_GCC_541\Debug\LCD_RS.o .\CortexM0\ARM_GCC_541\Debug\LCD_RS_PM.o .\CortexM0\ARM_GCC_541\Debug\LCD_Backlight.o .\CortexM0\ARM_GCC_541\Debug\LCD_Backlight_PM.o .\CortexM0\ARM_GCC_541\Debug\SPIM_LCD.o .\CortexM0\ARM_GCC_541\Debug\SPIM_LCD_PM.o .\CortexM0\ARM_GCC_541\Debug\SPIM_LCD_INT.o .\CortexM0\ARM_GCC_541\Debug\LCD_RES.o .\CortexM0\ARM_GCC_541\Debug\LCD_RES_PM.o .\CortexM0\ARM_GCC_541\Debug\BUZZER.o .\CortexM0\ARM_GCC_541\Debug\BUZZER_PM.o .\CortexM0\ARM_GCC_541\Debug\USBUART.o .\CortexM0\ARM_GCC_541\Debug\USBUART_audio.o .\CortexM0\ARM_GCC_541\Debug\USBUART_boot.o .\CortexM0\ARM_GCC_541\Debug\USBUART_cdc.o .\CortexM0\ARM_GCC_541\Debug\USBUART_cls.o .\CortexM0\ARM_GCC_541\Debug\USBUART_descr.o .\CortexM0\ARM_GCC_541\Debug\USBUART_drv.o .\CortexM0\ARM_GCC_541\Debug\USBUART_episr.o .\CortexM0\ARM_GCC_541\Debug\USBUART_hid.o .\CortexM0\ARM_GCC_541\Debug\USBUART_pm.o .\CortexM0\ARM_GCC_541\Debug\USBUART_std.o .\CortexM0\ARM_GCC_541\Debug\USBUART_vnd.o .\CortexM0\ARM_GCC_541\Debug\USBUART_midi.o .\CortexM0\ARM_GCC_541\Debug\USBUART_msc.o .\CortexM0\ARM_GCC_541\Debug\FLASH_MISO.o .\CortexM0\ARM_GCC_541\Debug\FLASH_MISO_PM.o .\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH.o .\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH_PM.o .\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH_INT.o .\CortexM0\ARM_GCC_541\Debug\WIFI_EN.o .\CortexM0\ARM_GCC_541\Debug\WIFI_EN_PM.o .\CortexM0\ARM_GCC_541\Debug\LED2_B.o .\CortexM0\ARM_GCC_541\Debug\LED2_B_PM.o .\CortexM0\ARM_GCC_541\Debug\LED2_G.o .\CortexM0\ARM_GCC_541\Debug\LED2_G_PM.o .\CortexM0\ARM_GCC_541\Debug\LED2_R.o .\CortexM0\ARM_GCC_541\Debug\LED2_R_PM.o .\CortexM0\ARM_GCC_541\Debug\LED1_B.o .\CortexM0\ARM_GCC_541\Debug\LED1_B_PM.o .\CortexM0\ARM_GCC_541\Debug\LED1_G.o .\CortexM0\ARM_GCC_541\Debug\LED1_G_PM.o .\CortexM0\ARM_GCC_541\Debug\LED1_R.o .\CortexM0\ARM_GCC_541\Debug\LED1_R_PM.o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_2.o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_2_PM.o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_1.o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_1_PM.o .\CortexM0\ARM_GCC_541\Debug\RESERVED_IN_2.o .\CortexM0\ARM_GCC_541\Debug\RESERVED_IN_2_PM.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_SCBCLK.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_sda.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_sda_PM.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_scl.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_scl_PM.o .\CortexM0\ARM_GCC_541\Debug\I2C_TC_SCB_IRQ.o .\CortexM0\ARM_GCC_541\Debug\UART_SCBCLK.o .\CortexM0\ARM_GCC_541\Debug\UART_tx.o .\CortexM0\ARM_GCC_541\Debug\UART_tx_PM.o .\CortexM0\ARM_GCC_541\Debug\UART_rx.o .\CortexM0\ARM_GCC_541\Debug\UART_rx_PM.o .\CortexM0\ARM_GCC_541\Debug\SPIM_LCD_IntClock.o .\CortexM0\ARM_GCC_541\Debug\USBUART_Dp.o .\CortexM0\ARM_GCC_541\Debug\USBUART_Dp_PM.o .\CortexM0\ARM_GCC_541\Debug\USBUART_Dm.o .\CortexM0\ARM_GCC_541\Debug\USBUART_Dm_PM.o .\CortexM0\ARM_GCC_541\Debug\SPIM_FLASH_IntClock.o .\CortexM0\ARM_GCC_541\Debug\CyFlash.o .\CortexM0\ARM_GCC_541\Debug\CyLib.o .\CortexM0\ARM_GCC_541\Debug\cyPm.o .\CortexM0\ARM_GCC_541\Debug\cyutils.o .\CortexM0\ARM_GCC_541\Debug\CyDMA.o .\CortexM0\ARM_GCC_541\Debug\CyLFClk.o .\CortexM0\ARM_GCC_541\Debug\cy_em_eeprom.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SPI_UART.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SPI_UART_INT.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_PM.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_UART.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_BOOT.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_UART_BOOT.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SCBCLK.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_tx.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_tx_PM.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_SCB_IRQ.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_rx.o .\CortexM0\ARM_GCC_541\Debug\UART_WIFI_rx_PM.o .\CortexM0\ARM_GCC_541\Debug\PWM_ONE_SECOND.o .\CortexM0\ARM_GCC_541\Debug\PWM_ONE_SECOND_PM.o .\CortexM0\ARM_GCC_541\Debug\isr_ONE_SECOND.o .\CortexM0\ARM_GCC_541\Debug\UART_SCB_IRQ.o .\CortexM0\ARM_GCC_541\Debug\TCPWM_LED.o .\CortexM0\ARM_GCC_541\Debug\TCPWM_LED_PM.o .\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_1.o .\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_1_PM.o .\CortexM0\ARM_GCC_541\Debug\Clock_LED.o .\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_2.o .\CortexM0\ARM_GCC_541\Debug\Control_Reg_LED_2_PM.o .\CortexM0\ARM_GCC_541\Debug\Em_EEPROM.o .\CortexM0\ARM_GCC_541\Debug\Bootloadable.o .\CortexM0\ARM_GCC_541\Debug\Ctrl_MEM_SS.o .\CortexM0\ARM_GCC_541\Debug\Ctrl_MEM_SS_PM.o .\CortexM0\ARM_GCC_541\Debug\trim_Int.o .\CortexM0\ARM_GCC_541\Debug\SwClk.o .\CortexM0\ARM_GCC_541\Debug\WIFI_RESET.o .\CortexM0\ARM_GCC_541\Debug\WIFI_RESET_PM.o .\CortexM0\ARM_GCC_541\Debug\TrimPin.o .\CortexM0\ARM_GCC_541\Debug\TrimPin_PM.o .\CortexM0\ARM_GCC_541\Debug\Reg_Pattern.o .\CortexM0\ARM_GCC_541\Debug\Reg_Pattern_PM.o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_3.o .\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_3_PM.o .\CortexM0\ARM_GCC_541\Debug\CyBootAsmGnu.o
+arm-none-eabi-ar.exe: creating .\CortexM0\ARM_GCC_541\Debug\Design.a
+arm-none-eabi-gcc.exe -Wl,--start-group -o C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_BLACK_CPU\Project\Design.cydsn\CortexM0\ARM_GCC_541\Debug\Design.elf .\CortexM0\ARM_GCC_541\Debug\FT5x46.o .\CortexM0\ARM_GCC_541\Debug\IODefine.o .\CortexM0\ARM_GCC_541\Debug\IOUtil.o .\CortexM0\ARM_GCC_541\Debug\LEDControl.o .\CortexM0\ARM_GCC_541\Debug\RealTimeClock.o .\CortexM0\ARM_GCC_541\Debug\ST7789V.o .\CortexM0\ARM_GCC_541\Debug\stdout.o .\CortexM0\ARM_GCC_541\Debug\sysTick.o .\CortexM0\ARM_GCC_541\Debug\w25qxx.o .\CortexM0\ARM_GCC_541\Debug\menu.o .\CortexM0\ARM_GCC_541\Debug\USB.o .\CortexM0\ARM_GCC_541\Debug\jsmn.o .\CortexM0\ARM_GCC_541\Debug\UI.o .\CortexM0\ARM_GCC_541\Debug\widget.o .\CortexM0\ARM_GCC_541\Debug\button.o .\CortexM0\ARM_GCC_541\Debug\internalFlash.o .\CortexM0\ARM_GCC_541\Debug\externalFlash.o .\CortexM0\ARM_GCC_541\Debug\manageMenu.o .\CortexM0\ARM_GCC_541\Debug\WIFI.o .\CortexM0\ARM_GCC_541\Debug\server.o .\CortexM0\ARM_GCC_541\Debug\utility.o .\CortexM0\ARM_GCC_541\Debug\main.o .\CortexM0\ARM_GCC_541\Debug\setup.o .\CortexM0\ARM_GCC_541\Debug\userTimer.o .\CortexM0\ARM_GCC_541\Debug\USBJsonConfig.o .\CortexM0\ARM_GCC_541\Debug\andonApi.o .\CortexM0\ARM_GCC_541\Debug\andonMessageQueue.o .\CortexM0\ARM_GCC_541\Debug\andonJson.o .\CortexM0\ARM_GCC_541\Debug\jsonUtil.o .\CortexM0\ARM_GCC_541\Debug\menuDesign.o .\CortexM0\ARM_GCC_541\Debug\userMenuProject1.o .\CortexM0\ARM_GCC_541\Debug\userMenuPatternSewingMachine.o .\CortexM0\ARM_GCC_541\Debug\userProjectPatternSewing.o .\CortexM0\ARM_GCC_541\Debug\count.o .\CortexM0\ARM_GCC_541\Debug\uartJson.o .\CortexM0\ARM_GCC_541\Debug\WarningLight.o .\CortexM0\ARM_GCC_541\Debug\andonMenu.o .\CortexM0\ARM_GCC_541\Debug\uartProcess.o .\CortexM0\ARM_GCC_541\Debug\downtime.o .\CortexM0\ARM_GCC_541\Debug\defective.o .\CortexM0\ARM_GCC_541\Debug\resetMenu.o .\CortexM0\ARM_GCC_541\Debug\cyfitter_cfg.o .\CortexM0\ARM_GCC_541\Debug\cymetadata.o .\CortexM0\ARM_GCC_541\Debug\Cm0Start.o .\CortexM0\ARM_GCC_541\Debug\cybootloader.o .\CortexM0\ARM_GCC_541\Debug\Design.a -mcpu=cortex-m0 -mthumb -L Generated_Source\PSoC4 -Wl,-Map,.\CortexM0\ARM_GCC_541\Debug/Design.map -T Generated_Source\PSoC4\cm0gcc.ld -specs=nano.specs -u _printf_float -Wl,--gc-sections -g -ffunction-sections -Og -ffat-lto-objects -Wl,--end-group
+cyelftool.exe -B C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_BLACK_CPU\Project\Design.cydsn\CortexM0\ARM_GCC_541\Debug\Design.elf --flash_row_size 256 --flash_size 262144 --flash_offset 0x00000000 --flash_array_size 262144
+No ELF section .cychecksum found, creating one
+Application checksum calculated and stored in ELF section .cychecksum
+Checksum calculated and stored in ELF section .cymeta
+cyelftool.exe -S C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_BLACK_CPU\Project\Design.cydsn\CortexM0\ARM_GCC_541\Debug\Design.elf
+Flash used: 122812 of 262144 bytes (46.8%). Bootloader: 13568 bytes. Application: 108988 bytes. Metadata: 256 bytes.
+SRAM used: 22532 of 32768 bytes (68.8%). Stack: 2048 bytes. Heap: 1024 bytes.
+--------------- Rebuild Succeeded: 03/17/2026 11:53:21 ---------------

@@ -1,0 +1,1918 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"count.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.PatternCountLoop,"ax",%progbits
+  20              		.align	2
+  21              		.global	PatternCountLoop
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	PatternCountLoop, %function
+  25              	PatternCountLoop:
+  26              	.LFB64:
+  27              		.file 1 "count.c"
+   1:count.c       **** /* ========================================
+   2:count.c       ****  *
+   3:count.c       ****  * Copyright Suntech, 2023.04.13
+   4:count.c       ****  * All Rights Reserved
+   5:count.c       ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:count.c       ****  *
+   7:count.c       ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:count.c       ****  * WHICH IS THE PROPERTY OF Suntech.
+   9:count.c       ****  *
+  10:count.c       ****  * ========================================
+  11:count.c       **** */
+  12:count.c       **** #include "main.h"
+  13:count.c       **** #include "count.h"
+  14:count.c       **** #include "lib/internalFlash.h"
+  15:count.c       **** #include "userProjectPatternSewing.h"
+  16:count.c       **** #include "andonApi.h"
+  17:count.c       **** #include "uartJson.h"
+  18:count.c       **** 
+  19:count.c       **** uint8 g_updateCountMenu=FALSE;
+  20:count.c       **** 
+  21:count.c       **** COUNT *g_ptrCount = NULL;
+  22:count.c       **** 
+  23:count.c       **** static uint32 g_uWorkingTimeCount=0;   /* 접근자 함수(Get/Reset)로만 외부 접근 */
+  24:count.c       **** 
+  25:count.c       **** void PatternCountLoop();
+  26:count.c       **** 
+  27:count.c       **** void (*CountFunc)() = &PatternCountLoop;
+  28:count.c       **** 
+  29:count.c       **** void initCount()
+  30:count.c       **** {
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 2
+
+
+  31:count.c       ****     if(sizeof(COUNT) > sizeof(g_internalFlash.data))
+  32:count.c       ****     {
+  33:count.c       ****         printf("Wrong... COUNT size is large than g_internalFlash.data\r\n");
+  34:count.c       ****     }
+  35:count.c       ****     g_ptrCount = (COUNT *) &g_internalFlash.data;
+  36:count.c       **** 
+  37:count.c       ****     SetCountLoop();
+  38:count.c       **** }
+  39:count.c       **** 
+  40:count.c       **** void SetCountLoop()
+  41:count.c       **** {
+  42:count.c       ****     /* BLACK_CPU: PATTERN_MACHINE 고정 */
+  43:count.c       ****     CountFunc = &PatternCountLoop;
+  44:count.c       ****     trim_Int_Stop();
+  45:count.c       **** }
+  46:count.c       **** 
+  47:count.c       **** void PatternCountLoop()
+  48:count.c       **** {
+  28              		.loc 1 48 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 10B5     		push	{r4, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  49:count.c       ****     if(uartJsonLoop()==TRUE)
+  36              		.loc 1 49 0
+  37 0002 FFF7FEFF 		bl	uartJsonLoop
+  38              	.LVL0:
+  39 0006 0128     		cmp	r0, #1
+  40 0008 02D1     		bne	.L1
+  50:count.c       ****     {
+  51:count.c       ****         g_updateCountMenu = TRUE;
+  41              		.loc 1 51 0
+  42 000a 0122     		movs	r2, #1
+  43 000c 014B     		ldr	r3, .L3
+  44 000e 1A70     		strb	r2, [r3]
+  45              	.L1:
+  52:count.c       ****     }
+  53:count.c       **** }
+  46              		.loc 1 53 0
+  47              		@ sp needed
+  48 0010 10BD     		pop	{r4, pc}
+  49              	.L4:
+  50 0012 C046     		.align	2
+  51              	.L3:
+  52 0014 00000000 		.word	.LANCHOR0
+  53              		.cfi_endproc
+  54              	.LFE64:
+  55              		.size	PatternCountLoop, .-PatternCountLoop
+  56              		.section	.text.SetCountLoop,"ax",%progbits
+  57              		.align	2
+  58              		.global	SetCountLoop
+  59              		.code	16
+  60              		.thumb_func
+  61              		.type	SetCountLoop, %function
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 3
+
+
+  62              	SetCountLoop:
+  63              	.LFB63:
+  41:count.c       ****     /* BLACK_CPU: PATTERN_MACHINE 고정 */
+  64              		.loc 1 41 0
+  65              		.cfi_startproc
+  66              		@ args = 0, pretend = 0, frame = 0
+  67              		@ frame_needed = 0, uses_anonymous_args = 0
+  68 0000 10B5     		push	{r4, lr}
+  69              		.cfi_def_cfa_offset 8
+  70              		.cfi_offset 4, -8
+  71              		.cfi_offset 14, -4
+  43:count.c       ****     trim_Int_Stop();
+  72              		.loc 1 43 0
+  73 0002 034A     		ldr	r2, .L6
+  74 0004 034B     		ldr	r3, .L6+4
+  75 0006 1A60     		str	r2, [r3]
+  44:count.c       **** }
+  76              		.loc 1 44 0
+  77 0008 FFF7FEFF 		bl	trim_Int_Stop
+  78              	.LVL1:
+  45:count.c       **** 
+  79              		.loc 1 45 0
+  80              		@ sp needed
+  81 000c 10BD     		pop	{r4, pc}
+  82              	.L7:
+  83 000e C046     		.align	2
+  84              	.L6:
+  85 0010 00000000 		.word	PatternCountLoop
+  86 0014 00000000 		.word	.LANCHOR1
+  87              		.cfi_endproc
+  88              	.LFE63:
+  89              		.size	SetCountLoop, .-SetCountLoop
+  90              		.section	.text.initCount,"ax",%progbits
+  91              		.align	2
+  92              		.global	initCount
+  93              		.code	16
+  94              		.thumb_func
+  95              		.type	initCount, %function
+  96              	initCount:
+  97              	.LFB62:
+  30:count.c       ****     if(sizeof(COUNT) > sizeof(g_internalFlash.data))
+  98              		.loc 1 30 0
+  99              		.cfi_startproc
+ 100              		@ args = 0, pretend = 0, frame = 0
+ 101              		@ frame_needed = 0, uses_anonymous_args = 0
+ 102 0000 10B5     		push	{r4, lr}
+ 103              		.cfi_def_cfa_offset 8
+ 104              		.cfi_offset 4, -8
+ 105              		.cfi_offset 14, -4
+  35:count.c       **** 
+ 106              		.loc 1 35 0
+ 107 0002 034A     		ldr	r2, .L9
+ 108 0004 034B     		ldr	r3, .L9+4
+ 109 0006 5A60     		str	r2, [r3, #4]
+  37:count.c       **** }
+ 110              		.loc 1 37 0
+ 111 0008 FFF7FEFF 		bl	SetCountLoop
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 4
+
+
+ 112              	.LVL2:
+  38:count.c       **** 
+ 113              		.loc 1 38 0
+ 114              		@ sp needed
+ 115 000c 10BD     		pop	{r4, pc}
+ 116              	.L10:
+ 117 000e C046     		.align	2
+ 118              	.L9:
+ 119 0010 02000000 		.word	g_internalFlash+2
+ 120 0014 00000000 		.word	.LANCHOR0
+ 121              		.cfi_endproc
+ 122              	.LFE62:
+ 123              		.size	initCount, .-initCount
+ 124              		.section	.text.getCount,"ax",%progbits
+ 125              		.align	2
+ 126              		.global	getCount
+ 127              		.code	16
+ 128              		.thumb_func
+ 129              		.type	getCount, %function
+ 130              	getCount:
+ 131              	.LFB65:
+  54:count.c       **** 
+  55:count.c       **** COUNT *getCount()
+  56:count.c       **** {
+ 132              		.loc 1 56 0
+ 133              		.cfi_startproc
+ 134              		@ args = 0, pretend = 0, frame = 0
+ 135              		@ frame_needed = 0, uses_anonymous_args = 0
+ 136              		@ link register save eliminated.
+  57:count.c       ****     return g_ptrCount;
+ 137              		.loc 1 57 0
+ 138 0000 014B     		ldr	r3, .L12
+ 139 0002 5868     		ldr	r0, [r3, #4]
+  58:count.c       **** }
+ 140              		.loc 1 58 0
+ 141              		@ sp needed
+ 142 0004 7047     		bx	lr
+ 143              	.L13:
+ 144 0006 C046     		.align	2
+ 145              	.L12:
+ 146 0008 00000000 		.word	.LANCHOR0
+ 147              		.cfi_endproc
+ 148              	.LFE65:
+ 149              		.size	getCount, .-getCount
+ 150              		.section	.text.ResetCount,"ax",%progbits
+ 151              		.align	2
+ 152              		.global	ResetCount
+ 153              		.code	16
+ 154              		.thumb_func
+ 155              		.type	ResetCount, %function
+ 156              	ResetCount:
+ 157              	.LFB66:
+  59:count.c       **** 
+  60:count.c       **** void ResetCount()
+  61:count.c       **** {
+ 158              		.loc 1 61 0
+ 159              		.cfi_startproc
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 5
+
+
+ 160              		@ args = 0, pretend = 0, frame = 0
+ 161              		@ frame_needed = 0, uses_anonymous_args = 0
+ 162 0000 10B5     		push	{r4, lr}
+ 163              		.cfi_def_cfa_offset 8
+ 164              		.cfi_offset 4, -8
+ 165              		.cfi_offset 14, -4
+  62:count.c       ****     g_ptrCount->patternActualH = 0;
+ 166              		.loc 1 62 0
+ 167 0002 0D49     		ldr	r1, .L15
+ 168 0004 4A68     		ldr	r2, [r1, #4]
+ 169 0006 0023     		movs	r3, #0
+ 170 0008 9383     		strh	r3, [r2, #28]
+  63:count.c       ****     g_ptrCount->patternActualL = 0;
+ 171              		.loc 1 63 0
+ 172 000a D383     		strh	r3, [r2, #30]
+  64:count.c       ****     g_ptrCount->patternCycleTimeSumH = 0;
+ 173              		.loc 1 64 0
+ 174 000c 9385     		strh	r3, [r2, #44]
+  65:count.c       ****     g_ptrCount->patternCycleTimeSumL = 0;
+ 175              		.loc 1 65 0
+ 176 000e D385     		strh	r3, [r2, #46]
+  66:count.c       ****     g_ptrCount->patternMotorRunTimeSumH = 0;
+ 177              		.loc 1 66 0
+ 178 0010 5386     		strh	r3, [r2, #50]
+  67:count.c       ****     g_ptrCount->patternMotorRunTimeSumL = 0;
+ 179              		.loc 1 67 0
+ 180 0012 9386     		strh	r3, [r2, #52]
+  68:count.c       ****     g_ptrCount->patternNoStitchSumH = 0;
+ 181              		.loc 1 68 0
+ 182 0014 1387     		strh	r3, [r2, #56]
+  69:count.c       ****     g_ptrCount->patternNoStitchSumL = 0;
+ 183              		.loc 1 69 0
+ 184 0016 5387     		strh	r3, [r2, #58]
+  70:count.c       ****     g_ptrCount->patternStitchLengthSumH = 0;
+ 185              		.loc 1 70 0
+ 186 0018 D387     		strh	r3, [r2, #62]
+  71:count.c       ****     g_ptrCount->patternStitchLengthSumL = 0;
+ 187              		.loc 1 71 0
+ 188 001a 4020     		movs	r0, #64
+ 189 001c 1352     		strh	r3, [r2, r0]
+  72:count.c       ****     g_ptrCount->patternTrimCountSumH = 0;
+ 190              		.loc 1 72 0
+ 191 001e 0430     		adds	r0, r0, #4
+ 192 0020 1352     		strh	r3, [r2, r0]
+  73:count.c       ****     g_ptrCount->patternTrimCountSumL = 0;
+ 193              		.loc 1 73 0
+ 194 0022 0230     		adds	r0, r0, #2
+ 195 0024 1352     		strh	r3, [r2, r0]
+  74:count.c       ****     g_ptrCount->patternEmergencyTimeSumH = 0;
+ 196              		.loc 1 74 0
+ 197 0026 D384     		strh	r3, [r2, #38]
+  75:count.c       ****     g_ptrCount->patternEmergencyTimeSumL = 0;
+ 198              		.loc 1 75 0
+ 199 0028 1385     		strh	r3, [r2, #40]
+  76:count.c       ****     g_ptrCount->sewingActualH = 0;
+ 200              		.loc 1 76 0
+ 201 002a 1380     		strh	r3, [r2]
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 6
+
+
+  77:count.c       ****     g_ptrCount->sewingActualL = 0;
+ 202              		.loc 1 77 0
+ 203 002c 4A68     		ldr	r2, [r1, #4]
+ 204 002e 5380     		strh	r3, [r2, #2]
+  78:count.c       **** 
+  79:count.c       ****     SaveInternalFlash();
+ 205              		.loc 1 79 0
+ 206 0030 FFF7FEFF 		bl	SaveInternalFlash
+ 207              	.LVL3:
+  80:count.c       **** }
+ 208              		.loc 1 80 0
+ 209              		@ sp needed
+ 210 0034 10BD     		pop	{r4, pc}
+ 211              	.L16:
+ 212 0036 C046     		.align	2
+ 213              	.L15:
+ 214 0038 00000000 		.word	.LANCHOR0
+ 215              		.cfi_endproc
+ 216              	.LFE66:
+ 217              		.size	ResetCount, .-ResetCount
+ 218              		.section	.text.WorkingTimeCount,"ax",%progbits
+ 219              		.align	2
+ 220              		.global	WorkingTimeCount
+ 221              		.code	16
+ 222              		.thumb_func
+ 223              		.type	WorkingTimeCount, %function
+ 224              	WorkingTimeCount:
+ 225              	.LFB67:
+  81:count.c       **** 
+  82:count.c       **** void WorkingTimeCount()
+  83:count.c       **** {
+ 226              		.loc 1 83 0
+ 227              		.cfi_startproc
+ 228              		@ args = 0, pretend = 0, frame = 0
+ 229              		@ frame_needed = 0, uses_anonymous_args = 0
+ 230              		@ link register save eliminated.
+  84:count.c       ****     g_uWorkingTimeCount++;
+ 231              		.loc 1 84 0
+ 232 0000 024A     		ldr	r2, .L18
+ 233 0002 9368     		ldr	r3, [r2, #8]
+ 234 0004 0133     		adds	r3, r3, #1
+ 235 0006 9360     		str	r3, [r2, #8]
+  85:count.c       **** }
+ 236              		.loc 1 85 0
+ 237              		@ sp needed
+ 238 0008 7047     		bx	lr
+ 239              	.L19:
+ 240 000a C046     		.align	2
+ 241              	.L18:
+ 242 000c 00000000 		.word	.LANCHOR0
+ 243              		.cfi_endproc
+ 244              	.LFE67:
+ 245              		.size	WorkingTimeCount, .-WorkingTimeCount
+ 246              		.section	.text.GetWorkingTimeCount,"ax",%progbits
+ 247              		.align	2
+ 248              		.global	GetWorkingTimeCount
+ 249              		.code	16
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 7
+
+
+ 250              		.thumb_func
+ 251              		.type	GetWorkingTimeCount, %function
+ 252              	GetWorkingTimeCount:
+ 253              	.LFB68:
+  86:count.c       **** 
+  87:count.c       **** uint32 GetWorkingTimeCount()
+  88:count.c       **** {
+ 254              		.loc 1 88 0
+ 255              		.cfi_startproc
+ 256              		@ args = 0, pretend = 0, frame = 0
+ 257              		@ frame_needed = 0, uses_anonymous_args = 0
+ 258              		@ link register save eliminated.
+  89:count.c       ****     return g_uWorkingTimeCount;
+ 259              		.loc 1 89 0
+ 260 0000 014B     		ldr	r3, .L21
+ 261 0002 9868     		ldr	r0, [r3, #8]
+  90:count.c       **** }
+ 262              		.loc 1 90 0
+ 263              		@ sp needed
+ 264 0004 7047     		bx	lr
+ 265              	.L22:
+ 266 0006 C046     		.align	2
+ 267              	.L21:
+ 268 0008 00000000 		.word	.LANCHOR0
+ 269              		.cfi_endproc
+ 270              	.LFE68:
+ 271              		.size	GetWorkingTimeCount, .-GetWorkingTimeCount
+ 272              		.section	.text.ResetWorkingTimeCount,"ax",%progbits
+ 273              		.align	2
+ 274              		.global	ResetWorkingTimeCount
+ 275              		.code	16
+ 276              		.thumb_func
+ 277              		.type	ResetWorkingTimeCount, %function
+ 278              	ResetWorkingTimeCount:
+ 279              	.LFB69:
+  91:count.c       **** 
+  92:count.c       **** void ResetWorkingTimeCount()
+  93:count.c       **** {
+ 280              		.loc 1 93 0
+ 281              		.cfi_startproc
+ 282              		@ args = 0, pretend = 0, frame = 0
+ 283              		@ frame_needed = 0, uses_anonymous_args = 0
+ 284              		@ link register save eliminated.
+  94:count.c       ****     g_uWorkingTimeCount = 0;
+ 285              		.loc 1 94 0
+ 286 0000 0022     		movs	r2, #0
+ 287 0002 014B     		ldr	r3, .L24
+ 288 0004 9A60     		str	r2, [r3, #8]
+  95:count.c       **** }
+ 289              		.loc 1 95 0
+ 290              		@ sp needed
+ 291 0006 7047     		bx	lr
+ 292              	.L25:
+ 293              		.align	2
+ 294              	.L24:
+ 295 0008 00000000 		.word	.LANCHOR0
+ 296              		.cfi_endproc
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 8
+
+
+ 297              	.LFE69:
+ 298              		.size	ResetWorkingTimeCount, .-ResetWorkingTimeCount
+ 299              		.global	CountFunc
+ 300              		.global	g_ptrCount
+ 301              		.global	g_updateCountMenu
+ 302              		.comm	Param,6,4
+ 303              		.data
+ 304              		.align	2
+ 305              		.set	.LANCHOR1,. + 0
+ 306              		.type	CountFunc, %object
+ 307              		.size	CountFunc, 4
+ 308              	CountFunc:
+ 309 0000 00000000 		.word	PatternCountLoop
+ 310              		.bss
+ 311              		.align	2
+ 312              		.set	.LANCHOR0,. + 0
+ 313              		.type	g_updateCountMenu, %object
+ 314              		.size	g_updateCountMenu, 1
+ 315              	g_updateCountMenu:
+ 316 0000 00       		.space	1
+ 317 0001 000000   		.space	3
+ 318              		.type	g_ptrCount, %object
+ 319              		.size	g_ptrCount, 4
+ 320              	g_ptrCount:
+ 321 0004 00000000 		.space	4
+ 322              		.type	g_uWorkingTimeCount, %object
+ 323              		.size	g_uWorkingTimeCount, 4
+ 324              	g_uWorkingTimeCount:
+ 325 0008 00000000 		.space	4
+ 326              		.text
+ 327              	.Letext0:
+ 328              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 329              		.file 3 "main.h"
+ 330              		.file 4 "count.h"
+ 331              		.file 5 "lib/internalFlash.h"
+ 332              		.file 6 "Generated_Source\\PSoC4/RTC.h"
+ 333              		.file 7 "uartJson.h"
+ 334              		.file 8 "Generated_Source\\PSoC4/trim_Int.h"
+ 335              		.section	.debug_info,"",%progbits
+ 336              	.Ldebug_info0:
+ 337 0000 92040000 		.4byte	0x492
+ 338 0004 0400     		.2byte	0x4
+ 339 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 340 000a 04       		.byte	0x4
+ 341 000b 01       		.uleb128 0x1
+ 342 000c 28010000 		.4byte	.LASF81
+ 343 0010 0C       		.byte	0xc
+ 344 0011 BB040000 		.4byte	.LASF82
+ 345 0015 CA030000 		.4byte	.LASF83
+ 346 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 347 001d 00000000 		.4byte	0
+ 348 0021 00000000 		.4byte	.Ldebug_line0
+ 349 0025 02       		.uleb128 0x2
+ 350 0026 01       		.byte	0x1
+ 351 0027 06       		.byte	0x6
+ 352 0028 2A030000 		.4byte	.LASF0
+ 353 002c 02       		.uleb128 0x2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 9
+
+
+ 354 002d 01       		.byte	0x1
+ 355 002e 08       		.byte	0x8
+ 356 002f AA020000 		.4byte	.LASF1
+ 357 0033 02       		.uleb128 0x2
+ 358 0034 02       		.byte	0x2
+ 359 0035 05       		.byte	0x5
+ 360 0036 57000000 		.4byte	.LASF2
+ 361 003a 02       		.uleb128 0x2
+ 362 003b 02       		.byte	0x2
+ 363 003c 07       		.byte	0x7
+ 364 003d B7030000 		.4byte	.LASF3
+ 365 0041 02       		.uleb128 0x2
+ 366 0042 04       		.byte	0x4
+ 367 0043 05       		.byte	0x5
+ 368 0044 33020000 		.4byte	.LASF4
+ 369 0048 02       		.uleb128 0x2
+ 370 0049 04       		.byte	0x4
+ 371 004a 07       		.byte	0x7
+ 372 004b 81030000 		.4byte	.LASF5
+ 373 004f 02       		.uleb128 0x2
+ 374 0050 08       		.byte	0x8
+ 375 0051 05       		.byte	0x5
+ 376 0052 D1010000 		.4byte	.LASF6
+ 377 0056 02       		.uleb128 0x2
+ 378 0057 08       		.byte	0x8
+ 379 0058 07       		.byte	0x7
+ 380 0059 36030000 		.4byte	.LASF7
+ 381 005d 03       		.uleb128 0x3
+ 382 005e 04       		.byte	0x4
+ 383 005f 05       		.byte	0x5
+ 384 0060 696E7400 		.ascii	"int\000"
+ 385 0064 02       		.uleb128 0x2
+ 386 0065 04       		.byte	0x4
+ 387 0066 07       		.byte	0x7
+ 388 0067 61030000 		.4byte	.LASF8
+ 389 006b 04       		.uleb128 0x4
+ 390 006c BF010000 		.4byte	.LASF9
+ 391 0070 02       		.byte	0x2
+ 392 0071 FC01     		.2byte	0x1fc
+ 393 0073 2C000000 		.4byte	0x2c
+ 394 0077 04       		.uleb128 0x4
+ 395 0078 AD040000 		.4byte	.LASF10
+ 396 007c 02       		.byte	0x2
+ 397 007d FD01     		.2byte	0x1fd
+ 398 007f 3A000000 		.4byte	0x3a
+ 399 0083 04       		.uleb128 0x4
+ 400 0084 B4040000 		.4byte	.LASF11
+ 401 0088 02       		.byte	0x2
+ 402 0089 FE01     		.2byte	0x1fe
+ 403 008b 48000000 		.4byte	0x48
+ 404 008f 02       		.uleb128 0x2
+ 405 0090 04       		.byte	0x4
+ 406 0091 04       		.byte	0x4
+ 407 0092 CB010000 		.4byte	.LASF12
+ 408 0096 02       		.uleb128 0x2
+ 409 0097 08       		.byte	0x8
+ 410 0098 04       		.byte	0x4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 10
+
+
+ 411 0099 C3040000 		.4byte	.LASF13
+ 412 009d 02       		.uleb128 0x2
+ 413 009e 01       		.byte	0x1
+ 414 009f 08       		.byte	0x8
+ 415 00a0 37040000 		.4byte	.LASF14
+ 416 00a4 02       		.uleb128 0x2
+ 417 00a5 08       		.byte	0x8
+ 418 00a6 04       		.byte	0x4
+ 419 00a7 D3020000 		.4byte	.LASF15
+ 420 00ab 02       		.uleb128 0x2
+ 421 00ac 04       		.byte	0x4
+ 422 00ad 07       		.byte	0x7
+ 423 00ae 86000000 		.4byte	.LASF16
+ 424 00b2 05       		.uleb128 0x5
+ 425 00b3 80040000 		.4byte	.LASF84
+ 426 00b7 06       		.byte	0x6
+ 427 00b8 03       		.byte	0x3
+ 428 00b9 2E       		.byte	0x2e
+ 429 00ba E3000000 		.4byte	0xe3
+ 430 00be 06       		.uleb128 0x6
+ 431 00bf CA040000 		.4byte	.LASF17
+ 432 00c3 03       		.byte	0x3
+ 433 00c4 30       		.byte	0x30
+ 434 00c5 6B000000 		.4byte	0x6b
+ 435 00c9 00       		.byte	0
+ 436 00ca 06       		.uleb128 0x6
+ 437 00cb C5010000 		.4byte	.LASF18
+ 438 00cf 03       		.byte	0x3
+ 439 00d0 31       		.byte	0x31
+ 440 00d1 77000000 		.4byte	0x77
+ 441 00d5 02       		.byte	0x2
+ 442 00d6 06       		.uleb128 0x6
+ 443 00d7 FD020000 		.4byte	.LASF19
+ 444 00db 03       		.byte	0x3
+ 445 00dc 32       		.byte	0x32
+ 446 00dd 77000000 		.4byte	0x77
+ 447 00e1 04       		.byte	0x4
+ 448 00e2 00       		.byte	0
+ 449 00e3 07       		.uleb128 0x7
+ 450 00e4 4E       		.byte	0x4e
+ 451 00e5 04       		.byte	0x4
+ 452 00e6 13       		.byte	0x13
+ 453 00e7 C0020000 		.4byte	0x2c0
+ 454 00eb 06       		.uleb128 0x6
+ 455 00ec D6040000 		.4byte	.LASF20
+ 456 00f0 04       		.byte	0x4
+ 457 00f1 15       		.byte	0x15
+ 458 00f2 77000000 		.4byte	0x77
+ 459 00f6 00       		.byte	0
+ 460 00f7 06       		.uleb128 0x6
+ 461 00f8 A9000000 		.4byte	.LASF21
+ 462 00fc 04       		.byte	0x4
+ 463 00fd 16       		.byte	0x16
+ 464 00fe 77000000 		.4byte	0x77
+ 465 0102 02       		.byte	0x2
+ 466 0103 06       		.uleb128 0x6
+ 467 0104 ED020000 		.4byte	.LASF22
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 11
+
+
+ 468 0108 04       		.byte	0x4
+ 469 0109 17       		.byte	0x17
+ 470 010a 77000000 		.4byte	0x77
+ 471 010e 04       		.byte	0x4
+ 472 010f 06       		.uleb128 0x6
+ 473 0110 CC000000 		.4byte	.LASF23
+ 474 0114 04       		.byte	0x4
+ 475 0115 18       		.byte	0x18
+ 476 0116 77000000 		.4byte	0x77
+ 477 011a 06       		.byte	0x6
+ 478 011b 06       		.uleb128 0x6
+ 479 011c 4D030000 		.4byte	.LASF24
+ 480 0120 04       		.byte	0x4
+ 481 0121 19       		.byte	0x19
+ 482 0122 77000000 		.4byte	0x77
+ 483 0126 08       		.byte	0x8
+ 484 0127 06       		.uleb128 0x6
+ 485 0128 03030000 		.4byte	.LASF25
+ 486 012c 04       		.byte	0x4
+ 487 012d 1A       		.byte	0x1a
+ 488 012e 77000000 		.4byte	0x77
+ 489 0132 0A       		.byte	0xa
+ 490 0133 06       		.uleb128 0x6
+ 491 0134 10000000 		.4byte	.LASF26
+ 492 0138 04       		.byte	0x4
+ 493 0139 1B       		.byte	0x1b
+ 494 013a 77000000 		.4byte	0x77
+ 495 013e 0C       		.byte	0xc
+ 496 013f 06       		.uleb128 0x6
+ 497 0140 C4050000 		.4byte	.LASF27
+ 498 0144 04       		.byte	0x4
+ 499 0145 1C       		.byte	0x1c
+ 500 0146 77000000 		.4byte	0x77
+ 501 014a 0E       		.byte	0xe
+ 502 014b 06       		.uleb128 0x6
+ 503 014c 62050000 		.4byte	.LASF28
+ 504 0150 04       		.byte	0x4
+ 505 0151 1D       		.byte	0x1d
+ 506 0152 77000000 		.4byte	0x77
+ 507 0156 10       		.byte	0x10
+ 508 0157 06       		.uleb128 0x6
+ 509 0158 7C050000 		.4byte	.LASF29
+ 510 015c 04       		.byte	0x4
+ 511 015d 1E       		.byte	0x1e
+ 512 015e 77000000 		.4byte	0x77
+ 513 0162 12       		.byte	0x12
+ 514 0163 06       		.uleb128 0x6
+ 515 0164 93030000 		.4byte	.LASF30
+ 516 0168 04       		.byte	0x4
+ 517 0169 1F       		.byte	0x1f
+ 518 016a 77000000 		.4byte	0x77
+ 519 016e 14       		.byte	0x14
+ 520 016f 06       		.uleb128 0x6
+ 521 0170 00000000 		.4byte	.LASF31
+ 522 0174 04       		.byte	0x4
+ 523 0175 20       		.byte	0x20
+ 524 0176 77000000 		.4byte	0x77
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 12
+
+
+ 525 017a 16       		.byte	0x16
+ 526 017b 06       		.uleb128 0x6
+ 527 017c 9C050000 		.4byte	.LASF32
+ 528 0180 04       		.byte	0x4
+ 529 0181 21       		.byte	0x21
+ 530 0182 77000000 		.4byte	0x77
+ 531 0186 18       		.byte	0x18
+ 532 0187 06       		.uleb128 0x6
+ 533 0188 DB050000 		.4byte	.LASF33
+ 534 018c 04       		.byte	0x4
+ 535 018d 22       		.byte	0x22
+ 536 018e 77000000 		.4byte	0x77
+ 537 0192 1A       		.byte	0x1a
+ 538 0193 06       		.uleb128 0x6
+ 539 0194 51020000 		.4byte	.LASF34
+ 540 0198 04       		.byte	0x4
+ 541 0199 25       		.byte	0x25
+ 542 019a 77000000 		.4byte	0x77
+ 543 019e 1C       		.byte	0x1c
+ 544 019f 06       		.uleb128 0x6
+ 545 01a0 91020000 		.4byte	.LASF35
+ 546 01a4 04       		.byte	0x4
+ 547 01a5 26       		.byte	0x26
+ 548 01a6 77000000 		.4byte	0x77
+ 549 01aa 1E       		.byte	0x1e
+ 550 01ab 06       		.uleb128 0x6
+ 551 01ac 45050000 		.4byte	.LASF36
+ 552 01b0 04       		.byte	0x4
+ 553 01b1 27       		.byte	0x27
+ 554 01b2 77000000 		.4byte	0x77
+ 555 01b6 20       		.byte	0x20
+ 556 01b7 06       		.uleb128 0x6
+ 557 01b8 9F000000 		.4byte	.LASF37
+ 558 01bc 04       		.byte	0x4
+ 559 01bd 28       		.byte	0x28
+ 560 01be 77000000 		.4byte	0x77
+ 561 01c2 22       		.byte	0x22
+ 562 01c3 06       		.uleb128 0x6
+ 563 01c4 B7000000 		.4byte	.LASF38
+ 564 01c8 04       		.byte	0x4
+ 565 01c9 29       		.byte	0x29
+ 566 01ca 77000000 		.4byte	0x77
+ 567 01ce 24       		.byte	0x24
+ 568 01cf 06       		.uleb128 0x6
+ 569 01d0 27000000 		.4byte	.LASF39
+ 570 01d4 04       		.byte	0x4
+ 571 01d5 2A       		.byte	0x2a
+ 572 01d6 77000000 		.4byte	0x77
+ 573 01da 26       		.byte	0x26
+ 574 01db 06       		.uleb128 0x6
+ 575 01dc 78020000 		.4byte	.LASF40
+ 576 01e0 04       		.byte	0x4
+ 577 01e1 2B       		.byte	0x2b
+ 578 01e2 77000000 		.4byte	0x77
+ 579 01e6 28       		.byte	0x28
+ 580 01e7 06       		.uleb128 0x6
+ 581 01e8 75000000 		.4byte	.LASF41
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 13
+
+
+ 582 01ec 04       		.byte	0x4
+ 583 01ed 2C       		.byte	0x2c
+ 584 01ee 77000000 		.4byte	0x77
+ 585 01f2 2A       		.byte	0x2a
+ 586 01f3 06       		.uleb128 0x6
+ 587 01f4 11020000 		.4byte	.LASF42
+ 588 01f8 04       		.byte	0x4
+ 589 01f9 2D       		.byte	0x2d
+ 590 01fa 77000000 		.4byte	0x77
+ 591 01fe 2C       		.byte	0x2c
+ 592 01ff 06       		.uleb128 0x6
+ 593 0200 3C020000 		.4byte	.LASF43
+ 594 0204 04       		.byte	0x4
+ 595 0205 2E       		.byte	0x2e
+ 596 0206 77000000 		.4byte	0x77
+ 597 020a 2E       		.byte	0x2e
+ 598 020b 06       		.uleb128 0x6
+ 599 020c B0050000 		.4byte	.LASF44
+ 600 0210 04       		.byte	0x4
+ 601 0211 2F       		.byte	0x2f
+ 602 0212 77000000 		.4byte	0x77
+ 603 0216 30       		.byte	0x30
+ 604 0217 06       		.uleb128 0x6
+ 605 0218 3C040000 		.4byte	.LASF45
+ 606 021c 04       		.byte	0x4
+ 607 021d 30       		.byte	0x30
+ 608 021e 77000000 		.4byte	0x77
+ 609 0222 32       		.byte	0x32
+ 610 0223 06       		.uleb128 0x6
+ 611 0224 68040000 		.4byte	.LASF46
+ 612 0228 04       		.byte	0x4
+ 613 0229 31       		.byte	0x31
+ 614 022a 77000000 		.4byte	0x77
+ 615 022e 34       		.byte	0x34
+ 616 022f 06       		.uleb128 0x6
+ 617 0230 52050000 		.4byte	.LASF47
+ 618 0234 04       		.byte	0x4
+ 619 0235 32       		.byte	0x32
+ 620 0236 77000000 		.4byte	0x77
+ 621 023a 36       		.byte	0x36
+ 622 023b 06       		.uleb128 0x6
+ 623 023c 16030000 		.4byte	.LASF48
+ 624 0240 04       		.byte	0x4
+ 625 0241 33       		.byte	0x33
+ 626 0242 77000000 		.4byte	0x77
+ 627 0246 38       		.byte	0x38
+ 628 0247 06       		.uleb128 0x6
+ 629 0248 FD010000 		.4byte	.LASF49
+ 630 024c 04       		.byte	0x4
+ 631 024d 34       		.byte	0x34
+ 632 024e 77000000 		.4byte	0x77
+ 633 0252 3A       		.byte	0x3a
+ 634 0253 06       		.uleb128 0x6
+ 635 0254 54040000 		.4byte	.LASF50
+ 636 0258 04       		.byte	0x4
+ 637 0259 35       		.byte	0x35
+ 638 025a 77000000 		.4byte	0x77
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 14
+
+
+ 639 025e 3C       		.byte	0x3c
+ 640 025f 06       		.uleb128 0x6
+ 641 0260 E5010000 		.4byte	.LASF51
+ 642 0264 04       		.byte	0x4
+ 643 0265 36       		.byte	0x36
+ 644 0266 77000000 		.4byte	0x77
+ 645 026a 3E       		.byte	0x3e
+ 646 026b 06       		.uleb128 0x6
+ 647 026c 60020000 		.4byte	.LASF52
+ 648 0270 04       		.byte	0x4
+ 649 0271 37       		.byte	0x37
+ 650 0272 77000000 		.4byte	0x77
+ 651 0276 40       		.byte	0x40
+ 652 0277 06       		.uleb128 0x6
+ 653 0278 40000000 		.4byte	.LASF53
+ 654 027c 04       		.byte	0x4
+ 655 027d 38       		.byte	0x38
+ 656 027e 77000000 		.4byte	0x77
+ 657 0282 42       		.byte	0x42
+ 658 0283 06       		.uleb128 0x6
+ 659 0284 E4040000 		.4byte	.LASF54
+ 660 0288 04       		.byte	0x4
+ 661 0289 39       		.byte	0x39
+ 662 028a 77000000 		.4byte	0x77
+ 663 028e 44       		.byte	0x44
+ 664 028f 06       		.uleb128 0x6
+ 665 0290 F9040000 		.4byte	.LASF55
+ 666 0294 04       		.byte	0x4
+ 667 0295 3A       		.byte	0x3a
+ 668 0296 77000000 		.4byte	0x77
+ 669 029a 46       		.byte	0x46
+ 670 029b 06       		.uleb128 0x6
+ 671 029c 2A050000 		.4byte	.LASF56
+ 672 02a0 04       		.byte	0x4
+ 673 02a1 3B       		.byte	0x3b
+ 674 02a2 77000000 		.4byte	0x77
+ 675 02a6 48       		.byte	0x48
+ 676 02a7 06       		.uleb128 0x6
+ 677 02a8 09010000 		.4byte	.LASF57
+ 678 02ac 04       		.byte	0x4
+ 679 02ad 3D       		.byte	0x3d
+ 680 02ae 77000000 		.4byte	0x77
+ 681 02b2 4A       		.byte	0x4a
+ 682 02b3 06       		.uleb128 0x6
+ 683 02b4 0E050000 		.4byte	.LASF58
+ 684 02b8 04       		.byte	0x4
+ 685 02b9 3E       		.byte	0x3e
+ 686 02ba 77000000 		.4byte	0x77
+ 687 02be 4C       		.byte	0x4c
+ 688 02bf 00       		.byte	0
+ 689 02c0 08       		.uleb128 0x8
+ 690 02c1 DF010000 		.4byte	.LASF59
+ 691 02c5 04       		.byte	0x4
+ 692 02c6 3F       		.byte	0x3f
+ 693 02c7 E3000000 		.4byte	0xe3
+ 694 02cb 07       		.uleb128 0x7
+ 695 02cc 80       		.byte	0x80
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 15
+
+
+ 696 02cd 05       		.byte	0x5
+ 697 02ce 18       		.byte	0x18
+ 698 02cf F8020000 		.4byte	0x2f8
+ 699 02d3 06       		.uleb128 0x6
+ 700 02d4 6E030000 		.4byte	.LASF60
+ 701 02d8 05       		.byte	0x5
+ 702 02d9 19       		.byte	0x19
+ 703 02da 3A000000 		.4byte	0x3a
+ 704 02de 00       		.byte	0
+ 705 02df 06       		.uleb128 0x6
+ 706 02e0 8B040000 		.4byte	.LASF61
+ 707 02e4 05       		.byte	0x5
+ 708 02e5 1A       		.byte	0x1a
+ 709 02e6 F8020000 		.4byte	0x2f8
+ 710 02ea 02       		.byte	0x2
+ 711 02eb 06       		.uleb128 0x6
+ 712 02ec B6010000 		.4byte	.LASF62
+ 713 02f0 05       		.byte	0x5
+ 714 02f1 1B       		.byte	0x1b
+ 715 02f2 3A000000 		.4byte	0x3a
+ 716 02f6 7E       		.byte	0x7e
+ 717 02f7 00       		.byte	0
+ 718 02f8 09       		.uleb128 0x9
+ 719 02f9 2C000000 		.4byte	0x2c
+ 720 02fd 08030000 		.4byte	0x308
+ 721 0301 0A       		.uleb128 0xa
+ 722 0302 AB000000 		.4byte	0xab
+ 723 0306 7B       		.byte	0x7b
+ 724 0307 00       		.byte	0
+ 725 0308 08       		.uleb128 0x8
+ 726 0309 35050000 		.4byte	.LASF63
+ 727 030d 05       		.byte	0x5
+ 728 030e 1C       		.byte	0x1c
+ 729 030f CB020000 		.4byte	0x2cb
+ 730 0313 0B       		.uleb128 0xb
+ 731 0314 A6030000 		.4byte	.LASF64
+ 732 0318 01       		.byte	0x1
+ 733 0319 2F       		.byte	0x2f
+ 734 031a 00000000 		.4byte	.LFB64
+ 735 031e 18000000 		.4byte	.LFE64-.LFB64
+ 736 0322 01       		.uleb128 0x1
+ 737 0323 9C       		.byte	0x9c
+ 738 0324 32030000 		.4byte	0x332
+ 739 0328 0C       		.uleb128 0xc
+ 740 0329 06000000 		.4byte	.LVL0
+ 741 032d 74040000 		.4byte	0x474
+ 742 0331 00       		.byte	0
+ 743 0332 0B       		.uleb128 0xb
+ 744 0333 26020000 		.4byte	.LASF65
+ 745 0337 01       		.byte	0x1
+ 746 0338 28       		.byte	0x28
+ 747 0339 00000000 		.4byte	.LFB63
+ 748 033d 18000000 		.4byte	.LFE63-.LFB63
+ 749 0341 01       		.uleb128 0x1
+ 750 0342 9C       		.byte	0x9c
+ 751 0343 51030000 		.4byte	0x351
+ 752 0347 0C       		.uleb128 0xc
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 16
+
+
+ 753 0348 0C000000 		.4byte	.LVL1
+ 754 034c 7F040000 		.4byte	0x47f
+ 755 0350 00       		.byte	0
+ 756 0351 0B       		.uleb128 0xb
+ 757 0352 A0020000 		.4byte	.LASF66
+ 758 0356 01       		.byte	0x1
+ 759 0357 1D       		.byte	0x1d
+ 760 0358 00000000 		.4byte	.LFB62
+ 761 035c 18000000 		.4byte	.LFE62-.LFB62
+ 762 0360 01       		.uleb128 0x1
+ 763 0361 9C       		.byte	0x9c
+ 764 0362 70030000 		.4byte	0x370
+ 765 0366 0C       		.uleb128 0xc
+ 766 0367 0C000000 		.4byte	.LVL2
+ 767 036b 32030000 		.4byte	0x332
+ 768 036f 00       		.byte	0
+ 769 0370 0D       		.uleb128 0xd
+ 770 0371 78030000 		.4byte	.LASF68
+ 771 0375 01       		.byte	0x1
+ 772 0376 37       		.byte	0x37
+ 773 0377 85030000 		.4byte	0x385
+ 774 037b 00000000 		.4byte	.LFB65
+ 775 037f 0C000000 		.4byte	.LFE65-.LFB65
+ 776 0383 01       		.uleb128 0x1
+ 777 0384 9C       		.byte	0x9c
+ 778 0385 0E       		.uleb128 0xe
+ 779 0386 04       		.byte	0x4
+ 780 0387 C0020000 		.4byte	0x2c0
+ 781 038b 0B       		.uleb128 0xb
+ 782 038c 71050000 		.4byte	.LASF67
+ 783 0390 01       		.byte	0x1
+ 784 0391 3C       		.byte	0x3c
+ 785 0392 00000000 		.4byte	.LFB66
+ 786 0396 3C000000 		.4byte	.LFE66-.LFB66
+ 787 039a 01       		.uleb128 0x1
+ 788 039b 9C       		.byte	0x9c
+ 789 039c AA030000 		.4byte	0x3aa
+ 790 03a0 0C       		.uleb128 0xc
+ 791 03a1 34000000 		.4byte	.LVL3
+ 792 03a5 8A040000 		.4byte	0x48a
+ 793 03a9 00       		.byte	0
+ 794 03aa 0F       		.uleb128 0xf
+ 795 03ab C2020000 		.4byte	.LASF70
+ 796 03af 01       		.byte	0x1
+ 797 03b0 52       		.byte	0x52
+ 798 03b1 00000000 		.4byte	.LFB67
+ 799 03b5 10000000 		.4byte	.LFE67-.LFB67
+ 800 03b9 01       		.uleb128 0x1
+ 801 03ba 9C       		.byte	0x9c
+ 802 03bb 0D       		.uleb128 0xd
+ 803 03bc 14010000 		.4byte	.LASF69
+ 804 03c0 01       		.byte	0x1
+ 805 03c1 57       		.byte	0x57
+ 806 03c2 83000000 		.4byte	0x83
+ 807 03c6 00000000 		.4byte	.LFB68
+ 808 03ca 0C000000 		.4byte	.LFE68-.LFB68
+ 809 03ce 01       		.uleb128 0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 17
+
+
+ 810 03cf 9C       		.byte	0x9c
+ 811 03d0 0F       		.uleb128 0xf
+ 812 03d1 14050000 		.4byte	.LASF71
+ 813 03d5 01       		.byte	0x1
+ 814 03d6 5C       		.byte	0x5c
+ 815 03d7 00000000 		.4byte	.LFB69
+ 816 03db 0C000000 		.4byte	.LFE69-.LFB69
+ 817 03df 01       		.uleb128 0x1
+ 818 03e0 9C       		.byte	0x9c
+ 819 03e1 10       		.uleb128 0x10
+ 820 03e2 61000000 		.4byte	.LASF85
+ 821 03e6 01       		.byte	0x1
+ 822 03e7 17       		.byte	0x17
+ 823 03e8 83000000 		.4byte	0x83
+ 824 03ec 05       		.uleb128 0x5
+ 825 03ed 03       		.byte	0x3
+ 826 03ee 08000000 		.4byte	g_uWorkingTimeCount
+ 827 03f2 09       		.uleb128 0x9
+ 828 03f3 02040000 		.4byte	0x402
+ 829 03f7 02040000 		.4byte	0x402
+ 830 03fb 0A       		.uleb128 0xa
+ 831 03fc AB000000 		.4byte	0xab
+ 832 0400 0B       		.byte	0xb
+ 833 0401 00       		.byte	0
+ 834 0402 11       		.uleb128 0x11
+ 835 0403 77000000 		.4byte	0x77
+ 836 0407 12       		.uleb128 0x12
+ 837 0408 E0000000 		.4byte	.LASF72
+ 838 040c 06       		.byte	0x6
+ 839 040d E001     		.2byte	0x1e0
+ 840 040f 13040000 		.4byte	0x413
+ 841 0413 11       		.uleb128 0x11
+ 842 0414 F2030000 		.4byte	0x3f2
+ 843 0418 13       		.uleb128 0x13
+ 844 0419 51000000 		.4byte	.LASF73
+ 845 041d 03       		.byte	0x3
+ 846 041e 35       		.byte	0x35
+ 847 041f B2000000 		.4byte	0xb2
+ 848 0423 05       		.uleb128 0x5
+ 849 0424 03       		.byte	0x3
+ 850 0425 00000000 		.4byte	Param
+ 851 0429 14       		.uleb128 0x14
+ 852 042a 30040000 		.4byte	0x430
+ 853 042e 15       		.uleb128 0x15
+ 854 042f 00       		.byte	0
+ 855 0430 13       		.uleb128 0x13
+ 856 0431 B8020000 		.4byte	.LASF74
+ 857 0435 01       		.byte	0x1
+ 858 0436 1B       		.byte	0x1b
+ 859 0437 41040000 		.4byte	0x441
+ 860 043b 05       		.uleb128 0x5
+ 861 043c 03       		.byte	0x3
+ 862 043d 00000000 		.4byte	CountFunc
+ 863 0441 0E       		.uleb128 0xe
+ 864 0442 04       		.byte	0x4
+ 865 0443 29040000 		.4byte	0x429
+ 866 0447 13       		.uleb128 0x13
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 18
+
+
+ 867 0448 F7000000 		.4byte	.LASF75
+ 868 044c 01       		.byte	0x1
+ 869 044d 13       		.byte	0x13
+ 870 044e 6B000000 		.4byte	0x6b
+ 871 0452 05       		.uleb128 0x5
+ 872 0453 03       		.byte	0x3
+ 873 0454 00000000 		.4byte	g_updateCountMenu
+ 874 0458 16       		.uleb128 0x16
+ 875 0459 8F000000 		.4byte	.LASF76
+ 876 045d 05       		.byte	0x5
+ 877 045e 24       		.byte	0x24
+ 878 045f 08030000 		.4byte	0x308
+ 879 0463 13       		.uleb128 0x13
+ 880 0464 A2040000 		.4byte	.LASF77
+ 881 0468 01       		.byte	0x1
+ 882 0469 15       		.byte	0x15
+ 883 046a 85030000 		.4byte	0x385
+ 884 046e 05       		.uleb128 0x5
+ 885 046f 03       		.byte	0x3
+ 886 0470 00000000 		.4byte	g_ptrCount
+ 887 0474 17       		.uleb128 0x17
+ 888 0475 8F050000 		.4byte	.LASF78
+ 889 0479 8F050000 		.4byte	.LASF78
+ 890 047d 07       		.byte	0x7
+ 891 047e 10       		.byte	0x10
+ 892 047f 17       		.uleb128 0x17
+ 893 0480 DF020000 		.4byte	.LASF79
+ 894 0484 DF020000 		.4byte	.LASF79
+ 895 0488 08       		.byte	0x8
+ 896 0489 19       		.byte	0x19
+ 897 048a 17       		.uleb128 0x17
+ 898 048b 90040000 		.4byte	.LASF80
+ 899 048f 90040000 		.4byte	.LASF80
+ 900 0493 05       		.byte	0x5
+ 901 0494 20       		.byte	0x20
+ 902 0495 00       		.byte	0
+ 903              		.section	.debug_abbrev,"",%progbits
+ 904              	.Ldebug_abbrev0:
+ 905 0000 01       		.uleb128 0x1
+ 906 0001 11       		.uleb128 0x11
+ 907 0002 01       		.byte	0x1
+ 908 0003 25       		.uleb128 0x25
+ 909 0004 0E       		.uleb128 0xe
+ 910 0005 13       		.uleb128 0x13
+ 911 0006 0B       		.uleb128 0xb
+ 912 0007 03       		.uleb128 0x3
+ 913 0008 0E       		.uleb128 0xe
+ 914 0009 1B       		.uleb128 0x1b
+ 915 000a 0E       		.uleb128 0xe
+ 916 000b 55       		.uleb128 0x55
+ 917 000c 17       		.uleb128 0x17
+ 918 000d 11       		.uleb128 0x11
+ 919 000e 01       		.uleb128 0x1
+ 920 000f 10       		.uleb128 0x10
+ 921 0010 17       		.uleb128 0x17
+ 922 0011 00       		.byte	0
+ 923 0012 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 19
+
+
+ 924 0013 02       		.uleb128 0x2
+ 925 0014 24       		.uleb128 0x24
+ 926 0015 00       		.byte	0
+ 927 0016 0B       		.uleb128 0xb
+ 928 0017 0B       		.uleb128 0xb
+ 929 0018 3E       		.uleb128 0x3e
+ 930 0019 0B       		.uleb128 0xb
+ 931 001a 03       		.uleb128 0x3
+ 932 001b 0E       		.uleb128 0xe
+ 933 001c 00       		.byte	0
+ 934 001d 00       		.byte	0
+ 935 001e 03       		.uleb128 0x3
+ 936 001f 24       		.uleb128 0x24
+ 937 0020 00       		.byte	0
+ 938 0021 0B       		.uleb128 0xb
+ 939 0022 0B       		.uleb128 0xb
+ 940 0023 3E       		.uleb128 0x3e
+ 941 0024 0B       		.uleb128 0xb
+ 942 0025 03       		.uleb128 0x3
+ 943 0026 08       		.uleb128 0x8
+ 944 0027 00       		.byte	0
+ 945 0028 00       		.byte	0
+ 946 0029 04       		.uleb128 0x4
+ 947 002a 16       		.uleb128 0x16
+ 948 002b 00       		.byte	0
+ 949 002c 03       		.uleb128 0x3
+ 950 002d 0E       		.uleb128 0xe
+ 951 002e 3A       		.uleb128 0x3a
+ 952 002f 0B       		.uleb128 0xb
+ 953 0030 3B       		.uleb128 0x3b
+ 954 0031 05       		.uleb128 0x5
+ 955 0032 49       		.uleb128 0x49
+ 956 0033 13       		.uleb128 0x13
+ 957 0034 00       		.byte	0
+ 958 0035 00       		.byte	0
+ 959 0036 05       		.uleb128 0x5
+ 960 0037 13       		.uleb128 0x13
+ 961 0038 01       		.byte	0x1
+ 962 0039 03       		.uleb128 0x3
+ 963 003a 0E       		.uleb128 0xe
+ 964 003b 0B       		.uleb128 0xb
+ 965 003c 0B       		.uleb128 0xb
+ 966 003d 3A       		.uleb128 0x3a
+ 967 003e 0B       		.uleb128 0xb
+ 968 003f 3B       		.uleb128 0x3b
+ 969 0040 0B       		.uleb128 0xb
+ 970 0041 01       		.uleb128 0x1
+ 971 0042 13       		.uleb128 0x13
+ 972 0043 00       		.byte	0
+ 973 0044 00       		.byte	0
+ 974 0045 06       		.uleb128 0x6
+ 975 0046 0D       		.uleb128 0xd
+ 976 0047 00       		.byte	0
+ 977 0048 03       		.uleb128 0x3
+ 978 0049 0E       		.uleb128 0xe
+ 979 004a 3A       		.uleb128 0x3a
+ 980 004b 0B       		.uleb128 0xb
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 20
+
+
+ 981 004c 3B       		.uleb128 0x3b
+ 982 004d 0B       		.uleb128 0xb
+ 983 004e 49       		.uleb128 0x49
+ 984 004f 13       		.uleb128 0x13
+ 985 0050 38       		.uleb128 0x38
+ 986 0051 0B       		.uleb128 0xb
+ 987 0052 00       		.byte	0
+ 988 0053 00       		.byte	0
+ 989 0054 07       		.uleb128 0x7
+ 990 0055 13       		.uleb128 0x13
+ 991 0056 01       		.byte	0x1
+ 992 0057 0B       		.uleb128 0xb
+ 993 0058 0B       		.uleb128 0xb
+ 994 0059 3A       		.uleb128 0x3a
+ 995 005a 0B       		.uleb128 0xb
+ 996 005b 3B       		.uleb128 0x3b
+ 997 005c 0B       		.uleb128 0xb
+ 998 005d 01       		.uleb128 0x1
+ 999 005e 13       		.uleb128 0x13
+ 1000 005f 00       		.byte	0
+ 1001 0060 00       		.byte	0
+ 1002 0061 08       		.uleb128 0x8
+ 1003 0062 16       		.uleb128 0x16
+ 1004 0063 00       		.byte	0
+ 1005 0064 03       		.uleb128 0x3
+ 1006 0065 0E       		.uleb128 0xe
+ 1007 0066 3A       		.uleb128 0x3a
+ 1008 0067 0B       		.uleb128 0xb
+ 1009 0068 3B       		.uleb128 0x3b
+ 1010 0069 0B       		.uleb128 0xb
+ 1011 006a 49       		.uleb128 0x49
+ 1012 006b 13       		.uleb128 0x13
+ 1013 006c 00       		.byte	0
+ 1014 006d 00       		.byte	0
+ 1015 006e 09       		.uleb128 0x9
+ 1016 006f 01       		.uleb128 0x1
+ 1017 0070 01       		.byte	0x1
+ 1018 0071 49       		.uleb128 0x49
+ 1019 0072 13       		.uleb128 0x13
+ 1020 0073 01       		.uleb128 0x1
+ 1021 0074 13       		.uleb128 0x13
+ 1022 0075 00       		.byte	0
+ 1023 0076 00       		.byte	0
+ 1024 0077 0A       		.uleb128 0xa
+ 1025 0078 21       		.uleb128 0x21
+ 1026 0079 00       		.byte	0
+ 1027 007a 49       		.uleb128 0x49
+ 1028 007b 13       		.uleb128 0x13
+ 1029 007c 2F       		.uleb128 0x2f
+ 1030 007d 0B       		.uleb128 0xb
+ 1031 007e 00       		.byte	0
+ 1032 007f 00       		.byte	0
+ 1033 0080 0B       		.uleb128 0xb
+ 1034 0081 2E       		.uleb128 0x2e
+ 1035 0082 01       		.byte	0x1
+ 1036 0083 3F       		.uleb128 0x3f
+ 1037 0084 19       		.uleb128 0x19
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 21
+
+
+ 1038 0085 03       		.uleb128 0x3
+ 1039 0086 0E       		.uleb128 0xe
+ 1040 0087 3A       		.uleb128 0x3a
+ 1041 0088 0B       		.uleb128 0xb
+ 1042 0089 3B       		.uleb128 0x3b
+ 1043 008a 0B       		.uleb128 0xb
+ 1044 008b 11       		.uleb128 0x11
+ 1045 008c 01       		.uleb128 0x1
+ 1046 008d 12       		.uleb128 0x12
+ 1047 008e 06       		.uleb128 0x6
+ 1048 008f 40       		.uleb128 0x40
+ 1049 0090 18       		.uleb128 0x18
+ 1050 0091 9742     		.uleb128 0x2117
+ 1051 0093 19       		.uleb128 0x19
+ 1052 0094 01       		.uleb128 0x1
+ 1053 0095 13       		.uleb128 0x13
+ 1054 0096 00       		.byte	0
+ 1055 0097 00       		.byte	0
+ 1056 0098 0C       		.uleb128 0xc
+ 1057 0099 898201   		.uleb128 0x4109
+ 1058 009c 00       		.byte	0
+ 1059 009d 11       		.uleb128 0x11
+ 1060 009e 01       		.uleb128 0x1
+ 1061 009f 31       		.uleb128 0x31
+ 1062 00a0 13       		.uleb128 0x13
+ 1063 00a1 00       		.byte	0
+ 1064 00a2 00       		.byte	0
+ 1065 00a3 0D       		.uleb128 0xd
+ 1066 00a4 2E       		.uleb128 0x2e
+ 1067 00a5 00       		.byte	0
+ 1068 00a6 3F       		.uleb128 0x3f
+ 1069 00a7 19       		.uleb128 0x19
+ 1070 00a8 03       		.uleb128 0x3
+ 1071 00a9 0E       		.uleb128 0xe
+ 1072 00aa 3A       		.uleb128 0x3a
+ 1073 00ab 0B       		.uleb128 0xb
+ 1074 00ac 3B       		.uleb128 0x3b
+ 1075 00ad 0B       		.uleb128 0xb
+ 1076 00ae 49       		.uleb128 0x49
+ 1077 00af 13       		.uleb128 0x13
+ 1078 00b0 11       		.uleb128 0x11
+ 1079 00b1 01       		.uleb128 0x1
+ 1080 00b2 12       		.uleb128 0x12
+ 1081 00b3 06       		.uleb128 0x6
+ 1082 00b4 40       		.uleb128 0x40
+ 1083 00b5 18       		.uleb128 0x18
+ 1084 00b6 9742     		.uleb128 0x2117
+ 1085 00b8 19       		.uleb128 0x19
+ 1086 00b9 00       		.byte	0
+ 1087 00ba 00       		.byte	0
+ 1088 00bb 0E       		.uleb128 0xe
+ 1089 00bc 0F       		.uleb128 0xf
+ 1090 00bd 00       		.byte	0
+ 1091 00be 0B       		.uleb128 0xb
+ 1092 00bf 0B       		.uleb128 0xb
+ 1093 00c0 49       		.uleb128 0x49
+ 1094 00c1 13       		.uleb128 0x13
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 22
+
+
+ 1095 00c2 00       		.byte	0
+ 1096 00c3 00       		.byte	0
+ 1097 00c4 0F       		.uleb128 0xf
+ 1098 00c5 2E       		.uleb128 0x2e
+ 1099 00c6 00       		.byte	0
+ 1100 00c7 3F       		.uleb128 0x3f
+ 1101 00c8 19       		.uleb128 0x19
+ 1102 00c9 03       		.uleb128 0x3
+ 1103 00ca 0E       		.uleb128 0xe
+ 1104 00cb 3A       		.uleb128 0x3a
+ 1105 00cc 0B       		.uleb128 0xb
+ 1106 00cd 3B       		.uleb128 0x3b
+ 1107 00ce 0B       		.uleb128 0xb
+ 1108 00cf 11       		.uleb128 0x11
+ 1109 00d0 01       		.uleb128 0x1
+ 1110 00d1 12       		.uleb128 0x12
+ 1111 00d2 06       		.uleb128 0x6
+ 1112 00d3 40       		.uleb128 0x40
+ 1113 00d4 18       		.uleb128 0x18
+ 1114 00d5 9742     		.uleb128 0x2117
+ 1115 00d7 19       		.uleb128 0x19
+ 1116 00d8 00       		.byte	0
+ 1117 00d9 00       		.byte	0
+ 1118 00da 10       		.uleb128 0x10
+ 1119 00db 34       		.uleb128 0x34
+ 1120 00dc 00       		.byte	0
+ 1121 00dd 03       		.uleb128 0x3
+ 1122 00de 0E       		.uleb128 0xe
+ 1123 00df 3A       		.uleb128 0x3a
+ 1124 00e0 0B       		.uleb128 0xb
+ 1125 00e1 3B       		.uleb128 0x3b
+ 1126 00e2 0B       		.uleb128 0xb
+ 1127 00e3 49       		.uleb128 0x49
+ 1128 00e4 13       		.uleb128 0x13
+ 1129 00e5 02       		.uleb128 0x2
+ 1130 00e6 18       		.uleb128 0x18
+ 1131 00e7 00       		.byte	0
+ 1132 00e8 00       		.byte	0
+ 1133 00e9 11       		.uleb128 0x11
+ 1134 00ea 26       		.uleb128 0x26
+ 1135 00eb 00       		.byte	0
+ 1136 00ec 49       		.uleb128 0x49
+ 1137 00ed 13       		.uleb128 0x13
+ 1138 00ee 00       		.byte	0
+ 1139 00ef 00       		.byte	0
+ 1140 00f0 12       		.uleb128 0x12
+ 1141 00f1 34       		.uleb128 0x34
+ 1142 00f2 00       		.byte	0
+ 1143 00f3 03       		.uleb128 0x3
+ 1144 00f4 0E       		.uleb128 0xe
+ 1145 00f5 3A       		.uleb128 0x3a
+ 1146 00f6 0B       		.uleb128 0xb
+ 1147 00f7 3B       		.uleb128 0x3b
+ 1148 00f8 05       		.uleb128 0x5
+ 1149 00f9 49       		.uleb128 0x49
+ 1150 00fa 13       		.uleb128 0x13
+ 1151 00fb 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 23
+
+
+ 1152 00fc 19       		.uleb128 0x19
+ 1153 00fd 3C       		.uleb128 0x3c
+ 1154 00fe 19       		.uleb128 0x19
+ 1155 00ff 00       		.byte	0
+ 1156 0100 00       		.byte	0
+ 1157 0101 13       		.uleb128 0x13
+ 1158 0102 34       		.uleb128 0x34
+ 1159 0103 00       		.byte	0
+ 1160 0104 03       		.uleb128 0x3
+ 1161 0105 0E       		.uleb128 0xe
+ 1162 0106 3A       		.uleb128 0x3a
+ 1163 0107 0B       		.uleb128 0xb
+ 1164 0108 3B       		.uleb128 0x3b
+ 1165 0109 0B       		.uleb128 0xb
+ 1166 010a 49       		.uleb128 0x49
+ 1167 010b 13       		.uleb128 0x13
+ 1168 010c 3F       		.uleb128 0x3f
+ 1169 010d 19       		.uleb128 0x19
+ 1170 010e 02       		.uleb128 0x2
+ 1171 010f 18       		.uleb128 0x18
+ 1172 0110 00       		.byte	0
+ 1173 0111 00       		.byte	0
+ 1174 0112 14       		.uleb128 0x14
+ 1175 0113 15       		.uleb128 0x15
+ 1176 0114 01       		.byte	0x1
+ 1177 0115 01       		.uleb128 0x1
+ 1178 0116 13       		.uleb128 0x13
+ 1179 0117 00       		.byte	0
+ 1180 0118 00       		.byte	0
+ 1181 0119 15       		.uleb128 0x15
+ 1182 011a 18       		.uleb128 0x18
+ 1183 011b 00       		.byte	0
+ 1184 011c 00       		.byte	0
+ 1185 011d 00       		.byte	0
+ 1186 011e 16       		.uleb128 0x16
+ 1187 011f 34       		.uleb128 0x34
+ 1188 0120 00       		.byte	0
+ 1189 0121 03       		.uleb128 0x3
+ 1190 0122 0E       		.uleb128 0xe
+ 1191 0123 3A       		.uleb128 0x3a
+ 1192 0124 0B       		.uleb128 0xb
+ 1193 0125 3B       		.uleb128 0x3b
+ 1194 0126 0B       		.uleb128 0xb
+ 1195 0127 49       		.uleb128 0x49
+ 1196 0128 13       		.uleb128 0x13
+ 1197 0129 3F       		.uleb128 0x3f
+ 1198 012a 19       		.uleb128 0x19
+ 1199 012b 3C       		.uleb128 0x3c
+ 1200 012c 19       		.uleb128 0x19
+ 1201 012d 00       		.byte	0
+ 1202 012e 00       		.byte	0
+ 1203 012f 17       		.uleb128 0x17
+ 1204 0130 2E       		.uleb128 0x2e
+ 1205 0131 00       		.byte	0
+ 1206 0132 3F       		.uleb128 0x3f
+ 1207 0133 19       		.uleb128 0x19
+ 1208 0134 3C       		.uleb128 0x3c
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 24
+
+
+ 1209 0135 19       		.uleb128 0x19
+ 1210 0136 6E       		.uleb128 0x6e
+ 1211 0137 0E       		.uleb128 0xe
+ 1212 0138 03       		.uleb128 0x3
+ 1213 0139 0E       		.uleb128 0xe
+ 1214 013a 3A       		.uleb128 0x3a
+ 1215 013b 0B       		.uleb128 0xb
+ 1216 013c 3B       		.uleb128 0x3b
+ 1217 013d 0B       		.uleb128 0xb
+ 1218 013e 00       		.byte	0
+ 1219 013f 00       		.byte	0
+ 1220 0140 00       		.byte	0
+ 1221              		.section	.debug_aranges,"",%progbits
+ 1222 0000 54000000 		.4byte	0x54
+ 1223 0004 0200     		.2byte	0x2
+ 1224 0006 00000000 		.4byte	.Ldebug_info0
+ 1225 000a 04       		.byte	0x4
+ 1226 000b 00       		.byte	0
+ 1227 000c 0000     		.2byte	0
+ 1228 000e 0000     		.2byte	0
+ 1229 0010 00000000 		.4byte	.LFB64
+ 1230 0014 18000000 		.4byte	.LFE64-.LFB64
+ 1231 0018 00000000 		.4byte	.LFB63
+ 1232 001c 18000000 		.4byte	.LFE63-.LFB63
+ 1233 0020 00000000 		.4byte	.LFB62
+ 1234 0024 18000000 		.4byte	.LFE62-.LFB62
+ 1235 0028 00000000 		.4byte	.LFB65
+ 1236 002c 0C000000 		.4byte	.LFE65-.LFB65
+ 1237 0030 00000000 		.4byte	.LFB66
+ 1238 0034 3C000000 		.4byte	.LFE66-.LFB66
+ 1239 0038 00000000 		.4byte	.LFB67
+ 1240 003c 10000000 		.4byte	.LFE67-.LFB67
+ 1241 0040 00000000 		.4byte	.LFB68
+ 1242 0044 0C000000 		.4byte	.LFE68-.LFB68
+ 1243 0048 00000000 		.4byte	.LFB69
+ 1244 004c 0C000000 		.4byte	.LFE69-.LFB69
+ 1245 0050 00000000 		.4byte	0
+ 1246 0054 00000000 		.4byte	0
+ 1247              		.section	.debug_ranges,"",%progbits
+ 1248              	.Ldebug_ranges0:
+ 1249 0000 00000000 		.4byte	.LFB64
+ 1250 0004 18000000 		.4byte	.LFE64
+ 1251 0008 00000000 		.4byte	.LFB63
+ 1252 000c 18000000 		.4byte	.LFE63
+ 1253 0010 00000000 		.4byte	.LFB62
+ 1254 0014 18000000 		.4byte	.LFE62
+ 1255 0018 00000000 		.4byte	.LFB65
+ 1256 001c 0C000000 		.4byte	.LFE65
+ 1257 0020 00000000 		.4byte	.LFB66
+ 1258 0024 3C000000 		.4byte	.LFE66
+ 1259 0028 00000000 		.4byte	.LFB67
+ 1260 002c 10000000 		.4byte	.LFE67
+ 1261 0030 00000000 		.4byte	.LFB68
+ 1262 0034 0C000000 		.4byte	.LFE68
+ 1263 0038 00000000 		.4byte	.LFB69
+ 1264 003c 0C000000 		.4byte	.LFE69
+ 1265 0040 00000000 		.4byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 25
+
+
+ 1266 0044 00000000 		.4byte	0
+ 1267              		.section	.debug_line,"",%progbits
+ 1268              	.Ldebug_line0:
+ 1269 0000 37010000 		.section	.debug_str,"MS",%progbits,1
+ 1269      02009300 
+ 1269      00000201 
+ 1269      FB0E0D00 
+ 1269      01010101 
+ 1270              	.LASF31:
+ 1271 0000 73657769 		.ascii	"sewingTrimCount\000"
+ 1271      6E675472 
+ 1271      696D436F 
+ 1271      756E7400 
+ 1272              	.LASF26:
+ 1273 0010 73657769 		.ascii	"sewingMotorRunTimeSumH\000"
+ 1273      6E674D6F 
+ 1273      746F7252 
+ 1273      756E5469 
+ 1273      6D655375 
+ 1274              	.LASF39:
+ 1275 0027 70617474 		.ascii	"patternEmergencyTimeSumH\000"
+ 1275      65726E45 
+ 1275      6D657267 
+ 1275      656E6379 
+ 1275      54696D65 
+ 1276              	.LASF53:
+ 1277 0040 70617474 		.ascii	"patternTrimCount\000"
+ 1277      65726E54 
+ 1277      72696D43 
+ 1277      6F756E74 
+ 1277      00
+ 1278              	.LASF73:
+ 1279 0051 50617261 		.ascii	"Param\000"
+ 1279      6D00
+ 1280              	.LASF2:
+ 1281 0057 73686F72 		.ascii	"short int\000"
+ 1281      7420696E 
+ 1281      7400
+ 1282              	.LASF85:
+ 1283 0061 675F7557 		.ascii	"g_uWorkingTimeCount\000"
+ 1283      6F726B69 
+ 1283      6E675469 
+ 1283      6D65436F 
+ 1283      756E7400 
+ 1284              	.LASF41:
+ 1285 0075 70617474 		.ascii	"patternCycleTime\000"
+ 1285      65726E43 
+ 1285      79636C65 
+ 1285      54696D65 
+ 1285      00
+ 1286              	.LASF16:
+ 1287 0086 73697A65 		.ascii	"sizetype\000"
+ 1287      74797065 
+ 1287      00
+ 1288              	.LASF76:
+ 1289 008f 675F696E 		.ascii	"g_internalFlash\000"
+ 1289      7465726E 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 26
+
+
+ 1289      616C466C 
+ 1289      61736800 
+ 1290              	.LASF37:
+ 1291 009f 70617474 		.ascii	"patternNo\000"
+ 1291      65726E4E 
+ 1291      6F00
+ 1292              	.LASF21:
+ 1293 00a9 73657769 		.ascii	"sewingActualL\000"
+ 1293      6E674163 
+ 1293      7475616C 
+ 1293      4C00
+ 1294              	.LASF38:
+ 1295 00b7 70617474 		.ascii	"patternEmergencyTime\000"
+ 1295      65726E45 
+ 1295      6D657267 
+ 1295      656E6379 
+ 1295      54696D65 
+ 1296              	.LASF23:
+ 1297 00cc 73657769 		.ascii	"sewingCycleTimeSumH\000"
+ 1297      6E674379 
+ 1297      636C6554 
+ 1297      696D6553 
+ 1297      756D4800 
+ 1298              	.LASF72:
+ 1299 00e0 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 1299      64617973 
+ 1299      4265666F 
+ 1299      72654D6F 
+ 1299      6E746854 
+ 1300              	.LASF75:
+ 1301 00f7 675F7570 		.ascii	"g_updateCountMenu\000"
+ 1301      64617465 
+ 1301      436F756E 
+ 1301      744D656E 
+ 1301      7500
+ 1302              	.LASF57:
+ 1303 0109 616E646F 		.ascii	"andonEntry\000"
+ 1303      6E456E74 
+ 1303      727900
+ 1304              	.LASF69:
+ 1305 0114 47657457 		.ascii	"GetWorkingTimeCount\000"
+ 1305      6F726B69 
+ 1305      6E675469 
+ 1305      6D65436F 
+ 1305      756E7400 
+ 1306              	.LASF81:
+ 1307 0128 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1307      43313120 
+ 1307      352E342E 
+ 1307      31203230 
+ 1307      31363036 
+ 1308 015b 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1308      20726576 
+ 1308      6973696F 
+ 1308      6E203233 
+ 1308      37373135 
+ 1309 018e 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 27
+
+
+ 1309      66756E63 
+ 1309      74696F6E 
+ 1309      2D736563 
+ 1309      74696F6E 
+ 1310              	.LASF62:
+ 1311 01b6 63686563 		.ascii	"checksum\000"
+ 1311      6B73756D 
+ 1311      00
+ 1312              	.LASF9:
+ 1313 01bf 75696E74 		.ascii	"uint8\000"
+ 1313      3800
+ 1314              	.LASF18:
+ 1315 01c5 706F735F 		.ascii	"pos_X\000"
+ 1315      5800
+ 1316              	.LASF12:
+ 1317 01cb 666C6F61 		.ascii	"float\000"
+ 1317      7400
+ 1318              	.LASF6:
+ 1319 01d1 6C6F6E67 		.ascii	"long long int\000"
+ 1319      206C6F6E 
+ 1319      6720696E 
+ 1319      7400
+ 1320              	.LASF59:
+ 1321 01df 434F554E 		.ascii	"COUNT\000"
+ 1321      5400
+ 1322              	.LASF51:
+ 1323 01e5 70617474 		.ascii	"patternStitchLengthSumH\000"
+ 1323      65726E53 
+ 1323      74697463 
+ 1323      684C656E 
+ 1323      67746853 
+ 1324              	.LASF49:
+ 1325 01fd 70617474 		.ascii	"patternNoStitchSumL\000"
+ 1325      65726E4E 
+ 1325      6F537469 
+ 1325      74636853 
+ 1325      756D4C00 
+ 1326              	.LASF42:
+ 1327 0211 70617474 		.ascii	"patternCycleTimeSumH\000"
+ 1327      65726E43 
+ 1327      79636C65 
+ 1327      54696D65 
+ 1327      53756D48 
+ 1328              	.LASF65:
+ 1329 0226 53657443 		.ascii	"SetCountLoop\000"
+ 1329      6F756E74 
+ 1329      4C6F6F70 
+ 1329      00
+ 1330              	.LASF4:
+ 1331 0233 6C6F6E67 		.ascii	"long int\000"
+ 1331      20696E74 
+ 1331      00
+ 1332              	.LASF43:
+ 1333 023c 70617474 		.ascii	"patternCycleTimeSumL\000"
+ 1333      65726E43 
+ 1333      79636C65 
+ 1333      54696D65 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 28
+
+
+ 1333      53756D4C 
+ 1334              	.LASF34:
+ 1335 0251 70617474 		.ascii	"patternActualH\000"
+ 1335      65726E41 
+ 1335      63747561 
+ 1335      6C4800
+ 1336              	.LASF52:
+ 1337 0260 70617474 		.ascii	"patternStitchLengthSumL\000"
+ 1337      65726E53 
+ 1337      74697463 
+ 1337      684C656E 
+ 1337      67746853 
+ 1338              	.LASF40:
+ 1339 0278 70617474 		.ascii	"patternEmergencyTimeSumL\000"
+ 1339      65726E45 
+ 1339      6D657267 
+ 1339      656E6379 
+ 1339      54696D65 
+ 1340              	.LASF35:
+ 1341 0291 70617474 		.ascii	"patternActualL\000"
+ 1341      65726E41 
+ 1341      63747561 
+ 1341      6C4C00
+ 1342              	.LASF66:
+ 1343 02a0 696E6974 		.ascii	"initCount\000"
+ 1343      436F756E 
+ 1343      7400
+ 1344              	.LASF1:
+ 1345 02aa 756E7369 		.ascii	"unsigned char\000"
+ 1345      676E6564 
+ 1345      20636861 
+ 1345      7200
+ 1346              	.LASF74:
+ 1347 02b8 436F756E 		.ascii	"CountFunc\000"
+ 1347      7446756E 
+ 1347      6300
+ 1348              	.LASF70:
+ 1349 02c2 576F726B 		.ascii	"WorkingTimeCount\000"
+ 1349      696E6754 
+ 1349      696D6543 
+ 1349      6F756E74 
+ 1349      00
+ 1350              	.LASF15:
+ 1351 02d3 6C6F6E67 		.ascii	"long double\000"
+ 1351      20646F75 
+ 1351      626C6500 
+ 1352              	.LASF79:
+ 1353 02df 7472696D 		.ascii	"trim_Int_Stop\000"
+ 1353      5F496E74 
+ 1353      5F53746F 
+ 1353      7000
+ 1354              	.LASF22:
+ 1355 02ed 73657769 		.ascii	"sewingCycleTime\000"
+ 1355      6E674379 
+ 1355      636C6554 
+ 1355      696D6500 
+ 1356              	.LASF19:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 29
+
+
+ 1357 02fd 706F735F 		.ascii	"pos_Y\000"
+ 1357      5900
+ 1358              	.LASF25:
+ 1359 0303 73657769 		.ascii	"sewingMotorRunTime\000"
+ 1359      6E674D6F 
+ 1359      746F7252 
+ 1359      756E5469 
+ 1359      6D6500
+ 1360              	.LASF48:
+ 1361 0316 70617474 		.ascii	"patternNoStitchSumH\000"
+ 1361      65726E4E 
+ 1361      6F537469 
+ 1361      74636853 
+ 1361      756D4800 
+ 1362              	.LASF0:
+ 1363 032a 7369676E 		.ascii	"signed char\000"
+ 1363      65642063 
+ 1363      68617200 
+ 1364              	.LASF7:
+ 1365 0336 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1365      206C6F6E 
+ 1365      6720756E 
+ 1365      7369676E 
+ 1365      65642069 
+ 1366              	.LASF24:
+ 1367 034d 73657769 		.ascii	"sewingCycleTimeSumL\000"
+ 1367      6E674379 
+ 1367      636C6554 
+ 1367      696D6553 
+ 1367      756D4C00 
+ 1368              	.LASF8:
+ 1369 0361 756E7369 		.ascii	"unsigned int\000"
+ 1369      676E6564 
+ 1369      20696E74 
+ 1369      00
+ 1370              	.LASF60:
+ 1371 036e 77617465 		.ascii	"watermark\000"
+ 1371      726D6172 
+ 1371      6B00
+ 1372              	.LASF68:
+ 1373 0378 67657443 		.ascii	"getCount\000"
+ 1373      6F756E74 
+ 1373      00
+ 1374              	.LASF5:
+ 1375 0381 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1375      20756E73 
+ 1375      69676E65 
+ 1375      6420696E 
+ 1375      7400
+ 1376              	.LASF30:
+ 1377 0393 73657769 		.ascii	"sewingNoStitchSumL\000"
+ 1377      6E674E6F 
+ 1377      53746974 
+ 1377      63685375 
+ 1377      6D4C00
+ 1378              	.LASF64:
+ 1379 03a6 50617474 		.ascii	"PatternCountLoop\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 30
+
+
+ 1379      65726E43 
+ 1379      6F756E74 
+ 1379      4C6F6F70 
+ 1379      00
+ 1380              	.LASF3:
+ 1381 03b7 73686F72 		.ascii	"short unsigned int\000"
+ 1381      7420756E 
+ 1381      7369676E 
+ 1381      65642069 
+ 1381      6E7400
+ 1382              	.LASF83:
+ 1383 03ca 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_INTEGR"
+ 1383      554E5445 
+ 1383      43485F44 
+ 1383      45565F43 
+ 1383      4C415544 
+ 1384 03fa 41544544 		.ascii	"ATED\\280CTP_IoT_INTEGRATED_V1_BLACK_CPU\\Project\\"
+ 1384      5C323830 
+ 1384      4354505F 
+ 1384      496F545F 
+ 1384      494E5445 
+ 1385 042a 44657369 		.ascii	"Design.cydsn\000"
+ 1385      676E2E63 
+ 1385      7964736E 
+ 1385      00
+ 1386              	.LASF14:
+ 1387 0437 63686172 		.ascii	"char\000"
+ 1387      00
+ 1388              	.LASF45:
+ 1389 043c 70617474 		.ascii	"patternMotorRunTimeSumH\000"
+ 1389      65726E4D 
+ 1389      6F746F72 
+ 1389      52756E54 
+ 1389      696D6553 
+ 1390              	.LASF50:
+ 1391 0454 70617474 		.ascii	"patternStitchLength\000"
+ 1391      65726E53 
+ 1391      74697463 
+ 1391      684C656E 
+ 1391      67746800 
+ 1392              	.LASF46:
+ 1393 0468 70617474 		.ascii	"patternMotorRunTimeSumL\000"
+ 1393      65726E4D 
+ 1393      6F746F72 
+ 1393      52756E54 
+ 1393      696D6553 
+ 1394              	.LASF84:
+ 1395 0480 73506172 		.ascii	"sParameter\000"
+ 1395      616D6574 
+ 1395      657200
+ 1396              	.LASF61:
+ 1397 048b 64617461 		.ascii	"data\000"
+ 1397      00
+ 1398              	.LASF80:
+ 1399 0490 53617665 		.ascii	"SaveInternalFlash\000"
+ 1399      496E7465 
+ 1399      726E616C 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 31
+
+
+ 1399      466C6173 
+ 1399      6800
+ 1400              	.LASF77:
+ 1401 04a2 675F7074 		.ascii	"g_ptrCount\000"
+ 1401      72436F75 
+ 1401      6E7400
+ 1402              	.LASF10:
+ 1403 04ad 75696E74 		.ascii	"uint16\000"
+ 1403      313600
+ 1404              	.LASF11:
+ 1405 04b4 75696E74 		.ascii	"uint32\000"
+ 1405      333200
+ 1406              	.LASF82:
+ 1407 04bb 636F756E 		.ascii	"count.c\000"
+ 1407      742E6300 
+ 1408              	.LASF13:
+ 1409 04c3 646F7562 		.ascii	"double\000"
+ 1409      6C6500
+ 1410              	.LASF17:
+ 1411 04ca 73746174 		.ascii	"stat_TC_INT\000"
+ 1411      5F54435F 
+ 1411      494E5400 
+ 1412              	.LASF20:
+ 1413 04d6 73657769 		.ascii	"sewingActualH\000"
+ 1413      6E674163 
+ 1413      7475616C 
+ 1413      4800
+ 1414              	.LASF54:
+ 1415 04e4 70617474 		.ascii	"patternTrimCountSumH\000"
+ 1415      65726E54 
+ 1415      72696D43 
+ 1415      6F756E74 
+ 1415      53756D48 
+ 1416              	.LASF55:
+ 1417 04f9 70617474 		.ascii	"patternTrimCountSumL\000"
+ 1417      65726E54 
+ 1417      72696D43 
+ 1417      6F756E74 
+ 1417      53756D4C 
+ 1418              	.LASF58:
+ 1419 050e 72657365 		.ascii	"reset\000"
+ 1419      7400
+ 1420              	.LASF71:
+ 1421 0514 52657365 		.ascii	"ResetWorkingTimeCount\000"
+ 1421      74576F72 
+ 1421      6B696E67 
+ 1421      54696D65 
+ 1421      436F756E 
+ 1422              	.LASF56:
+ 1423 052a 70617474 		.ascii	"patternSPM\000"
+ 1423      65726E53 
+ 1423      504D00
+ 1424              	.LASF63:
+ 1425 0535 494E5445 		.ascii	"INTERNAL_CONFIG\000"
+ 1425      524E414C 
+ 1425      5F434F4E 
+ 1425      46494700 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccrs11Tc.s 			page 32
+
+
+ 1426              	.LASF36:
+ 1427 0545 70617474 		.ascii	"patternCount\000"
+ 1427      65726E43 
+ 1427      6F756E74 
+ 1427      00
+ 1428              	.LASF47:
+ 1429 0552 70617474 		.ascii	"patternNoStitch\000"
+ 1429      65726E4E 
+ 1429      6F537469 
+ 1429      74636800 
+ 1430              	.LASF28:
+ 1431 0562 73657769 		.ascii	"sewingNoStitch\000"
+ 1431      6E674E6F 
+ 1431      53746974 
+ 1431      636800
+ 1432              	.LASF67:
+ 1433 0571 52657365 		.ascii	"ResetCount\000"
+ 1433      74436F75 
+ 1433      6E7400
+ 1434              	.LASF29:
+ 1435 057c 73657769 		.ascii	"sewingNoStitchSumH\000"
+ 1435      6E674E6F 
+ 1435      53746974 
+ 1435      63685375 
+ 1435      6D4800
+ 1436              	.LASF78:
+ 1437 058f 75617274 		.ascii	"uartJsonLoop\000"
+ 1437      4A736F6E 
+ 1437      4C6F6F70 
+ 1437      00
+ 1438              	.LASF32:
+ 1439 059c 73657769 		.ascii	"sewingTrimCountSumH\000"
+ 1439      6E675472 
+ 1439      696D436F 
+ 1439      756E7453 
+ 1439      756D4800 
+ 1440              	.LASF44:
+ 1441 05b0 70617474 		.ascii	"patternMotorRunTime\000"
+ 1441      65726E4D 
+ 1441      6F746F72 
+ 1441      52756E54 
+ 1441      696D6500 
+ 1442              	.LASF27:
+ 1443 05c4 73657769 		.ascii	"sewingMotorRunTimeSumL\000"
+ 1443      6E674D6F 
+ 1443      746F7252 
+ 1443      756E5469 
+ 1443      6D655375 
+ 1444              	.LASF33:
+ 1445 05db 73657769 		.ascii	"sewingTrimCountSumL\000"
+ 1445      6E675472 
+ 1445      696D436F 
+ 1445      756E7453 
+ 1445      756D4C00 
+ 1446              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

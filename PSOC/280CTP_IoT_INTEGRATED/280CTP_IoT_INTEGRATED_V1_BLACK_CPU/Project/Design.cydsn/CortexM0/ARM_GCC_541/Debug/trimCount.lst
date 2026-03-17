@@ -1,0 +1,724 @@
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccROUg1T.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"trimCount.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.Trim_Interrupt_Routine,"ax",%progbits
+  20              		.align	2
+  21              		.global	Trim_Interrupt_Routine
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	Trim_Interrupt_Routine, %function
+  25              	Trim_Interrupt_Routine:
+  26              	.LFB61:
+  27              		.file 1 "trimCount.c"
+   1:trimCount.c   **** /* ========================================
+   2:trimCount.c   ****  *
+   3:trimCount.c   ****  * Copyright Suntech, 2023.04.13
+   4:trimCount.c   ****  * All Rights Reserved
+   5:trimCount.c   ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:trimCount.c   ****  *
+   7:trimCount.c   ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:trimCount.c   ****  * WHICH IS THE PROPERTY OF Suntech.
+   9:trimCount.c   ****  *
+  10:trimCount.c   ****  * ========================================
+  11:trimCount.c   **** */
+  12:trimCount.c   **** #include "main.h"
+  13:trimCount.c   **** #include "trimCount.h"
+  14:trimCount.c   **** 
+  15:trimCount.c   **** uint8 g_updateTrimCount=FALSE;
+  16:trimCount.c   **** 
+  17:trimCount.c   **** CY_ISR(Trim_Interrupt_Routine)
+  18:trimCount.c   **** {
+  28              		.loc 1 18 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  19:trimCount.c   ****     g_updateTrimCount = TRUE;
+  33              		.loc 1 19 0
+  34 0000 0122     		movs	r2, #1
+  35 0002 014B     		ldr	r3, .L2
+  36 0004 1A70     		strb	r2, [r3]
+  20:trimCount.c   **** }
+  37              		.loc 1 20 0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccROUg1T.s 			page 2
+
+
+  38              		@ sp needed
+  39 0006 7047     		bx	lr
+  40              	.L3:
+  41              		.align	2
+  42              	.L2:
+  43 0008 00000000 		.word	.LANCHOR0
+  44              		.cfi_endproc
+  45              	.LFE61:
+  46              		.size	Trim_Interrupt_Routine, .-Trim_Interrupt_Routine
+  47              		.section	.text.initTrimCount,"ax",%progbits
+  48              		.align	2
+  49              		.global	initTrimCount
+  50              		.code	16
+  51              		.thumb_func
+  52              		.type	initTrimCount, %function
+  53              	initTrimCount:
+  54              	.LFB62:
+  21:trimCount.c   **** 
+  22:trimCount.c   **** void initTrimCount()
+  23:trimCount.c   **** {
+  55              		.loc 1 23 0
+  56              		.cfi_startproc
+  57              		@ args = 0, pretend = 0, frame = 0
+  58              		@ frame_needed = 0, uses_anonymous_args = 0
+  59 0000 10B5     		push	{r4, lr}
+  60              		.cfi_def_cfa_offset 8
+  61              		.cfi_offset 4, -8
+  62              		.cfi_offset 14, -4
+  24:trimCount.c   ****     trim_Int_StartEx(&Trim_Interrupt_Routine); 
+  63              		.loc 1 24 0
+  64 0002 0248     		ldr	r0, .L5
+  65 0004 FFF7FEFF 		bl	trim_Int_StartEx
+  66              	.LVL0:
+  25:trimCount.c   **** }
+  67              		.loc 1 25 0
+  68              		@ sp needed
+  69 0008 10BD     		pop	{r4, pc}
+  70              	.L6:
+  71 000a C046     		.align	2
+  72              	.L5:
+  73 000c 00000000 		.word	Trim_Interrupt_Routine
+  74              		.cfi_endproc
+  75              	.LFE62:
+  76              		.size	initTrimCount, .-initTrimCount
+  77              		.section	.text.trimCountLoop,"ax",%progbits
+  78              		.align	2
+  79              		.global	trimCountLoop
+  80              		.code	16
+  81              		.thumb_func
+  82              		.type	trimCountLoop, %function
+  83              	trimCountLoop:
+  84              	.LFB63:
+  26:trimCount.c   **** 
+  27:trimCount.c   **** void trimCountLoop()
+  28:trimCount.c   **** {
+  85              		.loc 1 28 0
+  86              		.cfi_startproc
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccROUg1T.s 			page 3
+
+
+  87              		@ args = 0, pretend = 0, frame = 0
+  88              		@ frame_needed = 0, uses_anonymous_args = 0
+  89              		@ link register save eliminated.
+  29:trimCount.c   ****     if(g_updateTrimCount == FALSE) return;
+  30:trimCount.c   **** }
+  90              		.loc 1 30 0
+  91              		@ sp needed
+  92 0000 7047     		bx	lr
+  93              		.cfi_endproc
+  94              	.LFE63:
+  95              		.size	trimCountLoop, .-trimCountLoop
+  96              		.global	g_updateTrimCount
+  97              		.comm	Param,6,4
+  98 0002 C046     		.bss
+  99              		.set	.LANCHOR0,. + 0
+ 100              		.type	g_updateTrimCount, %object
+ 101              		.size	g_updateTrimCount, 1
+ 102              	g_updateTrimCount:
+ 103 0000 00       		.space	1
+ 104              		.text
+ 105              	.Letext0:
+ 106              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 107              		.file 3 "main.h"
+ 108              		.file 4 "Generated_Source\\PSoC4/trim_Int.h"
+ 109              		.section	.debug_info,"",%progbits
+ 110              	.Ldebug_info0:
+ 111 0000 4C010000 		.4byte	0x14c
+ 112 0004 0400     		.2byte	0x4
+ 113 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 114 000a 04       		.byte	0x4
+ 115 000b 01       		.uleb128 0x1
+ 116 000c 22010000 		.4byte	.LASF21
+ 117 0010 0C       		.byte	0xc
+ 118 0011 0E000000 		.4byte	.LASF22
+ 119 0015 43000000 		.4byte	.LASF23
+ 120 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 121 001d 00000000 		.4byte	0
+ 122 0021 00000000 		.4byte	.Ldebug_line0
+ 123 0025 02       		.uleb128 0x2
+ 124 0026 01       		.byte	0x1
+ 125 0027 06       		.byte	0x6
+ 126 0028 C3010000 		.4byte	.LASF0
+ 127 002c 02       		.uleb128 0x2
+ 128 002d 01       		.byte	0x1
+ 129 002e 08       		.byte	0x8
+ 130 002f 35000000 		.4byte	.LASF1
+ 131 0033 02       		.uleb128 0x2
+ 132 0034 02       		.byte	0x2
+ 133 0035 05       		.byte	0x5
+ 134 0036 E1010000 		.4byte	.LASF2
+ 135 003a 02       		.uleb128 0x2
+ 136 003b 02       		.byte	0x2
+ 137 003c 07       		.byte	0x7
+ 138 003d B0010000 		.4byte	.LASF3
+ 139 0041 02       		.uleb128 0x2
+ 140 0042 04       		.byte	0x4
+ 141 0043 05       		.byte	0x5
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccROUg1T.s 			page 4
+
+
+ 142 0044 DE000000 		.4byte	.LASF4
+ 143 0048 02       		.uleb128 0x2
+ 144 0049 04       		.byte	0x4
+ 145 004a 07       		.byte	0x7
+ 146 004b 90000000 		.4byte	.LASF5
+ 147 004f 02       		.uleb128 0x2
+ 148 0050 08       		.byte	0x8
+ 149 0051 05       		.byte	0x5
+ 150 0052 00000000 		.4byte	.LASF6
+ 151 0056 02       		.uleb128 0x2
+ 152 0057 08       		.byte	0x8
+ 153 0058 07       		.byte	0x7
+ 154 0059 E7000000 		.4byte	.LASF7
+ 155 005d 03       		.uleb128 0x3
+ 156 005e 04       		.byte	0x4
+ 157 005f 05       		.byte	0x5
+ 158 0060 696E7400 		.ascii	"int\000"
+ 159 0064 02       		.uleb128 0x2
+ 160 0065 04       		.byte	0x4
+ 161 0066 07       		.byte	0x7
+ 162 0067 1A000000 		.4byte	.LASF8
+ 163 006b 04       		.uleb128 0x4
+ 164 006c 8A000000 		.4byte	.LASF9
+ 165 0070 02       		.byte	0x2
+ 166 0071 FC01     		.2byte	0x1fc
+ 167 0073 2C000000 		.4byte	0x2c
+ 168 0077 04       		.uleb128 0x4
+ 169 0078 EB010000 		.4byte	.LASF10
+ 170 007c 02       		.byte	0x2
+ 171 007d FD01     		.2byte	0x1fd
+ 172 007f 3A000000 		.4byte	0x3a
+ 173 0083 02       		.uleb128 0x2
+ 174 0084 04       		.byte	0x4
+ 175 0085 04       		.byte	0x4
+ 176 0086 DB010000 		.4byte	.LASF11
+ 177 008a 02       		.uleb128 0x2
+ 178 008b 08       		.byte	0x8
+ 179 008c 04       		.byte	0x4
+ 180 008d FE000000 		.4byte	.LASF12
+ 181 0091 02       		.uleb128 0x2
+ 182 0092 01       		.byte	0x1
+ 183 0093 08       		.byte	0x8
+ 184 0094 D9000000 		.4byte	.LASF13
+ 185 0098 02       		.uleb128 0x2
+ 186 0099 08       		.byte	0x8
+ 187 009a 04       		.byte	0x4
+ 188 009b CF010000 		.4byte	.LASF14
+ 189 009f 02       		.uleb128 0x2
+ 190 00a0 04       		.byte	0x4
+ 191 00a1 07       		.byte	0x7
+ 192 00a2 F2010000 		.4byte	.LASF15
+ 193 00a6 05       		.uleb128 0x5
+ 194 00a7 C2000000 		.4byte	.LASF24
+ 195 00ab 06       		.byte	0x6
+ 196 00ac 03       		.byte	0x3
+ 197 00ad 30       		.byte	0x30
+ 198 00ae D7000000 		.4byte	0xd7
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccROUg1T.s 			page 5
+
+
+ 199 00b2 06       		.uleb128 0x6
+ 200 00b3 CD000000 		.4byte	.LASF16
+ 201 00b7 03       		.byte	0x3
+ 202 00b8 32       		.byte	0x32
+ 203 00b9 6B000000 		.4byte	0x6b
+ 204 00bd 00       		.byte	0
+ 205 00be 06       		.uleb128 0x6
+ 206 00bf 05010000 		.4byte	.LASF17
+ 207 00c3 03       		.byte	0x3
+ 208 00c4 33       		.byte	0x33
+ 209 00c5 77000000 		.4byte	0x77
+ 210 00c9 02       		.byte	0x2
+ 211 00ca 06       		.uleb128 0x6
+ 212 00cb 0B010000 		.4byte	.LASF18
+ 213 00cf 03       		.byte	0x3
+ 214 00d0 34       		.byte	0x34
+ 215 00d1 77000000 		.4byte	0x77
+ 216 00d5 04       		.byte	0x4
+ 217 00d6 00       		.byte	0
+ 218 00d7 07       		.uleb128 0x7
+ 219 00d8 73000000 		.4byte	.LASF25
+ 220 00dc 01       		.byte	0x1
+ 221 00dd 11       		.byte	0x11
+ 222 00de 00000000 		.4byte	.LFB61
+ 223 00e2 0C000000 		.4byte	.LFE61-.LFB61
+ 224 00e6 01       		.uleb128 0x1
+ 225 00e7 9C       		.byte	0x9c
+ 226 00e8 08       		.uleb128 0x8
+ 227 00e9 B4000000 		.4byte	.LASF26
+ 228 00ed 01       		.byte	0x1
+ 229 00ee 16       		.byte	0x16
+ 230 00ef 00000000 		.4byte	.LFB62
+ 231 00f3 10000000 		.4byte	.LFE62-.LFB62
+ 232 00f7 01       		.uleb128 0x1
+ 233 00f8 9C       		.byte	0x9c
+ 234 00f9 11010000 		.4byte	0x111
+ 235 00fd 09       		.uleb128 0x9
+ 236 00fe 08000000 		.4byte	.LVL0
+ 237 0102 44010000 		.4byte	0x144
+ 238 0106 0A       		.uleb128 0xa
+ 239 0107 01       		.uleb128 0x1
+ 240 0108 50       		.byte	0x50
+ 241 0109 05       		.uleb128 0x5
+ 242 010a 03       		.byte	0x3
+ 243 010b 00000000 		.4byte	Trim_Interrupt_Routine
+ 244 010f 00       		.byte	0
+ 245 0110 00       		.byte	0
+ 246 0111 0B       		.uleb128 0xb
+ 247 0112 27000000 		.4byte	.LASF27
+ 248 0116 01       		.byte	0x1
+ 249 0117 1B       		.byte	0x1b
+ 250 0118 00000000 		.4byte	.LFB63
+ 251 011c 02000000 		.4byte	.LFE63-.LFB63
+ 252 0120 01       		.uleb128 0x1
+ 253 0121 9C       		.byte	0x9c
+ 254 0122 0C       		.uleb128 0xc
+ 255 0123 FB010000 		.4byte	.LASF19
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccROUg1T.s 			page 6
+
+
+ 256 0127 03       		.byte	0x3
+ 257 0128 37       		.byte	0x37
+ 258 0129 A6000000 		.4byte	0xa6
+ 259 012d 05       		.uleb128 0x5
+ 260 012e 03       		.byte	0x3
+ 261 012f 00000000 		.4byte	Param
+ 262 0133 0C       		.uleb128 0xc
+ 263 0134 A2000000 		.4byte	.LASF20
+ 264 0138 01       		.byte	0x1
+ 265 0139 0F       		.byte	0xf
+ 266 013a 6B000000 		.4byte	0x6b
+ 267 013e 05       		.uleb128 0x5
+ 268 013f 03       		.byte	0x3
+ 269 0140 00000000 		.4byte	g_updateTrimCount
+ 270 0144 0D       		.uleb128 0xd
+ 271 0145 11010000 		.4byte	.LASF28
+ 272 0149 11010000 		.4byte	.LASF28
+ 273 014d 04       		.byte	0x4
+ 274 014e 18       		.byte	0x18
+ 275 014f 00       		.byte	0
+ 276              		.section	.debug_abbrev,"",%progbits
+ 277              	.Ldebug_abbrev0:
+ 278 0000 01       		.uleb128 0x1
+ 279 0001 11       		.uleb128 0x11
+ 280 0002 01       		.byte	0x1
+ 281 0003 25       		.uleb128 0x25
+ 282 0004 0E       		.uleb128 0xe
+ 283 0005 13       		.uleb128 0x13
+ 284 0006 0B       		.uleb128 0xb
+ 285 0007 03       		.uleb128 0x3
+ 286 0008 0E       		.uleb128 0xe
+ 287 0009 1B       		.uleb128 0x1b
+ 288 000a 0E       		.uleb128 0xe
+ 289 000b 55       		.uleb128 0x55
+ 290 000c 17       		.uleb128 0x17
+ 291 000d 11       		.uleb128 0x11
+ 292 000e 01       		.uleb128 0x1
+ 293 000f 10       		.uleb128 0x10
+ 294 0010 17       		.uleb128 0x17
+ 295 0011 00       		.byte	0
+ 296 0012 00       		.byte	0
+ 297 0013 02       		.uleb128 0x2
+ 298 0014 24       		.uleb128 0x24
+ 299 0015 00       		.byte	0
+ 300 0016 0B       		.uleb128 0xb
+ 301 0017 0B       		.uleb128 0xb
+ 302 0018 3E       		.uleb128 0x3e
+ 303 0019 0B       		.uleb128 0xb
+ 304 001a 03       		.uleb128 0x3
+ 305 001b 0E       		.uleb128 0xe
+ 306 001c 00       		.byte	0
+ 307 001d 00       		.byte	0
+ 308 001e 03       		.uleb128 0x3
+ 309 001f 24       		.uleb128 0x24
+ 310 0020 00       		.byte	0
+ 311 0021 0B       		.uleb128 0xb
+ 312 0022 0B       		.uleb128 0xb
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccROUg1T.s 			page 7
+
+
+ 313 0023 3E       		.uleb128 0x3e
+ 314 0024 0B       		.uleb128 0xb
+ 315 0025 03       		.uleb128 0x3
+ 316 0026 08       		.uleb128 0x8
+ 317 0027 00       		.byte	0
+ 318 0028 00       		.byte	0
+ 319 0029 04       		.uleb128 0x4
+ 320 002a 16       		.uleb128 0x16
+ 321 002b 00       		.byte	0
+ 322 002c 03       		.uleb128 0x3
+ 323 002d 0E       		.uleb128 0xe
+ 324 002e 3A       		.uleb128 0x3a
+ 325 002f 0B       		.uleb128 0xb
+ 326 0030 3B       		.uleb128 0x3b
+ 327 0031 05       		.uleb128 0x5
+ 328 0032 49       		.uleb128 0x49
+ 329 0033 13       		.uleb128 0x13
+ 330 0034 00       		.byte	0
+ 331 0035 00       		.byte	0
+ 332 0036 05       		.uleb128 0x5
+ 333 0037 13       		.uleb128 0x13
+ 334 0038 01       		.byte	0x1
+ 335 0039 03       		.uleb128 0x3
+ 336 003a 0E       		.uleb128 0xe
+ 337 003b 0B       		.uleb128 0xb
+ 338 003c 0B       		.uleb128 0xb
+ 339 003d 3A       		.uleb128 0x3a
+ 340 003e 0B       		.uleb128 0xb
+ 341 003f 3B       		.uleb128 0x3b
+ 342 0040 0B       		.uleb128 0xb
+ 343 0041 01       		.uleb128 0x1
+ 344 0042 13       		.uleb128 0x13
+ 345 0043 00       		.byte	0
+ 346 0044 00       		.byte	0
+ 347 0045 06       		.uleb128 0x6
+ 348 0046 0D       		.uleb128 0xd
+ 349 0047 00       		.byte	0
+ 350 0048 03       		.uleb128 0x3
+ 351 0049 0E       		.uleb128 0xe
+ 352 004a 3A       		.uleb128 0x3a
+ 353 004b 0B       		.uleb128 0xb
+ 354 004c 3B       		.uleb128 0x3b
+ 355 004d 0B       		.uleb128 0xb
+ 356 004e 49       		.uleb128 0x49
+ 357 004f 13       		.uleb128 0x13
+ 358 0050 38       		.uleb128 0x38
+ 359 0051 0B       		.uleb128 0xb
+ 360 0052 00       		.byte	0
+ 361 0053 00       		.byte	0
+ 362 0054 07       		.uleb128 0x7
+ 363 0055 2E       		.uleb128 0x2e
+ 364 0056 00       		.byte	0
+ 365 0057 3F       		.uleb128 0x3f
+ 366 0058 19       		.uleb128 0x19
+ 367 0059 03       		.uleb128 0x3
+ 368 005a 0E       		.uleb128 0xe
+ 369 005b 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccROUg1T.s 			page 8
+
+
+ 370 005c 0B       		.uleb128 0xb
+ 371 005d 3B       		.uleb128 0x3b
+ 372 005e 0B       		.uleb128 0xb
+ 373 005f 27       		.uleb128 0x27
+ 374 0060 19       		.uleb128 0x19
+ 375 0061 11       		.uleb128 0x11
+ 376 0062 01       		.uleb128 0x1
+ 377 0063 12       		.uleb128 0x12
+ 378 0064 06       		.uleb128 0x6
+ 379 0065 40       		.uleb128 0x40
+ 380 0066 18       		.uleb128 0x18
+ 381 0067 9742     		.uleb128 0x2117
+ 382 0069 19       		.uleb128 0x19
+ 383 006a 00       		.byte	0
+ 384 006b 00       		.byte	0
+ 385 006c 08       		.uleb128 0x8
+ 386 006d 2E       		.uleb128 0x2e
+ 387 006e 01       		.byte	0x1
+ 388 006f 3F       		.uleb128 0x3f
+ 389 0070 19       		.uleb128 0x19
+ 390 0071 03       		.uleb128 0x3
+ 391 0072 0E       		.uleb128 0xe
+ 392 0073 3A       		.uleb128 0x3a
+ 393 0074 0B       		.uleb128 0xb
+ 394 0075 3B       		.uleb128 0x3b
+ 395 0076 0B       		.uleb128 0xb
+ 396 0077 11       		.uleb128 0x11
+ 397 0078 01       		.uleb128 0x1
+ 398 0079 12       		.uleb128 0x12
+ 399 007a 06       		.uleb128 0x6
+ 400 007b 40       		.uleb128 0x40
+ 401 007c 18       		.uleb128 0x18
+ 402 007d 9742     		.uleb128 0x2117
+ 403 007f 19       		.uleb128 0x19
+ 404 0080 01       		.uleb128 0x1
+ 405 0081 13       		.uleb128 0x13
+ 406 0082 00       		.byte	0
+ 407 0083 00       		.byte	0
+ 408 0084 09       		.uleb128 0x9
+ 409 0085 898201   		.uleb128 0x4109
+ 410 0088 01       		.byte	0x1
+ 411 0089 11       		.uleb128 0x11
+ 412 008a 01       		.uleb128 0x1
+ 413 008b 31       		.uleb128 0x31
+ 414 008c 13       		.uleb128 0x13
+ 415 008d 00       		.byte	0
+ 416 008e 00       		.byte	0
+ 417 008f 0A       		.uleb128 0xa
+ 418 0090 8A8201   		.uleb128 0x410a
+ 419 0093 00       		.byte	0
+ 420 0094 02       		.uleb128 0x2
+ 421 0095 18       		.uleb128 0x18
+ 422 0096 9142     		.uleb128 0x2111
+ 423 0098 18       		.uleb128 0x18
+ 424 0099 00       		.byte	0
+ 425 009a 00       		.byte	0
+ 426 009b 0B       		.uleb128 0xb
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccROUg1T.s 			page 9
+
+
+ 427 009c 2E       		.uleb128 0x2e
+ 428 009d 00       		.byte	0
+ 429 009e 3F       		.uleb128 0x3f
+ 430 009f 19       		.uleb128 0x19
+ 431 00a0 03       		.uleb128 0x3
+ 432 00a1 0E       		.uleb128 0xe
+ 433 00a2 3A       		.uleb128 0x3a
+ 434 00a3 0B       		.uleb128 0xb
+ 435 00a4 3B       		.uleb128 0x3b
+ 436 00a5 0B       		.uleb128 0xb
+ 437 00a6 11       		.uleb128 0x11
+ 438 00a7 01       		.uleb128 0x1
+ 439 00a8 12       		.uleb128 0x12
+ 440 00a9 06       		.uleb128 0x6
+ 441 00aa 40       		.uleb128 0x40
+ 442 00ab 18       		.uleb128 0x18
+ 443 00ac 9742     		.uleb128 0x2117
+ 444 00ae 19       		.uleb128 0x19
+ 445 00af 00       		.byte	0
+ 446 00b0 00       		.byte	0
+ 447 00b1 0C       		.uleb128 0xc
+ 448 00b2 34       		.uleb128 0x34
+ 449 00b3 00       		.byte	0
+ 450 00b4 03       		.uleb128 0x3
+ 451 00b5 0E       		.uleb128 0xe
+ 452 00b6 3A       		.uleb128 0x3a
+ 453 00b7 0B       		.uleb128 0xb
+ 454 00b8 3B       		.uleb128 0x3b
+ 455 00b9 0B       		.uleb128 0xb
+ 456 00ba 49       		.uleb128 0x49
+ 457 00bb 13       		.uleb128 0x13
+ 458 00bc 3F       		.uleb128 0x3f
+ 459 00bd 19       		.uleb128 0x19
+ 460 00be 02       		.uleb128 0x2
+ 461 00bf 18       		.uleb128 0x18
+ 462 00c0 00       		.byte	0
+ 463 00c1 00       		.byte	0
+ 464 00c2 0D       		.uleb128 0xd
+ 465 00c3 2E       		.uleb128 0x2e
+ 466 00c4 00       		.byte	0
+ 467 00c5 3F       		.uleb128 0x3f
+ 468 00c6 19       		.uleb128 0x19
+ 469 00c7 3C       		.uleb128 0x3c
+ 470 00c8 19       		.uleb128 0x19
+ 471 00c9 6E       		.uleb128 0x6e
+ 472 00ca 0E       		.uleb128 0xe
+ 473 00cb 03       		.uleb128 0x3
+ 474 00cc 0E       		.uleb128 0xe
+ 475 00cd 3A       		.uleb128 0x3a
+ 476 00ce 0B       		.uleb128 0xb
+ 477 00cf 3B       		.uleb128 0x3b
+ 478 00d0 0B       		.uleb128 0xb
+ 479 00d1 00       		.byte	0
+ 480 00d2 00       		.byte	0
+ 481 00d3 00       		.byte	0
+ 482              		.section	.debug_aranges,"",%progbits
+ 483 0000 2C000000 		.4byte	0x2c
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccROUg1T.s 			page 10
+
+
+ 484 0004 0200     		.2byte	0x2
+ 485 0006 00000000 		.4byte	.Ldebug_info0
+ 486 000a 04       		.byte	0x4
+ 487 000b 00       		.byte	0
+ 488 000c 0000     		.2byte	0
+ 489 000e 0000     		.2byte	0
+ 490 0010 00000000 		.4byte	.LFB61
+ 491 0014 0C000000 		.4byte	.LFE61-.LFB61
+ 492 0018 00000000 		.4byte	.LFB62
+ 493 001c 10000000 		.4byte	.LFE62-.LFB62
+ 494 0020 00000000 		.4byte	.LFB63
+ 495 0024 02000000 		.4byte	.LFE63-.LFB63
+ 496 0028 00000000 		.4byte	0
+ 497 002c 00000000 		.4byte	0
+ 498              		.section	.debug_ranges,"",%progbits
+ 499              	.Ldebug_ranges0:
+ 500 0000 00000000 		.4byte	.LFB61
+ 501 0004 0C000000 		.4byte	.LFE61
+ 502 0008 00000000 		.4byte	.LFB62
+ 503 000c 10000000 		.4byte	.LFE62
+ 504 0010 00000000 		.4byte	.LFB63
+ 505 0014 02000000 		.4byte	.LFE63
+ 506 0018 00000000 		.4byte	0
+ 507 001c 00000000 		.4byte	0
+ 508              		.section	.debug_line,"",%progbits
+ 509              	.Ldebug_line0:
+ 510 0000 96000000 		.section	.debug_str,"MS",%progbits,1
+ 510      02005E00 
+ 510      00000201 
+ 510      FB0E0D00 
+ 510      01010101 
+ 511              	.LASF6:
+ 512 0000 6C6F6E67 		.ascii	"long long int\000"
+ 512      206C6F6E 
+ 512      6720696E 
+ 512      7400
+ 513              	.LASF22:
+ 514 000e 7472696D 		.ascii	"trimCount.c\000"
+ 514      436F756E 
+ 514      742E6300 
+ 515              	.LASF8:
+ 516 001a 756E7369 		.ascii	"unsigned int\000"
+ 516      676E6564 
+ 516      20696E74 
+ 516      00
+ 517              	.LASF27:
+ 518 0027 7472696D 		.ascii	"trimCountLoop\000"
+ 518      436F756E 
+ 518      744C6F6F 
+ 518      7000
+ 519              	.LASF1:
+ 520 0035 756E7369 		.ascii	"unsigned char\000"
+ 520      676E6564 
+ 520      20636861 
+ 520      7200
+ 521              	.LASF23:
+ 522 0043 443A5C44 		.ascii	"D:\\DATA\\IoT\\IoT_Integrated\\Project\\Design.cyds"
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccROUg1T.s 			page 11
+
+
+ 522      4154415C 
+ 522      496F545C 
+ 522      496F545F 
+ 522      496E7465 
+ 523 0071 6E00     		.ascii	"n\000"
+ 524              	.LASF25:
+ 525 0073 5472696D 		.ascii	"Trim_Interrupt_Routine\000"
+ 525      5F496E74 
+ 525      65727275 
+ 525      70745F52 
+ 525      6F757469 
+ 526              	.LASF9:
+ 527 008a 75696E74 		.ascii	"uint8\000"
+ 527      3800
+ 528              	.LASF5:
+ 529 0090 6C6F6E67 		.ascii	"long unsigned int\000"
+ 529      20756E73 
+ 529      69676E65 
+ 529      6420696E 
+ 529      7400
+ 530              	.LASF20:
+ 531 00a2 675F7570 		.ascii	"g_updateTrimCount\000"
+ 531      64617465 
+ 531      5472696D 
+ 531      436F756E 
+ 531      7400
+ 532              	.LASF26:
+ 533 00b4 696E6974 		.ascii	"initTrimCount\000"
+ 533      5472696D 
+ 533      436F756E 
+ 533      7400
+ 534              	.LASF24:
+ 535 00c2 73506172 		.ascii	"sParameter\000"
+ 535      616D6574 
+ 535      657200
+ 536              	.LASF16:
+ 537 00cd 73746174 		.ascii	"stat_TC_INT\000"
+ 537      5F54435F 
+ 537      494E5400 
+ 538              	.LASF13:
+ 539 00d9 63686172 		.ascii	"char\000"
+ 539      00
+ 540              	.LASF4:
+ 541 00de 6C6F6E67 		.ascii	"long int\000"
+ 541      20696E74 
+ 541      00
+ 542              	.LASF7:
+ 543 00e7 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 543      206C6F6E 
+ 543      6720756E 
+ 543      7369676E 
+ 543      65642069 
+ 544              	.LASF12:
+ 545 00fe 646F7562 		.ascii	"double\000"
+ 545      6C6500
+ 546              	.LASF17:
+ 547 0105 706F735F 		.ascii	"pos_X\000"
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccROUg1T.s 			page 12
+
+
+ 547      5800
+ 548              	.LASF18:
+ 549 010b 706F735F 		.ascii	"pos_Y\000"
+ 549      5900
+ 550              	.LASF28:
+ 551 0111 7472696D 		.ascii	"trim_Int_StartEx\000"
+ 551      5F496E74 
+ 551      5F537461 
+ 551      72744578 
+ 551      00
+ 552              	.LASF21:
+ 553 0122 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 553      43313120 
+ 553      352E342E 
+ 553      31203230 
+ 553      31363036 
+ 554 0155 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 554      20726576 
+ 554      6973696F 
+ 554      6E203233 
+ 554      37373135 
+ 555 0188 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 555      66756E63 
+ 555      74696F6E 
+ 555      2D736563 
+ 555      74696F6E 
+ 556              	.LASF3:
+ 557 01b0 73686F72 		.ascii	"short unsigned int\000"
+ 557      7420756E 
+ 557      7369676E 
+ 557      65642069 
+ 557      6E7400
+ 558              	.LASF0:
+ 559 01c3 7369676E 		.ascii	"signed char\000"
+ 559      65642063 
+ 559      68617200 
+ 560              	.LASF14:
+ 561 01cf 6C6F6E67 		.ascii	"long double\000"
+ 561      20646F75 
+ 561      626C6500 
+ 562              	.LASF11:
+ 563 01db 666C6F61 		.ascii	"float\000"
+ 563      7400
+ 564              	.LASF2:
+ 565 01e1 73686F72 		.ascii	"short int\000"
+ 565      7420696E 
+ 565      7400
+ 566              	.LASF10:
+ 567 01eb 75696E74 		.ascii	"uint16\000"
+ 567      313600
+ 568              	.LASF15:
+ 569 01f2 73697A65 		.ascii	"sizetype\000"
+ 569      74797065 
+ 569      00
+ 570              	.LASF19:
+ 571 01fb 50617261 		.ascii	"Param\000"
+ 571      6D00
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccROUg1T.s 			page 13
+
+
+ 572              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

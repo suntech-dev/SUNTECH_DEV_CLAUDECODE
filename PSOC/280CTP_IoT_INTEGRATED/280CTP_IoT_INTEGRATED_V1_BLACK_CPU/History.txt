@@ -1,0 +1,28 @@
+280CTP_IoT_INTEGRATED_V1 를 가지고 USER_PROJECT_PATTERN_SEWING_MACHINE 전용 버전 만들기
+
+[2026-03-10] BLACK_CPU 버전 개발 계획 수립 (PLAN.md 참조)
+ - machineType = PATTERN_MACHINE 고정 (타입 선택 메뉴 제거)
+ - 초성 CPU UART 3.3~5V H/L 신호 카운트 제거 예정 (PatternCountLoop 로직)
+ - SEWING_MACHINE (TrimPin ISR) 카운터 입력 제거 예정
+ - 전류센서(ADC_SAR_Seq) 카운터 입력 제거 예정
+ - uartJson.c/.h 유지 → BLACK CPU 보드 전용 카운터 입력 방식으로 재활용 예정
+ - 실제 코드 수정은 2026-03-13 예정
+
+[2026-03-17] BLACK_CPU V1 코드 수정 완료 (PLAN.md 기반)
+ - PROJECT_FIRMWARE_VERSION → "BLACK_CPU V1" 변경
+ - main.c : currentSensorRoutine() 전방선언/호출 제거, g_bStartTrimPin TrimPin 블록(makeAndonSewingCount2 포함) 제거
+ - count.c : Trim_Interrupt_Routine ISR 제거, SewingCountLoop() 제거
+             g_updateTrimCount, g_Count, g_bStartTrimPin, g_bTrimElapsedTime 변수 제거
+             CountFunc = &PatternCountLoop 고정, SetCountLoop() 단순화
+ - count.h : g_bStartTrimPin, g_bTrimElapsedTime extern 선언 제거
+ - userProjectPatternSewing.h : SEWING_MACHINE enum 제거 (PATTERN_MACHINE 단일 고정)
+   ※ MACHINE_PARAMETER 구조체 필드(sewing*/current_*)는 external flash 호환성 유지 목적으로 보존
+ - userProjectPatternSewing.c : SEWING_MACHINE 분기 제거, machineType 강제 PATTERN_MACHINE 고정 처리
+ - userMenuPatternSewingMachine.c : #include "currentSensor.h" 제거
+                                    활성 SEWING_MACHINE 분기 코드 제거 (DisplayDoTopMenu, TopMenuPageUpdateValue,
+                                    doPairsInfoMenu, doActualInfoMenu, getTarget/setTarget/getActual/setActual)
+ - andonApi.c : makeAndonSewingCount2(), makeAndonSewingCount(), updateRuntimeSum() 제거
+ - andonApi.h : makeAndonSewingCount2, makeAndonSewingCount 선언 제거
+ - currentSensor.c : ADC_SAR_Seq 참조 제거 → stub 파일로 교체 (ADC 없이 컴파일 가능)
+   ※ COUNT 구조체 sewing* 필드는 internal flash 호환성 유지 목적으로 보존
+   ※ PSoC Creator TopDesign에서 ADC_SAR_Seq 컴포넌트 수동 제거 및 currentSensor.c 프로젝트 제거 필요

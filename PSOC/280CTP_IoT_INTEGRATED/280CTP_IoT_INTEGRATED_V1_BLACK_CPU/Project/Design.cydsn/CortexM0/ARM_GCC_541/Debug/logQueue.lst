@@ -1,0 +1,2193 @@
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"logQueue.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.global	__aeabi_idivmod
+  20              		.section	.text.isFullQueueLog,"ax",%progbits
+  21              		.align	2
+  22              		.global	isFullQueueLog
+  23              		.code	16
+  24              		.thumb_func
+  25              		.type	isFullQueueLog, %function
+  26              	isFullQueueLog:
+  27              	.LFB61:
+  28              		.file 1 "logQueue.c"
+   1:logQueue.c    **** /* ========================================
+   2:logQueue.c    ****  *
+   3:logQueue.c    ****  * Copyright YOUR COMPANY, THE YEAR
+   4:logQueue.c    ****  * All Rights Reserved
+   5:logQueue.c    ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:logQueue.c    ****  *
+   7:logQueue.c    ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:logQueue.c    ****  * WHICH IS THE PROPERTY OF your company.
+   9:logQueue.c    ****  *
+  10:logQueue.c    ****  * ========================================
+  11:logQueue.c    **** */
+  12:logQueue.c    **** #include "logQueue.h"
+  13:logQueue.c    **** 
+  14:logQueue.c    **** short g_uSizeQueueLog=0;
+  15:logQueue.c    **** short g_uFrontQueueLog=0;
+  16:logQueue.c    **** short g_uRearQueueLog=0;
+  17:logQueue.c    **** char  g_cLogQueue[MAX_LOG_QUEUE][50];
+  18:logQueue.c    **** 
+  19:logQueue.c    **** uint8 g_bLogQueuUpdated = FALSE;
+  20:logQueue.c    **** 
+  21:logQueue.c    **** int isFullQueueLog(void)
+  22:logQueue.c    **** {
+  29              		.loc 1 22 0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 2
+
+
+  36              		.cfi_offset 14, -4
+  23:logQueue.c    ****     if( (g_uRearQueueLog + 1) % MAX_LOG_QUEUE == g_uFrontQueueLog)
+  37              		.loc 1 23 0
+  38 0002 074C     		ldr	r4, .L4
+  39 0004 0023     		movs	r3, #0
+  40 0006 E05E     		ldrsh	r0, [r4, r3]
+  41 0008 0130     		adds	r0, r0, #1
+  42 000a 0A21     		movs	r1, #10
+  43 000c FFF7FEFF 		bl	__aeabi_idivmod
+  44              	.LVL0:
+  45 0010 0222     		movs	r2, #2
+  46 0012 A35E     		ldrsh	r3, [r4, r2]
+  47 0014 9942     		cmp	r1, r3
+  48 0016 01D1     		bne	.L3
+  24:logQueue.c    ****         return 1;
+  49              		.loc 1 24 0
+  50 0018 0120     		movs	r0, #1
+  51 001a 00E0     		b	.L2
+  52              	.L3:
+  25:logQueue.c    ****     else
+  26:logQueue.c    ****         return 0;
+  53              		.loc 1 26 0
+  54 001c 0020     		movs	r0, #0
+  55              	.L2:
+  27:logQueue.c    **** }
+  56              		.loc 1 27 0
+  57              		@ sp needed
+  58 001e 10BD     		pop	{r4, pc}
+  59              	.L5:
+  60              		.align	2
+  61              	.L4:
+  62 0020 00000000 		.word	.LANCHOR0
+  63              		.cfi_endproc
+  64              	.LFE61:
+  65              		.size	isFullQueueLog, .-isFullQueueLog
+  66              		.section	.text.isEmptyQueueLog,"ax",%progbits
+  67              		.align	2
+  68              		.global	isEmptyQueueLog
+  69              		.code	16
+  70              		.thumb_func
+  71              		.type	isEmptyQueueLog, %function
+  72              	isEmptyQueueLog:
+  73              	.LFB62:
+  28:logQueue.c    **** 
+  29:logQueue.c    **** int isEmptyQueueLog(void)
+  30:logQueue.c    **** {
+  74              		.loc 1 30 0
+  75              		.cfi_startproc
+  76              		@ args = 0, pretend = 0, frame = 0
+  77              		@ frame_needed = 0, uses_anonymous_args = 0
+  78              		@ link register save eliminated.
+  31:logQueue.c    ****     if(g_uFrontQueueLog==g_uRearQueueLog)
+  79              		.loc 1 31 0
+  80 0000 054B     		ldr	r3, .L9
+  81 0002 0221     		movs	r1, #2
+  82 0004 5A5E     		ldrsh	r2, [r3, r1]
+  83 0006 0021     		movs	r1, #0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 3
+
+
+  84 0008 5B5E     		ldrsh	r3, [r3, r1]
+  85 000a 9A42     		cmp	r2, r3
+  86 000c 01D1     		bne	.L8
+  32:logQueue.c    ****             return 1;
+  87              		.loc 1 32 0
+  88 000e 0120     		movs	r0, #1
+  89 0010 00E0     		b	.L7
+  90              	.L8:
+  33:logQueue.c    ****     else
+  34:logQueue.c    ****             return 0;
+  91              		.loc 1 34 0
+  92 0012 0020     		movs	r0, #0
+  93              	.L7:
+  35:logQueue.c    **** }
+  94              		.loc 1 35 0
+  95              		@ sp needed
+  96 0014 7047     		bx	lr
+  97              	.L10:
+  98 0016 C046     		.align	2
+  99              	.L9:
+ 100 0018 00000000 		.word	.LANCHOR0
+ 101              		.cfi_endproc
+ 102              	.LFE62:
+ 103              		.size	isEmptyQueueLog, .-isEmptyQueueLog
+ 104              		.section	.text.changeLogQueue,"ax",%progbits
+ 105              		.align	2
+ 106              		.global	changeLogQueue
+ 107              		.code	16
+ 108              		.thumb_func
+ 109              		.type	changeLogQueue, %function
+ 110              	changeLogQueue:
+ 111              	.LFB66:
+  36:logQueue.c    **** 
+  37:logQueue.c    **** uint8 enQueueLog(char *str)
+  38:logQueue.c    **** {
+  39:logQueue.c    ****     if(isFullQueueLog()) deQueueLog();
+  40:logQueue.c    ****     
+  41:logQueue.c    ****     g_uSizeQueueLog++;
+  42:logQueue.c    ****     g_uRearQueueLog = (g_uRearQueueLog + 1) % MAX_LOG_QUEUE;
+  43:logQueue.c    ****     strcpy(g_cLogQueue[g_uRearQueueLog], str);
+  44:logQueue.c    ****     
+  45:logQueue.c    ****     g_bLogQueuUpdated = TRUE;
+  46:logQueue.c    ****     return TRUE;
+  47:logQueue.c    **** }
+  48:logQueue.c    **** 
+  49:logQueue.c    **** uint8 enQueueLog_printf(const char *fmt, ...)
+  50:logQueue.c    **** {
+  51:logQueue.c    ****     if(isFullQueueLog()) deQueueLog();
+  52:logQueue.c    ****     
+  53:logQueue.c    ****     g_uSizeQueueLog++;
+  54:logQueue.c    ****     g_uRearQueueLog = (g_uRearQueueLog + 1) % MAX_LOG_QUEUE;
+  55:logQueue.c    ****        
+  56:logQueue.c    ****     va_list ap;   
+  57:logQueue.c    ****     va_start(ap, fmt);
+  58:logQueue.c    **** 
+  59:logQueue.c    ****     vsprintf(g_cLogQueue[g_uRearQueueLog], fmt, ap);
+  60:logQueue.c    ****     va_end(ap);
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 4
+
+
+  61:logQueue.c    ****     
+  62:logQueue.c    ****     g_bLogQueuUpdated = TRUE;
+  63:logQueue.c    ****     return TRUE;    
+  64:logQueue.c    **** }
+  65:logQueue.c    **** 
+  66:logQueue.c    **** // 마지막에 있는 문자열을 찾아 그곳에 새로운 문자열을 추가한다.
+  67:logQueue.c    **** void lastAppendLogQueue(char *str)
+  68:logQueue.c    **** {
+  69:logQueue.c    ****     char msg[50];
+  70:logQueue.c    ****     strcpy(msg,getRearQueueLog());
+  71:logQueue.c    ****     strcat(msg,str);
+  72:logQueue.c    ****     strcpy(getRearQueueLog(),msg);
+  73:logQueue.c    ****     g_bLogQueuUpdated = TRUE;    
+  74:logQueue.c    **** }
+  75:logQueue.c    **** 
+  76:logQueue.c    **** 
+  77:logQueue.c    **** void changeLogQueue(const char *fmt, ...)
+  78:logQueue.c    **** {
+ 112              		.loc 1 78 0
+ 113              		.cfi_startproc
+ 114              		@ args = 4, pretend = 16, frame = 8
+ 115              		@ frame_needed = 0, uses_anonymous_args = 1
+ 116              	.LVL1:
+ 117 0000 0FB4     		push	{r0, r1, r2, r3}
+ 118              		.cfi_def_cfa_offset 16
+ 119 0002 00B5     		push	{lr}
+ 120              		.cfi_def_cfa_offset 20
+ 121              		.cfi_offset 14, -20
+ 122 0004 83B0     		sub	sp, sp, #12
+ 123              		.cfi_def_cfa_offset 32
+ 124 0006 04AA     		add	r2, sp, #16
+ 125 0008 02CA     		ldmia	r2!, {r1}
+  79:logQueue.c    ****     va_list ap;   
+  80:logQueue.c    ****     va_start(ap, fmt);
+ 126              		.loc 1 80 0
+ 127 000a 0192     		str	r2, [sp, #4]
+  81:logQueue.c    **** 
+  82:logQueue.c    ****     vsprintf(g_cLogQueue[g_uRearQueueLog], fmt, ap);
+ 128              		.loc 1 82 0
+ 129 000c 064B     		ldr	r3, .L12
+ 130 000e 0020     		movs	r0, #0
+ 131 0010 185E     		ldrsh	r0, [r3, r0]
+ 132 0012 3223     		movs	r3, #50
+ 133 0014 5843     		muls	r0, r3
+ 134 0016 054B     		ldr	r3, .L12+4
+ 135 0018 C018     		adds	r0, r0, r3
+ 136 001a FFF7FEFF 		bl	vsprintf
+ 137              	.LVL2:
+  83:logQueue.c    ****     va_end(ap);  
+  84:logQueue.c    **** }
+ 138              		.loc 1 84 0
+ 139 001e 03B0     		add	sp, sp, #12
+ 140              		@ sp needed
+ 141 0020 08BC     		pop	{r3}
+ 142 0022 04B0     		add	sp, sp, #16
+ 143 0024 1847     		bx	r3
+ 144              	.L13:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 5
+
+
+ 145 0026 C046     		.align	2
+ 146              	.L12:
+ 147 0028 00000000 		.word	.LANCHOR0
+ 148 002c 00000000 		.word	g_cLogQueue
+ 149              		.cfi_endproc
+ 150              	.LFE66:
+ 151              		.size	changeLogQueue, .-changeLogQueue
+ 152              		.section	.text.deQueueLog,"ax",%progbits
+ 153              		.align	2
+ 154              		.global	deQueueLog
+ 155              		.code	16
+ 156              		.thumb_func
+ 157              		.type	deQueueLog, %function
+ 158              	deQueueLog:
+ 159              	.LFB67:
+  85:logQueue.c    **** 
+  86:logQueue.c    **** char *deQueueLog(void)
+  87:logQueue.c    **** {
+ 160              		.loc 1 87 0
+ 161              		.cfi_startproc
+ 162              		@ args = 0, pretend = 0, frame = 0
+ 163              		@ frame_needed = 0, uses_anonymous_args = 0
+ 164 0000 10B5     		push	{r4, lr}
+ 165              		.cfi_def_cfa_offset 8
+ 166              		.cfi_offset 4, -8
+ 167              		.cfi_offset 14, -4
+  88:logQueue.c    ****     g_uSizeQueueLog--;
+ 168              		.loc 1 88 0
+ 169 0002 084C     		ldr	r4, .L15
+ 170 0004 A388     		ldrh	r3, [r4, #4]
+ 171 0006 013B     		subs	r3, r3, #1
+ 172 0008 A380     		strh	r3, [r4, #4]
+  89:logQueue.c    ****     g_uFrontQueueLog = (g_uFrontQueueLog + 1) % MAX_LOG_QUEUE;
+ 173              		.loc 1 89 0
+ 174 000a 0223     		movs	r3, #2
+ 175 000c E05E     		ldrsh	r0, [r4, r3]
+ 176 000e 0130     		adds	r0, r0, #1
+ 177 0010 0A21     		movs	r1, #10
+ 178 0012 FFF7FEFF 		bl	__aeabi_idivmod
+ 179              	.LVL3:
+ 180 0016 09B2     		sxth	r1, r1
+ 181 0018 6180     		strh	r1, [r4, #2]
+  90:logQueue.c    ****     
+  91:logQueue.c    ****     return g_cLogQueue[g_uFrontQueueLog];
+ 182              		.loc 1 91 0
+ 183 001a 3220     		movs	r0, #50
+ 184 001c 4143     		muls	r1, r0
+ 185 001e 024B     		ldr	r3, .L15+4
+ 186 0020 C818     		adds	r0, r1, r3
+  92:logQueue.c    **** }
+ 187              		.loc 1 92 0
+ 188              		@ sp needed
+ 189 0022 10BD     		pop	{r4, pc}
+ 190              	.L16:
+ 191              		.align	2
+ 192              	.L15:
+ 193 0024 00000000 		.word	.LANCHOR0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 6
+
+
+ 194 0028 00000000 		.word	g_cLogQueue
+ 195              		.cfi_endproc
+ 196              	.LFE67:
+ 197              		.size	deQueueLog, .-deQueueLog
+ 198              		.section	.text.enQueueLog,"ax",%progbits
+ 199              		.align	2
+ 200              		.global	enQueueLog
+ 201              		.code	16
+ 202              		.thumb_func
+ 203              		.type	enQueueLog, %function
+ 204              	enQueueLog:
+ 205              	.LFB63:
+  38:logQueue.c    ****     if(isFullQueueLog()) deQueueLog();
+ 206              		.loc 1 38 0
+ 207              		.cfi_startproc
+ 208              		@ args = 0, pretend = 0, frame = 0
+ 209              		@ frame_needed = 0, uses_anonymous_args = 0
+ 210              	.LVL4:
+ 211 0000 70B5     		push	{r4, r5, r6, lr}
+ 212              		.cfi_def_cfa_offset 16
+ 213              		.cfi_offset 4, -16
+ 214              		.cfi_offset 5, -12
+ 215              		.cfi_offset 6, -8
+ 216              		.cfi_offset 14, -4
+ 217 0002 0500     		movs	r5, r0
+  39:logQueue.c    ****     
+ 218              		.loc 1 39 0
+ 219 0004 FFF7FEFF 		bl	isFullQueueLog
+ 220              	.LVL5:
+ 221 0008 0028     		cmp	r0, #0
+ 222 000a 01D0     		beq	.L18
+  39:logQueue.c    ****     
+ 223              		.loc 1 39 0 is_stmt 0 discriminator 1
+ 224 000c FFF7FEFF 		bl	deQueueLog
+ 225              	.LVL6:
+ 226              	.L18:
+  41:logQueue.c    ****     g_uRearQueueLog = (g_uRearQueueLog + 1) % MAX_LOG_QUEUE;
+ 227              		.loc 1 41 0 is_stmt 1
+ 228 0010 0B4C     		ldr	r4, .L19
+ 229 0012 A388     		ldrh	r3, [r4, #4]
+ 230 0014 0133     		adds	r3, r3, #1
+ 231 0016 A380     		strh	r3, [r4, #4]
+  42:logQueue.c    ****     strcpy(g_cLogQueue[g_uRearQueueLog], str);
+ 232              		.loc 1 42 0
+ 233 0018 0023     		movs	r3, #0
+ 234 001a E05E     		ldrsh	r0, [r4, r3]
+ 235 001c 0130     		adds	r0, r0, #1
+ 236 001e 0A21     		movs	r1, #10
+ 237 0020 FFF7FEFF 		bl	__aeabi_idivmod
+ 238              	.LVL7:
+ 239 0024 09B2     		sxth	r1, r1
+ 240 0026 2180     		strh	r1, [r4]
+  43:logQueue.c    ****     
+ 241              		.loc 1 43 0
+ 242 0028 3220     		movs	r0, #50
+ 243 002a 4143     		muls	r1, r0
+ 244 002c 054B     		ldr	r3, .L19+4
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 7
+
+
+ 245 002e C818     		adds	r0, r1, r3
+ 246 0030 2900     		movs	r1, r5
+ 247 0032 FFF7FEFF 		bl	strcpy
+ 248              	.LVL8:
+  45:logQueue.c    ****     return TRUE;
+ 249              		.loc 1 45 0
+ 250 0036 0123     		movs	r3, #1
+ 251 0038 A371     		strb	r3, [r4, #6]
+  47:logQueue.c    **** 
+ 252              		.loc 1 47 0
+ 253 003a 0120     		movs	r0, #1
+ 254              		@ sp needed
+ 255              	.LVL9:
+ 256 003c 70BD     		pop	{r4, r5, r6, pc}
+ 257              	.L20:
+ 258 003e C046     		.align	2
+ 259              	.L19:
+ 260 0040 00000000 		.word	.LANCHOR0
+ 261 0044 00000000 		.word	g_cLogQueue
+ 262              		.cfi_endproc
+ 263              	.LFE63:
+ 264              		.size	enQueueLog, .-enQueueLog
+ 265              		.section	.text.enQueueLog_printf,"ax",%progbits
+ 266              		.align	2
+ 267              		.global	enQueueLog_printf
+ 268              		.code	16
+ 269              		.thumb_func
+ 270              		.type	enQueueLog_printf, %function
+ 271              	enQueueLog_printf:
+ 272              	.LFB64:
+  50:logQueue.c    ****     if(isFullQueueLog()) deQueueLog();
+ 273              		.loc 1 50 0
+ 274              		.cfi_startproc
+ 275              		@ args = 4, pretend = 16, frame = 8
+ 276              		@ frame_needed = 0, uses_anonymous_args = 1
+ 277              	.LVL10:
+ 278 0000 0FB4     		push	{r0, r1, r2, r3}
+ 279              		.cfi_def_cfa_offset 16
+ 280 0002 10B5     		push	{r4, lr}
+ 281              		.cfi_def_cfa_offset 24
+ 282              		.cfi_offset 4, -24
+ 283              		.cfi_offset 14, -20
+ 284 0004 82B0     		sub	sp, sp, #8
+ 285              		.cfi_def_cfa_offset 32
+  51:logQueue.c    ****     
+ 286              		.loc 1 51 0
+ 287 0006 FFF7FEFF 		bl	isFullQueueLog
+ 288              	.LVL11:
+ 289 000a 0028     		cmp	r0, #0
+ 290 000c 01D0     		beq	.L22
+  51:logQueue.c    ****     
+ 291              		.loc 1 51 0 is_stmt 0 discriminator 1
+ 292 000e FFF7FEFF 		bl	deQueueLog
+ 293              	.LVL12:
+ 294              	.L22:
+  53:logQueue.c    ****     g_uRearQueueLog = (g_uRearQueueLog + 1) % MAX_LOG_QUEUE;
+ 295              		.loc 1 53 0 is_stmt 1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 8
+
+
+ 296 0012 0E4C     		ldr	r4, .L23
+ 297 0014 A388     		ldrh	r3, [r4, #4]
+ 298 0016 0133     		adds	r3, r3, #1
+ 299 0018 A380     		strh	r3, [r4, #4]
+  54:logQueue.c    ****        
+ 300              		.loc 1 54 0
+ 301 001a 0023     		movs	r3, #0
+ 302 001c E05E     		ldrsh	r0, [r4, r3]
+ 303 001e 0130     		adds	r0, r0, #1
+ 304 0020 0A21     		movs	r1, #10
+ 305 0022 FFF7FEFF 		bl	__aeabi_idivmod
+ 306              	.LVL13:
+ 307 0026 2180     		strh	r1, [r4]
+  57:logQueue.c    **** 
+ 308              		.loc 1 57 0
+ 309 0028 05AA     		add	r2, sp, #20
+ 310 002a 0192     		str	r2, [sp, #4]
+  59:logQueue.c    ****     va_end(ap);
+ 311              		.loc 1 59 0
+ 312 002c 09B2     		sxth	r1, r1
+ 313 002e 3220     		movs	r0, #50
+ 314 0030 4143     		muls	r1, r0
+ 315 0032 074B     		ldr	r3, .L23+4
+ 316 0034 C818     		adds	r0, r1, r3
+ 317 0036 0499     		ldr	r1, [sp, #16]
+ 318 0038 FFF7FEFF 		bl	vsprintf
+ 319              	.LVL14:
+  62:logQueue.c    ****     return TRUE;    
+ 320              		.loc 1 62 0
+ 321 003c 0123     		movs	r3, #1
+ 322 003e A371     		strb	r3, [r4, #6]
+  64:logQueue.c    **** 
+ 323              		.loc 1 64 0
+ 324 0040 0120     		movs	r0, #1
+ 325 0042 02B0     		add	sp, sp, #8
+ 326              		@ sp needed
+ 327 0044 10BC     		pop	{r4}
+ 328 0046 08BC     		pop	{r3}
+ 329 0048 04B0     		add	sp, sp, #16
+ 330 004a 1847     		bx	r3
+ 331              	.L24:
+ 332              		.align	2
+ 333              	.L23:
+ 334 004c 00000000 		.word	.LANCHOR0
+ 335 0050 00000000 		.word	g_cLogQueue
+ 336              		.cfi_endproc
+ 337              	.LFE64:
+ 338              		.size	enQueueLog_printf, .-enQueueLog_printf
+ 339              		.section	.text.getFrontQueueLog,"ax",%progbits
+ 340              		.align	2
+ 341              		.global	getFrontQueueLog
+ 342              		.code	16
+ 343              		.thumb_func
+ 344              		.type	getFrontQueueLog, %function
+ 345              	getFrontQueueLog:
+ 346              	.LFB68:
+  93:logQueue.c    **** 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 9
+
+
+  94:logQueue.c    **** char *getFrontQueueLog(void)
+  95:logQueue.c    **** {
+ 347              		.loc 1 95 0
+ 348              		.cfi_startproc
+ 349              		@ args = 0, pretend = 0, frame = 0
+ 350              		@ frame_needed = 0, uses_anonymous_args = 0
+ 351 0000 10B5     		push	{r4, lr}
+ 352              		.cfi_def_cfa_offset 8
+ 353              		.cfi_offset 4, -8
+ 354              		.cfi_offset 14, -4
+  96:logQueue.c    ****    return g_cLogQueue[(g_uFrontQueueLog + 1 ) % MAX_LOG_QUEUE ];
+ 355              		.loc 1 96 0
+ 356 0002 064B     		ldr	r3, .L26
+ 357 0004 0220     		movs	r0, #2
+ 358 0006 185E     		ldrsh	r0, [r3, r0]
+ 359 0008 0130     		adds	r0, r0, #1
+ 360 000a 0A21     		movs	r1, #10
+ 361 000c FFF7FEFF 		bl	__aeabi_idivmod
+ 362              	.LVL15:
+ 363 0010 3223     		movs	r3, #50
+ 364 0012 4B43     		muls	r3, r1
+ 365 0014 1800     		movs	r0, r3
+ 366 0016 024B     		ldr	r3, .L26+4
+ 367 0018 C018     		adds	r0, r0, r3
+  97:logQueue.c    **** }
+ 368              		.loc 1 97 0
+ 369              		@ sp needed
+ 370 001a 10BD     		pop	{r4, pc}
+ 371              	.L27:
+ 372              		.align	2
+ 373              	.L26:
+ 374 001c 00000000 		.word	.LANCHOR0
+ 375 0020 00000000 		.word	g_cLogQueue
+ 376              		.cfi_endproc
+ 377              	.LFE68:
+ 378              		.size	getFrontQueueLog, .-getFrontQueueLog
+ 379              		.section	.text.getFrontNextQueueLog,"ax",%progbits
+ 380              		.align	2
+ 381              		.global	getFrontNextQueueLog
+ 382              		.code	16
+ 383              		.thumb_func
+ 384              		.type	getFrontNextQueueLog, %function
+ 385              	getFrontNextQueueLog:
+ 386              	.LFB69:
+  98:logQueue.c    **** 
+  99:logQueue.c    **** char *getFrontNextQueueLog(int i)
+ 100:logQueue.c    **** {
+ 387              		.loc 1 100 0
+ 388              		.cfi_startproc
+ 389              		@ args = 0, pretend = 0, frame = 0
+ 390              		@ frame_needed = 0, uses_anonymous_args = 0
+ 391              	.LVL16:
+ 392 0000 10B5     		push	{r4, lr}
+ 393              		.cfi_def_cfa_offset 8
+ 394              		.cfi_offset 4, -8
+ 395              		.cfi_offset 14, -4
+ 101:logQueue.c    ****    return g_cLogQueue[(g_uFrontQueueLog + 1 + i) % MAX_LOG_QUEUE];
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 10
+
+
+ 396              		.loc 1 101 0
+ 397 0002 074B     		ldr	r3, .L29
+ 398 0004 0222     		movs	r2, #2
+ 399 0006 9B5E     		ldrsh	r3, [r3, r2]
+ 400 0008 0133     		adds	r3, r3, #1
+ 401 000a 1818     		adds	r0, r3, r0
+ 402              	.LVL17:
+ 403 000c 0A21     		movs	r1, #10
+ 404 000e FFF7FEFF 		bl	__aeabi_idivmod
+ 405              	.LVL18:
+ 406 0012 3223     		movs	r3, #50
+ 407 0014 4B43     		muls	r3, r1
+ 408 0016 1800     		movs	r0, r3
+ 409 0018 024B     		ldr	r3, .L29+4
+ 410 001a C018     		adds	r0, r0, r3
+ 102:logQueue.c    **** }
+ 411              		.loc 1 102 0
+ 412              		@ sp needed
+ 413 001c 10BD     		pop	{r4, pc}
+ 414              	.L30:
+ 415 001e C046     		.align	2
+ 416              	.L29:
+ 417 0020 00000000 		.word	.LANCHOR0
+ 418 0024 00000000 		.word	g_cLogQueue
+ 419              		.cfi_endproc
+ 420              	.LFE69:
+ 421              		.size	getFrontNextQueueLog, .-getFrontNextQueueLog
+ 422              		.section	.text.getRearQueueLog,"ax",%progbits
+ 423              		.align	2
+ 424              		.global	getRearQueueLog
+ 425              		.code	16
+ 426              		.thumb_func
+ 427              		.type	getRearQueueLog, %function
+ 428              	getRearQueueLog:
+ 429              	.LFB70:
+ 103:logQueue.c    **** 
+ 104:logQueue.c    **** char *getRearQueueLog(void)
+ 105:logQueue.c    **** {
+ 430              		.loc 1 105 0
+ 431              		.cfi_startproc
+ 432              		@ args = 0, pretend = 0, frame = 0
+ 433              		@ frame_needed = 0, uses_anonymous_args = 0
+ 434 0000 10B5     		push	{r4, lr}
+ 435              		.cfi_def_cfa_offset 8
+ 436              		.cfi_offset 4, -8
+ 437              		.cfi_offset 14, -4
+ 106:logQueue.c    ****    return g_cLogQueue[ g_uRearQueueLog % MAX_LOG_QUEUE];
+ 438              		.loc 1 106 0
+ 439 0002 064B     		ldr	r3, .L32
+ 440 0004 0020     		movs	r0, #0
+ 441 0006 185E     		ldrsh	r0, [r3, r0]
+ 442 0008 0A21     		movs	r1, #10
+ 443 000a FFF7FEFF 		bl	__aeabi_idivmod
+ 444              	.LVL19:
+ 445 000e 08B2     		sxth	r0, r1
+ 446 0010 3223     		movs	r3, #50
+ 447 0012 5843     		muls	r0, r3
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 11
+
+
+ 448 0014 024B     		ldr	r3, .L32+4
+ 449 0016 C018     		adds	r0, r0, r3
+ 107:logQueue.c    **** }
+ 450              		.loc 1 107 0
+ 451              		@ sp needed
+ 452 0018 10BD     		pop	{r4, pc}
+ 453              	.L33:
+ 454 001a C046     		.align	2
+ 455              	.L32:
+ 456 001c 00000000 		.word	.LANCHOR0
+ 457 0020 00000000 		.word	g_cLogQueue
+ 458              		.cfi_endproc
+ 459              	.LFE70:
+ 460              		.size	getRearQueueLog, .-getRearQueueLog
+ 461              		.section	.text.lastAppendLogQueue,"ax",%progbits
+ 462              		.align	2
+ 463              		.global	lastAppendLogQueue
+ 464              		.code	16
+ 465              		.thumb_func
+ 466              		.type	lastAppendLogQueue, %function
+ 467              	lastAppendLogQueue:
+ 468              	.LFB65:
+  68:logQueue.c    ****     char msg[50];
+ 469              		.loc 1 68 0
+ 470              		.cfi_startproc
+ 471              		@ args = 0, pretend = 0, frame = 56
+ 472              		@ frame_needed = 0, uses_anonymous_args = 0
+ 473              	.LVL20:
+ 474 0000 10B5     		push	{r4, lr}
+ 475              		.cfi_def_cfa_offset 8
+ 476              		.cfi_offset 4, -8
+ 477              		.cfi_offset 14, -4
+ 478 0002 8EB0     		sub	sp, sp, #56
+ 479              		.cfi_def_cfa_offset 64
+ 480 0004 0400     		movs	r4, r0
+  70:logQueue.c    ****     strcat(msg,str);
+ 481              		.loc 1 70 0
+ 482 0006 FFF7FEFF 		bl	getRearQueueLog
+ 483              	.LVL21:
+ 484 000a 0100     		movs	r1, r0
+ 485 000c 01A8     		add	r0, sp, #4
+ 486 000e FFF7FEFF 		bl	strcpy
+ 487              	.LVL22:
+  71:logQueue.c    ****     strcpy(getRearQueueLog(),msg);
+ 488              		.loc 1 71 0
+ 489 0012 2100     		movs	r1, r4
+ 490 0014 01A8     		add	r0, sp, #4
+ 491 0016 FFF7FEFF 		bl	strcat
+ 492              	.LVL23:
+  72:logQueue.c    ****     g_bLogQueuUpdated = TRUE;    
+ 493              		.loc 1 72 0
+ 494 001a FFF7FEFF 		bl	getRearQueueLog
+ 495              	.LVL24:
+ 496 001e 01A9     		add	r1, sp, #4
+ 497 0020 FFF7FEFF 		bl	strcpy
+ 498              	.LVL25:
+  73:logQueue.c    **** }
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 12
+
+
+ 499              		.loc 1 73 0
+ 500 0024 0122     		movs	r2, #1
+ 501 0026 024B     		ldr	r3, .L35
+ 502 0028 9A71     		strb	r2, [r3, #6]
+  74:logQueue.c    **** 
+ 503              		.loc 1 74 0
+ 504 002a 0EB0     		add	sp, sp, #56
+ 505              		@ sp needed
+ 506              	.LVL26:
+ 507 002c 10BD     		pop	{r4, pc}
+ 508              	.L36:
+ 509 002e C046     		.align	2
+ 510              	.L35:
+ 511 0030 00000000 		.word	.LANCHOR0
+ 512              		.cfi_endproc
+ 513              	.LFE65:
+ 514              		.size	lastAppendLogQueue, .-lastAppendLogQueue
+ 515              		.section	.text.getSizeQueueLog,"ax",%progbits
+ 516              		.align	2
+ 517              		.global	getSizeQueueLog
+ 518              		.code	16
+ 519              		.thumb_func
+ 520              		.type	getSizeQueueLog, %function
+ 521              	getSizeQueueLog:
+ 522              	.LFB71:
+ 108:logQueue.c    **** 
+ 109:logQueue.c    **** short getSizeQueueLog(void)
+ 110:logQueue.c    **** {
+ 523              		.loc 1 110 0
+ 524              		.cfi_startproc
+ 525              		@ args = 0, pretend = 0, frame = 0
+ 526              		@ frame_needed = 0, uses_anonymous_args = 0
+ 527              		@ link register save eliminated.
+ 111:logQueue.c    ****    return g_uSizeQueueLog;
+ 528              		.loc 1 111 0
+ 529 0000 014B     		ldr	r3, .L38
+ 530 0002 0420     		movs	r0, #4
+ 531 0004 185E     		ldrsh	r0, [r3, r0]
+ 112:logQueue.c    **** }
+ 532              		.loc 1 112 0
+ 533              		@ sp needed
+ 534 0006 7047     		bx	lr
+ 535              	.L39:
+ 536              		.align	2
+ 537              	.L38:
+ 538 0008 00000000 		.word	.LANCHOR0
+ 539              		.cfi_endproc
+ 540              	.LFE71:
+ 541              		.size	getSizeQueueLog, .-getSizeQueueLog
+ 542              		.section	.text.PrintInfoQueueLog,"ax",%progbits
+ 543              		.align	2
+ 544              		.global	PrintInfoQueueLog
+ 545              		.code	16
+ 546              		.thumb_func
+ 547              		.type	PrintInfoQueueLog, %function
+ 548              	PrintInfoQueueLog:
+ 549              	.LFB72:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 13
+
+
+ 113:logQueue.c    **** 
+ 114:logQueue.c    **** void PrintInfoQueueLog(void)
+ 115:logQueue.c    **** {
+ 550              		.loc 1 115 0
+ 551              		.cfi_startproc
+ 552              		@ args = 0, pretend = 0, frame = 0
+ 553              		@ frame_needed = 0, uses_anonymous_args = 0
+ 554 0000 10B5     		push	{r4, lr}
+ 555              		.cfi_def_cfa_offset 8
+ 556              		.cfi_offset 4, -8
+ 557              		.cfi_offset 14, -4
+ 558              	.LVL27:
+ 559              	.LBB2:
+ 116:logQueue.c    ****     for(int i=0; i < getSizeQueueLog(); i++)
+ 560              		.loc 1 116 0
+ 561 0002 0024     		movs	r4, #0
+ 562 0004 07E0     		b	.L41
+ 563              	.LVL28:
+ 564              	.L42:
+ 117:logQueue.c    ****        DEBUG_printf("%s\r\n",getFrontNextQueueLog(i));
+ 565              		.loc 1 117 0 discriminator 3
+ 566 0006 2000     		movs	r0, r4
+ 567 0008 FFF7FEFF 		bl	getFrontNextQueueLog
+ 568              	.LVL29:
+ 569 000c 0100     		movs	r1, r0
+ 570 000e 0448     		ldr	r0, .L43
+ 571 0010 FFF7FEFF 		bl	DEBUG_printf
+ 572              	.LVL30:
+ 116:logQueue.c    ****     for(int i=0; i < getSizeQueueLog(); i++)
+ 573              		.loc 1 116 0 discriminator 3
+ 574 0014 0134     		adds	r4, r4, #1
+ 575              	.LVL31:
+ 576              	.L41:
+ 116:logQueue.c    ****     for(int i=0; i < getSizeQueueLog(); i++)
+ 577              		.loc 1 116 0 is_stmt 0 discriminator 1
+ 578 0016 FFF7FEFF 		bl	getSizeQueueLog
+ 579              	.LVL32:
+ 580 001a 8442     		cmp	r4, r0
+ 581 001c F3DB     		blt	.L42
+ 582              	.LBE2:
+ 118:logQueue.c    **** 
+ 119:logQueue.c    **** }
+ 583              		.loc 1 119 0 is_stmt 1
+ 584              		@ sp needed
+ 585              	.LVL33:
+ 586 001e 10BD     		pop	{r4, pc}
+ 587              	.L44:
+ 588              		.align	2
+ 589              	.L43:
+ 590 0020 00000000 		.word	.LC18
+ 591              		.cfi_endproc
+ 592              	.LFE72:
+ 593              		.size	PrintInfoQueueLog, .-PrintInfoQueueLog
+ 594              		.global	g_bLogQueuUpdated
+ 595              		.comm	g_cLogQueue,500,4
+ 596              		.global	g_uRearQueueLog
+ 597              		.global	g_uFrontQueueLog
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 14
+
+
+ 598              		.global	g_uSizeQueueLog
+ 599              		.comm	Param,6,4
+ 600              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 601              		.align	2
+ 602              	.LC18:
+ 603 0000 25730D0A 		.ascii	"%s\015\012\000"
+ 603      00
+ 604              		.bss
+ 605              		.align	1
+ 606              		.set	.LANCHOR0,. + 0
+ 607              		.type	g_uRearQueueLog, %object
+ 608              		.size	g_uRearQueueLog, 2
+ 609              	g_uRearQueueLog:
+ 610 0000 0000     		.space	2
+ 611              		.type	g_uFrontQueueLog, %object
+ 612              		.size	g_uFrontQueueLog, 2
+ 613              	g_uFrontQueueLog:
+ 614 0002 0000     		.space	2
+ 615              		.type	g_uSizeQueueLog, %object
+ 616              		.size	g_uSizeQueueLog, 2
+ 617              	g_uSizeQueueLog:
+ 618 0004 0000     		.space	2
+ 619              		.type	g_bLogQueuUpdated, %object
+ 620              		.size	g_bLogQueuUpdated, 1
+ 621              	g_bLogQueuUpdated:
+ 622 0006 00       		.space	1
+ 623              		.text
+ 624              	.Letext0:
+ 625              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 626              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 627              		.file 4 "<built-in>"
+ 628              		.file 5 "main.h"
+ 629              		.file 6 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 630              		.file 7 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 631              		.file 8 "debug.h"
+ 632              		.section	.debug_info,"",%progbits
+ 633              	.Ldebug_info0:
+ 634 0000 48040000 		.4byte	0x448
+ 635 0004 0400     		.2byte	0x4
+ 636 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 637 000a 04       		.byte	0x4
+ 638 000b 01       		.uleb128 0x1
+ 639 000c 67000000 		.4byte	.LASF45
+ 640 0010 0C       		.byte	0xc
+ 641 0011 45020000 		.4byte	.LASF46
+ 642 0015 2A010000 		.4byte	.LASF47
+ 643 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 644 001d 00000000 		.4byte	0
+ 645 0021 00000000 		.4byte	.Ldebug_line0
+ 646 0025 02       		.uleb128 0x2
+ 647 0026 01       		.byte	0x1
+ 648 0027 06       		.byte	0x6
+ 649 0028 DB020000 		.4byte	.LASF0
+ 650 002c 02       		.uleb128 0x2
+ 651 002d 01       		.byte	0x1
+ 652 002e 08       		.byte	0x8
+ 653 002f A6010000 		.4byte	.LASF1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 15
+
+
+ 654 0033 02       		.uleb128 0x2
+ 655 0034 02       		.byte	0x2
+ 656 0035 05       		.byte	0x5
+ 657 0036 99020000 		.4byte	.LASF2
+ 658 003a 02       		.uleb128 0x2
+ 659 003b 02       		.byte	0x2
+ 660 003c 07       		.byte	0x7
+ 661 003d 84010000 		.4byte	.LASF3
+ 662 0041 02       		.uleb128 0x2
+ 663 0042 04       		.byte	0x4
+ 664 0043 05       		.byte	0x5
+ 665 0044 C6020000 		.4byte	.LASF4
+ 666 0048 02       		.uleb128 0x2
+ 667 0049 04       		.byte	0x4
+ 668 004a 07       		.byte	0x7
+ 669 004b 67010000 		.4byte	.LASF5
+ 670 004f 02       		.uleb128 0x2
+ 671 0050 08       		.byte	0x8
+ 672 0051 05       		.byte	0x5
+ 673 0052 75020000 		.4byte	.LASF6
+ 674 0056 02       		.uleb128 0x2
+ 675 0057 08       		.byte	0x8
+ 676 0058 07       		.byte	0x7
+ 677 0059 FE010000 		.4byte	.LASF7
+ 678 005d 03       		.uleb128 0x3
+ 679 005e 04       		.byte	0x4
+ 680 005f 05       		.byte	0x5
+ 681 0060 696E7400 		.ascii	"int\000"
+ 682 0064 02       		.uleb128 0x2
+ 683 0065 04       		.byte	0x4
+ 684 0066 07       		.byte	0x7
+ 685 0067 E6010000 		.4byte	.LASF8
+ 686 006b 04       		.uleb128 0x4
+ 687 006c A3020000 		.4byte	.LASF9
+ 688 0070 02       		.byte	0x2
+ 689 0071 FC01     		.2byte	0x1fc
+ 690 0073 2C000000 		.4byte	0x2c
+ 691 0077 04       		.uleb128 0x4
+ 692 0078 BA010000 		.4byte	.LASF10
+ 693 007c 02       		.byte	0x2
+ 694 007d FD01     		.2byte	0x1fd
+ 695 007f 3A000000 		.4byte	0x3a
+ 696 0083 02       		.uleb128 0x2
+ 697 0084 04       		.byte	0x4
+ 698 0085 04       		.byte	0x4
+ 699 0086 F5000000 		.4byte	.LASF11
+ 700 008a 02       		.uleb128 0x2
+ 701 008b 08       		.byte	0x8
+ 702 008c 04       		.byte	0x4
+ 703 008d E7020000 		.4byte	.LASF12
+ 704 0091 02       		.uleb128 0x2
+ 705 0092 01       		.byte	0x1
+ 706 0093 08       		.byte	0x8
+ 707 0094 83020000 		.4byte	.LASF13
+ 708 0098 02       		.uleb128 0x2
+ 709 0099 08       		.byte	0x8
+ 710 009a 04       		.byte	0x4
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 16
+
+
+ 711 009b CF020000 		.4byte	.LASF14
+ 712 009f 02       		.uleb128 0x2
+ 713 00a0 04       		.byte	0x4
+ 714 00a1 07       		.byte	0x7
+ 715 00a2 62020000 		.4byte	.LASF15
+ 716 00a6 05       		.uleb128 0x5
+ 717 00a7 04       		.byte	0x4
+ 718 00a8 06       		.uleb128 0x6
+ 719 00a9 04       		.byte	0x4
+ 720 00aa 91000000 		.4byte	0x91
+ 721 00ae 06       		.uleb128 0x6
+ 722 00af 04       		.byte	0x4
+ 723 00b0 B4000000 		.4byte	0xb4
+ 724 00b4 07       		.uleb128 0x7
+ 725 00b5 91000000 		.4byte	0x91
+ 726 00b9 08       		.uleb128 0x8
+ 727 00ba 0A010000 		.4byte	.LASF16
+ 728 00be 03       		.byte	0x3
+ 729 00bf 28       		.byte	0x28
+ 730 00c0 C4000000 		.4byte	0xc4
+ 731 00c4 09       		.uleb128 0x9
+ 732 00c5 6B020000 		.4byte	.LASF18
+ 733 00c9 04       		.byte	0x4
+ 734 00ca 04       		.byte	0x4
+ 735 00cb 00       		.byte	0
+ 736 00cc DB000000 		.4byte	0xdb
+ 737 00d0 0A       		.uleb128 0xa
+ 738 00d1 15020000 		.4byte	.LASF48
+ 739 00d5 A6000000 		.4byte	0xa6
+ 740 00d9 00       		.byte	0
+ 741 00da 00       		.byte	0
+ 742 00db 08       		.uleb128 0x8
+ 743 00dc 9E010000 		.4byte	.LASF17
+ 744 00e0 03       		.byte	0x3
+ 745 00e1 62       		.byte	0x62
+ 746 00e2 B9000000 		.4byte	0xb9
+ 747 00e6 09       		.uleb128 0x9
+ 748 00e7 79010000 		.4byte	.LASF19
+ 749 00eb 06       		.byte	0x6
+ 750 00ec 05       		.byte	0x5
+ 751 00ed 31       		.byte	0x31
+ 752 00ee 17010000 		.4byte	0x117
+ 753 00f2 0B       		.uleb128 0xb
+ 754 00f3 00000000 		.4byte	.LASF20
+ 755 00f7 05       		.byte	0x5
+ 756 00f8 33       		.byte	0x33
+ 757 00f9 6B000000 		.4byte	0x6b
+ 758 00fd 00       		.byte	0
+ 759 00fe 0B       		.uleb128 0xb
+ 760 00ff B4010000 		.4byte	.LASF21
+ 761 0103 05       		.byte	0x5
+ 762 0104 34       		.byte	0x34
+ 763 0105 77000000 		.4byte	0x77
+ 764 0109 02       		.byte	0x2
+ 765 010a 0B       		.uleb128 0xb
+ 766 010b 2A020000 		.4byte	.LASF22
+ 767 010f 05       		.byte	0x5
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 17
+
+
+ 768 0110 35       		.byte	0x35
+ 769 0111 77000000 		.4byte	0x77
+ 770 0115 04       		.byte	0x4
+ 771 0116 00       		.byte	0
+ 772 0117 0C       		.uleb128 0xc
+ 773 0118 FB000000 		.4byte	.LASF23
+ 774 011c 01       		.byte	0x1
+ 775 011d 15       		.byte	0x15
+ 776 011e 5D000000 		.4byte	0x5d
+ 777 0122 00000000 		.4byte	.LFB61
+ 778 0126 24000000 		.4byte	.LFE61-.LFB61
+ 779 012a 01       		.uleb128 0x1
+ 780 012b 9C       		.byte	0x9c
+ 781 012c 0D       		.uleb128 0xd
+ 782 012d C1010000 		.4byte	.LASF24
+ 783 0131 01       		.byte	0x1
+ 784 0132 1D       		.byte	0x1d
+ 785 0133 5D000000 		.4byte	0x5d
+ 786 0137 00000000 		.4byte	.LFB62
+ 787 013b 1C000000 		.4byte	.LFE62-.LFB62
+ 788 013f 01       		.uleb128 0x1
+ 789 0140 9C       		.byte	0x9c
+ 790 0141 0E       		.uleb128 0xe
+ 791 0142 D1010000 		.4byte	.LASF31
+ 792 0146 01       		.byte	0x1
+ 793 0147 4D       		.byte	0x4d
+ 794 0148 00000000 		.4byte	.LFB66
+ 795 014c 30000000 		.4byte	.LFE66-.LFB66
+ 796 0150 01       		.uleb128 0x1
+ 797 0151 9C       		.byte	0x9c
+ 798 0152 8A010000 		.4byte	0x18a
+ 799 0156 0F       		.uleb128 0xf
+ 800 0157 666D7400 		.ascii	"fmt\000"
+ 801 015b 01       		.byte	0x1
+ 802 015c 4D       		.byte	0x4d
+ 803 015d AE000000 		.4byte	0xae
+ 804 0161 02       		.uleb128 0x2
+ 805 0162 91       		.byte	0x91
+ 806 0163 70       		.sleb128 -16
+ 807 0164 10       		.uleb128 0x10
+ 808 0165 11       		.uleb128 0x11
+ 809 0166 617000   		.ascii	"ap\000"
+ 810 0169 01       		.byte	0x1
+ 811 016a 4F       		.byte	0x4f
+ 812 016b DB000000 		.4byte	0xdb
+ 813 016f 02       		.uleb128 0x2
+ 814 0170 91       		.byte	0x91
+ 815 0171 64       		.sleb128 -28
+ 816 0172 12       		.uleb128 0x12
+ 817 0173 1E000000 		.4byte	.LVL2
+ 818 0177 1F040000 		.4byte	0x41f
+ 819 017b 13       		.uleb128 0x13
+ 820 017c 01       		.uleb128 0x1
+ 821 017d 51       		.byte	0x51
+ 822 017e 03       		.uleb128 0x3
+ 823 017f 91       		.byte	0x91
+ 824 0180 50       		.sleb128 -48
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 18
+
+
+ 825 0181 06       		.byte	0x6
+ 826 0182 13       		.uleb128 0x13
+ 827 0183 01       		.uleb128 0x1
+ 828 0184 52       		.byte	0x52
+ 829 0185 02       		.uleb128 0x2
+ 830 0186 91       		.byte	0x91
+ 831 0187 54       		.sleb128 -44
+ 832 0188 00       		.byte	0
+ 833 0189 00       		.byte	0
+ 834 018a 0C       		.uleb128 0xc
+ 835 018b F3010000 		.4byte	.LASF25
+ 836 018f 01       		.byte	0x1
+ 837 0190 56       		.byte	0x56
+ 838 0191 A8000000 		.4byte	0xa8
+ 839 0195 00000000 		.4byte	.LFB67
+ 840 0199 2C000000 		.4byte	.LFE67-.LFB67
+ 841 019d 01       		.uleb128 0x1
+ 842 019e 9C       		.byte	0x9c
+ 843 019f 14       		.uleb128 0x14
+ 844 01a0 BB020000 		.4byte	.LASF26
+ 845 01a4 01       		.byte	0x1
+ 846 01a5 25       		.byte	0x25
+ 847 01a6 6B000000 		.4byte	0x6b
+ 848 01aa 00000000 		.4byte	.LFB63
+ 849 01ae 48000000 		.4byte	.LFE63-.LFB63
+ 850 01b2 01       		.uleb128 0x1
+ 851 01b3 9C       		.byte	0x9c
+ 852 01b4 EA010000 		.4byte	0x1ea
+ 853 01b8 15       		.uleb128 0x15
+ 854 01b9 73747200 		.ascii	"str\000"
+ 855 01bd 01       		.byte	0x1
+ 856 01be 25       		.byte	0x25
+ 857 01bf A8000000 		.4byte	0xa8
+ 858 01c3 00000000 		.4byte	.LLST0
+ 859 01c7 16       		.uleb128 0x16
+ 860 01c8 08000000 		.4byte	.LVL5
+ 861 01cc 17010000 		.4byte	0x117
+ 862 01d0 16       		.uleb128 0x16
+ 863 01d1 10000000 		.4byte	.LVL6
+ 864 01d5 8A010000 		.4byte	0x18a
+ 865 01d9 12       		.uleb128 0x12
+ 866 01da 36000000 		.4byte	.LVL8
+ 867 01de 2A040000 		.4byte	0x42a
+ 868 01e2 13       		.uleb128 0x13
+ 869 01e3 01       		.uleb128 0x1
+ 870 01e4 51       		.byte	0x51
+ 871 01e5 02       		.uleb128 0x2
+ 872 01e6 75       		.byte	0x75
+ 873 01e7 00       		.sleb128 0
+ 874 01e8 00       		.byte	0
+ 875 01e9 00       		.byte	0
+ 876 01ea 14       		.uleb128 0x14
+ 877 01eb 48000000 		.4byte	.LASF27
+ 878 01ef 01       		.byte	0x1
+ 879 01f0 31       		.byte	0x31
+ 880 01f1 6B000000 		.4byte	0x6b
+ 881 01f5 00000000 		.4byte	.LFB64
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 19
+
+
+ 882 01f9 54000000 		.4byte	.LFE64-.LFB64
+ 883 01fd 01       		.uleb128 0x1
+ 884 01fe 9C       		.byte	0x9c
+ 885 01ff 49020000 		.4byte	0x249
+ 886 0203 0F       		.uleb128 0xf
+ 887 0204 666D7400 		.ascii	"fmt\000"
+ 888 0208 01       		.byte	0x1
+ 889 0209 31       		.byte	0x31
+ 890 020a AE000000 		.4byte	0xae
+ 891 020e 02       		.uleb128 0x2
+ 892 020f 91       		.byte	0x91
+ 893 0210 70       		.sleb128 -16
+ 894 0211 10       		.uleb128 0x10
+ 895 0212 11       		.uleb128 0x11
+ 896 0213 617000   		.ascii	"ap\000"
+ 897 0216 01       		.byte	0x1
+ 898 0217 38       		.byte	0x38
+ 899 0218 DB000000 		.4byte	0xdb
+ 900 021c 02       		.uleb128 0x2
+ 901 021d 91       		.byte	0x91
+ 902 021e 64       		.sleb128 -28
+ 903 021f 16       		.uleb128 0x16
+ 904 0220 0A000000 		.4byte	.LVL11
+ 905 0224 17010000 		.4byte	0x117
+ 906 0228 16       		.uleb128 0x16
+ 907 0229 12000000 		.4byte	.LVL12
+ 908 022d 8A010000 		.4byte	0x18a
+ 909 0231 12       		.uleb128 0x12
+ 910 0232 3C000000 		.4byte	.LVL14
+ 911 0236 1F040000 		.4byte	0x41f
+ 912 023a 13       		.uleb128 0x13
+ 913 023b 01       		.uleb128 0x1
+ 914 023c 51       		.byte	0x51
+ 915 023d 03       		.uleb128 0x3
+ 916 023e 91       		.byte	0x91
+ 917 023f 50       		.sleb128 -48
+ 918 0240 06       		.byte	0x6
+ 919 0241 13       		.uleb128 0x13
+ 920 0242 01       		.uleb128 0x1
+ 921 0243 52       		.byte	0x52
+ 922 0244 02       		.uleb128 0x2
+ 923 0245 91       		.byte	0x91
+ 924 0246 54       		.sleb128 -44
+ 925 0247 00       		.byte	0
+ 926 0248 00       		.byte	0
+ 927 0249 0C       		.uleb128 0xc
+ 928 024a 88020000 		.4byte	.LASF28
+ 929 024e 01       		.byte	0x1
+ 930 024f 5E       		.byte	0x5e
+ 931 0250 A8000000 		.4byte	0xa8
+ 932 0254 00000000 		.4byte	.LFB68
+ 933 0258 24000000 		.4byte	.LFE68-.LFB68
+ 934 025c 01       		.uleb128 0x1
+ 935 025d 9C       		.byte	0x9c
+ 936 025e 14       		.uleb128 0x14
+ 937 025f 30020000 		.4byte	.LASF29
+ 938 0263 01       		.byte	0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 20
+
+
+ 939 0264 63       		.byte	0x63
+ 940 0265 A8000000 		.4byte	0xa8
+ 941 0269 00000000 		.4byte	.LFB69
+ 942 026d 28000000 		.4byte	.LFE69-.LFB69
+ 943 0271 01       		.uleb128 0x1
+ 944 0272 9C       		.byte	0x9c
+ 945 0273 85020000 		.4byte	0x285
+ 946 0277 15       		.uleb128 0x15
+ 947 0278 6900     		.ascii	"i\000"
+ 948 027a 01       		.byte	0x1
+ 949 027b 63       		.byte	0x63
+ 950 027c 5D000000 		.4byte	0x5d
+ 951 0280 2C000000 		.4byte	.LLST1
+ 952 0284 00       		.byte	0
+ 953 0285 0C       		.uleb128 0xc
+ 954 0286 38000000 		.4byte	.LASF30
+ 955 028a 01       		.byte	0x1
+ 956 028b 68       		.byte	0x68
+ 957 028c A8000000 		.4byte	0xa8
+ 958 0290 00000000 		.4byte	.LFB70
+ 959 0294 24000000 		.4byte	.LFE70-.LFB70
+ 960 0298 01       		.uleb128 0x1
+ 961 0299 9C       		.byte	0x9c
+ 962 029a 0E       		.uleb128 0xe
+ 963 029b EE020000 		.4byte	.LASF32
+ 964 029f 01       		.byte	0x1
+ 965 02a0 43       		.byte	0x43
+ 966 02a1 00000000 		.4byte	.LFB65
+ 967 02a5 34000000 		.4byte	.LFE65-.LFB65
+ 968 02a9 01       		.uleb128 0x1
+ 969 02aa 9C       		.byte	0x9c
+ 970 02ab 1D030000 		.4byte	0x31d
+ 971 02af 15       		.uleb128 0x15
+ 972 02b0 73747200 		.ascii	"str\000"
+ 973 02b4 01       		.byte	0x1
+ 974 02b5 43       		.byte	0x43
+ 975 02b6 A8000000 		.4byte	0xa8
+ 976 02ba 4D000000 		.4byte	.LLST2
+ 977 02be 11       		.uleb128 0x11
+ 978 02bf 6D736700 		.ascii	"msg\000"
+ 979 02c3 01       		.byte	0x1
+ 980 02c4 45       		.byte	0x45
+ 981 02c5 1D030000 		.4byte	0x31d
+ 982 02c9 02       		.uleb128 0x2
+ 983 02ca 91       		.byte	0x91
+ 984 02cb 44       		.sleb128 -60
+ 985 02cc 16       		.uleb128 0x16
+ 986 02cd 0A000000 		.4byte	.LVL21
+ 987 02d1 85020000 		.4byte	0x285
+ 988 02d5 17       		.uleb128 0x17
+ 989 02d6 12000000 		.4byte	.LVL22
+ 990 02da 2A040000 		.4byte	0x42a
+ 991 02de E9020000 		.4byte	0x2e9
+ 992 02e2 13       		.uleb128 0x13
+ 993 02e3 01       		.uleb128 0x1
+ 994 02e4 50       		.byte	0x50
+ 995 02e5 02       		.uleb128 0x2
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 21
+
+
+ 996 02e6 91       		.byte	0x91
+ 997 02e7 44       		.sleb128 -60
+ 998 02e8 00       		.byte	0
+ 999 02e9 17       		.uleb128 0x17
+ 1000 02ea 1A000000 		.4byte	.LVL23
+ 1001 02ee 35040000 		.4byte	0x435
+ 1002 02f2 03030000 		.4byte	0x303
+ 1003 02f6 13       		.uleb128 0x13
+ 1004 02f7 01       		.uleb128 0x1
+ 1005 02f8 50       		.byte	0x50
+ 1006 02f9 02       		.uleb128 0x2
+ 1007 02fa 91       		.byte	0x91
+ 1008 02fb 44       		.sleb128 -60
+ 1009 02fc 13       		.uleb128 0x13
+ 1010 02fd 01       		.uleb128 0x1
+ 1011 02fe 51       		.byte	0x51
+ 1012 02ff 02       		.uleb128 0x2
+ 1013 0300 74       		.byte	0x74
+ 1014 0301 00       		.sleb128 0
+ 1015 0302 00       		.byte	0
+ 1016 0303 16       		.uleb128 0x16
+ 1017 0304 1E000000 		.4byte	.LVL24
+ 1018 0308 85020000 		.4byte	0x285
+ 1019 030c 12       		.uleb128 0x12
+ 1020 030d 24000000 		.4byte	.LVL25
+ 1021 0311 2A040000 		.4byte	0x42a
+ 1022 0315 13       		.uleb128 0x13
+ 1023 0316 01       		.uleb128 0x1
+ 1024 0317 51       		.byte	0x51
+ 1025 0318 02       		.uleb128 0x2
+ 1026 0319 91       		.byte	0x91
+ 1027 031a 44       		.sleb128 -60
+ 1028 031b 00       		.byte	0
+ 1029 031c 00       		.byte	0
+ 1030 031d 18       		.uleb128 0x18
+ 1031 031e 91000000 		.4byte	0x91
+ 1032 0322 2D030000 		.4byte	0x32d
+ 1033 0326 19       		.uleb128 0x19
+ 1034 0327 9F000000 		.4byte	0x9f
+ 1035 032b 31       		.byte	0x31
+ 1036 032c 00       		.byte	0
+ 1037 032d 0D       		.uleb128 0xd
+ 1038 032e 0C000000 		.4byte	.LASF33
+ 1039 0332 01       		.byte	0x1
+ 1040 0333 6D       		.byte	0x6d
+ 1041 0334 33000000 		.4byte	0x33
+ 1042 0338 00000000 		.4byte	.LFB71
+ 1043 033c 0C000000 		.4byte	.LFE71-.LFB71
+ 1044 0340 01       		.uleb128 0x1
+ 1045 0341 9C       		.byte	0x9c
+ 1046 0342 0E       		.uleb128 0xe
+ 1047 0343 A9020000 		.4byte	.LASF34
+ 1048 0347 01       		.byte	0x1
+ 1049 0348 72       		.byte	0x72
+ 1050 0349 00000000 		.4byte	.LFB72
+ 1051 034d 24000000 		.4byte	.LFE72-.LFB72
+ 1052 0351 01       		.uleb128 0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 22
+
+
+ 1053 0352 9C       		.byte	0x9c
+ 1054 0353 A3030000 		.4byte	0x3a3
+ 1055 0357 1A       		.uleb128 0x1a
+ 1056 0358 02000000 		.4byte	.LBB2
+ 1057 035c 1C000000 		.4byte	.LBE2-.LBB2
+ 1058 0360 1B       		.uleb128 0x1b
+ 1059 0361 6900     		.ascii	"i\000"
+ 1060 0363 01       		.byte	0x1
+ 1061 0364 74       		.byte	0x74
+ 1062 0365 5D000000 		.4byte	0x5d
+ 1063 0369 79000000 		.4byte	.LLST3
+ 1064 036d 17       		.uleb128 0x17
+ 1065 036e 0C000000 		.4byte	.LVL29
+ 1066 0372 5E020000 		.4byte	0x25e
+ 1067 0376 81030000 		.4byte	0x381
+ 1068 037a 13       		.uleb128 0x13
+ 1069 037b 01       		.uleb128 0x1
+ 1070 037c 50       		.byte	0x50
+ 1071 037d 02       		.uleb128 0x2
+ 1072 037e 74       		.byte	0x74
+ 1073 037f 00       		.sleb128 0
+ 1074 0380 00       		.byte	0
+ 1075 0381 17       		.uleb128 0x17
+ 1076 0382 14000000 		.4byte	.LVL30
+ 1077 0386 40040000 		.4byte	0x440
+ 1078 038a 98030000 		.4byte	0x398
+ 1079 038e 13       		.uleb128 0x13
+ 1080 038f 01       		.uleb128 0x1
+ 1081 0390 50       		.byte	0x50
+ 1082 0391 05       		.uleb128 0x5
+ 1083 0392 03       		.byte	0x3
+ 1084 0393 00000000 		.4byte	.LC18
+ 1085 0397 00       		.byte	0
+ 1086 0398 16       		.uleb128 0x16
+ 1087 0399 1A000000 		.4byte	.LVL32
+ 1088 039d 2D030000 		.4byte	0x32d
+ 1089 03a1 00       		.byte	0
+ 1090 03a2 00       		.byte	0
+ 1091 03a3 1C       		.uleb128 0x1c
+ 1092 03a4 E0010000 		.4byte	.LASF35
+ 1093 03a8 05       		.byte	0x5
+ 1094 03a9 38       		.byte	0x38
+ 1095 03aa E6000000 		.4byte	0xe6
+ 1096 03ae 05       		.uleb128 0x5
+ 1097 03af 03       		.byte	0x3
+ 1098 03b0 00000000 		.4byte	Param
+ 1099 03b4 1C       		.uleb128 0x1c
+ 1100 03b5 50020000 		.4byte	.LASF36
+ 1101 03b9 01       		.byte	0x1
+ 1102 03ba 13       		.byte	0x13
+ 1103 03bb 6B000000 		.4byte	0x6b
+ 1104 03bf 05       		.uleb128 0x5
+ 1105 03c0 03       		.byte	0x3
+ 1106 03c1 00000000 		.4byte	g_bLogQueuUpdated
+ 1107 03c5 1C       		.uleb128 0x1c
+ 1108 03c6 28000000 		.4byte	.LASF37
+ 1109 03ca 01       		.byte	0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 23
+
+
+ 1110 03cb 0E       		.byte	0xe
+ 1111 03cc 33000000 		.4byte	0x33
+ 1112 03d0 05       		.uleb128 0x5
+ 1113 03d1 03       		.byte	0x3
+ 1114 03d2 00000000 		.4byte	g_uSizeQueueLog
+ 1115 03d6 1C       		.uleb128 0x1c
+ 1116 03d7 19010000 		.4byte	.LASF38
+ 1117 03db 01       		.byte	0x1
+ 1118 03dc 0F       		.byte	0xf
+ 1119 03dd 33000000 		.4byte	0x33
+ 1120 03e1 05       		.uleb128 0x5
+ 1121 03e2 03       		.byte	0x3
+ 1122 03e3 00000000 		.4byte	g_uFrontQueueLog
+ 1123 03e7 1C       		.uleb128 0x1c
+ 1124 03e8 1A020000 		.4byte	.LASF39
+ 1125 03ec 01       		.byte	0x1
+ 1126 03ed 10       		.byte	0x10
+ 1127 03ee 33000000 		.4byte	0x33
+ 1128 03f2 05       		.uleb128 0x5
+ 1129 03f3 03       		.byte	0x3
+ 1130 03f4 00000000 		.4byte	g_uRearQueueLog
+ 1131 03f8 18       		.uleb128 0x18
+ 1132 03f9 91000000 		.4byte	0x91
+ 1133 03fd 0E040000 		.4byte	0x40e
+ 1134 0401 19       		.uleb128 0x19
+ 1135 0402 9F000000 		.4byte	0x9f
+ 1136 0406 09       		.byte	0x9
+ 1137 0407 19       		.uleb128 0x19
+ 1138 0408 9F000000 		.4byte	0x9f
+ 1139 040c 31       		.byte	0x31
+ 1140 040d 00       		.byte	0
+ 1141 040e 1C       		.uleb128 0x1c
+ 1142 040f 1C000000 		.4byte	.LASF40
+ 1143 0413 01       		.byte	0x1
+ 1144 0414 11       		.byte	0x11
+ 1145 0415 F8030000 		.4byte	0x3f8
+ 1146 0419 05       		.uleb128 0x5
+ 1147 041a 03       		.byte	0x3
+ 1148 041b 00000000 		.4byte	g_cLogQueue
+ 1149 041f 1D       		.uleb128 0x1d
+ 1150 0420 01030000 		.4byte	.LASF41
+ 1151 0424 01030000 		.4byte	.LASF41
+ 1152 0428 06       		.byte	0x6
+ 1153 0429 C5       		.byte	0xc5
+ 1154 042a 1D       		.uleb128 0x1d
+ 1155 042b 60010000 		.4byte	.LASF42
+ 1156 042f 60010000 		.4byte	.LASF42
+ 1157 0433 07       		.byte	0x7
+ 1158 0434 1E       		.byte	0x1e
+ 1159 0435 1D       		.uleb128 0x1d
+ 1160 0436 97010000 		.4byte	.LASF43
+ 1161 043a 97010000 		.4byte	.LASF43
+ 1162 043e 07       		.byte	0x7
+ 1163 043f 1A       		.byte	0x1a
+ 1164 0440 1D       		.uleb128 0x1d
+ 1165 0441 5A000000 		.4byte	.LASF44
+ 1166 0445 5A000000 		.4byte	.LASF44
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 24
+
+
+ 1167 0449 08       		.byte	0x8
+ 1168 044a 11       		.byte	0x11
+ 1169 044b 00       		.byte	0
+ 1170              		.section	.debug_abbrev,"",%progbits
+ 1171              	.Ldebug_abbrev0:
+ 1172 0000 01       		.uleb128 0x1
+ 1173 0001 11       		.uleb128 0x11
+ 1174 0002 01       		.byte	0x1
+ 1175 0003 25       		.uleb128 0x25
+ 1176 0004 0E       		.uleb128 0xe
+ 1177 0005 13       		.uleb128 0x13
+ 1178 0006 0B       		.uleb128 0xb
+ 1179 0007 03       		.uleb128 0x3
+ 1180 0008 0E       		.uleb128 0xe
+ 1181 0009 1B       		.uleb128 0x1b
+ 1182 000a 0E       		.uleb128 0xe
+ 1183 000b 55       		.uleb128 0x55
+ 1184 000c 17       		.uleb128 0x17
+ 1185 000d 11       		.uleb128 0x11
+ 1186 000e 01       		.uleb128 0x1
+ 1187 000f 10       		.uleb128 0x10
+ 1188 0010 17       		.uleb128 0x17
+ 1189 0011 00       		.byte	0
+ 1190 0012 00       		.byte	0
+ 1191 0013 02       		.uleb128 0x2
+ 1192 0014 24       		.uleb128 0x24
+ 1193 0015 00       		.byte	0
+ 1194 0016 0B       		.uleb128 0xb
+ 1195 0017 0B       		.uleb128 0xb
+ 1196 0018 3E       		.uleb128 0x3e
+ 1197 0019 0B       		.uleb128 0xb
+ 1198 001a 03       		.uleb128 0x3
+ 1199 001b 0E       		.uleb128 0xe
+ 1200 001c 00       		.byte	0
+ 1201 001d 00       		.byte	0
+ 1202 001e 03       		.uleb128 0x3
+ 1203 001f 24       		.uleb128 0x24
+ 1204 0020 00       		.byte	0
+ 1205 0021 0B       		.uleb128 0xb
+ 1206 0022 0B       		.uleb128 0xb
+ 1207 0023 3E       		.uleb128 0x3e
+ 1208 0024 0B       		.uleb128 0xb
+ 1209 0025 03       		.uleb128 0x3
+ 1210 0026 08       		.uleb128 0x8
+ 1211 0027 00       		.byte	0
+ 1212 0028 00       		.byte	0
+ 1213 0029 04       		.uleb128 0x4
+ 1214 002a 16       		.uleb128 0x16
+ 1215 002b 00       		.byte	0
+ 1216 002c 03       		.uleb128 0x3
+ 1217 002d 0E       		.uleb128 0xe
+ 1218 002e 3A       		.uleb128 0x3a
+ 1219 002f 0B       		.uleb128 0xb
+ 1220 0030 3B       		.uleb128 0x3b
+ 1221 0031 05       		.uleb128 0x5
+ 1222 0032 49       		.uleb128 0x49
+ 1223 0033 13       		.uleb128 0x13
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 25
+
+
+ 1224 0034 00       		.byte	0
+ 1225 0035 00       		.byte	0
+ 1226 0036 05       		.uleb128 0x5
+ 1227 0037 0F       		.uleb128 0xf
+ 1228 0038 00       		.byte	0
+ 1229 0039 0B       		.uleb128 0xb
+ 1230 003a 0B       		.uleb128 0xb
+ 1231 003b 00       		.byte	0
+ 1232 003c 00       		.byte	0
+ 1233 003d 06       		.uleb128 0x6
+ 1234 003e 0F       		.uleb128 0xf
+ 1235 003f 00       		.byte	0
+ 1236 0040 0B       		.uleb128 0xb
+ 1237 0041 0B       		.uleb128 0xb
+ 1238 0042 49       		.uleb128 0x49
+ 1239 0043 13       		.uleb128 0x13
+ 1240 0044 00       		.byte	0
+ 1241 0045 00       		.byte	0
+ 1242 0046 07       		.uleb128 0x7
+ 1243 0047 26       		.uleb128 0x26
+ 1244 0048 00       		.byte	0
+ 1245 0049 49       		.uleb128 0x49
+ 1246 004a 13       		.uleb128 0x13
+ 1247 004b 00       		.byte	0
+ 1248 004c 00       		.byte	0
+ 1249 004d 08       		.uleb128 0x8
+ 1250 004e 16       		.uleb128 0x16
+ 1251 004f 00       		.byte	0
+ 1252 0050 03       		.uleb128 0x3
+ 1253 0051 0E       		.uleb128 0xe
+ 1254 0052 3A       		.uleb128 0x3a
+ 1255 0053 0B       		.uleb128 0xb
+ 1256 0054 3B       		.uleb128 0x3b
+ 1257 0055 0B       		.uleb128 0xb
+ 1258 0056 49       		.uleb128 0x49
+ 1259 0057 13       		.uleb128 0x13
+ 1260 0058 00       		.byte	0
+ 1261 0059 00       		.byte	0
+ 1262 005a 09       		.uleb128 0x9
+ 1263 005b 13       		.uleb128 0x13
+ 1264 005c 01       		.byte	0x1
+ 1265 005d 03       		.uleb128 0x3
+ 1266 005e 0E       		.uleb128 0xe
+ 1267 005f 0B       		.uleb128 0xb
+ 1268 0060 0B       		.uleb128 0xb
+ 1269 0061 3A       		.uleb128 0x3a
+ 1270 0062 0B       		.uleb128 0xb
+ 1271 0063 3B       		.uleb128 0x3b
+ 1272 0064 0B       		.uleb128 0xb
+ 1273 0065 01       		.uleb128 0x1
+ 1274 0066 13       		.uleb128 0x13
+ 1275 0067 00       		.byte	0
+ 1276 0068 00       		.byte	0
+ 1277 0069 0A       		.uleb128 0xa
+ 1278 006a 0D       		.uleb128 0xd
+ 1279 006b 00       		.byte	0
+ 1280 006c 03       		.uleb128 0x3
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 26
+
+
+ 1281 006d 0E       		.uleb128 0xe
+ 1282 006e 49       		.uleb128 0x49
+ 1283 006f 13       		.uleb128 0x13
+ 1284 0070 38       		.uleb128 0x38
+ 1285 0071 0B       		.uleb128 0xb
+ 1286 0072 34       		.uleb128 0x34
+ 1287 0073 19       		.uleb128 0x19
+ 1288 0074 00       		.byte	0
+ 1289 0075 00       		.byte	0
+ 1290 0076 0B       		.uleb128 0xb
+ 1291 0077 0D       		.uleb128 0xd
+ 1292 0078 00       		.byte	0
+ 1293 0079 03       		.uleb128 0x3
+ 1294 007a 0E       		.uleb128 0xe
+ 1295 007b 3A       		.uleb128 0x3a
+ 1296 007c 0B       		.uleb128 0xb
+ 1297 007d 3B       		.uleb128 0x3b
+ 1298 007e 0B       		.uleb128 0xb
+ 1299 007f 49       		.uleb128 0x49
+ 1300 0080 13       		.uleb128 0x13
+ 1301 0081 38       		.uleb128 0x38
+ 1302 0082 0B       		.uleb128 0xb
+ 1303 0083 00       		.byte	0
+ 1304 0084 00       		.byte	0
+ 1305 0085 0C       		.uleb128 0xc
+ 1306 0086 2E       		.uleb128 0x2e
+ 1307 0087 00       		.byte	0
+ 1308 0088 3F       		.uleb128 0x3f
+ 1309 0089 19       		.uleb128 0x19
+ 1310 008a 03       		.uleb128 0x3
+ 1311 008b 0E       		.uleb128 0xe
+ 1312 008c 3A       		.uleb128 0x3a
+ 1313 008d 0B       		.uleb128 0xb
+ 1314 008e 3B       		.uleb128 0x3b
+ 1315 008f 0B       		.uleb128 0xb
+ 1316 0090 27       		.uleb128 0x27
+ 1317 0091 19       		.uleb128 0x19
+ 1318 0092 49       		.uleb128 0x49
+ 1319 0093 13       		.uleb128 0x13
+ 1320 0094 11       		.uleb128 0x11
+ 1321 0095 01       		.uleb128 0x1
+ 1322 0096 12       		.uleb128 0x12
+ 1323 0097 06       		.uleb128 0x6
+ 1324 0098 40       		.uleb128 0x40
+ 1325 0099 18       		.uleb128 0x18
+ 1326 009a 9642     		.uleb128 0x2116
+ 1327 009c 19       		.uleb128 0x19
+ 1328 009d 00       		.byte	0
+ 1329 009e 00       		.byte	0
+ 1330 009f 0D       		.uleb128 0xd
+ 1331 00a0 2E       		.uleb128 0x2e
+ 1332 00a1 00       		.byte	0
+ 1333 00a2 3F       		.uleb128 0x3f
+ 1334 00a3 19       		.uleb128 0x19
+ 1335 00a4 03       		.uleb128 0x3
+ 1336 00a5 0E       		.uleb128 0xe
+ 1337 00a6 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 27
+
+
+ 1338 00a7 0B       		.uleb128 0xb
+ 1339 00a8 3B       		.uleb128 0x3b
+ 1340 00a9 0B       		.uleb128 0xb
+ 1341 00aa 27       		.uleb128 0x27
+ 1342 00ab 19       		.uleb128 0x19
+ 1343 00ac 49       		.uleb128 0x49
+ 1344 00ad 13       		.uleb128 0x13
+ 1345 00ae 11       		.uleb128 0x11
+ 1346 00af 01       		.uleb128 0x1
+ 1347 00b0 12       		.uleb128 0x12
+ 1348 00b1 06       		.uleb128 0x6
+ 1349 00b2 40       		.uleb128 0x40
+ 1350 00b3 18       		.uleb128 0x18
+ 1351 00b4 9742     		.uleb128 0x2117
+ 1352 00b6 19       		.uleb128 0x19
+ 1353 00b7 00       		.byte	0
+ 1354 00b8 00       		.byte	0
+ 1355 00b9 0E       		.uleb128 0xe
+ 1356 00ba 2E       		.uleb128 0x2e
+ 1357 00bb 01       		.byte	0x1
+ 1358 00bc 3F       		.uleb128 0x3f
+ 1359 00bd 19       		.uleb128 0x19
+ 1360 00be 03       		.uleb128 0x3
+ 1361 00bf 0E       		.uleb128 0xe
+ 1362 00c0 3A       		.uleb128 0x3a
+ 1363 00c1 0B       		.uleb128 0xb
+ 1364 00c2 3B       		.uleb128 0x3b
+ 1365 00c3 0B       		.uleb128 0xb
+ 1366 00c4 27       		.uleb128 0x27
+ 1367 00c5 19       		.uleb128 0x19
+ 1368 00c6 11       		.uleb128 0x11
+ 1369 00c7 01       		.uleb128 0x1
+ 1370 00c8 12       		.uleb128 0x12
+ 1371 00c9 06       		.uleb128 0x6
+ 1372 00ca 40       		.uleb128 0x40
+ 1373 00cb 18       		.uleb128 0x18
+ 1374 00cc 9742     		.uleb128 0x2117
+ 1375 00ce 19       		.uleb128 0x19
+ 1376 00cf 01       		.uleb128 0x1
+ 1377 00d0 13       		.uleb128 0x13
+ 1378 00d1 00       		.byte	0
+ 1379 00d2 00       		.byte	0
+ 1380 00d3 0F       		.uleb128 0xf
+ 1381 00d4 05       		.uleb128 0x5
+ 1382 00d5 00       		.byte	0
+ 1383 00d6 03       		.uleb128 0x3
+ 1384 00d7 08       		.uleb128 0x8
+ 1385 00d8 3A       		.uleb128 0x3a
+ 1386 00d9 0B       		.uleb128 0xb
+ 1387 00da 3B       		.uleb128 0x3b
+ 1388 00db 0B       		.uleb128 0xb
+ 1389 00dc 49       		.uleb128 0x49
+ 1390 00dd 13       		.uleb128 0x13
+ 1391 00de 02       		.uleb128 0x2
+ 1392 00df 18       		.uleb128 0x18
+ 1393 00e0 00       		.byte	0
+ 1394 00e1 00       		.byte	0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 28
+
+
+ 1395 00e2 10       		.uleb128 0x10
+ 1396 00e3 18       		.uleb128 0x18
+ 1397 00e4 00       		.byte	0
+ 1398 00e5 00       		.byte	0
+ 1399 00e6 00       		.byte	0
+ 1400 00e7 11       		.uleb128 0x11
+ 1401 00e8 34       		.uleb128 0x34
+ 1402 00e9 00       		.byte	0
+ 1403 00ea 03       		.uleb128 0x3
+ 1404 00eb 08       		.uleb128 0x8
+ 1405 00ec 3A       		.uleb128 0x3a
+ 1406 00ed 0B       		.uleb128 0xb
+ 1407 00ee 3B       		.uleb128 0x3b
+ 1408 00ef 0B       		.uleb128 0xb
+ 1409 00f0 49       		.uleb128 0x49
+ 1410 00f1 13       		.uleb128 0x13
+ 1411 00f2 02       		.uleb128 0x2
+ 1412 00f3 18       		.uleb128 0x18
+ 1413 00f4 00       		.byte	0
+ 1414 00f5 00       		.byte	0
+ 1415 00f6 12       		.uleb128 0x12
+ 1416 00f7 898201   		.uleb128 0x4109
+ 1417 00fa 01       		.byte	0x1
+ 1418 00fb 11       		.uleb128 0x11
+ 1419 00fc 01       		.uleb128 0x1
+ 1420 00fd 31       		.uleb128 0x31
+ 1421 00fe 13       		.uleb128 0x13
+ 1422 00ff 00       		.byte	0
+ 1423 0100 00       		.byte	0
+ 1424 0101 13       		.uleb128 0x13
+ 1425 0102 8A8201   		.uleb128 0x410a
+ 1426 0105 00       		.byte	0
+ 1427 0106 02       		.uleb128 0x2
+ 1428 0107 18       		.uleb128 0x18
+ 1429 0108 9142     		.uleb128 0x2111
+ 1430 010a 18       		.uleb128 0x18
+ 1431 010b 00       		.byte	0
+ 1432 010c 00       		.byte	0
+ 1433 010d 14       		.uleb128 0x14
+ 1434 010e 2E       		.uleb128 0x2e
+ 1435 010f 01       		.byte	0x1
+ 1436 0110 3F       		.uleb128 0x3f
+ 1437 0111 19       		.uleb128 0x19
+ 1438 0112 03       		.uleb128 0x3
+ 1439 0113 0E       		.uleb128 0xe
+ 1440 0114 3A       		.uleb128 0x3a
+ 1441 0115 0B       		.uleb128 0xb
+ 1442 0116 3B       		.uleb128 0x3b
+ 1443 0117 0B       		.uleb128 0xb
+ 1444 0118 27       		.uleb128 0x27
+ 1445 0119 19       		.uleb128 0x19
+ 1446 011a 49       		.uleb128 0x49
+ 1447 011b 13       		.uleb128 0x13
+ 1448 011c 11       		.uleb128 0x11
+ 1449 011d 01       		.uleb128 0x1
+ 1450 011e 12       		.uleb128 0x12
+ 1451 011f 06       		.uleb128 0x6
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 29
+
+
+ 1452 0120 40       		.uleb128 0x40
+ 1453 0121 18       		.uleb128 0x18
+ 1454 0122 9642     		.uleb128 0x2116
+ 1455 0124 19       		.uleb128 0x19
+ 1456 0125 01       		.uleb128 0x1
+ 1457 0126 13       		.uleb128 0x13
+ 1458 0127 00       		.byte	0
+ 1459 0128 00       		.byte	0
+ 1460 0129 15       		.uleb128 0x15
+ 1461 012a 05       		.uleb128 0x5
+ 1462 012b 00       		.byte	0
+ 1463 012c 03       		.uleb128 0x3
+ 1464 012d 08       		.uleb128 0x8
+ 1465 012e 3A       		.uleb128 0x3a
+ 1466 012f 0B       		.uleb128 0xb
+ 1467 0130 3B       		.uleb128 0x3b
+ 1468 0131 0B       		.uleb128 0xb
+ 1469 0132 49       		.uleb128 0x49
+ 1470 0133 13       		.uleb128 0x13
+ 1471 0134 02       		.uleb128 0x2
+ 1472 0135 17       		.uleb128 0x17
+ 1473 0136 00       		.byte	0
+ 1474 0137 00       		.byte	0
+ 1475 0138 16       		.uleb128 0x16
+ 1476 0139 898201   		.uleb128 0x4109
+ 1477 013c 00       		.byte	0
+ 1478 013d 11       		.uleb128 0x11
+ 1479 013e 01       		.uleb128 0x1
+ 1480 013f 31       		.uleb128 0x31
+ 1481 0140 13       		.uleb128 0x13
+ 1482 0141 00       		.byte	0
+ 1483 0142 00       		.byte	0
+ 1484 0143 17       		.uleb128 0x17
+ 1485 0144 898201   		.uleb128 0x4109
+ 1486 0147 01       		.byte	0x1
+ 1487 0148 11       		.uleb128 0x11
+ 1488 0149 01       		.uleb128 0x1
+ 1489 014a 31       		.uleb128 0x31
+ 1490 014b 13       		.uleb128 0x13
+ 1491 014c 01       		.uleb128 0x1
+ 1492 014d 13       		.uleb128 0x13
+ 1493 014e 00       		.byte	0
+ 1494 014f 00       		.byte	0
+ 1495 0150 18       		.uleb128 0x18
+ 1496 0151 01       		.uleb128 0x1
+ 1497 0152 01       		.byte	0x1
+ 1498 0153 49       		.uleb128 0x49
+ 1499 0154 13       		.uleb128 0x13
+ 1500 0155 01       		.uleb128 0x1
+ 1501 0156 13       		.uleb128 0x13
+ 1502 0157 00       		.byte	0
+ 1503 0158 00       		.byte	0
+ 1504 0159 19       		.uleb128 0x19
+ 1505 015a 21       		.uleb128 0x21
+ 1506 015b 00       		.byte	0
+ 1507 015c 49       		.uleb128 0x49
+ 1508 015d 13       		.uleb128 0x13
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 30
+
+
+ 1509 015e 2F       		.uleb128 0x2f
+ 1510 015f 0B       		.uleb128 0xb
+ 1511 0160 00       		.byte	0
+ 1512 0161 00       		.byte	0
+ 1513 0162 1A       		.uleb128 0x1a
+ 1514 0163 0B       		.uleb128 0xb
+ 1515 0164 01       		.byte	0x1
+ 1516 0165 11       		.uleb128 0x11
+ 1517 0166 01       		.uleb128 0x1
+ 1518 0167 12       		.uleb128 0x12
+ 1519 0168 06       		.uleb128 0x6
+ 1520 0169 00       		.byte	0
+ 1521 016a 00       		.byte	0
+ 1522 016b 1B       		.uleb128 0x1b
+ 1523 016c 34       		.uleb128 0x34
+ 1524 016d 00       		.byte	0
+ 1525 016e 03       		.uleb128 0x3
+ 1526 016f 08       		.uleb128 0x8
+ 1527 0170 3A       		.uleb128 0x3a
+ 1528 0171 0B       		.uleb128 0xb
+ 1529 0172 3B       		.uleb128 0x3b
+ 1530 0173 0B       		.uleb128 0xb
+ 1531 0174 49       		.uleb128 0x49
+ 1532 0175 13       		.uleb128 0x13
+ 1533 0176 02       		.uleb128 0x2
+ 1534 0177 17       		.uleb128 0x17
+ 1535 0178 00       		.byte	0
+ 1536 0179 00       		.byte	0
+ 1537 017a 1C       		.uleb128 0x1c
+ 1538 017b 34       		.uleb128 0x34
+ 1539 017c 00       		.byte	0
+ 1540 017d 03       		.uleb128 0x3
+ 1541 017e 0E       		.uleb128 0xe
+ 1542 017f 3A       		.uleb128 0x3a
+ 1543 0180 0B       		.uleb128 0xb
+ 1544 0181 3B       		.uleb128 0x3b
+ 1545 0182 0B       		.uleb128 0xb
+ 1546 0183 49       		.uleb128 0x49
+ 1547 0184 13       		.uleb128 0x13
+ 1548 0185 3F       		.uleb128 0x3f
+ 1549 0186 19       		.uleb128 0x19
+ 1550 0187 02       		.uleb128 0x2
+ 1551 0188 18       		.uleb128 0x18
+ 1552 0189 00       		.byte	0
+ 1553 018a 00       		.byte	0
+ 1554 018b 1D       		.uleb128 0x1d
+ 1555 018c 2E       		.uleb128 0x2e
+ 1556 018d 00       		.byte	0
+ 1557 018e 3F       		.uleb128 0x3f
+ 1558 018f 19       		.uleb128 0x19
+ 1559 0190 3C       		.uleb128 0x3c
+ 1560 0191 19       		.uleb128 0x19
+ 1561 0192 6E       		.uleb128 0x6e
+ 1562 0193 0E       		.uleb128 0xe
+ 1563 0194 03       		.uleb128 0x3
+ 1564 0195 0E       		.uleb128 0xe
+ 1565 0196 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 31
+
+
+ 1566 0197 0B       		.uleb128 0xb
+ 1567 0198 3B       		.uleb128 0x3b
+ 1568 0199 0B       		.uleb128 0xb
+ 1569 019a 00       		.byte	0
+ 1570 019b 00       		.byte	0
+ 1571 019c 00       		.byte	0
+ 1572              		.section	.debug_loc,"",%progbits
+ 1573              	.Ldebug_loc0:
+ 1574              	.LLST0:
+ 1575 0000 00000000 		.4byte	.LVL4
+ 1576 0004 07000000 		.4byte	.LVL5-1
+ 1577 0008 0100     		.2byte	0x1
+ 1578 000a 50       		.byte	0x50
+ 1579 000b 07000000 		.4byte	.LVL5-1
+ 1580 000f 3C000000 		.4byte	.LVL9
+ 1581 0013 0100     		.2byte	0x1
+ 1582 0015 55       		.byte	0x55
+ 1583 0016 3C000000 		.4byte	.LVL9
+ 1584 001a 48000000 		.4byte	.LFE63
+ 1585 001e 0400     		.2byte	0x4
+ 1586 0020 F3       		.byte	0xf3
+ 1587 0021 01       		.uleb128 0x1
+ 1588 0022 50       		.byte	0x50
+ 1589 0023 9F       		.byte	0x9f
+ 1590 0024 00000000 		.4byte	0
+ 1591 0028 00000000 		.4byte	0
+ 1592              	.LLST1:
+ 1593 002c 00000000 		.4byte	.LVL16
+ 1594 0030 0C000000 		.4byte	.LVL17
+ 1595 0034 0100     		.2byte	0x1
+ 1596 0036 50       		.byte	0x50
+ 1597 0037 0C000000 		.4byte	.LVL17
+ 1598 003b 28000000 		.4byte	.LFE69
+ 1599 003f 0400     		.2byte	0x4
+ 1600 0041 F3       		.byte	0xf3
+ 1601 0042 01       		.uleb128 0x1
+ 1602 0043 50       		.byte	0x50
+ 1603 0044 9F       		.byte	0x9f
+ 1604 0045 00000000 		.4byte	0
+ 1605 0049 00000000 		.4byte	0
+ 1606              	.LLST2:
+ 1607 004d 00000000 		.4byte	.LVL20
+ 1608 0051 09000000 		.4byte	.LVL21-1
+ 1609 0055 0100     		.2byte	0x1
+ 1610 0057 50       		.byte	0x50
+ 1611 0058 09000000 		.4byte	.LVL21-1
+ 1612 005c 2C000000 		.4byte	.LVL26
+ 1613 0060 0100     		.2byte	0x1
+ 1614 0062 54       		.byte	0x54
+ 1615 0063 2C000000 		.4byte	.LVL26
+ 1616 0067 34000000 		.4byte	.LFE65
+ 1617 006b 0400     		.2byte	0x4
+ 1618 006d F3       		.byte	0xf3
+ 1619 006e 01       		.uleb128 0x1
+ 1620 006f 50       		.byte	0x50
+ 1621 0070 9F       		.byte	0x9f
+ 1622 0071 00000000 		.4byte	0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 32
+
+
+ 1623 0075 00000000 		.4byte	0
+ 1624              	.LLST3:
+ 1625 0079 02000000 		.4byte	.LVL27
+ 1626 007d 06000000 		.4byte	.LVL28
+ 1627 0081 0200     		.2byte	0x2
+ 1628 0083 30       		.byte	0x30
+ 1629 0084 9F       		.byte	0x9f
+ 1630 0085 06000000 		.4byte	.LVL28
+ 1631 0089 1E000000 		.4byte	.LVL33
+ 1632 008d 0100     		.2byte	0x1
+ 1633 008f 54       		.byte	0x54
+ 1634 0090 00000000 		.4byte	0
+ 1635 0094 00000000 		.4byte	0
+ 1636              		.section	.debug_aranges,"",%progbits
+ 1637 0000 74000000 		.4byte	0x74
+ 1638 0004 0200     		.2byte	0x2
+ 1639 0006 00000000 		.4byte	.Ldebug_info0
+ 1640 000a 04       		.byte	0x4
+ 1641 000b 00       		.byte	0
+ 1642 000c 0000     		.2byte	0
+ 1643 000e 0000     		.2byte	0
+ 1644 0010 00000000 		.4byte	.LFB61
+ 1645 0014 24000000 		.4byte	.LFE61-.LFB61
+ 1646 0018 00000000 		.4byte	.LFB62
+ 1647 001c 1C000000 		.4byte	.LFE62-.LFB62
+ 1648 0020 00000000 		.4byte	.LFB66
+ 1649 0024 30000000 		.4byte	.LFE66-.LFB66
+ 1650 0028 00000000 		.4byte	.LFB67
+ 1651 002c 2C000000 		.4byte	.LFE67-.LFB67
+ 1652 0030 00000000 		.4byte	.LFB63
+ 1653 0034 48000000 		.4byte	.LFE63-.LFB63
+ 1654 0038 00000000 		.4byte	.LFB64
+ 1655 003c 54000000 		.4byte	.LFE64-.LFB64
+ 1656 0040 00000000 		.4byte	.LFB68
+ 1657 0044 24000000 		.4byte	.LFE68-.LFB68
+ 1658 0048 00000000 		.4byte	.LFB69
+ 1659 004c 28000000 		.4byte	.LFE69-.LFB69
+ 1660 0050 00000000 		.4byte	.LFB70
+ 1661 0054 24000000 		.4byte	.LFE70-.LFB70
+ 1662 0058 00000000 		.4byte	.LFB65
+ 1663 005c 34000000 		.4byte	.LFE65-.LFB65
+ 1664 0060 00000000 		.4byte	.LFB71
+ 1665 0064 0C000000 		.4byte	.LFE71-.LFB71
+ 1666 0068 00000000 		.4byte	.LFB72
+ 1667 006c 24000000 		.4byte	.LFE72-.LFB72
+ 1668 0070 00000000 		.4byte	0
+ 1669 0074 00000000 		.4byte	0
+ 1670              		.section	.debug_ranges,"",%progbits
+ 1671              	.Ldebug_ranges0:
+ 1672 0000 00000000 		.4byte	.LFB61
+ 1673 0004 24000000 		.4byte	.LFE61
+ 1674 0008 00000000 		.4byte	.LFB62
+ 1675 000c 1C000000 		.4byte	.LFE62
+ 1676 0010 00000000 		.4byte	.LFB66
+ 1677 0014 30000000 		.4byte	.LFE66
+ 1678 0018 00000000 		.4byte	.LFB67
+ 1679 001c 2C000000 		.4byte	.LFE67
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 33
+
+
+ 1680 0020 00000000 		.4byte	.LFB63
+ 1681 0024 48000000 		.4byte	.LFE63
+ 1682 0028 00000000 		.4byte	.LFB64
+ 1683 002c 54000000 		.4byte	.LFE64
+ 1684 0030 00000000 		.4byte	.LFB68
+ 1685 0034 24000000 		.4byte	.LFE68
+ 1686 0038 00000000 		.4byte	.LFB69
+ 1687 003c 28000000 		.4byte	.LFE69
+ 1688 0040 00000000 		.4byte	.LFB70
+ 1689 0044 24000000 		.4byte	.LFE70
+ 1690 0048 00000000 		.4byte	.LFB65
+ 1691 004c 34000000 		.4byte	.LFE65
+ 1692 0050 00000000 		.4byte	.LFB71
+ 1693 0054 0C000000 		.4byte	.LFE71
+ 1694 0058 00000000 		.4byte	.LFB72
+ 1695 005c 24000000 		.4byte	.LFE72
+ 1696 0060 00000000 		.4byte	0
+ 1697 0064 00000000 		.4byte	0
+ 1698              		.section	.debug_line,"",%progbits
+ 1699              	.Ldebug_line0:
+ 1700 0000 75020000 		.section	.debug_str,"MS",%progbits,1
+ 1700      02006901 
+ 1700      00000201 
+ 1700      FB0E0D00 
+ 1700      01010101 
+ 1701              	.LASF20:
+ 1702 0000 73746174 		.ascii	"stat_TC_INT\000"
+ 1702      5F54435F 
+ 1702      494E5400 
+ 1703              	.LASF33:
+ 1704 000c 67657453 		.ascii	"getSizeQueueLog\000"
+ 1704      697A6551 
+ 1704      75657565 
+ 1704      4C6F6700 
+ 1705              	.LASF40:
+ 1706 001c 675F634C 		.ascii	"g_cLogQueue\000"
+ 1706      6F675175 
+ 1706      65756500 
+ 1707              	.LASF37:
+ 1708 0028 675F7553 		.ascii	"g_uSizeQueueLog\000"
+ 1708      697A6551 
+ 1708      75657565 
+ 1708      4C6F6700 
+ 1709              	.LASF30:
+ 1710 0038 67657452 		.ascii	"getRearQueueLog\000"
+ 1710      65617251 
+ 1710      75657565 
+ 1710      4C6F6700 
+ 1711              	.LASF27:
+ 1712 0048 656E5175 		.ascii	"enQueueLog_printf\000"
+ 1712      6575654C 
+ 1712      6F675F70 
+ 1712      72696E74 
+ 1712      6600
+ 1713              	.LASF44:
+ 1714 005a 44454255 		.ascii	"DEBUG_printf\000"
+ 1714      475F7072 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 34
+
+
+ 1714      696E7466 
+ 1714      00
+ 1715              	.LASF45:
+ 1716 0067 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1716      43313120 
+ 1716      352E342E 
+ 1716      31203230 
+ 1716      31363036 
+ 1717 009a 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1717      20726576 
+ 1717      6973696F 
+ 1717      6E203233 
+ 1717      37373135 
+ 1718 00cd 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1718      66756E63 
+ 1718      74696F6E 
+ 1718      2D736563 
+ 1718      74696F6E 
+ 1719              	.LASF11:
+ 1720 00f5 666C6F61 		.ascii	"float\000"
+ 1720      7400
+ 1721              	.LASF23:
+ 1722 00fb 69734675 		.ascii	"isFullQueueLog\000"
+ 1722      6C6C5175 
+ 1722      6575654C 
+ 1722      6F6700
+ 1723              	.LASF16:
+ 1724 010a 5F5F676E 		.ascii	"__gnuc_va_list\000"
+ 1724      75635F76 
+ 1724      615F6C69 
+ 1724      737400
+ 1725              	.LASF38:
+ 1726 0119 675F7546 		.ascii	"g_uFrontQueueLog\000"
+ 1726      726F6E74 
+ 1726      51756575 
+ 1726      654C6F67 
+ 1726      00
+ 1727              	.LASF47:
+ 1728 012a 443A5C44 		.ascii	"D:\\DATA\\IoT\\TouchIoT - NewWifi\\TrimCount\\Desig"
+ 1728      4154415C 
+ 1728      496F545C 
+ 1728      546F7563 
+ 1728      68496F54 
+ 1729 0158 6E2E6379 		.ascii	"n.cydsn\000"
+ 1729      64736E00 
+ 1730              	.LASF42:
+ 1731 0160 73747263 		.ascii	"strcpy\000"
+ 1731      707900
+ 1732              	.LASF5:
+ 1733 0167 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1733      20756E73 
+ 1733      69676E65 
+ 1733      6420696E 
+ 1733      7400
+ 1734              	.LASF19:
+ 1735 0179 73506172 		.ascii	"sParameter\000"
+ 1735      616D6574 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 35
+
+
+ 1735      657200
+ 1736              	.LASF3:
+ 1737 0184 73686F72 		.ascii	"short unsigned int\000"
+ 1737      7420756E 
+ 1737      7369676E 
+ 1737      65642069 
+ 1737      6E7400
+ 1738              	.LASF43:
+ 1739 0197 73747263 		.ascii	"strcat\000"
+ 1739      617400
+ 1740              	.LASF17:
+ 1741 019e 76615F6C 		.ascii	"va_list\000"
+ 1741      69737400 
+ 1742              	.LASF1:
+ 1743 01a6 756E7369 		.ascii	"unsigned char\000"
+ 1743      676E6564 
+ 1743      20636861 
+ 1743      7200
+ 1744              	.LASF21:
+ 1745 01b4 706F735F 		.ascii	"pos_X\000"
+ 1745      5800
+ 1746              	.LASF10:
+ 1747 01ba 75696E74 		.ascii	"uint16\000"
+ 1747      313600
+ 1748              	.LASF24:
+ 1749 01c1 6973456D 		.ascii	"isEmptyQueueLog\000"
+ 1749      70747951 
+ 1749      75657565 
+ 1749      4C6F6700 
+ 1750              	.LASF31:
+ 1751 01d1 6368616E 		.ascii	"changeLogQueue\000"
+ 1751      67654C6F 
+ 1751      67517565 
+ 1751      756500
+ 1752              	.LASF35:
+ 1753 01e0 50617261 		.ascii	"Param\000"
+ 1753      6D00
+ 1754              	.LASF8:
+ 1755 01e6 756E7369 		.ascii	"unsigned int\000"
+ 1755      676E6564 
+ 1755      20696E74 
+ 1755      00
+ 1756              	.LASF25:
+ 1757 01f3 64655175 		.ascii	"deQueueLog\000"
+ 1757      6575654C 
+ 1757      6F6700
+ 1758              	.LASF7:
+ 1759 01fe 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1759      206C6F6E 
+ 1759      6720756E 
+ 1759      7369676E 
+ 1759      65642069 
+ 1760              	.LASF48:
+ 1761 0215 5F5F6170 		.ascii	"__ap\000"
+ 1761      00
+ 1762              	.LASF39:
+ 1763 021a 675F7552 		.ascii	"g_uRearQueueLog\000"
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 36
+
+
+ 1763      65617251 
+ 1763      75657565 
+ 1763      4C6F6700 
+ 1764              	.LASF22:
+ 1765 022a 706F735F 		.ascii	"pos_Y\000"
+ 1765      5900
+ 1766              	.LASF29:
+ 1767 0230 67657446 		.ascii	"getFrontNextQueueLog\000"
+ 1767      726F6E74 
+ 1767      4E657874 
+ 1767      51756575 
+ 1767      654C6F67 
+ 1768              	.LASF46:
+ 1769 0245 6C6F6751 		.ascii	"logQueue.c\000"
+ 1769      75657565 
+ 1769      2E6300
+ 1770              	.LASF36:
+ 1771 0250 675F624C 		.ascii	"g_bLogQueuUpdated\000"
+ 1771      6F675175 
+ 1771      65755570 
+ 1771      64617465 
+ 1771      6400
+ 1772              	.LASF15:
+ 1773 0262 73697A65 		.ascii	"sizetype\000"
+ 1773      74797065 
+ 1773      00
+ 1774              	.LASF18:
+ 1775 026b 5F5F7661 		.ascii	"__va_list\000"
+ 1775      5F6C6973 
+ 1775      7400
+ 1776              	.LASF6:
+ 1777 0275 6C6F6E67 		.ascii	"long long int\000"
+ 1777      206C6F6E 
+ 1777      6720696E 
+ 1777      7400
+ 1778              	.LASF13:
+ 1779 0283 63686172 		.ascii	"char\000"
+ 1779      00
+ 1780              	.LASF28:
+ 1781 0288 67657446 		.ascii	"getFrontQueueLog\000"
+ 1781      726F6E74 
+ 1781      51756575 
+ 1781      654C6F67 
+ 1781      00
+ 1782              	.LASF2:
+ 1783 0299 73686F72 		.ascii	"short int\000"
+ 1783      7420696E 
+ 1783      7400
+ 1784              	.LASF9:
+ 1785 02a3 75696E74 		.ascii	"uint8\000"
+ 1785      3800
+ 1786              	.LASF34:
+ 1787 02a9 5072696E 		.ascii	"PrintInfoQueueLog\000"
+ 1787      74496E66 
+ 1787      6F517565 
+ 1787      75654C6F 
+ 1787      6700
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccmoAs9N.s 			page 37
+
+
+ 1788              	.LASF26:
+ 1789 02bb 656E5175 		.ascii	"enQueueLog\000"
+ 1789      6575654C 
+ 1789      6F6700
+ 1790              	.LASF4:
+ 1791 02c6 6C6F6E67 		.ascii	"long int\000"
+ 1791      20696E74 
+ 1791      00
+ 1792              	.LASF14:
+ 1793 02cf 6C6F6E67 		.ascii	"long double\000"
+ 1793      20646F75 
+ 1793      626C6500 
+ 1794              	.LASF0:
+ 1795 02db 7369676E 		.ascii	"signed char\000"
+ 1795      65642063 
+ 1795      68617200 
+ 1796              	.LASF12:
+ 1797 02e7 646F7562 		.ascii	"double\000"
+ 1797      6C6500
+ 1798              	.LASF32:
+ 1799 02ee 6C617374 		.ascii	"lastAppendLogQueue\000"
+ 1799      41707065 
+ 1799      6E644C6F 
+ 1799      67517565 
+ 1799      756500
+ 1800              	.LASF41:
+ 1801 0301 76737072 		.ascii	"vsprintf\000"
+ 1801      696E7466 
+ 1801      00
+ 1802              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

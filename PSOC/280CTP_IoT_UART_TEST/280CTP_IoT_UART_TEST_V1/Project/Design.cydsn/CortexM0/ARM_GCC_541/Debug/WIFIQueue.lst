@@ -1,0 +1,1889 @@
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"WIFIQueue.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.IsBlocking,"ax",%progbits
+  20              		.align	2
+  21              		.global	IsBlocking
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	IsBlocking, %function
+  25              	IsBlocking:
+  26              	.LFB61:
+  27              		.file 1 "WIFIQueue.c"
+   1:WIFIQueue.c   **** /* ========================================
+   2:WIFIQueue.c   ****  *
+   3:WIFIQueue.c   ****  * Copyright YOUR COMPANY, THE YEAR
+   4:WIFIQueue.c   ****  * All Rights Reserved
+   5:WIFIQueue.c   ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:WIFIQueue.c   ****  *
+   7:WIFIQueue.c   ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:WIFIQueue.c   ****  * WHICH IS THE PROPERTY OF your company.
+   9:WIFIQueue.c   ****  *
+  10:WIFIQueue.c   ****  * ========================================
+  11:WIFIQueue.c   **** */
+  12:WIFIQueue.c   **** #include "WIFIQueue.h"
+  13:WIFIQueue.c   **** 
+  14:WIFIQueue.c   **** #define MAX_WIFI_QUEUE 1024
+  15:WIFIQueue.c   **** 
+  16:WIFIQueue.c   **** short g_uSizeQueueWIFI=0;
+  17:WIFIQueue.c   **** short g_uFrontQueueWIFI=0;
+  18:WIFIQueue.c   **** short g_uRearQueueWIFI=0;
+  19:WIFIQueue.c   **** char  g_cQueueWIFI[MAX_WIFI_QUEUE];
+  20:WIFIQueue.c   **** 
+  21:WIFIQueue.c   **** uint16 g_CountCRLF=0;
+  22:WIFIQueue.c   **** uint16 g_cLastEnqueue=0;
+  23:WIFIQueue.c   **** uint16 g_cLastDequeue=0;
+  24:WIFIQueue.c   **** 
+  25:WIFIQueue.c   **** uint8 g_bBlockingWIFIQueue=FALSE;
+  26:WIFIQueue.c   **** uint8 IsBlocking() { return g_bBlockingWIFIQueue; }
+  28              		.loc 1 26 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 2
+
+
+  32              		@ link register save eliminated.
+  33              		.loc 1 26 0
+  34 0000 014B     		ldr	r3, .L2
+  35 0002 1878     		ldrb	r0, [r3]
+  36              		@ sp needed
+  37 0004 7047     		bx	lr
+  38              	.L3:
+  39 0006 C046     		.align	2
+  40              	.L2:
+  41 0008 00000000 		.word	.LANCHOR0
+  42              		.cfi_endproc
+  43              	.LFE61:
+  44              		.size	IsBlocking, .-IsBlocking
+  45              		.section	.text.BlockingWifiQueue,"ax",%progbits
+  46              		.align	2
+  47              		.global	BlockingWifiQueue
+  48              		.code	16
+  49              		.thumb_func
+  50              		.type	BlockingWifiQueue, %function
+  51              	BlockingWifiQueue:
+  52              	.LFB62:
+  27:WIFIQueue.c   **** void  BlockingWifiQueue() { g_bBlockingWIFIQueue = TRUE; }
+  53              		.loc 1 27 0
+  54              		.cfi_startproc
+  55              		@ args = 0, pretend = 0, frame = 0
+  56              		@ frame_needed = 0, uses_anonymous_args = 0
+  57              		@ link register save eliminated.
+  58              		.loc 1 27 0
+  59 0000 0122     		movs	r2, #1
+  60 0002 014B     		ldr	r3, .L5
+  61 0004 1A70     		strb	r2, [r3]
+  62              		@ sp needed
+  63 0006 7047     		bx	lr
+  64              	.L6:
+  65              		.align	2
+  66              	.L5:
+  67 0008 00000000 		.word	.LANCHOR0
+  68              		.cfi_endproc
+  69              	.LFE62:
+  70              		.size	BlockingWifiQueue, .-BlockingWifiQueue
+  71              		.section	.text.UnblockingWifiQueue,"ax",%progbits
+  72              		.align	2
+  73              		.global	UnblockingWifiQueue
+  74              		.code	16
+  75              		.thumb_func
+  76              		.type	UnblockingWifiQueue, %function
+  77              	UnblockingWifiQueue:
+  78              	.LFB63:
+  28:WIFIQueue.c   **** void  UnblockingWifiQueue() { g_bBlockingWIFIQueue = FALSE; }
+  79              		.loc 1 28 0
+  80              		.cfi_startproc
+  81              		@ args = 0, pretend = 0, frame = 0
+  82              		@ frame_needed = 0, uses_anonymous_args = 0
+  83              		@ link register save eliminated.
+  84              		.loc 1 28 0
+  85 0000 0022     		movs	r2, #0
+  86 0002 014B     		ldr	r3, .L8
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 3
+
+
+  87 0004 1A70     		strb	r2, [r3]
+  88              		@ sp needed
+  89 0006 7047     		bx	lr
+  90              	.L9:
+  91              		.align	2
+  92              	.L8:
+  93 0008 00000000 		.word	.LANCHOR0
+  94              		.cfi_endproc
+  95              	.LFE63:
+  96              		.size	UnblockingWifiQueue, .-UnblockingWifiQueue
+  97              		.section	.text.deleteAllQueueWIFI,"ax",%progbits
+  98              		.align	2
+  99              		.global	deleteAllQueueWIFI
+ 100              		.code	16
+ 101              		.thumb_func
+ 102              		.type	deleteAllQueueWIFI, %function
+ 103              	deleteAllQueueWIFI:
+ 104              	.LFB64:
+  29:WIFIQueue.c   **** 
+  30:WIFIQueue.c   **** void deleteAllQueueWIFI()
+  31:WIFIQueue.c   **** {
+ 105              		.loc 1 31 0
+ 106              		.cfi_startproc
+ 107              		@ args = 0, pretend = 0, frame = 0
+ 108              		@ frame_needed = 0, uses_anonymous_args = 0
+ 109              		@ link register save eliminated.
+  32:WIFIQueue.c   ****     g_cLastEnqueue = g_cLastDequeue = 0;
+ 110              		.loc 1 32 0
+ 111 0000 024B     		ldr	r3, .L11
+ 112 0002 0022     		movs	r2, #0
+ 113 0004 5A80     		strh	r2, [r3, #2]
+ 114 0006 9A80     		strh	r2, [r3, #4]
+  33:WIFIQueue.c   ****     g_CountCRLF = 0;
+ 115              		.loc 1 33 0
+ 116 0008 DA80     		strh	r2, [r3, #6]
+  34:WIFIQueue.c   **** }
+ 117              		.loc 1 34 0
+ 118              		@ sp needed
+ 119 000a 7047     		bx	lr
+ 120              	.L12:
+ 121              		.align	2
+ 122              	.L11:
+ 123 000c 00000000 		.word	.LANCHOR0
+ 124              		.cfi_endproc
+ 125              	.LFE64:
+ 126              		.size	deleteAllQueueWIFI, .-deleteAllQueueWIFI
+ 127              		.section	.text.isFullQueueWIFI,"ax",%progbits
+ 128              		.align	2
+ 129              		.global	isFullQueueWIFI
+ 130              		.code	16
+ 131              		.thumb_func
+ 132              		.type	isFullQueueWIFI, %function
+ 133              	isFullQueueWIFI:
+ 134              	.LFB65:
+  35:WIFIQueue.c   **** uint8 isFullQueueWIFI(void)
+  36:WIFIQueue.c   **** {
+ 135              		.loc 1 36 0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 4
+
+
+ 136              		.cfi_startproc
+ 137              		@ args = 0, pretend = 0, frame = 0
+ 138              		@ frame_needed = 0, uses_anonymous_args = 0
+ 139              		@ link register save eliminated.
+  37:WIFIQueue.c   ****     if( (g_uRearQueueWIFI + 1) % MAX_WIFI_QUEUE == g_uFrontQueueWIFI)
+ 140              		.loc 1 37 0
+ 141 0000 0849     		ldr	r1, .L16
+ 142 0002 0822     		movs	r2, #8
+ 143 0004 8B5E     		ldrsh	r3, [r1, r2]
+ 144 0006 0133     		adds	r3, r3, #1
+ 145 0008 DA17     		asrs	r2, r3, #31
+ 146 000a 920D     		lsrs	r2, r2, #22
+ 147 000c 9B18     		adds	r3, r3, r2
+ 148 000e 9B05     		lsls	r3, r3, #22
+ 149 0010 9B0D     		lsrs	r3, r3, #22
+ 150 0012 9B1A     		subs	r3, r3, r2
+ 151 0014 0A22     		movs	r2, #10
+ 152 0016 8A5E     		ldrsh	r2, [r1, r2]
+ 153 0018 9342     		cmp	r3, r2
+ 154 001a 01D1     		bne	.L15
+  38:WIFIQueue.c   ****         return TRUE;
+ 155              		.loc 1 38 0
+ 156 001c 0120     		movs	r0, #1
+ 157 001e 00E0     		b	.L14
+ 158              	.L15:
+  39:WIFIQueue.c   ****     else
+  40:WIFIQueue.c   ****         return FALSE;
+ 159              		.loc 1 40 0
+ 160 0020 0020     		movs	r0, #0
+ 161              	.L14:
+  41:WIFIQueue.c   **** }
+ 162              		.loc 1 41 0
+ 163              		@ sp needed
+ 164 0022 7047     		bx	lr
+ 165              	.L17:
+ 166              		.align	2
+ 167              	.L16:
+ 168 0024 00000000 		.word	.LANCHOR0
+ 169              		.cfi_endproc
+ 170              	.LFE65:
+ 171              		.size	isFullQueueWIFI, .-isFullQueueWIFI
+ 172              		.section	.text.isEmptyQueueWIFI,"ax",%progbits
+ 173              		.align	2
+ 174              		.global	isEmptyQueueWIFI
+ 175              		.code	16
+ 176              		.thumb_func
+ 177              		.type	isEmptyQueueWIFI, %function
+ 178              	isEmptyQueueWIFI:
+ 179              	.LFB66:
+  42:WIFIQueue.c   **** 
+  43:WIFIQueue.c   **** uint8 isEmptyQueueWIFI(void)
+  44:WIFIQueue.c   **** {
+ 180              		.loc 1 44 0
+ 181              		.cfi_startproc
+ 182              		@ args = 0, pretend = 0, frame = 0
+ 183              		@ frame_needed = 0, uses_anonymous_args = 0
+ 184              		@ link register save eliminated.
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 5
+
+
+  45:WIFIQueue.c   ****     if(g_uFrontQueueWIFI==g_uRearQueueWIFI)
+ 185              		.loc 1 45 0
+ 186 0000 054B     		ldr	r3, .L21
+ 187 0002 0A21     		movs	r1, #10
+ 188 0004 5A5E     		ldrsh	r2, [r3, r1]
+ 189 0006 0821     		movs	r1, #8
+ 190 0008 5B5E     		ldrsh	r3, [r3, r1]
+ 191 000a 9A42     		cmp	r2, r3
+ 192 000c 01D1     		bne	.L20
+  46:WIFIQueue.c   ****             return 1;
+ 193              		.loc 1 46 0
+ 194 000e 0120     		movs	r0, #1
+ 195 0010 00E0     		b	.L19
+ 196              	.L20:
+  47:WIFIQueue.c   ****     else
+  48:WIFIQueue.c   ****             return 0;
+ 197              		.loc 1 48 0
+ 198 0012 0020     		movs	r0, #0
+ 199              	.L19:
+  49:WIFIQueue.c   **** }
+ 200              		.loc 1 49 0
+ 201              		@ sp needed
+ 202 0014 7047     		bx	lr
+ 203              	.L22:
+ 204 0016 C046     		.align	2
+ 205              	.L21:
+ 206 0018 00000000 		.word	.LANCHOR0
+ 207              		.cfi_endproc
+ 208              	.LFE66:
+ 209              		.size	isEmptyQueueWIFI, .-isEmptyQueueWIFI
+ 210              		.section	.text.enQueueWIFI,"ax",%progbits
+ 211              		.align	2
+ 212              		.global	enQueueWIFI
+ 213              		.code	16
+ 214              		.thumb_func
+ 215              		.type	enQueueWIFI, %function
+ 216              	enQueueWIFI:
+ 217              	.LFB67:
+  50:WIFIQueue.c   **** 
+  51:WIFIQueue.c   **** uint8 enQueueWIFI(char c)
+  52:WIFIQueue.c   **** {
+ 218              		.loc 1 52 0
+ 219              		.cfi_startproc
+ 220              		@ args = 0, pretend = 0, frame = 0
+ 221              		@ frame_needed = 0, uses_anonymous_args = 0
+ 222              	.LVL0:
+ 223 0000 10B5     		push	{r4, lr}
+ 224              		.cfi_def_cfa_offset 8
+ 225              		.cfi_offset 4, -8
+ 226              		.cfi_offset 14, -4
+ 227 0002 0400     		movs	r4, r0
+  53:WIFIQueue.c   ****     if(isFullQueueWIFI()) return FALSE;
+ 228              		.loc 1 53 0
+ 229 0004 FFF7FEFF 		bl	isFullQueueWIFI
+ 230              	.LVL1:
+ 231 0008 0028     		cmp	r0, #0
+ 232 000a 1BD1     		bne	.L26
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 6
+
+
+  54:WIFIQueue.c   **** 
+  55:WIFIQueue.c   ****     g_uSizeQueueWIFI++;
+ 233              		.loc 1 55 0
+ 234 000c 0E49     		ldr	r1, .L27
+ 235 000e 8B89     		ldrh	r3, [r1, #12]
+ 236 0010 0133     		adds	r3, r3, #1
+ 237 0012 8B81     		strh	r3, [r1, #12]
+  56:WIFIQueue.c   ****     g_uRearQueueWIFI = (g_uRearQueueWIFI + 1) % MAX_WIFI_QUEUE;
+ 238              		.loc 1 56 0
+ 239 0014 0823     		movs	r3, #8
+ 240 0016 CA5E     		ldrsh	r2, [r1, r3]
+ 241 0018 0132     		adds	r2, r2, #1
+ 242 001a D317     		asrs	r3, r2, #31
+ 243 001c 9B0D     		lsrs	r3, r3, #22
+ 244 001e D218     		adds	r2, r2, r3
+ 245 0020 9205     		lsls	r2, r2, #22
+ 246 0022 920D     		lsrs	r2, r2, #22
+ 247 0024 D31A     		subs	r3, r2, r3
+ 248 0026 0B81     		strh	r3, [r1, #8]
+  57:WIFIQueue.c   ****     g_cQueueWIFI[g_uRearQueueWIFI] = c;
+ 249              		.loc 1 57 0
+ 250 0028 084A     		ldr	r2, .L27+4
+ 251 002a D454     		strb	r4, [r2, r3]
+  58:WIFIQueue.c   ****     
+  59:WIFIQueue.c   ****     if(g_cLastEnqueue == CR && c == LF) g_CountCRLF++;    
+ 252              		.loc 1 59 0
+ 253 002c 8B88     		ldrh	r3, [r1, #4]
+ 254 002e 0D2B     		cmp	r3, #13
+ 255 0030 04D1     		bne	.L25
+ 256              		.loc 1 59 0 is_stmt 0 discriminator 1
+ 257 0032 0A2C     		cmp	r4, #10
+ 258 0034 02D1     		bne	.L25
+ 259              		.loc 1 59 0 discriminator 2
+ 260 0036 CB88     		ldrh	r3, [r1, #6]
+ 261 0038 0133     		adds	r3, r3, #1
+ 262 003a CB80     		strh	r3, [r1, #6]
+ 263              	.L25:
+  60:WIFIQueue.c   **** 
+  61:WIFIQueue.c   ****     g_cLastEnqueue = c;
+ 264              		.loc 1 61 0 is_stmt 1
+ 265 003c 024B     		ldr	r3, .L27
+ 266 003e 9C80     		strh	r4, [r3, #4]
+  62:WIFIQueue.c   ****     return TRUE;
+ 267              		.loc 1 62 0
+ 268 0040 0120     		movs	r0, #1
+ 269 0042 00E0     		b	.L24
+ 270              	.L26:
+  53:WIFIQueue.c   **** 
+ 271              		.loc 1 53 0
+ 272 0044 0020     		movs	r0, #0
+ 273              	.L24:
+  63:WIFIQueue.c   **** }
+ 274              		.loc 1 63 0
+ 275              		@ sp needed
+ 276 0046 10BD     		pop	{r4, pc}
+ 277              	.L28:
+ 278              		.align	2
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 7
+
+
+ 279              	.L27:
+ 280 0048 00000000 		.word	.LANCHOR0
+ 281 004c 00000000 		.word	g_cQueueWIFI
+ 282              		.cfi_endproc
+ 283              	.LFE67:
+ 284              		.size	enQueueWIFI, .-enQueueWIFI
+ 285              		.section	.text.deQueueWIFI,"ax",%progbits
+ 286              		.align	2
+ 287              		.global	deQueueWIFI
+ 288              		.code	16
+ 289              		.thumb_func
+ 290              		.type	deQueueWIFI, %function
+ 291              	deQueueWIFI:
+ 292              	.LFB68:
+  64:WIFIQueue.c   **** 
+  65:WIFIQueue.c   **** char deQueueWIFI(void)
+  66:WIFIQueue.c   **** {
+ 293              		.loc 1 66 0
+ 294              		.cfi_startproc
+ 295              		@ args = 0, pretend = 0, frame = 0
+ 296              		@ frame_needed = 0, uses_anonymous_args = 0
+ 297              		@ link register save eliminated.
+  67:WIFIQueue.c   ****     uint8 c;
+  68:WIFIQueue.c   ****     g_uSizeQueueWIFI--;
+ 298              		.loc 1 68 0
+ 299 0000 0D49     		ldr	r1, .L31
+ 300 0002 8B89     		ldrh	r3, [r1, #12]
+ 301 0004 013B     		subs	r3, r3, #1
+ 302 0006 8B81     		strh	r3, [r1, #12]
+  69:WIFIQueue.c   ****     g_uFrontQueueWIFI = (g_uFrontQueueWIFI + 1) % MAX_WIFI_QUEUE;
+ 303              		.loc 1 69 0
+ 304 0008 0A23     		movs	r3, #10
+ 305 000a CA5E     		ldrsh	r2, [r1, r3]
+ 306 000c 0132     		adds	r2, r2, #1
+ 307 000e D317     		asrs	r3, r2, #31
+ 308 0010 9B0D     		lsrs	r3, r3, #22
+ 309 0012 D218     		adds	r2, r2, r3
+ 310 0014 9205     		lsls	r2, r2, #22
+ 311 0016 920D     		lsrs	r2, r2, #22
+ 312 0018 D31A     		subs	r3, r2, r3
+ 313 001a 4B81     		strh	r3, [r1, #10]
+  70:WIFIQueue.c   ****     
+  71:WIFIQueue.c   ****     c = g_cQueueWIFI[g_uFrontQueueWIFI];
+ 314              		.loc 1 71 0
+ 315 001c 074A     		ldr	r2, .L31+4
+ 316 001e D05C     		ldrb	r0, [r2, r3]
+ 317              	.LVL2:
+  72:WIFIQueue.c   ****     
+  73:WIFIQueue.c   ****     if(g_cLastDequeue == CR && c == LF) g_CountCRLF--;
+ 318              		.loc 1 73 0
+ 319 0020 4B88     		ldrh	r3, [r1, #2]
+ 320 0022 0D2B     		cmp	r3, #13
+ 321 0024 04D1     		bne	.L30
+ 322              		.loc 1 73 0 is_stmt 0 discriminator 1
+ 323 0026 0A28     		cmp	r0, #10
+ 324 0028 02D1     		bne	.L30
+ 325              		.loc 1 73 0 discriminator 2
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 8
+
+
+ 326 002a CB88     		ldrh	r3, [r1, #6]
+ 327 002c 013B     		subs	r3, r3, #1
+ 328 002e CB80     		strh	r3, [r1, #6]
+ 329              	.L30:
+  74:WIFIQueue.c   ****     
+  75:WIFIQueue.c   ****     g_cLastDequeue = c;
+ 330              		.loc 1 75 0 is_stmt 1
+ 331 0030 014B     		ldr	r3, .L31
+ 332 0032 5880     		strh	r0, [r3, #2]
+  76:WIFIQueue.c   ****     return c;
+  77:WIFIQueue.c   **** }
+ 333              		.loc 1 77 0
+ 334              		@ sp needed
+ 335 0034 7047     		bx	lr
+ 336              	.L32:
+ 337 0036 C046     		.align	2
+ 338              	.L31:
+ 339 0038 00000000 		.word	.LANCHOR0
+ 340 003c 00000000 		.word	g_cQueueWIFI
+ 341              		.cfi_endproc
+ 342              	.LFE68:
+ 343              		.size	deQueueWIFI, .-deQueueWIFI
+ 344              		.section	.text.getFrontQueueWIFI,"ax",%progbits
+ 345              		.align	2
+ 346              		.global	getFrontQueueWIFI
+ 347              		.code	16
+ 348              		.thumb_func
+ 349              		.type	getFrontQueueWIFI, %function
+ 350              	getFrontQueueWIFI:
+ 351              	.LFB69:
+  78:WIFIQueue.c   **** 
+  79:WIFIQueue.c   **** char getFrontQueueWIFI(void)
+  80:WIFIQueue.c   **** {
+ 352              		.loc 1 80 0
+ 353              		.cfi_startproc
+ 354              		@ args = 0, pretend = 0, frame = 0
+ 355              		@ frame_needed = 0, uses_anonymous_args = 0
+ 356              		@ link register save eliminated.
+  81:WIFIQueue.c   ****    return g_cQueueWIFI[(g_uFrontQueueWIFI + 1 ) % MAX_WIFI_QUEUE ];
+ 357              		.loc 1 81 0
+ 358 0000 064B     		ldr	r3, .L34
+ 359 0002 0A22     		movs	r2, #10
+ 360 0004 9B5E     		ldrsh	r3, [r3, r2]
+ 361 0006 0133     		adds	r3, r3, #1
+ 362 0008 DA17     		asrs	r2, r3, #31
+ 363 000a 920D     		lsrs	r2, r2, #22
+ 364 000c 9B18     		adds	r3, r3, r2
+ 365 000e 9B05     		lsls	r3, r3, #22
+ 366 0010 9B0D     		lsrs	r3, r3, #22
+ 367 0012 9B1A     		subs	r3, r3, r2
+ 368 0014 024A     		ldr	r2, .L34+4
+ 369 0016 D05C     		ldrb	r0, [r2, r3]
+  82:WIFIQueue.c   **** }
+ 370              		.loc 1 82 0
+ 371              		@ sp needed
+ 372 0018 7047     		bx	lr
+ 373              	.L35:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 9
+
+
+ 374 001a C046     		.align	2
+ 375              	.L34:
+ 376 001c 00000000 		.word	.LANCHOR0
+ 377 0020 00000000 		.word	g_cQueueWIFI
+ 378              		.cfi_endproc
+ 379              	.LFE69:
+ 380              		.size	getFrontQueueWIFI, .-getFrontQueueWIFI
+ 381              		.section	.text.getFrontNextQueueWIFI,"ax",%progbits
+ 382              		.align	2
+ 383              		.global	getFrontNextQueueWIFI
+ 384              		.code	16
+ 385              		.thumb_func
+ 386              		.type	getFrontNextQueueWIFI, %function
+ 387              	getFrontNextQueueWIFI:
+ 388              	.LFB70:
+  83:WIFIQueue.c   **** 
+  84:WIFIQueue.c   **** char getFrontNextQueueWIFI(int i)
+  85:WIFIQueue.c   **** {
+ 389              		.loc 1 85 0
+ 390              		.cfi_startproc
+ 391              		@ args = 0, pretend = 0, frame = 0
+ 392              		@ frame_needed = 0, uses_anonymous_args = 0
+ 393              		@ link register save eliminated.
+ 394              	.LVL3:
+  86:WIFIQueue.c   ****    return g_cQueueWIFI[(g_uFrontQueueWIFI + 1 + i) % MAX_WIFI_QUEUE];
+ 395              		.loc 1 86 0
+ 396 0000 064B     		ldr	r3, .L37
+ 397 0002 0A22     		movs	r2, #10
+ 398 0004 9B5E     		ldrsh	r3, [r3, r2]
+ 399 0006 0133     		adds	r3, r3, #1
+ 400 0008 1818     		adds	r0, r3, r0
+ 401              	.LVL4:
+ 402 000a C317     		asrs	r3, r0, #31
+ 403 000c 9B0D     		lsrs	r3, r3, #22
+ 404 000e C018     		adds	r0, r0, r3
+ 405 0010 8005     		lsls	r0, r0, #22
+ 406 0012 800D     		lsrs	r0, r0, #22
+ 407 0014 C01A     		subs	r0, r0, r3
+ 408 0016 024B     		ldr	r3, .L37+4
+ 409 0018 185C     		ldrb	r0, [r3, r0]
+  87:WIFIQueue.c   **** }
+ 410              		.loc 1 87 0
+ 411              		@ sp needed
+ 412 001a 7047     		bx	lr
+ 413              	.L38:
+ 414              		.align	2
+ 415              	.L37:
+ 416 001c 00000000 		.word	.LANCHOR0
+ 417 0020 00000000 		.word	g_cQueueWIFI
+ 418              		.cfi_endproc
+ 419              	.LFE70:
+ 420              		.size	getFrontNextQueueWIFI, .-getFrontNextQueueWIFI
+ 421              		.section	.text.getRearQueueWIFI,"ax",%progbits
+ 422              		.align	2
+ 423              		.global	getRearQueueWIFI
+ 424              		.code	16
+ 425              		.thumb_func
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 10
+
+
+ 426              		.type	getRearQueueWIFI, %function
+ 427              	getRearQueueWIFI:
+ 428              	.LFB71:
+  88:WIFIQueue.c   **** 
+  89:WIFIQueue.c   **** char getRearQueueWIFI(void)
+  90:WIFIQueue.c   **** {
+ 429              		.loc 1 90 0
+ 430              		.cfi_startproc
+ 431              		@ args = 0, pretend = 0, frame = 0
+ 432              		@ frame_needed = 0, uses_anonymous_args = 0
+ 433              		@ link register save eliminated.
+  91:WIFIQueue.c   ****    return g_cQueueWIFI[ g_uSizeQueueWIFI % MAX_WIFI_QUEUE];
+ 434              		.loc 1 91 0
+ 435 0000 054B     		ldr	r3, .L40
+ 436 0002 0C22     		movs	r2, #12
+ 437 0004 9B5E     		ldrsh	r3, [r3, r2]
+ 438 0006 DA17     		asrs	r2, r3, #31
+ 439 0008 920D     		lsrs	r2, r2, #22
+ 440 000a 9B18     		adds	r3, r3, r2
+ 441 000c 9B05     		lsls	r3, r3, #22
+ 442 000e 9B0D     		lsrs	r3, r3, #22
+ 443 0010 9B1A     		subs	r3, r3, r2
+ 444 0012 024A     		ldr	r2, .L40+4
+ 445 0014 D05C     		ldrb	r0, [r2, r3]
+  92:WIFIQueue.c   **** }
+ 446              		.loc 1 92 0
+ 447              		@ sp needed
+ 448 0016 7047     		bx	lr
+ 449              	.L41:
+ 450              		.align	2
+ 451              	.L40:
+ 452 0018 00000000 		.word	.LANCHOR0
+ 453 001c 00000000 		.word	g_cQueueWIFI
+ 454              		.cfi_endproc
+ 455              	.LFE71:
+ 456              		.size	getRearQueueWIFI, .-getRearQueueWIFI
+ 457              		.section	.text.getSizeQueueWIFI,"ax",%progbits
+ 458              		.align	2
+ 459              		.global	getSizeQueueWIFI
+ 460              		.code	16
+ 461              		.thumb_func
+ 462              		.type	getSizeQueueWIFI, %function
+ 463              	getSizeQueueWIFI:
+ 464              	.LFB72:
+  93:WIFIQueue.c   **** 
+  94:WIFIQueue.c   **** uint16 getSizeQueueWIFI(void)
+  95:WIFIQueue.c   **** {
+ 465              		.loc 1 95 0
+ 466              		.cfi_startproc
+ 467              		@ args = 0, pretend = 0, frame = 0
+ 468              		@ frame_needed = 0, uses_anonymous_args = 0
+ 469              		@ link register save eliminated.
+  96:WIFIQueue.c   ****    return g_uSizeQueueWIFI;
+ 470              		.loc 1 96 0
+ 471 0000 014B     		ldr	r3, .L43
+ 472 0002 9889     		ldrh	r0, [r3, #12]
+  97:WIFIQueue.c   **** }
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 11
+
+
+ 473              		.loc 1 97 0
+ 474              		@ sp needed
+ 475 0004 7047     		bx	lr
+ 476              	.L44:
+ 477 0006 C046     		.align	2
+ 478              	.L43:
+ 479 0008 00000000 		.word	.LANCHOR0
+ 480              		.cfi_endproc
+ 481              	.LFE72:
+ 482              		.size	getSizeQueueWIFI, .-getSizeQueueWIFI
+ 483              		.section	.text.getCountCRLF,"ax",%progbits
+ 484              		.align	2
+ 485              		.global	getCountCRLF
+ 486              		.code	16
+ 487              		.thumb_func
+ 488              		.type	getCountCRLF, %function
+ 489              	getCountCRLF:
+ 490              	.LFB73:
+  98:WIFIQueue.c   **** 
+  99:WIFIQueue.c   **** uint16 getCountCRLF() { return g_CountCRLF; }
+ 491              		.loc 1 99 0
+ 492              		.cfi_startproc
+ 493              		@ args = 0, pretend = 0, frame = 0
+ 494              		@ frame_needed = 0, uses_anonymous_args = 0
+ 495              		@ link register save eliminated.
+ 496              		.loc 1 99 0
+ 497 0000 014B     		ldr	r3, .L46
+ 498 0002 D888     		ldrh	r0, [r3, #6]
+ 499              		@ sp needed
+ 500 0004 7047     		bx	lr
+ 501              	.L47:
+ 502 0006 C046     		.align	2
+ 503              	.L46:
+ 504 0008 00000000 		.word	.LANCHOR0
+ 505              		.cfi_endproc
+ 506              	.LFE73:
+ 507              		.size	getCountCRLF, .-getCountCRLF
+ 508              		.section	.text.PrintQueueWIFI,"ax",%progbits
+ 509              		.align	2
+ 510              		.global	PrintQueueWIFI
+ 511              		.code	16
+ 512              		.thumb_func
+ 513              		.type	PrintQueueWIFI, %function
+ 514              	PrintQueueWIFI:
+ 515              	.LFB74:
+ 100:WIFIQueue.c   **** 
+ 101:WIFIQueue.c   **** void PrintQueueWIFI()
+ 102:WIFIQueue.c   **** {
+ 516              		.loc 1 102 0
+ 517              		.cfi_startproc
+ 518              		@ args = 0, pretend = 0, frame = 0
+ 519              		@ frame_needed = 0, uses_anonymous_args = 0
+ 520 0000 10B5     		push	{r4, lr}
+ 521              		.cfi_def_cfa_offset 8
+ 522              		.cfi_offset 4, -8
+ 523              		.cfi_offset 14, -4
+ 524              	.LVL5:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 12
+
+
+ 525              	.LBB2:
+ 103:WIFIQueue.c   ****     for(int i=0; i < getSizeQueueWIFI(); i++)
+ 526              		.loc 1 103 0
+ 527 0002 0024     		movs	r4, #0
+ 528 0004 07E0     		b	.L49
+ 529              	.LVL6:
+ 530              	.L50:
+ 104:WIFIQueue.c   ****         DEBUG_printf("%c",getFrontNextQueueWIFI(i));
+ 531              		.loc 1 104 0 discriminator 3
+ 532 0006 2000     		movs	r0, r4
+ 533 0008 FFF7FEFF 		bl	getFrontNextQueueWIFI
+ 534              	.LVL7:
+ 535 000c 0100     		movs	r1, r0
+ 536 000e 0448     		ldr	r0, .L51
+ 537 0010 FFF7FEFF 		bl	DEBUG_printf
+ 538              	.LVL8:
+ 103:WIFIQueue.c   ****     for(int i=0; i < getSizeQueueWIFI(); i++)
+ 539              		.loc 1 103 0 discriminator 3
+ 540 0014 0134     		adds	r4, r4, #1
+ 541              	.LVL9:
+ 542              	.L49:
+ 103:WIFIQueue.c   ****     for(int i=0; i < getSizeQueueWIFI(); i++)
+ 543              		.loc 1 103 0 is_stmt 0 discriminator 1
+ 544 0016 FFF7FEFF 		bl	getSizeQueueWIFI
+ 545              	.LVL10:
+ 546 001a 8442     		cmp	r4, r0
+ 547 001c F3DB     		blt	.L50
+ 548              	.LBE2:
+ 105:WIFIQueue.c   **** }
+ 549              		.loc 1 105 0 is_stmt 1
+ 550              		@ sp needed
+ 551              	.LVL11:
+ 552 001e 10BD     		pop	{r4, pc}
+ 553              	.L52:
+ 554              		.align	2
+ 555              	.L51:
+ 556 0020 00000000 		.word	.LC18
+ 557              		.cfi_endproc
+ 558              	.LFE74:
+ 559              		.size	PrintQueueWIFI, .-PrintQueueWIFI
+ 560              		.global	g_bBlockingWIFIQueue
+ 561              		.global	g_cLastDequeue
+ 562              		.global	g_cLastEnqueue
+ 563              		.global	g_CountCRLF
+ 564              		.comm	g_cQueueWIFI,1024,4
+ 565              		.global	g_uRearQueueWIFI
+ 566              		.global	g_uFrontQueueWIFI
+ 567              		.global	g_uSizeQueueWIFI
+ 568              		.comm	Param,6,4
+ 569              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 570              		.align	2
+ 571              	.LC18:
+ 572 0000 256300   		.ascii	"%c\000"
+ 573              		.bss
+ 574              		.align	1
+ 575              		.set	.LANCHOR0,. + 0
+ 576              		.type	g_bBlockingWIFIQueue, %object
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 13
+
+
+ 577              		.size	g_bBlockingWIFIQueue, 1
+ 578              	g_bBlockingWIFIQueue:
+ 579 0000 00       		.space	1
+ 580 0001 00       		.space	1
+ 581              		.type	g_cLastDequeue, %object
+ 582              		.size	g_cLastDequeue, 2
+ 583              	g_cLastDequeue:
+ 584 0002 0000     		.space	2
+ 585              		.type	g_cLastEnqueue, %object
+ 586              		.size	g_cLastEnqueue, 2
+ 587              	g_cLastEnqueue:
+ 588 0004 0000     		.space	2
+ 589              		.type	g_CountCRLF, %object
+ 590              		.size	g_CountCRLF, 2
+ 591              	g_CountCRLF:
+ 592 0006 0000     		.space	2
+ 593              		.type	g_uRearQueueWIFI, %object
+ 594              		.size	g_uRearQueueWIFI, 2
+ 595              	g_uRearQueueWIFI:
+ 596 0008 0000     		.space	2
+ 597              		.type	g_uFrontQueueWIFI, %object
+ 598              		.size	g_uFrontQueueWIFI, 2
+ 599              	g_uFrontQueueWIFI:
+ 600 000a 0000     		.space	2
+ 601              		.type	g_uSizeQueueWIFI, %object
+ 602              		.size	g_uSizeQueueWIFI, 2
+ 603              	g_uSizeQueueWIFI:
+ 604 000c 0000     		.space	2
+ 605              		.text
+ 606              	.Letext0:
+ 607              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 608              		.file 3 "main.h"
+ 609              		.file 4 "debug.h"
+ 610              		.section	.debug_info,"",%progbits
+ 611              	.Ldebug_info0:
+ 612 0000 2C030000 		.4byte	0x32c
+ 613 0004 0400     		.2byte	0x4
+ 614 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 615 000a 04       		.byte	0x4
+ 616 000b 01       		.uleb128 0x1
+ 617 000c B7010000 		.4byte	.LASF41
+ 618 0010 0C       		.byte	0xc
+ 619 0011 E0000000 		.4byte	.LASF42
+ 620 0015 8C010000 		.4byte	.LASF43
+ 621 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 622 001d 00000000 		.4byte	0
+ 623 0021 00000000 		.4byte	.Ldebug_line0
+ 624 0025 02       		.uleb128 0x2
+ 625 0026 01       		.byte	0x1
+ 626 0027 06       		.byte	0x6
+ 627 0028 CC020000 		.4byte	.LASF0
+ 628 002c 02       		.uleb128 0x2
+ 629 002d 01       		.byte	0x1
+ 630 002e 08       		.byte	0x8
+ 631 002f 8B000000 		.4byte	.LASF1
+ 632 0033 02       		.uleb128 0x2
+ 633 0034 02       		.byte	0x2
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 14
+
+
+ 634 0035 05       		.byte	0x5
+ 635 0036 82020000 		.4byte	.LASF2
+ 636 003a 02       		.uleb128 0x2
+ 637 003b 02       		.byte	0x2
+ 638 003c 07       		.byte	0x7
+ 639 003d 4C000000 		.4byte	.LASF3
+ 640 0041 02       		.uleb128 0x2
+ 641 0042 04       		.byte	0x4
+ 642 0043 05       		.byte	0x5
+ 643 0044 A5020000 		.4byte	.LASF4
+ 644 0048 02       		.uleb128 0x2
+ 645 0049 04       		.byte	0x4
+ 646 004a 07       		.byte	0x7
+ 647 004b C3000000 		.4byte	.LASF5
+ 648 004f 02       		.uleb128 0x2
+ 649 0050 08       		.byte	0x8
+ 650 0051 05       		.byte	0x5
+ 651 0052 60020000 		.4byte	.LASF6
+ 652 0056 02       		.uleb128 0x2
+ 653 0057 08       		.byte	0x8
+ 654 0058 07       		.byte	0x7
+ 655 0059 5F010000 		.4byte	.LASF7
+ 656 005d 03       		.uleb128 0x3
+ 657 005e 04       		.byte	0x4
+ 658 005f 05       		.byte	0x5
+ 659 0060 696E7400 		.ascii	"int\000"
+ 660 0064 02       		.uleb128 0x2
+ 661 0065 04       		.byte	0x4
+ 662 0066 07       		.byte	0x7
+ 663 0067 46010000 		.4byte	.LASF8
+ 664 006b 04       		.uleb128 0x4
+ 665 006c 9F020000 		.4byte	.LASF9
+ 666 0070 02       		.byte	0x2
+ 667 0071 FC01     		.2byte	0x1fc
+ 668 0073 2C000000 		.4byte	0x2c
+ 669 0077 04       		.uleb128 0x4
+ 670 0078 17010000 		.4byte	.LASF10
+ 671 007c 02       		.byte	0x2
+ 672 007d FD01     		.2byte	0x1fd
+ 673 007f 3A000000 		.4byte	0x3a
+ 674 0083 02       		.uleb128 0x2
+ 675 0084 04       		.byte	0x4
+ 676 0085 04       		.byte	0x4
+ 677 0086 85000000 		.4byte	.LASF11
+ 678 008a 02       		.uleb128 0x2
+ 679 008b 08       		.byte	0x8
+ 680 008c 04       		.byte	0x4
+ 681 008d 5F000000 		.4byte	.LASF12
+ 682 0091 02       		.uleb128 0x2
+ 683 0092 01       		.byte	0x1
+ 684 0093 08       		.byte	0x8
+ 685 0094 6E020000 		.4byte	.LASF13
+ 686 0098 02       		.uleb128 0x2
+ 687 0099 08       		.byte	0x8
+ 688 009a 04       		.byte	0x4
+ 689 009b C0020000 		.4byte	.LASF14
+ 690 009f 02       		.uleb128 0x2
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 15
+
+
+ 691 00a0 04       		.byte	0x4
+ 692 00a1 07       		.byte	0x7
+ 693 00a2 57020000 		.4byte	.LASF15
+ 694 00a6 05       		.uleb128 0x5
+ 695 00a7 D5000000 		.4byte	.LASF44
+ 696 00ab 06       		.byte	0x6
+ 697 00ac 03       		.byte	0x3
+ 698 00ad 31       		.byte	0x31
+ 699 00ae D7000000 		.4byte	0xd7
+ 700 00b2 06       		.uleb128 0x6
+ 701 00b3 00000000 		.4byte	.LASF16
+ 702 00b7 03       		.byte	0x3
+ 703 00b8 33       		.byte	0x33
+ 704 00b9 6B000000 		.4byte	0x6b
+ 705 00bd 00       		.byte	0
+ 706 00be 06       		.uleb128 0x6
+ 707 00bf 76010000 		.4byte	.LASF17
+ 708 00c3 03       		.byte	0x3
+ 709 00c4 34       		.byte	0x34
+ 710 00c5 77000000 		.4byte	0x77
+ 711 00c9 02       		.byte	0x2
+ 712 00ca 06       		.uleb128 0x6
+ 713 00cb 11010000 		.4byte	.LASF18
+ 714 00cf 03       		.byte	0x3
+ 715 00d0 35       		.byte	0x35
+ 716 00d1 77000000 		.4byte	0x77
+ 717 00d5 04       		.byte	0x4
+ 718 00d6 00       		.byte	0
+ 719 00d7 07       		.uleb128 0x7
+ 720 00d8 1B000000 		.4byte	.LASF30
+ 721 00dc 01       		.byte	0x1
+ 722 00dd 1A       		.byte	0x1a
+ 723 00de 6B000000 		.4byte	0x6b
+ 724 00e2 00000000 		.4byte	.LFB61
+ 725 00e6 0C000000 		.4byte	.LFE61-.LFB61
+ 726 00ea 01       		.uleb128 0x1
+ 727 00eb 9C       		.byte	0x9c
+ 728 00ec 08       		.uleb128 0x8
+ 729 00ed AE020000 		.4byte	.LASF19
+ 730 00f1 01       		.byte	0x1
+ 731 00f2 1B       		.byte	0x1b
+ 732 00f3 00000000 		.4byte	.LFB62
+ 733 00f7 0C000000 		.4byte	.LFE62-.LFB62
+ 734 00fb 01       		.uleb128 0x1
+ 735 00fc 9C       		.byte	0x9c
+ 736 00fd 08       		.uleb128 0x8
+ 737 00fe EC000000 		.4byte	.LASF20
+ 738 0102 01       		.byte	0x1
+ 739 0103 1C       		.byte	0x1c
+ 740 0104 00000000 		.4byte	.LFB63
+ 741 0108 0C000000 		.4byte	.LFE63-.LFB63
+ 742 010c 01       		.uleb128 0x1
+ 743 010d 9C       		.byte	0x9c
+ 744 010e 08       		.uleb128 0x8
+ 745 010f 8C020000 		.4byte	.LASF21
+ 746 0113 01       		.byte	0x1
+ 747 0114 1E       		.byte	0x1e
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 16
+
+
+ 748 0115 00000000 		.4byte	.LFB64
+ 749 0119 10000000 		.4byte	.LFE64-.LFB64
+ 750 011d 01       		.uleb128 0x1
+ 751 011e 9C       		.byte	0x9c
+ 752 011f 09       		.uleb128 0x9
+ 753 0120 7C010000 		.4byte	.LASF22
+ 754 0124 01       		.byte	0x1
+ 755 0125 23       		.byte	0x23
+ 756 0126 6B000000 		.4byte	0x6b
+ 757 012a 00000000 		.4byte	.LFB65
+ 758 012e 28000000 		.4byte	.LFE65-.LFB65
+ 759 0132 01       		.uleb128 0x1
+ 760 0133 9C       		.byte	0x9c
+ 761 0134 09       		.uleb128 0x9
+ 762 0135 3B000000 		.4byte	.LASF23
+ 763 0139 01       		.byte	0x1
+ 764 013a 2B       		.byte	0x2b
+ 765 013b 6B000000 		.4byte	0x6b
+ 766 013f 00000000 		.4byte	.LFB66
+ 767 0143 1C000000 		.4byte	.LFE66-.LFB66
+ 768 0147 01       		.uleb128 0x1
+ 769 0148 9C       		.byte	0x9c
+ 770 0149 0A       		.uleb128 0xa
+ 771 014a F4020000 		.4byte	.LASF24
+ 772 014e 01       		.byte	0x1
+ 773 014f 33       		.byte	0x33
+ 774 0150 6B000000 		.4byte	0x6b
+ 775 0154 00000000 		.4byte	.LFB67
+ 776 0158 50000000 		.4byte	.LFE67-.LFB67
+ 777 015c 01       		.uleb128 0x1
+ 778 015d 9C       		.byte	0x9c
+ 779 015e 79010000 		.4byte	0x179
+ 780 0162 0B       		.uleb128 0xb
+ 781 0163 6300     		.ascii	"c\000"
+ 782 0165 01       		.byte	0x1
+ 783 0166 33       		.byte	0x33
+ 784 0167 91000000 		.4byte	0x91
+ 785 016b 00000000 		.4byte	.LLST0
+ 786 016f 0C       		.uleb128 0xc
+ 787 0170 08000000 		.4byte	.LVL1
+ 788 0174 1F010000 		.4byte	0x11f
+ 789 0178 00       		.byte	0
+ 790 0179 0A       		.uleb128 0xa
+ 791 017a 53010000 		.4byte	.LASF25
+ 792 017e 01       		.byte	0x1
+ 793 017f 41       		.byte	0x41
+ 794 0180 91000000 		.4byte	0x91
+ 795 0184 00000000 		.4byte	.LFB68
+ 796 0188 40000000 		.4byte	.LFE68-.LFB68
+ 797 018c 01       		.uleb128 0x1
+ 798 018d 9C       		.byte	0x9c
+ 799 018e 9E010000 		.4byte	0x19e
+ 800 0192 0D       		.uleb128 0xd
+ 801 0193 6300     		.ascii	"c\000"
+ 802 0195 01       		.byte	0x1
+ 803 0196 43       		.byte	0x43
+ 804 0197 6B000000 		.4byte	0x6b
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 17
+
+
+ 805 019b 01       		.uleb128 0x1
+ 806 019c 50       		.byte	0x50
+ 807 019d 00       		.byte	0
+ 808 019e 09       		.uleb128 0x9
+ 809 019f 45020000 		.4byte	.LASF26
+ 810 01a3 01       		.byte	0x1
+ 811 01a4 4F       		.byte	0x4f
+ 812 01a5 91000000 		.4byte	0x91
+ 813 01a9 00000000 		.4byte	.LFB69
+ 814 01ad 24000000 		.4byte	.LFE69-.LFB69
+ 815 01b1 01       		.uleb128 0x1
+ 816 01b2 9C       		.byte	0x9c
+ 817 01b3 0A       		.uleb128 0xa
+ 818 01b4 00030000 		.4byte	.LASF27
+ 819 01b8 01       		.byte	0x1
+ 820 01b9 54       		.byte	0x54
+ 821 01ba 91000000 		.4byte	0x91
+ 822 01be 00000000 		.4byte	.LFB70
+ 823 01c2 24000000 		.4byte	.LFE70-.LFB70
+ 824 01c6 01       		.uleb128 0x1
+ 825 01c7 9C       		.byte	0x9c
+ 826 01c8 DA010000 		.4byte	0x1da
+ 827 01cc 0B       		.uleb128 0xb
+ 828 01cd 6900     		.ascii	"i\000"
+ 829 01cf 01       		.byte	0x1
+ 830 01d0 54       		.byte	0x54
+ 831 01d1 5D000000 		.4byte	0x5d
+ 832 01d5 21000000 		.4byte	.LLST1
+ 833 01d9 00       		.byte	0
+ 834 01da 09       		.uleb128 0x9
+ 835 01db 00010000 		.4byte	.LASF28
+ 836 01df 01       		.byte	0x1
+ 837 01e0 59       		.byte	0x59
+ 838 01e1 91000000 		.4byte	0x91
+ 839 01e5 00000000 		.4byte	.LFB71
+ 840 01e9 20000000 		.4byte	.LFE71-.LFB71
+ 841 01ed 01       		.uleb128 0x1
+ 842 01ee 9C       		.byte	0x9c
+ 843 01ef 09       		.uleb128 0x9
+ 844 01f0 35010000 		.4byte	.LASF29
+ 845 01f4 01       		.byte	0x1
+ 846 01f5 5E       		.byte	0x5e
+ 847 01f6 77000000 		.4byte	0x77
+ 848 01fa 00000000 		.4byte	.LFB72
+ 849 01fe 0C000000 		.4byte	.LFE72-.LFB72
+ 850 0202 01       		.uleb128 0x1
+ 851 0203 9C       		.byte	0x9c
+ 852 0204 07       		.uleb128 0x7
+ 853 0205 66000000 		.4byte	.LASF31
+ 854 0209 01       		.byte	0x1
+ 855 020a 63       		.byte	0x63
+ 856 020b 77000000 		.4byte	0x77
+ 857 020f 00000000 		.4byte	.LFB73
+ 858 0213 0C000000 		.4byte	.LFE73-.LFB73
+ 859 0217 01       		.uleb128 0x1
+ 860 0218 9C       		.byte	0x9c
+ 861 0219 0E       		.uleb128 0xe
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 18
+
+
+ 862 021a 73020000 		.4byte	.LASF45
+ 863 021e 01       		.byte	0x1
+ 864 021f 65       		.byte	0x65
+ 865 0220 00000000 		.4byte	.LFB74
+ 866 0224 24000000 		.4byte	.LFE74-.LFB74
+ 867 0228 01       		.uleb128 0x1
+ 868 0229 9C       		.byte	0x9c
+ 869 022a 7A020000 		.4byte	0x27a
+ 870 022e 0F       		.uleb128 0xf
+ 871 022f 02000000 		.4byte	.LBB2
+ 872 0233 1C000000 		.4byte	.LBE2-.LBB2
+ 873 0237 10       		.uleb128 0x10
+ 874 0238 6900     		.ascii	"i\000"
+ 875 023a 01       		.byte	0x1
+ 876 023b 67       		.byte	0x67
+ 877 023c 5D000000 		.4byte	0x5d
+ 878 0240 42000000 		.4byte	.LLST2
+ 879 0244 11       		.uleb128 0x11
+ 880 0245 0C000000 		.4byte	.LVL7
+ 881 0249 B3010000 		.4byte	0x1b3
+ 882 024d 58020000 		.4byte	0x258
+ 883 0251 12       		.uleb128 0x12
+ 884 0252 01       		.uleb128 0x1
+ 885 0253 50       		.byte	0x50
+ 886 0254 02       		.uleb128 0x2
+ 887 0255 74       		.byte	0x74
+ 888 0256 00       		.sleb128 0
+ 889 0257 00       		.byte	0
+ 890 0258 11       		.uleb128 0x11
+ 891 0259 14000000 		.4byte	.LVL8
+ 892 025d 24030000 		.4byte	0x324
+ 893 0261 6F020000 		.4byte	0x26f
+ 894 0265 12       		.uleb128 0x12
+ 895 0266 01       		.uleb128 0x1
+ 896 0267 50       		.byte	0x50
+ 897 0268 05       		.uleb128 0x5
+ 898 0269 03       		.byte	0x3
+ 899 026a 00000000 		.4byte	.LC18
+ 900 026e 00       		.byte	0
+ 901 026f 0C       		.uleb128 0xc
+ 902 0270 1A000000 		.4byte	.LVL10
+ 903 0274 EF010000 		.4byte	0x1ef
+ 904 0278 00       		.byte	0
+ 905 0279 00       		.byte	0
+ 906 027a 13       		.uleb128 0x13
+ 907 027b 2F010000 		.4byte	.LASF32
+ 908 027f 03       		.byte	0x3
+ 909 0280 38       		.byte	0x38
+ 910 0281 A6000000 		.4byte	0xa6
+ 911 0285 05       		.uleb128 0x5
+ 912 0286 03       		.byte	0x3
+ 913 0287 00000000 		.4byte	Param
+ 914 028b 13       		.uleb128 0x13
+ 915 028c 1E010000 		.4byte	.LASF33
+ 916 0290 01       		.byte	0x1
+ 917 0291 10       		.byte	0x10
+ 918 0292 33000000 		.4byte	0x33
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 19
+
+
+ 919 0296 05       		.uleb128 0x5
+ 920 0297 03       		.byte	0x3
+ 921 0298 00000000 		.4byte	g_uSizeQueueWIFI
+ 922 029c 13       		.uleb128 0x13
+ 923 029d 73000000 		.4byte	.LASF34
+ 924 02a1 01       		.byte	0x1
+ 925 02a2 11       		.byte	0x11
+ 926 02a3 33000000 		.4byte	0x33
+ 927 02a7 05       		.uleb128 0x5
+ 928 02a8 03       		.byte	0x3
+ 929 02a9 00000000 		.4byte	g_uFrontQueueWIFI
+ 930 02ad 13       		.uleb128 0x13
+ 931 02ae A5000000 		.4byte	.LASF35
+ 932 02b2 01       		.byte	0x1
+ 933 02b3 12       		.byte	0x12
+ 934 02b4 33000000 		.4byte	0x33
+ 935 02b8 05       		.uleb128 0x5
+ 936 02b9 03       		.byte	0x3
+ 937 02ba 00000000 		.4byte	g_uRearQueueWIFI
+ 938 02be 14       		.uleb128 0x14
+ 939 02bf 91000000 		.4byte	0x91
+ 940 02c3 CF020000 		.4byte	0x2cf
+ 941 02c7 15       		.uleb128 0x15
+ 942 02c8 9F000000 		.4byte	0x9f
+ 943 02cc FF03     		.2byte	0x3ff
+ 944 02ce 00       		.byte	0
+ 945 02cf 13       		.uleb128 0x13
+ 946 02d0 D8020000 		.4byte	.LASF36
+ 947 02d4 01       		.byte	0x1
+ 948 02d5 13       		.byte	0x13
+ 949 02d6 BE020000 		.4byte	0x2be
+ 950 02da 05       		.uleb128 0x5
+ 951 02db 03       		.byte	0x3
+ 952 02dc 00000000 		.4byte	g_cQueueWIFI
+ 953 02e0 13       		.uleb128 0x13
+ 954 02e1 99000000 		.4byte	.LASF37
+ 955 02e5 01       		.byte	0x1
+ 956 02e6 15       		.byte	0x15
+ 957 02e7 77000000 		.4byte	0x77
+ 958 02eb 05       		.uleb128 0x5
+ 959 02ec 03       		.byte	0x3
+ 960 02ed 00000000 		.4byte	g_CountCRLF
+ 961 02f1 13       		.uleb128 0x13
+ 962 02f2 E5020000 		.4byte	.LASF38
+ 963 02f6 01       		.byte	0x1
+ 964 02f7 16       		.byte	0x16
+ 965 02f8 77000000 		.4byte	0x77
+ 966 02fc 05       		.uleb128 0x5
+ 967 02fd 03       		.byte	0x3
+ 968 02fe 00000000 		.4byte	g_cLastEnqueue
+ 969 0302 13       		.uleb128 0x13
+ 970 0303 0C000000 		.4byte	.LASF39
+ 971 0307 01       		.byte	0x1
+ 972 0308 17       		.byte	0x17
+ 973 0309 77000000 		.4byte	0x77
+ 974 030d 05       		.uleb128 0x5
+ 975 030e 03       		.byte	0x3
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 20
+
+
+ 976 030f 00000000 		.4byte	g_cLastDequeue
+ 977 0313 13       		.uleb128 0x13
+ 978 0314 26000000 		.4byte	.LASF40
+ 979 0318 01       		.byte	0x1
+ 980 0319 19       		.byte	0x19
+ 981 031a 6B000000 		.4byte	0x6b
+ 982 031e 05       		.uleb128 0x5
+ 983 031f 03       		.byte	0x3
+ 984 0320 00000000 		.4byte	g_bBlockingWIFIQueue
+ 985 0324 16       		.uleb128 0x16
+ 986 0325 B6000000 		.4byte	.LASF46
+ 987 0329 B6000000 		.4byte	.LASF46
+ 988 032d 04       		.byte	0x4
+ 989 032e 11       		.byte	0x11
+ 990 032f 00       		.byte	0
+ 991              		.section	.debug_abbrev,"",%progbits
+ 992              	.Ldebug_abbrev0:
+ 993 0000 01       		.uleb128 0x1
+ 994 0001 11       		.uleb128 0x11
+ 995 0002 01       		.byte	0x1
+ 996 0003 25       		.uleb128 0x25
+ 997 0004 0E       		.uleb128 0xe
+ 998 0005 13       		.uleb128 0x13
+ 999 0006 0B       		.uleb128 0xb
+ 1000 0007 03       		.uleb128 0x3
+ 1001 0008 0E       		.uleb128 0xe
+ 1002 0009 1B       		.uleb128 0x1b
+ 1003 000a 0E       		.uleb128 0xe
+ 1004 000b 55       		.uleb128 0x55
+ 1005 000c 17       		.uleb128 0x17
+ 1006 000d 11       		.uleb128 0x11
+ 1007 000e 01       		.uleb128 0x1
+ 1008 000f 10       		.uleb128 0x10
+ 1009 0010 17       		.uleb128 0x17
+ 1010 0011 00       		.byte	0
+ 1011 0012 00       		.byte	0
+ 1012 0013 02       		.uleb128 0x2
+ 1013 0014 24       		.uleb128 0x24
+ 1014 0015 00       		.byte	0
+ 1015 0016 0B       		.uleb128 0xb
+ 1016 0017 0B       		.uleb128 0xb
+ 1017 0018 3E       		.uleb128 0x3e
+ 1018 0019 0B       		.uleb128 0xb
+ 1019 001a 03       		.uleb128 0x3
+ 1020 001b 0E       		.uleb128 0xe
+ 1021 001c 00       		.byte	0
+ 1022 001d 00       		.byte	0
+ 1023 001e 03       		.uleb128 0x3
+ 1024 001f 24       		.uleb128 0x24
+ 1025 0020 00       		.byte	0
+ 1026 0021 0B       		.uleb128 0xb
+ 1027 0022 0B       		.uleb128 0xb
+ 1028 0023 3E       		.uleb128 0x3e
+ 1029 0024 0B       		.uleb128 0xb
+ 1030 0025 03       		.uleb128 0x3
+ 1031 0026 08       		.uleb128 0x8
+ 1032 0027 00       		.byte	0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 21
+
+
+ 1033 0028 00       		.byte	0
+ 1034 0029 04       		.uleb128 0x4
+ 1035 002a 16       		.uleb128 0x16
+ 1036 002b 00       		.byte	0
+ 1037 002c 03       		.uleb128 0x3
+ 1038 002d 0E       		.uleb128 0xe
+ 1039 002e 3A       		.uleb128 0x3a
+ 1040 002f 0B       		.uleb128 0xb
+ 1041 0030 3B       		.uleb128 0x3b
+ 1042 0031 05       		.uleb128 0x5
+ 1043 0032 49       		.uleb128 0x49
+ 1044 0033 13       		.uleb128 0x13
+ 1045 0034 00       		.byte	0
+ 1046 0035 00       		.byte	0
+ 1047 0036 05       		.uleb128 0x5
+ 1048 0037 13       		.uleb128 0x13
+ 1049 0038 01       		.byte	0x1
+ 1050 0039 03       		.uleb128 0x3
+ 1051 003a 0E       		.uleb128 0xe
+ 1052 003b 0B       		.uleb128 0xb
+ 1053 003c 0B       		.uleb128 0xb
+ 1054 003d 3A       		.uleb128 0x3a
+ 1055 003e 0B       		.uleb128 0xb
+ 1056 003f 3B       		.uleb128 0x3b
+ 1057 0040 0B       		.uleb128 0xb
+ 1058 0041 01       		.uleb128 0x1
+ 1059 0042 13       		.uleb128 0x13
+ 1060 0043 00       		.byte	0
+ 1061 0044 00       		.byte	0
+ 1062 0045 06       		.uleb128 0x6
+ 1063 0046 0D       		.uleb128 0xd
+ 1064 0047 00       		.byte	0
+ 1065 0048 03       		.uleb128 0x3
+ 1066 0049 0E       		.uleb128 0xe
+ 1067 004a 3A       		.uleb128 0x3a
+ 1068 004b 0B       		.uleb128 0xb
+ 1069 004c 3B       		.uleb128 0x3b
+ 1070 004d 0B       		.uleb128 0xb
+ 1071 004e 49       		.uleb128 0x49
+ 1072 004f 13       		.uleb128 0x13
+ 1073 0050 38       		.uleb128 0x38
+ 1074 0051 0B       		.uleb128 0xb
+ 1075 0052 00       		.byte	0
+ 1076 0053 00       		.byte	0
+ 1077 0054 07       		.uleb128 0x7
+ 1078 0055 2E       		.uleb128 0x2e
+ 1079 0056 00       		.byte	0
+ 1080 0057 3F       		.uleb128 0x3f
+ 1081 0058 19       		.uleb128 0x19
+ 1082 0059 03       		.uleb128 0x3
+ 1083 005a 0E       		.uleb128 0xe
+ 1084 005b 3A       		.uleb128 0x3a
+ 1085 005c 0B       		.uleb128 0xb
+ 1086 005d 3B       		.uleb128 0x3b
+ 1087 005e 0B       		.uleb128 0xb
+ 1088 005f 49       		.uleb128 0x49
+ 1089 0060 13       		.uleb128 0x13
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 22
+
+
+ 1090 0061 11       		.uleb128 0x11
+ 1091 0062 01       		.uleb128 0x1
+ 1092 0063 12       		.uleb128 0x12
+ 1093 0064 06       		.uleb128 0x6
+ 1094 0065 40       		.uleb128 0x40
+ 1095 0066 18       		.uleb128 0x18
+ 1096 0067 9742     		.uleb128 0x2117
+ 1097 0069 19       		.uleb128 0x19
+ 1098 006a 00       		.byte	0
+ 1099 006b 00       		.byte	0
+ 1100 006c 08       		.uleb128 0x8
+ 1101 006d 2E       		.uleb128 0x2e
+ 1102 006e 00       		.byte	0
+ 1103 006f 3F       		.uleb128 0x3f
+ 1104 0070 19       		.uleb128 0x19
+ 1105 0071 03       		.uleb128 0x3
+ 1106 0072 0E       		.uleb128 0xe
+ 1107 0073 3A       		.uleb128 0x3a
+ 1108 0074 0B       		.uleb128 0xb
+ 1109 0075 3B       		.uleb128 0x3b
+ 1110 0076 0B       		.uleb128 0xb
+ 1111 0077 11       		.uleb128 0x11
+ 1112 0078 01       		.uleb128 0x1
+ 1113 0079 12       		.uleb128 0x12
+ 1114 007a 06       		.uleb128 0x6
+ 1115 007b 40       		.uleb128 0x40
+ 1116 007c 18       		.uleb128 0x18
+ 1117 007d 9742     		.uleb128 0x2117
+ 1118 007f 19       		.uleb128 0x19
+ 1119 0080 00       		.byte	0
+ 1120 0081 00       		.byte	0
+ 1121 0082 09       		.uleb128 0x9
+ 1122 0083 2E       		.uleb128 0x2e
+ 1123 0084 00       		.byte	0
+ 1124 0085 3F       		.uleb128 0x3f
+ 1125 0086 19       		.uleb128 0x19
+ 1126 0087 03       		.uleb128 0x3
+ 1127 0088 0E       		.uleb128 0xe
+ 1128 0089 3A       		.uleb128 0x3a
+ 1129 008a 0B       		.uleb128 0xb
+ 1130 008b 3B       		.uleb128 0x3b
+ 1131 008c 0B       		.uleb128 0xb
+ 1132 008d 27       		.uleb128 0x27
+ 1133 008e 19       		.uleb128 0x19
+ 1134 008f 49       		.uleb128 0x49
+ 1135 0090 13       		.uleb128 0x13
+ 1136 0091 11       		.uleb128 0x11
+ 1137 0092 01       		.uleb128 0x1
+ 1138 0093 12       		.uleb128 0x12
+ 1139 0094 06       		.uleb128 0x6
+ 1140 0095 40       		.uleb128 0x40
+ 1141 0096 18       		.uleb128 0x18
+ 1142 0097 9742     		.uleb128 0x2117
+ 1143 0099 19       		.uleb128 0x19
+ 1144 009a 00       		.byte	0
+ 1145 009b 00       		.byte	0
+ 1146 009c 0A       		.uleb128 0xa
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 23
+
+
+ 1147 009d 2E       		.uleb128 0x2e
+ 1148 009e 01       		.byte	0x1
+ 1149 009f 3F       		.uleb128 0x3f
+ 1150 00a0 19       		.uleb128 0x19
+ 1151 00a1 03       		.uleb128 0x3
+ 1152 00a2 0E       		.uleb128 0xe
+ 1153 00a3 3A       		.uleb128 0x3a
+ 1154 00a4 0B       		.uleb128 0xb
+ 1155 00a5 3B       		.uleb128 0x3b
+ 1156 00a6 0B       		.uleb128 0xb
+ 1157 00a7 27       		.uleb128 0x27
+ 1158 00a8 19       		.uleb128 0x19
+ 1159 00a9 49       		.uleb128 0x49
+ 1160 00aa 13       		.uleb128 0x13
+ 1161 00ab 11       		.uleb128 0x11
+ 1162 00ac 01       		.uleb128 0x1
+ 1163 00ad 12       		.uleb128 0x12
+ 1164 00ae 06       		.uleb128 0x6
+ 1165 00af 40       		.uleb128 0x40
+ 1166 00b0 18       		.uleb128 0x18
+ 1167 00b1 9742     		.uleb128 0x2117
+ 1168 00b3 19       		.uleb128 0x19
+ 1169 00b4 01       		.uleb128 0x1
+ 1170 00b5 13       		.uleb128 0x13
+ 1171 00b6 00       		.byte	0
+ 1172 00b7 00       		.byte	0
+ 1173 00b8 0B       		.uleb128 0xb
+ 1174 00b9 05       		.uleb128 0x5
+ 1175 00ba 00       		.byte	0
+ 1176 00bb 03       		.uleb128 0x3
+ 1177 00bc 08       		.uleb128 0x8
+ 1178 00bd 3A       		.uleb128 0x3a
+ 1179 00be 0B       		.uleb128 0xb
+ 1180 00bf 3B       		.uleb128 0x3b
+ 1181 00c0 0B       		.uleb128 0xb
+ 1182 00c1 49       		.uleb128 0x49
+ 1183 00c2 13       		.uleb128 0x13
+ 1184 00c3 02       		.uleb128 0x2
+ 1185 00c4 17       		.uleb128 0x17
+ 1186 00c5 00       		.byte	0
+ 1187 00c6 00       		.byte	0
+ 1188 00c7 0C       		.uleb128 0xc
+ 1189 00c8 898201   		.uleb128 0x4109
+ 1190 00cb 00       		.byte	0
+ 1191 00cc 11       		.uleb128 0x11
+ 1192 00cd 01       		.uleb128 0x1
+ 1193 00ce 31       		.uleb128 0x31
+ 1194 00cf 13       		.uleb128 0x13
+ 1195 00d0 00       		.byte	0
+ 1196 00d1 00       		.byte	0
+ 1197 00d2 0D       		.uleb128 0xd
+ 1198 00d3 34       		.uleb128 0x34
+ 1199 00d4 00       		.byte	0
+ 1200 00d5 03       		.uleb128 0x3
+ 1201 00d6 08       		.uleb128 0x8
+ 1202 00d7 3A       		.uleb128 0x3a
+ 1203 00d8 0B       		.uleb128 0xb
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 24
+
+
+ 1204 00d9 3B       		.uleb128 0x3b
+ 1205 00da 0B       		.uleb128 0xb
+ 1206 00db 49       		.uleb128 0x49
+ 1207 00dc 13       		.uleb128 0x13
+ 1208 00dd 02       		.uleb128 0x2
+ 1209 00de 18       		.uleb128 0x18
+ 1210 00df 00       		.byte	0
+ 1211 00e0 00       		.byte	0
+ 1212 00e1 0E       		.uleb128 0xe
+ 1213 00e2 2E       		.uleb128 0x2e
+ 1214 00e3 01       		.byte	0x1
+ 1215 00e4 3F       		.uleb128 0x3f
+ 1216 00e5 19       		.uleb128 0x19
+ 1217 00e6 03       		.uleb128 0x3
+ 1218 00e7 0E       		.uleb128 0xe
+ 1219 00e8 3A       		.uleb128 0x3a
+ 1220 00e9 0B       		.uleb128 0xb
+ 1221 00ea 3B       		.uleb128 0x3b
+ 1222 00eb 0B       		.uleb128 0xb
+ 1223 00ec 11       		.uleb128 0x11
+ 1224 00ed 01       		.uleb128 0x1
+ 1225 00ee 12       		.uleb128 0x12
+ 1226 00ef 06       		.uleb128 0x6
+ 1227 00f0 40       		.uleb128 0x40
+ 1228 00f1 18       		.uleb128 0x18
+ 1229 00f2 9742     		.uleb128 0x2117
+ 1230 00f4 19       		.uleb128 0x19
+ 1231 00f5 01       		.uleb128 0x1
+ 1232 00f6 13       		.uleb128 0x13
+ 1233 00f7 00       		.byte	0
+ 1234 00f8 00       		.byte	0
+ 1235 00f9 0F       		.uleb128 0xf
+ 1236 00fa 0B       		.uleb128 0xb
+ 1237 00fb 01       		.byte	0x1
+ 1238 00fc 11       		.uleb128 0x11
+ 1239 00fd 01       		.uleb128 0x1
+ 1240 00fe 12       		.uleb128 0x12
+ 1241 00ff 06       		.uleb128 0x6
+ 1242 0100 00       		.byte	0
+ 1243 0101 00       		.byte	0
+ 1244 0102 10       		.uleb128 0x10
+ 1245 0103 34       		.uleb128 0x34
+ 1246 0104 00       		.byte	0
+ 1247 0105 03       		.uleb128 0x3
+ 1248 0106 08       		.uleb128 0x8
+ 1249 0107 3A       		.uleb128 0x3a
+ 1250 0108 0B       		.uleb128 0xb
+ 1251 0109 3B       		.uleb128 0x3b
+ 1252 010a 0B       		.uleb128 0xb
+ 1253 010b 49       		.uleb128 0x49
+ 1254 010c 13       		.uleb128 0x13
+ 1255 010d 02       		.uleb128 0x2
+ 1256 010e 17       		.uleb128 0x17
+ 1257 010f 00       		.byte	0
+ 1258 0110 00       		.byte	0
+ 1259 0111 11       		.uleb128 0x11
+ 1260 0112 898201   		.uleb128 0x4109
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 25
+
+
+ 1261 0115 01       		.byte	0x1
+ 1262 0116 11       		.uleb128 0x11
+ 1263 0117 01       		.uleb128 0x1
+ 1264 0118 31       		.uleb128 0x31
+ 1265 0119 13       		.uleb128 0x13
+ 1266 011a 01       		.uleb128 0x1
+ 1267 011b 13       		.uleb128 0x13
+ 1268 011c 00       		.byte	0
+ 1269 011d 00       		.byte	0
+ 1270 011e 12       		.uleb128 0x12
+ 1271 011f 8A8201   		.uleb128 0x410a
+ 1272 0122 00       		.byte	0
+ 1273 0123 02       		.uleb128 0x2
+ 1274 0124 18       		.uleb128 0x18
+ 1275 0125 9142     		.uleb128 0x2111
+ 1276 0127 18       		.uleb128 0x18
+ 1277 0128 00       		.byte	0
+ 1278 0129 00       		.byte	0
+ 1279 012a 13       		.uleb128 0x13
+ 1280 012b 34       		.uleb128 0x34
+ 1281 012c 00       		.byte	0
+ 1282 012d 03       		.uleb128 0x3
+ 1283 012e 0E       		.uleb128 0xe
+ 1284 012f 3A       		.uleb128 0x3a
+ 1285 0130 0B       		.uleb128 0xb
+ 1286 0131 3B       		.uleb128 0x3b
+ 1287 0132 0B       		.uleb128 0xb
+ 1288 0133 49       		.uleb128 0x49
+ 1289 0134 13       		.uleb128 0x13
+ 1290 0135 3F       		.uleb128 0x3f
+ 1291 0136 19       		.uleb128 0x19
+ 1292 0137 02       		.uleb128 0x2
+ 1293 0138 18       		.uleb128 0x18
+ 1294 0139 00       		.byte	0
+ 1295 013a 00       		.byte	0
+ 1296 013b 14       		.uleb128 0x14
+ 1297 013c 01       		.uleb128 0x1
+ 1298 013d 01       		.byte	0x1
+ 1299 013e 49       		.uleb128 0x49
+ 1300 013f 13       		.uleb128 0x13
+ 1301 0140 01       		.uleb128 0x1
+ 1302 0141 13       		.uleb128 0x13
+ 1303 0142 00       		.byte	0
+ 1304 0143 00       		.byte	0
+ 1305 0144 15       		.uleb128 0x15
+ 1306 0145 21       		.uleb128 0x21
+ 1307 0146 00       		.byte	0
+ 1308 0147 49       		.uleb128 0x49
+ 1309 0148 13       		.uleb128 0x13
+ 1310 0149 2F       		.uleb128 0x2f
+ 1311 014a 05       		.uleb128 0x5
+ 1312 014b 00       		.byte	0
+ 1313 014c 00       		.byte	0
+ 1314 014d 16       		.uleb128 0x16
+ 1315 014e 2E       		.uleb128 0x2e
+ 1316 014f 00       		.byte	0
+ 1317 0150 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 26
+
+
+ 1318 0151 19       		.uleb128 0x19
+ 1319 0152 3C       		.uleb128 0x3c
+ 1320 0153 19       		.uleb128 0x19
+ 1321 0154 6E       		.uleb128 0x6e
+ 1322 0155 0E       		.uleb128 0xe
+ 1323 0156 03       		.uleb128 0x3
+ 1324 0157 0E       		.uleb128 0xe
+ 1325 0158 3A       		.uleb128 0x3a
+ 1326 0159 0B       		.uleb128 0xb
+ 1327 015a 3B       		.uleb128 0x3b
+ 1328 015b 0B       		.uleb128 0xb
+ 1329 015c 00       		.byte	0
+ 1330 015d 00       		.byte	0
+ 1331 015e 00       		.byte	0
+ 1332              		.section	.debug_loc,"",%progbits
+ 1333              	.Ldebug_loc0:
+ 1334              	.LLST0:
+ 1335 0000 00000000 		.4byte	.LVL0
+ 1336 0004 07000000 		.4byte	.LVL1-1
+ 1337 0008 0100     		.2byte	0x1
+ 1338 000a 50       		.byte	0x50
+ 1339 000b 07000000 		.4byte	.LVL1-1
+ 1340 000f 50000000 		.4byte	.LFE67
+ 1341 0013 0400     		.2byte	0x4
+ 1342 0015 F3       		.byte	0xf3
+ 1343 0016 01       		.uleb128 0x1
+ 1344 0017 50       		.byte	0x50
+ 1345 0018 9F       		.byte	0x9f
+ 1346 0019 00000000 		.4byte	0
+ 1347 001d 00000000 		.4byte	0
+ 1348              	.LLST1:
+ 1349 0021 00000000 		.4byte	.LVL3
+ 1350 0025 0A000000 		.4byte	.LVL4
+ 1351 0029 0100     		.2byte	0x1
+ 1352 002b 50       		.byte	0x50
+ 1353 002c 0A000000 		.4byte	.LVL4
+ 1354 0030 24000000 		.4byte	.LFE70
+ 1355 0034 0400     		.2byte	0x4
+ 1356 0036 F3       		.byte	0xf3
+ 1357 0037 01       		.uleb128 0x1
+ 1358 0038 50       		.byte	0x50
+ 1359 0039 9F       		.byte	0x9f
+ 1360 003a 00000000 		.4byte	0
+ 1361 003e 00000000 		.4byte	0
+ 1362              	.LLST2:
+ 1363 0042 02000000 		.4byte	.LVL5
+ 1364 0046 06000000 		.4byte	.LVL6
+ 1365 004a 0200     		.2byte	0x2
+ 1366 004c 30       		.byte	0x30
+ 1367 004d 9F       		.byte	0x9f
+ 1368 004e 06000000 		.4byte	.LVL6
+ 1369 0052 1E000000 		.4byte	.LVL11
+ 1370 0056 0100     		.2byte	0x1
+ 1371 0058 54       		.byte	0x54
+ 1372 0059 00000000 		.4byte	0
+ 1373 005d 00000000 		.4byte	0
+ 1374              		.section	.debug_aranges,"",%progbits
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 27
+
+
+ 1375 0000 84000000 		.4byte	0x84
+ 1376 0004 0200     		.2byte	0x2
+ 1377 0006 00000000 		.4byte	.Ldebug_info0
+ 1378 000a 04       		.byte	0x4
+ 1379 000b 00       		.byte	0
+ 1380 000c 0000     		.2byte	0
+ 1381 000e 0000     		.2byte	0
+ 1382 0010 00000000 		.4byte	.LFB61
+ 1383 0014 0C000000 		.4byte	.LFE61-.LFB61
+ 1384 0018 00000000 		.4byte	.LFB62
+ 1385 001c 0C000000 		.4byte	.LFE62-.LFB62
+ 1386 0020 00000000 		.4byte	.LFB63
+ 1387 0024 0C000000 		.4byte	.LFE63-.LFB63
+ 1388 0028 00000000 		.4byte	.LFB64
+ 1389 002c 10000000 		.4byte	.LFE64-.LFB64
+ 1390 0030 00000000 		.4byte	.LFB65
+ 1391 0034 28000000 		.4byte	.LFE65-.LFB65
+ 1392 0038 00000000 		.4byte	.LFB66
+ 1393 003c 1C000000 		.4byte	.LFE66-.LFB66
+ 1394 0040 00000000 		.4byte	.LFB67
+ 1395 0044 50000000 		.4byte	.LFE67-.LFB67
+ 1396 0048 00000000 		.4byte	.LFB68
+ 1397 004c 40000000 		.4byte	.LFE68-.LFB68
+ 1398 0050 00000000 		.4byte	.LFB69
+ 1399 0054 24000000 		.4byte	.LFE69-.LFB69
+ 1400 0058 00000000 		.4byte	.LFB70
+ 1401 005c 24000000 		.4byte	.LFE70-.LFB70
+ 1402 0060 00000000 		.4byte	.LFB71
+ 1403 0064 20000000 		.4byte	.LFE71-.LFB71
+ 1404 0068 00000000 		.4byte	.LFB72
+ 1405 006c 0C000000 		.4byte	.LFE72-.LFB72
+ 1406 0070 00000000 		.4byte	.LFB73
+ 1407 0074 0C000000 		.4byte	.LFE73-.LFB73
+ 1408 0078 00000000 		.4byte	.LFB74
+ 1409 007c 24000000 		.4byte	.LFE74-.LFB74
+ 1410 0080 00000000 		.4byte	0
+ 1411 0084 00000000 		.4byte	0
+ 1412              		.section	.debug_ranges,"",%progbits
+ 1413              	.Ldebug_ranges0:
+ 1414 0000 00000000 		.4byte	.LFB61
+ 1415 0004 0C000000 		.4byte	.LFE61
+ 1416 0008 00000000 		.4byte	.LFB62
+ 1417 000c 0C000000 		.4byte	.LFE62
+ 1418 0010 00000000 		.4byte	.LFB63
+ 1419 0014 0C000000 		.4byte	.LFE63
+ 1420 0018 00000000 		.4byte	.LFB64
+ 1421 001c 10000000 		.4byte	.LFE64
+ 1422 0020 00000000 		.4byte	.LFB65
+ 1423 0024 28000000 		.4byte	.LFE65
+ 1424 0028 00000000 		.4byte	.LFB66
+ 1425 002c 1C000000 		.4byte	.LFE66
+ 1426 0030 00000000 		.4byte	.LFB67
+ 1427 0034 50000000 		.4byte	.LFE67
+ 1428 0038 00000000 		.4byte	.LFB68
+ 1429 003c 40000000 		.4byte	.LFE68
+ 1430 0040 00000000 		.4byte	.LFB69
+ 1431 0044 24000000 		.4byte	.LFE69
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 28
+
+
+ 1432 0048 00000000 		.4byte	.LFB70
+ 1433 004c 24000000 		.4byte	.LFE70
+ 1434 0050 00000000 		.4byte	.LFB71
+ 1435 0054 20000000 		.4byte	.LFE71
+ 1436 0058 00000000 		.4byte	.LFB72
+ 1437 005c 0C000000 		.4byte	.LFE72
+ 1438 0060 00000000 		.4byte	.LFB73
+ 1439 0064 0C000000 		.4byte	.LFE73
+ 1440 0068 00000000 		.4byte	.LFB74
+ 1441 006c 24000000 		.4byte	.LFE74
+ 1442 0070 00000000 		.4byte	0
+ 1443 0074 00000000 		.4byte	0
+ 1444              		.section	.debug_line,"",%progbits
+ 1445              	.Ldebug_line0:
+ 1446 0000 8F010000 		.section	.debug_str,"MS",%progbits,1
+ 1446      02005B00 
+ 1446      00000201 
+ 1446      FB0E0D00 
+ 1446      01010101 
+ 1447              	.LASF16:
+ 1448 0000 73746174 		.ascii	"stat_TC_INT\000"
+ 1448      5F54435F 
+ 1448      494E5400 
+ 1449              	.LASF39:
+ 1450 000c 675F634C 		.ascii	"g_cLastDequeue\000"
+ 1450      61737444 
+ 1450      65717565 
+ 1450      756500
+ 1451              	.LASF30:
+ 1452 001b 4973426C 		.ascii	"IsBlocking\000"
+ 1452      6F636B69 
+ 1452      6E6700
+ 1453              	.LASF40:
+ 1454 0026 675F6242 		.ascii	"g_bBlockingWIFIQueue\000"
+ 1454      6C6F636B 
+ 1454      696E6757 
+ 1454      49464951 
+ 1454      75657565 
+ 1455              	.LASF23:
+ 1456 003b 6973456D 		.ascii	"isEmptyQueueWIFI\000"
+ 1456      70747951 
+ 1456      75657565 
+ 1456      57494649 
+ 1456      00
+ 1457              	.LASF3:
+ 1458 004c 73686F72 		.ascii	"short unsigned int\000"
+ 1458      7420756E 
+ 1458      7369676E 
+ 1458      65642069 
+ 1458      6E7400
+ 1459              	.LASF12:
+ 1460 005f 646F7562 		.ascii	"double\000"
+ 1460      6C6500
+ 1461              	.LASF31:
+ 1462 0066 67657443 		.ascii	"getCountCRLF\000"
+ 1462      6F756E74 
+ 1462      43524C46 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 29
+
+
+ 1462      00
+ 1463              	.LASF34:
+ 1464 0073 675F7546 		.ascii	"g_uFrontQueueWIFI\000"
+ 1464      726F6E74 
+ 1464      51756575 
+ 1464      65574946 
+ 1464      4900
+ 1465              	.LASF11:
+ 1466 0085 666C6F61 		.ascii	"float\000"
+ 1466      7400
+ 1467              	.LASF1:
+ 1468 008b 756E7369 		.ascii	"unsigned char\000"
+ 1468      676E6564 
+ 1468      20636861 
+ 1468      7200
+ 1469              	.LASF37:
+ 1470 0099 675F436F 		.ascii	"g_CountCRLF\000"
+ 1470      756E7443 
+ 1470      524C4600 
+ 1471              	.LASF35:
+ 1472 00a5 675F7552 		.ascii	"g_uRearQueueWIFI\000"
+ 1472      65617251 
+ 1472      75657565 
+ 1472      57494649 
+ 1472      00
+ 1473              	.LASF46:
+ 1474 00b6 44454255 		.ascii	"DEBUG_printf\000"
+ 1474      475F7072 
+ 1474      696E7466 
+ 1474      00
+ 1475              	.LASF5:
+ 1476 00c3 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1476      20756E73 
+ 1476      69676E65 
+ 1476      6420696E 
+ 1476      7400
+ 1477              	.LASF44:
+ 1478 00d5 73506172 		.ascii	"sParameter\000"
+ 1478      616D6574 
+ 1478      657200
+ 1479              	.LASF42:
+ 1480 00e0 57494649 		.ascii	"WIFIQueue.c\000"
+ 1480      51756575 
+ 1480      652E6300 
+ 1481              	.LASF20:
+ 1482 00ec 556E626C 		.ascii	"UnblockingWifiQueue\000"
+ 1482      6F636B69 
+ 1482      6E675769 
+ 1482      66695175 
+ 1482      65756500 
+ 1483              	.LASF28:
+ 1484 0100 67657452 		.ascii	"getRearQueueWIFI\000"
+ 1484      65617251 
+ 1484      75657565 
+ 1484      57494649 
+ 1484      00
+ 1485              	.LASF18:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 30
+
+
+ 1486 0111 706F735F 		.ascii	"pos_Y\000"
+ 1486      5900
+ 1487              	.LASF10:
+ 1488 0117 75696E74 		.ascii	"uint16\000"
+ 1488      313600
+ 1489              	.LASF33:
+ 1490 011e 675F7553 		.ascii	"g_uSizeQueueWIFI\000"
+ 1490      697A6551 
+ 1490      75657565 
+ 1490      57494649 
+ 1490      00
+ 1491              	.LASF32:
+ 1492 012f 50617261 		.ascii	"Param\000"
+ 1492      6D00
+ 1493              	.LASF29:
+ 1494 0135 67657453 		.ascii	"getSizeQueueWIFI\000"
+ 1494      697A6551 
+ 1494      75657565 
+ 1494      57494649 
+ 1494      00
+ 1495              	.LASF8:
+ 1496 0146 756E7369 		.ascii	"unsigned int\000"
+ 1496      676E6564 
+ 1496      20696E74 
+ 1496      00
+ 1497              	.LASF25:
+ 1498 0153 64655175 		.ascii	"deQueueWIFI\000"
+ 1498      65756557 
+ 1498      49464900 
+ 1499              	.LASF7:
+ 1500 015f 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1500      206C6F6E 
+ 1500      6720756E 
+ 1500      7369676E 
+ 1500      65642069 
+ 1501              	.LASF17:
+ 1502 0176 706F735F 		.ascii	"pos_X\000"
+ 1502      5800
+ 1503              	.LASF22:
+ 1504 017c 69734675 		.ascii	"isFullQueueWIFI\000"
+ 1504      6C6C5175 
+ 1504      65756557 
+ 1504      49464900 
+ 1505              	.LASF43:
+ 1506 018c 433A5C44 		.ascii	"C:\\DATA\\IoT\\TouchIoT\\Tagguang\\Design.cydsn\000"
+ 1506      4154415C 
+ 1506      496F545C 
+ 1506      546F7563 
+ 1506      68496F54 
+ 1507              	.LASF41:
+ 1508 01b7 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1508      43313120 
+ 1508      352E342E 
+ 1508      31203230 
+ 1508      31363036 
+ 1509 01ea 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1509      20726576 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 31
+
+
+ 1509      6973696F 
+ 1509      6E203233 
+ 1509      37373135 
+ 1510 021d 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1510      66756E63 
+ 1510      74696F6E 
+ 1510      2D736563 
+ 1510      74696F6E 
+ 1511              	.LASF26:
+ 1512 0245 67657446 		.ascii	"getFrontQueueWIFI\000"
+ 1512      726F6E74 
+ 1512      51756575 
+ 1512      65574946 
+ 1512      4900
+ 1513              	.LASF15:
+ 1514 0257 73697A65 		.ascii	"sizetype\000"
+ 1514      74797065 
+ 1514      00
+ 1515              	.LASF6:
+ 1516 0260 6C6F6E67 		.ascii	"long long int\000"
+ 1516      206C6F6E 
+ 1516      6720696E 
+ 1516      7400
+ 1517              	.LASF13:
+ 1518 026e 63686172 		.ascii	"char\000"
+ 1518      00
+ 1519              	.LASF45:
+ 1520 0273 5072696E 		.ascii	"PrintQueueWIFI\000"
+ 1520      74517565 
+ 1520      75655749 
+ 1520      464900
+ 1521              	.LASF2:
+ 1522 0282 73686F72 		.ascii	"short int\000"
+ 1522      7420696E 
+ 1522      7400
+ 1523              	.LASF21:
+ 1524 028c 64656C65 		.ascii	"deleteAllQueueWIFI\000"
+ 1524      7465416C 
+ 1524      6C517565 
+ 1524      75655749 
+ 1524      464900
+ 1525              	.LASF9:
+ 1526 029f 75696E74 		.ascii	"uint8\000"
+ 1526      3800
+ 1527              	.LASF4:
+ 1528 02a5 6C6F6E67 		.ascii	"long int\000"
+ 1528      20696E74 
+ 1528      00
+ 1529              	.LASF19:
+ 1530 02ae 426C6F63 		.ascii	"BlockingWifiQueue\000"
+ 1530      6B696E67 
+ 1530      57696669 
+ 1530      51756575 
+ 1530      6500
+ 1531              	.LASF14:
+ 1532 02c0 6C6F6E67 		.ascii	"long double\000"
+ 1532      20646F75 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccIUymvQ.s 			page 32
+
+
+ 1532      626C6500 
+ 1533              	.LASF0:
+ 1534 02cc 7369676E 		.ascii	"signed char\000"
+ 1534      65642063 
+ 1534      68617200 
+ 1535              	.LASF36:
+ 1536 02d8 675F6351 		.ascii	"g_cQueueWIFI\000"
+ 1536      75657565 
+ 1536      57494649 
+ 1536      00
+ 1537              	.LASF38:
+ 1538 02e5 675F634C 		.ascii	"g_cLastEnqueue\000"
+ 1538      61737445 
+ 1538      6E717565 
+ 1538      756500
+ 1539              	.LASF24:
+ 1540 02f4 656E5175 		.ascii	"enQueueWIFI\000"
+ 1540      65756557 
+ 1540      49464900 
+ 1541              	.LASF27:
+ 1542 0300 67657446 		.ascii	"getFrontNextQueueWIFI\000"
+ 1542      726F6E74 
+ 1542      4E657874 
+ 1542      51756575 
+ 1542      65574946 
+ 1543              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

@@ -54,11 +54,11 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 ### 트리거 조건
 
-다음 중 하나라도 해당되면 **아래 4개 파일을 자동으로 생성**한다:
+다음 중 하나라도 해당되면 **아래 3개 파일을 자동으로 생성**한다:
 
 1. 새 프로젝트 폴더가 생성된 후 **처음으로 분석/작업 요청**이 들어올 때
-2. 프로젝트 폴더에 `CLAUDE.md`, `README.md`, `README.html`, `VERSION_HISTORY.md` 중 **하나라도 없을 때**
-3. 사용자가 "새 프로젝트 시작", "초기화", "문서 만들어줘", "필수 4개 파일들" 등을 요청할 때
+2. 프로젝트 폴더에 `CLAUDE.md`, `README.md`, `VERSION_HISTORY.md` 중 **하나라도 없을 때**
+3. 사용자가 "새 프로젝트 시작", "초기화", "문서 만들어줘", "필수 파일들" 등을 요청할 때
 
 ### 생성 대상 위치
 
@@ -66,7 +66,6 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 C:\SUNTECH_DEV_CLAUDECODE\WEB\{프로젝트명}\       <- 이 레벨에만 생성
     CLAUDE.md
     README.md
-    README.html
     VERSION_HISTORY.md
 ```
 

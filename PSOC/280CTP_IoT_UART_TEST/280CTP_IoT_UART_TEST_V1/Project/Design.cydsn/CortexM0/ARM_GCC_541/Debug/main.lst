@@ -1,0 +1,970 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.main,"ax",%progbits
+  20              		.align	2
+  21              		.global	main
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	main, %function
+  25              	main:
+  26              	.LFB62:
+  27              		.file 1 "main.c"
+   1:main.c        **** 
+   2:main.c        **** #include "main.h"
+   3:main.c        **** #include "setup.h"
+   4:main.c        **** #include "userTimer.h"
+   5:main.c        **** #include "lib/LEDControl.h"
+   6:main.c        **** #include "lib/USB.h"
+   7:main.c        **** #include "uartJson.h"
+   8:main.c        **** 
+   9:main.c        **** extern uint8 OneSecondIndex;
+  10:main.c        **** 
+  11:main.c        **** int main(void)
+  12:main.c        **** {
+  28              		.loc 1 12 0
+  29              		.cfi_startproc
+  30              		@ Volatile: function does not return.
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  13:main.c        ****     /* Enable WCO */
+  14:main.c        ****     CySysClkWcoStart();
+  37              		.loc 1 14 0
+  38 0002 FFF7FEFF 		bl	CySysClkWcoStart
+  39              	.LVL0:
+  15:main.c        **** 
+  16:main.c        ****     CyGlobalIntEnable; /* Enable global interrupts. */
+  40              		.loc 1 16 0
+  41              		.syntax divided
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 2
+
+
+  42              	@ 16 "main.c" 1
+  43 0006 62B6     		CPSIE   i
+  44              	@ 0 "" 2
+  17:main.c        **** 
+  18:main.c        ****     SetUp();
+  45              		.loc 1 18 0
+  46              		.thumb
+  47              		.syntax unified
+  48 0008 FFF7FEFF 		bl	SetUp
+  49              	.LVL1:
+  19:main.c        **** 
+  20:main.c        ****     LCD_Backlight_Write(1);
+  50              		.loc 1 20 0
+  51 000c 0120     		movs	r0, #1
+  52 000e FFF7FEFF 		bl	LCD_Backlight_Write
+  53              	.LVL2:
+  21:main.c        **** 
+  22:main.c        ****     // g_uLED1_Color = LED_RED;
+  23:main.c        ****     g_uLED1_Color = LED_GREEN;
+  54              		.loc 1 23 0
+  55 0012 0222     		movs	r2, #2
+  56 0014 0C4B     		ldr	r3, .L4
+  57 0016 1A80     		strh	r2, [r3]
+  24:main.c        ****     // g_bLED1_Flickering = TRUE;
+  25:main.c        **** 
+  26:main.c        ****     printf("SunTech CTP280 UART RX TEST Start...\r\n");
+  58              		.loc 1 26 0
+  59 0018 0C48     		ldr	r0, .L4+4
+  60 001a FFF7FEFF 		bl	puts
+  61              	.LVL3:
+  62              	.L3:
+  27:main.c        **** 
+  28:main.c        ****     for(;;)
+  29:main.c        ****     {
+  30:main.c        ****         OneMilliSecond_MainLoop(); /* 1ms 마다 작동하는 함수 */
+  63              		.loc 1 30 0
+  64 001e FFF7FEFF 		bl	OneMilliSecond_MainLoop
+  65              	.LVL4:
+  31:main.c        ****         OneSecond_MainLoop();      /* 1s 마다 작동하는 함수 */
+  66              		.loc 1 31 0
+  67 0022 FFF7FEFF 		bl	OneSecond_MainLoop
+  68              	.LVL5:
+  32:main.c        **** 
+  33:main.c        ****         usbLoop();                 /* USB CDC enumeration 처리 */
+  69              		.loc 1 33 0
+  70 0026 FFF7FEFF 		bl	usbLoop
+  71              	.LVL6:
+  34:main.c        ****         uartJsonLoop();            /* UART 수신 + JSON 파싱 */
+  72              		.loc 1 34 0
+  73 002a FFF7FEFF 		bl	uartJsonLoop
+  74              	.LVL7:
+  35:main.c        **** 
+  36:main.c        ****         if(isFinishCounter_1s(OneSecondIndex))
+  75              		.loc 1 36 0
+  76 002e 084B     		ldr	r3, .L4+8
+  77 0030 1878     		ldrb	r0, [r3]
+  78 0032 FFF7FEFF 		bl	isFinishCounter_1s
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 3
+
+
+  79              	.LVL8:
+  80 0036 0028     		cmp	r0, #0
+  81 0038 01D0     		beq	.L2
+  37:main.c        ****         {
+  38:main.c        ****             LED_OneSecondControl();
+  82              		.loc 1 38 0
+  83 003a FFF7FEFF 		bl	LED_OneSecondControl
+  84              	.LVL9:
+  85              	.L2:
+  39:main.c        ****         }
+  40:main.c        **** 
+  41:main.c        ****         uartJsonDrawScreen();      /* LCD 뷰어 화면 갱신 */
+  86              		.loc 1 41 0
+  87 003e FFF7FEFF 		bl	uartJsonDrawScreen
+  88              	.LVL10:
+  42:main.c        ****         uartJsonHandleTouch();     /* Up/Down 스크롤 터치 처리 */
+  89              		.loc 1 42 0
+  90 0042 FFF7FEFF 		bl	uartJsonHandleTouch
+  91              	.LVL11:
+  43:main.c        ****     }
+  92              		.loc 1 43 0
+  93 0046 EAE7     		b	.L3
+  94              	.L5:
+  95              		.align	2
+  96              	.L4:
+  97 0048 00000000 		.word	g_uLED1_Color
+  98 004c 00000000 		.word	.LC1
+  99 0050 00000000 		.word	OneSecondIndex
+ 100              		.cfi_endproc
+ 101              	.LFE62:
+ 102              		.size	main, .-main
+ 103              		.comm	Param,6,4
+ 104              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 105              		.align	2
+ 106              	.LC1:
+ 107 0000 53756E54 		.ascii	"SunTech CTP280 UART RX TEST Start...\015\000"
+ 107      65636820 
+ 107      43545032 
+ 107      38302055 
+ 107      41525420 
+ 108              		.text
+ 109              	.Letext0:
+ 110              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 111              		.file 3 "main.h"
+ 112              		.file 4 "Generated_Source\\PSoC4/RTC.h"
+ 113              		.file 5 "lib/LEDControl.h"
+ 114              		.file 6 "Generated_Source\\PSoC4/CyLFClk.h"
+ 115              		.file 7 "setup.h"
+ 116              		.file 8 "Generated_Source\\PSoC4/LCD_Backlight.h"
+ 117              		.file 9 "userTimer.h"
+ 118              		.file 10 "lib/USB.h"
+ 119              		.file 11 "uartJson.h"
+ 120              		.file 12 "<built-in>"
+ 121              		.section	.debug_info,"",%progbits
+ 122              	.Ldebug_info0:
+ 123 0000 47020000 		.4byte	0x247
+ 124 0004 0400     		.2byte	0x4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 4
+
+
+ 125 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 126 000a 04       		.byte	0x4
+ 127 000b 01       		.uleb128 0x1
+ 128 000c 49010000 		.4byte	.LASF34
+ 129 0010 0C       		.byte	0xc
+ 130 0011 FA010000 		.4byte	.LASF35
+ 131 0015 69020000 		.4byte	.LASF36
+ 132 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 133 001d 00000000 		.4byte	0
+ 134 0021 00000000 		.4byte	.Ldebug_line0
+ 135 0025 02       		.uleb128 0x2
+ 136 0026 01       		.byte	0x1
+ 137 0027 06       		.byte	0x6
+ 138 0028 4A020000 		.4byte	.LASF0
+ 139 002c 02       		.uleb128 0x2
+ 140 002d 01       		.byte	0x1
+ 141 002e 08       		.byte	0x8
+ 142 002f 76000000 		.4byte	.LASF1
+ 143 0033 02       		.uleb128 0x2
+ 144 0034 02       		.byte	0x2
+ 145 0035 05       		.byte	0x5
+ 146 0036 15020000 		.4byte	.LASF2
+ 147 003a 02       		.uleb128 0x2
+ 148 003b 02       		.byte	0x2
+ 149 003c 07       		.byte	0x7
+ 150 003d A1000000 		.4byte	.LASF3
+ 151 0041 02       		.uleb128 0x2
+ 152 0042 04       		.byte	0x4
+ 153 0043 05       		.byte	0x5
+ 154 0044 25020000 		.4byte	.LASF4
+ 155 0048 02       		.uleb128 0x2
+ 156 0049 04       		.byte	0x4
+ 157 004a 07       		.byte	0x7
+ 158 004b 84000000 		.4byte	.LASF5
+ 159 004f 02       		.uleb128 0x2
+ 160 0050 08       		.byte	0x8
+ 161 0051 05       		.byte	0x5
+ 162 0052 EC010000 		.4byte	.LASF6
+ 163 0056 02       		.uleb128 0x2
+ 164 0057 08       		.byte	0x8
+ 165 0058 07       		.byte	0x7
+ 166 0059 03010000 		.4byte	.LASF7
+ 167 005d 03       		.uleb128 0x3
+ 168 005e 04       		.byte	0x4
+ 169 005f 05       		.byte	0x5
+ 170 0060 696E7400 		.ascii	"int\000"
+ 171 0064 02       		.uleb128 0x2
+ 172 0065 04       		.byte	0x4
+ 173 0066 07       		.byte	0x7
+ 174 0067 F6000000 		.4byte	.LASF8
+ 175 006b 04       		.uleb128 0x4
+ 176 006c 1F020000 		.4byte	.LASF9
+ 177 0070 02       		.byte	0x2
+ 178 0071 FC01     		.2byte	0x1fc
+ 179 0073 2C000000 		.4byte	0x2c
+ 180 0077 04       		.uleb128 0x4
+ 181 0078 E9000000 		.4byte	.LASF10
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 5
+
+
+ 182 007c 02       		.byte	0x2
+ 183 007d FD01     		.2byte	0x1fd
+ 184 007f 3A000000 		.4byte	0x3a
+ 185 0083 02       		.uleb128 0x2
+ 186 0084 04       		.byte	0x4
+ 187 0085 04       		.byte	0x4
+ 188 0086 61000000 		.4byte	.LASF11
+ 189 008a 02       		.uleb128 0x2
+ 190 008b 08       		.byte	0x8
+ 191 008c 04       		.byte	0x4
+ 192 008d 27000000 		.4byte	.LASF12
+ 193 0091 02       		.uleb128 0x2
+ 194 0092 01       		.byte	0x1
+ 195 0093 08       		.byte	0x8
+ 196 0094 01020000 		.4byte	.LASF13
+ 197 0098 02       		.uleb128 0x2
+ 198 0099 08       		.byte	0x8
+ 199 009a 04       		.byte	0x4
+ 200 009b D7010000 		.4byte	.LASF14
+ 201 009f 02       		.uleb128 0x2
+ 202 00a0 04       		.byte	0x4
+ 203 00a1 07       		.byte	0x7
+ 204 00a2 E3010000 		.4byte	.LASF15
+ 205 00a6 05       		.uleb128 0x5
+ 206 00a7 96000000 		.4byte	.LASF37
+ 207 00ab 06       		.byte	0x6
+ 208 00ac 03       		.byte	0x3
+ 209 00ad 2E       		.byte	0x2e
+ 210 00ae D7000000 		.4byte	0xd7
+ 211 00b2 06       		.uleb128 0x6
+ 212 00b3 00000000 		.4byte	.LASF16
+ 213 00b7 03       		.byte	0x3
+ 214 00b8 30       		.byte	0x30
+ 215 00b9 6B000000 		.4byte	0x6b
+ 216 00bd 00       		.byte	0
+ 217 00be 06       		.uleb128 0x6
+ 218 00bf D8000000 		.4byte	.LASF17
+ 219 00c3 03       		.byte	0x3
+ 220 00c4 31       		.byte	0x31
+ 221 00c5 77000000 		.4byte	0x77
+ 222 00c9 02       		.byte	0x2
+ 223 00ca 06       		.uleb128 0x6
+ 224 00cb DE000000 		.4byte	.LASF18
+ 225 00cf 03       		.byte	0x3
+ 226 00d0 32       		.byte	0x32
+ 227 00d1 77000000 		.4byte	0x77
+ 228 00d5 04       		.byte	0x4
+ 229 00d6 00       		.byte	0
+ 230 00d7 07       		.uleb128 0x7
+ 231 00d8 E4000000 		.4byte	.LASF38
+ 232 00dc 01       		.byte	0x1
+ 233 00dd 0B       		.byte	0xb
+ 234 00de 5D000000 		.4byte	0x5d
+ 235 00e2 00000000 		.4byte	.LFB62
+ 236 00e6 54000000 		.4byte	.LFE62-.LFB62
+ 237 00ea 01       		.uleb128 0x1
+ 238 00eb 9C       		.byte	0x9c
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 6
+
+
+ 239 00ec 75010000 		.4byte	0x175
+ 240 00f0 08       		.uleb128 0x8
+ 241 00f1 06000000 		.4byte	.LVL0
+ 242 00f5 C2010000 		.4byte	0x1c2
+ 243 00f9 08       		.uleb128 0x8
+ 244 00fa 0C000000 		.4byte	.LVL1
+ 245 00fe CD010000 		.4byte	0x1cd
+ 246 0102 09       		.uleb128 0x9
+ 247 0103 12000000 		.4byte	.LVL2
+ 248 0107 D8010000 		.4byte	0x1d8
+ 249 010b 15010000 		.4byte	0x115
+ 250 010f 0A       		.uleb128 0xa
+ 251 0110 01       		.uleb128 0x1
+ 252 0111 50       		.byte	0x50
+ 253 0112 01       		.uleb128 0x1
+ 254 0113 31       		.byte	0x31
+ 255 0114 00       		.byte	0
+ 256 0115 09       		.uleb128 0x9
+ 257 0116 1E000000 		.4byte	.LVL3
+ 258 011a E3010000 		.4byte	0x1e3
+ 259 011e 2C010000 		.4byte	0x12c
+ 260 0122 0A       		.uleb128 0xa
+ 261 0123 01       		.uleb128 0x1
+ 262 0124 50       		.byte	0x50
+ 263 0125 05       		.uleb128 0x5
+ 264 0126 03       		.byte	0x3
+ 265 0127 00000000 		.4byte	.LC1
+ 266 012b 00       		.byte	0
+ 267 012c 08       		.uleb128 0x8
+ 268 012d 22000000 		.4byte	.LVL4
+ 269 0131 F2010000 		.4byte	0x1f2
+ 270 0135 08       		.uleb128 0x8
+ 271 0136 26000000 		.4byte	.LVL5
+ 272 013a FD010000 		.4byte	0x1fd
+ 273 013e 08       		.uleb128 0x8
+ 274 013f 2A000000 		.4byte	.LVL6
+ 275 0143 08020000 		.4byte	0x208
+ 276 0147 08       		.uleb128 0x8
+ 277 0148 2E000000 		.4byte	.LVL7
+ 278 014c 13020000 		.4byte	0x213
+ 279 0150 08       		.uleb128 0x8
+ 280 0151 36000000 		.4byte	.LVL8
+ 281 0155 1E020000 		.4byte	0x21e
+ 282 0159 08       		.uleb128 0x8
+ 283 015a 3E000000 		.4byte	.LVL9
+ 284 015e 29020000 		.4byte	0x229
+ 285 0162 08       		.uleb128 0x8
+ 286 0163 42000000 		.4byte	.LVL10
+ 287 0167 34020000 		.4byte	0x234
+ 288 016b 08       		.uleb128 0x8
+ 289 016c 46000000 		.4byte	.LVL11
+ 290 0170 3F020000 		.4byte	0x23f
+ 291 0174 00       		.byte	0
+ 292 0175 0B       		.uleb128 0xb
+ 293 0176 85010000 		.4byte	0x185
+ 294 017a 85010000 		.4byte	0x185
+ 295 017e 0C       		.uleb128 0xc
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 7
+
+
+ 296 017f 9F000000 		.4byte	0x9f
+ 297 0183 0B       		.byte	0xb
+ 298 0184 00       		.byte	0
+ 299 0185 0D       		.uleb128 0xd
+ 300 0186 77000000 		.4byte	0x77
+ 301 018a 0E       		.uleb128 0xe
+ 302 018b 2E020000 		.4byte	.LASF19
+ 303 018f 04       		.byte	0x4
+ 304 0190 E001     		.2byte	0x1e0
+ 305 0192 96010000 		.4byte	0x196
+ 306 0196 0D       		.uleb128 0xd
+ 307 0197 75010000 		.4byte	0x175
+ 308 019b 0F       		.uleb128 0xf
+ 309 019c F0000000 		.4byte	.LASF20
+ 310 01a0 03       		.byte	0x3
+ 311 01a1 35       		.byte	0x35
+ 312 01a2 A6000000 		.4byte	0xa6
+ 313 01a6 05       		.uleb128 0x5
+ 314 01a7 03       		.byte	0x3
+ 315 01a8 00000000 		.4byte	Param
+ 316 01ac 10       		.uleb128 0x10
+ 317 01ad 46000000 		.4byte	.LASF21
+ 318 01b1 05       		.byte	0x5
+ 319 01b2 10       		.byte	0x10
+ 320 01b3 77000000 		.4byte	0x77
+ 321 01b7 10       		.uleb128 0x10
+ 322 01b8 06020000 		.4byte	.LASF22
+ 323 01bc 01       		.byte	0x1
+ 324 01bd 09       		.byte	0x9
+ 325 01be 6B000000 		.4byte	0x6b
+ 326 01c2 11       		.uleb128 0x11
+ 327 01c3 B4000000 		.4byte	.LASF23
+ 328 01c7 B4000000 		.4byte	.LASF23
+ 329 01cb 06       		.byte	0x6
+ 330 01cc 4E       		.byte	0x4e
+ 331 01cd 11       		.uleb128 0x11
+ 332 01ce 21000000 		.4byte	.LASF24
+ 333 01d2 21000000 		.4byte	.LASF24
+ 334 01d6 07       		.byte	0x7
+ 335 01d7 05       		.byte	0x5
+ 336 01d8 11       		.uleb128 0x11
+ 337 01d9 CA020000 		.4byte	.LASF25
+ 338 01dd CA020000 		.4byte	.LASF25
+ 339 01e1 08       		.byte	0x8
+ 340 01e2 33       		.byte	0x33
+ 341 01e3 12       		.uleb128 0x12
+ 342 01e4 45020000 		.4byte	.LASF39
+ 343 01e8 67000000 		.4byte	.LASF40
+ 344 01ec 0C       		.byte	0xc
+ 345 01ed 00       		.byte	0
+ 346 01ee 45020000 		.4byte	.LASF39
+ 347 01f2 11       		.uleb128 0x11
+ 348 01f3 2E000000 		.4byte	.LASF26
+ 349 01f7 2E000000 		.4byte	.LASF26
+ 350 01fb 09       		.byte	0x9
+ 351 01fc 12       		.byte	0x12
+ 352 01fd 11       		.uleb128 0x11
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 8
+
+
+ 353 01fe C5000000 		.4byte	.LASF27
+ 354 0202 C5000000 		.4byte	.LASF27
+ 355 0206 09       		.byte	0x9
+ 356 0207 13       		.byte	0x13
+ 357 0208 11       		.uleb128 0x11
+ 358 0209 41010000 		.4byte	.LASF28
+ 359 020d 41010000 		.4byte	.LASF28
+ 360 0211 0A       		.byte	0xa
+ 361 0212 0A       		.byte	0xa
+ 362 0213 11       		.uleb128 0x11
+ 363 0214 54000000 		.4byte	.LASF29
+ 364 0218 54000000 		.4byte	.LASF29
+ 365 021c 0B       		.byte	0xb
+ 366 021d 10       		.byte	0x10
+ 367 021e 11       		.uleb128 0x11
+ 368 021f 56020000 		.4byte	.LASF30
+ 369 0223 56020000 		.4byte	.LASF30
+ 370 0227 09       		.byte	0x9
+ 371 0228 17       		.byte	0x17
+ 372 0229 11       		.uleb128 0x11
+ 373 022a 0C000000 		.4byte	.LASF31
+ 374 022e 0C000000 		.4byte	.LASF31
+ 375 0232 05       		.byte	0x5
+ 376 0233 15       		.byte	0x15
+ 377 0234 11       		.uleb128 0x11
+ 378 0235 2E010000 		.4byte	.LASF32
+ 379 0239 2E010000 		.4byte	.LASF32
+ 380 023d 0B       		.byte	0xb
+ 381 023e 11       		.byte	0x11
+ 382 023f 11       		.uleb128 0x11
+ 383 0240 1A010000 		.4byte	.LASF33
+ 384 0244 1A010000 		.4byte	.LASF33
+ 385 0248 0B       		.byte	0xb
+ 386 0249 12       		.byte	0x12
+ 387 024a 00       		.byte	0
+ 388              		.section	.debug_abbrev,"",%progbits
+ 389              	.Ldebug_abbrev0:
+ 390 0000 01       		.uleb128 0x1
+ 391 0001 11       		.uleb128 0x11
+ 392 0002 01       		.byte	0x1
+ 393 0003 25       		.uleb128 0x25
+ 394 0004 0E       		.uleb128 0xe
+ 395 0005 13       		.uleb128 0x13
+ 396 0006 0B       		.uleb128 0xb
+ 397 0007 03       		.uleb128 0x3
+ 398 0008 0E       		.uleb128 0xe
+ 399 0009 1B       		.uleb128 0x1b
+ 400 000a 0E       		.uleb128 0xe
+ 401 000b 55       		.uleb128 0x55
+ 402 000c 17       		.uleb128 0x17
+ 403 000d 11       		.uleb128 0x11
+ 404 000e 01       		.uleb128 0x1
+ 405 000f 10       		.uleb128 0x10
+ 406 0010 17       		.uleb128 0x17
+ 407 0011 00       		.byte	0
+ 408 0012 00       		.byte	0
+ 409 0013 02       		.uleb128 0x2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 9
+
+
+ 410 0014 24       		.uleb128 0x24
+ 411 0015 00       		.byte	0
+ 412 0016 0B       		.uleb128 0xb
+ 413 0017 0B       		.uleb128 0xb
+ 414 0018 3E       		.uleb128 0x3e
+ 415 0019 0B       		.uleb128 0xb
+ 416 001a 03       		.uleb128 0x3
+ 417 001b 0E       		.uleb128 0xe
+ 418 001c 00       		.byte	0
+ 419 001d 00       		.byte	0
+ 420 001e 03       		.uleb128 0x3
+ 421 001f 24       		.uleb128 0x24
+ 422 0020 00       		.byte	0
+ 423 0021 0B       		.uleb128 0xb
+ 424 0022 0B       		.uleb128 0xb
+ 425 0023 3E       		.uleb128 0x3e
+ 426 0024 0B       		.uleb128 0xb
+ 427 0025 03       		.uleb128 0x3
+ 428 0026 08       		.uleb128 0x8
+ 429 0027 00       		.byte	0
+ 430 0028 00       		.byte	0
+ 431 0029 04       		.uleb128 0x4
+ 432 002a 16       		.uleb128 0x16
+ 433 002b 00       		.byte	0
+ 434 002c 03       		.uleb128 0x3
+ 435 002d 0E       		.uleb128 0xe
+ 436 002e 3A       		.uleb128 0x3a
+ 437 002f 0B       		.uleb128 0xb
+ 438 0030 3B       		.uleb128 0x3b
+ 439 0031 05       		.uleb128 0x5
+ 440 0032 49       		.uleb128 0x49
+ 441 0033 13       		.uleb128 0x13
+ 442 0034 00       		.byte	0
+ 443 0035 00       		.byte	0
+ 444 0036 05       		.uleb128 0x5
+ 445 0037 13       		.uleb128 0x13
+ 446 0038 01       		.byte	0x1
+ 447 0039 03       		.uleb128 0x3
+ 448 003a 0E       		.uleb128 0xe
+ 449 003b 0B       		.uleb128 0xb
+ 450 003c 0B       		.uleb128 0xb
+ 451 003d 3A       		.uleb128 0x3a
+ 452 003e 0B       		.uleb128 0xb
+ 453 003f 3B       		.uleb128 0x3b
+ 454 0040 0B       		.uleb128 0xb
+ 455 0041 01       		.uleb128 0x1
+ 456 0042 13       		.uleb128 0x13
+ 457 0043 00       		.byte	0
+ 458 0044 00       		.byte	0
+ 459 0045 06       		.uleb128 0x6
+ 460 0046 0D       		.uleb128 0xd
+ 461 0047 00       		.byte	0
+ 462 0048 03       		.uleb128 0x3
+ 463 0049 0E       		.uleb128 0xe
+ 464 004a 3A       		.uleb128 0x3a
+ 465 004b 0B       		.uleb128 0xb
+ 466 004c 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 10
+
+
+ 467 004d 0B       		.uleb128 0xb
+ 468 004e 49       		.uleb128 0x49
+ 469 004f 13       		.uleb128 0x13
+ 470 0050 38       		.uleb128 0x38
+ 471 0051 0B       		.uleb128 0xb
+ 472 0052 00       		.byte	0
+ 473 0053 00       		.byte	0
+ 474 0054 07       		.uleb128 0x7
+ 475 0055 2E       		.uleb128 0x2e
+ 476 0056 01       		.byte	0x1
+ 477 0057 3F       		.uleb128 0x3f
+ 478 0058 19       		.uleb128 0x19
+ 479 0059 03       		.uleb128 0x3
+ 480 005a 0E       		.uleb128 0xe
+ 481 005b 3A       		.uleb128 0x3a
+ 482 005c 0B       		.uleb128 0xb
+ 483 005d 3B       		.uleb128 0x3b
+ 484 005e 0B       		.uleb128 0xb
+ 485 005f 27       		.uleb128 0x27
+ 486 0060 19       		.uleb128 0x19
+ 487 0061 49       		.uleb128 0x49
+ 488 0062 13       		.uleb128 0x13
+ 489 0063 8701     		.uleb128 0x87
+ 490 0065 19       		.uleb128 0x19
+ 491 0066 11       		.uleb128 0x11
+ 492 0067 01       		.uleb128 0x1
+ 493 0068 12       		.uleb128 0x12
+ 494 0069 06       		.uleb128 0x6
+ 495 006a 40       		.uleb128 0x40
+ 496 006b 18       		.uleb128 0x18
+ 497 006c 9742     		.uleb128 0x2117
+ 498 006e 19       		.uleb128 0x19
+ 499 006f 01       		.uleb128 0x1
+ 500 0070 13       		.uleb128 0x13
+ 501 0071 00       		.byte	0
+ 502 0072 00       		.byte	0
+ 503 0073 08       		.uleb128 0x8
+ 504 0074 898201   		.uleb128 0x4109
+ 505 0077 00       		.byte	0
+ 506 0078 11       		.uleb128 0x11
+ 507 0079 01       		.uleb128 0x1
+ 508 007a 31       		.uleb128 0x31
+ 509 007b 13       		.uleb128 0x13
+ 510 007c 00       		.byte	0
+ 511 007d 00       		.byte	0
+ 512 007e 09       		.uleb128 0x9
+ 513 007f 898201   		.uleb128 0x4109
+ 514 0082 01       		.byte	0x1
+ 515 0083 11       		.uleb128 0x11
+ 516 0084 01       		.uleb128 0x1
+ 517 0085 31       		.uleb128 0x31
+ 518 0086 13       		.uleb128 0x13
+ 519 0087 01       		.uleb128 0x1
+ 520 0088 13       		.uleb128 0x13
+ 521 0089 00       		.byte	0
+ 522 008a 00       		.byte	0
+ 523 008b 0A       		.uleb128 0xa
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 11
+
+
+ 524 008c 8A8201   		.uleb128 0x410a
+ 525 008f 00       		.byte	0
+ 526 0090 02       		.uleb128 0x2
+ 527 0091 18       		.uleb128 0x18
+ 528 0092 9142     		.uleb128 0x2111
+ 529 0094 18       		.uleb128 0x18
+ 530 0095 00       		.byte	0
+ 531 0096 00       		.byte	0
+ 532 0097 0B       		.uleb128 0xb
+ 533 0098 01       		.uleb128 0x1
+ 534 0099 01       		.byte	0x1
+ 535 009a 49       		.uleb128 0x49
+ 536 009b 13       		.uleb128 0x13
+ 537 009c 01       		.uleb128 0x1
+ 538 009d 13       		.uleb128 0x13
+ 539 009e 00       		.byte	0
+ 540 009f 00       		.byte	0
+ 541 00a0 0C       		.uleb128 0xc
+ 542 00a1 21       		.uleb128 0x21
+ 543 00a2 00       		.byte	0
+ 544 00a3 49       		.uleb128 0x49
+ 545 00a4 13       		.uleb128 0x13
+ 546 00a5 2F       		.uleb128 0x2f
+ 547 00a6 0B       		.uleb128 0xb
+ 548 00a7 00       		.byte	0
+ 549 00a8 00       		.byte	0
+ 550 00a9 0D       		.uleb128 0xd
+ 551 00aa 26       		.uleb128 0x26
+ 552 00ab 00       		.byte	0
+ 553 00ac 49       		.uleb128 0x49
+ 554 00ad 13       		.uleb128 0x13
+ 555 00ae 00       		.byte	0
+ 556 00af 00       		.byte	0
+ 557 00b0 0E       		.uleb128 0xe
+ 558 00b1 34       		.uleb128 0x34
+ 559 00b2 00       		.byte	0
+ 560 00b3 03       		.uleb128 0x3
+ 561 00b4 0E       		.uleb128 0xe
+ 562 00b5 3A       		.uleb128 0x3a
+ 563 00b6 0B       		.uleb128 0xb
+ 564 00b7 3B       		.uleb128 0x3b
+ 565 00b8 05       		.uleb128 0x5
+ 566 00b9 49       		.uleb128 0x49
+ 567 00ba 13       		.uleb128 0x13
+ 568 00bb 3F       		.uleb128 0x3f
+ 569 00bc 19       		.uleb128 0x19
+ 570 00bd 3C       		.uleb128 0x3c
+ 571 00be 19       		.uleb128 0x19
+ 572 00bf 00       		.byte	0
+ 573 00c0 00       		.byte	0
+ 574 00c1 0F       		.uleb128 0xf
+ 575 00c2 34       		.uleb128 0x34
+ 576 00c3 00       		.byte	0
+ 577 00c4 03       		.uleb128 0x3
+ 578 00c5 0E       		.uleb128 0xe
+ 579 00c6 3A       		.uleb128 0x3a
+ 580 00c7 0B       		.uleb128 0xb
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 12
+
+
+ 581 00c8 3B       		.uleb128 0x3b
+ 582 00c9 0B       		.uleb128 0xb
+ 583 00ca 49       		.uleb128 0x49
+ 584 00cb 13       		.uleb128 0x13
+ 585 00cc 3F       		.uleb128 0x3f
+ 586 00cd 19       		.uleb128 0x19
+ 587 00ce 02       		.uleb128 0x2
+ 588 00cf 18       		.uleb128 0x18
+ 589 00d0 00       		.byte	0
+ 590 00d1 00       		.byte	0
+ 591 00d2 10       		.uleb128 0x10
+ 592 00d3 34       		.uleb128 0x34
+ 593 00d4 00       		.byte	0
+ 594 00d5 03       		.uleb128 0x3
+ 595 00d6 0E       		.uleb128 0xe
+ 596 00d7 3A       		.uleb128 0x3a
+ 597 00d8 0B       		.uleb128 0xb
+ 598 00d9 3B       		.uleb128 0x3b
+ 599 00da 0B       		.uleb128 0xb
+ 600 00db 49       		.uleb128 0x49
+ 601 00dc 13       		.uleb128 0x13
+ 602 00dd 3F       		.uleb128 0x3f
+ 603 00de 19       		.uleb128 0x19
+ 604 00df 3C       		.uleb128 0x3c
+ 605 00e0 19       		.uleb128 0x19
+ 606 00e1 00       		.byte	0
+ 607 00e2 00       		.byte	0
+ 608 00e3 11       		.uleb128 0x11
+ 609 00e4 2E       		.uleb128 0x2e
+ 610 00e5 00       		.byte	0
+ 611 00e6 3F       		.uleb128 0x3f
+ 612 00e7 19       		.uleb128 0x19
+ 613 00e8 3C       		.uleb128 0x3c
+ 614 00e9 19       		.uleb128 0x19
+ 615 00ea 6E       		.uleb128 0x6e
+ 616 00eb 0E       		.uleb128 0xe
+ 617 00ec 03       		.uleb128 0x3
+ 618 00ed 0E       		.uleb128 0xe
+ 619 00ee 3A       		.uleb128 0x3a
+ 620 00ef 0B       		.uleb128 0xb
+ 621 00f0 3B       		.uleb128 0x3b
+ 622 00f1 0B       		.uleb128 0xb
+ 623 00f2 00       		.byte	0
+ 624 00f3 00       		.byte	0
+ 625 00f4 12       		.uleb128 0x12
+ 626 00f5 2E       		.uleb128 0x2e
+ 627 00f6 00       		.byte	0
+ 628 00f7 3F       		.uleb128 0x3f
+ 629 00f8 19       		.uleb128 0x19
+ 630 00f9 3C       		.uleb128 0x3c
+ 631 00fa 19       		.uleb128 0x19
+ 632 00fb 6E       		.uleb128 0x6e
+ 633 00fc 0E       		.uleb128 0xe
+ 634 00fd 03       		.uleb128 0x3
+ 635 00fe 0E       		.uleb128 0xe
+ 636 00ff 3A       		.uleb128 0x3a
+ 637 0100 0B       		.uleb128 0xb
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 13
+
+
+ 638 0101 3B       		.uleb128 0x3b
+ 639 0102 0B       		.uleb128 0xb
+ 640 0103 6E       		.uleb128 0x6e
+ 641 0104 0E       		.uleb128 0xe
+ 642 0105 00       		.byte	0
+ 643 0106 00       		.byte	0
+ 644 0107 00       		.byte	0
+ 645              		.section	.debug_aranges,"",%progbits
+ 646 0000 1C000000 		.4byte	0x1c
+ 647 0004 0200     		.2byte	0x2
+ 648 0006 00000000 		.4byte	.Ldebug_info0
+ 649 000a 04       		.byte	0x4
+ 650 000b 00       		.byte	0
+ 651 000c 0000     		.2byte	0
+ 652 000e 0000     		.2byte	0
+ 653 0010 00000000 		.4byte	.LFB62
+ 654 0014 54000000 		.4byte	.LFE62-.LFB62
+ 655 0018 00000000 		.4byte	0
+ 656 001c 00000000 		.4byte	0
+ 657              		.section	.debug_ranges,"",%progbits
+ 658              	.Ldebug_ranges0:
+ 659 0000 00000000 		.4byte	.LFB62
+ 660 0004 54000000 		.4byte	.LFE62
+ 661 0008 00000000 		.4byte	0
+ 662 000c 00000000 		.4byte	0
+ 663              		.section	.debug_line,"",%progbits
+ 664              	.Ldebug_line0:
+ 665 0000 EB000000 		.section	.debug_str,"MS",%progbits,1
+ 665      0200C700 
+ 665      00000201 
+ 665      FB0E0D00 
+ 665      01010101 
+ 666              	.LASF16:
+ 667 0000 73746174 		.ascii	"stat_TC_INT\000"
+ 667      5F54435F 
+ 667      494E5400 
+ 668              	.LASF31:
+ 669 000c 4C45445F 		.ascii	"LED_OneSecondControl\000"
+ 669      4F6E6553 
+ 669      65636F6E 
+ 669      64436F6E 
+ 669      74726F6C 
+ 670              	.LASF24:
+ 671 0021 53657455 		.ascii	"SetUp\000"
+ 671      7000
+ 672              	.LASF12:
+ 673 0027 646F7562 		.ascii	"double\000"
+ 673      6C6500
+ 674              	.LASF26:
+ 675 002e 4F6E654D 		.ascii	"OneMilliSecond_MainLoop\000"
+ 675      696C6C69 
+ 675      5365636F 
+ 675      6E645F4D 
+ 675      61696E4C 
+ 676              	.LASF21:
+ 677 0046 675F754C 		.ascii	"g_uLED1_Color\000"
+ 677      4544315F 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 14
+
+
+ 677      436F6C6F 
+ 677      7200
+ 678              	.LASF29:
+ 679 0054 75617274 		.ascii	"uartJsonLoop\000"
+ 679      4A736F6E 
+ 679      4C6F6F70 
+ 679      00
+ 680              	.LASF11:
+ 681 0061 666C6F61 		.ascii	"float\000"
+ 681      7400
+ 682              	.LASF40:
+ 683 0067 5F5F6275 		.ascii	"__builtin_puts\000"
+ 683      696C7469 
+ 683      6E5F7075 
+ 683      747300
+ 684              	.LASF1:
+ 685 0076 756E7369 		.ascii	"unsigned char\000"
+ 685      676E6564 
+ 685      20636861 
+ 685      7200
+ 686              	.LASF5:
+ 687 0084 6C6F6E67 		.ascii	"long unsigned int\000"
+ 687      20756E73 
+ 687      69676E65 
+ 687      6420696E 
+ 687      7400
+ 688              	.LASF37:
+ 689 0096 73506172 		.ascii	"sParameter\000"
+ 689      616D6574 
+ 689      657200
+ 690              	.LASF3:
+ 691 00a1 73686F72 		.ascii	"short unsigned int\000"
+ 691      7420756E 
+ 691      7369676E 
+ 691      65642069 
+ 691      6E7400
+ 692              	.LASF23:
+ 693 00b4 43795379 		.ascii	"CySysClkWcoStart\000"
+ 693      73436C6B 
+ 693      57636F53 
+ 693      74617274 
+ 693      00
+ 694              	.LASF27:
+ 695 00c5 4F6E6553 		.ascii	"OneSecond_MainLoop\000"
+ 695      65636F6E 
+ 695      645F4D61 
+ 695      696E4C6F 
+ 695      6F7000
+ 696              	.LASF17:
+ 697 00d8 706F735F 		.ascii	"pos_X\000"
+ 697      5800
+ 698              	.LASF18:
+ 699 00de 706F735F 		.ascii	"pos_Y\000"
+ 699      5900
+ 700              	.LASF38:
+ 701 00e4 6D61696E 		.ascii	"main\000"
+ 701      00
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 15
+
+
+ 702              	.LASF10:
+ 703 00e9 75696E74 		.ascii	"uint16\000"
+ 703      313600
+ 704              	.LASF20:
+ 705 00f0 50617261 		.ascii	"Param\000"
+ 705      6D00
+ 706              	.LASF8:
+ 707 00f6 756E7369 		.ascii	"unsigned int\000"
+ 707      676E6564 
+ 707      20696E74 
+ 707      00
+ 708              	.LASF7:
+ 709 0103 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 709      206C6F6E 
+ 709      6720756E 
+ 709      7369676E 
+ 709      65642069 
+ 710              	.LASF33:
+ 711 011a 75617274 		.ascii	"uartJsonHandleTouch\000"
+ 711      4A736F6E 
+ 711      48616E64 
+ 711      6C65546F 
+ 711      75636800 
+ 712              	.LASF32:
+ 713 012e 75617274 		.ascii	"uartJsonDrawScreen\000"
+ 713      4A736F6E 
+ 713      44726177 
+ 713      53637265 
+ 713      656E00
+ 714              	.LASF28:
+ 715 0141 7573624C 		.ascii	"usbLoop\000"
+ 715      6F6F7000 
+ 716              	.LASF34:
+ 717 0149 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 717      43313120 
+ 717      352E342E 
+ 717      31203230 
+ 717      31363036 
+ 718 017c 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 718      20726576 
+ 718      6973696F 
+ 718      6E203233 
+ 718      37373135 
+ 719 01af 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 719      66756E63 
+ 719      74696F6E 
+ 719      2D736563 
+ 719      74696F6E 
+ 720              	.LASF14:
+ 721 01d7 6C6F6E67 		.ascii	"long double\000"
+ 721      20646F75 
+ 721      626C6500 
+ 722              	.LASF15:
+ 723 01e3 73697A65 		.ascii	"sizetype\000"
+ 723      74797065 
+ 723      00
+ 724              	.LASF6:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 16
+
+
+ 725 01ec 6C6F6E67 		.ascii	"long long int\000"
+ 725      206C6F6E 
+ 725      6720696E 
+ 725      7400
+ 726              	.LASF35:
+ 727 01fa 6D61696E 		.ascii	"main.c\000"
+ 727      2E6300
+ 728              	.LASF13:
+ 729 0201 63686172 		.ascii	"char\000"
+ 729      00
+ 730              	.LASF22:
+ 731 0206 4F6E6553 		.ascii	"OneSecondIndex\000"
+ 731      65636F6E 
+ 731      64496E64 
+ 731      657800
+ 732              	.LASF2:
+ 733 0215 73686F72 		.ascii	"short int\000"
+ 733      7420696E 
+ 733      7400
+ 734              	.LASF9:
+ 735 021f 75696E74 		.ascii	"uint8\000"
+ 735      3800
+ 736              	.LASF4:
+ 737 0225 6C6F6E67 		.ascii	"long int\000"
+ 737      20696E74 
+ 737      00
+ 738              	.LASF19:
+ 739 022e 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 739      64617973 
+ 739      4265666F 
+ 739      72654D6F 
+ 739      6E746854 
+ 740              	.LASF39:
+ 741 0245 70757473 		.ascii	"puts\000"
+ 741      00
+ 742              	.LASF0:
+ 743 024a 7369676E 		.ascii	"signed char\000"
+ 743      65642063 
+ 743      68617200 
+ 744              	.LASF30:
+ 745 0256 69734669 		.ascii	"isFinishCounter_1s\000"
+ 745      6E697368 
+ 745      436F756E 
+ 745      7465725F 
+ 745      317300
+ 746              	.LASF36:
+ 747 0269 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_UART_T"
+ 747      554E5445 
+ 747      43485F44 
+ 747      45565F43 
+ 747      4C415544 
+ 748 0299 4553545C 		.ascii	"EST\\280CTP_IoT_UART_TEST_V1\\Project\\Design.cydsn"
+ 748      32383043 
+ 748      54505F49 
+ 748      6F545F55 
+ 748      4152545F 
+ 749 02c9 00       		.ascii	"\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccP8mkRa.s 			page 17
+
+
+ 750              	.LASF25:
+ 751 02ca 4C43445F 		.ascii	"LCD_Backlight_Write\000"
+ 751      4261636B 
+ 751      6C696768 
+ 751      745F5772 
+ 751      69746500 
+ 752              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

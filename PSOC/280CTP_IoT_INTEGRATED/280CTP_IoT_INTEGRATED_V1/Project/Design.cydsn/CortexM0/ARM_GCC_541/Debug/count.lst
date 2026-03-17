@@ -1,0 +1,2824 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"count.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.Trim_Interrupt_Routine,"ax",%progbits
+  20              		.align	2
+  21              		.global	Trim_Interrupt_Routine
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	Trim_Interrupt_Routine, %function
+  25              	Trim_Interrupt_Routine:
+  26              	.LFB62:
+  27              		.file 1 "count.c"
+   1:count.c       **** /* ========================================
+   2:count.c       ****  *
+   3:count.c       ****  * Copyright Suntech, 2023.04.13
+   4:count.c       ****  * All Rights Reserved
+   5:count.c       ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:count.c       ****  *
+   7:count.c       ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:count.c       ****  * WHICH IS THE PROPERTY OF Suntech.
+   9:count.c       ****  *
+  10:count.c       ****  * ========================================
+  11:count.c       **** */
+  12:count.c       **** #include "main.h"
+  13:count.c       **** #include "count.h"
+  14:count.c       **** #include "lib/internalFlash.h"
+  15:count.c       **** #include "userProjectPatternSewing.h"
+  16:count.c       **** #include "andonApi.h"
+  17:count.c       **** #include "uartJson.h"
+  18:count.c       **** 
+  19:count.c       **** static uint8 g_updateTrimCount=FALSE;  /* ISR + SewingCountLoop 내부 전용 */
+  20:count.c       **** uint8 g_updateCountMenu=FALSE;
+  21:count.c       **** //uint16 g_trimCount=0;
+  22:count.c       **** 
+  23:count.c       **** COUNT *g_ptrCount = NULL;
+  24:count.c       **** 
+  25:count.c       **** static uint32 g_uWorkingTimeCount=0;   /* 접근자 함수(Get/Reset)로만 외부 접근 */
+  26:count.c       **** 
+  27:count.c       **** void PatternCountLoop();
+  28:count.c       **** void SewingCountLoop();
+  29:count.c       **** 
+  30:count.c       **** void (*CountFunc)() = &SewingCountLoop;
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 2
+
+
+  31:count.c       **** 
+  32:count.c       **** static uint16 g_Count = 0;             /* ISR + SewingCountLoop 내부 전용 */
+  33:count.c       **** 
+  34:count.c       **** volatile uint8_t  g_bStartTrimPin    = FALSE;  /* ISR 공유 → volatile 필수 */
+  35:count.c       **** volatile uint16_t g_bTrimElapsedTime = 0;      /* ISR 공유 → volatile 필수 */
+  36:count.c       **** 
+  37:count.c       **** CY_ISR(Trim_Interrupt_Routine)
+  38:count.c       **** {
+  28              		.loc 1 38 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 10B5     		push	{r4, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  39:count.c       ****     g_updateTrimCount = TRUE;
+  36              		.loc 1 39 0
+  37 0002 0A4B     		ldr	r3, .L3
+  38 0004 0122     		movs	r2, #1
+  39 0006 1A70     		strb	r2, [r3]
+  40:count.c       ****     //g_trimCount++;
+  41:count.c       ****     g_ptrCount->sewingTrimCount++;
+  40              		.loc 1 41 0
+  41 0008 5968     		ldr	r1, [r3, #4]
+  42 000a CA8A     		ldrh	r2, [r1, #22]
+  43 000c 0132     		adds	r2, r2, #1
+  44 000e CA82     		strh	r2, [r1, #22]
+  42:count.c       ****     g_Count++;
+  45              		.loc 1 42 0
+  46 0010 1A89     		ldrh	r2, [r3, #8]
+  47 0012 0132     		adds	r2, r2, #1
+  48 0014 1A81     		strh	r2, [r3, #8]
+  43:count.c       ****     
+  44:count.c       ****     if(TrimPin_Read() == 0)
+  49              		.loc 1 44 0
+  50 0016 FFF7FEFF 		bl	TrimPin_Read
+  51              	.LVL0:
+  52 001a 0028     		cmp	r0, #0
+  53 001c 04D1     		bne	.L1
+  45:count.c       ****     {
+  46:count.c       ****         g_bStartTrimPin = TRUE;
+  54              		.loc 1 46 0
+  55 001e 034B     		ldr	r3, .L3
+  56 0020 0122     		movs	r2, #1
+  57 0022 9A72     		strb	r2, [r3, #10]
+  47:count.c       ****         g_bTrimElapsedTime = 0;
+  58              		.loc 1 47 0
+  59 0024 0022     		movs	r2, #0
+  60 0026 9A81     		strh	r2, [r3, #12]
+  61              	.L1:
+  48:count.c       ****     }
+  49:count.c       **** }
+  62              		.loc 1 49 0
+  63              		@ sp needed
+  64 0028 10BD     		pop	{r4, pc}
+  65              	.L4:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 3
+
+
+  66 002a C046     		.align	2
+  67              	.L3:
+  68 002c 00000000 		.word	.LANCHOR0
+  69              		.cfi_endproc
+  70              	.LFE62:
+  71              		.size	Trim_Interrupt_Routine, .-Trim_Interrupt_Routine
+  72              		.section	.text.SewingCountLoop,"ax",%progbits
+  73              		.align	2
+  74              		.global	SewingCountLoop
+  75              		.code	16
+  76              		.thumb_func
+  77              		.type	SewingCountLoop, %function
+  78              	SewingCountLoop:
+  79              	.LFB65:
+  50:count.c       **** 
+  51:count.c       **** void initCount()
+  52:count.c       **** {
+  53:count.c       ****     if(sizeof(COUNT) > sizeof(g_internalFlash.data))
+  54:count.c       ****     {
+  55:count.c       ****         printf("Wrong... COUNT size is large than g_internalFlash.data\r\n");        
+  56:count.c       ****     }    
+  57:count.c       ****     g_ptrCount = (COUNT *) &g_internalFlash.data;  
+  58:count.c       ****     
+  59:count.c       ****     SetCountLoop();
+  60:count.c       **** }
+  61:count.c       **** 
+  62:count.c       **** void SetCountLoop()
+  63:count.c       **** {
+  64:count.c       ****     switch(g_ptrMachineParameter->machineType)
+  65:count.c       ****     {
+  66:count.c       ****         case PATTERN_MACHINE:
+  67:count.c       ****             CountFunc = &PatternCountLoop;
+  68:count.c       ****             trim_Int_Stop();
+  69:count.c       ****         break;
+  70:count.c       ****         case SEWING_MACHINE :
+  71:count.c       ****             CountFunc = &SewingCountLoop;
+  72:count.c       ****             trim_Int_StartEx(&Trim_Interrupt_Routine); 
+  73:count.c       ****         break;
+  74:count.c       ****     }
+  75:count.c       **** }
+  76:count.c       **** 
+  77:count.c       **** void SewingCountLoop()
+  78:count.c       **** {
+  80              		.loc 1 78 0
+  81              		.cfi_startproc
+  82              		@ args = 0, pretend = 0, frame = 0
+  83              		@ frame_needed = 0, uses_anonymous_args = 0
+  84 0000 10B5     		push	{r4, lr}
+  85              		.cfi_def_cfa_offset 8
+  86              		.cfi_offset 4, -8
+  87              		.cfi_offset 14, -4
+  79:count.c       ****     if(g_updateTrimCount == FALSE) return;
+  88              		.loc 1 79 0
+  89 0002 1B4B     		ldr	r3, .L10
+  90 0004 1B78     		ldrb	r3, [r3]
+  91 0006 002B     		cmp	r3, #0
+  92 0008 30D0     		beq	.L5
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 4
+
+
+  93              	.LVL1:
+  94              	.LBB2:
+  80:count.c       **** 
+  81:count.c       ****     uint8 bSend = FALSE;
+  82:count.c       ****     //uint32 actual =  CONVERT_TO_4BYTE(g_ptrCount->sewingActualH, g_ptrCount->sewingActualL) /10;
+  83:count.c       ****     
+  84:count.c       ****     ADD_CONVERT_TO_4BYTE(g_ptrCount->sewingTrimCountSumH,g_ptrCount->sewingTrimCountSumL,g_Count); 
+  95              		.loc 1 84 0
+  96 000a 1948     		ldr	r0, .L10
+  97 000c 4268     		ldr	r2, [r0, #4]
+  98 000e 138B     		ldrh	r3, [r2, #24]
+  99 0010 1B04     		lsls	r3, r3, #16
+ 100 0012 518B     		ldrh	r1, [r2, #26]
+ 101 0014 0B43     		orrs	r3, r1
+ 102 0016 0189     		ldrh	r1, [r0, #8]
+ 103 0018 5B18     		adds	r3, r3, r1
+ 104              	.LVL2:
+ 105 001a 190C     		lsrs	r1, r3, #16
+ 106 001c 1183     		strh	r1, [r2, #24]
+ 107 001e 5383     		strh	r3, [r2, #26]
+ 108              	.LBE2:
+ 109 0020 0023     		movs	r3, #0
+ 110              	.LVL3:
+ 111 0022 0381     		strh	r3, [r0, #8]
+  81:count.c       ****     //uint32 actual =  CONVERT_TO_4BYTE(g_ptrCount->sewingActualH, g_ptrCount->sewingActualL) /10;
+ 112              		.loc 1 81 0
+ 113 0024 0024     		movs	r4, #0
+  85:count.c       ****     
+  86:count.c       ****     //printf("\r\n%u %u %lu\r\n",g_ptrCount->sewingTrimCount,g_ptrMachineParameter->sewingPairTrim,
+  87:count.c       ****     while(g_ptrCount->sewingTrimCount >= g_ptrMachineParameter->sewingPairTrim)
+ 114              		.loc 1 87 0
+ 115 0026 0DE0     		b	.L7
+ 116              	.LVL4:
+ 117              	.L8:
+  88:count.c       ****     {
+  89:count.c       ****         g_ptrCount->sewingTrimCount -= g_ptrMachineParameter->sewingPairTrim;
+ 118              		.loc 1 89 0
+ 119 0028 521A     		subs	r2, r2, r1
+ 120 002a DA82     		strh	r2, [r3, #22]
+ 121              	.LBB3:
+  90:count.c       ****         
+  91:count.c       ****         ADD_CONVERT_TO_4BYTE(g_ptrCount->sewingActualH,g_ptrCount->sewingActualL,g_ptrMachineParame
+ 122              		.loc 1 91 0
+ 123 002c 1A88     		ldrh	r2, [r3]
+ 124 002e 1204     		lsls	r2, r2, #16
+ 125 0030 5988     		ldrh	r1, [r3, #2]
+ 126 0032 0A43     		orrs	r2, r1
+ 127 0034 8189     		ldrh	r1, [r0, #12]
+ 128 0036 5218     		adds	r2, r2, r1
+ 129              	.LVL5:
+ 130 0038 110C     		lsrs	r1, r2, #16
+ 131 003a 1980     		strh	r1, [r3]
+ 132 003c 0C4B     		ldr	r3, .L10
+ 133 003e 5B68     		ldr	r3, [r3, #4]
+ 134 0040 5A80     		strh	r2, [r3, #2]
+ 135              	.LVL6:
+ 136              	.LBE3:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 5
+
+
+  92:count.c       ****         bSend = TRUE;
+ 137              		.loc 1 92 0
+ 138 0042 0124     		movs	r4, #1
+ 139              	.LVL7:
+ 140              	.L7:
+  87:count.c       ****     {
+ 141              		.loc 1 87 0
+ 142 0044 0A4B     		ldr	r3, .L10
+ 143 0046 5B68     		ldr	r3, [r3, #4]
+ 144 0048 DA8A     		ldrh	r2, [r3, #22]
+ 145 004a 0A49     		ldr	r1, .L10+4
+ 146 004c 0868     		ldr	r0, [r1]
+ 147 004e 4189     		ldrh	r1, [r0, #10]
+ 148 0050 8A42     		cmp	r2, r1
+ 149 0052 E9D2     		bcs	.L8
+  93:count.c       ****     }
+  94:count.c       **** 
+  95:count.c       ****     if(bSend == TRUE)
+ 150              		.loc 1 95 0
+ 151 0054 012C     		cmp	r4, #1
+ 152 0056 06D1     		bne	.L9
+  96:count.c       ****     {
+  97:count.c       ****         g_updateCountMenu = TRUE;
+ 153              		.loc 1 97 0
+ 154 0058 0122     		movs	r2, #1
+ 155 005a 054B     		ldr	r3, .L10
+ 156 005c 9A73     		strb	r2, [r3, #14]
+  98:count.c       ****         makeAndonSewingCount();
+ 157              		.loc 1 98 0
+ 158 005e FFF7FEFF 		bl	makeAndonSewingCount
+ 159              	.LVL8:
+  99:count.c       ****         SaveInternalFlash();              
+ 160              		.loc 1 99 0
+ 161 0062 FFF7FEFF 		bl	SaveInternalFlash
+ 162              	.LVL9:
+ 163              	.L9:
+ 100:count.c       ****     }
+ 101:count.c       ****     
+ 102:count.c       ****     //if(CONVERT_TO_4BYTE(g_ptrCount->sewingActualH, g_ptrCount->sewingActualL)/10 > actual)
+ 103:count.c       ****     //{
+ 104:count.c       ****     //  g_updateCountMenu = TRUE;
+ 105:count.c       ****     //  makeAndonSewingCount();
+ 106:count.c       ****     //  SaveInternalFlash();              
+ 107:count.c       ****     //}
+ 108:count.c       ****     
+ 109:count.c       ****     g_updateTrimCount = FALSE;        
+ 164              		.loc 1 109 0
+ 165 0066 0022     		movs	r2, #0
+ 166 0068 014B     		ldr	r3, .L10
+ 167 006a 1A70     		strb	r2, [r3]
+ 168              	.LVL10:
+ 169              	.L5:
+ 110:count.c       **** }
+ 170              		.loc 1 110 0
+ 171              		@ sp needed
+ 172 006c 10BD     		pop	{r4, pc}
+ 173              	.L11:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 6
+
+
+ 174 006e C046     		.align	2
+ 175              	.L10:
+ 176 0070 00000000 		.word	.LANCHOR0
+ 177 0074 00000000 		.word	g_ptrMachineParameter
+ 178              		.cfi_endproc
+ 179              	.LFE65:
+ 180              		.size	SewingCountLoop, .-SewingCountLoop
+ 181              		.section	.text.PatternCountLoop,"ax",%progbits
+ 182              		.align	2
+ 183              		.global	PatternCountLoop
+ 184              		.code	16
+ 185              		.thumb_func
+ 186              		.type	PatternCountLoop, %function
+ 187              	PatternCountLoop:
+ 188              	.LFB66:
+ 111:count.c       **** 
+ 112:count.c       **** void PatternCountLoop()
+ 113:count.c       **** {
+ 189              		.loc 1 113 0
+ 190              		.cfi_startproc
+ 191              		@ args = 0, pretend = 0, frame = 0
+ 192              		@ frame_needed = 0, uses_anonymous_args = 0
+ 193 0000 10B5     		push	{r4, lr}
+ 194              		.cfi_def_cfa_offset 8
+ 195              		.cfi_offset 4, -8
+ 196              		.cfi_offset 14, -4
+ 114:count.c       ****     if(uartJsonLoop()==TRUE)
+ 197              		.loc 1 114 0
+ 198 0002 FFF7FEFF 		bl	uartJsonLoop
+ 199              	.LVL11:
+ 200 0006 0128     		cmp	r0, #1
+ 201 0008 02D1     		bne	.L12
+ 115:count.c       ****     {
+ 116:count.c       ****         g_updateCountMenu = TRUE;
+ 202              		.loc 1 116 0
+ 203 000a 0122     		movs	r2, #1
+ 204 000c 014B     		ldr	r3, .L14
+ 205 000e 9A73     		strb	r2, [r3, #14]
+ 206              	.L12:
+ 117:count.c       ****     }
+ 118:count.c       **** }
+ 207              		.loc 1 118 0
+ 208              		@ sp needed
+ 209 0010 10BD     		pop	{r4, pc}
+ 210              	.L15:
+ 211 0012 C046     		.align	2
+ 212              	.L14:
+ 213 0014 00000000 		.word	.LANCHOR0
+ 214              		.cfi_endproc
+ 215              	.LFE66:
+ 216              		.size	PatternCountLoop, .-PatternCountLoop
+ 217              		.section	.text.SetCountLoop,"ax",%progbits
+ 218              		.align	2
+ 219              		.global	SetCountLoop
+ 220              		.code	16
+ 221              		.thumb_func
+ 222              		.type	SetCountLoop, %function
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 7
+
+
+ 223              	SetCountLoop:
+ 224              	.LFB64:
+  63:count.c       ****     switch(g_ptrMachineParameter->machineType)
+ 225              		.loc 1 63 0
+ 226              		.cfi_startproc
+ 227              		@ args = 0, pretend = 0, frame = 0
+ 228              		@ frame_needed = 0, uses_anonymous_args = 0
+ 229 0000 10B5     		push	{r4, lr}
+ 230              		.cfi_def_cfa_offset 8
+ 231              		.cfi_offset 4, -8
+ 232              		.cfi_offset 14, -4
+  64:count.c       ****     {
+ 233              		.loc 1 64 0
+ 234 0002 0A4B     		ldr	r3, .L20
+ 235 0004 1B68     		ldr	r3, [r3]
+ 236 0006 1B78     		ldrb	r3, [r3]
+ 237 0008 002B     		cmp	r3, #0
+ 238 000a 02D0     		beq	.L18
+ 239 000c 012B     		cmp	r3, #1
+ 240 000e 06D0     		beq	.L19
+ 241 0010 0BE0     		b	.L16
+ 242              	.L18:
+  67:count.c       ****             trim_Int_Stop();
+ 243              		.loc 1 67 0
+ 244 0012 074A     		ldr	r2, .L20+4
+ 245 0014 074B     		ldr	r3, .L20+8
+ 246 0016 1A60     		str	r2, [r3]
+  68:count.c       ****         break;
+ 247              		.loc 1 68 0
+ 248 0018 FFF7FEFF 		bl	trim_Int_Stop
+ 249              	.LVL12:
+  69:count.c       ****         case SEWING_MACHINE :
+ 250              		.loc 1 69 0
+ 251 001c 05E0     		b	.L16
+ 252              	.L19:
+  71:count.c       ****             trim_Int_StartEx(&Trim_Interrupt_Routine); 
+ 253              		.loc 1 71 0
+ 254 001e 064A     		ldr	r2, .L20+12
+ 255 0020 044B     		ldr	r3, .L20+8
+ 256 0022 1A60     		str	r2, [r3]
+  72:count.c       ****         break;
+ 257              		.loc 1 72 0
+ 258 0024 0548     		ldr	r0, .L20+16
+ 259 0026 FFF7FEFF 		bl	trim_Int_StartEx
+ 260              	.LVL13:
+ 261              	.L16:
+  75:count.c       **** 
+ 262              		.loc 1 75 0
+ 263              		@ sp needed
+ 264 002a 10BD     		pop	{r4, pc}
+ 265              	.L21:
+ 266              		.align	2
+ 267              	.L20:
+ 268 002c 00000000 		.word	g_ptrMachineParameter
+ 269 0030 00000000 		.word	PatternCountLoop
+ 270 0034 00000000 		.word	.LANCHOR1
+ 271 0038 00000000 		.word	SewingCountLoop
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 8
+
+
+ 272 003c 00000000 		.word	Trim_Interrupt_Routine
+ 273              		.cfi_endproc
+ 274              	.LFE64:
+ 275              		.size	SetCountLoop, .-SetCountLoop
+ 276              		.section	.text.initCount,"ax",%progbits
+ 277              		.align	2
+ 278              		.global	initCount
+ 279              		.code	16
+ 280              		.thumb_func
+ 281              		.type	initCount, %function
+ 282              	initCount:
+ 283              	.LFB63:
+  52:count.c       ****     if(sizeof(COUNT) > sizeof(g_internalFlash.data))
+ 284              		.loc 1 52 0
+ 285              		.cfi_startproc
+ 286              		@ args = 0, pretend = 0, frame = 0
+ 287              		@ frame_needed = 0, uses_anonymous_args = 0
+ 288 0000 10B5     		push	{r4, lr}
+ 289              		.cfi_def_cfa_offset 8
+ 290              		.cfi_offset 4, -8
+ 291              		.cfi_offset 14, -4
+  57:count.c       ****     
+ 292              		.loc 1 57 0
+ 293 0002 034A     		ldr	r2, .L23
+ 294 0004 034B     		ldr	r3, .L23+4
+ 295 0006 5A60     		str	r2, [r3, #4]
+  59:count.c       **** }
+ 296              		.loc 1 59 0
+ 297 0008 FFF7FEFF 		bl	SetCountLoop
+ 298              	.LVL14:
+  60:count.c       **** 
+ 299              		.loc 1 60 0
+ 300              		@ sp needed
+ 301 000c 10BD     		pop	{r4, pc}
+ 302              	.L24:
+ 303 000e C046     		.align	2
+ 304              	.L23:
+ 305 0010 02000000 		.word	g_internalFlash+2
+ 306 0014 00000000 		.word	.LANCHOR0
+ 307              		.cfi_endproc
+ 308              	.LFE63:
+ 309              		.size	initCount, .-initCount
+ 310              		.section	.text.getCount,"ax",%progbits
+ 311              		.align	2
+ 312              		.global	getCount
+ 313              		.code	16
+ 314              		.thumb_func
+ 315              		.type	getCount, %function
+ 316              	getCount:
+ 317              	.LFB67:
+ 119:count.c       **** 
+ 120:count.c       **** COUNT *getCount() 
+ 121:count.c       **** {
+ 318              		.loc 1 121 0
+ 319              		.cfi_startproc
+ 320              		@ args = 0, pretend = 0, frame = 0
+ 321              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 9
+
+
+ 322              		@ link register save eliminated.
+ 122:count.c       ****     return g_ptrCount;
+ 323              		.loc 1 122 0
+ 324 0000 014B     		ldr	r3, .L26
+ 325 0002 5868     		ldr	r0, [r3, #4]
+ 123:count.c       **** }
+ 326              		.loc 1 123 0
+ 327              		@ sp needed
+ 328 0004 7047     		bx	lr
+ 329              	.L27:
+ 330 0006 C046     		.align	2
+ 331              	.L26:
+ 332 0008 00000000 		.word	.LANCHOR0
+ 333              		.cfi_endproc
+ 334              	.LFE67:
+ 335              		.size	getCount, .-getCount
+ 336              		.section	.text.ResetCount,"ax",%progbits
+ 337              		.align	2
+ 338              		.global	ResetCount
+ 339              		.code	16
+ 340              		.thumb_func
+ 341              		.type	ResetCount, %function
+ 342              	ResetCount:
+ 343              	.LFB68:
+ 124:count.c       **** 
+ 125:count.c       **** void ResetCount()
+ 126:count.c       **** {
+ 344              		.loc 1 126 0
+ 345              		.cfi_startproc
+ 346              		@ args = 0, pretend = 0, frame = 0
+ 347              		@ frame_needed = 0, uses_anonymous_args = 0
+ 348 0000 10B5     		push	{r4, lr}
+ 349              		.cfi_def_cfa_offset 8
+ 350              		.cfi_offset 4, -8
+ 351              		.cfi_offset 14, -4
+ 127:count.c       ****     g_ptrCount->patternActualH = 0;
+ 352              		.loc 1 127 0
+ 353 0002 0D49     		ldr	r1, .L29
+ 354 0004 4A68     		ldr	r2, [r1, #4]
+ 355 0006 0023     		movs	r3, #0
+ 356 0008 9383     		strh	r3, [r2, #28]
+ 128:count.c       ****     g_ptrCount->patternActualL = 0; 
+ 357              		.loc 1 128 0
+ 358 000a D383     		strh	r3, [r2, #30]
+ 129:count.c       ****     
+ 130:count.c       ****     // 김도형 추가.
+ 131:count.c       ****     g_ptrCount->patternCycleTimeSumH = 0;
+ 359              		.loc 1 131 0
+ 360 000c 9385     		strh	r3, [r2, #44]
+ 132:count.c       ****     g_ptrCount->patternCycleTimeSumL = 0;
+ 361              		.loc 1 132 0
+ 362 000e D385     		strh	r3, [r2, #46]
+ 133:count.c       ****     g_ptrCount->patternMotorRunTimeSumH = 0;
+ 363              		.loc 1 133 0
+ 364 0010 5386     		strh	r3, [r2, #50]
+ 134:count.c       ****     g_ptrCount->patternMotorRunTimeSumL = 0;
+ 365              		.loc 1 134 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 10
+
+
+ 366 0012 9386     		strh	r3, [r2, #52]
+ 135:count.c       ****     g_ptrCount->patternNoStitchSumH = 0;
+ 367              		.loc 1 135 0
+ 368 0014 1387     		strh	r3, [r2, #56]
+ 136:count.c       ****     g_ptrCount->patternNoStitchSumL = 0;
+ 369              		.loc 1 136 0
+ 370 0016 5387     		strh	r3, [r2, #58]
+ 137:count.c       ****     g_ptrCount->patternStitchLengthSumH = 0;
+ 371              		.loc 1 137 0
+ 372 0018 D387     		strh	r3, [r2, #62]
+ 138:count.c       ****     g_ptrCount->patternStitchLengthSumL = 0;
+ 373              		.loc 1 138 0
+ 374 001a 4020     		movs	r0, #64
+ 375 001c 1352     		strh	r3, [r2, r0]
+ 139:count.c       ****     g_ptrCount->patternTrimCountSumH = 0;
+ 376              		.loc 1 139 0
+ 377 001e 0430     		adds	r0, r0, #4
+ 378 0020 1352     		strh	r3, [r2, r0]
+ 140:count.c       ****     g_ptrCount->patternTrimCountSumL = 0;
+ 379              		.loc 1 140 0
+ 380 0022 0230     		adds	r0, r0, #2
+ 381 0024 1352     		strh	r3, [r2, r0]
+ 141:count.c       ****     g_ptrCount->patternEmergencyTimeSumH = 0;
+ 382              		.loc 1 141 0
+ 383 0026 D384     		strh	r3, [r2, #38]
+ 142:count.c       ****     g_ptrCount->patternEmergencyTimeSumL = 0;
+ 384              		.loc 1 142 0
+ 385 0028 1385     		strh	r3, [r2, #40]
+ 143:count.c       ****     //                
+ 144:count.c       ****     
+ 145:count.c       ****     g_ptrCount->sewingActualH = 0;
+ 386              		.loc 1 145 0
+ 387 002a 1380     		strh	r3, [r2]
+ 146:count.c       ****     g_ptrCount->sewingActualL = 0;  
+ 388              		.loc 1 146 0
+ 389 002c 4A68     		ldr	r2, [r1, #4]
+ 390 002e 5380     		strh	r3, [r2, #2]
+ 147:count.c       ****     
+ 148:count.c       ****     SaveInternalFlash(); 
+ 391              		.loc 1 148 0
+ 392 0030 FFF7FEFF 		bl	SaveInternalFlash
+ 393              	.LVL15:
+ 149:count.c       **** }
+ 394              		.loc 1 149 0
+ 395              		@ sp needed
+ 396 0034 10BD     		pop	{r4, pc}
+ 397              	.L30:
+ 398 0036 C046     		.align	2
+ 399              	.L29:
+ 400 0038 00000000 		.word	.LANCHOR0
+ 401              		.cfi_endproc
+ 402              	.LFE68:
+ 403              		.size	ResetCount, .-ResetCount
+ 404              		.section	.text.WorkingTimeCount,"ax",%progbits
+ 405              		.align	2
+ 406              		.global	WorkingTimeCount
+ 407              		.code	16
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 11
+
+
+ 408              		.thumb_func
+ 409              		.type	WorkingTimeCount, %function
+ 410              	WorkingTimeCount:
+ 411              	.LFB69:
+ 150:count.c       **** 
+ 151:count.c       **** void WorkingTimeCount()
+ 152:count.c       **** {
+ 412              		.loc 1 152 0
+ 413              		.cfi_startproc
+ 414              		@ args = 0, pretend = 0, frame = 0
+ 415              		@ frame_needed = 0, uses_anonymous_args = 0
+ 416              		@ link register save eliminated.
+ 153:count.c       ****     g_uWorkingTimeCount++;
+ 417              		.loc 1 153 0
+ 418 0000 024A     		ldr	r2, .L32
+ 419 0002 1369     		ldr	r3, [r2, #16]
+ 420 0004 0133     		adds	r3, r3, #1
+ 421 0006 1361     		str	r3, [r2, #16]
+ 154:count.c       **** }
+ 422              		.loc 1 154 0
+ 423              		@ sp needed
+ 424 0008 7047     		bx	lr
+ 425              	.L33:
+ 426 000a C046     		.align	2
+ 427              	.L32:
+ 428 000c 00000000 		.word	.LANCHOR0
+ 429              		.cfi_endproc
+ 430              	.LFE69:
+ 431              		.size	WorkingTimeCount, .-WorkingTimeCount
+ 432              		.section	.text.GetWorkingTimeCount,"ax",%progbits
+ 433              		.align	2
+ 434              		.global	GetWorkingTimeCount
+ 435              		.code	16
+ 436              		.thumb_func
+ 437              		.type	GetWorkingTimeCount, %function
+ 438              	GetWorkingTimeCount:
+ 439              	.LFB70:
+ 155:count.c       **** 
+ 156:count.c       **** uint32 GetWorkingTimeCount()
+ 157:count.c       **** {
+ 440              		.loc 1 157 0
+ 441              		.cfi_startproc
+ 442              		@ args = 0, pretend = 0, frame = 0
+ 443              		@ frame_needed = 0, uses_anonymous_args = 0
+ 444              		@ link register save eliminated.
+ 158:count.c       ****     return g_uWorkingTimeCount;
+ 445              		.loc 1 158 0
+ 446 0000 014B     		ldr	r3, .L35
+ 447 0002 1869     		ldr	r0, [r3, #16]
+ 159:count.c       **** }
+ 448              		.loc 1 159 0
+ 449              		@ sp needed
+ 450 0004 7047     		bx	lr
+ 451              	.L36:
+ 452 0006 C046     		.align	2
+ 453              	.L35:
+ 454 0008 00000000 		.word	.LANCHOR0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 12
+
+
+ 455              		.cfi_endproc
+ 456              	.LFE70:
+ 457              		.size	GetWorkingTimeCount, .-GetWorkingTimeCount
+ 458              		.section	.text.ResetWorkingTimeCount,"ax",%progbits
+ 459              		.align	2
+ 460              		.global	ResetWorkingTimeCount
+ 461              		.code	16
+ 462              		.thumb_func
+ 463              		.type	ResetWorkingTimeCount, %function
+ 464              	ResetWorkingTimeCount:
+ 465              	.LFB71:
+ 160:count.c       **** 
+ 161:count.c       **** void ResetWorkingTimeCount()
+ 162:count.c       **** {
+ 466              		.loc 1 162 0
+ 467              		.cfi_startproc
+ 468              		@ args = 0, pretend = 0, frame = 0
+ 469              		@ frame_needed = 0, uses_anonymous_args = 0
+ 470              		@ link register save eliminated.
+ 163:count.c       ****     g_uWorkingTimeCount = 0;
+ 471              		.loc 1 163 0
+ 472 0000 0022     		movs	r2, #0
+ 473 0002 014B     		ldr	r3, .L38
+ 474 0004 1A61     		str	r2, [r3, #16]
+ 164:count.c       **** }
+ 475              		.loc 1 164 0
+ 476              		@ sp needed
+ 477 0006 7047     		bx	lr
+ 478              	.L39:
+ 479              		.align	2
+ 480              	.L38:
+ 481 0008 00000000 		.word	.LANCHOR0
+ 482              		.cfi_endproc
+ 483              	.LFE71:
+ 484              		.size	ResetWorkingTimeCount, .-ResetWorkingTimeCount
+ 485              		.global	g_bTrimElapsedTime
+ 486              		.global	g_bStartTrimPin
+ 487              		.global	CountFunc
+ 488              		.global	g_ptrCount
+ 489              		.global	g_updateCountMenu
+ 490              		.comm	Param,6,4
+ 491              		.data
+ 492              		.align	2
+ 493              		.set	.LANCHOR1,. + 0
+ 494              		.type	CountFunc, %object
+ 495              		.size	CountFunc, 4
+ 496              	CountFunc:
+ 497 0000 00000000 		.word	SewingCountLoop
+ 498              		.bss
+ 499              		.align	2
+ 500              		.set	.LANCHOR0,. + 0
+ 501              		.type	g_updateTrimCount, %object
+ 502              		.size	g_updateTrimCount, 1
+ 503              	g_updateTrimCount:
+ 504 0000 00       		.space	1
+ 505 0001 000000   		.space	3
+ 506              		.type	g_ptrCount, %object
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 13
+
+
+ 507              		.size	g_ptrCount, 4
+ 508              	g_ptrCount:
+ 509 0004 00000000 		.space	4
+ 510              		.type	g_Count, %object
+ 511              		.size	g_Count, 2
+ 512              	g_Count:
+ 513 0008 0000     		.space	2
+ 514              		.type	g_bStartTrimPin, %object
+ 515              		.size	g_bStartTrimPin, 1
+ 516              	g_bStartTrimPin:
+ 517 000a 00       		.space	1
+ 518 000b 00       		.space	1
+ 519              		.type	g_bTrimElapsedTime, %object
+ 520              		.size	g_bTrimElapsedTime, 2
+ 521              	g_bTrimElapsedTime:
+ 522 000c 0000     		.space	2
+ 523              		.type	g_updateCountMenu, %object
+ 524              		.size	g_updateCountMenu, 1
+ 525              	g_updateCountMenu:
+ 526 000e 00       		.space	1
+ 527 000f 00       		.space	1
+ 528              		.type	g_uWorkingTimeCount, %object
+ 529              		.size	g_uWorkingTimeCount, 4
+ 530              	g_uWorkingTimeCount:
+ 531 0010 00000000 		.space	4
+ 532              		.text
+ 533              	.Letext0:
+ 534              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 535              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 536              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 537              		.file 5 "main.h"
+ 538              		.file 6 "count.h"
+ 539              		.file 7 "lib/internalFlash.h"
+ 540              		.file 8 "userProjectPatternSewing.h"
+ 541              		.file 9 "Generated_Source\\PSoC4/RTC.h"
+ 542              		.file 10 "Generated_Source\\PSoC4/TrimPin.h"
+ 543              		.file 11 "andonApi.h"
+ 544              		.file 12 "uartJson.h"
+ 545              		.file 13 "Generated_Source\\PSoC4/trim_Int.h"
+ 546              		.section	.debug_info,"",%progbits
+ 547              	.Ldebug_info0:
+ 548 0000 B8060000 		.4byte	0x6b8
+ 549 0004 0400     		.2byte	0x4
+ 550 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 551 000a 04       		.byte	0x4
+ 552 000b 01       		.uleb128 0x1
+ 553 000c A9010000 		.4byte	.LASF113
+ 554 0010 0C       		.byte	0xc
+ 555 0011 CB050000 		.4byte	.LASF114
+ 556 0015 FE050000 		.4byte	.LASF115
+ 557 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 558 001d 00000000 		.4byte	0
+ 559 0021 00000000 		.4byte	.Ldebug_line0
+ 560 0025 02       		.uleb128 0x2
+ 561 0026 01       		.byte	0x1
+ 562 0027 06       		.byte	0x6
+ 563 0028 C4060000 		.4byte	.LASF0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 14
+
+
+ 564 002c 03       		.uleb128 0x3
+ 565 002d 9F030000 		.4byte	.LASF3
+ 566 0031 02       		.byte	0x2
+ 567 0032 1D       		.byte	0x1d
+ 568 0033 37000000 		.4byte	0x37
+ 569 0037 02       		.uleb128 0x2
+ 570 0038 01       		.byte	0x1
+ 571 0039 08       		.byte	0x8
+ 572 003a C2030000 		.4byte	.LASF1
+ 573 003e 02       		.uleb128 0x2
+ 574 003f 02       		.byte	0x2
+ 575 0040 05       		.byte	0x5
+ 576 0041 8E000000 		.4byte	.LASF2
+ 577 0045 03       		.uleb128 0x3
+ 578 0046 7A010000 		.4byte	.LASF4
+ 579 004a 02       		.byte	0x2
+ 580 004b 2B       		.byte	0x2b
+ 581 004c 50000000 		.4byte	0x50
+ 582 0050 02       		.uleb128 0x2
+ 583 0051 02       		.byte	0x2
+ 584 0052 07       		.byte	0x7
+ 585 0053 44050000 		.4byte	.LASF5
+ 586 0057 02       		.uleb128 0x2
+ 587 0058 04       		.byte	0x4
+ 588 0059 05       		.byte	0x5
+ 589 005a 1F030000 		.4byte	.LASF6
+ 590 005e 03       		.uleb128 0x3
+ 591 005f 51010000 		.4byte	.LASF7
+ 592 0063 02       		.byte	0x2
+ 593 0064 41       		.byte	0x41
+ 594 0065 69000000 		.4byte	0x69
+ 595 0069 02       		.uleb128 0x2
+ 596 006a 04       		.byte	0x4
+ 597 006b 07       		.byte	0x7
+ 598 006c BA040000 		.4byte	.LASF8
+ 599 0070 02       		.uleb128 0x2
+ 600 0071 08       		.byte	0x8
+ 601 0072 05       		.byte	0x5
+ 602 0073 AD020000 		.4byte	.LASF9
+ 603 0077 02       		.uleb128 0x2
+ 604 0078 08       		.byte	0x8
+ 605 0079 07       		.byte	0x7
+ 606 007a 55040000 		.4byte	.LASF10
+ 607 007e 04       		.uleb128 0x4
+ 608 007f 04       		.byte	0x4
+ 609 0080 05       		.byte	0x5
+ 610 0081 696E7400 		.ascii	"int\000"
+ 611 0085 02       		.uleb128 0x2
+ 612 0086 04       		.byte	0x4
+ 613 0087 07       		.byte	0x7
+ 614 0088 89040000 		.4byte	.LASF11
+ 615 008c 03       		.uleb128 0x3
+ 616 008d D0060000 		.4byte	.LASF12
+ 617 0091 03       		.byte	0x3
+ 618 0092 18       		.byte	0x18
+ 619 0093 2C000000 		.4byte	0x2c
+ 620 0097 03       		.uleb128 0x3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 15
+
+
+ 621 0098 23050000 		.4byte	.LASF13
+ 622 009c 03       		.byte	0x3
+ 623 009d 24       		.byte	0x24
+ 624 009e 45000000 		.4byte	0x45
+ 625 00a2 03       		.uleb128 0x3
+ 626 00a3 6C040000 		.4byte	.LASF14
+ 627 00a7 03       		.byte	0x3
+ 628 00a8 30       		.byte	0x30
+ 629 00a9 5E000000 		.4byte	0x5e
+ 630 00ad 05       		.uleb128 0x5
+ 631 00ae 51020000 		.4byte	.LASF15
+ 632 00b2 04       		.byte	0x4
+ 633 00b3 FC01     		.2byte	0x1fc
+ 634 00b5 37000000 		.4byte	0x37
+ 635 00b9 05       		.uleb128 0x5
+ 636 00ba BD050000 		.4byte	.LASF16
+ 637 00be 04       		.byte	0x4
+ 638 00bf FD01     		.2byte	0x1fd
+ 639 00c1 50000000 		.4byte	0x50
+ 640 00c5 05       		.uleb128 0x5
+ 641 00c6 C4050000 		.4byte	.LASF17
+ 642 00ca 04       		.byte	0x4
+ 643 00cb FE01     		.2byte	0x1fe
+ 644 00cd 69000000 		.4byte	0x69
+ 645 00d1 02       		.uleb128 0x2
+ 646 00d2 04       		.byte	0x4
+ 647 00d3 04       		.byte	0x4
+ 648 00d4 93020000 		.4byte	.LASF18
+ 649 00d8 02       		.uleb128 0x2
+ 650 00d9 08       		.byte	0x8
+ 651 00da 04       		.byte	0x4
+ 652 00db D3050000 		.4byte	.LASF19
+ 653 00df 02       		.uleb128 0x2
+ 654 00e0 01       		.byte	0x1
+ 655 00e1 08       		.byte	0x8
+ 656 00e2 1E050000 		.4byte	.LASF20
+ 657 00e6 02       		.uleb128 0x2
+ 658 00e7 08       		.byte	0x8
+ 659 00e8 04       		.byte	0x4
+ 660 00e9 EB030000 		.4byte	.LASF21
+ 661 00ed 02       		.uleb128 0x2
+ 662 00ee 04       		.byte	0x4
+ 663 00ef 07       		.byte	0x7
+ 664 00f0 BD000000 		.4byte	.LASF22
+ 665 00f4 06       		.uleb128 0x6
+ 666 00f5 90050000 		.4byte	.LASF116
+ 667 00f9 06       		.byte	0x6
+ 668 00fa 05       		.byte	0x5
+ 669 00fb 2E       		.byte	0x2e
+ 670 00fc 25010000 		.4byte	0x125
+ 671 0100 07       		.uleb128 0x7
+ 672 0101 2E010000 		.4byte	.LASF23
+ 673 0105 05       		.byte	0x5
+ 674 0106 30       		.byte	0x30
+ 675 0107 AD000000 		.4byte	0xad
+ 676 010b 00       		.byte	0
+ 677 010c 07       		.uleb128 0x7
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 16
+
+
+ 678 010d 6D020000 		.4byte	.LASF24
+ 679 0111 05       		.byte	0x5
+ 680 0112 31       		.byte	0x31
+ 681 0113 B9000000 		.4byte	0xb9
+ 682 0117 02       		.byte	0x2
+ 683 0118 07       		.uleb128 0x7
+ 684 0119 85020000 		.4byte	.LASF25
+ 685 011d 05       		.byte	0x5
+ 686 011e 32       		.byte	0x32
+ 687 011f B9000000 		.4byte	0xb9
+ 688 0123 04       		.byte	0x4
+ 689 0124 00       		.byte	0
+ 690 0125 08       		.uleb128 0x8
+ 691 0126 4E       		.byte	0x4e
+ 692 0127 06       		.byte	0x6
+ 693 0128 13       		.byte	0x13
+ 694 0129 02030000 		.4byte	0x302
+ 695 012d 07       		.uleb128 0x7
+ 696 012e 80000000 		.4byte	.LASF26
+ 697 0132 06       		.byte	0x6
+ 698 0133 15       		.byte	0x15
+ 699 0134 B9000000 		.4byte	0xb9
+ 700 0138 00       		.byte	0
+ 701 0139 07       		.uleb128 0x7
+ 702 013a E0000000 		.4byte	.LASF27
+ 703 013e 06       		.byte	0x6
+ 704 013f 16       		.byte	0x16
+ 705 0140 B9000000 		.4byte	0xb9
+ 706 0144 02       		.byte	0x2
+ 707 0145 07       		.uleb128 0x7
+ 708 0146 05040000 		.4byte	.LASF28
+ 709 014a 06       		.byte	0x6
+ 710 014b 17       		.byte	0x17
+ 711 014c B9000000 		.4byte	0xb9
+ 712 0150 04       		.byte	0x4
+ 713 0151 07       		.uleb128 0x7
+ 714 0152 1A010000 		.4byte	.LASF29
+ 715 0156 06       		.byte	0x6
+ 716 0157 18       		.byte	0x18
+ 717 0158 B9000000 		.4byte	0xb9
+ 718 015c 06       		.byte	0x6
+ 719 015d 07       		.uleb128 0x7
+ 720 015e 75040000 		.4byte	.LASF30
+ 721 0162 06       		.byte	0x6
+ 722 0163 19       		.byte	0x19
+ 723 0164 B9000000 		.4byte	0xb9
+ 724 0168 08       		.byte	0x8
+ 725 0169 07       		.uleb128 0x7
+ 726 016a 5C010000 		.4byte	.LASF31
+ 727 016e 06       		.byte	0x6
+ 728 016f 1A       		.byte	0x1a
+ 729 0170 B9000000 		.4byte	0xb9
+ 730 0174 0A       		.byte	0xa
+ 731 0175 07       		.uleb128 0x7
+ 732 0176 EE000000 		.4byte	.LASF32
+ 733 017a 06       		.byte	0x6
+ 734 017b 1B       		.byte	0x1b
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 17
+
+
+ 735 017c B9000000 		.4byte	0xb9
+ 736 0180 0C       		.byte	0xc
+ 737 0181 07       		.uleb128 0x7
+ 738 0182 91070000 		.4byte	.LASF33
+ 739 0186 06       		.byte	0x6
+ 740 0187 1C       		.byte	0x1c
+ 741 0188 B9000000 		.4byte	0xb9
+ 742 018c 0E       		.byte	0xe
+ 743 018d 07       		.uleb128 0x7
+ 744 018e 05070000 		.4byte	.LASF34
+ 745 0192 06       		.byte	0x6
+ 746 0193 1D       		.byte	0x1d
+ 747 0194 B9000000 		.4byte	0xb9
+ 748 0198 10       		.byte	0x10
+ 749 0199 07       		.uleb128 0x7
+ 750 019a 30070000 		.4byte	.LASF35
+ 751 019e 06       		.byte	0x6
+ 752 019f 1E       		.byte	0x1e
+ 753 01a0 B9000000 		.4byte	0xb9
+ 754 01a4 12       		.byte	0x12
+ 755 01a5 07       		.uleb128 0x7
+ 756 01a6 CC040000 		.4byte	.LASF36
+ 757 01aa 06       		.byte	0x6
+ 758 01ab 1F       		.byte	0x1f
+ 759 01ac B9000000 		.4byte	0xb9
+ 760 01b0 14       		.byte	0x14
+ 761 01b1 07       		.uleb128 0x7
+ 762 01b2 00000000 		.4byte	.LASF37
+ 763 01b6 06       		.byte	0x6
+ 764 01b7 20       		.byte	0x20
+ 765 01b8 B9000000 		.4byte	0xb9
+ 766 01bc 16       		.byte	0x16
+ 767 01bd 07       		.uleb128 0x7
+ 768 01be 69070000 		.4byte	.LASF38
+ 769 01c2 06       		.byte	0x6
+ 770 01c3 21       		.byte	0x21
+ 771 01c4 B9000000 		.4byte	0xb9
+ 772 01c8 18       		.byte	0x18
+ 773 01c9 07       		.uleb128 0x7
+ 774 01ca A8070000 		.4byte	.LASF39
+ 775 01ce 06       		.byte	0x6
+ 776 01cf 22       		.byte	0x22
+ 777 01d0 B9000000 		.4byte	0xb9
+ 778 01d4 1A       		.byte	0x1a
+ 779 01d5 07       		.uleb128 0x7
+ 780 01d6 3D030000 		.4byte	.LASF40
+ 781 01da 06       		.byte	0x6
+ 782 01db 25       		.byte	0x25
+ 783 01dc B9000000 		.4byte	0xb9
+ 784 01e0 1C       		.byte	0x1c
+ 785 01e1 07       		.uleb128 0x7
+ 786 01e2 90030000 		.4byte	.LASF41
+ 787 01e6 06       		.byte	0x6
+ 788 01e7 26       		.byte	0x26
+ 789 01e8 B9000000 		.4byte	0xb9
+ 790 01ec 1E       		.byte	0x1e
+ 791 01ed 07       		.uleb128 0x7
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 18
+
+
+ 792 01ee E8060000 		.4byte	.LASF42
+ 793 01f2 06       		.byte	0x6
+ 794 01f3 27       		.byte	0x27
+ 795 01f4 B9000000 		.4byte	0xb9
+ 796 01f8 20       		.byte	0x20
+ 797 01f9 07       		.uleb128 0x7
+ 798 01fa D6000000 		.4byte	.LASF43
+ 799 01fe 06       		.byte	0x6
+ 800 01ff 28       		.byte	0x28
+ 801 0200 B9000000 		.4byte	0xb9
+ 802 0204 22       		.byte	0x22
+ 803 0205 07       		.uleb128 0x7
+ 804 0206 05010000 		.4byte	.LASF44
+ 805 020a 06       		.byte	0x6
+ 806 020b 29       		.byte	0x29
+ 807 020c B9000000 		.4byte	0xb9
+ 808 0210 24       		.byte	0x24
+ 809 0211 07       		.uleb128 0x7
+ 810 0212 30000000 		.4byte	.LASF45
+ 811 0216 06       		.byte	0x6
+ 812 0217 2A       		.byte	0x2a
+ 813 0218 B9000000 		.4byte	0xb9
+ 814 021c 26       		.byte	0x26
+ 815 021d 07       		.uleb128 0x7
+ 816 021e 64030000 		.4byte	.LASF46
+ 817 0222 06       		.byte	0x6
+ 818 0223 2B       		.byte	0x2b
+ 819 0224 B9000000 		.4byte	0xb9
+ 820 0228 28       		.byte	0x28
+ 821 0229 07       		.uleb128 0x7
+ 822 022a AC000000 		.4byte	.LASF47
+ 823 022e 06       		.byte	0x6
+ 824 022f 2C       		.byte	0x2c
+ 825 0230 B9000000 		.4byte	0xb9
+ 826 0234 2A       		.byte	0x2a
+ 827 0235 07       		.uleb128 0x7
+ 828 0236 FD020000 		.4byte	.LASF48
+ 829 023a 06       		.byte	0x6
+ 830 023b 2D       		.byte	0x2d
+ 831 023c B9000000 		.4byte	0xb9
+ 832 0240 2C       		.byte	0x2c
+ 833 0241 07       		.uleb128 0x7
+ 834 0242 28030000 		.4byte	.LASF49
+ 835 0246 06       		.byte	0x6
+ 836 0247 2E       		.byte	0x2e
+ 837 0248 B9000000 		.4byte	0xb9
+ 838 024c 2E       		.byte	0x2e
+ 839 024d 07       		.uleb128 0x7
+ 840 024e 7D070000 		.4byte	.LASF50
+ 841 0252 06       		.byte	0x6
+ 842 0253 2F       		.byte	0x2f
+ 843 0254 B9000000 		.4byte	0xb9
+ 844 0258 30       		.byte	0x30
+ 845 0259 07       		.uleb128 0x7
+ 846 025a 2C050000 		.4byte	.LASF51
+ 847 025e 06       		.byte	0x6
+ 848 025f 30       		.byte	0x30
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 19
+
+
+ 849 0260 B9000000 		.4byte	0xb9
+ 850 0264 32       		.byte	0x32
+ 851 0265 07       		.uleb128 0x7
+ 852 0266 6B050000 		.4byte	.LASF52
+ 853 026a 06       		.byte	0x6
+ 854 026b 31       		.byte	0x31
+ 855 026c B9000000 		.4byte	0xb9
+ 856 0270 34       		.byte	0x34
+ 857 0271 07       		.uleb128 0x7
+ 858 0272 D9020000 		.4byte	.LASF53
+ 859 0276 06       		.byte	0x6
+ 860 0277 32       		.byte	0x32
+ 861 0278 B9000000 		.4byte	0xb9
+ 862 027c 36       		.byte	0x36
+ 863 027d 07       		.uleb128 0x7
+ 864 027e 32040000 		.4byte	.LASF54
+ 865 0282 06       		.byte	0x6
+ 866 0283 33       		.byte	0x33
+ 867 0284 B9000000 		.4byte	0xb9
+ 868 0288 38       		.byte	0x38
+ 869 0289 07       		.uleb128 0x7
+ 870 028a E9020000 		.4byte	.LASF55
+ 871 028e 06       		.byte	0x6
+ 872 028f 34       		.byte	0x34
+ 873 0290 B9000000 		.4byte	0xb9
+ 874 0294 3A       		.byte	0x3a
+ 875 0295 07       		.uleb128 0x7
+ 876 0296 57050000 		.4byte	.LASF56
+ 877 029a 06       		.byte	0x6
+ 878 029b 35       		.byte	0x35
+ 879 029c B9000000 		.4byte	0xb9
+ 880 02a0 3C       		.byte	0x3c
+ 881 02a1 07       		.uleb128 0x7
+ 882 02a2 C1020000 		.4byte	.LASF57
+ 883 02a6 06       		.byte	0x6
+ 884 02a7 36       		.byte	0x36
+ 885 02a8 B9000000 		.4byte	0xb9
+ 886 02ac 3E       		.byte	0x3e
+ 887 02ad 07       		.uleb128 0x7
+ 888 02ae 4C030000 		.4byte	.LASF58
+ 889 02b2 06       		.byte	0x6
+ 890 02b3 37       		.byte	0x37
+ 891 02b4 B9000000 		.4byte	0xb9
+ 892 02b8 40       		.byte	0x40
+ 893 02b9 07       		.uleb128 0x7
+ 894 02ba 40020000 		.4byte	.LASF59
+ 895 02be 06       		.byte	0x6
+ 896 02bf 38       		.byte	0x38
+ 897 02c0 B9000000 		.4byte	0xb9
+ 898 02c4 42       		.byte	0x42
+ 899 02c5 07       		.uleb128 0x7
+ 900 02c6 61060000 		.4byte	.LASF60
+ 901 02ca 06       		.byte	0x6
+ 902 02cb 39       		.byte	0x39
+ 903 02cc B9000000 		.4byte	0xb9
+ 904 02d0 44       		.byte	0x44
+ 905 02d1 07       		.uleb128 0x7
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 20
+
+
+ 906 02d2 93060000 		.4byte	.LASF61
+ 907 02d6 06       		.byte	0x6
+ 908 02d7 3A       		.byte	0x3a
+ 909 02d8 B9000000 		.4byte	0xb9
+ 910 02dc 46       		.byte	0x46
+ 911 02dd 07       		.uleb128 0x7
+ 912 02de 57000000 		.4byte	.LASF62
+ 913 02e2 06       		.byte	0x6
+ 914 02e3 3B       		.byte	0x3b
+ 915 02e4 B9000000 		.4byte	0xb9
+ 916 02e8 48       		.byte	0x48
+ 917 02e9 07       		.uleb128 0x7
+ 918 02ea 6F010000 		.4byte	.LASF63
+ 919 02ee 06       		.byte	0x6
+ 920 02ef 3D       		.byte	0x3d
+ 921 02f0 B9000000 		.4byte	0xb9
+ 922 02f4 4A       		.byte	0x4a
+ 923 02f5 07       		.uleb128 0x7
+ 924 02f6 A8060000 		.4byte	.LASF64
+ 925 02fa 06       		.byte	0x6
+ 926 02fb 3E       		.byte	0x3e
+ 927 02fc B9000000 		.4byte	0xb9
+ 928 0300 4C       		.byte	0x4c
+ 929 0301 00       		.byte	0
+ 930 0302 03       		.uleb128 0x3
+ 931 0303 BB020000 		.4byte	.LASF65
+ 932 0307 06       		.byte	0x6
+ 933 0308 3F       		.byte	0x3f
+ 934 0309 25010000 		.4byte	0x125
+ 935 030d 08       		.uleb128 0x8
+ 936 030e 80       		.byte	0x80
+ 937 030f 07       		.byte	0x7
+ 938 0310 18       		.byte	0x18
+ 939 0311 3A030000 		.4byte	0x33a
+ 940 0315 07       		.uleb128 0x7
+ 941 0316 A7040000 		.4byte	.LASF66
+ 942 031a 07       		.byte	0x7
+ 943 031b 19       		.byte	0x19
+ 944 031c 50000000 		.4byte	0x50
+ 945 0320 00       		.byte	0
+ 946 0321 07       		.uleb128 0x7
+ 947 0322 9B050000 		.4byte	.LASF67
+ 948 0326 07       		.byte	0x7
+ 949 0327 1A       		.byte	0x1a
+ 950 0328 3A030000 		.4byte	0x33a
+ 951 032c 02       		.byte	0x2
+ 952 032d 07       		.uleb128 0x7
+ 953 032e 37020000 		.4byte	.LASF68
+ 954 0332 07       		.byte	0x7
+ 955 0333 1B       		.byte	0x1b
+ 956 0334 50000000 		.4byte	0x50
+ 957 0338 7E       		.byte	0x7e
+ 958 0339 00       		.byte	0
+ 959 033a 09       		.uleb128 0x9
+ 960 033b 37000000 		.4byte	0x37
+ 961 033f 4A030000 		.4byte	0x34a
+ 962 0343 0A       		.uleb128 0xa
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 21
+
+
+ 963 0344 ED000000 		.4byte	0xed
+ 964 0348 7B       		.byte	0x7b
+ 965 0349 00       		.byte	0
+ 966 034a 03       		.uleb128 0x3
+ 967 034b D8060000 		.4byte	.LASF69
+ 968 034f 07       		.byte	0x7
+ 969 0350 1C       		.byte	0x1c
+ 970 0351 0D030000 		.4byte	0x30d
+ 971 0355 0B       		.uleb128 0xb
+ 972 0356 25040000 		.4byte	.LASF117
+ 973 035a 01       		.byte	0x1
+ 974 035b 37000000 		.4byte	0x37
+ 975 035f 08       		.byte	0x8
+ 976 0360 09       		.byte	0x9
+ 977 0361 72030000 		.4byte	0x372
+ 978 0365 0C       		.uleb128 0xc
+ 979 0366 F5060000 		.4byte	.LASF70
+ 980 036a 00       		.byte	0
+ 981 036b 0C       		.uleb128 0xc
+ 982 036c A9030000 		.4byte	.LASF71
+ 983 0370 01       		.byte	0x1
+ 984 0371 00       		.byte	0
+ 985 0372 08       		.uleb128 0x8
+ 986 0373 1C       		.byte	0x1c
+ 987 0374 08       		.byte	0x8
+ 988 0375 0E       		.byte	0xe
+ 989 0376 0B040000 		.4byte	0x40b
+ 990 037a 07       		.uleb128 0x7
+ 991 037b 74000000 		.4byte	.LASF72
+ 992 037f 08       		.byte	0x8
+ 993 0380 0F       		.byte	0xf
+ 994 0381 AD000000 		.4byte	0xad
+ 995 0385 00       		.byte	0
+ 996 0386 07       		.uleb128 0x7
+ 997 0387 49000000 		.4byte	.LASF73
+ 998 038b 08       		.byte	0x8
+ 999 038c 10       		.byte	0x10
+ 1000 038d B9000000 		.4byte	0xb9
+ 1001 0391 02       		.byte	0x2
+ 1002 0392 07       		.uleb128 0x7
+ 1003 0393 96040000 		.4byte	.LASF74
+ 1004 0397 08       		.byte	0x8
+ 1005 0398 11       		.byte	0x11
+ 1006 0399 B9000000 		.4byte	0xb9
+ 1007 039d 04       		.byte	0x4
+ 1008 039e 07       		.uleb128 0x7
+ 1009 039f 50070000 		.4byte	.LASF75
+ 1010 03a3 08       		.byte	0x8
+ 1011 03a4 12       		.byte	0x12
+ 1012 03a5 B9000000 		.4byte	0xb9
+ 1013 03a9 06       		.byte	0x6
+ 1014 03aa 07       		.uleb128 0x7
+ 1015 03ab 83050000 		.4byte	.LASF76
+ 1016 03af 08       		.byte	0x8
+ 1017 03b0 14       		.byte	0x14
+ 1018 03b1 B9000000 		.4byte	0xb9
+ 1019 03b5 08       		.byte	0x8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 22
+
+
+ 1020 03b6 07       		.uleb128 0x7
+ 1021 03b7 46040000 		.4byte	.LASF77
+ 1022 03bb 08       		.byte	0x8
+ 1023 03bc 15       		.byte	0x15
+ 1024 03bd B9000000 		.4byte	0xb9
+ 1025 03c1 0A       		.byte	0xa
+ 1026 03c2 07       		.uleb128 0x7
+ 1027 03c3 F3050000 		.4byte	.LASF78
+ 1028 03c7 08       		.byte	0x8
+ 1029 03c8 16       		.byte	0x16
+ 1030 03c9 B9000000 		.4byte	0xb9
+ 1031 03cd 0C       		.byte	0xc
+ 1032 03ce 07       		.uleb128 0x7
+ 1033 03cf 99020000 		.4byte	.LASF79
+ 1034 03d3 08       		.byte	0x8
+ 1035 03d4 18       		.byte	0x18
+ 1036 03d5 C5000000 		.4byte	0xc5
+ 1037 03d9 10       		.byte	0x10
+ 1038 03da 07       		.uleb128 0x7
+ 1039 03db 43070000 		.4byte	.LASF80
+ 1040 03df 08       		.byte	0x8
+ 1041 03e0 1A       		.byte	0x1a
+ 1042 03e1 B9000000 		.4byte	0xb9
+ 1043 03e5 14       		.byte	0x14
+ 1044 03e6 07       		.uleb128 0x7
+ 1045 03e7 02050000 		.4byte	.LASF81
+ 1046 03eb 08       		.byte	0x8
+ 1047 03ec 1B       		.byte	0x1b
+ 1048 03ed B9000000 		.4byte	0xb9
+ 1049 03f1 16       		.byte	0x16
+ 1050 03f2 07       		.uleb128 0x7
+ 1051 03f3 DA050000 		.4byte	.LASF82
+ 1052 03f7 08       		.byte	0x8
+ 1053 03f8 1C       		.byte	0x1c
+ 1054 03f9 B9000000 		.4byte	0xb9
+ 1055 03fd 18       		.byte	0x18
+ 1056 03fe 07       		.uleb128 0x7
+ 1057 03ff 10000000 		.4byte	.LASF83
+ 1058 0403 08       		.byte	0x8
+ 1059 0404 1E       		.byte	0x1e
+ 1060 0405 AD000000 		.4byte	0xad
+ 1061 0409 1A       		.byte	0x1a
+ 1062 040a 00       		.byte	0
+ 1063 040b 03       		.uleb128 0x3
+ 1064 040c 73020000 		.4byte	.LASF84
+ 1065 0410 08       		.byte	0x8
+ 1066 0411 20       		.byte	0x20
+ 1067 0412 72030000 		.4byte	0x372
+ 1068 0416 0D       		.uleb128 0xd
+ 1069 0417 7C060000 		.4byte	.LASF118
+ 1070 041b 01       		.byte	0x1
+ 1071 041c 25       		.byte	0x25
+ 1072 041d 00000000 		.4byte	.LFB62
+ 1073 0421 30000000 		.4byte	.LFE62-.LFB62
+ 1074 0425 01       		.uleb128 0x1
+ 1075 0426 9C       		.byte	0x9c
+ 1076 0427 35040000 		.4byte	0x435
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 23
+
+
+ 1077 042b 0E       		.uleb128 0xe
+ 1078 042c 1A000000 		.4byte	.LVL0
+ 1079 0430 79060000 		.4byte	0x679
+ 1080 0434 00       		.byte	0
+ 1081 0435 0F       		.uleb128 0xf
+ 1082 0436 85010000 		.4byte	.LASF86
+ 1083 043a 01       		.byte	0x1
+ 1084 043b 4D       		.byte	0x4d
+ 1085 043c 00000000 		.4byte	.LFB65
+ 1086 0440 78000000 		.4byte	.LFE65-.LFB65
+ 1087 0444 01       		.uleb128 0x1
+ 1088 0445 9C       		.byte	0x9c
+ 1089 0446 A6040000 		.4byte	0x4a6
+ 1090 044a 10       		.uleb128 0x10
+ 1091 044b BC070000 		.4byte	.LASF85
+ 1092 044f 01       		.byte	0x1
+ 1093 0450 51       		.byte	0x51
+ 1094 0451 AD000000 		.4byte	0xad
+ 1095 0455 00000000 		.4byte	.LLST0
+ 1096 0459 11       		.uleb128 0x11
+ 1097 045a 0A000000 		.4byte	.LBB2
+ 1098 045e 16000000 		.4byte	.LBE2-.LBB2
+ 1099 0462 76040000 		.4byte	0x476
+ 1100 0466 12       		.uleb128 0x12
+ 1101 0467 746D7000 		.ascii	"tmp\000"
+ 1102 046b 01       		.byte	0x1
+ 1103 046c 54       		.byte	0x54
+ 1104 046d C5000000 		.4byte	0xc5
+ 1105 0471 36000000 		.4byte	.LLST1
+ 1106 0475 00       		.byte	0
+ 1107 0476 11       		.uleb128 0x11
+ 1108 0477 2C000000 		.4byte	.LBB3
+ 1109 047b 16000000 		.4byte	.LBE3-.LBB3
+ 1110 047f 93040000 		.4byte	0x493
+ 1111 0483 12       		.uleb128 0x12
+ 1112 0484 746D7000 		.ascii	"tmp\000"
+ 1113 0488 01       		.byte	0x1
+ 1114 0489 5B       		.byte	0x5b
+ 1115 048a C5000000 		.4byte	0xc5
+ 1116 048e 49000000 		.4byte	.LLST2
+ 1117 0492 00       		.byte	0
+ 1118 0493 0E       		.uleb128 0xe
+ 1119 0494 62000000 		.4byte	.LVL8
+ 1120 0498 84060000 		.4byte	0x684
+ 1121 049c 0E       		.uleb128 0xe
+ 1122 049d 66000000 		.4byte	.LVL9
+ 1123 04a1 8F060000 		.4byte	0x68f
+ 1124 04a5 00       		.byte	0
+ 1125 04a6 0F       		.uleb128 0xf
+ 1126 04a7 F1040000 		.4byte	.LASF87
+ 1127 04ab 01       		.byte	0x1
+ 1128 04ac 70       		.byte	0x70
+ 1129 04ad 00000000 		.4byte	.LFB66
+ 1130 04b1 18000000 		.4byte	.LFE66-.LFB66
+ 1131 04b5 01       		.uleb128 0x1
+ 1132 04b6 9C       		.byte	0x9c
+ 1133 04b7 C5040000 		.4byte	0x4c5
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 24
+
+
+ 1134 04bb 0E       		.uleb128 0xe
+ 1135 04bc 06000000 		.4byte	.LVL11
+ 1136 04c0 9A060000 		.4byte	0x69a
+ 1137 04c4 00       		.byte	0
+ 1138 04c5 0F       		.uleb128 0xf
+ 1139 04c6 12030000 		.4byte	.LASF88
+ 1140 04ca 01       		.byte	0x1
+ 1141 04cb 3E       		.byte	0x3e
+ 1142 04cc 00000000 		.4byte	.LFB64
+ 1143 04d0 40000000 		.4byte	.LFE64-.LFB64
+ 1144 04d4 01       		.uleb128 0x1
+ 1145 04d5 9C       		.byte	0x9c
+ 1146 04d6 F7040000 		.4byte	0x4f7
+ 1147 04da 0E       		.uleb128 0xe
+ 1148 04db 1C000000 		.4byte	.LVL12
+ 1149 04df A5060000 		.4byte	0x6a5
+ 1150 04e3 13       		.uleb128 0x13
+ 1151 04e4 2A000000 		.4byte	.LVL13
+ 1152 04e8 B0060000 		.4byte	0x6b0
+ 1153 04ec 14       		.uleb128 0x14
+ 1154 04ed 01       		.uleb128 0x1
+ 1155 04ee 50       		.byte	0x50
+ 1156 04ef 05       		.uleb128 0x5
+ 1157 04f0 03       		.byte	0x3
+ 1158 04f1 00000000 		.4byte	Trim_Interrupt_Routine
+ 1159 04f5 00       		.byte	0
+ 1160 04f6 00       		.byte	0
+ 1161 04f7 0F       		.uleb128 0xf
+ 1162 04f8 B8030000 		.4byte	.LASF89
+ 1163 04fc 01       		.byte	0x1
+ 1164 04fd 33       		.byte	0x33
+ 1165 04fe 00000000 		.4byte	.LFB63
+ 1166 0502 18000000 		.4byte	.LFE63-.LFB63
+ 1167 0506 01       		.uleb128 0x1
+ 1168 0507 9C       		.byte	0x9c
+ 1169 0508 16050000 		.4byte	0x516
+ 1170 050c 0E       		.uleb128 0xe
+ 1171 050d 0C000000 		.4byte	.LVL14
+ 1172 0511 C5040000 		.4byte	0x4c5
+ 1173 0515 00       		.byte	0
+ 1174 0516 15       		.uleb128 0x15
+ 1175 0517 B1040000 		.4byte	.LASF91
+ 1176 051b 01       		.byte	0x1
+ 1177 051c 78       		.byte	0x78
+ 1178 051d 2B050000 		.4byte	0x52b
+ 1179 0521 00000000 		.4byte	.LFB67
+ 1180 0525 0C000000 		.4byte	.LFE67-.LFB67
+ 1181 0529 01       		.uleb128 0x1
+ 1182 052a 9C       		.byte	0x9c
+ 1183 052b 16       		.uleb128 0x16
+ 1184 052c 04       		.byte	0x4
+ 1185 052d 02030000 		.4byte	0x302
+ 1186 0531 0F       		.uleb128 0xf
+ 1187 0532 14070000 		.4byte	.LASF90
+ 1188 0536 01       		.byte	0x1
+ 1189 0537 7D       		.byte	0x7d
+ 1190 0538 00000000 		.4byte	.LFB68
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 25
+
+
+ 1191 053c 3C000000 		.4byte	.LFE68-.LFB68
+ 1192 0540 01       		.uleb128 0x1
+ 1193 0541 9C       		.byte	0x9c
+ 1194 0542 50050000 		.4byte	0x550
+ 1195 0546 0E       		.uleb128 0xe
+ 1196 0547 34000000 		.4byte	.LVL15
+ 1197 054b 8F060000 		.4byte	0x68f
+ 1198 054f 00       		.byte	0
+ 1199 0550 17       		.uleb128 0x17
+ 1200 0551 DA030000 		.4byte	.LASF93
+ 1201 0555 01       		.byte	0x1
+ 1202 0556 97       		.byte	0x97
+ 1203 0557 00000000 		.4byte	.LFB69
+ 1204 055b 10000000 		.4byte	.LFE69-.LFB69
+ 1205 055f 01       		.uleb128 0x1
+ 1206 0560 9C       		.byte	0x9c
+ 1207 0561 15       		.uleb128 0x15
+ 1208 0562 95010000 		.4byte	.LASF92
+ 1209 0566 01       		.byte	0x1
+ 1210 0567 9C       		.byte	0x9c
+ 1211 0568 C5000000 		.4byte	0xc5
+ 1212 056c 00000000 		.4byte	.LFB70
+ 1213 0570 0C000000 		.4byte	.LFE70-.LFB70
+ 1214 0574 01       		.uleb128 0x1
+ 1215 0575 9C       		.byte	0x9c
+ 1216 0576 17       		.uleb128 0x17
+ 1217 0577 AE060000 		.4byte	.LASF94
+ 1218 057b 01       		.byte	0x1
+ 1219 057c A1       		.byte	0xa1
+ 1220 057d 00000000 		.4byte	.LFB71
+ 1221 0581 0C000000 		.4byte	.LFE71-.LFB71
+ 1222 0585 01       		.uleb128 0x1
+ 1223 0586 9C       		.byte	0x9c
+ 1224 0587 18       		.uleb128 0x18
+ 1225 0588 62000000 		.4byte	.LASF95
+ 1226 058c 01       		.byte	0x1
+ 1227 058d 13       		.byte	0x13
+ 1228 058e AD000000 		.4byte	0xad
+ 1229 0592 05       		.uleb128 0x5
+ 1230 0593 03       		.byte	0x3
+ 1231 0594 00000000 		.4byte	g_updateTrimCount
+ 1232 0598 18       		.uleb128 0x18
+ 1233 0599 98000000 		.4byte	.LASF96
+ 1234 059d 01       		.byte	0x1
+ 1235 059e 19       		.byte	0x19
+ 1236 059f C5000000 		.4byte	0xc5
+ 1237 05a3 05       		.uleb128 0x5
+ 1238 05a4 03       		.byte	0x3
+ 1239 05a5 10000000 		.4byte	g_uWorkingTimeCount
+ 1240 05a9 18       		.uleb128 0x18
+ 1241 05aa 8B020000 		.4byte	.LASF97
+ 1242 05ae 01       		.byte	0x1
+ 1243 05af 20       		.byte	0x20
+ 1244 05b0 B9000000 		.4byte	0xb9
+ 1245 05b4 05       		.uleb128 0x5
+ 1246 05b5 03       		.byte	0x3
+ 1247 05b6 08000000 		.4byte	g_Count
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 26
+
+
+ 1248 05ba 09       		.uleb128 0x9
+ 1249 05bb CA050000 		.4byte	0x5ca
+ 1250 05bf CA050000 		.4byte	0x5ca
+ 1251 05c3 0A       		.uleb128 0xa
+ 1252 05c4 ED000000 		.4byte	0xed
+ 1253 05c8 0B       		.byte	0xb
+ 1254 05c9 00       		.byte	0
+ 1255 05ca 19       		.uleb128 0x19
+ 1256 05cb B9000000 		.4byte	0xb9
+ 1257 05cf 1A       		.uleb128 0x1a
+ 1258 05d0 3A010000 		.4byte	.LASF98
+ 1259 05d4 09       		.byte	0x9
+ 1260 05d5 E001     		.2byte	0x1e0
+ 1261 05d7 DB050000 		.4byte	0x5db
+ 1262 05db 19       		.uleb128 0x19
+ 1263 05dc BA050000 		.4byte	0x5ba
+ 1264 05e0 1B       		.uleb128 0x1b
+ 1265 05e1 76060000 		.4byte	.LASF99
+ 1266 05e5 05       		.byte	0x5
+ 1267 05e6 35       		.byte	0x35
+ 1268 05e7 F4000000 		.4byte	0xf4
+ 1269 05eb 05       		.uleb128 0x5
+ 1270 05ec 03       		.byte	0x3
+ 1271 05ed 00000000 		.4byte	Param
+ 1272 05f1 1C       		.uleb128 0x1c
+ 1273 05f2 F8050000 		.4byte	0x5f8
+ 1274 05f6 1D       		.uleb128 0x1d
+ 1275 05f7 00       		.byte	0
+ 1276 05f8 1B       		.uleb128 0x1b
+ 1277 05f9 D0030000 		.4byte	.LASF100
+ 1278 05fd 01       		.byte	0x1
+ 1279 05fe 1E       		.byte	0x1e
+ 1280 05ff 09060000 		.4byte	0x609
+ 1281 0603 05       		.uleb128 0x5
+ 1282 0604 03       		.byte	0x3
+ 1283 0605 00000000 		.4byte	CountFunc
+ 1284 0609 16       		.uleb128 0x16
+ 1285 060a 04       		.byte	0x4
+ 1286 060b F1050000 		.4byte	0x5f1
+ 1287 060f 1B       		.uleb128 0x1b
+ 1288 0610 DF040000 		.4byte	.LASF101
+ 1289 0614 01       		.byte	0x1
+ 1290 0615 14       		.byte	0x14
+ 1291 0616 AD000000 		.4byte	0xad
+ 1292 061a 05       		.uleb128 0x5
+ 1293 061b 03       		.byte	0x3
+ 1294 061c 00000000 		.4byte	g_updateCountMenu
+ 1295 0620 1B       		.uleb128 0x1b
+ 1296 0621 15040000 		.4byte	.LASF102
+ 1297 0625 01       		.byte	0x1
+ 1298 0626 22       		.byte	0x22
+ 1299 0627 31060000 		.4byte	0x631
+ 1300 062b 05       		.uleb128 0x5
+ 1301 062c 03       		.byte	0x3
+ 1302 062d 00000000 		.4byte	g_bStartTrimPin
+ 1303 0631 1E       		.uleb128 0x1e
+ 1304 0632 8C000000 		.4byte	0x8c
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 27
+
+
+ 1305 0636 1B       		.uleb128 0x1b
+ 1306 0637 7D030000 		.4byte	.LASF103
+ 1307 063b 01       		.byte	0x1
+ 1308 063c 23       		.byte	0x23
+ 1309 063d 47060000 		.4byte	0x647
+ 1310 0641 05       		.uleb128 0x5
+ 1311 0642 03       		.byte	0x3
+ 1312 0643 00000000 		.4byte	g_bTrimElapsedTime
+ 1313 0647 1E       		.uleb128 0x1e
+ 1314 0648 97000000 		.4byte	0x97
+ 1315 064c 1F       		.uleb128 0x1f
+ 1316 064d C6000000 		.4byte	.LASF104
+ 1317 0651 07       		.byte	0x7
+ 1318 0652 24       		.byte	0x24
+ 1319 0653 4A030000 		.4byte	0x34a
+ 1320 0657 1F       		.uleb128 0x1f
+ 1321 0658 57020000 		.4byte	.LASF105
+ 1322 065c 08       		.byte	0x8
+ 1323 065d 22       		.byte	0x22
+ 1324 065e 62060000 		.4byte	0x662
+ 1325 0662 16       		.uleb128 0x16
+ 1326 0663 04       		.byte	0x4
+ 1327 0664 0B040000 		.4byte	0x40b
+ 1328 0668 1B       		.uleb128 0x1b
+ 1329 0669 B2050000 		.4byte	.LASF106
+ 1330 066d 01       		.byte	0x1
+ 1331 066e 17       		.byte	0x17
+ 1332 066f 2B050000 		.4byte	0x52b
+ 1333 0673 05       		.uleb128 0x5
+ 1334 0674 03       		.byte	0x3
+ 1335 0675 00000000 		.4byte	g_ptrCount
+ 1336 0679 20       		.uleb128 0x20
+ 1337 067a 11050000 		.4byte	.LASF107
+ 1338 067e 11050000 		.4byte	.LASF107
+ 1339 0682 0A       		.byte	0xa
+ 1340 0683 32       		.byte	0x32
+ 1341 0684 20       		.uleb128 0x20
+ 1342 0685 1B000000 		.4byte	.LASF108
+ 1343 0689 1B000000 		.4byte	.LASF108
+ 1344 068d 0B       		.byte	0xb
+ 1345 068e 83       		.byte	0x83
+ 1346 068f 20       		.uleb128 0x20
+ 1347 0690 A0050000 		.4byte	.LASF109
+ 1348 0694 A0050000 		.4byte	.LASF109
+ 1349 0698 07       		.byte	0x7
+ 1350 0699 20       		.byte	0x20
+ 1351 069a 20       		.uleb128 0x20
+ 1352 069b 5C070000 		.4byte	.LASF110
+ 1353 069f 5C070000 		.4byte	.LASF110
+ 1354 06a3 0C       		.byte	0xc
+ 1355 06a4 10       		.byte	0x10
+ 1356 06a5 20       		.uleb128 0x20
+ 1357 06a6 F7030000 		.4byte	.LASF111
+ 1358 06aa F7030000 		.4byte	.LASF111
+ 1359 06ae 0D       		.byte	0xd
+ 1360 06af 19       		.byte	0x19
+ 1361 06b0 20       		.uleb128 0x20
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 28
+
+
+ 1362 06b1 1F070000 		.4byte	.LASF112
+ 1363 06b5 1F070000 		.4byte	.LASF112
+ 1364 06b9 0D       		.byte	0xd
+ 1365 06ba 18       		.byte	0x18
+ 1366 06bb 00       		.byte	0
+ 1367              		.section	.debug_abbrev,"",%progbits
+ 1368              	.Ldebug_abbrev0:
+ 1369 0000 01       		.uleb128 0x1
+ 1370 0001 11       		.uleb128 0x11
+ 1371 0002 01       		.byte	0x1
+ 1372 0003 25       		.uleb128 0x25
+ 1373 0004 0E       		.uleb128 0xe
+ 1374 0005 13       		.uleb128 0x13
+ 1375 0006 0B       		.uleb128 0xb
+ 1376 0007 03       		.uleb128 0x3
+ 1377 0008 0E       		.uleb128 0xe
+ 1378 0009 1B       		.uleb128 0x1b
+ 1379 000a 0E       		.uleb128 0xe
+ 1380 000b 55       		.uleb128 0x55
+ 1381 000c 17       		.uleb128 0x17
+ 1382 000d 11       		.uleb128 0x11
+ 1383 000e 01       		.uleb128 0x1
+ 1384 000f 10       		.uleb128 0x10
+ 1385 0010 17       		.uleb128 0x17
+ 1386 0011 00       		.byte	0
+ 1387 0012 00       		.byte	0
+ 1388 0013 02       		.uleb128 0x2
+ 1389 0014 24       		.uleb128 0x24
+ 1390 0015 00       		.byte	0
+ 1391 0016 0B       		.uleb128 0xb
+ 1392 0017 0B       		.uleb128 0xb
+ 1393 0018 3E       		.uleb128 0x3e
+ 1394 0019 0B       		.uleb128 0xb
+ 1395 001a 03       		.uleb128 0x3
+ 1396 001b 0E       		.uleb128 0xe
+ 1397 001c 00       		.byte	0
+ 1398 001d 00       		.byte	0
+ 1399 001e 03       		.uleb128 0x3
+ 1400 001f 16       		.uleb128 0x16
+ 1401 0020 00       		.byte	0
+ 1402 0021 03       		.uleb128 0x3
+ 1403 0022 0E       		.uleb128 0xe
+ 1404 0023 3A       		.uleb128 0x3a
+ 1405 0024 0B       		.uleb128 0xb
+ 1406 0025 3B       		.uleb128 0x3b
+ 1407 0026 0B       		.uleb128 0xb
+ 1408 0027 49       		.uleb128 0x49
+ 1409 0028 13       		.uleb128 0x13
+ 1410 0029 00       		.byte	0
+ 1411 002a 00       		.byte	0
+ 1412 002b 04       		.uleb128 0x4
+ 1413 002c 24       		.uleb128 0x24
+ 1414 002d 00       		.byte	0
+ 1415 002e 0B       		.uleb128 0xb
+ 1416 002f 0B       		.uleb128 0xb
+ 1417 0030 3E       		.uleb128 0x3e
+ 1418 0031 0B       		.uleb128 0xb
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 29
+
+
+ 1419 0032 03       		.uleb128 0x3
+ 1420 0033 08       		.uleb128 0x8
+ 1421 0034 00       		.byte	0
+ 1422 0035 00       		.byte	0
+ 1423 0036 05       		.uleb128 0x5
+ 1424 0037 16       		.uleb128 0x16
+ 1425 0038 00       		.byte	0
+ 1426 0039 03       		.uleb128 0x3
+ 1427 003a 0E       		.uleb128 0xe
+ 1428 003b 3A       		.uleb128 0x3a
+ 1429 003c 0B       		.uleb128 0xb
+ 1430 003d 3B       		.uleb128 0x3b
+ 1431 003e 05       		.uleb128 0x5
+ 1432 003f 49       		.uleb128 0x49
+ 1433 0040 13       		.uleb128 0x13
+ 1434 0041 00       		.byte	0
+ 1435 0042 00       		.byte	0
+ 1436 0043 06       		.uleb128 0x6
+ 1437 0044 13       		.uleb128 0x13
+ 1438 0045 01       		.byte	0x1
+ 1439 0046 03       		.uleb128 0x3
+ 1440 0047 0E       		.uleb128 0xe
+ 1441 0048 0B       		.uleb128 0xb
+ 1442 0049 0B       		.uleb128 0xb
+ 1443 004a 3A       		.uleb128 0x3a
+ 1444 004b 0B       		.uleb128 0xb
+ 1445 004c 3B       		.uleb128 0x3b
+ 1446 004d 0B       		.uleb128 0xb
+ 1447 004e 01       		.uleb128 0x1
+ 1448 004f 13       		.uleb128 0x13
+ 1449 0050 00       		.byte	0
+ 1450 0051 00       		.byte	0
+ 1451 0052 07       		.uleb128 0x7
+ 1452 0053 0D       		.uleb128 0xd
+ 1453 0054 00       		.byte	0
+ 1454 0055 03       		.uleb128 0x3
+ 1455 0056 0E       		.uleb128 0xe
+ 1456 0057 3A       		.uleb128 0x3a
+ 1457 0058 0B       		.uleb128 0xb
+ 1458 0059 3B       		.uleb128 0x3b
+ 1459 005a 0B       		.uleb128 0xb
+ 1460 005b 49       		.uleb128 0x49
+ 1461 005c 13       		.uleb128 0x13
+ 1462 005d 38       		.uleb128 0x38
+ 1463 005e 0B       		.uleb128 0xb
+ 1464 005f 00       		.byte	0
+ 1465 0060 00       		.byte	0
+ 1466 0061 08       		.uleb128 0x8
+ 1467 0062 13       		.uleb128 0x13
+ 1468 0063 01       		.byte	0x1
+ 1469 0064 0B       		.uleb128 0xb
+ 1470 0065 0B       		.uleb128 0xb
+ 1471 0066 3A       		.uleb128 0x3a
+ 1472 0067 0B       		.uleb128 0xb
+ 1473 0068 3B       		.uleb128 0x3b
+ 1474 0069 0B       		.uleb128 0xb
+ 1475 006a 01       		.uleb128 0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 30
+
+
+ 1476 006b 13       		.uleb128 0x13
+ 1477 006c 00       		.byte	0
+ 1478 006d 00       		.byte	0
+ 1479 006e 09       		.uleb128 0x9
+ 1480 006f 01       		.uleb128 0x1
+ 1481 0070 01       		.byte	0x1
+ 1482 0071 49       		.uleb128 0x49
+ 1483 0072 13       		.uleb128 0x13
+ 1484 0073 01       		.uleb128 0x1
+ 1485 0074 13       		.uleb128 0x13
+ 1486 0075 00       		.byte	0
+ 1487 0076 00       		.byte	0
+ 1488 0077 0A       		.uleb128 0xa
+ 1489 0078 21       		.uleb128 0x21
+ 1490 0079 00       		.byte	0
+ 1491 007a 49       		.uleb128 0x49
+ 1492 007b 13       		.uleb128 0x13
+ 1493 007c 2F       		.uleb128 0x2f
+ 1494 007d 0B       		.uleb128 0xb
+ 1495 007e 00       		.byte	0
+ 1496 007f 00       		.byte	0
+ 1497 0080 0B       		.uleb128 0xb
+ 1498 0081 04       		.uleb128 0x4
+ 1499 0082 01       		.byte	0x1
+ 1500 0083 03       		.uleb128 0x3
+ 1501 0084 0E       		.uleb128 0xe
+ 1502 0085 0B       		.uleb128 0xb
+ 1503 0086 0B       		.uleb128 0xb
+ 1504 0087 49       		.uleb128 0x49
+ 1505 0088 13       		.uleb128 0x13
+ 1506 0089 3A       		.uleb128 0x3a
+ 1507 008a 0B       		.uleb128 0xb
+ 1508 008b 3B       		.uleb128 0x3b
+ 1509 008c 0B       		.uleb128 0xb
+ 1510 008d 01       		.uleb128 0x1
+ 1511 008e 13       		.uleb128 0x13
+ 1512 008f 00       		.byte	0
+ 1513 0090 00       		.byte	0
+ 1514 0091 0C       		.uleb128 0xc
+ 1515 0092 28       		.uleb128 0x28
+ 1516 0093 00       		.byte	0
+ 1517 0094 03       		.uleb128 0x3
+ 1518 0095 0E       		.uleb128 0xe
+ 1519 0096 1C       		.uleb128 0x1c
+ 1520 0097 0B       		.uleb128 0xb
+ 1521 0098 00       		.byte	0
+ 1522 0099 00       		.byte	0
+ 1523 009a 0D       		.uleb128 0xd
+ 1524 009b 2E       		.uleb128 0x2e
+ 1525 009c 01       		.byte	0x1
+ 1526 009d 3F       		.uleb128 0x3f
+ 1527 009e 19       		.uleb128 0x19
+ 1528 009f 03       		.uleb128 0x3
+ 1529 00a0 0E       		.uleb128 0xe
+ 1530 00a1 3A       		.uleb128 0x3a
+ 1531 00a2 0B       		.uleb128 0xb
+ 1532 00a3 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 31
+
+
+ 1533 00a4 0B       		.uleb128 0xb
+ 1534 00a5 27       		.uleb128 0x27
+ 1535 00a6 19       		.uleb128 0x19
+ 1536 00a7 11       		.uleb128 0x11
+ 1537 00a8 01       		.uleb128 0x1
+ 1538 00a9 12       		.uleb128 0x12
+ 1539 00aa 06       		.uleb128 0x6
+ 1540 00ab 40       		.uleb128 0x40
+ 1541 00ac 18       		.uleb128 0x18
+ 1542 00ad 9742     		.uleb128 0x2117
+ 1543 00af 19       		.uleb128 0x19
+ 1544 00b0 01       		.uleb128 0x1
+ 1545 00b1 13       		.uleb128 0x13
+ 1546 00b2 00       		.byte	0
+ 1547 00b3 00       		.byte	0
+ 1548 00b4 0E       		.uleb128 0xe
+ 1549 00b5 898201   		.uleb128 0x4109
+ 1550 00b8 00       		.byte	0
+ 1551 00b9 11       		.uleb128 0x11
+ 1552 00ba 01       		.uleb128 0x1
+ 1553 00bb 31       		.uleb128 0x31
+ 1554 00bc 13       		.uleb128 0x13
+ 1555 00bd 00       		.byte	0
+ 1556 00be 00       		.byte	0
+ 1557 00bf 0F       		.uleb128 0xf
+ 1558 00c0 2E       		.uleb128 0x2e
+ 1559 00c1 01       		.byte	0x1
+ 1560 00c2 3F       		.uleb128 0x3f
+ 1561 00c3 19       		.uleb128 0x19
+ 1562 00c4 03       		.uleb128 0x3
+ 1563 00c5 0E       		.uleb128 0xe
+ 1564 00c6 3A       		.uleb128 0x3a
+ 1565 00c7 0B       		.uleb128 0xb
+ 1566 00c8 3B       		.uleb128 0x3b
+ 1567 00c9 0B       		.uleb128 0xb
+ 1568 00ca 11       		.uleb128 0x11
+ 1569 00cb 01       		.uleb128 0x1
+ 1570 00cc 12       		.uleb128 0x12
+ 1571 00cd 06       		.uleb128 0x6
+ 1572 00ce 40       		.uleb128 0x40
+ 1573 00cf 18       		.uleb128 0x18
+ 1574 00d0 9742     		.uleb128 0x2117
+ 1575 00d2 19       		.uleb128 0x19
+ 1576 00d3 01       		.uleb128 0x1
+ 1577 00d4 13       		.uleb128 0x13
+ 1578 00d5 00       		.byte	0
+ 1579 00d6 00       		.byte	0
+ 1580 00d7 10       		.uleb128 0x10
+ 1581 00d8 34       		.uleb128 0x34
+ 1582 00d9 00       		.byte	0
+ 1583 00da 03       		.uleb128 0x3
+ 1584 00db 0E       		.uleb128 0xe
+ 1585 00dc 3A       		.uleb128 0x3a
+ 1586 00dd 0B       		.uleb128 0xb
+ 1587 00de 3B       		.uleb128 0x3b
+ 1588 00df 0B       		.uleb128 0xb
+ 1589 00e0 49       		.uleb128 0x49
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 32
+
+
+ 1590 00e1 13       		.uleb128 0x13
+ 1591 00e2 02       		.uleb128 0x2
+ 1592 00e3 17       		.uleb128 0x17
+ 1593 00e4 00       		.byte	0
+ 1594 00e5 00       		.byte	0
+ 1595 00e6 11       		.uleb128 0x11
+ 1596 00e7 0B       		.uleb128 0xb
+ 1597 00e8 01       		.byte	0x1
+ 1598 00e9 11       		.uleb128 0x11
+ 1599 00ea 01       		.uleb128 0x1
+ 1600 00eb 12       		.uleb128 0x12
+ 1601 00ec 06       		.uleb128 0x6
+ 1602 00ed 01       		.uleb128 0x1
+ 1603 00ee 13       		.uleb128 0x13
+ 1604 00ef 00       		.byte	0
+ 1605 00f0 00       		.byte	0
+ 1606 00f1 12       		.uleb128 0x12
+ 1607 00f2 34       		.uleb128 0x34
+ 1608 00f3 00       		.byte	0
+ 1609 00f4 03       		.uleb128 0x3
+ 1610 00f5 08       		.uleb128 0x8
+ 1611 00f6 3A       		.uleb128 0x3a
+ 1612 00f7 0B       		.uleb128 0xb
+ 1613 00f8 3B       		.uleb128 0x3b
+ 1614 00f9 0B       		.uleb128 0xb
+ 1615 00fa 49       		.uleb128 0x49
+ 1616 00fb 13       		.uleb128 0x13
+ 1617 00fc 02       		.uleb128 0x2
+ 1618 00fd 17       		.uleb128 0x17
+ 1619 00fe 00       		.byte	0
+ 1620 00ff 00       		.byte	0
+ 1621 0100 13       		.uleb128 0x13
+ 1622 0101 898201   		.uleb128 0x4109
+ 1623 0104 01       		.byte	0x1
+ 1624 0105 11       		.uleb128 0x11
+ 1625 0106 01       		.uleb128 0x1
+ 1626 0107 31       		.uleb128 0x31
+ 1627 0108 13       		.uleb128 0x13
+ 1628 0109 00       		.byte	0
+ 1629 010a 00       		.byte	0
+ 1630 010b 14       		.uleb128 0x14
+ 1631 010c 8A8201   		.uleb128 0x410a
+ 1632 010f 00       		.byte	0
+ 1633 0110 02       		.uleb128 0x2
+ 1634 0111 18       		.uleb128 0x18
+ 1635 0112 9142     		.uleb128 0x2111
+ 1636 0114 18       		.uleb128 0x18
+ 1637 0115 00       		.byte	0
+ 1638 0116 00       		.byte	0
+ 1639 0117 15       		.uleb128 0x15
+ 1640 0118 2E       		.uleb128 0x2e
+ 1641 0119 00       		.byte	0
+ 1642 011a 3F       		.uleb128 0x3f
+ 1643 011b 19       		.uleb128 0x19
+ 1644 011c 03       		.uleb128 0x3
+ 1645 011d 0E       		.uleb128 0xe
+ 1646 011e 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 33
+
+
+ 1647 011f 0B       		.uleb128 0xb
+ 1648 0120 3B       		.uleb128 0x3b
+ 1649 0121 0B       		.uleb128 0xb
+ 1650 0122 49       		.uleb128 0x49
+ 1651 0123 13       		.uleb128 0x13
+ 1652 0124 11       		.uleb128 0x11
+ 1653 0125 01       		.uleb128 0x1
+ 1654 0126 12       		.uleb128 0x12
+ 1655 0127 06       		.uleb128 0x6
+ 1656 0128 40       		.uleb128 0x40
+ 1657 0129 18       		.uleb128 0x18
+ 1658 012a 9742     		.uleb128 0x2117
+ 1659 012c 19       		.uleb128 0x19
+ 1660 012d 00       		.byte	0
+ 1661 012e 00       		.byte	0
+ 1662 012f 16       		.uleb128 0x16
+ 1663 0130 0F       		.uleb128 0xf
+ 1664 0131 00       		.byte	0
+ 1665 0132 0B       		.uleb128 0xb
+ 1666 0133 0B       		.uleb128 0xb
+ 1667 0134 49       		.uleb128 0x49
+ 1668 0135 13       		.uleb128 0x13
+ 1669 0136 00       		.byte	0
+ 1670 0137 00       		.byte	0
+ 1671 0138 17       		.uleb128 0x17
+ 1672 0139 2E       		.uleb128 0x2e
+ 1673 013a 00       		.byte	0
+ 1674 013b 3F       		.uleb128 0x3f
+ 1675 013c 19       		.uleb128 0x19
+ 1676 013d 03       		.uleb128 0x3
+ 1677 013e 0E       		.uleb128 0xe
+ 1678 013f 3A       		.uleb128 0x3a
+ 1679 0140 0B       		.uleb128 0xb
+ 1680 0141 3B       		.uleb128 0x3b
+ 1681 0142 0B       		.uleb128 0xb
+ 1682 0143 11       		.uleb128 0x11
+ 1683 0144 01       		.uleb128 0x1
+ 1684 0145 12       		.uleb128 0x12
+ 1685 0146 06       		.uleb128 0x6
+ 1686 0147 40       		.uleb128 0x40
+ 1687 0148 18       		.uleb128 0x18
+ 1688 0149 9742     		.uleb128 0x2117
+ 1689 014b 19       		.uleb128 0x19
+ 1690 014c 00       		.byte	0
+ 1691 014d 00       		.byte	0
+ 1692 014e 18       		.uleb128 0x18
+ 1693 014f 34       		.uleb128 0x34
+ 1694 0150 00       		.byte	0
+ 1695 0151 03       		.uleb128 0x3
+ 1696 0152 0E       		.uleb128 0xe
+ 1697 0153 3A       		.uleb128 0x3a
+ 1698 0154 0B       		.uleb128 0xb
+ 1699 0155 3B       		.uleb128 0x3b
+ 1700 0156 0B       		.uleb128 0xb
+ 1701 0157 49       		.uleb128 0x49
+ 1702 0158 13       		.uleb128 0x13
+ 1703 0159 02       		.uleb128 0x2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 34
+
+
+ 1704 015a 18       		.uleb128 0x18
+ 1705 015b 00       		.byte	0
+ 1706 015c 00       		.byte	0
+ 1707 015d 19       		.uleb128 0x19
+ 1708 015e 26       		.uleb128 0x26
+ 1709 015f 00       		.byte	0
+ 1710 0160 49       		.uleb128 0x49
+ 1711 0161 13       		.uleb128 0x13
+ 1712 0162 00       		.byte	0
+ 1713 0163 00       		.byte	0
+ 1714 0164 1A       		.uleb128 0x1a
+ 1715 0165 34       		.uleb128 0x34
+ 1716 0166 00       		.byte	0
+ 1717 0167 03       		.uleb128 0x3
+ 1718 0168 0E       		.uleb128 0xe
+ 1719 0169 3A       		.uleb128 0x3a
+ 1720 016a 0B       		.uleb128 0xb
+ 1721 016b 3B       		.uleb128 0x3b
+ 1722 016c 05       		.uleb128 0x5
+ 1723 016d 49       		.uleb128 0x49
+ 1724 016e 13       		.uleb128 0x13
+ 1725 016f 3F       		.uleb128 0x3f
+ 1726 0170 19       		.uleb128 0x19
+ 1727 0171 3C       		.uleb128 0x3c
+ 1728 0172 19       		.uleb128 0x19
+ 1729 0173 00       		.byte	0
+ 1730 0174 00       		.byte	0
+ 1731 0175 1B       		.uleb128 0x1b
+ 1732 0176 34       		.uleb128 0x34
+ 1733 0177 00       		.byte	0
+ 1734 0178 03       		.uleb128 0x3
+ 1735 0179 0E       		.uleb128 0xe
+ 1736 017a 3A       		.uleb128 0x3a
+ 1737 017b 0B       		.uleb128 0xb
+ 1738 017c 3B       		.uleb128 0x3b
+ 1739 017d 0B       		.uleb128 0xb
+ 1740 017e 49       		.uleb128 0x49
+ 1741 017f 13       		.uleb128 0x13
+ 1742 0180 3F       		.uleb128 0x3f
+ 1743 0181 19       		.uleb128 0x19
+ 1744 0182 02       		.uleb128 0x2
+ 1745 0183 18       		.uleb128 0x18
+ 1746 0184 00       		.byte	0
+ 1747 0185 00       		.byte	0
+ 1748 0186 1C       		.uleb128 0x1c
+ 1749 0187 15       		.uleb128 0x15
+ 1750 0188 01       		.byte	0x1
+ 1751 0189 01       		.uleb128 0x1
+ 1752 018a 13       		.uleb128 0x13
+ 1753 018b 00       		.byte	0
+ 1754 018c 00       		.byte	0
+ 1755 018d 1D       		.uleb128 0x1d
+ 1756 018e 18       		.uleb128 0x18
+ 1757 018f 00       		.byte	0
+ 1758 0190 00       		.byte	0
+ 1759 0191 00       		.byte	0
+ 1760 0192 1E       		.uleb128 0x1e
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 35
+
+
+ 1761 0193 35       		.uleb128 0x35
+ 1762 0194 00       		.byte	0
+ 1763 0195 49       		.uleb128 0x49
+ 1764 0196 13       		.uleb128 0x13
+ 1765 0197 00       		.byte	0
+ 1766 0198 00       		.byte	0
+ 1767 0199 1F       		.uleb128 0x1f
+ 1768 019a 34       		.uleb128 0x34
+ 1769 019b 00       		.byte	0
+ 1770 019c 03       		.uleb128 0x3
+ 1771 019d 0E       		.uleb128 0xe
+ 1772 019e 3A       		.uleb128 0x3a
+ 1773 019f 0B       		.uleb128 0xb
+ 1774 01a0 3B       		.uleb128 0x3b
+ 1775 01a1 0B       		.uleb128 0xb
+ 1776 01a2 49       		.uleb128 0x49
+ 1777 01a3 13       		.uleb128 0x13
+ 1778 01a4 3F       		.uleb128 0x3f
+ 1779 01a5 19       		.uleb128 0x19
+ 1780 01a6 3C       		.uleb128 0x3c
+ 1781 01a7 19       		.uleb128 0x19
+ 1782 01a8 00       		.byte	0
+ 1783 01a9 00       		.byte	0
+ 1784 01aa 20       		.uleb128 0x20
+ 1785 01ab 2E       		.uleb128 0x2e
+ 1786 01ac 00       		.byte	0
+ 1787 01ad 3F       		.uleb128 0x3f
+ 1788 01ae 19       		.uleb128 0x19
+ 1789 01af 3C       		.uleb128 0x3c
+ 1790 01b0 19       		.uleb128 0x19
+ 1791 01b1 6E       		.uleb128 0x6e
+ 1792 01b2 0E       		.uleb128 0xe
+ 1793 01b3 03       		.uleb128 0x3
+ 1794 01b4 0E       		.uleb128 0xe
+ 1795 01b5 3A       		.uleb128 0x3a
+ 1796 01b6 0B       		.uleb128 0xb
+ 1797 01b7 3B       		.uleb128 0x3b
+ 1798 01b8 0B       		.uleb128 0xb
+ 1799 01b9 00       		.byte	0
+ 1800 01ba 00       		.byte	0
+ 1801 01bb 00       		.byte	0
+ 1802              		.section	.debug_loc,"",%progbits
+ 1803              	.Ldebug_loc0:
+ 1804              	.LLST0:
+ 1805 0000 0A000000 		.4byte	.LVL1
+ 1806 0004 28000000 		.4byte	.LVL4
+ 1807 0008 0200     		.2byte	0x2
+ 1808 000a 30       		.byte	0x30
+ 1809 000b 9F       		.byte	0x9f
+ 1810 000c 28000000 		.4byte	.LVL4
+ 1811 0010 42000000 		.4byte	.LVL6
+ 1812 0014 0100     		.2byte	0x1
+ 1813 0016 54       		.byte	0x54
+ 1814 0017 42000000 		.4byte	.LVL6
+ 1815 001b 44000000 		.4byte	.LVL7
+ 1816 001f 0200     		.2byte	0x2
+ 1817 0021 31       		.byte	0x31
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 36
+
+
+ 1818 0022 9F       		.byte	0x9f
+ 1819 0023 44000000 		.4byte	.LVL7
+ 1820 0027 6C000000 		.4byte	.LVL10
+ 1821 002b 0100     		.2byte	0x1
+ 1822 002d 54       		.byte	0x54
+ 1823 002e 00000000 		.4byte	0
+ 1824 0032 00000000 		.4byte	0
+ 1825              	.LLST1:
+ 1826 0036 1A000000 		.4byte	.LVL2
+ 1827 003a 22000000 		.4byte	.LVL3
+ 1828 003e 0100     		.2byte	0x1
+ 1829 0040 53       		.byte	0x53
+ 1830 0041 00000000 		.4byte	0
+ 1831 0045 00000000 		.4byte	0
+ 1832              	.LLST2:
+ 1833 0049 38000000 		.4byte	.LVL5
+ 1834 004d 44000000 		.4byte	.LVL7
+ 1835 0051 0100     		.2byte	0x1
+ 1836 0053 52       		.byte	0x52
+ 1837 0054 00000000 		.4byte	0
+ 1838 0058 00000000 		.4byte	0
+ 1839              		.section	.debug_aranges,"",%progbits
+ 1840 0000 64000000 		.4byte	0x64
+ 1841 0004 0200     		.2byte	0x2
+ 1842 0006 00000000 		.4byte	.Ldebug_info0
+ 1843 000a 04       		.byte	0x4
+ 1844 000b 00       		.byte	0
+ 1845 000c 0000     		.2byte	0
+ 1846 000e 0000     		.2byte	0
+ 1847 0010 00000000 		.4byte	.LFB62
+ 1848 0014 30000000 		.4byte	.LFE62-.LFB62
+ 1849 0018 00000000 		.4byte	.LFB65
+ 1850 001c 78000000 		.4byte	.LFE65-.LFB65
+ 1851 0020 00000000 		.4byte	.LFB66
+ 1852 0024 18000000 		.4byte	.LFE66-.LFB66
+ 1853 0028 00000000 		.4byte	.LFB64
+ 1854 002c 40000000 		.4byte	.LFE64-.LFB64
+ 1855 0030 00000000 		.4byte	.LFB63
+ 1856 0034 18000000 		.4byte	.LFE63-.LFB63
+ 1857 0038 00000000 		.4byte	.LFB67
+ 1858 003c 0C000000 		.4byte	.LFE67-.LFB67
+ 1859 0040 00000000 		.4byte	.LFB68
+ 1860 0044 3C000000 		.4byte	.LFE68-.LFB68
+ 1861 0048 00000000 		.4byte	.LFB69
+ 1862 004c 10000000 		.4byte	.LFE69-.LFB69
+ 1863 0050 00000000 		.4byte	.LFB70
+ 1864 0054 0C000000 		.4byte	.LFE70-.LFB70
+ 1865 0058 00000000 		.4byte	.LFB71
+ 1866 005c 0C000000 		.4byte	.LFE71-.LFB71
+ 1867 0060 00000000 		.4byte	0
+ 1868 0064 00000000 		.4byte	0
+ 1869              		.section	.debug_ranges,"",%progbits
+ 1870              	.Ldebug_ranges0:
+ 1871 0000 00000000 		.4byte	.LFB62
+ 1872 0004 30000000 		.4byte	.LFE62
+ 1873 0008 00000000 		.4byte	.LFB65
+ 1874 000c 78000000 		.4byte	.LFE65
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 37
+
+
+ 1875 0010 00000000 		.4byte	.LFB66
+ 1876 0014 18000000 		.4byte	.LFE66
+ 1877 0018 00000000 		.4byte	.LFB64
+ 1878 001c 40000000 		.4byte	.LFE64
+ 1879 0020 00000000 		.4byte	.LFB63
+ 1880 0024 18000000 		.4byte	.LFE63
+ 1881 0028 00000000 		.4byte	.LFB67
+ 1882 002c 0C000000 		.4byte	.LFE67
+ 1883 0030 00000000 		.4byte	.LFB68
+ 1884 0034 3C000000 		.4byte	.LFE68
+ 1885 0038 00000000 		.4byte	.LFB69
+ 1886 003c 10000000 		.4byte	.LFE69
+ 1887 0040 00000000 		.4byte	.LFB70
+ 1888 0044 0C000000 		.4byte	.LFE70
+ 1889 0048 00000000 		.4byte	.LFB71
+ 1890 004c 0C000000 		.4byte	.LFE71
+ 1891 0050 00000000 		.4byte	0
+ 1892 0054 00000000 		.4byte	0
+ 1893              		.section	.debug_line,"",%progbits
+ 1894              	.Ldebug_line0:
+ 1895 0000 AA020000 		.section	.debug_str,"MS",%progbits,1
+ 1895      0200C901 
+ 1895      00000201 
+ 1895      FB0E0D00 
+ 1895      01010101 
+ 1896              	.LASF37:
+ 1897 0000 73657769 		.ascii	"sewingTrimCount\000"
+ 1897      6E675472 
+ 1897      696D436F 
+ 1897      756E7400 
+ 1898              	.LASF83:
+ 1899 0010 62417574 		.ascii	"bAutoReset\000"
+ 1899      6F526573 
+ 1899      657400
+ 1900              	.LASF108:
+ 1901 001b 6D616B65 		.ascii	"makeAndonSewingCount\000"
+ 1901      416E646F 
+ 1901      6E536577 
+ 1901      696E6743 
+ 1901      6F756E74 
+ 1902              	.LASF45:
+ 1903 0030 70617474 		.ascii	"patternEmergencyTimeSumH\000"
+ 1903      65726E45 
+ 1903      6D657267 
+ 1903      656E6379 
+ 1903      54696D65 
+ 1904              	.LASF73:
+ 1905 0049 70617474 		.ascii	"patternTarget\000"
+ 1905      65726E54 
+ 1905      61726765 
+ 1905      7400
+ 1906              	.LASF62:
+ 1907 0057 70617474 		.ascii	"patternSPM\000"
+ 1907      65726E53 
+ 1907      504D00
+ 1908              	.LASF95:
+ 1909 0062 675F7570 		.ascii	"g_updateTrimCount\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 38
+
+
+ 1909      64617465 
+ 1909      5472696D 
+ 1909      436F756E 
+ 1909      7400
+ 1910              	.LASF72:
+ 1911 0074 6D616368 		.ascii	"machineType\000"
+ 1911      696E6554 
+ 1911      79706500 
+ 1912              	.LASF26:
+ 1913 0080 73657769 		.ascii	"sewingActualH\000"
+ 1913      6E674163 
+ 1913      7475616C 
+ 1913      4800
+ 1914              	.LASF2:
+ 1915 008e 73686F72 		.ascii	"short int\000"
+ 1915      7420696E 
+ 1915      7400
+ 1916              	.LASF96:
+ 1917 0098 675F7557 		.ascii	"g_uWorkingTimeCount\000"
+ 1917      6F726B69 
+ 1917      6E675469 
+ 1917      6D65436F 
+ 1917      756E7400 
+ 1918              	.LASF47:
+ 1919 00ac 70617474 		.ascii	"patternCycleTime\000"
+ 1919      65726E43 
+ 1919      79636C65 
+ 1919      54696D65 
+ 1919      00
+ 1920              	.LASF22:
+ 1921 00bd 73697A65 		.ascii	"sizetype\000"
+ 1921      74797065 
+ 1921      00
+ 1922              	.LASF104:
+ 1923 00c6 675F696E 		.ascii	"g_internalFlash\000"
+ 1923      7465726E 
+ 1923      616C466C 
+ 1923      61736800 
+ 1924              	.LASF43:
+ 1925 00d6 70617474 		.ascii	"patternNo\000"
+ 1925      65726E4E 
+ 1925      6F00
+ 1926              	.LASF27:
+ 1927 00e0 73657769 		.ascii	"sewingActualL\000"
+ 1927      6E674163 
+ 1927      7475616C 
+ 1927      4C00
+ 1928              	.LASF32:
+ 1929 00ee 73657769 		.ascii	"sewingMotorRunTimeSumH\000"
+ 1929      6E674D6F 
+ 1929      746F7252 
+ 1929      756E5469 
+ 1929      6D655375 
+ 1930              	.LASF44:
+ 1931 0105 70617474 		.ascii	"patternEmergencyTime\000"
+ 1931      65726E45 
+ 1931      6D657267 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 39
+
+
+ 1931      656E6379 
+ 1931      54696D65 
+ 1932              	.LASF29:
+ 1933 011a 73657769 		.ascii	"sewingCycleTimeSumH\000"
+ 1933      6E674379 
+ 1933      636C6554 
+ 1933      696D6553 
+ 1933      756D4800 
+ 1934              	.LASF23:
+ 1935 012e 73746174 		.ascii	"stat_TC_INT\000"
+ 1935      5F54435F 
+ 1935      494E5400 
+ 1936              	.LASF98:
+ 1937 013a 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 1937      64617973 
+ 1937      4265666F 
+ 1937      72654D6F 
+ 1937      6E746854 
+ 1938              	.LASF7:
+ 1939 0151 5F5F7569 		.ascii	"__uint32_t\000"
+ 1939      6E743332 
+ 1939      5F7400
+ 1940              	.LASF31:
+ 1941 015c 73657769 		.ascii	"sewingMotorRunTime\000"
+ 1941      6E674D6F 
+ 1941      746F7252 
+ 1941      756E5469 
+ 1941      6D6500
+ 1942              	.LASF63:
+ 1943 016f 616E646F 		.ascii	"andonEntry\000"
+ 1943      6E456E74 
+ 1943      727900
+ 1944              	.LASF4:
+ 1945 017a 5F5F7569 		.ascii	"__uint16_t\000"
+ 1945      6E743136 
+ 1945      5F7400
+ 1946              	.LASF86:
+ 1947 0185 53657769 		.ascii	"SewingCountLoop\000"
+ 1947      6E67436F 
+ 1947      756E744C 
+ 1947      6F6F7000 
+ 1948              	.LASF92:
+ 1949 0195 47657457 		.ascii	"GetWorkingTimeCount\000"
+ 1949      6F726B69 
+ 1949      6E675469 
+ 1949      6D65436F 
+ 1949      756E7400 
+ 1950              	.LASF113:
+ 1951 01a9 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1951      43313120 
+ 1951      352E342E 
+ 1951      31203230 
+ 1951      31363036 
+ 1952 01dc 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1952      20726576 
+ 1952      6973696F 
+ 1952      6E203233 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 40
+
+
+ 1952      37373135 
+ 1953 020f 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1953      66756E63 
+ 1953      74696F6E 
+ 1953      2D736563 
+ 1953      74696F6E 
+ 1954              	.LASF68:
+ 1955 0237 63686563 		.ascii	"checksum\000"
+ 1955      6B73756D 
+ 1955      00
+ 1956              	.LASF59:
+ 1957 0240 70617474 		.ascii	"patternTrimCount\000"
+ 1957      65726E54 
+ 1957      72696D43 
+ 1957      6F756E74 
+ 1957      00
+ 1958              	.LASF15:
+ 1959 0251 75696E74 		.ascii	"uint8\000"
+ 1959      3800
+ 1960              	.LASF105:
+ 1961 0257 675F7074 		.ascii	"g_ptrMachineParameter\000"
+ 1961      724D6163 
+ 1961      68696E65 
+ 1961      50617261 
+ 1961      6D657465 
+ 1962              	.LASF24:
+ 1963 026d 706F735F 		.ascii	"pos_X\000"
+ 1963      5800
+ 1964              	.LASF84:
+ 1965 0273 4D414348 		.ascii	"MACHINE_PARAMETER\000"
+ 1965      494E455F 
+ 1965      50415241 
+ 1965      4D455445 
+ 1965      5200
+ 1966              	.LASF25:
+ 1967 0285 706F735F 		.ascii	"pos_Y\000"
+ 1967      5900
+ 1968              	.LASF97:
+ 1969 028b 675F436F 		.ascii	"g_Count\000"
+ 1969      756E7400 
+ 1970              	.LASF18:
+ 1971 0293 666C6F61 		.ascii	"float\000"
+ 1971      7400
+ 1972              	.LASF79:
+ 1973 0299 6C617374 		.ascii	"lastPowerOnDateTime\000"
+ 1973      506F7765 
+ 1973      724F6E44 
+ 1973      61746554 
+ 1973      696D6500 
+ 1974              	.LASF9:
+ 1975 02ad 6C6F6E67 		.ascii	"long long int\000"
+ 1975      206C6F6E 
+ 1975      6720696E 
+ 1975      7400
+ 1976              	.LASF65:
+ 1977 02bb 434F554E 		.ascii	"COUNT\000"
+ 1977      5400
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 41
+
+
+ 1978              	.LASF57:
+ 1979 02c1 70617474 		.ascii	"patternStitchLengthSumH\000"
+ 1979      65726E53 
+ 1979      74697463 
+ 1979      684C656E 
+ 1979      67746853 
+ 1980              	.LASF53:
+ 1981 02d9 70617474 		.ascii	"patternNoStitch\000"
+ 1981      65726E4E 
+ 1981      6F537469 
+ 1981      74636800 
+ 1982              	.LASF55:
+ 1983 02e9 70617474 		.ascii	"patternNoStitchSumL\000"
+ 1983      65726E4E 
+ 1983      6F537469 
+ 1983      74636853 
+ 1983      756D4C00 
+ 1984              	.LASF48:
+ 1985 02fd 70617474 		.ascii	"patternCycleTimeSumH\000"
+ 1985      65726E43 
+ 1985      79636C65 
+ 1985      54696D65 
+ 1985      53756D48 
+ 1986              	.LASF88:
+ 1987 0312 53657443 		.ascii	"SetCountLoop\000"
+ 1987      6F756E74 
+ 1987      4C6F6F70 
+ 1987      00
+ 1988              	.LASF6:
+ 1989 031f 6C6F6E67 		.ascii	"long int\000"
+ 1989      20696E74 
+ 1989      00
+ 1990              	.LASF49:
+ 1991 0328 70617474 		.ascii	"patternCycleTimeSumL\000"
+ 1991      65726E43 
+ 1991      79636C65 
+ 1991      54696D65 
+ 1991      53756D4C 
+ 1992              	.LASF40:
+ 1993 033d 70617474 		.ascii	"patternActualH\000"
+ 1993      65726E41 
+ 1993      63747561 
+ 1993      6C4800
+ 1994              	.LASF58:
+ 1995 034c 70617474 		.ascii	"patternStitchLengthSumL\000"
+ 1995      65726E53 
+ 1995      74697463 
+ 1995      684C656E 
+ 1995      67746853 
+ 1996              	.LASF46:
+ 1997 0364 70617474 		.ascii	"patternEmergencyTimeSumL\000"
+ 1997      65726E45 
+ 1997      6D657267 
+ 1997      656E6379 
+ 1997      54696D65 
+ 1998              	.LASF103:
+ 1999 037d 675F6254 		.ascii	"g_bTrimElapsedTime\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 42
+
+
+ 1999      72696D45 
+ 1999      6C617073 
+ 1999      65645469 
+ 1999      6D6500
+ 2000              	.LASF41:
+ 2001 0390 70617474 		.ascii	"patternActualL\000"
+ 2001      65726E41 
+ 2001      63747561 
+ 2001      6C4C00
+ 2002              	.LASF3:
+ 2003 039f 5F5F7569 		.ascii	"__uint8_t\000"
+ 2003      6E74385F 
+ 2003      7400
+ 2004              	.LASF71:
+ 2005 03a9 53455749 		.ascii	"SEWING_MACHINE\000"
+ 2005      4E475F4D 
+ 2005      41434849 
+ 2005      4E4500
+ 2006              	.LASF89:
+ 2007 03b8 696E6974 		.ascii	"initCount\000"
+ 2007      436F756E 
+ 2007      7400
+ 2008              	.LASF1:
+ 2009 03c2 756E7369 		.ascii	"unsigned char\000"
+ 2009      676E6564 
+ 2009      20636861 
+ 2009      7200
+ 2010              	.LASF100:
+ 2011 03d0 436F756E 		.ascii	"CountFunc\000"
+ 2011      7446756E 
+ 2011      6300
+ 2012              	.LASF93:
+ 2013 03da 576F726B 		.ascii	"WorkingTimeCount\000"
+ 2013      696E6754 
+ 2013      696D6543 
+ 2013      6F756E74 
+ 2013      00
+ 2014              	.LASF21:
+ 2015 03eb 6C6F6E67 		.ascii	"long double\000"
+ 2015      20646F75 
+ 2015      626C6500 
+ 2016              	.LASF111:
+ 2017 03f7 7472696D 		.ascii	"trim_Int_Stop\000"
+ 2017      5F496E74 
+ 2017      5F53746F 
+ 2017      7000
+ 2018              	.LASF28:
+ 2019 0405 73657769 		.ascii	"sewingCycleTime\000"
+ 2019      6E674379 
+ 2019      636C6554 
+ 2019      696D6500 
+ 2020              	.LASF102:
+ 2021 0415 675F6253 		.ascii	"g_bStartTrimPin\000"
+ 2021      74617274 
+ 2021      5472696D 
+ 2021      50696E00 
+ 2022              	.LASF117:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 43
+
+
+ 2023 0425 4D414348 		.ascii	"MACHINE_TYPE\000"
+ 2023      494E455F 
+ 2023      54595045 
+ 2023      00
+ 2024              	.LASF54:
+ 2025 0432 70617474 		.ascii	"patternNoStitchSumH\000"
+ 2025      65726E4E 
+ 2025      6F537469 
+ 2025      74636853 
+ 2025      756D4800 
+ 2026              	.LASF77:
+ 2027 0446 73657769 		.ascii	"sewingPairTrim\000"
+ 2027      6E675061 
+ 2027      69725472 
+ 2027      696D00
+ 2028              	.LASF10:
+ 2029 0455 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2029      206C6F6E 
+ 2029      6720756E 
+ 2029      7369676E 
+ 2029      65642069 
+ 2030              	.LASF14:
+ 2031 046c 75696E74 		.ascii	"uint32_t\000"
+ 2031      33325F74 
+ 2031      00
+ 2032              	.LASF30:
+ 2033 0475 73657769 		.ascii	"sewingCycleTimeSumL\000"
+ 2033      6E674379 
+ 2033      636C6554 
+ 2033      696D6553 
+ 2033      756D4C00 
+ 2034              	.LASF11:
+ 2035 0489 756E7369 		.ascii	"unsigned int\000"
+ 2035      676E6564 
+ 2035      20696E74 
+ 2035      00
+ 2036              	.LASF74:
+ 2037 0496 70617474 		.ascii	"patternPairCount\000"
+ 2037      65726E50 
+ 2037      61697243 
+ 2037      6F756E74 
+ 2037      00
+ 2038              	.LASF66:
+ 2039 04a7 77617465 		.ascii	"watermark\000"
+ 2039      726D6172 
+ 2039      6B00
+ 2040              	.LASF91:
+ 2041 04b1 67657443 		.ascii	"getCount\000"
+ 2041      6F756E74 
+ 2041      00
+ 2042              	.LASF8:
+ 2043 04ba 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2043      20756E73 
+ 2043      69676E65 
+ 2043      6420696E 
+ 2043      7400
+ 2044              	.LASF36:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 44
+
+
+ 2045 04cc 73657769 		.ascii	"sewingNoStitchSumL\000"
+ 2045      6E674E6F 
+ 2045      53746974 
+ 2045      63685375 
+ 2045      6D4C00
+ 2046              	.LASF101:
+ 2047 04df 675F7570 		.ascii	"g_updateCountMenu\000"
+ 2047      64617465 
+ 2047      436F756E 
+ 2047      744D656E 
+ 2047      7500
+ 2048              	.LASF87:
+ 2049 04f1 50617474 		.ascii	"PatternCountLoop\000"
+ 2049      65726E43 
+ 2049      6F756E74 
+ 2049      4C6F6F70 
+ 2049      00
+ 2050              	.LASF81:
+ 2051 0502 63757272 		.ascii	"current_enable\000"
+ 2051      656E745F 
+ 2051      656E6162 
+ 2051      6C6500
+ 2052              	.LASF107:
+ 2053 0511 5472696D 		.ascii	"TrimPin_Read\000"
+ 2053      50696E5F 
+ 2053      52656164 
+ 2053      00
+ 2054              	.LASF20:
+ 2055 051e 63686172 		.ascii	"char\000"
+ 2055      00
+ 2056              	.LASF13:
+ 2057 0523 75696E74 		.ascii	"uint16_t\000"
+ 2057      31365F74 
+ 2057      00
+ 2058              	.LASF51:
+ 2059 052c 70617474 		.ascii	"patternMotorRunTimeSumH\000"
+ 2059      65726E4D 
+ 2059      6F746F72 
+ 2059      52756E54 
+ 2059      696D6553 
+ 2060              	.LASF5:
+ 2061 0544 73686F72 		.ascii	"short unsigned int\000"
+ 2061      7420756E 
+ 2061      7369676E 
+ 2061      65642069 
+ 2061      6E7400
+ 2062              	.LASF56:
+ 2063 0557 70617474 		.ascii	"patternStitchLength\000"
+ 2063      65726E53 
+ 2063      74697463 
+ 2063      684C656E 
+ 2063      67746800 
+ 2064              	.LASF52:
+ 2065 056b 70617474 		.ascii	"patternMotorRunTimeSumL\000"
+ 2065      65726E4D 
+ 2065      6F746F72 
+ 2065      52756E54 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 45
+
+
+ 2065      696D6553 
+ 2066              	.LASF76:
+ 2067 0583 73657769 		.ascii	"sewingTarget\000"
+ 2067      6E675461 
+ 2067      72676574 
+ 2067      00
+ 2068              	.LASF116:
+ 2069 0590 73506172 		.ascii	"sParameter\000"
+ 2069      616D6574 
+ 2069      657200
+ 2070              	.LASF67:
+ 2071 059b 64617461 		.ascii	"data\000"
+ 2071      00
+ 2072              	.LASF109:
+ 2073 05a0 53617665 		.ascii	"SaveInternalFlash\000"
+ 2073      496E7465 
+ 2073      726E616C 
+ 2073      466C6173 
+ 2073      6800
+ 2074              	.LASF106:
+ 2075 05b2 675F7074 		.ascii	"g_ptrCount\000"
+ 2075      72436F75 
+ 2075      6E7400
+ 2076              	.LASF16:
+ 2077 05bd 75696E74 		.ascii	"uint16\000"
+ 2077      313600
+ 2078              	.LASF17:
+ 2079 05c4 75696E74 		.ascii	"uint32\000"
+ 2079      333200
+ 2080              	.LASF114:
+ 2081 05cb 636F756E 		.ascii	"count.c\000"
+ 2081      742E6300 
+ 2082              	.LASF19:
+ 2083 05d3 646F7562 		.ascii	"double\000"
+ 2083      6C6500
+ 2084              	.LASF82:
+ 2085 05da 63757272 		.ascii	"current_sensor_threshold\000"
+ 2085      656E745F 
+ 2085      73656E73 
+ 2085      6F725F74 
+ 2085      68726573 
+ 2086              	.LASF78:
+ 2087 05f3 73657769 		.ascii	"sewingPair\000"
+ 2087      6E675061 
+ 2087      697200
+ 2088              	.LASF115:
+ 2089 05fe 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_INTEGR"
+ 2089      554E5445 
+ 2089      43485F44 
+ 2089      45565F43 
+ 2089      4C415544 
+ 2090 062e 41544544 		.ascii	"ATED\\280CTP_IoT_INTEGRATED_V1\\Project\\Design.cyd"
+ 2090      5C323830 
+ 2090      4354505F 
+ 2090      496F545F 
+ 2090      494E5445 
+ 2091 065e 736E00   		.ascii	"sn\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 46
+
+
+ 2092              	.LASF60:
+ 2093 0661 70617474 		.ascii	"patternTrimCountSumH\000"
+ 2093      65726E54 
+ 2093      72696D43 
+ 2093      6F756E74 
+ 2093      53756D48 
+ 2094              	.LASF99:
+ 2095 0676 50617261 		.ascii	"Param\000"
+ 2095      6D00
+ 2096              	.LASF118:
+ 2097 067c 5472696D 		.ascii	"Trim_Interrupt_Routine\000"
+ 2097      5F496E74 
+ 2097      65727275 
+ 2097      70745F52 
+ 2097      6F757469 
+ 2098              	.LASF61:
+ 2099 0693 70617474 		.ascii	"patternTrimCountSumL\000"
+ 2099      65726E54 
+ 2099      72696D43 
+ 2099      6F756E74 
+ 2099      53756D4C 
+ 2100              	.LASF64:
+ 2101 06a8 72657365 		.ascii	"reset\000"
+ 2101      7400
+ 2102              	.LASF94:
+ 2103 06ae 52657365 		.ascii	"ResetWorkingTimeCount\000"
+ 2103      74576F72 
+ 2103      6B696E67 
+ 2103      54696D65 
+ 2103      436F756E 
+ 2104              	.LASF0:
+ 2105 06c4 7369676E 		.ascii	"signed char\000"
+ 2105      65642063 
+ 2105      68617200 
+ 2106              	.LASF12:
+ 2107 06d0 75696E74 		.ascii	"uint8_t\000"
+ 2107      385F7400 
+ 2108              	.LASF69:
+ 2109 06d8 494E5445 		.ascii	"INTERNAL_CONFIG\000"
+ 2109      524E414C 
+ 2109      5F434F4E 
+ 2109      46494700 
+ 2110              	.LASF42:
+ 2111 06e8 70617474 		.ascii	"patternCount\000"
+ 2111      65726E43 
+ 2111      6F756E74 
+ 2111      00
+ 2112              	.LASF70:
+ 2113 06f5 50415454 		.ascii	"PATTERN_MACHINE\000"
+ 2113      45524E5F 
+ 2113      4D414348 
+ 2113      494E4500 
+ 2114              	.LASF34:
+ 2115 0705 73657769 		.ascii	"sewingNoStitch\000"
+ 2115      6E674E6F 
+ 2115      53746974 
+ 2115      636800
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 47
+
+
+ 2116              	.LASF90:
+ 2117 0714 52657365 		.ascii	"ResetCount\000"
+ 2117      74436F75 
+ 2117      6E7400
+ 2118              	.LASF112:
+ 2119 071f 7472696D 		.ascii	"trim_Int_StartEx\000"
+ 2119      5F496E74 
+ 2119      5F537461 
+ 2119      72744578 
+ 2119      00
+ 2120              	.LASF35:
+ 2121 0730 73657769 		.ascii	"sewingNoStitchSumH\000"
+ 2121      6E674E6F 
+ 2121      53746974 
+ 2121      63685375 
+ 2121      6D4800
+ 2122              	.LASF80:
+ 2123 0743 616E646F 		.ascii	"andon_enable\000"
+ 2123      6E5F656E 
+ 2123      61626C65 
+ 2123      00
+ 2124              	.LASF75:
+ 2125 0750 70617474 		.ascii	"patternPair\000"
+ 2125      65726E50 
+ 2125      61697200 
+ 2126              	.LASF110:
+ 2127 075c 75617274 		.ascii	"uartJsonLoop\000"
+ 2127      4A736F6E 
+ 2127      4C6F6F70 
+ 2127      00
+ 2128              	.LASF38:
+ 2129 0769 73657769 		.ascii	"sewingTrimCountSumH\000"
+ 2129      6E675472 
+ 2129      696D436F 
+ 2129      756E7453 
+ 2129      756D4800 
+ 2130              	.LASF50:
+ 2131 077d 70617474 		.ascii	"patternMotorRunTime\000"
+ 2131      65726E4D 
+ 2131      6F746F72 
+ 2131      52756E54 
+ 2131      696D6500 
+ 2132              	.LASF33:
+ 2133 0791 73657769 		.ascii	"sewingMotorRunTimeSumL\000"
+ 2133      6E674D6F 
+ 2133      746F7252 
+ 2133      756E5469 
+ 2133      6D655375 
+ 2134              	.LASF39:
+ 2135 07a8 73657769 		.ascii	"sewingTrimCountSumL\000"
+ 2135      6E675472 
+ 2135      696D436F 
+ 2135      756E7453 
+ 2135      756D4C00 
+ 2136              	.LASF85:
+ 2137 07bc 6253656E 		.ascii	"bSend\000"
+ 2137      6400
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccnLJM5n.s 			page 48
+
+
+ 2138              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

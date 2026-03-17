@@ -1,0 +1,3921 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"setup.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.SetUp,"ax",%progbits
+  20              		.align	2
+  21              		.global	SetUp
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	SetUp, %function
+  25              	SetUp:
+  26              	.LFB62:
+  27              		.file 1 "setup.c"
+   1:setup.c       **** 
+   2:setup.c       **** #include "setup.h"
+   3:setup.c       **** #include "lib/ST7789V.h"
+   4:setup.c       **** #include "lib/FT5x46.h"
+   5:setup.c       **** #include "lib/sysTick.h"
+   6:setup.c       **** #include "lib/LEDControl.h"
+   7:setup.c       **** #include "lib/UI.h"
+   8:setup.c       **** #include "lib/USB.h"
+   9:setup.c       **** #include "userTimer.h"
+  10:setup.c       **** 
+  11:setup.c       **** uint8 OneSecondIndex;
+  12:setup.c       **** 
+  13:setup.c       **** void SetUp(void)
+  14:setup.c       **** {
+  28              		.loc 1 14 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 10B5     		push	{r4, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  15:setup.c       ****     BUZZER_Write(0);
+  36              		.loc 1 15 0
+  37 0002 0020     		movs	r0, #0
+  38 0004 FFF7FEFF 		bl	BUZZER_Write
+  39              	.LVL0:
+  16:setup.c       ****     
+  17:setup.c       ****     //LCD    
+  18:setup.c       ****     SPIM_LCD_Start(); 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 2
+
+
+  40              		.loc 1 18 0
+  41 0008 FFF7FEFF 		bl	SPIM_LCD_Start
+  42              	.LVL1:
+  19:setup.c       ****     LCD_RES_Write(0);
+  43              		.loc 1 19 0
+  44 000c 0020     		movs	r0, #0
+  45 000e FFF7FEFF 		bl	LCD_RES_Write
+  46              	.LVL2:
+  20:setup.c       ****     CyDelay(10);
+  47              		.loc 1 20 0
+  48 0012 0A20     		movs	r0, #10
+  49 0014 FFF7FEFF 		bl	CyDelay
+  50              	.LVL3:
+  21:setup.c       ****     
+  22:setup.c       ****     ST7789V_Init();
+  51              		.loc 1 22 0
+  52 0018 FFF7FEFF 		bl	ST7789V_Init
+  53              	.LVL4:
+  23:setup.c       ****     initUI();
+  54              		.loc 1 23 0
+  55 001c FFF7FEFF 		bl	initUI
+  56              	.LVL5:
+  24:setup.c       ****     setDisplayDirection(DISPLAY_DIRECTION_PORTRAIT);
+  57              		.loc 1 24 0
+  58 0020 0020     		movs	r0, #0
+  59 0022 FFF7FEFF 		bl	setDisplayDirection
+  60              	.LVL6:
+  25:setup.c       ****         
+  26:setup.c       ****     TouchHardwareInit(); //Touch
+  61              		.loc 1 26 0
+  62 0026 FFF7FEFF 		bl	TouchHardwareInit
+  63              	.LVL7:
+  27:setup.c       ****     I2C_TC_Start();    
+  64              		.loc 1 27 0
+  65 002a FFF7FEFF 		bl	I2C_TC_Start
+  66              	.LVL8:
+  28:setup.c       ****     
+  29:setup.c       ****     // SPIM_FLASH_Start(); // External Flash Memory
+  30:setup.c       ****     
+  31:setup.c       ****     initLEDControl();
+  67              		.loc 1 31 0
+  68 002e FFF7FEFF 		bl	initLEDControl
+  69              	.LVL9:
+  32:setup.c       ****     initTimer();
+  70              		.loc 1 32 0
+  71 0032 FFF7FEFF 		bl	initTimer
+  72              	.LVL10:
+  33:setup.c       ****     initUSB();
+  73              		.loc 1 33 0
+  74 0036 FFF7FEFF 		bl	initUSB
+  75              	.LVL11:
+  34:setup.c       ****     UART_Start();
+  76              		.loc 1 34 0
+  77 003a FFF7FEFF 		bl	UART_Start
+  78              	.LVL12:
+  35:setup.c       ****     /* initWIFI(); -- WiFi 미사용 (UART TEST 버전) */
+  36:setup.c       ****     
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 3
+
+
+  37:setup.c       ****     OneSecondIndex = registerCounter_1s(1);
+  79              		.loc 1 37 0
+  80 003e 0120     		movs	r0, #1
+  81 0040 FFF7FEFF 		bl	registerCounter_1s
+  82              	.LVL13:
+  83 0044 024B     		ldr	r3, .L2
+  84 0046 1870     		strb	r0, [r3]
+  38:setup.c       ****     
+  39:setup.c       ****     // initUserProject();
+  40:setup.c       ****     // initServer();        
+  41:setup.c       ****     // initExternalFlash();
+  42:setup.c       ****     initLEDControl();
+  85              		.loc 1 42 0
+  86 0048 FFF7FEFF 		bl	initLEDControl
+  87              	.LVL14:
+  43:setup.c       ****   
+  44:setup.c       ****     // initInternalFlash();
+  45:setup.c       ****     //initRepository();
+  46:setup.c       **** 
+  47:setup.c       ****     //initUSBUARTConfig();   
+  48:setup.c       **** 
+  49:setup.c       ****     //UART_WIFI_Start();
+  50:setup.c       ****     //WIFI_EN_Write(1); 
+  51:setup.c       ****     //WIFI_Init();
+  52:setup.c       ****             
+  53:setup.c       ****     //PWM_ONE_SECOND_Start();
+  54:setup.c       ****     //UART_Start();
+  55:setup.c       ****             
+  56:setup.c       ****     //LCD
+  57:setup.c       ****     //SPIM_LCD_Start(); 
+  58:setup.c       ****     //LCD_RES_Write(0);
+  59:setup.c       ****     //CyDelay(10);       
+  60:setup.c       ****     //LCD_RES_Write(1);
+  61:setup.c       ****     
+  62:setup.c       ****     //Touch
+  63:setup.c       ****     //TouchHardwareInit();
+  64:setup.c       ****     //I2C_TC_Start();
+  65:setup.c       ****             
+  66:setup.c       ****     //UART_UartPutString("=== SUNTECH IoT ===\r\n");
+  67:setup.c       ****         
+  68:setup.c       ****     //ST7789V_Init();
+  69:setup.c       ****     //initRealTimeClock();    
+  70:setup.c       ****     //initFLASH();        
+  71:setup.c       ****     //initInfor();
+  72:setup.c       ****  
+  73:setup.c       ****     // initCount();
+  74:setup.c       ****     /* initMenu() / initWarning() / ANDON 자동진입 -- UART TEST 버전에서 미사용 */
+  75:setup.c       **** }
+  88              		.loc 1 75 0
+  89              		@ sp needed
+  90 004c 10BD     		pop	{r4, pc}
+  91              	.L3:
+  92 004e C046     		.align	2
+  93              	.L2:
+  94 0050 00000000 		.word	OneSecondIndex
+  95              		.cfi_endproc
+  96              	.LFE62:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 4
+
+
+  97              		.size	SetUp, .-SetUp
+  98              		.comm	OneSecondIndex,1,1
+  99              		.comm	Param,6,4
+ 100              		.text
+ 101              	.Letext0:
+ 102              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 103              		.file 3 "./main.h"
+ 104              		.file 4 "lib/fonts.h"
+ 105              		.file 5 "Generated_Source\\PSoC4/RTC.h"
+ 106              		.file 6 "Generated_Source\\PSoC4/BUZZER.h"
+ 107              		.file 7 "Generated_Source\\PSoC4/SPIM_LCD.h"
+ 108              		.file 8 "Generated_Source\\PSoC4/LCD_RES.h"
+ 109              		.file 9 "Generated_Source\\PSoC4/CyLib.h"
+ 110              		.file 10 "lib/ST7789V.h"
+ 111              		.file 11 "lib/UI.h"
+ 112              		.file 12 "lib/FT5x46.h"
+ 113              		.file 13 "Generated_Source\\PSoC4/I2C_TC.h"
+ 114              		.file 14 "lib/LEDControl.h"
+ 115              		.file 15 "userTimer.h"
+ 116              		.file 16 "lib/USB.h"
+ 117              		.file 17 "Generated_Source\\PSoC4/UART.h"
+ 118              		.section	.debug_info,"",%progbits
+ 119              	.Ldebug_info0:
+ 120 0000 590D0000 		.4byte	0xd59
+ 121 0004 0400     		.2byte	0x4
+ 122 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 123 000a 04       		.byte	0x4
+ 124 000b 01       		.uleb128 0x1
+ 125 000c 91010000 		.4byte	.LASF40
+ 126 0010 0C       		.byte	0xc
+ 127 0011 1E000000 		.4byte	.LASF41
+ 128 0015 B3020000 		.4byte	.LASF42
+ 129 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 130 001d 00000000 		.4byte	0
+ 131 0021 00000000 		.4byte	.Ldebug_line0
+ 132 0025 02       		.uleb128 0x2
+ 133 0026 01       		.byte	0x1
+ 134 0027 06       		.byte	0x6
+ 135 0028 A7020000 		.4byte	.LASF0
+ 136 002c 02       		.uleb128 0x2
+ 137 002d 01       		.byte	0x1
+ 138 002e 08       		.byte	0x8
+ 139 002f 92000000 		.4byte	.LASF1
+ 140 0033 02       		.uleb128 0x2
+ 141 0034 02       		.byte	0x2
+ 142 0035 05       		.byte	0x5
+ 143 0036 6B020000 		.4byte	.LASF2
+ 144 003a 02       		.uleb128 0x2
+ 145 003b 02       		.byte	0x2
+ 146 003c 07       		.byte	0x7
+ 147 003d CB000000 		.4byte	.LASF3
+ 148 0041 02       		.uleb128 0x2
+ 149 0042 04       		.byte	0x4
+ 150 0043 05       		.byte	0x5
+ 151 0044 7B020000 		.4byte	.LASF4
+ 152 0048 02       		.uleb128 0x2
+ 153 0049 04       		.byte	0x4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 5
+
+
+ 154 004a 07       		.byte	0x7
+ 155 004b AE000000 		.4byte	.LASF5
+ 156 004f 02       		.uleb128 0x2
+ 157 0050 08       		.byte	0x8
+ 158 0051 05       		.byte	0x5
+ 159 0052 28020000 		.4byte	.LASF6
+ 160 0056 02       		.uleb128 0x2
+ 161 0057 08       		.byte	0x8
+ 162 0058 07       		.byte	0x7
+ 163 0059 7A010000 		.4byte	.LASF7
+ 164 005d 03       		.uleb128 0x3
+ 165 005e 04       		.byte	0x4
+ 166 005f 05       		.byte	0x5
+ 167 0060 696E7400 		.ascii	"int\000"
+ 168 0064 02       		.uleb128 0x2
+ 169 0065 04       		.byte	0x4
+ 170 0066 07       		.byte	0x7
+ 171 0067 52010000 		.4byte	.LASF8
+ 172 006b 04       		.uleb128 0x4
+ 173 006c 75020000 		.4byte	.LASF9
+ 174 0070 02       		.byte	0x2
+ 175 0071 FC01     		.2byte	0x1fc
+ 176 0073 2C000000 		.4byte	0x2c
+ 177 0077 04       		.uleb128 0x4
+ 178 0078 16010000 		.4byte	.LASF10
+ 179 007c 02       		.byte	0x2
+ 180 007d FD01     		.2byte	0x1fd
+ 181 007f 3A000000 		.4byte	0x3a
+ 182 0083 02       		.uleb128 0x2
+ 183 0084 04       		.byte	0x4
+ 184 0085 04       		.byte	0x4
+ 185 0086 8C000000 		.4byte	.LASF11
+ 186 008a 02       		.uleb128 0x2
+ 187 008b 08       		.byte	0x8
+ 188 008c 04       		.byte	0x4
+ 189 008d 63000000 		.4byte	.LASF12
+ 190 0091 02       		.uleb128 0x2
+ 191 0092 01       		.byte	0x1
+ 192 0093 08       		.byte	0x8
+ 193 0094 43020000 		.4byte	.LASF13
+ 194 0098 02       		.uleb128 0x2
+ 195 0099 08       		.byte	0x8
+ 196 009a 04       		.byte	0x4
+ 197 009b 9B020000 		.4byte	.LASF14
+ 198 009f 02       		.uleb128 0x2
+ 199 00a0 04       		.byte	0x4
+ 200 00a1 07       		.byte	0x7
+ 201 00a2 1F020000 		.4byte	.LASF15
+ 202 00a6 05       		.uleb128 0x5
+ 203 00a7 C0000000 		.4byte	.LASF43
+ 204 00ab 06       		.byte	0x6
+ 205 00ac 03       		.byte	0x3
+ 206 00ad 2E       		.byte	0x2e
+ 207 00ae D7000000 		.4byte	0xd7
+ 208 00b2 06       		.uleb128 0x6
+ 209 00b3 00000000 		.4byte	.LASF16
+ 210 00b7 03       		.byte	0x3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 6
+
+
+ 211 00b8 30       		.byte	0x30
+ 212 00b9 6B000000 		.4byte	0x6b
+ 213 00bd 00       		.byte	0
+ 214 00be 06       		.uleb128 0x6
+ 215 00bf F7000000 		.4byte	.LASF17
+ 216 00c3 03       		.byte	0x3
+ 217 00c4 31       		.byte	0x31
+ 218 00c5 77000000 		.4byte	0x77
+ 219 00c9 02       		.byte	0x2
+ 220 00ca 06       		.uleb128 0x6
+ 221 00cb FD000000 		.4byte	.LASF18
+ 222 00cf 03       		.byte	0x3
+ 223 00d0 32       		.byte	0x32
+ 224 00d1 77000000 		.4byte	0x77
+ 225 00d5 04       		.byte	0x4
+ 226 00d6 00       		.byte	0
+ 227 00d7 07       		.uleb128 0x7
+ 228 00d8 0C000000 		.4byte	.LASF44
+ 229 00dc 01       		.byte	0x1
+ 230 00dd 2C000000 		.4byte	0x2c
+ 231 00e1 0B       		.byte	0xb
+ 232 00e2 14       		.byte	0x14
+ 233 00e3 F4000000 		.4byte	0xf4
+ 234 00e7 08       		.uleb128 0x8
+ 235 00e8 5F010000 		.4byte	.LASF19
+ 236 00ec 00       		.byte	0
+ 237 00ed 08       		.uleb128 0x8
+ 238 00ee 47000000 		.4byte	.LASF20
+ 239 00f2 01       		.byte	0x1
+ 240 00f3 00       		.byte	0
+ 241 00f4 09       		.uleb128 0x9
+ 242 00f5 2D000000 		.4byte	.LASF45
+ 243 00f9 01       		.byte	0x1
+ 244 00fa 0D       		.byte	0xd
+ 245 00fb 00000000 		.4byte	.LFB62
+ 246 00ff 54000000 		.4byte	.LFE62-.LFB62
+ 247 0103 01       		.uleb128 0x1
+ 248 0104 9C       		.byte	0x9c
+ 249 0105 C3010000 		.4byte	0x1c3
+ 250 0109 0A       		.uleb128 0xa
+ 251 010a 08000000 		.4byte	.LVL0
+ 252 010e C20C0000 		.4byte	0xcc2
+ 253 0112 1C010000 		.4byte	0x11c
+ 254 0116 0B       		.uleb128 0xb
+ 255 0117 01       		.uleb128 0x1
+ 256 0118 50       		.byte	0x50
+ 257 0119 01       		.uleb128 0x1
+ 258 011a 30       		.byte	0x30
+ 259 011b 00       		.byte	0
+ 260 011c 0C       		.uleb128 0xc
+ 261 011d 0C000000 		.4byte	.LVL1
+ 262 0121 CD0C0000 		.4byte	0xccd
+ 263 0125 0A       		.uleb128 0xa
+ 264 0126 12000000 		.4byte	.LVL2
+ 265 012a D80C0000 		.4byte	0xcd8
+ 266 012e 38010000 		.4byte	0x138
+ 267 0132 0B       		.uleb128 0xb
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 7
+
+
+ 268 0133 01       		.uleb128 0x1
+ 269 0134 50       		.byte	0x50
+ 270 0135 01       		.uleb128 0x1
+ 271 0136 30       		.byte	0x30
+ 272 0137 00       		.byte	0
+ 273 0138 0A       		.uleb128 0xa
+ 274 0139 18000000 		.4byte	.LVL3
+ 275 013d E30C0000 		.4byte	0xce3
+ 276 0141 4B010000 		.4byte	0x14b
+ 277 0145 0B       		.uleb128 0xb
+ 278 0146 01       		.uleb128 0x1
+ 279 0147 50       		.byte	0x50
+ 280 0148 01       		.uleb128 0x1
+ 281 0149 3A       		.byte	0x3a
+ 282 014a 00       		.byte	0
+ 283 014b 0C       		.uleb128 0xc
+ 284 014c 1C000000 		.4byte	.LVL4
+ 285 0150 EE0C0000 		.4byte	0xcee
+ 286 0154 0C       		.uleb128 0xc
+ 287 0155 20000000 		.4byte	.LVL5
+ 288 0159 F90C0000 		.4byte	0xcf9
+ 289 015d 0A       		.uleb128 0xa
+ 290 015e 26000000 		.4byte	.LVL6
+ 291 0162 040D0000 		.4byte	0xd04
+ 292 0166 70010000 		.4byte	0x170
+ 293 016a 0B       		.uleb128 0xb
+ 294 016b 01       		.uleb128 0x1
+ 295 016c 50       		.byte	0x50
+ 296 016d 01       		.uleb128 0x1
+ 297 016e 30       		.byte	0x30
+ 298 016f 00       		.byte	0
+ 299 0170 0C       		.uleb128 0xc
+ 300 0171 2A000000 		.4byte	.LVL7
+ 301 0175 0F0D0000 		.4byte	0xd0f
+ 302 0179 0C       		.uleb128 0xc
+ 303 017a 2E000000 		.4byte	.LVL8
+ 304 017e 1A0D0000 		.4byte	0xd1a
+ 305 0182 0C       		.uleb128 0xc
+ 306 0183 32000000 		.4byte	.LVL9
+ 307 0187 250D0000 		.4byte	0xd25
+ 308 018b 0C       		.uleb128 0xc
+ 309 018c 36000000 		.4byte	.LVL10
+ 310 0190 300D0000 		.4byte	0xd30
+ 311 0194 0C       		.uleb128 0xc
+ 312 0195 3A000000 		.4byte	.LVL11
+ 313 0199 3B0D0000 		.4byte	0xd3b
+ 314 019d 0C       		.uleb128 0xc
+ 315 019e 3E000000 		.4byte	.LVL12
+ 316 01a2 460D0000 		.4byte	0xd46
+ 317 01a6 0A       		.uleb128 0xa
+ 318 01a7 44000000 		.4byte	.LVL13
+ 319 01ab 510D0000 		.4byte	0xd51
+ 320 01af B9010000 		.4byte	0x1b9
+ 321 01b3 0B       		.uleb128 0xb
+ 322 01b4 01       		.uleb128 0x1
+ 323 01b5 50       		.byte	0x50
+ 324 01b6 01       		.uleb128 0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 8
+
+
+ 325 01b7 31       		.byte	0x31
+ 326 01b8 00       		.byte	0
+ 327 01b9 0C       		.uleb128 0xc
+ 328 01ba 4C000000 		.4byte	.LVL14
+ 329 01be 250D0000 		.4byte	0xd25
+ 330 01c2 00       		.byte	0
+ 331 01c3 0D       		.uleb128 0xd
+ 332 01c4 D4010000 		.4byte	0x1d4
+ 333 01c8 D4010000 		.4byte	0x1d4
+ 334 01cc 0E       		.uleb128 0xe
+ 335 01cd 9F000000 		.4byte	0x9f
+ 336 01d1 7704     		.2byte	0x477
+ 337 01d3 00       		.byte	0
+ 338 01d4 0F       		.uleb128 0xf
+ 339 01d5 2C000000 		.4byte	0x2c
+ 340 01d9 10       		.uleb128 0x10
+ 341 01da A0000000 		.4byte	.LASF21
+ 342 01de 04       		.byte	0x4
+ 343 01df 13       		.byte	0x13
+ 344 01e0 5E060000 		.4byte	0x65e
+ 345 01e4 7804     		.2byte	0x478
+ 346 01e6 08       		.byte	0x8
+ 347 01e7 0C       		.byte	0xc
+ 348 01e8 20       		.byte	0x20
+ 349 01e9 5F       		.byte	0x5f
+ 350 01ea 00       		.byte	0
+ 351 01eb 00       		.byte	0
+ 352 01ec 00       		.byte	0
+ 353 01ed 00       		.byte	0
+ 354 01ee 00       		.byte	0
+ 355 01ef 00       		.byte	0
+ 356 01f0 00       		.byte	0
+ 357 01f1 00       		.byte	0
+ 358 01f2 00       		.byte	0
+ 359 01f3 00       		.byte	0
+ 360 01f4 00       		.byte	0
+ 361 01f5 00       		.byte	0
+ 362 01f6 00       		.byte	0
+ 363 01f7 00       		.byte	0
+ 364 01f8 20       		.byte	0x20
+ 365 01f9 20       		.byte	0x20
+ 366 01fa 20       		.byte	0x20
+ 367 01fb 20       		.byte	0x20
+ 368 01fc 20       		.byte	0x20
+ 369 01fd 20       		.byte	0x20
+ 370 01fe 00       		.byte	0
+ 371 01ff 20       		.byte	0x20
+ 372 0200 00       		.byte	0
+ 373 0201 00       		.byte	0
+ 374 0202 00       		.byte	0
+ 375 0203 28       		.byte	0x28
+ 376 0204 50       		.byte	0x50
+ 377 0205 50       		.byte	0x50
+ 378 0206 00       		.byte	0
+ 379 0207 00       		.byte	0
+ 380 0208 00       		.byte	0
+ 381 0209 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 9
+
+
+ 382 020a 00       		.byte	0
+ 383 020b 00       		.byte	0
+ 384 020c 00       		.byte	0
+ 385 020d 00       		.byte	0
+ 386 020e 00       		.byte	0
+ 387 020f 00       		.byte	0
+ 388 0210 28       		.byte	0x28
+ 389 0211 28       		.byte	0x28
+ 390 0212 FC       		.byte	0xfc
+ 391 0213 28       		.byte	0x28
+ 392 0214 50       		.byte	0x50
+ 393 0215 FC       		.byte	0xfc
+ 394 0216 50       		.byte	0x50
+ 395 0217 50       		.byte	0x50
+ 396 0218 00       		.byte	0
+ 397 0219 00       		.byte	0
+ 398 021a 00       		.byte	0
+ 399 021b 20       		.byte	0x20
+ 400 021c 78       		.byte	0x78
+ 401 021d A8       		.byte	0xa8
+ 402 021e A0       		.byte	0xa0
+ 403 021f 60       		.byte	0x60
+ 404 0220 30       		.byte	0x30
+ 405 0221 28       		.byte	0x28
+ 406 0222 A8       		.byte	0xa8
+ 407 0223 F0       		.byte	0xf0
+ 408 0224 20       		.byte	0x20
+ 409 0225 00       		.byte	0
+ 410 0226 00       		.byte	0
+ 411 0227 00       		.byte	0
+ 412 0228 48       		.byte	0x48
+ 413 0229 A8       		.byte	0xa8
+ 414 022a B0       		.byte	0xb0
+ 415 022b 50       		.byte	0x50
+ 416 022c 28       		.byte	0x28
+ 417 022d 34       		.byte	0x34
+ 418 022e 54       		.byte	0x54
+ 419 022f 48       		.byte	0x48
+ 420 0230 00       		.byte	0
+ 421 0231 00       		.byte	0
+ 422 0232 00       		.byte	0
+ 423 0233 00       		.byte	0
+ 424 0234 20       		.byte	0x20
+ 425 0235 50       		.byte	0x50
+ 426 0236 50       		.byte	0x50
+ 427 0237 78       		.byte	0x78
+ 428 0238 A8       		.byte	0xa8
+ 429 0239 A8       		.byte	0xa8
+ 430 023a 90       		.byte	0x90
+ 431 023b 6C       		.byte	0x6c
+ 432 023c 00       		.byte	0
+ 433 023d 00       		.byte	0
+ 434 023e 00       		.byte	0
+ 435 023f 40       		.byte	0x40
+ 436 0240 40       		.byte	0x40
+ 437 0241 80       		.byte	0x80
+ 438 0242 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 10
+
+
+ 439 0243 00       		.byte	0
+ 440 0244 00       		.byte	0
+ 441 0245 00       		.byte	0
+ 442 0246 00       		.byte	0
+ 443 0247 00       		.byte	0
+ 444 0248 00       		.byte	0
+ 445 0249 00       		.byte	0
+ 446 024a 00       		.byte	0
+ 447 024b 04       		.byte	0x4
+ 448 024c 08       		.byte	0x8
+ 449 024d 10       		.byte	0x10
+ 450 024e 10       		.byte	0x10
+ 451 024f 10       		.byte	0x10
+ 452 0250 10       		.byte	0x10
+ 453 0251 10       		.byte	0x10
+ 454 0252 10       		.byte	0x10
+ 455 0253 08       		.byte	0x8
+ 456 0254 04       		.byte	0x4
+ 457 0255 00       		.byte	0
+ 458 0256 00       		.byte	0
+ 459 0257 40       		.byte	0x40
+ 460 0258 20       		.byte	0x20
+ 461 0259 10       		.byte	0x10
+ 462 025a 10       		.byte	0x10
+ 463 025b 10       		.byte	0x10
+ 464 025c 10       		.byte	0x10
+ 465 025d 10       		.byte	0x10
+ 466 025e 10       		.byte	0x10
+ 467 025f 20       		.byte	0x20
+ 468 0260 40       		.byte	0x40
+ 469 0261 00       		.byte	0
+ 470 0262 00       		.byte	0
+ 471 0263 00       		.byte	0
+ 472 0264 00       		.byte	0
+ 473 0265 20       		.byte	0x20
+ 474 0266 A8       		.byte	0xa8
+ 475 0267 70       		.byte	0x70
+ 476 0268 70       		.byte	0x70
+ 477 0269 A8       		.byte	0xa8
+ 478 026a 20       		.byte	0x20
+ 479 026b 00       		.byte	0
+ 480 026c 00       		.byte	0
+ 481 026d 00       		.byte	0
+ 482 026e 00       		.byte	0
+ 483 026f 00       		.byte	0
+ 484 0270 20       		.byte	0x20
+ 485 0271 20       		.byte	0x20
+ 486 0272 20       		.byte	0x20
+ 487 0273 F8       		.byte	0xf8
+ 488 0274 20       		.byte	0x20
+ 489 0275 20       		.byte	0x20
+ 490 0276 20       		.byte	0x20
+ 491 0277 00       		.byte	0
+ 492 0278 00       		.byte	0
+ 493 0279 00       		.byte	0
+ 494 027a 00       		.byte	0
+ 495 027b 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 11
+
+
+ 496 027c 00       		.byte	0
+ 497 027d 00       		.byte	0
+ 498 027e 00       		.byte	0
+ 499 027f 00       		.byte	0
+ 500 0280 00       		.byte	0
+ 501 0281 00       		.byte	0
+ 502 0282 00       		.byte	0
+ 503 0283 40       		.byte	0x40
+ 504 0284 40       		.byte	0x40
+ 505 0285 80       		.byte	0x80
+ 506 0286 00       		.byte	0
+ 507 0287 00       		.byte	0
+ 508 0288 00       		.byte	0
+ 509 0289 00       		.byte	0
+ 510 028a 00       		.byte	0
+ 511 028b F8       		.byte	0xf8
+ 512 028c 00       		.byte	0
+ 513 028d 00       		.byte	0
+ 514 028e 00       		.byte	0
+ 515 028f 00       		.byte	0
+ 516 0290 00       		.byte	0
+ 517 0291 00       		.byte	0
+ 518 0292 00       		.byte	0
+ 519 0293 00       		.byte	0
+ 520 0294 00       		.byte	0
+ 521 0295 00       		.byte	0
+ 522 0296 00       		.byte	0
+ 523 0297 00       		.byte	0
+ 524 0298 00       		.byte	0
+ 525 0299 00       		.byte	0
+ 526 029a 00       		.byte	0
+ 527 029b 40       		.byte	0x40
+ 528 029c 00       		.byte	0
+ 529 029d 00       		.byte	0
+ 530 029e 00       		.byte	0
+ 531 029f 08       		.byte	0x8
+ 532 02a0 10       		.byte	0x10
+ 533 02a1 10       		.byte	0x10
+ 534 02a2 10       		.byte	0x10
+ 535 02a3 20       		.byte	0x20
+ 536 02a4 20       		.byte	0x20
+ 537 02a5 40       		.byte	0x40
+ 538 02a6 40       		.byte	0x40
+ 539 02a7 40       		.byte	0x40
+ 540 02a8 80       		.byte	0x80
+ 541 02a9 00       		.byte	0
+ 542 02aa 00       		.byte	0
+ 543 02ab 00       		.byte	0
+ 544 02ac 70       		.byte	0x70
+ 545 02ad 88       		.byte	0x88
+ 546 02ae 88       		.byte	0x88
+ 547 02af 88       		.byte	0x88
+ 548 02b0 88       		.byte	0x88
+ 549 02b1 88       		.byte	0x88
+ 550 02b2 88       		.byte	0x88
+ 551 02b3 70       		.byte	0x70
+ 552 02b4 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 12
+
+
+ 553 02b5 00       		.byte	0
+ 554 02b6 00       		.byte	0
+ 555 02b7 00       		.byte	0
+ 556 02b8 20       		.byte	0x20
+ 557 02b9 60       		.byte	0x60
+ 558 02ba 20       		.byte	0x20
+ 559 02bb 20       		.byte	0x20
+ 560 02bc 20       		.byte	0x20
+ 561 02bd 20       		.byte	0x20
+ 562 02be 20       		.byte	0x20
+ 563 02bf 70       		.byte	0x70
+ 564 02c0 00       		.byte	0
+ 565 02c1 00       		.byte	0
+ 566 02c2 00       		.byte	0
+ 567 02c3 00       		.byte	0
+ 568 02c4 70       		.byte	0x70
+ 569 02c5 88       		.byte	0x88
+ 570 02c6 88       		.byte	0x88
+ 571 02c7 10       		.byte	0x10
+ 572 02c8 20       		.byte	0x20
+ 573 02c9 40       		.byte	0x40
+ 574 02ca 80       		.byte	0x80
+ 575 02cb F8       		.byte	0xf8
+ 576 02cc 00       		.byte	0
+ 577 02cd 00       		.byte	0
+ 578 02ce 00       		.byte	0
+ 579 02cf 00       		.byte	0
+ 580 02d0 70       		.byte	0x70
+ 581 02d1 88       		.byte	0x88
+ 582 02d2 08       		.byte	0x8
+ 583 02d3 30       		.byte	0x30
+ 584 02d4 08       		.byte	0x8
+ 585 02d5 08       		.byte	0x8
+ 586 02d6 88       		.byte	0x88
+ 587 02d7 70       		.byte	0x70
+ 588 02d8 00       		.byte	0
+ 589 02d9 00       		.byte	0
+ 590 02da 00       		.byte	0
+ 591 02db 00       		.byte	0
+ 592 02dc 10       		.byte	0x10
+ 593 02dd 30       		.byte	0x30
+ 594 02de 50       		.byte	0x50
+ 595 02df 50       		.byte	0x50
+ 596 02e0 90       		.byte	0x90
+ 597 02e1 78       		.byte	0x78
+ 598 02e2 10       		.byte	0x10
+ 599 02e3 18       		.byte	0x18
+ 600 02e4 00       		.byte	0
+ 601 02e5 00       		.byte	0
+ 602 02e6 00       		.byte	0
+ 603 02e7 00       		.byte	0
+ 604 02e8 F8       		.byte	0xf8
+ 605 02e9 80       		.byte	0x80
+ 606 02ea 80       		.byte	0x80
+ 607 02eb F0       		.byte	0xf0
+ 608 02ec 08       		.byte	0x8
+ 609 02ed 08       		.byte	0x8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 13
+
+
+ 610 02ee 88       		.byte	0x88
+ 611 02ef 70       		.byte	0x70
+ 612 02f0 00       		.byte	0
+ 613 02f1 00       		.byte	0
+ 614 02f2 00       		.byte	0
+ 615 02f3 00       		.byte	0
+ 616 02f4 70       		.byte	0x70
+ 617 02f5 90       		.byte	0x90
+ 618 02f6 80       		.byte	0x80
+ 619 02f7 F0       		.byte	0xf0
+ 620 02f8 88       		.byte	0x88
+ 621 02f9 88       		.byte	0x88
+ 622 02fa 88       		.byte	0x88
+ 623 02fb 70       		.byte	0x70
+ 624 02fc 00       		.byte	0
+ 625 02fd 00       		.byte	0
+ 626 02fe 00       		.byte	0
+ 627 02ff 00       		.byte	0
+ 628 0300 F8       		.byte	0xf8
+ 629 0301 90       		.byte	0x90
+ 630 0302 10       		.byte	0x10
+ 631 0303 20       		.byte	0x20
+ 632 0304 20       		.byte	0x20
+ 633 0305 20       		.byte	0x20
+ 634 0306 20       		.byte	0x20
+ 635 0307 20       		.byte	0x20
+ 636 0308 00       		.byte	0
+ 637 0309 00       		.byte	0
+ 638 030a 00       		.byte	0
+ 639 030b 00       		.byte	0
+ 640 030c 70       		.byte	0x70
+ 641 030d 88       		.byte	0x88
+ 642 030e 88       		.byte	0x88
+ 643 030f 70       		.byte	0x70
+ 644 0310 88       		.byte	0x88
+ 645 0311 88       		.byte	0x88
+ 646 0312 88       		.byte	0x88
+ 647 0313 70       		.byte	0x70
+ 648 0314 00       		.byte	0
+ 649 0315 00       		.byte	0
+ 650 0316 00       		.byte	0
+ 651 0317 00       		.byte	0
+ 652 0318 70       		.byte	0x70
+ 653 0319 88       		.byte	0x88
+ 654 031a 88       		.byte	0x88
+ 655 031b 88       		.byte	0x88
+ 656 031c 78       		.byte	0x78
+ 657 031d 08       		.byte	0x8
+ 658 031e 48       		.byte	0x48
+ 659 031f 70       		.byte	0x70
+ 660 0320 00       		.byte	0
+ 661 0321 00       		.byte	0
+ 662 0322 00       		.byte	0
+ 663 0323 00       		.byte	0
+ 664 0324 00       		.byte	0
+ 665 0325 00       		.byte	0
+ 666 0326 20       		.byte	0x20
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 14
+
+
+ 667 0327 00       		.byte	0
+ 668 0328 00       		.byte	0
+ 669 0329 00       		.byte	0
+ 670 032a 00       		.byte	0
+ 671 032b 20       		.byte	0x20
+ 672 032c 00       		.byte	0
+ 673 032d 00       		.byte	0
+ 674 032e 00       		.byte	0
+ 675 032f 00       		.byte	0
+ 676 0330 00       		.byte	0
+ 677 0331 00       		.byte	0
+ 678 0332 00       		.byte	0
+ 679 0333 20       		.byte	0x20
+ 680 0334 00       		.byte	0
+ 681 0335 00       		.byte	0
+ 682 0336 00       		.byte	0
+ 683 0337 20       		.byte	0x20
+ 684 0338 20       		.byte	0x20
+ 685 0339 00       		.byte	0
+ 686 033a 00       		.byte	0
+ 687 033b 04       		.byte	0x4
+ 688 033c 08       		.byte	0x8
+ 689 033d 10       		.byte	0x10
+ 690 033e 20       		.byte	0x20
+ 691 033f 40       		.byte	0x40
+ 692 0340 20       		.byte	0x20
+ 693 0341 10       		.byte	0x10
+ 694 0342 08       		.byte	0x8
+ 695 0343 04       		.byte	0x4
+ 696 0344 00       		.byte	0
+ 697 0345 00       		.byte	0
+ 698 0346 00       		.byte	0
+ 699 0347 00       		.byte	0
+ 700 0348 00       		.byte	0
+ 701 0349 00       		.byte	0
+ 702 034a F8       		.byte	0xf8
+ 703 034b 00       		.byte	0
+ 704 034c 00       		.byte	0
+ 705 034d F8       		.byte	0xf8
+ 706 034e 00       		.byte	0
+ 707 034f 00       		.byte	0
+ 708 0350 00       		.byte	0
+ 709 0351 00       		.byte	0
+ 710 0352 00       		.byte	0
+ 711 0353 40       		.byte	0x40
+ 712 0354 20       		.byte	0x20
+ 713 0355 10       		.byte	0x10
+ 714 0356 08       		.byte	0x8
+ 715 0357 04       		.byte	0x4
+ 716 0358 08       		.byte	0x8
+ 717 0359 10       		.byte	0x10
+ 718 035a 20       		.byte	0x20
+ 719 035b 40       		.byte	0x40
+ 720 035c 00       		.byte	0
+ 721 035d 00       		.byte	0
+ 722 035e 00       		.byte	0
+ 723 035f 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 15
+
+
+ 724 0360 70       		.byte	0x70
+ 725 0361 88       		.byte	0x88
+ 726 0362 88       		.byte	0x88
+ 727 0363 10       		.byte	0x10
+ 728 0364 20       		.byte	0x20
+ 729 0365 20       		.byte	0x20
+ 730 0366 00       		.byte	0
+ 731 0367 20       		.byte	0x20
+ 732 0368 00       		.byte	0
+ 733 0369 00       		.byte	0
+ 734 036a 00       		.byte	0
+ 735 036b 00       		.byte	0
+ 736 036c 70       		.byte	0x70
+ 737 036d 88       		.byte	0x88
+ 738 036e 98       		.byte	0x98
+ 739 036f A8       		.byte	0xa8
+ 740 0370 A8       		.byte	0xa8
+ 741 0371 B8       		.byte	0xb8
+ 742 0372 80       		.byte	0x80
+ 743 0373 78       		.byte	0x78
+ 744 0374 00       		.byte	0
+ 745 0375 00       		.byte	0
+ 746 0376 00       		.byte	0
+ 747 0377 00       		.byte	0
+ 748 0378 20       		.byte	0x20
+ 749 0379 20       		.byte	0x20
+ 750 037a 30       		.byte	0x30
+ 751 037b 50       		.byte	0x50
+ 752 037c 50       		.byte	0x50
+ 753 037d 78       		.byte	0x78
+ 754 037e 48       		.byte	0x48
+ 755 037f CC       		.byte	0xcc
+ 756 0380 00       		.byte	0
+ 757 0381 00       		.byte	0
+ 758 0382 00       		.byte	0
+ 759 0383 00       		.byte	0
+ 760 0384 F0       		.byte	0xf0
+ 761 0385 48       		.byte	0x48
+ 762 0386 48       		.byte	0x48
+ 763 0387 70       		.byte	0x70
+ 764 0388 48       		.byte	0x48
+ 765 0389 48       		.byte	0x48
+ 766 038a 48       		.byte	0x48
+ 767 038b F0       		.byte	0xf0
+ 768 038c 00       		.byte	0
+ 769 038d 00       		.byte	0
+ 770 038e 00       		.byte	0
+ 771 038f 00       		.byte	0
+ 772 0390 78       		.byte	0x78
+ 773 0391 88       		.byte	0x88
+ 774 0392 80       		.byte	0x80
+ 775 0393 80       		.byte	0x80
+ 776 0394 80       		.byte	0x80
+ 777 0395 80       		.byte	0x80
+ 778 0396 88       		.byte	0x88
+ 779 0397 70       		.byte	0x70
+ 780 0398 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 16
+
+
+ 781 0399 00       		.byte	0
+ 782 039a 00       		.byte	0
+ 783 039b 00       		.byte	0
+ 784 039c F0       		.byte	0xf0
+ 785 039d 48       		.byte	0x48
+ 786 039e 48       		.byte	0x48
+ 787 039f 48       		.byte	0x48
+ 788 03a0 48       		.byte	0x48
+ 789 03a1 48       		.byte	0x48
+ 790 03a2 48       		.byte	0x48
+ 791 03a3 F0       		.byte	0xf0
+ 792 03a4 00       		.byte	0
+ 793 03a5 00       		.byte	0
+ 794 03a6 00       		.byte	0
+ 795 03a7 00       		.byte	0
+ 796 03a8 F8       		.byte	0xf8
+ 797 03a9 48       		.byte	0x48
+ 798 03aa 50       		.byte	0x50
+ 799 03ab 70       		.byte	0x70
+ 800 03ac 50       		.byte	0x50
+ 801 03ad 40       		.byte	0x40
+ 802 03ae 48       		.byte	0x48
+ 803 03af F8       		.byte	0xf8
+ 804 03b0 00       		.byte	0
+ 805 03b1 00       		.byte	0
+ 806 03b2 00       		.byte	0
+ 807 03b3 00       		.byte	0
+ 808 03b4 F8       		.byte	0xf8
+ 809 03b5 48       		.byte	0x48
+ 810 03b6 50       		.byte	0x50
+ 811 03b7 70       		.byte	0x70
+ 812 03b8 50       		.byte	0x50
+ 813 03b9 40       		.byte	0x40
+ 814 03ba 40       		.byte	0x40
+ 815 03bb E0       		.byte	0xe0
+ 816 03bc 00       		.byte	0
+ 817 03bd 00       		.byte	0
+ 818 03be 00       		.byte	0
+ 819 03bf 00       		.byte	0
+ 820 03c0 38       		.byte	0x38
+ 821 03c1 48       		.byte	0x48
+ 822 03c2 80       		.byte	0x80
+ 823 03c3 80       		.byte	0x80
+ 824 03c4 9C       		.byte	0x9c
+ 825 03c5 88       		.byte	0x88
+ 826 03c6 48       		.byte	0x48
+ 827 03c7 30       		.byte	0x30
+ 828 03c8 00       		.byte	0
+ 829 03c9 00       		.byte	0
+ 830 03ca 00       		.byte	0
+ 831 03cb 00       		.byte	0
+ 832 03cc CC       		.byte	0xcc
+ 833 03cd 48       		.byte	0x48
+ 834 03ce 48       		.byte	0x48
+ 835 03cf 78       		.byte	0x78
+ 836 03d0 48       		.byte	0x48
+ 837 03d1 48       		.byte	0x48
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 17
+
+
+ 838 03d2 48       		.byte	0x48
+ 839 03d3 CC       		.byte	0xcc
+ 840 03d4 00       		.byte	0
+ 841 03d5 00       		.byte	0
+ 842 03d6 00       		.byte	0
+ 843 03d7 00       		.byte	0
+ 844 03d8 F8       		.byte	0xf8
+ 845 03d9 20       		.byte	0x20
+ 846 03da 20       		.byte	0x20
+ 847 03db 20       		.byte	0x20
+ 848 03dc 20       		.byte	0x20
+ 849 03dd 20       		.byte	0x20
+ 850 03de 20       		.byte	0x20
+ 851 03df F8       		.byte	0xf8
+ 852 03e0 00       		.byte	0
+ 853 03e1 00       		.byte	0
+ 854 03e2 00       		.byte	0
+ 855 03e3 00       		.byte	0
+ 856 03e4 7C       		.byte	0x7c
+ 857 03e5 10       		.byte	0x10
+ 858 03e6 10       		.byte	0x10
+ 859 03e7 10       		.byte	0x10
+ 860 03e8 10       		.byte	0x10
+ 861 03e9 10       		.byte	0x10
+ 862 03ea 10       		.byte	0x10
+ 863 03eb 90       		.byte	0x90
+ 864 03ec E0       		.byte	0xe0
+ 865 03ed 00       		.byte	0
+ 866 03ee 00       		.byte	0
+ 867 03ef 00       		.byte	0
+ 868 03f0 EC       		.byte	0xec
+ 869 03f1 48       		.byte	0x48
+ 870 03f2 50       		.byte	0x50
+ 871 03f3 60       		.byte	0x60
+ 872 03f4 50       		.byte	0x50
+ 873 03f5 50       		.byte	0x50
+ 874 03f6 48       		.byte	0x48
+ 875 03f7 EC       		.byte	0xec
+ 876 03f8 00       		.byte	0
+ 877 03f9 00       		.byte	0
+ 878 03fa 00       		.byte	0
+ 879 03fb 00       		.byte	0
+ 880 03fc E0       		.byte	0xe0
+ 881 03fd 40       		.byte	0x40
+ 882 03fe 40       		.byte	0x40
+ 883 03ff 40       		.byte	0x40
+ 884 0400 40       		.byte	0x40
+ 885 0401 40       		.byte	0x40
+ 886 0402 44       		.byte	0x44
+ 887 0403 FC       		.byte	0xfc
+ 888 0404 00       		.byte	0
+ 889 0405 00       		.byte	0
+ 890 0406 00       		.byte	0
+ 891 0407 00       		.byte	0
+ 892 0408 D8       		.byte	0xd8
+ 893 0409 D8       		.byte	0xd8
+ 894 040a D8       		.byte	0xd8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 18
+
+
+ 895 040b D8       		.byte	0xd8
+ 896 040c A8       		.byte	0xa8
+ 897 040d A8       		.byte	0xa8
+ 898 040e A8       		.byte	0xa8
+ 899 040f A8       		.byte	0xa8
+ 900 0410 00       		.byte	0
+ 901 0411 00       		.byte	0
+ 902 0412 00       		.byte	0
+ 903 0413 00       		.byte	0
+ 904 0414 DC       		.byte	0xdc
+ 905 0415 48       		.byte	0x48
+ 906 0416 68       		.byte	0x68
+ 907 0417 68       		.byte	0x68
+ 908 0418 58       		.byte	0x58
+ 909 0419 58       		.byte	0x58
+ 910 041a 48       		.byte	0x48
+ 911 041b E8       		.byte	0xe8
+ 912 041c 00       		.byte	0
+ 913 041d 00       		.byte	0
+ 914 041e 00       		.byte	0
+ 915 041f 00       		.byte	0
+ 916 0420 70       		.byte	0x70
+ 917 0421 88       		.byte	0x88
+ 918 0422 88       		.byte	0x88
+ 919 0423 88       		.byte	0x88
+ 920 0424 88       		.byte	0x88
+ 921 0425 88       		.byte	0x88
+ 922 0426 88       		.byte	0x88
+ 923 0427 70       		.byte	0x70
+ 924 0428 00       		.byte	0
+ 925 0429 00       		.byte	0
+ 926 042a 00       		.byte	0
+ 927 042b 00       		.byte	0
+ 928 042c F0       		.byte	0xf0
+ 929 042d 48       		.byte	0x48
+ 930 042e 48       		.byte	0x48
+ 931 042f 70       		.byte	0x70
+ 932 0430 40       		.byte	0x40
+ 933 0431 40       		.byte	0x40
+ 934 0432 40       		.byte	0x40
+ 935 0433 E0       		.byte	0xe0
+ 936 0434 00       		.byte	0
+ 937 0435 00       		.byte	0
+ 938 0436 00       		.byte	0
+ 939 0437 00       		.byte	0
+ 940 0438 70       		.byte	0x70
+ 941 0439 88       		.byte	0x88
+ 942 043a 88       		.byte	0x88
+ 943 043b 88       		.byte	0x88
+ 944 043c 88       		.byte	0x88
+ 945 043d E8       		.byte	0xe8
+ 946 043e 98       		.byte	0x98
+ 947 043f 70       		.byte	0x70
+ 948 0440 18       		.byte	0x18
+ 949 0441 00       		.byte	0
+ 950 0442 00       		.byte	0
+ 951 0443 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 19
+
+
+ 952 0444 F0       		.byte	0xf0
+ 953 0445 48       		.byte	0x48
+ 954 0446 48       		.byte	0x48
+ 955 0447 70       		.byte	0x70
+ 956 0448 50       		.byte	0x50
+ 957 0449 48       		.byte	0x48
+ 958 044a 48       		.byte	0x48
+ 959 044b EC       		.byte	0xec
+ 960 044c 00       		.byte	0
+ 961 044d 00       		.byte	0
+ 962 044e 00       		.byte	0
+ 963 044f 00       		.byte	0
+ 964 0450 78       		.byte	0x78
+ 965 0451 88       		.byte	0x88
+ 966 0452 80       		.byte	0x80
+ 967 0453 60       		.byte	0x60
+ 968 0454 10       		.byte	0x10
+ 969 0455 08       		.byte	0x8
+ 970 0456 88       		.byte	0x88
+ 971 0457 F0       		.byte	0xf0
+ 972 0458 00       		.byte	0
+ 973 0459 00       		.byte	0
+ 974 045a 00       		.byte	0
+ 975 045b 00       		.byte	0
+ 976 045c F8       		.byte	0xf8
+ 977 045d A8       		.byte	0xa8
+ 978 045e 20       		.byte	0x20
+ 979 045f 20       		.byte	0x20
+ 980 0460 20       		.byte	0x20
+ 981 0461 20       		.byte	0x20
+ 982 0462 20       		.byte	0x20
+ 983 0463 70       		.byte	0x70
+ 984 0464 00       		.byte	0
+ 985 0465 00       		.byte	0
+ 986 0466 00       		.byte	0
+ 987 0467 00       		.byte	0
+ 988 0468 CC       		.byte	0xcc
+ 989 0469 48       		.byte	0x48
+ 990 046a 48       		.byte	0x48
+ 991 046b 48       		.byte	0x48
+ 992 046c 48       		.byte	0x48
+ 993 046d 48       		.byte	0x48
+ 994 046e 48       		.byte	0x48
+ 995 046f 30       		.byte	0x30
+ 996 0470 00       		.byte	0
+ 997 0471 00       		.byte	0
+ 998 0472 00       		.byte	0
+ 999 0473 00       		.byte	0
+ 1000 0474 CC       		.byte	0xcc
+ 1001 0475 48       		.byte	0x48
+ 1002 0476 48       		.byte	0x48
+ 1003 0477 50       		.byte	0x50
+ 1004 0478 50       		.byte	0x50
+ 1005 0479 30       		.byte	0x30
+ 1006 047a 20       		.byte	0x20
+ 1007 047b 20       		.byte	0x20
+ 1008 047c 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 20
+
+
+ 1009 047d 00       		.byte	0
+ 1010 047e 00       		.byte	0
+ 1011 047f 00       		.byte	0
+ 1012 0480 A8       		.byte	0xa8
+ 1013 0481 A8       		.byte	0xa8
+ 1014 0482 A8       		.byte	0xa8
+ 1015 0483 70       		.byte	0x70
+ 1016 0484 50       		.byte	0x50
+ 1017 0485 50       		.byte	0x50
+ 1018 0486 50       		.byte	0x50
+ 1019 0487 50       		.byte	0x50
+ 1020 0488 00       		.byte	0
+ 1021 0489 00       		.byte	0
+ 1022 048a 00       		.byte	0
+ 1023 048b 00       		.byte	0
+ 1024 048c D8       		.byte	0xd8
+ 1025 048d 50       		.byte	0x50
+ 1026 048e 50       		.byte	0x50
+ 1027 048f 20       		.byte	0x20
+ 1028 0490 20       		.byte	0x20
+ 1029 0491 50       		.byte	0x50
+ 1030 0492 50       		.byte	0x50
+ 1031 0493 D8       		.byte	0xd8
+ 1032 0494 00       		.byte	0
+ 1033 0495 00       		.byte	0
+ 1034 0496 00       		.byte	0
+ 1035 0497 00       		.byte	0
+ 1036 0498 D8       		.byte	0xd8
+ 1037 0499 50       		.byte	0x50
+ 1038 049a 50       		.byte	0x50
+ 1039 049b 20       		.byte	0x20
+ 1040 049c 20       		.byte	0x20
+ 1041 049d 20       		.byte	0x20
+ 1042 049e 20       		.byte	0x20
+ 1043 049f 70       		.byte	0x70
+ 1044 04a0 00       		.byte	0
+ 1045 04a1 00       		.byte	0
+ 1046 04a2 00       		.byte	0
+ 1047 04a3 00       		.byte	0
+ 1048 04a4 F8       		.byte	0xf8
+ 1049 04a5 90       		.byte	0x90
+ 1050 04a6 10       		.byte	0x10
+ 1051 04a7 20       		.byte	0x20
+ 1052 04a8 20       		.byte	0x20
+ 1053 04a9 40       		.byte	0x40
+ 1054 04aa 48       		.byte	0x48
+ 1055 04ab F8       		.byte	0xf8
+ 1056 04ac 00       		.byte	0
+ 1057 04ad 00       		.byte	0
+ 1058 04ae 00       		.byte	0
+ 1059 04af 38       		.byte	0x38
+ 1060 04b0 20       		.byte	0x20
+ 1061 04b1 20       		.byte	0x20
+ 1062 04b2 20       		.byte	0x20
+ 1063 04b3 20       		.byte	0x20
+ 1064 04b4 20       		.byte	0x20
+ 1065 04b5 20       		.byte	0x20
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 21
+
+
+ 1066 04b6 20       		.byte	0x20
+ 1067 04b7 20       		.byte	0x20
+ 1068 04b8 38       		.byte	0x38
+ 1069 04b9 00       		.byte	0
+ 1070 04ba 00       		.byte	0
+ 1071 04bb 40       		.byte	0x40
+ 1072 04bc 40       		.byte	0x40
+ 1073 04bd 40       		.byte	0x40
+ 1074 04be 20       		.byte	0x20
+ 1075 04bf 20       		.byte	0x20
+ 1076 04c0 10       		.byte	0x10
+ 1077 04c1 10       		.byte	0x10
+ 1078 04c2 10       		.byte	0x10
+ 1079 04c3 08       		.byte	0x8
+ 1080 04c4 00       		.byte	0
+ 1081 04c5 00       		.byte	0
+ 1082 04c6 00       		.byte	0
+ 1083 04c7 70       		.byte	0x70
+ 1084 04c8 10       		.byte	0x10
+ 1085 04c9 10       		.byte	0x10
+ 1086 04ca 10       		.byte	0x10
+ 1087 04cb 10       		.byte	0x10
+ 1088 04cc 10       		.byte	0x10
+ 1089 04cd 10       		.byte	0x10
+ 1090 04ce 10       		.byte	0x10
+ 1091 04cf 10       		.byte	0x10
+ 1092 04d0 70       		.byte	0x70
+ 1093 04d1 00       		.byte	0
+ 1094 04d2 00       		.byte	0
+ 1095 04d3 20       		.byte	0x20
+ 1096 04d4 50       		.byte	0x50
+ 1097 04d5 00       		.byte	0
+ 1098 04d6 00       		.byte	0
+ 1099 04d7 00       		.byte	0
+ 1100 04d8 00       		.byte	0
+ 1101 04d9 00       		.byte	0
+ 1102 04da 00       		.byte	0
+ 1103 04db 00       		.byte	0
+ 1104 04dc 00       		.byte	0
+ 1105 04dd 00       		.byte	0
+ 1106 04de 00       		.byte	0
+ 1107 04df 00       		.byte	0
+ 1108 04e0 00       		.byte	0
+ 1109 04e1 00       		.byte	0
+ 1110 04e2 00       		.byte	0
+ 1111 04e3 00       		.byte	0
+ 1112 04e4 00       		.byte	0
+ 1113 04e5 00       		.byte	0
+ 1114 04e6 00       		.byte	0
+ 1115 04e7 00       		.byte	0
+ 1116 04e8 00       		.byte	0
+ 1117 04e9 FC       		.byte	0xfc
+ 1118 04ea 00       		.byte	0
+ 1119 04eb 20       		.byte	0x20
+ 1120 04ec 00       		.byte	0
+ 1121 04ed 00       		.byte	0
+ 1122 04ee 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 22
+
+
+ 1123 04ef 00       		.byte	0
+ 1124 04f0 00       		.byte	0
+ 1125 04f1 00       		.byte	0
+ 1126 04f2 00       		.byte	0
+ 1127 04f3 00       		.byte	0
+ 1128 04f4 00       		.byte	0
+ 1129 04f5 00       		.byte	0
+ 1130 04f6 00       		.byte	0
+ 1131 04f7 00       		.byte	0
+ 1132 04f8 00       		.byte	0
+ 1133 04f9 00       		.byte	0
+ 1134 04fa 00       		.byte	0
+ 1135 04fb 30       		.byte	0x30
+ 1136 04fc 48       		.byte	0x48
+ 1137 04fd 38       		.byte	0x38
+ 1138 04fe 48       		.byte	0x48
+ 1139 04ff 3C       		.byte	0x3c
+ 1140 0500 00       		.byte	0
+ 1141 0501 00       		.byte	0
+ 1142 0502 00       		.byte	0
+ 1143 0503 00       		.byte	0
+ 1144 0504 C0       		.byte	0xc0
+ 1145 0505 40       		.byte	0x40
+ 1146 0506 40       		.byte	0x40
+ 1147 0507 70       		.byte	0x70
+ 1148 0508 48       		.byte	0x48
+ 1149 0509 48       		.byte	0x48
+ 1150 050a 48       		.byte	0x48
+ 1151 050b 70       		.byte	0x70
+ 1152 050c 00       		.byte	0
+ 1153 050d 00       		.byte	0
+ 1154 050e 00       		.byte	0
+ 1155 050f 00       		.byte	0
+ 1156 0510 00       		.byte	0
+ 1157 0511 00       		.byte	0
+ 1158 0512 00       		.byte	0
+ 1159 0513 38       		.byte	0x38
+ 1160 0514 48       		.byte	0x48
+ 1161 0515 40       		.byte	0x40
+ 1162 0516 40       		.byte	0x40
+ 1163 0517 38       		.byte	0x38
+ 1164 0518 00       		.byte	0
+ 1165 0519 00       		.byte	0
+ 1166 051a 00       		.byte	0
+ 1167 051b 00       		.byte	0
+ 1168 051c 18       		.byte	0x18
+ 1169 051d 08       		.byte	0x8
+ 1170 051e 08       		.byte	0x8
+ 1171 051f 38       		.byte	0x38
+ 1172 0520 48       		.byte	0x48
+ 1173 0521 48       		.byte	0x48
+ 1174 0522 48       		.byte	0x48
+ 1175 0523 3C       		.byte	0x3c
+ 1176 0524 00       		.byte	0
+ 1177 0525 00       		.byte	0
+ 1178 0526 00       		.byte	0
+ 1179 0527 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 23
+
+
+ 1180 0528 00       		.byte	0
+ 1181 0529 00       		.byte	0
+ 1182 052a 00       		.byte	0
+ 1183 052b 30       		.byte	0x30
+ 1184 052c 48       		.byte	0x48
+ 1185 052d 78       		.byte	0x78
+ 1186 052e 40       		.byte	0x40
+ 1187 052f 38       		.byte	0x38
+ 1188 0530 00       		.byte	0
+ 1189 0531 00       		.byte	0
+ 1190 0532 00       		.byte	0
+ 1191 0533 00       		.byte	0
+ 1192 0534 1C       		.byte	0x1c
+ 1193 0535 20       		.byte	0x20
+ 1194 0536 20       		.byte	0x20
+ 1195 0537 78       		.byte	0x78
+ 1196 0538 20       		.byte	0x20
+ 1197 0539 20       		.byte	0x20
+ 1198 053a 20       		.byte	0x20
+ 1199 053b 78       		.byte	0x78
+ 1200 053c 00       		.byte	0
+ 1201 053d 00       		.byte	0
+ 1202 053e 00       		.byte	0
+ 1203 053f 00       		.byte	0
+ 1204 0540 00       		.byte	0
+ 1205 0541 00       		.byte	0
+ 1206 0542 00       		.byte	0
+ 1207 0543 3C       		.byte	0x3c
+ 1208 0544 48       		.byte	0x48
+ 1209 0545 30       		.byte	0x30
+ 1210 0546 40       		.byte	0x40
+ 1211 0547 78       		.byte	0x78
+ 1212 0548 44       		.byte	0x44
+ 1213 0549 38       		.byte	0x38
+ 1214 054a 00       		.byte	0
+ 1215 054b 00       		.byte	0
+ 1216 054c C0       		.byte	0xc0
+ 1217 054d 40       		.byte	0x40
+ 1218 054e 40       		.byte	0x40
+ 1219 054f 70       		.byte	0x70
+ 1220 0550 48       		.byte	0x48
+ 1221 0551 48       		.byte	0x48
+ 1222 0552 48       		.byte	0x48
+ 1223 0553 EC       		.byte	0xec
+ 1224 0554 00       		.byte	0
+ 1225 0555 00       		.byte	0
+ 1226 0556 00       		.byte	0
+ 1227 0557 00       		.byte	0
+ 1228 0558 20       		.byte	0x20
+ 1229 0559 00       		.byte	0
+ 1230 055a 00       		.byte	0
+ 1231 055b 60       		.byte	0x60
+ 1232 055c 20       		.byte	0x20
+ 1233 055d 20       		.byte	0x20
+ 1234 055e 20       		.byte	0x20
+ 1235 055f 70       		.byte	0x70
+ 1236 0560 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 24
+
+
+ 1237 0561 00       		.byte	0
+ 1238 0562 00       		.byte	0
+ 1239 0563 00       		.byte	0
+ 1240 0564 10       		.byte	0x10
+ 1241 0565 00       		.byte	0
+ 1242 0566 00       		.byte	0
+ 1243 0567 30       		.byte	0x30
+ 1244 0568 10       		.byte	0x10
+ 1245 0569 10       		.byte	0x10
+ 1246 056a 10       		.byte	0x10
+ 1247 056b 10       		.byte	0x10
+ 1248 056c 10       		.byte	0x10
+ 1249 056d E0       		.byte	0xe0
+ 1250 056e 00       		.byte	0
+ 1251 056f 00       		.byte	0
+ 1252 0570 C0       		.byte	0xc0
+ 1253 0571 40       		.byte	0x40
+ 1254 0572 40       		.byte	0x40
+ 1255 0573 5C       		.byte	0x5c
+ 1256 0574 50       		.byte	0x50
+ 1257 0575 70       		.byte	0x70
+ 1258 0576 48       		.byte	0x48
+ 1259 0577 EC       		.byte	0xec
+ 1260 0578 00       		.byte	0
+ 1261 0579 00       		.byte	0
+ 1262 057a 00       		.byte	0
+ 1263 057b 00       		.byte	0
+ 1264 057c E0       		.byte	0xe0
+ 1265 057d 20       		.byte	0x20
+ 1266 057e 20       		.byte	0x20
+ 1267 057f 20       		.byte	0x20
+ 1268 0580 20       		.byte	0x20
+ 1269 0581 20       		.byte	0x20
+ 1270 0582 20       		.byte	0x20
+ 1271 0583 F8       		.byte	0xf8
+ 1272 0584 00       		.byte	0
+ 1273 0585 00       		.byte	0
+ 1274 0586 00       		.byte	0
+ 1275 0587 00       		.byte	0
+ 1276 0588 00       		.byte	0
+ 1277 0589 00       		.byte	0
+ 1278 058a 00       		.byte	0
+ 1279 058b F0       		.byte	0xf0
+ 1280 058c A8       		.byte	0xa8
+ 1281 058d A8       		.byte	0xa8
+ 1282 058e A8       		.byte	0xa8
+ 1283 058f A8       		.byte	0xa8
+ 1284 0590 00       		.byte	0
+ 1285 0591 00       		.byte	0
+ 1286 0592 00       		.byte	0
+ 1287 0593 00       		.byte	0
+ 1288 0594 00       		.byte	0
+ 1289 0595 00       		.byte	0
+ 1290 0596 00       		.byte	0
+ 1291 0597 F0       		.byte	0xf0
+ 1292 0598 48       		.byte	0x48
+ 1293 0599 48       		.byte	0x48
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 25
+
+
+ 1294 059a 48       		.byte	0x48
+ 1295 059b EC       		.byte	0xec
+ 1296 059c 00       		.byte	0
+ 1297 059d 00       		.byte	0
+ 1298 059e 00       		.byte	0
+ 1299 059f 00       		.byte	0
+ 1300 05a0 00       		.byte	0
+ 1301 05a1 00       		.byte	0
+ 1302 05a2 00       		.byte	0
+ 1303 05a3 30       		.byte	0x30
+ 1304 05a4 48       		.byte	0x48
+ 1305 05a5 48       		.byte	0x48
+ 1306 05a6 48       		.byte	0x48
+ 1307 05a7 30       		.byte	0x30
+ 1308 05a8 00       		.byte	0
+ 1309 05a9 00       		.byte	0
+ 1310 05aa 00       		.byte	0
+ 1311 05ab 00       		.byte	0
+ 1312 05ac 00       		.byte	0
+ 1313 05ad 00       		.byte	0
+ 1314 05ae 00       		.byte	0
+ 1315 05af F0       		.byte	0xf0
+ 1316 05b0 48       		.byte	0x48
+ 1317 05b1 48       		.byte	0x48
+ 1318 05b2 48       		.byte	0x48
+ 1319 05b3 70       		.byte	0x70
+ 1320 05b4 40       		.byte	0x40
+ 1321 05b5 E0       		.byte	0xe0
+ 1322 05b6 00       		.byte	0
+ 1323 05b7 00       		.byte	0
+ 1324 05b8 00       		.byte	0
+ 1325 05b9 00       		.byte	0
+ 1326 05ba 00       		.byte	0
+ 1327 05bb 38       		.byte	0x38
+ 1328 05bc 48       		.byte	0x48
+ 1329 05bd 48       		.byte	0x48
+ 1330 05be 48       		.byte	0x48
+ 1331 05bf 38       		.byte	0x38
+ 1332 05c0 08       		.byte	0x8
+ 1333 05c1 1C       		.byte	0x1c
+ 1334 05c2 00       		.byte	0
+ 1335 05c3 00       		.byte	0
+ 1336 05c4 00       		.byte	0
+ 1337 05c5 00       		.byte	0
+ 1338 05c6 00       		.byte	0
+ 1339 05c7 D8       		.byte	0xd8
+ 1340 05c8 60       		.byte	0x60
+ 1341 05c9 40       		.byte	0x40
+ 1342 05ca 40       		.byte	0x40
+ 1343 05cb E0       		.byte	0xe0
+ 1344 05cc 00       		.byte	0
+ 1345 05cd 00       		.byte	0
+ 1346 05ce 00       		.byte	0
+ 1347 05cf 00       		.byte	0
+ 1348 05d0 00       		.byte	0
+ 1349 05d1 00       		.byte	0
+ 1350 05d2 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 26
+
+
+ 1351 05d3 78       		.byte	0x78
+ 1352 05d4 40       		.byte	0x40
+ 1353 05d5 30       		.byte	0x30
+ 1354 05d6 08       		.byte	0x8
+ 1355 05d7 78       		.byte	0x78
+ 1356 05d8 00       		.byte	0
+ 1357 05d9 00       		.byte	0
+ 1358 05da 00       		.byte	0
+ 1359 05db 00       		.byte	0
+ 1360 05dc 00       		.byte	0
+ 1361 05dd 20       		.byte	0x20
+ 1362 05de 20       		.byte	0x20
+ 1363 05df 70       		.byte	0x70
+ 1364 05e0 20       		.byte	0x20
+ 1365 05e1 20       		.byte	0x20
+ 1366 05e2 20       		.byte	0x20
+ 1367 05e3 18       		.byte	0x18
+ 1368 05e4 00       		.byte	0
+ 1369 05e5 00       		.byte	0
+ 1370 05e6 00       		.byte	0
+ 1371 05e7 00       		.byte	0
+ 1372 05e8 00       		.byte	0
+ 1373 05e9 00       		.byte	0
+ 1374 05ea 00       		.byte	0
+ 1375 05eb D8       		.byte	0xd8
+ 1376 05ec 48       		.byte	0x48
+ 1377 05ed 48       		.byte	0x48
+ 1378 05ee 48       		.byte	0x48
+ 1379 05ef 3C       		.byte	0x3c
+ 1380 05f0 00       		.byte	0
+ 1381 05f1 00       		.byte	0
+ 1382 05f2 00       		.byte	0
+ 1383 05f3 00       		.byte	0
+ 1384 05f4 00       		.byte	0
+ 1385 05f5 00       		.byte	0
+ 1386 05f6 00       		.byte	0
+ 1387 05f7 EC       		.byte	0xec
+ 1388 05f8 48       		.byte	0x48
+ 1389 05f9 50       		.byte	0x50
+ 1390 05fa 30       		.byte	0x30
+ 1391 05fb 20       		.byte	0x20
+ 1392 05fc 00       		.byte	0
+ 1393 05fd 00       		.byte	0
+ 1394 05fe 00       		.byte	0
+ 1395 05ff 00       		.byte	0
+ 1396 0600 00       		.byte	0
+ 1397 0601 00       		.byte	0
+ 1398 0602 00       		.byte	0
+ 1399 0603 A8       		.byte	0xa8
+ 1400 0604 A8       		.byte	0xa8
+ 1401 0605 70       		.byte	0x70
+ 1402 0606 50       		.byte	0x50
+ 1403 0607 50       		.byte	0x50
+ 1404 0608 00       		.byte	0
+ 1405 0609 00       		.byte	0
+ 1406 060a 00       		.byte	0
+ 1407 060b 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 27
+
+
+ 1408 060c 00       		.byte	0
+ 1409 060d 00       		.byte	0
+ 1410 060e 00       		.byte	0
+ 1411 060f D8       		.byte	0xd8
+ 1412 0610 50       		.byte	0x50
+ 1413 0611 20       		.byte	0x20
+ 1414 0612 50       		.byte	0x50
+ 1415 0613 D8       		.byte	0xd8
+ 1416 0614 00       		.byte	0
+ 1417 0615 00       		.byte	0
+ 1418 0616 00       		.byte	0
+ 1419 0617 00       		.byte	0
+ 1420 0618 00       		.byte	0
+ 1421 0619 00       		.byte	0
+ 1422 061a 00       		.byte	0
+ 1423 061b EC       		.byte	0xec
+ 1424 061c 48       		.byte	0x48
+ 1425 061d 50       		.byte	0x50
+ 1426 061e 30       		.byte	0x30
+ 1427 061f 20       		.byte	0x20
+ 1428 0620 20       		.byte	0x20
+ 1429 0621 C0       		.byte	0xc0
+ 1430 0622 00       		.byte	0
+ 1431 0623 00       		.byte	0
+ 1432 0624 00       		.byte	0
+ 1433 0625 00       		.byte	0
+ 1434 0626 00       		.byte	0
+ 1435 0627 78       		.byte	0x78
+ 1436 0628 10       		.byte	0x10
+ 1437 0629 20       		.byte	0x20
+ 1438 062a 20       		.byte	0x20
+ 1439 062b 78       		.byte	0x78
+ 1440 062c 00       		.byte	0
+ 1441 062d 00       		.byte	0
+ 1442 062e 00       		.byte	0
+ 1443 062f 18       		.byte	0x18
+ 1444 0630 10       		.byte	0x10
+ 1445 0631 10       		.byte	0x10
+ 1446 0632 10       		.byte	0x10
+ 1447 0633 20       		.byte	0x20
+ 1448 0634 10       		.byte	0x10
+ 1449 0635 10       		.byte	0x10
+ 1450 0636 10       		.byte	0x10
+ 1451 0637 10       		.byte	0x10
+ 1452 0638 18       		.byte	0x18
+ 1453 0639 00       		.byte	0
+ 1454 063a 10       		.byte	0x10
+ 1455 063b 10       		.byte	0x10
+ 1456 063c 10       		.byte	0x10
+ 1457 063d 10       		.byte	0x10
+ 1458 063e 10       		.byte	0x10
+ 1459 063f 10       		.byte	0x10
+ 1460 0640 10       		.byte	0x10
+ 1461 0641 10       		.byte	0x10
+ 1462 0642 10       		.byte	0x10
+ 1463 0643 10       		.byte	0x10
+ 1464 0644 10       		.byte	0x10
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 28
+
+
+ 1465 0645 10       		.byte	0x10
+ 1466 0646 00       		.byte	0
+ 1467 0647 60       		.byte	0x60
+ 1468 0648 20       		.byte	0x20
+ 1469 0649 20       		.byte	0x20
+ 1470 064a 20       		.byte	0x20
+ 1471 064b 10       		.byte	0x10
+ 1472 064c 20       		.byte	0x20
+ 1473 064d 20       		.byte	0x20
+ 1474 064e 20       		.byte	0x20
+ 1475 064f 20       		.byte	0x20
+ 1476 0650 60       		.byte	0x60
+ 1477 0651 00       		.byte	0
+ 1478 0652 40       		.byte	0x40
+ 1479 0653 A4       		.byte	0xa4
+ 1480 0654 18       		.byte	0x18
+ 1481 0655 00       		.byte	0
+ 1482 0656 00       		.byte	0
+ 1483 0657 00       		.byte	0
+ 1484 0658 00       		.byte	0
+ 1485 0659 00       		.byte	0
+ 1486 065a 00       		.byte	0
+ 1487 065b 00       		.byte	0
+ 1488 065c 00       		.byte	0
+ 1489 065d 00       		.byte	0
+ 1490 065e 0F       		.uleb128 0xf
+ 1491 065f C3010000 		.4byte	0x1c3
+ 1492 0663 0D       		.uleb128 0xd
+ 1493 0664 D4010000 		.4byte	0x1d4
+ 1494 0668 74060000 		.4byte	0x674
+ 1495 066c 0E       		.uleb128 0xe
+ 1496 066d 9F000000 		.4byte	0x9f
+ 1497 0671 F305     		.2byte	0x5f3
+ 1498 0673 00       		.byte	0
+ 1499 0674 10       		.uleb128 0x10
+ 1500 0675 62020000 		.4byte	.LASF22
+ 1501 0679 04       		.byte	0x4
+ 1502 067a 80       		.byte	0x80
+ 1503 067b 750C0000 		.4byte	0xc75
+ 1504 067f F405     		.2byte	0x5f4
+ 1505 0681 08       		.byte	0x8
+ 1506 0682 10       		.byte	0x10
+ 1507 0683 20       		.byte	0x20
+ 1508 0684 5F       		.byte	0x5f
+ 1509 0685 00       		.byte	0
+ 1510 0686 00       		.byte	0
+ 1511 0687 00       		.byte	0
+ 1512 0688 00       		.byte	0
+ 1513 0689 00       		.byte	0
+ 1514 068a 00       		.byte	0
+ 1515 068b 00       		.byte	0
+ 1516 068c 00       		.byte	0
+ 1517 068d 00       		.byte	0
+ 1518 068e 00       		.byte	0
+ 1519 068f 00       		.byte	0
+ 1520 0690 00       		.byte	0
+ 1521 0691 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 29
+
+
+ 1522 0692 00       		.byte	0
+ 1523 0693 00       		.byte	0
+ 1524 0694 00       		.byte	0
+ 1525 0695 00       		.byte	0
+ 1526 0696 00       		.byte	0
+ 1527 0697 18       		.byte	0x18
+ 1528 0698 3C       		.byte	0x3c
+ 1529 0699 3C       		.byte	0x3c
+ 1530 069a 3C       		.byte	0x3c
+ 1531 069b 18       		.byte	0x18
+ 1532 069c 18       		.byte	0x18
+ 1533 069d 18       		.byte	0x18
+ 1534 069e 00       		.byte	0
+ 1535 069f 18       		.byte	0x18
+ 1536 06a0 18       		.byte	0x18
+ 1537 06a1 00       		.byte	0
+ 1538 06a2 00       		.byte	0
+ 1539 06a3 00       		.byte	0
+ 1540 06a4 00       		.byte	0
+ 1541 06a5 00       		.byte	0
+ 1542 06a6 66       		.byte	0x66
+ 1543 06a7 66       		.byte	0x66
+ 1544 06a8 66       		.byte	0x66
+ 1545 06a9 24       		.byte	0x24
+ 1546 06aa 00       		.byte	0
+ 1547 06ab 00       		.byte	0
+ 1548 06ac 00       		.byte	0
+ 1549 06ad 00       		.byte	0
+ 1550 06ae 00       		.byte	0
+ 1551 06af 00       		.byte	0
+ 1552 06b0 00       		.byte	0
+ 1553 06b1 00       		.byte	0
+ 1554 06b2 00       		.byte	0
+ 1555 06b3 00       		.byte	0
+ 1556 06b4 00       		.byte	0
+ 1557 06b5 00       		.byte	0
+ 1558 06b6 00       		.byte	0
+ 1559 06b7 00       		.byte	0
+ 1560 06b8 6C       		.byte	0x6c
+ 1561 06b9 6C       		.byte	0x6c
+ 1562 06ba FE       		.byte	0xfe
+ 1563 06bb 6C       		.byte	0x6c
+ 1564 06bc 6C       		.byte	0x6c
+ 1565 06bd 6C       		.byte	0x6c
+ 1566 06be FE       		.byte	0xfe
+ 1567 06bf 6C       		.byte	0x6c
+ 1568 06c0 6C       		.byte	0x6c
+ 1569 06c1 00       		.byte	0
+ 1570 06c2 00       		.byte	0
+ 1571 06c3 00       		.byte	0
+ 1572 06c4 00       		.byte	0
+ 1573 06c5 18       		.byte	0x18
+ 1574 06c6 18       		.byte	0x18
+ 1575 06c7 7C       		.byte	0x7c
+ 1576 06c8 C6       		.byte	0xc6
+ 1577 06c9 C2       		.byte	0xc2
+ 1578 06ca C0       		.byte	0xc0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 30
+
+
+ 1579 06cb 7C       		.byte	0x7c
+ 1580 06cc 06       		.byte	0x6
+ 1581 06cd 06       		.byte	0x6
+ 1582 06ce 86       		.byte	0x86
+ 1583 06cf C6       		.byte	0xc6
+ 1584 06d0 7C       		.byte	0x7c
+ 1585 06d1 18       		.byte	0x18
+ 1586 06d2 18       		.byte	0x18
+ 1587 06d3 00       		.byte	0
+ 1588 06d4 00       		.byte	0
+ 1589 06d5 00       		.byte	0
+ 1590 06d6 00       		.byte	0
+ 1591 06d7 00       		.byte	0
+ 1592 06d8 00       		.byte	0
+ 1593 06d9 C2       		.byte	0xc2
+ 1594 06da C6       		.byte	0xc6
+ 1595 06db 0C       		.byte	0xc
+ 1596 06dc 18       		.byte	0x18
+ 1597 06dd 30       		.byte	0x30
+ 1598 06de 66       		.byte	0x66
+ 1599 06df C6       		.byte	0xc6
+ 1600 06e0 86       		.byte	0x86
+ 1601 06e1 00       		.byte	0
+ 1602 06e2 00       		.byte	0
+ 1603 06e3 00       		.byte	0
+ 1604 06e4 00       		.byte	0
+ 1605 06e5 00       		.byte	0
+ 1606 06e6 00       		.byte	0
+ 1607 06e7 38       		.byte	0x38
+ 1608 06e8 6C       		.byte	0x6c
+ 1609 06e9 6C       		.byte	0x6c
+ 1610 06ea 38       		.byte	0x38
+ 1611 06eb 76       		.byte	0x76
+ 1612 06ec DC       		.byte	0xdc
+ 1613 06ed CC       		.byte	0xcc
+ 1614 06ee CC       		.byte	0xcc
+ 1615 06ef CC       		.byte	0xcc
+ 1616 06f0 76       		.byte	0x76
+ 1617 06f1 00       		.byte	0
+ 1618 06f2 00       		.byte	0
+ 1619 06f3 00       		.byte	0
+ 1620 06f4 00       		.byte	0
+ 1621 06f5 00       		.byte	0
+ 1622 06f6 30       		.byte	0x30
+ 1623 06f7 30       		.byte	0x30
+ 1624 06f8 30       		.byte	0x30
+ 1625 06f9 60       		.byte	0x60
+ 1626 06fa 00       		.byte	0
+ 1627 06fb 00       		.byte	0
+ 1628 06fc 00       		.byte	0
+ 1629 06fd 00       		.byte	0
+ 1630 06fe 00       		.byte	0
+ 1631 06ff 00       		.byte	0
+ 1632 0700 00       		.byte	0
+ 1633 0701 00       		.byte	0
+ 1634 0702 00       		.byte	0
+ 1635 0703 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 31
+
+
+ 1636 0704 00       		.byte	0
+ 1637 0705 00       		.byte	0
+ 1638 0706 00       		.byte	0
+ 1639 0707 0C       		.byte	0xc
+ 1640 0708 18       		.byte	0x18
+ 1641 0709 30       		.byte	0x30
+ 1642 070a 30       		.byte	0x30
+ 1643 070b 30       		.byte	0x30
+ 1644 070c 30       		.byte	0x30
+ 1645 070d 30       		.byte	0x30
+ 1646 070e 30       		.byte	0x30
+ 1647 070f 18       		.byte	0x18
+ 1648 0710 0C       		.byte	0xc
+ 1649 0711 00       		.byte	0
+ 1650 0712 00       		.byte	0
+ 1651 0713 00       		.byte	0
+ 1652 0714 00       		.byte	0
+ 1653 0715 00       		.byte	0
+ 1654 0716 00       		.byte	0
+ 1655 0717 30       		.byte	0x30
+ 1656 0718 18       		.byte	0x18
+ 1657 0719 0C       		.byte	0xc
+ 1658 071a 0C       		.byte	0xc
+ 1659 071b 0C       		.byte	0xc
+ 1660 071c 0C       		.byte	0xc
+ 1661 071d 0C       		.byte	0xc
+ 1662 071e 0C       		.byte	0xc
+ 1663 071f 18       		.byte	0x18
+ 1664 0720 30       		.byte	0x30
+ 1665 0721 00       		.byte	0
+ 1666 0722 00       		.byte	0
+ 1667 0723 00       		.byte	0
+ 1668 0724 00       		.byte	0
+ 1669 0725 00       		.byte	0
+ 1670 0726 00       		.byte	0
+ 1671 0727 00       		.byte	0
+ 1672 0728 00       		.byte	0
+ 1673 0729 00       		.byte	0
+ 1674 072a 66       		.byte	0x66
+ 1675 072b 3C       		.byte	0x3c
+ 1676 072c FF       		.byte	0xff
+ 1677 072d 3C       		.byte	0x3c
+ 1678 072e 66       		.byte	0x66
+ 1679 072f 00       		.byte	0
+ 1680 0730 00       		.byte	0
+ 1681 0731 00       		.byte	0
+ 1682 0732 00       		.byte	0
+ 1683 0733 00       		.byte	0
+ 1684 0734 00       		.byte	0
+ 1685 0735 00       		.byte	0
+ 1686 0736 00       		.byte	0
+ 1687 0737 00       		.byte	0
+ 1688 0738 00       		.byte	0
+ 1689 0739 00       		.byte	0
+ 1690 073a 18       		.byte	0x18
+ 1691 073b 18       		.byte	0x18
+ 1692 073c 7E       		.byte	0x7e
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 32
+
+
+ 1693 073d 18       		.byte	0x18
+ 1694 073e 18       		.byte	0x18
+ 1695 073f 00       		.byte	0
+ 1696 0740 00       		.byte	0
+ 1697 0741 00       		.byte	0
+ 1698 0742 00       		.byte	0
+ 1699 0743 00       		.byte	0
+ 1700 0744 00       		.byte	0
+ 1701 0745 00       		.byte	0
+ 1702 0746 00       		.byte	0
+ 1703 0747 00       		.byte	0
+ 1704 0748 00       		.byte	0
+ 1705 0749 00       		.byte	0
+ 1706 074a 00       		.byte	0
+ 1707 074b 00       		.byte	0
+ 1708 074c 00       		.byte	0
+ 1709 074d 00       		.byte	0
+ 1710 074e 18       		.byte	0x18
+ 1711 074f 18       		.byte	0x18
+ 1712 0750 18       		.byte	0x18
+ 1713 0751 30       		.byte	0x30
+ 1714 0752 00       		.byte	0
+ 1715 0753 00       		.byte	0
+ 1716 0754 00       		.byte	0
+ 1717 0755 00       		.byte	0
+ 1718 0756 00       		.byte	0
+ 1719 0757 00       		.byte	0
+ 1720 0758 00       		.byte	0
+ 1721 0759 00       		.byte	0
+ 1722 075a 00       		.byte	0
+ 1723 075b 00       		.byte	0
+ 1724 075c 7E       		.byte	0x7e
+ 1725 075d 00       		.byte	0
+ 1726 075e 00       		.byte	0
+ 1727 075f 00       		.byte	0
+ 1728 0760 00       		.byte	0
+ 1729 0761 00       		.byte	0
+ 1730 0762 00       		.byte	0
+ 1731 0763 00       		.byte	0
+ 1732 0764 00       		.byte	0
+ 1733 0765 00       		.byte	0
+ 1734 0766 00       		.byte	0
+ 1735 0767 00       		.byte	0
+ 1736 0768 00       		.byte	0
+ 1737 0769 00       		.byte	0
+ 1738 076a 00       		.byte	0
+ 1739 076b 00       		.byte	0
+ 1740 076c 00       		.byte	0
+ 1741 076d 00       		.byte	0
+ 1742 076e 00       		.byte	0
+ 1743 076f 18       		.byte	0x18
+ 1744 0770 18       		.byte	0x18
+ 1745 0771 00       		.byte	0
+ 1746 0772 00       		.byte	0
+ 1747 0773 00       		.byte	0
+ 1748 0774 00       		.byte	0
+ 1749 0775 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 33
+
+
+ 1750 0776 00       		.byte	0
+ 1751 0777 00       		.byte	0
+ 1752 0778 00       		.byte	0
+ 1753 0779 06       		.byte	0x6
+ 1754 077a 06       		.byte	0x6
+ 1755 077b 0C       		.byte	0xc
+ 1756 077c 18       		.byte	0x18
+ 1757 077d 30       		.byte	0x30
+ 1758 077e 60       		.byte	0x60
+ 1759 077f C0       		.byte	0xc0
+ 1760 0780 C0       		.byte	0xc0
+ 1761 0781 00       		.byte	0
+ 1762 0782 00       		.byte	0
+ 1763 0783 00       		.byte	0
+ 1764 0784 00       		.byte	0
+ 1765 0785 00       		.byte	0
+ 1766 0786 00       		.byte	0
+ 1767 0787 7C       		.byte	0x7c
+ 1768 0788 C6       		.byte	0xc6
+ 1769 0789 CE       		.byte	0xce
+ 1770 078a DE       		.byte	0xde
+ 1771 078b D6       		.byte	0xd6
+ 1772 078c F6       		.byte	0xf6
+ 1773 078d E6       		.byte	0xe6
+ 1774 078e C6       		.byte	0xc6
+ 1775 078f C6       		.byte	0xc6
+ 1776 0790 7C       		.byte	0x7c
+ 1777 0791 00       		.byte	0
+ 1778 0792 00       		.byte	0
+ 1779 0793 00       		.byte	0
+ 1780 0794 00       		.byte	0
+ 1781 0795 00       		.byte	0
+ 1782 0796 00       		.byte	0
+ 1783 0797 18       		.byte	0x18
+ 1784 0798 38       		.byte	0x38
+ 1785 0799 78       		.byte	0x78
+ 1786 079a 18       		.byte	0x18
+ 1787 079b 18       		.byte	0x18
+ 1788 079c 18       		.byte	0x18
+ 1789 079d 18       		.byte	0x18
+ 1790 079e 18       		.byte	0x18
+ 1791 079f 18       		.byte	0x18
+ 1792 07a0 7E       		.byte	0x7e
+ 1793 07a1 00       		.byte	0
+ 1794 07a2 00       		.byte	0
+ 1795 07a3 00       		.byte	0
+ 1796 07a4 00       		.byte	0
+ 1797 07a5 00       		.byte	0
+ 1798 07a6 00       		.byte	0
+ 1799 07a7 7C       		.byte	0x7c
+ 1800 07a8 C6       		.byte	0xc6
+ 1801 07a9 06       		.byte	0x6
+ 1802 07aa 0C       		.byte	0xc
+ 1803 07ab 18       		.byte	0x18
+ 1804 07ac 30       		.byte	0x30
+ 1805 07ad 60       		.byte	0x60
+ 1806 07ae C0       		.byte	0xc0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 34
+
+
+ 1807 07af C6       		.byte	0xc6
+ 1808 07b0 FE       		.byte	0xfe
+ 1809 07b1 00       		.byte	0
+ 1810 07b2 00       		.byte	0
+ 1811 07b3 00       		.byte	0
+ 1812 07b4 00       		.byte	0
+ 1813 07b5 00       		.byte	0
+ 1814 07b6 00       		.byte	0
+ 1815 07b7 7C       		.byte	0x7c
+ 1816 07b8 C6       		.byte	0xc6
+ 1817 07b9 06       		.byte	0x6
+ 1818 07ba 06       		.byte	0x6
+ 1819 07bb 3C       		.byte	0x3c
+ 1820 07bc 06       		.byte	0x6
+ 1821 07bd 06       		.byte	0x6
+ 1822 07be 06       		.byte	0x6
+ 1823 07bf C6       		.byte	0xc6
+ 1824 07c0 7C       		.byte	0x7c
+ 1825 07c1 00       		.byte	0
+ 1826 07c2 00       		.byte	0
+ 1827 07c3 00       		.byte	0
+ 1828 07c4 00       		.byte	0
+ 1829 07c5 00       		.byte	0
+ 1830 07c6 00       		.byte	0
+ 1831 07c7 0C       		.byte	0xc
+ 1832 07c8 1C       		.byte	0x1c
+ 1833 07c9 3C       		.byte	0x3c
+ 1834 07ca 6C       		.byte	0x6c
+ 1835 07cb CC       		.byte	0xcc
+ 1836 07cc FE       		.byte	0xfe
+ 1837 07cd 0C       		.byte	0xc
+ 1838 07ce 0C       		.byte	0xc
+ 1839 07cf 0C       		.byte	0xc
+ 1840 07d0 1E       		.byte	0x1e
+ 1841 07d1 00       		.byte	0
+ 1842 07d2 00       		.byte	0
+ 1843 07d3 00       		.byte	0
+ 1844 07d4 00       		.byte	0
+ 1845 07d5 00       		.byte	0
+ 1846 07d6 00       		.byte	0
+ 1847 07d7 FE       		.byte	0xfe
+ 1848 07d8 C0       		.byte	0xc0
+ 1849 07d9 C0       		.byte	0xc0
+ 1850 07da C0       		.byte	0xc0
+ 1851 07db FC       		.byte	0xfc
+ 1852 07dc 0E       		.byte	0xe
+ 1853 07dd 06       		.byte	0x6
+ 1854 07de 06       		.byte	0x6
+ 1855 07df C6       		.byte	0xc6
+ 1856 07e0 7C       		.byte	0x7c
+ 1857 07e1 00       		.byte	0
+ 1858 07e2 00       		.byte	0
+ 1859 07e3 00       		.byte	0
+ 1860 07e4 00       		.byte	0
+ 1861 07e5 00       		.byte	0
+ 1862 07e6 00       		.byte	0
+ 1863 07e7 38       		.byte	0x38
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 35
+
+
+ 1864 07e8 60       		.byte	0x60
+ 1865 07e9 C0       		.byte	0xc0
+ 1866 07ea C0       		.byte	0xc0
+ 1867 07eb FC       		.byte	0xfc
+ 1868 07ec C6       		.byte	0xc6
+ 1869 07ed C6       		.byte	0xc6
+ 1870 07ee C6       		.byte	0xc6
+ 1871 07ef C6       		.byte	0xc6
+ 1872 07f0 7C       		.byte	0x7c
+ 1873 07f1 00       		.byte	0
+ 1874 07f2 00       		.byte	0
+ 1875 07f3 00       		.byte	0
+ 1876 07f4 00       		.byte	0
+ 1877 07f5 00       		.byte	0
+ 1878 07f6 00       		.byte	0
+ 1879 07f7 FE       		.byte	0xfe
+ 1880 07f8 C6       		.byte	0xc6
+ 1881 07f9 06       		.byte	0x6
+ 1882 07fa 06       		.byte	0x6
+ 1883 07fb 0C       		.byte	0xc
+ 1884 07fc 18       		.byte	0x18
+ 1885 07fd 30       		.byte	0x30
+ 1886 07fe 30       		.byte	0x30
+ 1887 07ff 30       		.byte	0x30
+ 1888 0800 30       		.byte	0x30
+ 1889 0801 00       		.byte	0
+ 1890 0802 00       		.byte	0
+ 1891 0803 00       		.byte	0
+ 1892 0804 00       		.byte	0
+ 1893 0805 00       		.byte	0
+ 1894 0806 00       		.byte	0
+ 1895 0807 7C       		.byte	0x7c
+ 1896 0808 C6       		.byte	0xc6
+ 1897 0809 C6       		.byte	0xc6
+ 1898 080a C6       		.byte	0xc6
+ 1899 080b 7C       		.byte	0x7c
+ 1900 080c C6       		.byte	0xc6
+ 1901 080d C6       		.byte	0xc6
+ 1902 080e C6       		.byte	0xc6
+ 1903 080f C6       		.byte	0xc6
+ 1904 0810 7C       		.byte	0x7c
+ 1905 0811 00       		.byte	0
+ 1906 0812 00       		.byte	0
+ 1907 0813 00       		.byte	0
+ 1908 0814 00       		.byte	0
+ 1909 0815 00       		.byte	0
+ 1910 0816 00       		.byte	0
+ 1911 0817 7C       		.byte	0x7c
+ 1912 0818 C6       		.byte	0xc6
+ 1913 0819 C6       		.byte	0xc6
+ 1914 081a C6       		.byte	0xc6
+ 1915 081b 7E       		.byte	0x7e
+ 1916 081c 06       		.byte	0x6
+ 1917 081d 06       		.byte	0x6
+ 1918 081e 0C       		.byte	0xc
+ 1919 081f 18       		.byte	0x18
+ 1920 0820 70       		.byte	0x70
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 36
+
+
+ 1921 0821 00       		.byte	0
+ 1922 0822 00       		.byte	0
+ 1923 0823 00       		.byte	0
+ 1924 0824 00       		.byte	0
+ 1925 0825 00       		.byte	0
+ 1926 0826 00       		.byte	0
+ 1927 0827 00       		.byte	0
+ 1928 0828 00       		.byte	0
+ 1929 0829 18       		.byte	0x18
+ 1930 082a 18       		.byte	0x18
+ 1931 082b 00       		.byte	0
+ 1932 082c 00       		.byte	0
+ 1933 082d 00       		.byte	0
+ 1934 082e 18       		.byte	0x18
+ 1935 082f 18       		.byte	0x18
+ 1936 0830 00       		.byte	0
+ 1937 0831 00       		.byte	0
+ 1938 0832 00       		.byte	0
+ 1939 0833 00       		.byte	0
+ 1940 0834 00       		.byte	0
+ 1941 0835 00       		.byte	0
+ 1942 0836 00       		.byte	0
+ 1943 0837 00       		.byte	0
+ 1944 0838 00       		.byte	0
+ 1945 0839 18       		.byte	0x18
+ 1946 083a 18       		.byte	0x18
+ 1947 083b 00       		.byte	0
+ 1948 083c 00       		.byte	0
+ 1949 083d 00       		.byte	0
+ 1950 083e 18       		.byte	0x18
+ 1951 083f 18       		.byte	0x18
+ 1952 0840 30       		.byte	0x30
+ 1953 0841 00       		.byte	0
+ 1954 0842 00       		.byte	0
+ 1955 0843 00       		.byte	0
+ 1956 0844 00       		.byte	0
+ 1957 0845 00       		.byte	0
+ 1958 0846 00       		.byte	0
+ 1959 0847 00       		.byte	0
+ 1960 0848 06       		.byte	0x6
+ 1961 0849 0C       		.byte	0xc
+ 1962 084a 18       		.byte	0x18
+ 1963 084b 30       		.byte	0x30
+ 1964 084c 60       		.byte	0x60
+ 1965 084d 30       		.byte	0x30
+ 1966 084e 18       		.byte	0x18
+ 1967 084f 0C       		.byte	0xc
+ 1968 0850 06       		.byte	0x6
+ 1969 0851 00       		.byte	0
+ 1970 0852 00       		.byte	0
+ 1971 0853 00       		.byte	0
+ 1972 0854 00       		.byte	0
+ 1973 0855 00       		.byte	0
+ 1974 0856 00       		.byte	0
+ 1975 0857 00       		.byte	0
+ 1976 0858 00       		.byte	0
+ 1977 0859 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 37
+
+
+ 1978 085a 7E       		.byte	0x7e
+ 1979 085b 00       		.byte	0
+ 1980 085c 00       		.byte	0
+ 1981 085d 7E       		.byte	0x7e
+ 1982 085e 00       		.byte	0
+ 1983 085f 00       		.byte	0
+ 1984 0860 00       		.byte	0
+ 1985 0861 00       		.byte	0
+ 1986 0862 00       		.byte	0
+ 1987 0863 00       		.byte	0
+ 1988 0864 00       		.byte	0
+ 1989 0865 00       		.byte	0
+ 1990 0866 00       		.byte	0
+ 1991 0867 00       		.byte	0
+ 1992 0868 60       		.byte	0x60
+ 1993 0869 30       		.byte	0x30
+ 1994 086a 18       		.byte	0x18
+ 1995 086b 0C       		.byte	0xc
+ 1996 086c 06       		.byte	0x6
+ 1997 086d 0C       		.byte	0xc
+ 1998 086e 18       		.byte	0x18
+ 1999 086f 30       		.byte	0x30
+ 2000 0870 60       		.byte	0x60
+ 2001 0871 00       		.byte	0
+ 2002 0872 00       		.byte	0
+ 2003 0873 00       		.byte	0
+ 2004 0874 00       		.byte	0
+ 2005 0875 00       		.byte	0
+ 2006 0876 00       		.byte	0
+ 2007 0877 7C       		.byte	0x7c
+ 2008 0878 C6       		.byte	0xc6
+ 2009 0879 C6       		.byte	0xc6
+ 2010 087a 0C       		.byte	0xc
+ 2011 087b 18       		.byte	0x18
+ 2012 087c 18       		.byte	0x18
+ 2013 087d 18       		.byte	0x18
+ 2014 087e 00       		.byte	0
+ 2015 087f 18       		.byte	0x18
+ 2016 0880 18       		.byte	0x18
+ 2017 0881 00       		.byte	0
+ 2018 0882 00       		.byte	0
+ 2019 0883 00       		.byte	0
+ 2020 0884 00       		.byte	0
+ 2021 0885 00       		.byte	0
+ 2022 0886 00       		.byte	0
+ 2023 0887 7C       		.byte	0x7c
+ 2024 0888 C6       		.byte	0xc6
+ 2025 0889 C6       		.byte	0xc6
+ 2026 088a DE       		.byte	0xde
+ 2027 088b DE       		.byte	0xde
+ 2028 088c DE       		.byte	0xde
+ 2029 088d DC       		.byte	0xdc
+ 2030 088e C0       		.byte	0xc0
+ 2031 088f C0       		.byte	0xc0
+ 2032 0890 7C       		.byte	0x7c
+ 2033 0891 00       		.byte	0
+ 2034 0892 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 38
+
+
+ 2035 0893 00       		.byte	0
+ 2036 0894 00       		.byte	0
+ 2037 0895 00       		.byte	0
+ 2038 0896 00       		.byte	0
+ 2039 0897 10       		.byte	0x10
+ 2040 0898 38       		.byte	0x38
+ 2041 0899 6C       		.byte	0x6c
+ 2042 089a C6       		.byte	0xc6
+ 2043 089b C6       		.byte	0xc6
+ 2044 089c FE       		.byte	0xfe
+ 2045 089d C6       		.byte	0xc6
+ 2046 089e C6       		.byte	0xc6
+ 2047 089f C6       		.byte	0xc6
+ 2048 08a0 C6       		.byte	0xc6
+ 2049 08a1 00       		.byte	0
+ 2050 08a2 00       		.byte	0
+ 2051 08a3 00       		.byte	0
+ 2052 08a4 00       		.byte	0
+ 2053 08a5 00       		.byte	0
+ 2054 08a6 00       		.byte	0
+ 2055 08a7 FC       		.byte	0xfc
+ 2056 08a8 66       		.byte	0x66
+ 2057 08a9 66       		.byte	0x66
+ 2058 08aa 66       		.byte	0x66
+ 2059 08ab 7C       		.byte	0x7c
+ 2060 08ac 66       		.byte	0x66
+ 2061 08ad 66       		.byte	0x66
+ 2062 08ae 66       		.byte	0x66
+ 2063 08af 66       		.byte	0x66
+ 2064 08b0 FC       		.byte	0xfc
+ 2065 08b1 00       		.byte	0
+ 2066 08b2 00       		.byte	0
+ 2067 08b3 00       		.byte	0
+ 2068 08b4 00       		.byte	0
+ 2069 08b5 00       		.byte	0
+ 2070 08b6 00       		.byte	0
+ 2071 08b7 3C       		.byte	0x3c
+ 2072 08b8 66       		.byte	0x66
+ 2073 08b9 C2       		.byte	0xc2
+ 2074 08ba C0       		.byte	0xc0
+ 2075 08bb C0       		.byte	0xc0
+ 2076 08bc C0       		.byte	0xc0
+ 2077 08bd C0       		.byte	0xc0
+ 2078 08be C2       		.byte	0xc2
+ 2079 08bf 66       		.byte	0x66
+ 2080 08c0 3C       		.byte	0x3c
+ 2081 08c1 00       		.byte	0
+ 2082 08c2 00       		.byte	0
+ 2083 08c3 00       		.byte	0
+ 2084 08c4 00       		.byte	0
+ 2085 08c5 00       		.byte	0
+ 2086 08c6 00       		.byte	0
+ 2087 08c7 F8       		.byte	0xf8
+ 2088 08c8 6C       		.byte	0x6c
+ 2089 08c9 66       		.byte	0x66
+ 2090 08ca 66       		.byte	0x66
+ 2091 08cb 66       		.byte	0x66
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 39
+
+
+ 2092 08cc 66       		.byte	0x66
+ 2093 08cd 66       		.byte	0x66
+ 2094 08ce 66       		.byte	0x66
+ 2095 08cf 6C       		.byte	0x6c
+ 2096 08d0 F8       		.byte	0xf8
+ 2097 08d1 00       		.byte	0
+ 2098 08d2 00       		.byte	0
+ 2099 08d3 00       		.byte	0
+ 2100 08d4 00       		.byte	0
+ 2101 08d5 00       		.byte	0
+ 2102 08d6 00       		.byte	0
+ 2103 08d7 FE       		.byte	0xfe
+ 2104 08d8 66       		.byte	0x66
+ 2105 08d9 62       		.byte	0x62
+ 2106 08da 68       		.byte	0x68
+ 2107 08db 78       		.byte	0x78
+ 2108 08dc 68       		.byte	0x68
+ 2109 08dd 60       		.byte	0x60
+ 2110 08de 62       		.byte	0x62
+ 2111 08df 66       		.byte	0x66
+ 2112 08e0 FE       		.byte	0xfe
+ 2113 08e1 00       		.byte	0
+ 2114 08e2 00       		.byte	0
+ 2115 08e3 00       		.byte	0
+ 2116 08e4 00       		.byte	0
+ 2117 08e5 00       		.byte	0
+ 2118 08e6 00       		.byte	0
+ 2119 08e7 FE       		.byte	0xfe
+ 2120 08e8 66       		.byte	0x66
+ 2121 08e9 62       		.byte	0x62
+ 2122 08ea 68       		.byte	0x68
+ 2123 08eb 78       		.byte	0x78
+ 2124 08ec 68       		.byte	0x68
+ 2125 08ed 60       		.byte	0x60
+ 2126 08ee 60       		.byte	0x60
+ 2127 08ef 60       		.byte	0x60
+ 2128 08f0 F0       		.byte	0xf0
+ 2129 08f1 00       		.byte	0
+ 2130 08f2 00       		.byte	0
+ 2131 08f3 00       		.byte	0
+ 2132 08f4 00       		.byte	0
+ 2133 08f5 00       		.byte	0
+ 2134 08f6 00       		.byte	0
+ 2135 08f7 3C       		.byte	0x3c
+ 2136 08f8 66       		.byte	0x66
+ 2137 08f9 C2       		.byte	0xc2
+ 2138 08fa C0       		.byte	0xc0
+ 2139 08fb C0       		.byte	0xc0
+ 2140 08fc DE       		.byte	0xde
+ 2141 08fd C6       		.byte	0xc6
+ 2142 08fe C6       		.byte	0xc6
+ 2143 08ff 66       		.byte	0x66
+ 2144 0900 3A       		.byte	0x3a
+ 2145 0901 00       		.byte	0
+ 2146 0902 00       		.byte	0
+ 2147 0903 00       		.byte	0
+ 2148 0904 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 40
+
+
+ 2149 0905 00       		.byte	0
+ 2150 0906 00       		.byte	0
+ 2151 0907 C6       		.byte	0xc6
+ 2152 0908 C6       		.byte	0xc6
+ 2153 0909 C6       		.byte	0xc6
+ 2154 090a C6       		.byte	0xc6
+ 2155 090b FE       		.byte	0xfe
+ 2156 090c C6       		.byte	0xc6
+ 2157 090d C6       		.byte	0xc6
+ 2158 090e C6       		.byte	0xc6
+ 2159 090f C6       		.byte	0xc6
+ 2160 0910 C6       		.byte	0xc6
+ 2161 0911 00       		.byte	0
+ 2162 0912 00       		.byte	0
+ 2163 0913 00       		.byte	0
+ 2164 0914 00       		.byte	0
+ 2165 0915 00       		.byte	0
+ 2166 0916 00       		.byte	0
+ 2167 0917 3C       		.byte	0x3c
+ 2168 0918 18       		.byte	0x18
+ 2169 0919 18       		.byte	0x18
+ 2170 091a 18       		.byte	0x18
+ 2171 091b 18       		.byte	0x18
+ 2172 091c 18       		.byte	0x18
+ 2173 091d 18       		.byte	0x18
+ 2174 091e 18       		.byte	0x18
+ 2175 091f 18       		.byte	0x18
+ 2176 0920 3C       		.byte	0x3c
+ 2177 0921 00       		.byte	0
+ 2178 0922 00       		.byte	0
+ 2179 0923 00       		.byte	0
+ 2180 0924 00       		.byte	0
+ 2181 0925 00       		.byte	0
+ 2182 0926 00       		.byte	0
+ 2183 0927 1E       		.byte	0x1e
+ 2184 0928 0C       		.byte	0xc
+ 2185 0929 0C       		.byte	0xc
+ 2186 092a 0C       		.byte	0xc
+ 2187 092b 0C       		.byte	0xc
+ 2188 092c 0C       		.byte	0xc
+ 2189 092d CC       		.byte	0xcc
+ 2190 092e CC       		.byte	0xcc
+ 2191 092f CC       		.byte	0xcc
+ 2192 0930 78       		.byte	0x78
+ 2193 0931 00       		.byte	0
+ 2194 0932 00       		.byte	0
+ 2195 0933 00       		.byte	0
+ 2196 0934 00       		.byte	0
+ 2197 0935 00       		.byte	0
+ 2198 0936 00       		.byte	0
+ 2199 0937 E6       		.byte	0xe6
+ 2200 0938 66       		.byte	0x66
+ 2201 0939 6C       		.byte	0x6c
+ 2202 093a 6C       		.byte	0x6c
+ 2203 093b 78       		.byte	0x78
+ 2204 093c 78       		.byte	0x78
+ 2205 093d 6C       		.byte	0x6c
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 41
+
+
+ 2206 093e 66       		.byte	0x66
+ 2207 093f 66       		.byte	0x66
+ 2208 0940 E6       		.byte	0xe6
+ 2209 0941 00       		.byte	0
+ 2210 0942 00       		.byte	0
+ 2211 0943 00       		.byte	0
+ 2212 0944 00       		.byte	0
+ 2213 0945 00       		.byte	0
+ 2214 0946 00       		.byte	0
+ 2215 0947 F0       		.byte	0xf0
+ 2216 0948 60       		.byte	0x60
+ 2217 0949 60       		.byte	0x60
+ 2218 094a 60       		.byte	0x60
+ 2219 094b 60       		.byte	0x60
+ 2220 094c 60       		.byte	0x60
+ 2221 094d 60       		.byte	0x60
+ 2222 094e 62       		.byte	0x62
+ 2223 094f 66       		.byte	0x66
+ 2224 0950 FE       		.byte	0xfe
+ 2225 0951 00       		.byte	0
+ 2226 0952 00       		.byte	0
+ 2227 0953 00       		.byte	0
+ 2228 0954 00       		.byte	0
+ 2229 0955 00       		.byte	0
+ 2230 0956 00       		.byte	0
+ 2231 0957 C6       		.byte	0xc6
+ 2232 0958 EE       		.byte	0xee
+ 2233 0959 FE       		.byte	0xfe
+ 2234 095a FE       		.byte	0xfe
+ 2235 095b D6       		.byte	0xd6
+ 2236 095c C6       		.byte	0xc6
+ 2237 095d C6       		.byte	0xc6
+ 2238 095e C6       		.byte	0xc6
+ 2239 095f C6       		.byte	0xc6
+ 2240 0960 C6       		.byte	0xc6
+ 2241 0961 00       		.byte	0
+ 2242 0962 00       		.byte	0
+ 2243 0963 00       		.byte	0
+ 2244 0964 00       		.byte	0
+ 2245 0965 00       		.byte	0
+ 2246 0966 00       		.byte	0
+ 2247 0967 C6       		.byte	0xc6
+ 2248 0968 E6       		.byte	0xe6
+ 2249 0969 F6       		.byte	0xf6
+ 2250 096a FE       		.byte	0xfe
+ 2251 096b DE       		.byte	0xde
+ 2252 096c CE       		.byte	0xce
+ 2253 096d C6       		.byte	0xc6
+ 2254 096e C6       		.byte	0xc6
+ 2255 096f C6       		.byte	0xc6
+ 2256 0970 C6       		.byte	0xc6
+ 2257 0971 00       		.byte	0
+ 2258 0972 00       		.byte	0
+ 2259 0973 00       		.byte	0
+ 2260 0974 00       		.byte	0
+ 2261 0975 00       		.byte	0
+ 2262 0976 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 42
+
+
+ 2263 0977 38       		.byte	0x38
+ 2264 0978 6C       		.byte	0x6c
+ 2265 0979 C6       		.byte	0xc6
+ 2266 097a C6       		.byte	0xc6
+ 2267 097b C6       		.byte	0xc6
+ 2268 097c C6       		.byte	0xc6
+ 2269 097d C6       		.byte	0xc6
+ 2270 097e C6       		.byte	0xc6
+ 2271 097f 6C       		.byte	0x6c
+ 2272 0980 38       		.byte	0x38
+ 2273 0981 00       		.byte	0
+ 2274 0982 00       		.byte	0
+ 2275 0983 00       		.byte	0
+ 2276 0984 00       		.byte	0
+ 2277 0985 00       		.byte	0
+ 2278 0986 00       		.byte	0
+ 2279 0987 FC       		.byte	0xfc
+ 2280 0988 66       		.byte	0x66
+ 2281 0989 66       		.byte	0x66
+ 2282 098a 66       		.byte	0x66
+ 2283 098b 7C       		.byte	0x7c
+ 2284 098c 60       		.byte	0x60
+ 2285 098d 60       		.byte	0x60
+ 2286 098e 60       		.byte	0x60
+ 2287 098f 60       		.byte	0x60
+ 2288 0990 F0       		.byte	0xf0
+ 2289 0991 00       		.byte	0
+ 2290 0992 00       		.byte	0
+ 2291 0993 00       		.byte	0
+ 2292 0994 00       		.byte	0
+ 2293 0995 00       		.byte	0
+ 2294 0996 00       		.byte	0
+ 2295 0997 7C       		.byte	0x7c
+ 2296 0998 C6       		.byte	0xc6
+ 2297 0999 C6       		.byte	0xc6
+ 2298 099a C6       		.byte	0xc6
+ 2299 099b C6       		.byte	0xc6
+ 2300 099c C6       		.byte	0xc6
+ 2301 099d C6       		.byte	0xc6
+ 2302 099e D6       		.byte	0xd6
+ 2303 099f DE       		.byte	0xde
+ 2304 09a0 7C       		.byte	0x7c
+ 2305 09a1 0C       		.byte	0xc
+ 2306 09a2 0E       		.byte	0xe
+ 2307 09a3 00       		.byte	0
+ 2308 09a4 00       		.byte	0
+ 2309 09a5 00       		.byte	0
+ 2310 09a6 00       		.byte	0
+ 2311 09a7 FC       		.byte	0xfc
+ 2312 09a8 66       		.byte	0x66
+ 2313 09a9 66       		.byte	0x66
+ 2314 09aa 66       		.byte	0x66
+ 2315 09ab 7C       		.byte	0x7c
+ 2316 09ac 78       		.byte	0x78
+ 2317 09ad 6C       		.byte	0x6c
+ 2318 09ae 66       		.byte	0x66
+ 2319 09af 66       		.byte	0x66
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 43
+
+
+ 2320 09b0 E6       		.byte	0xe6
+ 2321 09b1 00       		.byte	0
+ 2322 09b2 00       		.byte	0
+ 2323 09b3 00       		.byte	0
+ 2324 09b4 00       		.byte	0
+ 2325 09b5 00       		.byte	0
+ 2326 09b6 00       		.byte	0
+ 2327 09b7 7C       		.byte	0x7c
+ 2328 09b8 C6       		.byte	0xc6
+ 2329 09b9 C6       		.byte	0xc6
+ 2330 09ba 60       		.byte	0x60
+ 2331 09bb 38       		.byte	0x38
+ 2332 09bc 0C       		.byte	0xc
+ 2333 09bd 06       		.byte	0x6
+ 2334 09be C6       		.byte	0xc6
+ 2335 09bf C6       		.byte	0xc6
+ 2336 09c0 7C       		.byte	0x7c
+ 2337 09c1 00       		.byte	0
+ 2338 09c2 00       		.byte	0
+ 2339 09c3 00       		.byte	0
+ 2340 09c4 00       		.byte	0
+ 2341 09c5 00       		.byte	0
+ 2342 09c6 00       		.byte	0
+ 2343 09c7 7E       		.byte	0x7e
+ 2344 09c8 7E       		.byte	0x7e
+ 2345 09c9 5A       		.byte	0x5a
+ 2346 09ca 18       		.byte	0x18
+ 2347 09cb 18       		.byte	0x18
+ 2348 09cc 18       		.byte	0x18
+ 2349 09cd 18       		.byte	0x18
+ 2350 09ce 18       		.byte	0x18
+ 2351 09cf 18       		.byte	0x18
+ 2352 09d0 3C       		.byte	0x3c
+ 2353 09d1 00       		.byte	0
+ 2354 09d2 00       		.byte	0
+ 2355 09d3 00       		.byte	0
+ 2356 09d4 00       		.byte	0
+ 2357 09d5 00       		.byte	0
+ 2358 09d6 00       		.byte	0
+ 2359 09d7 C6       		.byte	0xc6
+ 2360 09d8 C6       		.byte	0xc6
+ 2361 09d9 C6       		.byte	0xc6
+ 2362 09da C6       		.byte	0xc6
+ 2363 09db C6       		.byte	0xc6
+ 2364 09dc C6       		.byte	0xc6
+ 2365 09dd C6       		.byte	0xc6
+ 2366 09de C6       		.byte	0xc6
+ 2367 09df C6       		.byte	0xc6
+ 2368 09e0 7C       		.byte	0x7c
+ 2369 09e1 00       		.byte	0
+ 2370 09e2 00       		.byte	0
+ 2371 09e3 00       		.byte	0
+ 2372 09e4 00       		.byte	0
+ 2373 09e5 00       		.byte	0
+ 2374 09e6 00       		.byte	0
+ 2375 09e7 C6       		.byte	0xc6
+ 2376 09e8 C6       		.byte	0xc6
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 44
+
+
+ 2377 09e9 C6       		.byte	0xc6
+ 2378 09ea C6       		.byte	0xc6
+ 2379 09eb C6       		.byte	0xc6
+ 2380 09ec C6       		.byte	0xc6
+ 2381 09ed C6       		.byte	0xc6
+ 2382 09ee 6C       		.byte	0x6c
+ 2383 09ef 38       		.byte	0x38
+ 2384 09f0 10       		.byte	0x10
+ 2385 09f1 00       		.byte	0
+ 2386 09f2 00       		.byte	0
+ 2387 09f3 00       		.byte	0
+ 2388 09f4 00       		.byte	0
+ 2389 09f5 00       		.byte	0
+ 2390 09f6 00       		.byte	0
+ 2391 09f7 C6       		.byte	0xc6
+ 2392 09f8 C6       		.byte	0xc6
+ 2393 09f9 C6       		.byte	0xc6
+ 2394 09fa C6       		.byte	0xc6
+ 2395 09fb D6       		.byte	0xd6
+ 2396 09fc D6       		.byte	0xd6
+ 2397 09fd D6       		.byte	0xd6
+ 2398 09fe FE       		.byte	0xfe
+ 2399 09ff EE       		.byte	0xee
+ 2400 0a00 6C       		.byte	0x6c
+ 2401 0a01 00       		.byte	0
+ 2402 0a02 00       		.byte	0
+ 2403 0a03 00       		.byte	0
+ 2404 0a04 00       		.byte	0
+ 2405 0a05 00       		.byte	0
+ 2406 0a06 00       		.byte	0
+ 2407 0a07 C6       		.byte	0xc6
+ 2408 0a08 C6       		.byte	0xc6
+ 2409 0a09 6C       		.byte	0x6c
+ 2410 0a0a 7C       		.byte	0x7c
+ 2411 0a0b 38       		.byte	0x38
+ 2412 0a0c 38       		.byte	0x38
+ 2413 0a0d 7C       		.byte	0x7c
+ 2414 0a0e 6C       		.byte	0x6c
+ 2415 0a0f C6       		.byte	0xc6
+ 2416 0a10 C6       		.byte	0xc6
+ 2417 0a11 00       		.byte	0
+ 2418 0a12 00       		.byte	0
+ 2419 0a13 00       		.byte	0
+ 2420 0a14 00       		.byte	0
+ 2421 0a15 00       		.byte	0
+ 2422 0a16 00       		.byte	0
+ 2423 0a17 66       		.byte	0x66
+ 2424 0a18 66       		.byte	0x66
+ 2425 0a19 66       		.byte	0x66
+ 2426 0a1a 66       		.byte	0x66
+ 2427 0a1b 3C       		.byte	0x3c
+ 2428 0a1c 18       		.byte	0x18
+ 2429 0a1d 18       		.byte	0x18
+ 2430 0a1e 18       		.byte	0x18
+ 2431 0a1f 18       		.byte	0x18
+ 2432 0a20 3C       		.byte	0x3c
+ 2433 0a21 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 45
+
+
+ 2434 0a22 00       		.byte	0
+ 2435 0a23 00       		.byte	0
+ 2436 0a24 00       		.byte	0
+ 2437 0a25 00       		.byte	0
+ 2438 0a26 00       		.byte	0
+ 2439 0a27 FE       		.byte	0xfe
+ 2440 0a28 C6       		.byte	0xc6
+ 2441 0a29 86       		.byte	0x86
+ 2442 0a2a 0C       		.byte	0xc
+ 2443 0a2b 18       		.byte	0x18
+ 2444 0a2c 30       		.byte	0x30
+ 2445 0a2d 60       		.byte	0x60
+ 2446 0a2e C2       		.byte	0xc2
+ 2447 0a2f C6       		.byte	0xc6
+ 2448 0a30 FE       		.byte	0xfe
+ 2449 0a31 00       		.byte	0
+ 2450 0a32 00       		.byte	0
+ 2451 0a33 00       		.byte	0
+ 2452 0a34 00       		.byte	0
+ 2453 0a35 00       		.byte	0
+ 2454 0a36 00       		.byte	0
+ 2455 0a37 3C       		.byte	0x3c
+ 2456 0a38 30       		.byte	0x30
+ 2457 0a39 30       		.byte	0x30
+ 2458 0a3a 30       		.byte	0x30
+ 2459 0a3b 30       		.byte	0x30
+ 2460 0a3c 30       		.byte	0x30
+ 2461 0a3d 30       		.byte	0x30
+ 2462 0a3e 30       		.byte	0x30
+ 2463 0a3f 30       		.byte	0x30
+ 2464 0a40 3C       		.byte	0x3c
+ 2465 0a41 00       		.byte	0
+ 2466 0a42 00       		.byte	0
+ 2467 0a43 00       		.byte	0
+ 2468 0a44 00       		.byte	0
+ 2469 0a45 00       		.byte	0
+ 2470 0a46 00       		.byte	0
+ 2471 0a47 00       		.byte	0
+ 2472 0a48 80       		.byte	0x80
+ 2473 0a49 C0       		.byte	0xc0
+ 2474 0a4a E0       		.byte	0xe0
+ 2475 0a4b 70       		.byte	0x70
+ 2476 0a4c 38       		.byte	0x38
+ 2477 0a4d 1C       		.byte	0x1c
+ 2478 0a4e 0E       		.byte	0xe
+ 2479 0a4f 06       		.byte	0x6
+ 2480 0a50 02       		.byte	0x2
+ 2481 0a51 00       		.byte	0
+ 2482 0a52 00       		.byte	0
+ 2483 0a53 00       		.byte	0
+ 2484 0a54 00       		.byte	0
+ 2485 0a55 00       		.byte	0
+ 2486 0a56 00       		.byte	0
+ 2487 0a57 3C       		.byte	0x3c
+ 2488 0a58 0C       		.byte	0xc
+ 2489 0a59 0C       		.byte	0xc
+ 2490 0a5a 0C       		.byte	0xc
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 46
+
+
+ 2491 0a5b 0C       		.byte	0xc
+ 2492 0a5c 0C       		.byte	0xc
+ 2493 0a5d 0C       		.byte	0xc
+ 2494 0a5e 0C       		.byte	0xc
+ 2495 0a5f 0C       		.byte	0xc
+ 2496 0a60 3C       		.byte	0x3c
+ 2497 0a61 00       		.byte	0
+ 2498 0a62 00       		.byte	0
+ 2499 0a63 00       		.byte	0
+ 2500 0a64 00       		.byte	0
+ 2501 0a65 10       		.byte	0x10
+ 2502 0a66 38       		.byte	0x38
+ 2503 0a67 6C       		.byte	0x6c
+ 2504 0a68 C6       		.byte	0xc6
+ 2505 0a69 00       		.byte	0
+ 2506 0a6a 00       		.byte	0
+ 2507 0a6b 00       		.byte	0
+ 2508 0a6c 00       		.byte	0
+ 2509 0a6d 00       		.byte	0
+ 2510 0a6e 00       		.byte	0
+ 2511 0a6f 00       		.byte	0
+ 2512 0a70 00       		.byte	0
+ 2513 0a71 00       		.byte	0
+ 2514 0a72 00       		.byte	0
+ 2515 0a73 00       		.byte	0
+ 2516 0a74 00       		.byte	0
+ 2517 0a75 00       		.byte	0
+ 2518 0a76 00       		.byte	0
+ 2519 0a77 00       		.byte	0
+ 2520 0a78 00       		.byte	0
+ 2521 0a79 00       		.byte	0
+ 2522 0a7a 00       		.byte	0
+ 2523 0a7b 00       		.byte	0
+ 2524 0a7c 00       		.byte	0
+ 2525 0a7d 00       		.byte	0
+ 2526 0a7e 00       		.byte	0
+ 2527 0a7f 00       		.byte	0
+ 2528 0a80 00       		.byte	0
+ 2529 0a81 FF       		.byte	0xff
+ 2530 0a82 00       		.byte	0
+ 2531 0a83 00       		.byte	0
+ 2532 0a84 00       		.byte	0
+ 2533 0a85 30       		.byte	0x30
+ 2534 0a86 18       		.byte	0x18
+ 2535 0a87 0C       		.byte	0xc
+ 2536 0a88 00       		.byte	0
+ 2537 0a89 00       		.byte	0
+ 2538 0a8a 00       		.byte	0
+ 2539 0a8b 00       		.byte	0
+ 2540 0a8c 00       		.byte	0
+ 2541 0a8d 00       		.byte	0
+ 2542 0a8e 00       		.byte	0
+ 2543 0a8f 00       		.byte	0
+ 2544 0a90 00       		.byte	0
+ 2545 0a91 00       		.byte	0
+ 2546 0a92 00       		.byte	0
+ 2547 0a93 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 47
+
+
+ 2548 0a94 00       		.byte	0
+ 2549 0a95 00       		.byte	0
+ 2550 0a96 00       		.byte	0
+ 2551 0a97 00       		.byte	0
+ 2552 0a98 00       		.byte	0
+ 2553 0a99 00       		.byte	0
+ 2554 0a9a 78       		.byte	0x78
+ 2555 0a9b 0C       		.byte	0xc
+ 2556 0a9c 7C       		.byte	0x7c
+ 2557 0a9d CC       		.byte	0xcc
+ 2558 0a9e CC       		.byte	0xcc
+ 2559 0a9f CC       		.byte	0xcc
+ 2560 0aa0 76       		.byte	0x76
+ 2561 0aa1 00       		.byte	0
+ 2562 0aa2 00       		.byte	0
+ 2563 0aa3 00       		.byte	0
+ 2564 0aa4 00       		.byte	0
+ 2565 0aa5 00       		.byte	0
+ 2566 0aa6 00       		.byte	0
+ 2567 0aa7 E0       		.byte	0xe0
+ 2568 0aa8 60       		.byte	0x60
+ 2569 0aa9 60       		.byte	0x60
+ 2570 0aaa 78       		.byte	0x78
+ 2571 0aab 6C       		.byte	0x6c
+ 2572 0aac 66       		.byte	0x66
+ 2573 0aad 66       		.byte	0x66
+ 2574 0aae 66       		.byte	0x66
+ 2575 0aaf 66       		.byte	0x66
+ 2576 0ab0 7C       		.byte	0x7c
+ 2577 0ab1 00       		.byte	0
+ 2578 0ab2 00       		.byte	0
+ 2579 0ab3 00       		.byte	0
+ 2580 0ab4 00       		.byte	0
+ 2581 0ab5 00       		.byte	0
+ 2582 0ab6 00       		.byte	0
+ 2583 0ab7 00       		.byte	0
+ 2584 0ab8 00       		.byte	0
+ 2585 0ab9 00       		.byte	0
+ 2586 0aba 7C       		.byte	0x7c
+ 2587 0abb C6       		.byte	0xc6
+ 2588 0abc C0       		.byte	0xc0
+ 2589 0abd C0       		.byte	0xc0
+ 2590 0abe C0       		.byte	0xc0
+ 2591 0abf C6       		.byte	0xc6
+ 2592 0ac0 7C       		.byte	0x7c
+ 2593 0ac1 00       		.byte	0
+ 2594 0ac2 00       		.byte	0
+ 2595 0ac3 00       		.byte	0
+ 2596 0ac4 00       		.byte	0
+ 2597 0ac5 00       		.byte	0
+ 2598 0ac6 00       		.byte	0
+ 2599 0ac7 1C       		.byte	0x1c
+ 2600 0ac8 0C       		.byte	0xc
+ 2601 0ac9 0C       		.byte	0xc
+ 2602 0aca 3C       		.byte	0x3c
+ 2603 0acb 6C       		.byte	0x6c
+ 2604 0acc CC       		.byte	0xcc
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 48
+
+
+ 2605 0acd CC       		.byte	0xcc
+ 2606 0ace CC       		.byte	0xcc
+ 2607 0acf CC       		.byte	0xcc
+ 2608 0ad0 76       		.byte	0x76
+ 2609 0ad1 00       		.byte	0
+ 2610 0ad2 00       		.byte	0
+ 2611 0ad3 00       		.byte	0
+ 2612 0ad4 00       		.byte	0
+ 2613 0ad5 00       		.byte	0
+ 2614 0ad6 00       		.byte	0
+ 2615 0ad7 00       		.byte	0
+ 2616 0ad8 00       		.byte	0
+ 2617 0ad9 00       		.byte	0
+ 2618 0ada 7C       		.byte	0x7c
+ 2619 0adb C6       		.byte	0xc6
+ 2620 0adc FE       		.byte	0xfe
+ 2621 0add C0       		.byte	0xc0
+ 2622 0ade C0       		.byte	0xc0
+ 2623 0adf C6       		.byte	0xc6
+ 2624 0ae0 7C       		.byte	0x7c
+ 2625 0ae1 00       		.byte	0
+ 2626 0ae2 00       		.byte	0
+ 2627 0ae3 00       		.byte	0
+ 2628 0ae4 00       		.byte	0
+ 2629 0ae5 00       		.byte	0
+ 2630 0ae6 00       		.byte	0
+ 2631 0ae7 1C       		.byte	0x1c
+ 2632 0ae8 36       		.byte	0x36
+ 2633 0ae9 32       		.byte	0x32
+ 2634 0aea 30       		.byte	0x30
+ 2635 0aeb 7C       		.byte	0x7c
+ 2636 0aec 30       		.byte	0x30
+ 2637 0aed 30       		.byte	0x30
+ 2638 0aee 30       		.byte	0x30
+ 2639 0aef 30       		.byte	0x30
+ 2640 0af0 78       		.byte	0x78
+ 2641 0af1 00       		.byte	0
+ 2642 0af2 00       		.byte	0
+ 2643 0af3 00       		.byte	0
+ 2644 0af4 00       		.byte	0
+ 2645 0af5 00       		.byte	0
+ 2646 0af6 00       		.byte	0
+ 2647 0af7 00       		.byte	0
+ 2648 0af8 00       		.byte	0
+ 2649 0af9 00       		.byte	0
+ 2650 0afa 76       		.byte	0x76
+ 2651 0afb CC       		.byte	0xcc
+ 2652 0afc CC       		.byte	0xcc
+ 2653 0afd CC       		.byte	0xcc
+ 2654 0afe CC       		.byte	0xcc
+ 2655 0aff 7C       		.byte	0x7c
+ 2656 0b00 0C       		.byte	0xc
+ 2657 0b01 CC       		.byte	0xcc
+ 2658 0b02 78       		.byte	0x78
+ 2659 0b03 00       		.byte	0
+ 2660 0b04 00       		.byte	0
+ 2661 0b05 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 49
+
+
+ 2662 0b06 00       		.byte	0
+ 2663 0b07 E0       		.byte	0xe0
+ 2664 0b08 60       		.byte	0x60
+ 2665 0b09 60       		.byte	0x60
+ 2666 0b0a 6C       		.byte	0x6c
+ 2667 0b0b 76       		.byte	0x76
+ 2668 0b0c 66       		.byte	0x66
+ 2669 0b0d 66       		.byte	0x66
+ 2670 0b0e 66       		.byte	0x66
+ 2671 0b0f 66       		.byte	0x66
+ 2672 0b10 E6       		.byte	0xe6
+ 2673 0b11 00       		.byte	0
+ 2674 0b12 00       		.byte	0
+ 2675 0b13 00       		.byte	0
+ 2676 0b14 00       		.byte	0
+ 2677 0b15 00       		.byte	0
+ 2678 0b16 00       		.byte	0
+ 2679 0b17 18       		.byte	0x18
+ 2680 0b18 18       		.byte	0x18
+ 2681 0b19 00       		.byte	0
+ 2682 0b1a 38       		.byte	0x38
+ 2683 0b1b 18       		.byte	0x18
+ 2684 0b1c 18       		.byte	0x18
+ 2685 0b1d 18       		.byte	0x18
+ 2686 0b1e 18       		.byte	0x18
+ 2687 0b1f 18       		.byte	0x18
+ 2688 0b20 3C       		.byte	0x3c
+ 2689 0b21 00       		.byte	0
+ 2690 0b22 00       		.byte	0
+ 2691 0b23 00       		.byte	0
+ 2692 0b24 00       		.byte	0
+ 2693 0b25 00       		.byte	0
+ 2694 0b26 00       		.byte	0
+ 2695 0b27 06       		.byte	0x6
+ 2696 0b28 06       		.byte	0x6
+ 2697 0b29 00       		.byte	0
+ 2698 0b2a 0E       		.byte	0xe
+ 2699 0b2b 06       		.byte	0x6
+ 2700 0b2c 06       		.byte	0x6
+ 2701 0b2d 06       		.byte	0x6
+ 2702 0b2e 06       		.byte	0x6
+ 2703 0b2f 06       		.byte	0x6
+ 2704 0b30 06       		.byte	0x6
+ 2705 0b31 66       		.byte	0x66
+ 2706 0b32 3C       		.byte	0x3c
+ 2707 0b33 00       		.byte	0
+ 2708 0b34 00       		.byte	0
+ 2709 0b35 00       		.byte	0
+ 2710 0b36 00       		.byte	0
+ 2711 0b37 E0       		.byte	0xe0
+ 2712 0b38 60       		.byte	0x60
+ 2713 0b39 60       		.byte	0x60
+ 2714 0b3a 66       		.byte	0x66
+ 2715 0b3b 6C       		.byte	0x6c
+ 2716 0b3c 78       		.byte	0x78
+ 2717 0b3d 78       		.byte	0x78
+ 2718 0b3e 6C       		.byte	0x6c
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 50
+
+
+ 2719 0b3f 66       		.byte	0x66
+ 2720 0b40 E6       		.byte	0xe6
+ 2721 0b41 00       		.byte	0
+ 2722 0b42 00       		.byte	0
+ 2723 0b43 00       		.byte	0
+ 2724 0b44 00       		.byte	0
+ 2725 0b45 00       		.byte	0
+ 2726 0b46 00       		.byte	0
+ 2727 0b47 38       		.byte	0x38
+ 2728 0b48 18       		.byte	0x18
+ 2729 0b49 18       		.byte	0x18
+ 2730 0b4a 18       		.byte	0x18
+ 2731 0b4b 18       		.byte	0x18
+ 2732 0b4c 18       		.byte	0x18
+ 2733 0b4d 18       		.byte	0x18
+ 2734 0b4e 18       		.byte	0x18
+ 2735 0b4f 18       		.byte	0x18
+ 2736 0b50 3C       		.byte	0x3c
+ 2737 0b51 00       		.byte	0
+ 2738 0b52 00       		.byte	0
+ 2739 0b53 00       		.byte	0
+ 2740 0b54 00       		.byte	0
+ 2741 0b55 00       		.byte	0
+ 2742 0b56 00       		.byte	0
+ 2743 0b57 00       		.byte	0
+ 2744 0b58 00       		.byte	0
+ 2745 0b59 00       		.byte	0
+ 2746 0b5a EC       		.byte	0xec
+ 2747 0b5b FE       		.byte	0xfe
+ 2748 0b5c D6       		.byte	0xd6
+ 2749 0b5d D6       		.byte	0xd6
+ 2750 0b5e D6       		.byte	0xd6
+ 2751 0b5f D6       		.byte	0xd6
+ 2752 0b60 C6       		.byte	0xc6
+ 2753 0b61 00       		.byte	0
+ 2754 0b62 00       		.byte	0
+ 2755 0b63 00       		.byte	0
+ 2756 0b64 00       		.byte	0
+ 2757 0b65 00       		.byte	0
+ 2758 0b66 00       		.byte	0
+ 2759 0b67 00       		.byte	0
+ 2760 0b68 00       		.byte	0
+ 2761 0b69 00       		.byte	0
+ 2762 0b6a DC       		.byte	0xdc
+ 2763 0b6b 66       		.byte	0x66
+ 2764 0b6c 66       		.byte	0x66
+ 2765 0b6d 66       		.byte	0x66
+ 2766 0b6e 66       		.byte	0x66
+ 2767 0b6f 66       		.byte	0x66
+ 2768 0b70 66       		.byte	0x66
+ 2769 0b71 00       		.byte	0
+ 2770 0b72 00       		.byte	0
+ 2771 0b73 00       		.byte	0
+ 2772 0b74 00       		.byte	0
+ 2773 0b75 00       		.byte	0
+ 2774 0b76 00       		.byte	0
+ 2775 0b77 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 51
+
+
+ 2776 0b78 00       		.byte	0
+ 2777 0b79 00       		.byte	0
+ 2778 0b7a 7C       		.byte	0x7c
+ 2779 0b7b C6       		.byte	0xc6
+ 2780 0b7c C6       		.byte	0xc6
+ 2781 0b7d C6       		.byte	0xc6
+ 2782 0b7e C6       		.byte	0xc6
+ 2783 0b7f C6       		.byte	0xc6
+ 2784 0b80 7C       		.byte	0x7c
+ 2785 0b81 00       		.byte	0
+ 2786 0b82 00       		.byte	0
+ 2787 0b83 00       		.byte	0
+ 2788 0b84 00       		.byte	0
+ 2789 0b85 00       		.byte	0
+ 2790 0b86 00       		.byte	0
+ 2791 0b87 00       		.byte	0
+ 2792 0b88 00       		.byte	0
+ 2793 0b89 00       		.byte	0
+ 2794 0b8a DC       		.byte	0xdc
+ 2795 0b8b 66       		.byte	0x66
+ 2796 0b8c 66       		.byte	0x66
+ 2797 0b8d 66       		.byte	0x66
+ 2798 0b8e 66       		.byte	0x66
+ 2799 0b8f 7C       		.byte	0x7c
+ 2800 0b90 60       		.byte	0x60
+ 2801 0b91 60       		.byte	0x60
+ 2802 0b92 F0       		.byte	0xf0
+ 2803 0b93 00       		.byte	0
+ 2804 0b94 00       		.byte	0
+ 2805 0b95 00       		.byte	0
+ 2806 0b96 00       		.byte	0
+ 2807 0b97 00       		.byte	0
+ 2808 0b98 00       		.byte	0
+ 2809 0b99 00       		.byte	0
+ 2810 0b9a 76       		.byte	0x76
+ 2811 0b9b CC       		.byte	0xcc
+ 2812 0b9c CC       		.byte	0xcc
+ 2813 0b9d CC       		.byte	0xcc
+ 2814 0b9e CC       		.byte	0xcc
+ 2815 0b9f 7C       		.byte	0x7c
+ 2816 0ba0 0C       		.byte	0xc
+ 2817 0ba1 0C       		.byte	0xc
+ 2818 0ba2 1E       		.byte	0x1e
+ 2819 0ba3 00       		.byte	0
+ 2820 0ba4 00       		.byte	0
+ 2821 0ba5 00       		.byte	0
+ 2822 0ba6 00       		.byte	0
+ 2823 0ba7 00       		.byte	0
+ 2824 0ba8 00       		.byte	0
+ 2825 0ba9 00       		.byte	0
+ 2826 0baa DC       		.byte	0xdc
+ 2827 0bab 76       		.byte	0x76
+ 2828 0bac 66       		.byte	0x66
+ 2829 0bad 60       		.byte	0x60
+ 2830 0bae 60       		.byte	0x60
+ 2831 0baf 60       		.byte	0x60
+ 2832 0bb0 F0       		.byte	0xf0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 52
+
+
+ 2833 0bb1 00       		.byte	0
+ 2834 0bb2 00       		.byte	0
+ 2835 0bb3 00       		.byte	0
+ 2836 0bb4 00       		.byte	0
+ 2837 0bb5 00       		.byte	0
+ 2838 0bb6 00       		.byte	0
+ 2839 0bb7 00       		.byte	0
+ 2840 0bb8 00       		.byte	0
+ 2841 0bb9 00       		.byte	0
+ 2842 0bba 7C       		.byte	0x7c
+ 2843 0bbb C6       		.byte	0xc6
+ 2844 0bbc 60       		.byte	0x60
+ 2845 0bbd 38       		.byte	0x38
+ 2846 0bbe 0C       		.byte	0xc
+ 2847 0bbf C6       		.byte	0xc6
+ 2848 0bc0 7C       		.byte	0x7c
+ 2849 0bc1 00       		.byte	0
+ 2850 0bc2 00       		.byte	0
+ 2851 0bc3 00       		.byte	0
+ 2852 0bc4 00       		.byte	0
+ 2853 0bc5 00       		.byte	0
+ 2854 0bc6 00       		.byte	0
+ 2855 0bc7 10       		.byte	0x10
+ 2856 0bc8 30       		.byte	0x30
+ 2857 0bc9 30       		.byte	0x30
+ 2858 0bca FC       		.byte	0xfc
+ 2859 0bcb 30       		.byte	0x30
+ 2860 0bcc 30       		.byte	0x30
+ 2861 0bcd 30       		.byte	0x30
+ 2862 0bce 30       		.byte	0x30
+ 2863 0bcf 36       		.byte	0x36
+ 2864 0bd0 1C       		.byte	0x1c
+ 2865 0bd1 00       		.byte	0
+ 2866 0bd2 00       		.byte	0
+ 2867 0bd3 00       		.byte	0
+ 2868 0bd4 00       		.byte	0
+ 2869 0bd5 00       		.byte	0
+ 2870 0bd6 00       		.byte	0
+ 2871 0bd7 00       		.byte	0
+ 2872 0bd8 00       		.byte	0
+ 2873 0bd9 00       		.byte	0
+ 2874 0bda CC       		.byte	0xcc
+ 2875 0bdb CC       		.byte	0xcc
+ 2876 0bdc CC       		.byte	0xcc
+ 2877 0bdd CC       		.byte	0xcc
+ 2878 0bde CC       		.byte	0xcc
+ 2879 0bdf CC       		.byte	0xcc
+ 2880 0be0 76       		.byte	0x76
+ 2881 0be1 00       		.byte	0
+ 2882 0be2 00       		.byte	0
+ 2883 0be3 00       		.byte	0
+ 2884 0be4 00       		.byte	0
+ 2885 0be5 00       		.byte	0
+ 2886 0be6 00       		.byte	0
+ 2887 0be7 00       		.byte	0
+ 2888 0be8 00       		.byte	0
+ 2889 0be9 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 53
+
+
+ 2890 0bea 66       		.byte	0x66
+ 2891 0beb 66       		.byte	0x66
+ 2892 0bec 66       		.byte	0x66
+ 2893 0bed 66       		.byte	0x66
+ 2894 0bee 66       		.byte	0x66
+ 2895 0bef 3C       		.byte	0x3c
+ 2896 0bf0 18       		.byte	0x18
+ 2897 0bf1 00       		.byte	0
+ 2898 0bf2 00       		.byte	0
+ 2899 0bf3 00       		.byte	0
+ 2900 0bf4 00       		.byte	0
+ 2901 0bf5 00       		.byte	0
+ 2902 0bf6 00       		.byte	0
+ 2903 0bf7 00       		.byte	0
+ 2904 0bf8 00       		.byte	0
+ 2905 0bf9 00       		.byte	0
+ 2906 0bfa C6       		.byte	0xc6
+ 2907 0bfb C6       		.byte	0xc6
+ 2908 0bfc D6       		.byte	0xd6
+ 2909 0bfd D6       		.byte	0xd6
+ 2910 0bfe D6       		.byte	0xd6
+ 2911 0bff FE       		.byte	0xfe
+ 2912 0c00 6C       		.byte	0x6c
+ 2913 0c01 00       		.byte	0
+ 2914 0c02 00       		.byte	0
+ 2915 0c03 00       		.byte	0
+ 2916 0c04 00       		.byte	0
+ 2917 0c05 00       		.byte	0
+ 2918 0c06 00       		.byte	0
+ 2919 0c07 00       		.byte	0
+ 2920 0c08 00       		.byte	0
+ 2921 0c09 00       		.byte	0
+ 2922 0c0a C6       		.byte	0xc6
+ 2923 0c0b 6C       		.byte	0x6c
+ 2924 0c0c 38       		.byte	0x38
+ 2925 0c0d 38       		.byte	0x38
+ 2926 0c0e 6C       		.byte	0x6c
+ 2927 0c0f C6       		.byte	0xc6
+ 2928 0c10 C6       		.byte	0xc6
+ 2929 0c11 00       		.byte	0
+ 2930 0c12 00       		.byte	0
+ 2931 0c13 00       		.byte	0
+ 2932 0c14 00       		.byte	0
+ 2933 0c15 00       		.byte	0
+ 2934 0c16 00       		.byte	0
+ 2935 0c17 00       		.byte	0
+ 2936 0c18 00       		.byte	0
+ 2937 0c19 00       		.byte	0
+ 2938 0c1a CC       		.byte	0xcc
+ 2939 0c1b CC       		.byte	0xcc
+ 2940 0c1c CC       		.byte	0xcc
+ 2941 0c1d CC       		.byte	0xcc
+ 2942 0c1e CC       		.byte	0xcc
+ 2943 0c1f 7C       		.byte	0x7c
+ 2944 0c20 0C       		.byte	0xc
+ 2945 0c21 18       		.byte	0x18
+ 2946 0c22 F0       		.byte	0xf0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 54
+
+
+ 2947 0c23 00       		.byte	0
+ 2948 0c24 00       		.byte	0
+ 2949 0c25 00       		.byte	0
+ 2950 0c26 00       		.byte	0
+ 2951 0c27 00       		.byte	0
+ 2952 0c28 00       		.byte	0
+ 2953 0c29 00       		.byte	0
+ 2954 0c2a FE       		.byte	0xfe
+ 2955 0c2b CC       		.byte	0xcc
+ 2956 0c2c 18       		.byte	0x18
+ 2957 0c2d 30       		.byte	0x30
+ 2958 0c2e 60       		.byte	0x60
+ 2959 0c2f C6       		.byte	0xc6
+ 2960 0c30 FE       		.byte	0xfe
+ 2961 0c31 00       		.byte	0
+ 2962 0c32 00       		.byte	0
+ 2963 0c33 00       		.byte	0
+ 2964 0c34 00       		.byte	0
+ 2965 0c35 00       		.byte	0
+ 2966 0c36 00       		.byte	0
+ 2967 0c37 0E       		.byte	0xe
+ 2968 0c38 18       		.byte	0x18
+ 2969 0c39 18       		.byte	0x18
+ 2970 0c3a 18       		.byte	0x18
+ 2971 0c3b 70       		.byte	0x70
+ 2972 0c3c 18       		.byte	0x18
+ 2973 0c3d 18       		.byte	0x18
+ 2974 0c3e 18       		.byte	0x18
+ 2975 0c3f 18       		.byte	0x18
+ 2976 0c40 0E       		.byte	0xe
+ 2977 0c41 00       		.byte	0
+ 2978 0c42 00       		.byte	0
+ 2979 0c43 00       		.byte	0
+ 2980 0c44 00       		.byte	0
+ 2981 0c45 00       		.byte	0
+ 2982 0c46 00       		.byte	0
+ 2983 0c47 18       		.byte	0x18
+ 2984 0c48 18       		.byte	0x18
+ 2985 0c49 18       		.byte	0x18
+ 2986 0c4a 18       		.byte	0x18
+ 2987 0c4b 00       		.byte	0
+ 2988 0c4c 18       		.byte	0x18
+ 2989 0c4d 18       		.byte	0x18
+ 2990 0c4e 18       		.byte	0x18
+ 2991 0c4f 18       		.byte	0x18
+ 2992 0c50 18       		.byte	0x18
+ 2993 0c51 00       		.byte	0
+ 2994 0c52 00       		.byte	0
+ 2995 0c53 00       		.byte	0
+ 2996 0c54 00       		.byte	0
+ 2997 0c55 00       		.byte	0
+ 2998 0c56 00       		.byte	0
+ 2999 0c57 70       		.byte	0x70
+ 3000 0c58 18       		.byte	0x18
+ 3001 0c59 18       		.byte	0x18
+ 3002 0c5a 18       		.byte	0x18
+ 3003 0c5b 0E       		.byte	0xe
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 55
+
+
+ 3004 0c5c 18       		.byte	0x18
+ 3005 0c5d 18       		.byte	0x18
+ 3006 0c5e 18       		.byte	0x18
+ 3007 0c5f 18       		.byte	0x18
+ 3008 0c60 70       		.byte	0x70
+ 3009 0c61 00       		.byte	0
+ 3010 0c62 00       		.byte	0
+ 3011 0c63 00       		.byte	0
+ 3012 0c64 00       		.byte	0
+ 3013 0c65 76       		.byte	0x76
+ 3014 0c66 DC       		.byte	0xdc
+ 3015 0c67 00       		.byte	0
+ 3016 0c68 00       		.byte	0
+ 3017 0c69 00       		.byte	0
+ 3018 0c6a 00       		.byte	0
+ 3019 0c6b 00       		.byte	0
+ 3020 0c6c 00       		.byte	0
+ 3021 0c6d 00       		.byte	0
+ 3022 0c6e 00       		.byte	0
+ 3023 0c6f 00       		.byte	0
+ 3024 0c70 00       		.byte	0
+ 3025 0c71 00       		.byte	0
+ 3026 0c72 00       		.byte	0
+ 3027 0c73 00       		.byte	0
+ 3028 0c74 00       		.byte	0
+ 3029 0c75 0F       		.uleb128 0xf
+ 3030 0c76 63060000 		.4byte	0x663
+ 3031 0c7a 0D       		.uleb128 0xd
+ 3032 0c7b 8A0C0000 		.4byte	0xc8a
+ 3033 0c7f 8A0C0000 		.4byte	0xc8a
+ 3034 0c83 11       		.uleb128 0x11
+ 3035 0c84 9F000000 		.4byte	0x9f
+ 3036 0c88 0B       		.byte	0xb
+ 3037 0c89 00       		.byte	0
+ 3038 0c8a 0F       		.uleb128 0xf
+ 3039 0c8b 77000000 		.4byte	0x77
+ 3040 0c8f 12       		.uleb128 0x12
+ 3041 0c90 84020000 		.4byte	.LASF23
+ 3042 0c94 05       		.byte	0x5
+ 3043 0c95 E001     		.2byte	0x1e0
+ 3044 0c97 9B0C0000 		.4byte	0xc9b
+ 3045 0c9b 0F       		.uleb128 0xf
+ 3046 0c9c 7A0C0000 		.4byte	0xc7a
+ 3047 0ca0 13       		.uleb128 0x13
+ 3048 0ca1 3E010000 		.4byte	.LASF24
+ 3049 0ca5 03       		.byte	0x3
+ 3050 0ca6 35       		.byte	0x35
+ 3051 0ca7 A6000000 		.4byte	0xa6
+ 3052 0cab 05       		.uleb128 0x5
+ 3053 0cac 03       		.byte	0x3
+ 3054 0cad 00000000 		.4byte	Param
+ 3055 0cb1 13       		.uleb128 0x13
+ 3056 0cb2 48020000 		.4byte	.LASF25
+ 3057 0cb6 01       		.byte	0x1
+ 3058 0cb7 0B       		.byte	0xb
+ 3059 0cb8 6B000000 		.4byte	0x6b
+ 3060 0cbc 05       		.uleb128 0x5
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 56
+
+
+ 3061 0cbd 03       		.byte	0x3
+ 3062 0cbe 00000000 		.4byte	OneSecondIndex
+ 3063 0cc2 14       		.uleb128 0x14
+ 3064 0cc3 36020000 		.4byte	.LASF26
+ 3065 0cc7 36020000 		.4byte	.LASF26
+ 3066 0ccb 06       		.byte	0x6
+ 3067 0ccc 33       		.byte	0x33
+ 3068 0ccd 14       		.uleb128 0x14
+ 3069 0cce 2F010000 		.4byte	.LASF27
+ 3070 0cd2 2F010000 		.4byte	.LASF27
+ 3071 0cd6 07       		.byte	0x7
+ 3072 0cd7 4D       		.byte	0x4d
+ 3073 0cd8 14       		.uleb128 0x14
+ 3074 0cd9 44010000 		.4byte	.LASF28
+ 3075 0cdd 44010000 		.4byte	.LASF28
+ 3076 0ce1 08       		.byte	0x8
+ 3077 0ce2 33       		.byte	0x33
+ 3078 0ce3 14       		.uleb128 0x14
+ 3079 0ce4 14030000 		.4byte	.LASF29
+ 3080 0ce8 14030000 		.4byte	.LASF29
+ 3081 0cec 09       		.byte	0x9
+ 3082 0ced EC       		.byte	0xec
+ 3083 0cee 14       		.uleb128 0x14
+ 3084 0cef 72000000 		.4byte	.LASF30
+ 3085 0cf3 72000000 		.4byte	.LASF30
+ 3086 0cf7 0A       		.byte	0xa
+ 3087 0cf8 66       		.byte	0x66
+ 3088 0cf9 14       		.uleb128 0x14
+ 3089 0cfa 26000000 		.4byte	.LASF31
+ 3090 0cfe 26000000 		.4byte	.LASF31
+ 3091 0d02 0B       		.byte	0xb
+ 3092 0d03 78       		.byte	0x78
+ 3093 0d04 14       		.uleb128 0x14
+ 3094 0d05 33000000 		.4byte	.LASF32
+ 3095 0d09 33000000 		.4byte	.LASF32
+ 3096 0d0d 0B       		.byte	0xb
+ 3097 0d0e 41       		.byte	0x41
+ 3098 0d0f 14       		.uleb128 0x14
+ 3099 0d10 1D010000 		.4byte	.LASF33
+ 3100 0d14 1D010000 		.4byte	.LASF33
+ 3101 0d18 0C       		.byte	0xc
+ 3102 0d19 30       		.byte	0x30
+ 3103 0d1a 14       		.uleb128 0x14
+ 3104 0d1b 7F000000 		.4byte	.LASF34
+ 3105 0d1f 7F000000 		.4byte	.LASF34
+ 3106 0d23 0D       		.byte	0xd
+ 3107 0d24 72       		.byte	0x72
+ 3108 0d25 14       		.uleb128 0x14
+ 3109 0d26 E8000000 		.4byte	.LASF35
+ 3110 0d2a E8000000 		.4byte	.LASF35
+ 3111 0d2e 0E       		.byte	0xe
+ 3112 0d2f 14       		.byte	0x14
+ 3113 0d30 14       		.uleb128 0x14
+ 3114 0d31 DE000000 		.4byte	.LASF36
+ 3115 0d35 DE000000 		.4byte	.LASF36
+ 3116 0d39 0F       		.byte	0xf
+ 3117 0d3a 14       		.byte	0x14
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 57
+
+
+ 3118 0d3b 14       		.uleb128 0x14
+ 3119 0d3c 6A000000 		.4byte	.LASF37
+ 3120 0d40 6A000000 		.4byte	.LASF37
+ 3121 0d44 10       		.byte	0x10
+ 3122 0d45 09       		.byte	0x9
+ 3123 0d46 14       		.uleb128 0x14
+ 3124 0d47 57020000 		.4byte	.LASF38
+ 3125 0d4b 57020000 		.4byte	.LASF38
+ 3126 0d4f 11       		.byte	0x11
+ 3127 0d50 72       		.byte	0x72
+ 3128 0d51 14       		.uleb128 0x14
+ 3129 0d52 03010000 		.4byte	.LASF39
+ 3130 0d56 03010000 		.4byte	.LASF39
+ 3131 0d5a 0F       		.byte	0xf
+ 3132 0d5b 16       		.byte	0x16
+ 3133 0d5c 00       		.byte	0
+ 3134              		.section	.debug_abbrev,"",%progbits
+ 3135              	.Ldebug_abbrev0:
+ 3136 0000 01       		.uleb128 0x1
+ 3137 0001 11       		.uleb128 0x11
+ 3138 0002 01       		.byte	0x1
+ 3139 0003 25       		.uleb128 0x25
+ 3140 0004 0E       		.uleb128 0xe
+ 3141 0005 13       		.uleb128 0x13
+ 3142 0006 0B       		.uleb128 0xb
+ 3143 0007 03       		.uleb128 0x3
+ 3144 0008 0E       		.uleb128 0xe
+ 3145 0009 1B       		.uleb128 0x1b
+ 3146 000a 0E       		.uleb128 0xe
+ 3147 000b 55       		.uleb128 0x55
+ 3148 000c 17       		.uleb128 0x17
+ 3149 000d 11       		.uleb128 0x11
+ 3150 000e 01       		.uleb128 0x1
+ 3151 000f 10       		.uleb128 0x10
+ 3152 0010 17       		.uleb128 0x17
+ 3153 0011 00       		.byte	0
+ 3154 0012 00       		.byte	0
+ 3155 0013 02       		.uleb128 0x2
+ 3156 0014 24       		.uleb128 0x24
+ 3157 0015 00       		.byte	0
+ 3158 0016 0B       		.uleb128 0xb
+ 3159 0017 0B       		.uleb128 0xb
+ 3160 0018 3E       		.uleb128 0x3e
+ 3161 0019 0B       		.uleb128 0xb
+ 3162 001a 03       		.uleb128 0x3
+ 3163 001b 0E       		.uleb128 0xe
+ 3164 001c 00       		.byte	0
+ 3165 001d 00       		.byte	0
+ 3166 001e 03       		.uleb128 0x3
+ 3167 001f 24       		.uleb128 0x24
+ 3168 0020 00       		.byte	0
+ 3169 0021 0B       		.uleb128 0xb
+ 3170 0022 0B       		.uleb128 0xb
+ 3171 0023 3E       		.uleb128 0x3e
+ 3172 0024 0B       		.uleb128 0xb
+ 3173 0025 03       		.uleb128 0x3
+ 3174 0026 08       		.uleb128 0x8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 58
+
+
+ 3175 0027 00       		.byte	0
+ 3176 0028 00       		.byte	0
+ 3177 0029 04       		.uleb128 0x4
+ 3178 002a 16       		.uleb128 0x16
+ 3179 002b 00       		.byte	0
+ 3180 002c 03       		.uleb128 0x3
+ 3181 002d 0E       		.uleb128 0xe
+ 3182 002e 3A       		.uleb128 0x3a
+ 3183 002f 0B       		.uleb128 0xb
+ 3184 0030 3B       		.uleb128 0x3b
+ 3185 0031 05       		.uleb128 0x5
+ 3186 0032 49       		.uleb128 0x49
+ 3187 0033 13       		.uleb128 0x13
+ 3188 0034 00       		.byte	0
+ 3189 0035 00       		.byte	0
+ 3190 0036 05       		.uleb128 0x5
+ 3191 0037 13       		.uleb128 0x13
+ 3192 0038 01       		.byte	0x1
+ 3193 0039 03       		.uleb128 0x3
+ 3194 003a 0E       		.uleb128 0xe
+ 3195 003b 0B       		.uleb128 0xb
+ 3196 003c 0B       		.uleb128 0xb
+ 3197 003d 3A       		.uleb128 0x3a
+ 3198 003e 0B       		.uleb128 0xb
+ 3199 003f 3B       		.uleb128 0x3b
+ 3200 0040 0B       		.uleb128 0xb
+ 3201 0041 01       		.uleb128 0x1
+ 3202 0042 13       		.uleb128 0x13
+ 3203 0043 00       		.byte	0
+ 3204 0044 00       		.byte	0
+ 3205 0045 06       		.uleb128 0x6
+ 3206 0046 0D       		.uleb128 0xd
+ 3207 0047 00       		.byte	0
+ 3208 0048 03       		.uleb128 0x3
+ 3209 0049 0E       		.uleb128 0xe
+ 3210 004a 3A       		.uleb128 0x3a
+ 3211 004b 0B       		.uleb128 0xb
+ 3212 004c 3B       		.uleb128 0x3b
+ 3213 004d 0B       		.uleb128 0xb
+ 3214 004e 49       		.uleb128 0x49
+ 3215 004f 13       		.uleb128 0x13
+ 3216 0050 38       		.uleb128 0x38
+ 3217 0051 0B       		.uleb128 0xb
+ 3218 0052 00       		.byte	0
+ 3219 0053 00       		.byte	0
+ 3220 0054 07       		.uleb128 0x7
+ 3221 0055 04       		.uleb128 0x4
+ 3222 0056 01       		.byte	0x1
+ 3223 0057 03       		.uleb128 0x3
+ 3224 0058 0E       		.uleb128 0xe
+ 3225 0059 0B       		.uleb128 0xb
+ 3226 005a 0B       		.uleb128 0xb
+ 3227 005b 49       		.uleb128 0x49
+ 3228 005c 13       		.uleb128 0x13
+ 3229 005d 3A       		.uleb128 0x3a
+ 3230 005e 0B       		.uleb128 0xb
+ 3231 005f 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 59
+
+
+ 3232 0060 0B       		.uleb128 0xb
+ 3233 0061 01       		.uleb128 0x1
+ 3234 0062 13       		.uleb128 0x13
+ 3235 0063 00       		.byte	0
+ 3236 0064 00       		.byte	0
+ 3237 0065 08       		.uleb128 0x8
+ 3238 0066 28       		.uleb128 0x28
+ 3239 0067 00       		.byte	0
+ 3240 0068 03       		.uleb128 0x3
+ 3241 0069 0E       		.uleb128 0xe
+ 3242 006a 1C       		.uleb128 0x1c
+ 3243 006b 0B       		.uleb128 0xb
+ 3244 006c 00       		.byte	0
+ 3245 006d 00       		.byte	0
+ 3246 006e 09       		.uleb128 0x9
+ 3247 006f 2E       		.uleb128 0x2e
+ 3248 0070 01       		.byte	0x1
+ 3249 0071 3F       		.uleb128 0x3f
+ 3250 0072 19       		.uleb128 0x19
+ 3251 0073 03       		.uleb128 0x3
+ 3252 0074 0E       		.uleb128 0xe
+ 3253 0075 3A       		.uleb128 0x3a
+ 3254 0076 0B       		.uleb128 0xb
+ 3255 0077 3B       		.uleb128 0x3b
+ 3256 0078 0B       		.uleb128 0xb
+ 3257 0079 27       		.uleb128 0x27
+ 3258 007a 19       		.uleb128 0x19
+ 3259 007b 11       		.uleb128 0x11
+ 3260 007c 01       		.uleb128 0x1
+ 3261 007d 12       		.uleb128 0x12
+ 3262 007e 06       		.uleb128 0x6
+ 3263 007f 40       		.uleb128 0x40
+ 3264 0080 18       		.uleb128 0x18
+ 3265 0081 9742     		.uleb128 0x2117
+ 3266 0083 19       		.uleb128 0x19
+ 3267 0084 01       		.uleb128 0x1
+ 3268 0085 13       		.uleb128 0x13
+ 3269 0086 00       		.byte	0
+ 3270 0087 00       		.byte	0
+ 3271 0088 0A       		.uleb128 0xa
+ 3272 0089 898201   		.uleb128 0x4109
+ 3273 008c 01       		.byte	0x1
+ 3274 008d 11       		.uleb128 0x11
+ 3275 008e 01       		.uleb128 0x1
+ 3276 008f 31       		.uleb128 0x31
+ 3277 0090 13       		.uleb128 0x13
+ 3278 0091 01       		.uleb128 0x1
+ 3279 0092 13       		.uleb128 0x13
+ 3280 0093 00       		.byte	0
+ 3281 0094 00       		.byte	0
+ 3282 0095 0B       		.uleb128 0xb
+ 3283 0096 8A8201   		.uleb128 0x410a
+ 3284 0099 00       		.byte	0
+ 3285 009a 02       		.uleb128 0x2
+ 3286 009b 18       		.uleb128 0x18
+ 3287 009c 9142     		.uleb128 0x2111
+ 3288 009e 18       		.uleb128 0x18
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 60
+
+
+ 3289 009f 00       		.byte	0
+ 3290 00a0 00       		.byte	0
+ 3291 00a1 0C       		.uleb128 0xc
+ 3292 00a2 898201   		.uleb128 0x4109
+ 3293 00a5 00       		.byte	0
+ 3294 00a6 11       		.uleb128 0x11
+ 3295 00a7 01       		.uleb128 0x1
+ 3296 00a8 31       		.uleb128 0x31
+ 3297 00a9 13       		.uleb128 0x13
+ 3298 00aa 00       		.byte	0
+ 3299 00ab 00       		.byte	0
+ 3300 00ac 0D       		.uleb128 0xd
+ 3301 00ad 01       		.uleb128 0x1
+ 3302 00ae 01       		.byte	0x1
+ 3303 00af 49       		.uleb128 0x49
+ 3304 00b0 13       		.uleb128 0x13
+ 3305 00b1 01       		.uleb128 0x1
+ 3306 00b2 13       		.uleb128 0x13
+ 3307 00b3 00       		.byte	0
+ 3308 00b4 00       		.byte	0
+ 3309 00b5 0E       		.uleb128 0xe
+ 3310 00b6 21       		.uleb128 0x21
+ 3311 00b7 00       		.byte	0
+ 3312 00b8 49       		.uleb128 0x49
+ 3313 00b9 13       		.uleb128 0x13
+ 3314 00ba 2F       		.uleb128 0x2f
+ 3315 00bb 05       		.uleb128 0x5
+ 3316 00bc 00       		.byte	0
+ 3317 00bd 00       		.byte	0
+ 3318 00be 0F       		.uleb128 0xf
+ 3319 00bf 26       		.uleb128 0x26
+ 3320 00c0 00       		.byte	0
+ 3321 00c1 49       		.uleb128 0x49
+ 3322 00c2 13       		.uleb128 0x13
+ 3323 00c3 00       		.byte	0
+ 3324 00c4 00       		.byte	0
+ 3325 00c5 10       		.uleb128 0x10
+ 3326 00c6 34       		.uleb128 0x34
+ 3327 00c7 00       		.byte	0
+ 3328 00c8 03       		.uleb128 0x3
+ 3329 00c9 0E       		.uleb128 0xe
+ 3330 00ca 3A       		.uleb128 0x3a
+ 3331 00cb 0B       		.uleb128 0xb
+ 3332 00cc 3B       		.uleb128 0x3b
+ 3333 00cd 0B       		.uleb128 0xb
+ 3334 00ce 49       		.uleb128 0x49
+ 3335 00cf 13       		.uleb128 0x13
+ 3336 00d0 1C       		.uleb128 0x1c
+ 3337 00d1 03       		.uleb128 0x3
+ 3338 00d2 00       		.byte	0
+ 3339 00d3 00       		.byte	0
+ 3340 00d4 11       		.uleb128 0x11
+ 3341 00d5 21       		.uleb128 0x21
+ 3342 00d6 00       		.byte	0
+ 3343 00d7 49       		.uleb128 0x49
+ 3344 00d8 13       		.uleb128 0x13
+ 3345 00d9 2F       		.uleb128 0x2f
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 61
+
+
+ 3346 00da 0B       		.uleb128 0xb
+ 3347 00db 00       		.byte	0
+ 3348 00dc 00       		.byte	0
+ 3349 00dd 12       		.uleb128 0x12
+ 3350 00de 34       		.uleb128 0x34
+ 3351 00df 00       		.byte	0
+ 3352 00e0 03       		.uleb128 0x3
+ 3353 00e1 0E       		.uleb128 0xe
+ 3354 00e2 3A       		.uleb128 0x3a
+ 3355 00e3 0B       		.uleb128 0xb
+ 3356 00e4 3B       		.uleb128 0x3b
+ 3357 00e5 05       		.uleb128 0x5
+ 3358 00e6 49       		.uleb128 0x49
+ 3359 00e7 13       		.uleb128 0x13
+ 3360 00e8 3F       		.uleb128 0x3f
+ 3361 00e9 19       		.uleb128 0x19
+ 3362 00ea 3C       		.uleb128 0x3c
+ 3363 00eb 19       		.uleb128 0x19
+ 3364 00ec 00       		.byte	0
+ 3365 00ed 00       		.byte	0
+ 3366 00ee 13       		.uleb128 0x13
+ 3367 00ef 34       		.uleb128 0x34
+ 3368 00f0 00       		.byte	0
+ 3369 00f1 03       		.uleb128 0x3
+ 3370 00f2 0E       		.uleb128 0xe
+ 3371 00f3 3A       		.uleb128 0x3a
+ 3372 00f4 0B       		.uleb128 0xb
+ 3373 00f5 3B       		.uleb128 0x3b
+ 3374 00f6 0B       		.uleb128 0xb
+ 3375 00f7 49       		.uleb128 0x49
+ 3376 00f8 13       		.uleb128 0x13
+ 3377 00f9 3F       		.uleb128 0x3f
+ 3378 00fa 19       		.uleb128 0x19
+ 3379 00fb 02       		.uleb128 0x2
+ 3380 00fc 18       		.uleb128 0x18
+ 3381 00fd 00       		.byte	0
+ 3382 00fe 00       		.byte	0
+ 3383 00ff 14       		.uleb128 0x14
+ 3384 0100 2E       		.uleb128 0x2e
+ 3385 0101 00       		.byte	0
+ 3386 0102 3F       		.uleb128 0x3f
+ 3387 0103 19       		.uleb128 0x19
+ 3388 0104 3C       		.uleb128 0x3c
+ 3389 0105 19       		.uleb128 0x19
+ 3390 0106 6E       		.uleb128 0x6e
+ 3391 0107 0E       		.uleb128 0xe
+ 3392 0108 03       		.uleb128 0x3
+ 3393 0109 0E       		.uleb128 0xe
+ 3394 010a 3A       		.uleb128 0x3a
+ 3395 010b 0B       		.uleb128 0xb
+ 3396 010c 3B       		.uleb128 0x3b
+ 3397 010d 0B       		.uleb128 0xb
+ 3398 010e 00       		.byte	0
+ 3399 010f 00       		.byte	0
+ 3400 0110 00       		.byte	0
+ 3401              		.section	.debug_aranges,"",%progbits
+ 3402 0000 1C000000 		.4byte	0x1c
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 62
+
+
+ 3403 0004 0200     		.2byte	0x2
+ 3404 0006 00000000 		.4byte	.Ldebug_info0
+ 3405 000a 04       		.byte	0x4
+ 3406 000b 00       		.byte	0
+ 3407 000c 0000     		.2byte	0
+ 3408 000e 0000     		.2byte	0
+ 3409 0010 00000000 		.4byte	.LFB62
+ 3410 0014 54000000 		.4byte	.LFE62-.LFB62
+ 3411 0018 00000000 		.4byte	0
+ 3412 001c 00000000 		.4byte	0
+ 3413              		.section	.debug_ranges,"",%progbits
+ 3414              	.Ldebug_ranges0:
+ 3415 0000 00000000 		.4byte	.LFB62
+ 3416 0004 54000000 		.4byte	.LFE62
+ 3417 0008 00000000 		.4byte	0
+ 3418 000c 00000000 		.4byte	0
+ 3419              		.section	.debug_line,"",%progbits
+ 3420              	.Ldebug_line0:
+ 3421 0000 1E010000 		.section	.debug_str,"MS",%progbits,1
+ 3421      0200F700 
+ 3421      00000201 
+ 3421      FB0E0D00 
+ 3421      01010101 
+ 3422              	.LASF16:
+ 3423 0000 73746174 		.ascii	"stat_TC_INT\000"
+ 3423      5F54435F 
+ 3423      494E5400 
+ 3424              	.LASF44:
+ 3425 000c 44495350 		.ascii	"DISPLAY_DIRECTION\000"
+ 3425      4C41595F 
+ 3425      44495245 
+ 3425      4354494F 
+ 3425      4E00
+ 3426              	.LASF41:
+ 3427 001e 73657475 		.ascii	"setup.c\000"
+ 3427      702E6300 
+ 3428              	.LASF31:
+ 3429 0026 696E6974 		.ascii	"initUI\000"
+ 3429      554900
+ 3430              	.LASF45:
+ 3431 002d 53657455 		.ascii	"SetUp\000"
+ 3431      7000
+ 3432              	.LASF32:
+ 3433 0033 73657444 		.ascii	"setDisplayDirection\000"
+ 3433      6973706C 
+ 3433      61794469 
+ 3433      72656374 
+ 3433      696F6E00 
+ 3434              	.LASF20:
+ 3435 0047 44495350 		.ascii	"DISPLAY_DIRECTION_LANDSCAPE\000"
+ 3435      4C41595F 
+ 3435      44495245 
+ 3435      4354494F 
+ 3435      4E5F4C41 
+ 3436              	.LASF12:
+ 3437 0063 646F7562 		.ascii	"double\000"
+ 3437      6C6500
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 63
+
+
+ 3438              	.LASF37:
+ 3439 006a 696E6974 		.ascii	"initUSB\000"
+ 3439      55534200 
+ 3440              	.LASF30:
+ 3441 0072 53543737 		.ascii	"ST7789V_Init\000"
+ 3441      3839565F 
+ 3441      496E6974 
+ 3441      00
+ 3442              	.LASF34:
+ 3443 007f 4932435F 		.ascii	"I2C_TC_Start\000"
+ 3443      54435F53 
+ 3443      74617274 
+ 3443      00
+ 3444              	.LASF11:
+ 3445 008c 666C6F61 		.ascii	"float\000"
+ 3445      7400
+ 3446              	.LASF1:
+ 3447 0092 756E7369 		.ascii	"unsigned char\000"
+ 3447      676E6564 
+ 3447      20636861 
+ 3447      7200
+ 3448              	.LASF21:
+ 3449 00a0 536D616C 		.ascii	"SmallFont8x12\000"
+ 3449      6C466F6E 
+ 3449      74387831 
+ 3449      3200
+ 3450              	.LASF5:
+ 3451 00ae 6C6F6E67 		.ascii	"long unsigned int\000"
+ 3451      20756E73 
+ 3451      69676E65 
+ 3451      6420696E 
+ 3451      7400
+ 3452              	.LASF43:
+ 3453 00c0 73506172 		.ascii	"sParameter\000"
+ 3453      616D6574 
+ 3453      657200
+ 3454              	.LASF3:
+ 3455 00cb 73686F72 		.ascii	"short unsigned int\000"
+ 3455      7420756E 
+ 3455      7369676E 
+ 3455      65642069 
+ 3455      6E7400
+ 3456              	.LASF36:
+ 3457 00de 696E6974 		.ascii	"initTimer\000"
+ 3457      54696D65 
+ 3457      7200
+ 3458              	.LASF35:
+ 3459 00e8 696E6974 		.ascii	"initLEDControl\000"
+ 3459      4C454443 
+ 3459      6F6E7472 
+ 3459      6F6C00
+ 3460              	.LASF17:
+ 3461 00f7 706F735F 		.ascii	"pos_X\000"
+ 3461      5800
+ 3462              	.LASF18:
+ 3463 00fd 706F735F 		.ascii	"pos_Y\000"
+ 3463      5900
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 64
+
+
+ 3464              	.LASF39:
+ 3465 0103 72656769 		.ascii	"registerCounter_1s\000"
+ 3465      73746572 
+ 3465      436F756E 
+ 3465      7465725F 
+ 3465      317300
+ 3466              	.LASF10:
+ 3467 0116 75696E74 		.ascii	"uint16\000"
+ 3467      313600
+ 3468              	.LASF33:
+ 3469 011d 546F7563 		.ascii	"TouchHardwareInit\000"
+ 3469      68486172 
+ 3469      64776172 
+ 3469      65496E69 
+ 3469      7400
+ 3470              	.LASF27:
+ 3471 012f 5350494D 		.ascii	"SPIM_LCD_Start\000"
+ 3471      5F4C4344 
+ 3471      5F537461 
+ 3471      727400
+ 3472              	.LASF24:
+ 3473 013e 50617261 		.ascii	"Param\000"
+ 3473      6D00
+ 3474              	.LASF28:
+ 3475 0144 4C43445F 		.ascii	"LCD_RES_Write\000"
+ 3475      5245535F 
+ 3475      57726974 
+ 3475      6500
+ 3476              	.LASF8:
+ 3477 0152 756E7369 		.ascii	"unsigned int\000"
+ 3477      676E6564 
+ 3477      20696E74 
+ 3477      00
+ 3478              	.LASF19:
+ 3479 015f 44495350 		.ascii	"DISPLAY_DIRECTION_PORTRAIT\000"
+ 3479      4C41595F 
+ 3479      44495245 
+ 3479      4354494F 
+ 3479      4E5F504F 
+ 3480              	.LASF7:
+ 3481 017a 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 3481      206C6F6E 
+ 3481      6720756E 
+ 3481      7369676E 
+ 3481      65642069 
+ 3482              	.LASF40:
+ 3483 0191 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 3483      43313120 
+ 3483      352E342E 
+ 3483      31203230 
+ 3483      31363036 
+ 3484 01c4 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 3484      20726576 
+ 3484      6973696F 
+ 3484      6E203233 
+ 3484      37373135 
+ 3485 01f7 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 65
+
+
+ 3485      66756E63 
+ 3485      74696F6E 
+ 3485      2D736563 
+ 3485      74696F6E 
+ 3486              	.LASF15:
+ 3487 021f 73697A65 		.ascii	"sizetype\000"
+ 3487      74797065 
+ 3487      00
+ 3488              	.LASF6:
+ 3489 0228 6C6F6E67 		.ascii	"long long int\000"
+ 3489      206C6F6E 
+ 3489      6720696E 
+ 3489      7400
+ 3490              	.LASF26:
+ 3491 0236 42555A5A 		.ascii	"BUZZER_Write\000"
+ 3491      45525F57 
+ 3491      72697465 
+ 3491      00
+ 3492              	.LASF13:
+ 3493 0243 63686172 		.ascii	"char\000"
+ 3493      00
+ 3494              	.LASF25:
+ 3495 0248 4F6E6553 		.ascii	"OneSecondIndex\000"
+ 3495      65636F6E 
+ 3495      64496E64 
+ 3495      657800
+ 3496              	.LASF38:
+ 3497 0257 55415254 		.ascii	"UART_Start\000"
+ 3497      5F537461 
+ 3497      727400
+ 3498              	.LASF22:
+ 3499 0262 466F6E74 		.ascii	"Font8x16\000"
+ 3499      38783136 
+ 3499      00
+ 3500              	.LASF2:
+ 3501 026b 73686F72 		.ascii	"short int\000"
+ 3501      7420696E 
+ 3501      7400
+ 3502              	.LASF9:
+ 3503 0275 75696E74 		.ascii	"uint8\000"
+ 3503      3800
+ 3504              	.LASF4:
+ 3505 027b 6C6F6E67 		.ascii	"long int\000"
+ 3505      20696E74 
+ 3505      00
+ 3506              	.LASF23:
+ 3507 0284 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 3507      64617973 
+ 3507      4265666F 
+ 3507      72654D6F 
+ 3507      6E746854 
+ 3508              	.LASF14:
+ 3509 029b 6C6F6E67 		.ascii	"long double\000"
+ 3509      20646F75 
+ 3509      626C6500 
+ 3510              	.LASF0:
+ 3511 02a7 7369676E 		.ascii	"signed char\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccXiPk5K.s 			page 66
+
+
+ 3511      65642063 
+ 3511      68617200 
+ 3512              	.LASF42:
+ 3513 02b3 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_UART_T"
+ 3513      554E5445 
+ 3513      43485F44 
+ 3513      45565F43 
+ 3513      4C415544 
+ 3514 02e3 4553545C 		.ascii	"EST\\280CTP_IoT_UART_TEST_V1\\Project\\Design.cydsn"
+ 3514      32383043 
+ 3514      54505F49 
+ 3514      6F545F55 
+ 3514      4152545F 
+ 3515 0313 00       		.ascii	"\000"
+ 3516              	.LASF29:
+ 3517 0314 43794465 		.ascii	"CyDelay\000"
+ 3517      6C617900 
+ 3518              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

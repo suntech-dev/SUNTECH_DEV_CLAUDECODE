@@ -1,0 +1,5105 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"andonApi.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.andonResponse,"ax",%progbits
+  20              		.align	2
+  21              		.global	andonResponse
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	andonResponse, %function
+  25              	andonResponse:
+  26              	.LFB63:
+  27              		.file 1 "andonApi.c"
+   1:andonApi.c    **** /* ========================================
+   2:andonApi.c    ****  *
+   3:andonApi.c    ****  * Copyright Suntech, 2023.02.01
+   4:andonApi.c    ****  * All Rights Reserved
+   5:andonApi.c    ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:andonApi.c    ****  *
+   7:andonApi.c    ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:andonApi.c    ****  * WHICH IS THE PROPERTY OF Suntech.
+   9:andonApi.c    ****  *
+  10:andonApi.c    ****  * ========================================
+  11:andonApi.c    **** */
+  12:andonApi.c    **** #include "andonApi.h"
+  13:andonApi.c    **** #include "andonJson.h"
+  14:andonApi.c    **** #include "andonMessageQueue.h"
+  15:andonApi.c    **** #include "lib/WIFI.h"
+  16:andonApi.c    **** #include "lib/server.h"
+  17:andonApi.c    **** #include "lib/utility.h"
+  18:andonApi.c    **** #include "userProjectPatternSewing.h"
+  19:andonApi.c    **** #include "count.h"
+  20:andonApi.c    **** #include "package.h"
+  21:andonApi.c    **** #include "lib/sysTick.h"
+  22:andonApi.c    **** #include "WarningLight.h"
+  23:andonApi.c    **** #include "downtime.h"
+  24:andonApi.c    **** #include "defective.h"
+  25:andonApi.c    **** 
+  26:andonApi.c    **** ANDON_LISTS g_AndonLists;
+  27:andonApi.c    **** uint8       g_bDeviceInfoUpdate=FALSE;
+  28:andonApi.c    **** uint8       g_uReplyResult=RR_INIT;
+  29:andonApi.c    **** static uint16 g_uAndonRequestType = ANDON_NONE;  /* andonApi.c 내부에서만 사용 */
+  30:andonApi.c    **** uint8       g_bTargetReceived = FALSE;
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 2
+
+
+  31:andonApi.c    **** uint8       g_index_request_interval=0;
+  32:andonApi.c    **** uint8       g_bReceivedAndonStart = 0;
+  33:andonApi.c    **** 
+  34:andonApi.c    **** INFO  g_Info = {
+  35:andonApi.c    ****     .nNoOfLineForNotice =0, 
+  36:andonApi.c    **** };
+  37:andonApi.c    **** 
+  38:andonApi.c    **** uint8 andonLoop()
+  39:andonApi.c    **** {
+  40:andonApi.c    ****     if(!isEmptyQueueANDON())
+  41:andonApi.c    ****     {
+  42:andonApi.c    ****         ANDON_QUEUE *aq = deQueueANDON();
+  43:andonApi.c    ****         
+  44:andonApi.c    ****         char url[512];
+  45:andonApi.c    ****         snprintf(url, sizeof(url), "%s?code=%s", DEFAULT_API_ENDPOINT, aq->message);
+  46:andonApi.c    **** 
+  47:andonApi.c    ****         g_uAndonRequestType = aq->type;
+  48:andonApi.c    **** 
+  49:andonApi.c    ****         wifi_cmd_http(url);
+  50:andonApi.c    ****         
+  51:andonApi.c    ****         return TRUE;
+  52:andonApi.c    ****     }
+  53:andonApi.c    ****     
+  54:andonApi.c    ****     if(g_bReceivedAndonStart)
+  55:andonApi.c    ****     {
+  56:andonApi.c    ****         if(isFinishCounter_1ms(g_index_request_interval)) // Wifi Strength 체크를 5sec마다 수
+  57:andonApi.c    ****         {
+  58:andonApi.c    ****             resetCounter_1ms(g_index_request_interval);
+  59:andonApi.c    ****             
+  60:andonApi.c    ****             if(g_ptrMachineParameter->andon_enable==TRUE) makeAndonList();             
+  61:andonApi.c    ****             
+  62:andonApi.c    ****             return TRUE;
+  63:andonApi.c    ****         }
+  64:andonApi.c    ****         
+  65:andonApi.c    ****         WarningLight();
+  66:andonApi.c    ****     }
+  67:andonApi.c    ****    
+  68:andonApi.c    ****     return FALSE;
+  69:andonApi.c    **** }
+  70:andonApi.c    **** 
+  71:andonApi.c    **** 
+  72:andonApi.c    **** void andonResponse(char *ptrText, int16 sizeOfText)
+  73:andonApi.c    **** {
+  28              		.loc 1 73 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  37 0002 0300     		movs	r3, r0
+  38 0004 0A00     		movs	r2, r1
+  74:andonApi.c    ****     andonJsonParsor(g_uAndonRequestType, ptrText, sizeOfText);
+  39              		.loc 1 74 0
+  40 0006 044C     		ldr	r4, .L2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 3
+
+
+  41 0008 2088     		ldrh	r0, [r4]
+  42              	.LVL1:
+  43 000a 1900     		movs	r1, r3
+  44              	.LVL2:
+  45 000c FFF7FEFF 		bl	andonJsonParsor
+  46              	.LVL3:
+  75:andonApi.c    ****     g_uAndonRequestType = ANDON_NONE;
+  47              		.loc 1 75 0
+  48 0010 0023     		movs	r3, #0
+  49 0012 2380     		strh	r3, [r4]
+  76:andonApi.c    **** }
+  50              		.loc 1 76 0
+  51              		@ sp needed
+  52 0014 10BD     		pop	{r4, pc}
+  53              	.L3:
+  54 0016 C046     		.align	2
+  55              	.L2:
+  56 0018 00000000 		.word	.LANCHOR0
+  57              		.cfi_endproc
+  58              	.LFE63:
+  59              		.size	andonResponse, .-andonResponse
+  60              		.section	.text.makeAndonCurrentTimeRequest,"ax",%progbits
+  61              		.align	2
+  62              		.global	makeAndonCurrentTimeRequest
+  63              		.code	16
+  64              		.thumb_func
+  65              		.type	makeAndonCurrentTimeRequest, %function
+  66              	makeAndonCurrentTimeRequest:
+  67              	.LFB64:
+  77:andonApi.c    **** 
+  78:andonApi.c    **** void makeAndonCurrentTimeRequest()
+  79:andonApi.c    **** {
+  68              		.loc 1 79 0
+  69              		.cfi_startproc
+  70              		@ args = 0, pretend = 0, frame = 0
+  71              		@ frame_needed = 0, uses_anonymous_args = 0
+  72 0000 10B5     		push	{r4, lr}
+  73              		.cfi_def_cfa_offset 8
+  74              		.cfi_offset 4, -8
+  75              		.cfi_offset 14, -4
+  80:andonApi.c    ****     enQueueANDON_printf(ANDON_CURRENT_TIME,"get_dateTime");
+  76              		.loc 1 80 0
+  77 0002 0249     		ldr	r1, .L5
+  78 0004 0120     		movs	r0, #1
+  79 0006 FFF7FEFF 		bl	enQueueANDON_printf
+  80              	.LVL4:
+  81:andonApi.c    **** }
+  81              		.loc 1 81 0
+  82              		@ sp needed
+  83 000a 10BD     		pop	{r4, pc}
+  84              	.L6:
+  85              		.align	2
+  86              	.L5:
+  87 000c 00000000 		.word	.LC1
+  88              		.cfi_endproc
+  89              	.LFE64:
+  90              		.size	makeAndonCurrentTimeRequest, .-makeAndonCurrentTimeRequest
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 4
+
+
+  91              		.section	.text.makeAndonStart,"ax",%progbits
+  92              		.align	2
+  93              		.global	makeAndonStart
+  94              		.code	16
+  95              		.thumb_func
+  96              		.type	makeAndonStart, %function
+  97              	makeAndonStart:
+  98              	.LFB65:
+  82:andonApi.c    **** 
+  83:andonApi.c    **** void makeAndonStart()
+  84:andonApi.c    **** {
+  99              		.loc 1 84 0
+ 100              		.cfi_startproc
+ 101              		@ args = 0, pretend = 0, frame = 0
+ 102              		@ frame_needed = 0, uses_anonymous_args = 0
+ 103 0000 00B5     		push	{lr}
+ 104              		.cfi_def_cfa_offset 4
+ 105              		.cfi_offset 14, -4
+ 106 0002 83B0     		sub	sp, sp, #12
+ 107              		.cfi_def_cfa_offset 16
+  85:andonApi.c    ****     //enQueueANDON_printf(ANDON_START,"start&mac=%s&name=%s&ip=%s&ver=%s",
+  86:andonApi.c    ****     enQueueANDON_printf(ANDON_START,"start&mac=%s&machine_no=%s&ip=%s&ver=%s",
+  87:andonApi.c    ****         g_network.MAC,
+  88:andonApi.c    ****         g_ptrServer->deviceName,
+ 108              		.loc 1 88 0
+ 109 0004 074B     		ldr	r3, .L8
+ 110 0006 1B68     		ldr	r3, [r3]
+ 111 0008 7033     		adds	r3, r3, #112
+  86:andonApi.c    ****         g_network.MAC,
+ 112              		.loc 1 86 0
+ 113 000a 074A     		ldr	r2, .L8+4
+ 114 000c 0749     		ldr	r1, .L8+8
+ 115 000e 0191     		str	r1, [sp, #4]
+ 116 0010 1100     		movs	r1, r2
+ 117 0012 4039     		subs	r1, r1, #64
+ 118 0014 0091     		str	r1, [sp]
+ 119 0016 0649     		ldr	r1, .L8+12
+ 120 0018 0F20     		movs	r0, #15
+ 121 001a FFF7FEFF 		bl	enQueueANDON_printf
+ 122              	.LVL5:
+  89:andonApi.c    ****         g_network.IPv4,
+  90:andonApi.c    ****         PROJECT_FIRMWARE_VERSION
+  91:andonApi.c    ****     ); 
+  92:andonApi.c    **** }
+ 123              		.loc 1 92 0
+ 124 001e 03B0     		add	sp, sp, #12
+ 125              		@ sp needed
+ 126 0020 00BD     		pop	{pc}
+ 127              	.L9:
+ 128 0022 C046     		.align	2
+ 129              	.L8:
+ 130 0024 00000000 		.word	g_ptrServer
+ 131 0028 6C000000 		.word	g_network+108
+ 132 002c 38000000 		.word	.LC7
+ 133 0030 10000000 		.word	.LC5
+ 134              		.cfi_endproc
+ 135              	.LFE65:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 5
+
+
+ 136              		.size	makeAndonStart, .-makeAndonStart
+ 137              		.section	.text.makeAndonList,"ax",%progbits
+ 138              		.align	2
+ 139              		.global	makeAndonList
+ 140              		.code	16
+ 141              		.thumb_func
+ 142              		.type	makeAndonList, %function
+ 143              	makeAndonList:
+ 144              	.LFB66:
+  93:andonApi.c    **** 
+  94:andonApi.c    **** void makeAndonList()
+  95:andonApi.c    **** {
+ 145              		.loc 1 95 0
+ 146              		.cfi_startproc
+ 147              		@ args = 0, pretend = 0, frame = 0
+ 148              		@ frame_needed = 0, uses_anonymous_args = 0
+ 149 0000 10B5     		push	{r4, lr}
+ 150              		.cfi_def_cfa_offset 8
+ 151              		.cfi_offset 4, -8
+ 152              		.cfi_offset 14, -4
+  96:andonApi.c    ****     enQueueANDON_printf(ANDON_REQUEST_LIST,"get_andonList&mac=%s",
+ 153              		.loc 1 96 0
+ 154 0002 034A     		ldr	r2, .L11
+ 155 0004 0349     		ldr	r1, .L11+4
+ 156 0006 0520     		movs	r0, #5
+ 157 0008 FFF7FEFF 		bl	enQueueANDON_printf
+ 158              	.LVL6:
+  97:andonApi.c    ****         g_network.MAC
+  98:andonApi.c    ****     );   
+  99:andonApi.c    **** }
+ 159              		.loc 1 99 0
+ 160              		@ sp needed
+ 161 000c 10BD     		pop	{r4, pc}
+ 162              	.L12:
+ 163 000e C046     		.align	2
+ 164              	.L11:
+ 165 0010 6C000000 		.word	g_network+108
+ 166 0014 48000000 		.word	.LC11
+ 167              		.cfi_endproc
+ 168              	.LFE66:
+ 169              		.size	makeAndonList, .-makeAndonList
+ 170              		.section	.text.andonLoop,"ax",%progbits
+ 171              		.align	2
+ 172              		.global	andonLoop
+ 173              		.code	16
+ 174              		.thumb_func
+ 175              		.type	andonLoop, %function
+ 176              	andonLoop:
+ 177              	.LFB62:
+  39:andonApi.c    ****     if(!isEmptyQueueANDON())
+ 178              		.loc 1 39 0
+ 179              		.cfi_startproc
+ 180              		@ args = 0, pretend = 0, frame = 512
+ 181              		@ frame_needed = 0, uses_anonymous_args = 0
+ 182 0000 10B5     		push	{r4, lr}
+ 183              		.cfi_def_cfa_offset 8
+ 184              		.cfi_offset 4, -8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 6
+
+
+ 185              		.cfi_offset 14, -4
+ 186 0002 1D4C     		ldr	r4, .L18
+ 187 0004 A544     		add	sp, sp, r4
+ 188              		.cfi_def_cfa_offset 528
+  40:andonApi.c    ****     {
+ 189              		.loc 1 40 0
+ 190 0006 FFF7FEFF 		bl	isEmptyQueueANDON
+ 191              	.LVL7:
+ 192 000a 0028     		cmp	r0, #0
+ 193 000c 14D1     		bne	.L14
+ 194              	.LBB2:
+  42:andonApi.c    ****         
+ 195              		.loc 1 42 0
+ 196 000e FFF7FEFF 		bl	deQueueANDON
+ 197              	.LVL8:
+ 198 0012 0400     		movs	r4, r0
+ 199              	.LVL9:
+  45:andonApi.c    **** 
+ 200              		.loc 1 45 0
+ 201 0014 0090     		str	r0, [sp]
+ 202 0016 194B     		ldr	r3, .L18+4
+ 203 0018 194A     		ldr	r2, .L18+8
+ 204 001a 8021     		movs	r1, #128
+ 205 001c 8900     		lsls	r1, r1, #2
+ 206 001e 02A8     		add	r0, sp, #8
+ 207              	.LVL10:
+ 208 0020 FFF7FEFF 		bl	snprintf
+ 209              	.LVL11:
+  47:andonApi.c    **** 
+ 210              		.loc 1 47 0
+ 211 0024 8023     		movs	r3, #128
+ 212 0026 5B00     		lsls	r3, r3, #1
+ 213 0028 E25A     		ldrh	r2, [r4, r3]
+ 214 002a 164B     		ldr	r3, .L18+12
+ 215 002c 1A80     		strh	r2, [r3]
+  49:andonApi.c    ****         
+ 216              		.loc 1 49 0
+ 217 002e 02A8     		add	r0, sp, #8
+ 218 0030 FFF7FEFF 		bl	wifi_cmd_http
+ 219              	.LVL12:
+  51:andonApi.c    ****     }
+ 220              		.loc 1 51 0
+ 221 0034 0124     		movs	r4, #1
+ 222              	.LVL13:
+ 223 0036 19E0     		b	.L15
+ 224              	.L14:
+ 225              	.LBE2:
+  54:andonApi.c    ****     {
+ 226              		.loc 1 54 0
+ 227 0038 124B     		ldr	r3, .L18+12
+ 228 003a 9C78     		ldrb	r4, [r3, #2]
+ 229 003c 002C     		cmp	r4, #0
+ 230 003e 15D0     		beq	.L15
+  56:andonApi.c    ****         {
+ 231              		.loc 1 56 0
+ 232 0040 D878     		ldrb	r0, [r3, #3]
+ 233 0042 FFF7FEFF 		bl	isFinishCounter_1ms
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 7
+
+
+ 234              	.LVL14:
+ 235 0046 041E     		subs	r4, r0, #0
+ 236 0048 0CD0     		beq	.L16
+  58:andonApi.c    ****             
+ 237              		.loc 1 58 0
+ 238 004a 0E4B     		ldr	r3, .L18+12
+ 239 004c D878     		ldrb	r0, [r3, #3]
+ 240 004e FFF7FEFF 		bl	resetCounter_1ms
+ 241              	.LVL15:
+  60:andonApi.c    ****             
+ 242              		.loc 1 60 0
+ 243 0052 0D4B     		ldr	r3, .L18+16
+ 244 0054 1B68     		ldr	r3, [r3]
+ 245 0056 9B8A     		ldrh	r3, [r3, #20]
+ 246 0058 012B     		cmp	r3, #1
+ 247 005a 06D1     		bne	.L17
+  60:andonApi.c    ****             
+ 248              		.loc 1 60 0 is_stmt 0 discriminator 1
+ 249 005c FFF7FEFF 		bl	makeAndonList
+ 250              	.LVL16:
+  62:andonApi.c    ****         }
+ 251              		.loc 1 62 0 is_stmt 1 discriminator 1
+ 252 0060 0124     		movs	r4, #1
+ 253 0062 03E0     		b	.L15
+ 254              	.L16:
+  65:andonApi.c    ****     }
+ 255              		.loc 1 65 0
+ 256 0064 FFF7FEFF 		bl	WarningLight
+ 257              	.LVL17:
+ 258 0068 00E0     		b	.L15
+ 259              	.L17:
+  62:andonApi.c    ****         }
+ 260              		.loc 1 62 0
+ 261 006a 0124     		movs	r4, #1
+ 262              	.L15:
+  69:andonApi.c    **** 
+ 263              		.loc 1 69 0 discriminator 1
+ 264 006c 2000     		movs	r0, r4
+ 265 006e 8223     		movs	r3, #130
+ 266 0070 9B00     		lsls	r3, r3, #2
+ 267 0072 9D44     		add	sp, sp, r3
+ 268              		@ sp needed
+ 269 0074 10BD     		pop	{r4, pc}
+ 270              	.L19:
+ 271 0076 C046     		.align	2
+ 272              	.L18:
+ 273 0078 F8FDFFFF 		.word	-520
+ 274 007c 60000000 		.word	.LC13
+ 275 0080 70000000 		.word	.LC15
+ 276 0084 00000000 		.word	.LANCHOR0
+ 277 0088 00000000 		.word	g_ptrMachineParameter
+ 278              		.cfi_endproc
+ 279              	.LFE62:
+ 280              		.size	andonLoop, .-andonLoop
+ 281              		.section	.text.makeAndonWarningRequest,"ax",%progbits
+ 282              		.align	2
+ 283              		.global	makeAndonWarningRequest
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 8
+
+
+ 284              		.code	16
+ 285              		.thumb_func
+ 286              		.type	makeAndonWarningRequest, %function
+ 287              	makeAndonWarningRequest:
+ 288              	.LFB67:
+ 100:andonApi.c    **** 
+ 101:andonApi.c    **** void makeAndonWarningRequest(int idx)
+ 102:andonApi.c    **** {
+ 289              		.loc 1 102 0
+ 290              		.cfi_startproc
+ 291              		@ args = 0, pretend = 0, frame = 0
+ 292              		@ frame_needed = 0, uses_anonymous_args = 0
+ 293              	.LVL18:
+ 294 0000 10B5     		push	{r4, lr}
+ 295              		.cfi_def_cfa_offset 8
+ 296              		.cfi_offset 4, -8
+ 297              		.cfi_offset 14, -4
+ 298 0002 0300     		movs	r3, r0
+ 103:andonApi.c    ****     //enQueueANDON_printf(ANDON_REQUEST_ITEM,"send_andon_warning&mac=%s&andon_text_idx=%d",
+ 104:andonApi.c    ****     enQueueANDON_printf(ANDON_REQUEST_ITEM,"send_andon_warning&mac=%s&andon_idx=%d",
+ 299              		.loc 1 104 0
+ 300 0004 024A     		ldr	r2, .L21
+ 301 0006 0349     		ldr	r1, .L21+4
+ 302 0008 0420     		movs	r0, #4
+ 303              	.LVL19:
+ 304 000a FFF7FEFF 		bl	enQueueANDON_printf
+ 305              	.LVL20:
+ 105:andonApi.c    ****         g_network.MAC,
+ 106:andonApi.c    ****         idx
+ 107:andonApi.c    ****     );  
+ 108:andonApi.c    **** }
+ 306              		.loc 1 108 0
+ 307              		@ sp needed
+ 308 000e 10BD     		pop	{r4, pc}
+ 309              	.L22:
+ 310              		.align	2
+ 311              	.L21:
+ 312 0010 6C000000 		.word	g_network+108
+ 313 0014 7C000000 		.word	.LC20
+ 314              		.cfi_endproc
+ 315              	.LFE67:
+ 316              		.size	makeAndonWarningRequest, .-makeAndonWarningRequest
+ 317              		.section	.text.makeAndonCompleteRequest,"ax",%progbits
+ 318              		.align	2
+ 319              		.global	makeAndonCompleteRequest
+ 320              		.code	16
+ 321              		.thumb_func
+ 322              		.type	makeAndonCompleteRequest, %function
+ 323              	makeAndonCompleteRequest:
+ 324              	.LFB68:
+ 109:andonApi.c    **** 
+ 110:andonApi.c    **** void makeAndonCompleteRequest(int idx)
+ 111:andonApi.c    **** {
+ 325              		.loc 1 111 0
+ 326              		.cfi_startproc
+ 327              		@ args = 0, pretend = 0, frame = 0
+ 328              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 9
+
+
+ 329              	.LVL21:
+ 330 0000 10B5     		push	{r4, lr}
+ 331              		.cfi_def_cfa_offset 8
+ 332              		.cfi_offset 4, -8
+ 333              		.cfi_offset 14, -4
+ 334 0002 0300     		movs	r3, r0
+ 112:andonApi.c    ****     //enQueueANDON_printf(ANDON_REQUEST_ITEM,"send_andon_completed&mac=%s&andon_text_idx=%d",
+ 113:andonApi.c    ****     enQueueANDON_printf(ANDON_REQUEST_ITEM,"send_andon_completed&mac=%s&andon_idx=%d",
+ 335              		.loc 1 113 0
+ 336 0004 024A     		ldr	r2, .L24
+ 337 0006 0349     		ldr	r1, .L24+4
+ 338 0008 0420     		movs	r0, #4
+ 339              	.LVL22:
+ 340 000a FFF7FEFF 		bl	enQueueANDON_printf
+ 341              	.LVL23:
+ 114:andonApi.c    ****         g_network.MAC,
+ 115:andonApi.c    ****         idx);  
+ 116:andonApi.c    **** }
+ 342              		.loc 1 116 0
+ 343              		@ sp needed
+ 344 000e 10BD     		pop	{r4, pc}
+ 345              	.L25:
+ 346              		.align	2
+ 347              	.L24:
+ 348 0010 6C000000 		.word	g_network+108
+ 349 0014 A4000000 		.word	.LC23
+ 350              		.cfi_endproc
+ 351              	.LFE68:
+ 352              		.size	makeAndonCompleteRequest, .-makeAndonCompleteRequest
+ 353              		.section	.text.updateRuntimeSum,"ax",%progbits
+ 354              		.align	2
+ 355              		.global	updateRuntimeSum
+ 356              		.code	16
+ 357              		.thumb_func
+ 358              		.type	updateRuntimeSum, %function
+ 359              	updateRuntimeSum:
+ 360              	.LFB69:
+ 117:andonApi.c    **** 
+ 118:andonApi.c    **** /* 전류센서 신호. (디바이스 2pin) */
+ 119:andonApi.c    **** void updateRuntimeSum(uint32 runtimeSum,uint32 elaspedTime)
+ 120:andonApi.c    **** {    
+ 361              		.loc 1 120 0
+ 362              		.cfi_startproc
+ 363              		@ args = 0, pretend = 0, frame = 0
+ 364              		@ frame_needed = 0, uses_anonymous_args = 0
+ 365              	.LVL24:
+ 366 0000 70B5     		push	{r4, r5, r6, lr}
+ 367              		.cfi_def_cfa_offset 16
+ 368              		.cfi_offset 4, -16
+ 369              		.cfi_offset 5, -12
+ 370              		.cfi_offset 6, -8
+ 371              		.cfi_offset 14, -4
+ 372 0002 84B0     		sub	sp, sp, #16
+ 373              		.cfi_def_cfa_offset 32
+ 374 0004 0500     		movs	r5, r0
+ 375 0006 0E00     		movs	r6, r1
+ 121:andonApi.c    ****     enQueueANDON_printf(ANDON_UPDATE_RUNTIME_SUM,"send_rCount_test&mac=%s&d_idx=%u&target=%lu&motor
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 10
+
+
+ 122:andonApi.c    ****         g_network.MAC,
+ 123:andonApi.c    ****         g_Info.DeviceIdx, 
+ 376              		.loc 1 123 0
+ 377 0008 074B     		ldr	r3, .L27
+ 378 000a DC8D     		ldrh	r4, [r3, #46]
+ 121:andonApi.c    ****     enQueueANDON_printf(ANDON_UPDATE_RUNTIME_SUM,"send_rCount_test&mac=%s&d_idx=%u&target=%lu&motor
+ 379              		.loc 1 121 0
+ 380 000c FFF7FEFF 		bl	getTarget
+ 381              	.LVL25:
+ 382 0010 0296     		str	r6, [sp, #8]
+ 383 0012 0195     		str	r5, [sp, #4]
+ 384 0014 0090     		str	r0, [sp]
+ 385 0016 2300     		movs	r3, r4
+ 386 0018 044A     		ldr	r2, .L27+4
+ 387 001a 0549     		ldr	r1, .L27+8
+ 388 001c 1220     		movs	r0, #18
+ 389 001e FFF7FEFF 		bl	enQueueANDON_printf
+ 390              	.LVL26:
+ 124:andonApi.c    ****         getTarget(), 
+ 125:andonApi.c    ****         runtimeSum, 
+ 126:andonApi.c    ****         elaspedTime
+ 127:andonApi.c    ****     );    
+ 128:andonApi.c    **** }
+ 391              		.loc 1 128 0
+ 392 0022 04B0     		add	sp, sp, #16
+ 393              		@ sp needed
+ 394              	.LVL27:
+ 395              	.LVL28:
+ 396 0024 70BD     		pop	{r4, r5, r6, pc}
+ 397              	.L28:
+ 398 0026 C046     		.align	2
+ 399              	.L27:
+ 400 0028 00000000 		.word	.LANCHOR0
+ 401 002c 6C000000 		.word	g_network+108
+ 402 0030 D0000000 		.word	.LC27
+ 403              		.cfi_endproc
+ 404              	.LFE69:
+ 405              		.size	updateRuntimeSum, .-updateRuntimeSum
+ 406              		.global	__aeabi_ui2d
+ 407              		.global	__aeabi_ddiv
+ 408              		.global	__aeabi_i2d
+ 409              		.section	.text.makeAndonSewingCount2,"ax",%progbits
+ 410              		.align	2
+ 411              		.global	makeAndonSewingCount2
+ 412              		.code	16
+ 413              		.thumb_func
+ 414              		.type	makeAndonSewingCount2, %function
+ 415              	makeAndonSewingCount2:
+ 416              	.LFB70:
+ 129:andonApi.c    **** 
+ 130:andonApi.c    **** /* 초성 CPU 의 3.3~5V High~Low 신호. (디바이스 6pin. 1번,6번) */
+ 131:andonApi.c    **** void makeAndonSewingCount2(uint16 elapsedTime)
+ 132:andonApi.c    **** {
+ 417              		.loc 1 132 0
+ 418              		.cfi_startproc
+ 419              		@ args = 0, pretend = 0, frame = 0
+ 420              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 11
+
+
+ 421              	.LVL29:
+ 422 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 423              		.cfi_def_cfa_offset 20
+ 424              		.cfi_offset 4, -20
+ 425              		.cfi_offset 5, -16
+ 426              		.cfi_offset 6, -12
+ 427              		.cfi_offset 7, -8
+ 428              		.cfi_offset 14, -4
+ 429 0002 4746     		mov	r7, r8
+ 430 0004 80B4     		push	{r7}
+ 431              		.cfi_def_cfa_offset 24
+ 432              		.cfi_offset 8, -24
+ 433 0006 88B0     		sub	sp, sp, #32
+ 434              		.cfi_def_cfa_offset 56
+ 435 0008 0600     		movs	r6, r0
+ 133:andonApi.c    ****     COUNT *ptrCount = getCount();     
+ 436              		.loc 1 133 0
+ 437 000a FFF7FEFF 		bl	getCount
+ 438              	.LVL30:
+ 439 000e 0400     		movs	r4, r0
+ 440              	.LVL31:
+ 134:andonApi.c    ****     uint32 pts =   GetWorkingTimeCount();
+ 441              		.loc 1 134 0
+ 442 0010 FFF7FEFF 		bl	GetWorkingTimeCount
+ 443              	.LVL32:
+ 444 0014 0700     		movs	r7, r0
+ 445              	.LVL33:
+ 135:andonApi.c    ****     ResetWorkingTimeCount(); 
+ 446              		.loc 1 135 0
+ 447 0016 FFF7FEFF 		bl	ResetWorkingTimeCount
+ 448              	.LVL34:
+ 136:andonApi.c    ****     
+ 137:andonApi.c    ****     // Edit coed
+ 138:andonApi.c    ****     enQueueANDON_printf(ANDON_SEND_SEWING_COUNT,"send_cCount_test&mac=%s&pi=%0.1f&tg=%u&sc=%0.1f&ct
+ 139:andonApi.c    ****         g_network.MAC,
+ 140:andonApi.c    ****         //g_Info.DeviceIdx,
+ 141:andonApi.c    ****         //g_ptrMachineParameter->sewingPairTrim,                                                   
+ 142:andonApi.c    ****         g_ptrMachineParameter->sewingPair / 10. ,                                                  
+ 449              		.loc 1 142 0
+ 450 001a 134B     		ldr	r3, .L30
+ 451 001c 1B68     		ldr	r3, [r3]
+ 452 001e 9D89     		ldrh	r5, [r3, #12]
+ 143:andonApi.c    ****         g_ptrMachineParameter->sewingTarget,                                                       
+ 453              		.loc 1 143 0
+ 454 0020 1B89     		ldrh	r3, [r3, #8]
+ 455 0022 9846     		mov	r8, r3
+ 144:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(ptrCount->sewingActualH,ptrCount->sewingActualL) / 10.,          
+ 456              		.loc 1 144 0
+ 457 0024 2088     		ldrh	r0, [r4]
+ 458 0026 0004     		lsls	r0, r0, #16
+ 459 0028 6388     		ldrh	r3, [r4, #2]
+ 460 002a 1843     		orrs	r0, r3
+ 138:andonApi.c    ****         g_network.MAC,
+ 461              		.loc 1 138 0
+ 462 002c 0797     		str	r7, [sp, #28]
+ 463 002e 0696     		str	r6, [sp, #24]
+ 464 0030 FFF7FEFF 		bl	__aeabi_ui2d
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 12
+
+
+ 465              	.LVL35:
+ 466 0034 0022     		movs	r2, #0
+ 467 0036 0D4B     		ldr	r3, .L30+4
+ 468 0038 FFF7FEFF 		bl	__aeabi_ddiv
+ 469              	.LVL36:
+ 470 003c 0490     		str	r0, [sp, #16]
+ 471 003e 0591     		str	r1, [sp, #20]
+ 472 0040 4346     		mov	r3, r8
+ 473 0042 0293     		str	r3, [sp, #8]
+ 474 0044 2800     		movs	r0, r5
+ 475 0046 FFF7FEFF 		bl	__aeabi_i2d
+ 476              	.LVL37:
+ 477 004a 0022     		movs	r2, #0
+ 478 004c 074B     		ldr	r3, .L30+4
+ 479 004e FFF7FEFF 		bl	__aeabi_ddiv
+ 480              	.LVL38:
+ 481 0052 0090     		str	r0, [sp]
+ 482 0054 0191     		str	r1, [sp, #4]
+ 483 0056 064A     		ldr	r2, .L30+8
+ 484 0058 0649     		ldr	r1, .L30+12
+ 485 005a 1020     		movs	r0, #16
+ 486 005c FFF7FEFF 		bl	enQueueANDON_printf
+ 487              	.LVL39:
+ 145:andonApi.c    ****         //ptrCount->sewingCycleTime,                                                               
+ 146:andonApi.c    ****         //(uint32) CONVERT_TO_4BYTE(ptrCount->sewingCycleTimeSumH, ptrCount->sewingCycleTimeSumL), 
+ 147:andonApi.c    ****         //ptrCount->sewingMotorRunTime,                                                            
+ 148:andonApi.c    ****         //(uint32) CONVERT_TO_4BYTE(ptrCount->sewingMotorRunTimeSumH, ptrCount->sewingMotorRunTimeS
+ 149:andonApi.c    ****         //ptrCount->sewingNoStitch,                                                                
+ 150:andonApi.c    ****         //(uint32) CONVERT_TO_4BYTE(ptrCount->sewingNoStitchSumH,ptrCount->sewingNoStitchSumL),    
+ 151:andonApi.c    ****         //g_ptrMachineParameter->sewingPairTrim,                                                   
+ 152:andonApi.c    ****         //(uint32) CONVERT_TO_4BYTE(ptrCount->sewingTrimCountSumH,ptrCount->sewingTrimCountSumL),  
+ 153:andonApi.c    ****         elapsedTime,                                                                               
+ 154:andonApi.c    ****         pts                                                                                        
+ 155:andonApi.c    ****         );  
+ 156:andonApi.c    ****     
+ 157:andonApi.c    ****     // Original code
+ 158:andonApi.c    ****     /*enQueueANDON_printf(ANDON_SEND_SEWING_COUNT,"send_cCount_test&mac=%s&&d_idx=%u&pi=%0.1f&tg=%u
+ 159:andonApi.c    ****         g_network.MAC,
+ 160:andonApi.c    ****         g_Info.DeviceIdx,
+ 161:andonApi.c    ****         //g_ptrMachineParameter->sewingPairTrim,                                                   
+ 162:andonApi.c    ****         g_ptrMachineParameter->sewingPair / 10. ,                                                  
+ 163:andonApi.c    ****         g_ptrMachineParameter->sewingTarget,                                                       
+ 164:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(ptrCount->sewingActualH,ptrCount->sewingActualL) / 10.,          
+ 165:andonApi.c    ****         ptrCount->sewingCycleTime,                                                                 
+ 166:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(ptrCount->sewingCycleTimeSumH, ptrCount->sewingCycleTimeSumL),   
+ 167:andonApi.c    ****         ptrCount->sewingMotorRunTime,                                                              
+ 168:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(ptrCount->sewingMotorRunTimeSumH, ptrCount->sewingMotorRunTimeSum
+ 169:andonApi.c    ****         ptrCount->sewingNoStitch,                                                                  
+ 170:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(ptrCount->sewingNoStitchSumH,ptrCount->sewingNoStitchSumL),      
+ 171:andonApi.c    ****         g_ptrMachineParameter->sewingPairTrim,                                                     
+ 172:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(ptrCount->sewingTrimCountSumH,ptrCount->sewingTrimCountSumL),    
+ 173:andonApi.c    ****         elapsedTime,                                                                               
+ 174:andonApi.c    ****         pts                                                                                        
+ 175:andonApi.c    ****         );*/
+ 176:andonApi.c    **** }
+ 488              		.loc 1 176 0
+ 489 0060 08B0     		add	sp, sp, #32
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 13
+
+
+ 490              		@ sp needed
+ 491              	.LVL40:
+ 492              	.LVL41:
+ 493 0062 04BC     		pop	{r2}
+ 494 0064 9046     		mov	r8, r2
+ 495 0066 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 496              	.L31:
+ 497              		.align	2
+ 498              	.L30:
+ 499 0068 00000000 		.word	g_ptrMachineParameter
+ 500 006c 00002440 		.word	1076101120
+ 501 0070 6C000000 		.word	g_network+108
+ 502 0074 24010000 		.word	.LC31
+ 503              		.cfi_endproc
+ 504              	.LFE70:
+ 505              		.size	makeAndonSewingCount2, .-makeAndonSewingCount2
+ 506              		.section	.text.makeAndonPatternCount,"ax",%progbits
+ 507              		.align	2
+ 508              		.global	makeAndonPatternCount
+ 509              		.code	16
+ 510              		.thumb_func
+ 511              		.type	makeAndonPatternCount, %function
+ 512              	makeAndonPatternCount:
+ 513              	.LFB71:
+ 177:andonApi.c    **** 
+ 178:andonApi.c    **** /* 패턴 New CPU 보드의 Uart 신호. (디바이스 4pin. 1번,2번) */
+ 179:andonApi.c    **** void makeAndonPatternCount()
+ 180:andonApi.c    **** {
+ 514              		.loc 1 180 0
+ 515              		.cfi_startproc
+ 516              		@ args = 0, pretend = 0, frame = 0
+ 517              		@ frame_needed = 0, uses_anonymous_args = 0
+ 518 0000 70B5     		push	{r4, r5, r6, lr}
+ 519              		.cfi_def_cfa_offset 16
+ 520              		.cfi_offset 4, -16
+ 521              		.cfi_offset 5, -12
+ 522              		.cfi_offset 6, -8
+ 523              		.cfi_offset 14, -4
+ 524 0002 86B0     		sub	sp, sp, #24
+ 525              		.cfi_def_cfa_offset 40
+ 181:andonApi.c    ****     COUNT *ptrCount = getCount();    
+ 526              		.loc 1 181 0
+ 527 0004 FFF7FEFF 		bl	getCount
+ 528              	.LVL42:
+ 529 0008 0400     		movs	r4, r0
+ 530              	.LVL43:
+ 182:andonApi.c    ****     uint32 pts =   GetWorkingTimeCount();
+ 531              		.loc 1 182 0
+ 532 000a FFF7FEFF 		bl	GetWorkingTimeCount
+ 533              	.LVL44:
+ 183:andonApi.c    ****     ResetWorkingTimeCount();
+ 534              		.loc 1 183 0
+ 535 000e FFF7FEFF 		bl	ResetWorkingTimeCount
+ 536              	.LVL45:
+ 184:andonApi.c    **** 
+ 185:andonApi.c    ****     //enQueueANDON_printf(ANDON_SEND_PATTERN_COUNT,"send_pCount&mac=%s&d_idx=%u&pc=%u&pi=%0.1f&tg=%
+ 186:andonApi.c    ****     //enQueueANDON_printf(ANDON_SEND_PATTERN_COUNT,"send_pCount&mac=%s&pc=%u&pi=%0.1f&tg=%u&sc=%0.1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 14
+
+
+ 187:andonApi.c    ****     enQueueANDON_printf(ANDON_SEND_PATTERN_COUNT,"send_pCount&mac=%s&pc=%u&pi=%0.1f&sc=%0.1f&design
+ 188:andonApi.c    ****         g_network.MAC,
+ 189:andonApi.c    ****         //g_Info.DeviceIdx,
+ 190:andonApi.c    ****         g_ptrMachineParameter->patternPairCount,                                                   
+ 537              		.loc 1 190 0
+ 538 0012 124B     		ldr	r3, .L33
+ 539 0014 1B68     		ldr	r3, [r3]
+ 540 0016 9D88     		ldrh	r5, [r3, #4]
+ 191:andonApi.c    ****         g_ptrMachineParameter->patternPair / 10.,                                                  
+ 541              		.loc 1 191 0
+ 542 0018 DE88     		ldrh	r6, [r3, #6]
+ 192:andonApi.c    ****         //g_ptrMachineParameter->patternTarget,                                                    
+ 193:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(ptrCount->patternActualH,ptrCount->patternActualL) / 10.,        
+ 543              		.loc 1 193 0
+ 544 001a A08B     		ldrh	r0, [r4, #28]
+ 545 001c 0004     		lsls	r0, r0, #16
+ 546 001e E38B     		ldrh	r3, [r4, #30]
+ 547 0020 1843     		orrs	r0, r3
+ 194:andonApi.c    ****         ptrCount->patternNo,
+ 548              		.loc 1 194 0
+ 549 0022 638C     		ldrh	r3, [r4, #34]
+ 195:andonApi.c    ****         //ptrCount->patternEmergencyTime,                                                          
+ 196:andonApi.c    ****         //(uint32) CONVERT_TO_4BYTE(ptrCount->patternEmergencyTimeSumH,ptrCount->patternEmergencyTi
+ 197:andonApi.c    ****         ptrCount->patternCycleTime                                                                 
+ 550              		.loc 1 197 0
+ 551 0024 628D     		ldrh	r2, [r4, #42]
+ 187:andonApi.c    ****         g_network.MAC,
+ 552              		.loc 1 187 0
+ 553 0026 0592     		str	r2, [sp, #20]
+ 554 0028 0493     		str	r3, [sp, #16]
+ 555 002a FFF7FEFF 		bl	__aeabi_ui2d
+ 556              	.LVL46:
+ 557 002e 0022     		movs	r2, #0
+ 558 0030 0B4B     		ldr	r3, .L33+4
+ 559 0032 FFF7FEFF 		bl	__aeabi_ddiv
+ 560              	.LVL47:
+ 561 0036 0290     		str	r0, [sp, #8]
+ 562 0038 0391     		str	r1, [sp, #12]
+ 563 003a 3000     		movs	r0, r6
+ 564 003c FFF7FEFF 		bl	__aeabi_i2d
+ 565              	.LVL48:
+ 566 0040 0022     		movs	r2, #0
+ 567 0042 074B     		ldr	r3, .L33+4
+ 568 0044 FFF7FEFF 		bl	__aeabi_ddiv
+ 569              	.LVL49:
+ 570 0048 0090     		str	r0, [sp]
+ 571 004a 0191     		str	r1, [sp, #4]
+ 572 004c 2B00     		movs	r3, r5
+ 573 004e 054A     		ldr	r2, .L33+8
+ 574 0050 0549     		ldr	r1, .L33+12
+ 575 0052 1120     		movs	r0, #17
+ 576 0054 FFF7FEFF 		bl	enQueueANDON_printf
+ 577              	.LVL50:
+ 198:andonApi.c    ****         //(uint32) CONVERT_TO_4BYTE(ptrCount->patternCycleTimeSumH,ptrCount->patternCycleTimeSumL),
+ 199:andonApi.c    ****         //ptrCount->patternMotorRunTime,                                                           
+ 200:andonApi.c    ****         //(uint32) CONVERT_TO_4BYTE(ptrCount->patternMotorRunTimeSumH, ptrCount->patternMotorRunTim
+ 201:andonApi.c    ****         //ptrCount->patternNoStitch,                                                               
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 15
+
+
+ 202:andonApi.c    ****         //(uint32) CONVERT_TO_4BYTE(ptrCount->patternNoStitchSumH, ptrCount->patternNoStitchSumL), 
+ 203:andonApi.c    ****         //ptrCount->patternStitchLength,                                                           
+ 204:andonApi.c    ****         //(uint32) CONVERT_TO_4BYTE(ptrCount->patternStitchLengthSumH,ptrCount->patternStitchLength
+ 205:andonApi.c    ****         //ptrCount->patternTrimCount,                                                              
+ 206:andonApi.c    ****         //(uint32) CONVERT_TO_4BYTE(ptrCount->patternTrimCountSumH,ptrCount->patternTrimCountSumL),
+ 207:andonApi.c    ****         //ptrCount->patternSPM,                                                                    
+ 208:andonApi.c    ****         //pts                                                                                      
+ 209:andonApi.c    ****         );
+ 210:andonApi.c    **** }
+ 578              		.loc 1 210 0
+ 579 0058 06B0     		add	sp, sp, #24
+ 580              		@ sp needed
+ 581              	.LVL51:
+ 582 005a 70BD     		pop	{r4, r5, r6, pc}
+ 583              	.L34:
+ 584              		.align	2
+ 585              	.L33:
+ 586 005c 00000000 		.word	g_ptrMachineParameter
+ 587 0060 00002440 		.word	1076101120
+ 588 0064 6C000000 		.word	g_network+108
+ 589 0068 64010000 		.word	.LC35
+ 590              		.cfi_endproc
+ 591              	.LFE71:
+ 592              		.size	makeAndonPatternCount, .-makeAndonPatternCount
+ 593              		.section	.text.makeAndonDevice,"ax",%progbits
+ 594              		.align	2
+ 595              		.global	makeAndonDevice
+ 596              		.code	16
+ 597              		.thumb_func
+ 598              		.type	makeAndonDevice, %function
+ 599              	makeAndonDevice:
+ 600              	.LFB72:
+ 211:andonApi.c    **** 
+ 212:andonApi.c    **** /* 현 버전에서 사용하지 않는 함수들 Start. */
+ 213:andonApi.c    **** void makeAndonDevice()
+ 214:andonApi.c    **** {
+ 601              		.loc 1 214 0
+ 602              		.cfi_startproc
+ 603              		@ args = 0, pretend = 0, frame = 0
+ 604              		@ frame_needed = 0, uses_anonymous_args = 0
+ 605 0000 00B5     		push	{lr}
+ 606              		.cfi_def_cfa_offset 4
+ 607              		.cfi_offset 14, -4
+ 608 0002 83B0     		sub	sp, sp, #12
+ 609              		.cfi_def_cfa_offset 16
+ 215:andonApi.c    ****     enQueueANDON_printf(ANDON_GET_DEVICE_NAME,"send_device&mac=%s&name=%s&ip=%s&ver=%s",g_network.M
+ 610              		.loc 1 215 0
+ 611 0004 074B     		ldr	r3, .L36
+ 612 0006 1B68     		ldr	r3, [r3]
+ 613 0008 7033     		adds	r3, r3, #112
+ 614 000a 074A     		ldr	r2, .L36+4
+ 615 000c 0749     		ldr	r1, .L36+8
+ 616 000e 0191     		str	r1, [sp, #4]
+ 617 0010 1100     		movs	r1, r2
+ 618 0012 4039     		subs	r1, r1, #64
+ 619 0014 0091     		str	r1, [sp]
+ 620 0016 0649     		ldr	r1, .L36+12
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 16
+
+
+ 621 0018 0320     		movs	r0, #3
+ 622 001a FFF7FEFF 		bl	enQueueANDON_printf
+ 623              	.LVL52:
+ 216:andonApi.c    **** }
+ 624              		.loc 1 216 0
+ 625 001e 03B0     		add	sp, sp, #12
+ 626              		@ sp needed
+ 627 0020 00BD     		pop	{pc}
+ 628              	.L37:
+ 629 0022 C046     		.align	2
+ 630              	.L36:
+ 631 0024 00000000 		.word	g_ptrServer
+ 632 0028 6C000000 		.word	g_network+108
+ 633 002c 38000000 		.word	.LC7
+ 634 0030 A4010000 		.word	.LC39
+ 635              		.cfi_endproc
+ 636              	.LFE72:
+ 637              		.size	makeAndonDevice, .-makeAndonDevice
+ 638              		.section	.text.makeRequestTarget,"ax",%progbits
+ 639              		.align	2
+ 640              		.global	makeRequestTarget
+ 641              		.code	16
+ 642              		.thumb_func
+ 643              		.type	makeRequestTarget, %function
+ 644              	makeRequestTarget:
+ 645              	.LFB73:
+ 217:andonApi.c    **** 
+ 218:andonApi.c    **** void makeRequestTarget()
+ 219:andonApi.c    **** {
+ 646              		.loc 1 219 0
+ 647              		.cfi_startproc
+ 648              		@ args = 0, pretend = 0, frame = 0
+ 649              		@ frame_needed = 0, uses_anonymous_args = 0
+ 650 0000 10B5     		push	{r4, lr}
+ 651              		.cfi_def_cfa_offset 8
+ 652              		.cfi_offset 4, -8
+ 653              		.cfi_offset 14, -4
+ 220:andonApi.c    ****     enQueueANDON_printf(ANDON_REQUEST_TARGET,"get_target&device_idx=%d",g_Info.DeviceIdx);    
+ 654              		.loc 1 220 0
+ 655 0002 034B     		ldr	r3, .L39
+ 656 0004 DA8D     		ldrh	r2, [r3, #46]
+ 657 0006 0349     		ldr	r1, .L39+4
+ 658 0008 0720     		movs	r0, #7
+ 659 000a FFF7FEFF 		bl	enQueueANDON_printf
+ 660              	.LVL53:
+ 221:andonApi.c    **** }
+ 661              		.loc 1 221 0
+ 662              		@ sp needed
+ 663 000e 10BD     		pop	{r4, pc}
+ 664              	.L40:
+ 665              		.align	2
+ 666              	.L39:
+ 667 0010 00000000 		.word	.LANCHOR0
+ 668 0014 CC010000 		.word	.LC44
+ 669              		.cfi_endproc
+ 670              	.LFE73:
+ 671              		.size	makeRequestTarget, .-makeRequestTarget
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 17
+
+
+ 672              		.section	.text.makeAndonTextList,"ax",%progbits
+ 673              		.align	2
+ 674              		.global	makeAndonTextList
+ 675              		.code	16
+ 676              		.thumb_func
+ 677              		.type	makeAndonTextList, %function
+ 678              	makeAndonTextList:
+ 679              	.LFB74:
+ 222:andonApi.c    **** 
+ 223:andonApi.c    **** void makeAndonTextList()
+ 224:andonApi.c    **** {
+ 680              		.loc 1 224 0
+ 681              		.cfi_startproc
+ 682              		@ args = 0, pretend = 0, frame = 0
+ 683              		@ frame_needed = 0, uses_anonymous_args = 0
+ 684 0000 10B5     		push	{r4, lr}
+ 685              		.cfi_def_cfa_offset 8
+ 686              		.cfi_offset 4, -8
+ 687              		.cfi_offset 14, -4
+ 225:andonApi.c    ****     enQueueANDON_printf(ANDON_REQUEST_TEXT_LIST,"get_textList&device_idx=%d",g_ptrServer->deviceInd
+ 688              		.loc 1 225 0
+ 689 0002 044B     		ldr	r3, .L42
+ 690 0004 1A68     		ldr	r2, [r3]
+ 691 0006 8423     		movs	r3, #132
+ 692 0008 D25A     		ldrh	r2, [r2, r3]
+ 693 000a 0349     		ldr	r1, .L42+4
+ 694 000c 0620     		movs	r0, #6
+ 695 000e FFF7FEFF 		bl	enQueueANDON_printf
+ 696              	.LVL54:
+ 226:andonApi.c    **** }
+ 697              		.loc 1 226 0
+ 698              		@ sp needed
+ 699 0012 10BD     		pop	{r4, pc}
+ 700              	.L43:
+ 701              		.align	2
+ 702              	.L42:
+ 703 0014 00000000 		.word	g_ptrServer
+ 704 0018 E8010000 		.word	.LC47
+ 705              		.cfi_endproc
+ 706              	.LFE74:
+ 707              		.size	makeAndonTextList, .-makeAndonTextList
+ 708              		.section	.text.makeAndonSewingCount,"ax",%progbits
+ 709              		.align	2
+ 710              		.global	makeAndonSewingCount
+ 711              		.code	16
+ 712              		.thumb_func
+ 713              		.type	makeAndonSewingCount, %function
+ 714              	makeAndonSewingCount:
+ 715              	.LFB75:
+ 227:andonApi.c    **** 
+ 228:andonApi.c    **** /* trim 신호. (디바이스 6pin. 1번,6번) */
+ 229:andonApi.c    **** // makeAndonSewingCount2 로 대체함.
+ 230:andonApi.c    **** void makeAndonSewingCount()
+ 231:andonApi.c    **** {
+ 716              		.loc 1 231 0
+ 717              		.cfi_startproc
+ 718              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 18
+
+
+ 719              		@ frame_needed = 0, uses_anonymous_args = 0
+ 720 0000 10B5     		push	{r4, lr}
+ 721              		.cfi_def_cfa_offset 8
+ 722              		.cfi_offset 4, -8
+ 723              		.cfi_offset 14, -4
+ 232:andonApi.c    ****     COUNT *ptrCount = getCount();  
+ 724              		.loc 1 232 0
+ 725 0002 FFF7FEFF 		bl	getCount
+ 726              	.LVL55:
+ 233:andonApi.c    ****     
+ 234:andonApi.c    ****     /*enQueueANDON_printf(ANDON_SEND_SEWING_COUNT,"send_cCount&d_idx=%u&pi=%0.1f&tg=%u&sc=%0.1f&ct=
+ 235:andonApi.c    ****         g_Info.DeviceIdx,
+ 236:andonApi.c    ****         //g_ptrMachineParameter->sewingPairTrim,                                                   
+ 237:andonApi.c    ****         g_ptrMachineParameter->sewingPair / 10. ,                                                  
+ 238:andonApi.c    ****         g_ptrMachineParameter->sewingTarget,                                                       
+ 239:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(ptrCount->sewingActualH,ptrCount->sewingActualL) / 10.,          
+ 240:andonApi.c    ****         ptrCount->sewingCycleTime,                                                                 
+ 241:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(ptrCount->sewingCycleTimeSumH, ptrCount->sewingCycleTimeSumL),   
+ 242:andonApi.c    ****         ptrCount->sewingMotorRunTime,                                                              
+ 243:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(ptrCount->sewingMotorRunTimeSumH, ptrCount->sewingMotorRunTimeSum
+ 244:andonApi.c    ****         ptrCount->sewingNoStitch,                                                                  
+ 245:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(ptrCount->sewingNoStitchSumH,ptrCount->sewingNoStitchSumL),      
+ 246:andonApi.c    ****         g_ptrMachineParameter->sewingPairTrim,                                                     
+ 247:andonApi.c    ****         (uint32) CONVERT_TO_4BYTE(ptrCount->sewingTrimCountSumH,ptrCount->sewingTrimCountSumL)     
+ 248:andonApi.c    ****         );*/
+ 249:andonApi.c    ****     printf("6 pin High Level Start...\r\n");
+ 727              		.loc 1 249 0
+ 728 0006 0248     		ldr	r0, .L45
+ 729 0008 FFF7FEFF 		bl	puts
+ 730              	.LVL56:
+ 250:andonApi.c    **** }
+ 731              		.loc 1 250 0
+ 732              		@ sp needed
+ 733 000c 10BD     		pop	{r4, pc}
+ 734              	.L46:
+ 735 000e C046     		.align	2
+ 736              	.L45:
+ 737 0010 04020000 		.word	.LC49
+ 738              		.cfi_endproc
+ 739              	.LFE75:
+ 740              		.size	makeAndonSewingCount, .-makeAndonSewingCount
+ 741              		.section	.text.initAndon,"ax",%progbits
+ 742              		.align	2
+ 743              		.global	initAndon
+ 744              		.code	16
+ 745              		.thumb_func
+ 746              		.type	initAndon, %function
+ 747              	initAndon:
+ 748              	.LFB76:
+ 251:andonApi.c    **** /* 현 버전에서 사용하지 않는 함수들 End */
+ 252:andonApi.c    **** 
+ 253:andonApi.c    **** void initAndon()
+ 254:andonApi.c    **** {
+ 749              		.loc 1 254 0
+ 750              		.cfi_startproc
+ 751              		@ args = 0, pretend = 0, frame = 0
+ 752              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 19
+
+
+ 753 0000 10B5     		push	{r4, lr}
+ 754              		.cfi_def_cfa_offset 8
+ 755              		.cfi_offset 4, -8
+ 756              		.cfi_offset 14, -4
+ 255:andonApi.c    ****     g_index_request_interval = registerCounter_1ms(5000);
+ 757              		.loc 1 255 0
+ 758 0002 0848     		ldr	r0, .L48
+ 759 0004 FFF7FEFF 		bl	registerCounter_1ms
+ 760              	.LVL57:
+ 761 0008 074B     		ldr	r3, .L48+4
+ 762 000a D870     		strb	r0, [r3, #3]
+ 256:andonApi.c    ****     makeAndonCurrentTimeRequest();
+ 763              		.loc 1 256 0
+ 764 000c FFF7FEFF 		bl	makeAndonCurrentTimeRequest
+ 765              	.LVL58:
+ 257:andonApi.c    ****     makeAndonStart();
+ 766              		.loc 1 257 0
+ 767 0010 FFF7FEFF 		bl	makeAndonStart
+ 768              	.LVL59:
+ 258:andonApi.c    ****     makeAndonList();
+ 769              		.loc 1 258 0
+ 770 0014 FFF7FEFF 		bl	makeAndonList
+ 771              	.LVL60:
+ 259:andonApi.c    ****     makeDownTimeList();
+ 772              		.loc 1 259 0
+ 773 0018 FFF7FEFF 		bl	makeDownTimeList
+ 774              	.LVL61:
+ 260:andonApi.c    ****     makeDefectiveList();
+ 775              		.loc 1 260 0
+ 776 001c FFF7FEFF 		bl	makeDefectiveList
+ 777              	.LVL62:
+ 261:andonApi.c    ****     //makeAndonTextList();
+ 262:andonApi.c    **** }
+ 778              		.loc 1 262 0
+ 779              		@ sp needed
+ 780 0020 10BD     		pop	{r4, pc}
+ 781              	.L49:
+ 782 0022 C046     		.align	2
+ 783              	.L48:
+ 784 0024 88130000 		.word	5000
+ 785 0028 00000000 		.word	.LANCHOR0
+ 786              		.cfi_endproc
+ 787              	.LFE76:
+ 788              		.size	initAndon, .-initAndon
+ 789              		.global	g_Info
+ 790              		.global	g_bReceivedAndonStart
+ 791              		.global	g_index_request_interval
+ 792              		.global	g_bTargetReceived
+ 793              		.global	g_uReplyResult
+ 794              		.global	g_bDeviceInfoUpdate
+ 795              		.comm	g_AndonLists,194,4
+ 796              		.comm	Param,6,4
+ 797              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 798              		.align	2
+ 799              	.LC1:
+ 800 0000 6765745F 		.ascii	"get_dateTime\000"
+ 800      64617465 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 20
+
+
+ 800      54696D65 
+ 800      00
+ 801 000d 000000   		.space	3
+ 802              	.LC5:
+ 803 0010 73746172 		.ascii	"start&mac=%s&machine_no=%s&ip=%s&ver=%s\000"
+ 803      74266D61 
+ 803      633D2573 
+ 803      266D6163 
+ 803      68696E65 
+ 804              	.LC7:
+ 805 0038 496E7465 		.ascii	"Integrated V1\000"
+ 805      67726174 
+ 805      65642056 
+ 805      3100
+ 806 0046 0000     		.space	2
+ 807              	.LC11:
+ 808 0048 6765745F 		.ascii	"get_andonList&mac=%s\000"
+ 808      616E646F 
+ 808      6E4C6973 
+ 808      74266D61 
+ 808      633D2573 
+ 809 005d 000000   		.space	3
+ 810              	.LC13:
+ 811 0060 2F617069 		.ascii	"/api/sewing.php\000"
+ 811      2F736577 
+ 811      696E672E 
+ 811      70687000 
+ 812              	.LC15:
+ 813 0070 25733F63 		.ascii	"%s?code=%s\000"
+ 813      6F64653D 
+ 813      257300
+ 814 007b 00       		.space	1
+ 815              	.LC20:
+ 816 007c 73656E64 		.ascii	"send_andon_warning&mac=%s&andon_idx=%d\000"
+ 816      5F616E64 
+ 816      6F6E5F77 
+ 816      61726E69 
+ 816      6E67266D 
+ 817 00a3 00       		.space	1
+ 818              	.LC23:
+ 819 00a4 73656E64 		.ascii	"send_andon_completed&mac=%s&andon_idx=%d\000"
+ 819      5F616E64 
+ 819      6F6E5F63 
+ 819      6F6D706C 
+ 819      65746564 
+ 820 00cd 000000   		.space	3
+ 821              	.LC27:
+ 822 00d0 73656E64 		.ascii	"send_rCount_test&mac=%s&d_idx=%u&target=%lu&motor_r"
+ 822      5F72436F 
+ 822      756E745F 
+ 822      74657374 
+ 822      266D6163 
+ 823 0103 756E7469 		.ascii	"untime_sum=%lu&elaspedTime=%lu\000"
+ 823      6D655F73 
+ 823      756D3D25 
+ 823      6C752665 
+ 823      6C617370 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 21
+
+
+ 824 0122 0000     		.space	2
+ 825              	.LC31:
+ 826 0124 73656E64 		.ascii	"send_cCount_test&mac=%s&pi=%0.1f&tg=%u&sc=%0.1f&cts"
+ 826      5F63436F 
+ 826      756E745F 
+ 826      74657374 
+ 826      266D6163 
+ 827 0157 323D2575 		.ascii	"2=%u&pts=%lu\000"
+ 827      26707473 
+ 827      3D256C75 
+ 827      00
+ 828              	.LC35:
+ 829 0164 73656E64 		.ascii	"send_pCount&mac=%s&pc=%u&pi=%0.1f&sc=%0.1f&design_n"
+ 829      5F70436F 
+ 829      756E7426 
+ 829      6D61633D 
+ 829      25732670 
+ 830 0197 6F3D2575 		.ascii	"o=%u&ct=%u\015\012\000"
+ 830      2663743D 
+ 830      25750D0A 
+ 830      00
+ 831              	.LC39:
+ 832 01a4 73656E64 		.ascii	"send_device&mac=%s&name=%s&ip=%s&ver=%s\000"
+ 832      5F646576 
+ 832      69636526 
+ 832      6D61633D 
+ 832      2573266E 
+ 833              	.LC44:
+ 834 01cc 6765745F 		.ascii	"get_target&device_idx=%d\000"
+ 834      74617267 
+ 834      65742664 
+ 834      65766963 
+ 834      655F6964 
+ 835 01e5 000000   		.space	3
+ 836              	.LC47:
+ 837 01e8 6765745F 		.ascii	"get_textList&device_idx=%d\000"
+ 837      74657874 
+ 837      4C697374 
+ 837      26646576 
+ 837      6963655F 
+ 838 0203 00       		.space	1
+ 839              	.LC49:
+ 840 0204 36207069 		.ascii	"6 pin High Level Start...\015\000"
+ 840      6E204869 
+ 840      6768204C 
+ 840      6576656C 
+ 840      20537461 
+ 841              		.bss
+ 842              		.align	2
+ 843              		.set	.LANCHOR0,. + 0
+ 844              		.type	g_uAndonRequestType, %object
+ 845              		.size	g_uAndonRequestType, 2
+ 846              	g_uAndonRequestType:
+ 847 0000 0000     		.space	2
+ 848              		.type	g_bReceivedAndonStart, %object
+ 849              		.size	g_bReceivedAndonStart, 1
+ 850              	g_bReceivedAndonStart:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 22
+
+
+ 851 0002 00       		.space	1
+ 852              		.type	g_index_request_interval, %object
+ 853              		.size	g_index_request_interval, 1
+ 854              	g_index_request_interval:
+ 855 0003 00       		.space	1
+ 856              		.type	g_Info, %object
+ 857              		.size	g_Info, 392
+ 858              	g_Info:
+ 859 0004 00000000 		.space	392
+ 859      00000000 
+ 859      00000000 
+ 859      00000000 
+ 859      00000000 
+ 860              		.type	g_bTargetReceived, %object
+ 861              		.size	g_bTargetReceived, 1
+ 862              	g_bTargetReceived:
+ 863 018c 00       		.space	1
+ 864              		.type	g_uReplyResult, %object
+ 865              		.size	g_uReplyResult, 1
+ 866              	g_uReplyResult:
+ 867 018d 00       		.space	1
+ 868              		.type	g_bDeviceInfoUpdate, %object
+ 869              		.size	g_bDeviceInfoUpdate, 1
+ 870              	g_bDeviceInfoUpdate:
+ 871 018e 00       		.space	1
+ 872              		.text
+ 873              	.Letext0:
+ 874              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 875              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 876              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 877              		.file 5 "main.h"
+ 878              		.file 6 "andonApi.h"
+ 879              		.file 7 "andonMessageQueue.h"
+ 880              		.file 8 "lib/WIFI.h"
+ 881              		.file 9 "lib/server.h"
+ 882              		.file 10 "userProjectPatternSewing.h"
+ 883              		.file 11 "count.h"
+ 884              		.file 12 "Generated_Source\\PSoC4/RTC.h"
+ 885              		.file 13 "andonJson.h"
+ 886              		.file 14 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4
+ 887              		.file 15 "lib/sysTick.h"
+ 888              		.file 16 "WarningLight.h"
+ 889              		.file 17 "downtime.h"
+ 890              		.file 18 "defective.h"
+ 891              		.file 19 "<built-in>"
+ 892              		.section	.debug_info,"",%progbits
+ 893              	.Ldebug_info0:
+ 894 0000 A90D0000 		.4byte	0xda9
+ 895 0004 0400     		.2byte	0x4
+ 896 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 897 000a 04       		.byte	0x4
+ 898 000b 01       		.uleb128 0x1
+ 899 000c 1E010000 		.4byte	.LASF199
+ 900 0010 0C       		.byte	0xc
+ 901 0011 050C0000 		.4byte	.LASF200
+ 902 0015 75020000 		.4byte	.LASF201
+ 903 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 23
+
+
+ 904 001d 00000000 		.4byte	0
+ 905 0021 00000000 		.4byte	.Ldebug_line0
+ 906 0025 02       		.uleb128 0x2
+ 907 0026 01       		.byte	0x1
+ 908 0027 06       		.byte	0x6
+ 909 0028 3F020000 		.4byte	.LASF0
+ 910 002c 02       		.uleb128 0x2
+ 911 002d 01       		.byte	0x1
+ 912 002e 08       		.byte	0x8
+ 913 002f 6B080000 		.4byte	.LASF1
+ 914 0033 02       		.uleb128 0x2
+ 915 0034 02       		.byte	0x2
+ 916 0035 05       		.byte	0x5
+ 917 0036 B8080000 		.4byte	.LASF2
+ 918 003a 02       		.uleb128 0x2
+ 919 003b 02       		.byte	0x2
+ 920 003c 07       		.byte	0x7
+ 921 003d 5A050000 		.4byte	.LASF3
+ 922 0041 02       		.uleb128 0x2
+ 923 0042 04       		.byte	0x4
+ 924 0043 05       		.byte	0x5
+ 925 0044 1A030000 		.4byte	.LASF4
+ 926 0048 03       		.uleb128 0x3
+ 927 0049 17040000 		.4byte	.LASF9
+ 928 004d 02       		.byte	0x2
+ 929 004e 41       		.byte	0x41
+ 930 004f 53000000 		.4byte	0x53
+ 931 0053 02       		.uleb128 0x2
+ 932 0054 04       		.byte	0x4
+ 933 0055 07       		.byte	0x7
+ 934 0056 B7090000 		.4byte	.LASF5
+ 935 005a 02       		.uleb128 0x2
+ 936 005b 08       		.byte	0x8
+ 937 005c 05       		.byte	0x5
+ 938 005d 31020000 		.4byte	.LASF6
+ 939 0061 02       		.uleb128 0x2
+ 940 0062 08       		.byte	0x8
+ 941 0063 07       		.byte	0x7
+ 942 0064 7A040000 		.4byte	.LASF7
+ 943 0068 04       		.uleb128 0x4
+ 944 0069 04       		.byte	0x4
+ 945 006a 05       		.byte	0x5
+ 946 006b 696E7400 		.ascii	"int\000"
+ 947 006f 02       		.uleb128 0x2
+ 948 0070 04       		.byte	0x4
+ 949 0071 07       		.byte	0x7
+ 950 0072 AF040000 		.4byte	.LASF8
+ 951 0076 03       		.uleb128 0x3
+ 952 0077 8E090000 		.4byte	.LASF10
+ 953 007b 03       		.byte	0x3
+ 954 007c 30       		.byte	0x30
+ 955 007d 48000000 		.4byte	0x48
+ 956 0081 05       		.uleb128 0x5
+ 957 0082 41050000 		.4byte	.LASF11
+ 958 0086 04       		.byte	0x4
+ 959 0087 FC01     		.2byte	0x1fc
+ 960 0089 2C000000 		.4byte	0x2c
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 24
+
+
+ 961 008d 05       		.uleb128 0x5
+ 962 008e 15000000 		.4byte	.LASF12
+ 963 0092 04       		.byte	0x4
+ 964 0093 FD01     		.2byte	0x1fd
+ 965 0095 3A000000 		.4byte	0x3a
+ 966 0099 05       		.uleb128 0x5
+ 967 009a F8030000 		.4byte	.LASF13
+ 968 009e 04       		.byte	0x4
+ 969 009f FE01     		.2byte	0x1fe
+ 970 00a1 53000000 		.4byte	0x53
+ 971 00a5 05       		.uleb128 0x5
+ 972 00a6 C7060000 		.4byte	.LASF14
+ 973 00aa 04       		.byte	0x4
+ 974 00ab 0002     		.2byte	0x200
+ 975 00ad 33000000 		.4byte	0x33
+ 976 00b1 02       		.uleb128 0x2
+ 977 00b2 04       		.byte	0x4
+ 978 00b3 04       		.byte	0x4
+ 979 00b4 7C070000 		.4byte	.LASF15
+ 980 00b8 02       		.uleb128 0x2
+ 981 00b9 08       		.byte	0x8
+ 982 00ba 04       		.byte	0x4
+ 983 00bb B6030000 		.4byte	.LASF16
+ 984 00bf 02       		.uleb128 0x2
+ 985 00c0 01       		.byte	0x1
+ 986 00c1 08       		.byte	0x8
+ 987 00c2 C9090000 		.4byte	.LASF17
+ 988 00c6 02       		.uleb128 0x2
+ 989 00c7 08       		.byte	0x8
+ 990 00c8 04       		.byte	0x4
+ 991 00c9 84060000 		.4byte	.LASF18
+ 992 00cd 02       		.uleb128 0x2
+ 993 00ce 04       		.byte	0x4
+ 994 00cf 07       		.byte	0x7
+ 995 00d0 6F060000 		.4byte	.LASF19
+ 996 00d4 06       		.uleb128 0x6
+ 997 00d5 04       		.byte	0x4
+ 998 00d6 BF000000 		.4byte	0xbf
+ 999 00da 07       		.uleb128 0x7
+ 1000 00db AC090000 		.4byte	.LASF53
+ 1001 00df 06       		.byte	0x6
+ 1002 00e0 05       		.byte	0x5
+ 1003 00e1 2E       		.byte	0x2e
+ 1004 00e2 0B010000 		.4byte	0x10b
+ 1005 00e6 08       		.uleb128 0x8
+ 1006 00e7 97050000 		.4byte	.LASF20
+ 1007 00eb 05       		.byte	0x5
+ 1008 00ec 30       		.byte	0x30
+ 1009 00ed 81000000 		.4byte	0x81
+ 1010 00f1 00       		.byte	0
+ 1011 00f2 08       		.uleb128 0x8
+ 1012 00f3 78060000 		.4byte	.LASF21
+ 1013 00f7 05       		.byte	0x5
+ 1014 00f8 31       		.byte	0x31
+ 1015 00f9 8D000000 		.4byte	0x8d
+ 1016 00fd 02       		.byte	0x2
+ 1017 00fe 08       		.uleb128 0x8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 25
+
+
+ 1018 00ff 7E060000 		.4byte	.LASF22
+ 1019 0103 05       		.byte	0x5
+ 1020 0104 32       		.byte	0x32
+ 1021 0105 8D000000 		.4byte	0x8d
+ 1022 0109 04       		.byte	0x4
+ 1023 010a 00       		.byte	0
+ 1024 010b 09       		.uleb128 0x9
+ 1025 010c CB000000 		.4byte	.LASF48
+ 1026 0110 01       		.byte	0x1
+ 1027 0111 2C000000 		.4byte	0x2c
+ 1028 0115 06       		.byte	0x6
+ 1029 0116 10       		.byte	0x10
+ 1030 0117 B2010000 		.4byte	0x1b2
+ 1031 011b 0A       		.uleb128 0xa
+ 1032 011c A3050000 		.4byte	.LASF23
+ 1033 0120 00       		.byte	0
+ 1034 0121 0A       		.uleb128 0xa
+ 1035 0122 FF030000 		.4byte	.LASF24
+ 1036 0126 01       		.byte	0x1
+ 1037 0127 0A       		.uleb128 0xa
+ 1038 0128 B2070000 		.4byte	.LASF25
+ 1039 012c 02       		.byte	0x2
+ 1040 012d 0A       		.uleb128 0xa
+ 1041 012e 820A0000 		.4byte	.LASF26
+ 1042 0132 03       		.byte	0x3
+ 1043 0133 0A       		.uleb128 0xa
+ 1044 0134 2E050000 		.4byte	.LASF27
+ 1045 0138 04       		.byte	0x4
+ 1046 0139 0A       		.uleb128 0xa
+ 1047 013a FD0A0000 		.4byte	.LASF28
+ 1048 013e 05       		.byte	0x5
+ 1049 013f 0A       		.uleb128 0xa
+ 1050 0140 650C0000 		.4byte	.LASF29
+ 1051 0144 06       		.byte	0x6
+ 1052 0145 0A       		.uleb128 0xa
+ 1053 0146 FD050000 		.4byte	.LASF30
+ 1054 014a 07       		.byte	0x7
+ 1055 014b 0A       		.uleb128 0xa
+ 1056 014c 47050000 		.4byte	.LASF31
+ 1057 0150 08       		.byte	0x8
+ 1058 0151 0A       		.uleb128 0xa
+ 1059 0152 2F040000 		.4byte	.LASF32
+ 1060 0156 09       		.byte	0x9
+ 1061 0157 0A       		.uleb128 0xa
+ 1062 0158 640A0000 		.4byte	.LASF33
+ 1063 015c 0A       		.byte	0xa
+ 1064 015d 0A       		.uleb128 0xa
+ 1065 015e C6050000 		.4byte	.LASF34
+ 1066 0162 0B       		.byte	0xb
+ 1067 0163 0A       		.uleb128 0xa
+ 1068 0164 D7010000 		.4byte	.LASF35
+ 1069 0168 0C       		.byte	0xc
+ 1070 0169 0A       		.uleb128 0xa
+ 1071 016a 57070000 		.4byte	.LASF36
+ 1072 016e 0D       		.byte	0xd
+ 1073 016f 0A       		.uleb128 0xa
+ 1074 0170 3A090000 		.4byte	.LASF37
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 26
+
+
+ 1075 0174 0E       		.byte	0xe
+ 1076 0175 0A       		.uleb128 0xa
+ 1077 0176 BC040000 		.4byte	.LASF38
+ 1078 017a 0F       		.byte	0xf
+ 1079 017b 0A       		.uleb128 0xa
+ 1080 017c 95030000 		.4byte	.LASF39
+ 1081 0180 10       		.byte	0x10
+ 1082 0181 0A       		.uleb128 0xa
+ 1083 0182 99070000 		.4byte	.LASF40
+ 1084 0186 11       		.byte	0x11
+ 1085 0187 0A       		.uleb128 0xa
+ 1086 0188 AE0A0000 		.4byte	.LASF41
+ 1087 018c 12       		.byte	0x12
+ 1088 018d 0A       		.uleb128 0xa
+ 1089 018e 18050000 		.4byte	.LASF42
+ 1090 0192 13       		.byte	0x13
+ 1091 0193 0A       		.uleb128 0xa
+ 1092 0194 980A0000 		.4byte	.LASF43
+ 1093 0198 14       		.byte	0x14
+ 1094 0199 0A       		.uleb128 0xa
+ 1095 019a 240A0000 		.4byte	.LASF44
+ 1096 019e 15       		.byte	0x15
+ 1097 019f 0A       		.uleb128 0xa
+ 1098 01a0 4E090000 		.4byte	.LASF45
+ 1099 01a4 16       		.byte	0x16
+ 1100 01a5 0A       		.uleb128 0xa
+ 1101 01a6 C8040000 		.4byte	.LASF46
+ 1102 01aa 17       		.byte	0x17
+ 1103 01ab 0A       		.uleb128 0xa
+ 1104 01ac FA070000 		.4byte	.LASF47
+ 1105 01b0 18       		.byte	0x18
+ 1106 01b1 00       		.byte	0
+ 1107 01b2 09       		.uleb128 0x9
+ 1108 01b3 0A070000 		.4byte	.LASF49
+ 1109 01b7 01       		.byte	0x1
+ 1110 01b8 2C000000 		.4byte	0x2c
+ 1111 01bc 06       		.byte	0x6
+ 1112 01bd 2E       		.byte	0x2e
+ 1113 01be D5010000 		.4byte	0x1d5
+ 1114 01c2 0A       		.uleb128 0xa
+ 1115 01c3 76090000 		.4byte	.LASF50
+ 1116 01c7 00       		.byte	0
+ 1117 01c8 0A       		.uleb128 0xa
+ 1118 01c9 82070000 		.4byte	.LASF51
+ 1119 01cd 01       		.byte	0x1
+ 1120 01ce 0A       		.uleb128 0xa
+ 1121 01cf AC010000 		.4byte	.LASF52
+ 1122 01d3 02       		.byte	0x2
+ 1123 01d4 00       		.byte	0
+ 1124 01d5 07       		.uleb128 0x7
+ 1125 01d6 AC080000 		.4byte	.LASF54
+ 1126 01da 26       		.byte	0x26
+ 1127 01db 06       		.byte	0x6
+ 1128 01dc 40       		.byte	0x40
+ 1129 01dd 1E020000 		.4byte	0x21e
+ 1130 01e1 08       		.uleb128 0x8
+ 1131 01e2 AD030000 		.4byte	.LASF55
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 27
+
+
+ 1132 01e6 06       		.byte	0x6
+ 1133 01e7 41       		.byte	0x41
+ 1134 01e8 81000000 		.4byte	0x81
+ 1135 01ec 00       		.byte	0
+ 1136 01ed 08       		.uleb128 0x8
+ 1137 01ee EC0A0000 		.4byte	.LASF56
+ 1138 01f2 06       		.byte	0x6
+ 1139 01f3 42       		.byte	0x42
+ 1140 01f4 81000000 		.4byte	0x81
+ 1141 01f8 01       		.byte	0x1
+ 1142 01f9 08       		.uleb128 0x8
+ 1143 01fa CE090000 		.4byte	.LASF57
+ 1144 01fe 06       		.byte	0x6
+ 1145 01ff 43       		.byte	0x43
+ 1146 0200 1E020000 		.4byte	0x21e
+ 1147 0204 02       		.byte	0x2
+ 1148 0205 0B       		.uleb128 0xb
+ 1149 0206 69647800 		.ascii	"idx\000"
+ 1150 020a 06       		.byte	0x6
+ 1151 020b 44       		.byte	0x44
+ 1152 020c A5000000 		.4byte	0xa5
+ 1153 0210 22       		.byte	0x22
+ 1154 0211 08       		.uleb128 0x8
+ 1155 0212 D3090000 		.4byte	.LASF58
+ 1156 0216 06       		.byte	0x6
+ 1157 0217 45       		.byte	0x45
+ 1158 0218 A5000000 		.4byte	0xa5
+ 1159 021c 24       		.byte	0x24
+ 1160 021d 00       		.byte	0
+ 1161 021e 0C       		.uleb128 0xc
+ 1162 021f BF000000 		.4byte	0xbf
+ 1163 0223 2E020000 		.4byte	0x22e
+ 1164 0227 0D       		.uleb128 0xd
+ 1165 0228 CD000000 		.4byte	0xcd
+ 1166 022c 1F       		.byte	0x1f
+ 1167 022d 00       		.byte	0
+ 1168 022e 03       		.uleb128 0x3
+ 1169 022f 78000000 		.4byte	.LASF59
+ 1170 0233 06       		.byte	0x6
+ 1171 0234 46       		.byte	0x46
+ 1172 0235 D5010000 		.4byte	0x1d5
+ 1173 0239 07       		.uleb128 0x7
+ 1174 023a 74070000 		.4byte	.LASF60
+ 1175 023e C2       		.byte	0xc2
+ 1176 023f 06       		.byte	0x6
+ 1177 0240 48       		.byte	0x48
+ 1178 0241 76020000 		.4byte	0x276
+ 1179 0245 08       		.uleb128 0x8
+ 1180 0246 AD030000 		.4byte	.LASF55
+ 1181 024a 06       		.byte	0x6
+ 1182 024b 4A       		.byte	0x4a
+ 1183 024c 81000000 		.4byte	0x81
+ 1184 0250 00       		.byte	0
+ 1185 0251 08       		.uleb128 0x8
+ 1186 0252 5C0C0000 		.4byte	.LASF61
+ 1187 0256 06       		.byte	0x6
+ 1188 0257 4B       		.byte	0x4b
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 28
+
+
+ 1189 0258 81000000 		.4byte	0x81
+ 1190 025c 01       		.byte	0x1
+ 1191 025d 08       		.uleb128 0x8
+ 1192 025e 9F080000 		.4byte	.LASF62
+ 1193 0262 06       		.byte	0x6
+ 1194 0263 4C       		.byte	0x4c
+ 1195 0264 81000000 		.4byte	0x81
+ 1196 0268 02       		.byte	0x2
+ 1197 0269 08       		.uleb128 0x8
+ 1198 026a 12060000 		.4byte	.LASF63
+ 1199 026e 06       		.byte	0x6
+ 1200 026f 4D       		.byte	0x4d
+ 1201 0270 76020000 		.4byte	0x276
+ 1202 0274 04       		.byte	0x4
+ 1203 0275 00       		.byte	0
+ 1204 0276 0C       		.uleb128 0xc
+ 1205 0277 2E020000 		.4byte	0x22e
+ 1206 027b 86020000 		.4byte	0x286
+ 1207 027f 0D       		.uleb128 0xd
+ 1208 0280 CD000000 		.4byte	0xcd
+ 1209 0284 04       		.byte	0x4
+ 1210 0285 00       		.byte	0
+ 1211 0286 03       		.uleb128 0x3
+ 1212 0287 57040000 		.4byte	.LASF64
+ 1213 028b 06       		.byte	0x6
+ 1214 028c 4E       		.byte	0x4e
+ 1215 028d 39020000 		.4byte	0x239
+ 1216 0291 0E       		.uleb128 0xe
+ 1217 0292 4F040000 		.4byte	.LASF65
+ 1218 0296 8801     		.2byte	0x188
+ 1219 0298 06       		.byte	0x6
+ 1220 0299 59       		.byte	0x59
+ 1221 029a 25030000 		.4byte	0x325
+ 1222 029e 08       		.uleb128 0x8
+ 1223 029f 63040000 		.4byte	.LASF66
+ 1224 02a3 06       		.byte	0x6
+ 1225 02a4 5A       		.byte	0x5a
+ 1226 02a5 81000000 		.4byte	0x81
+ 1227 02a9 00       		.byte	0
+ 1228 02aa 08       		.uleb128 0x8
+ 1229 02ab 530C0000 		.4byte	.LASF67
+ 1230 02af 06       		.byte	0x6
+ 1231 02b0 5C       		.byte	0x5c
+ 1232 02b1 25030000 		.4byte	0x325
+ 1233 02b5 01       		.byte	0x1
+ 1234 02b6 08       		.uleb128 0x8
+ 1235 02b7 F3060000 		.4byte	.LASF68
+ 1236 02bb 06       		.byte	0x6
+ 1237 02bc 5D       		.byte	0x5d
+ 1238 02bd 25030000 		.4byte	0x325
+ 1239 02c1 15       		.byte	0x15
+ 1240 02c2 08       		.uleb128 0x8
+ 1241 02c3 0E050000 		.4byte	.LASF69
+ 1242 02c7 06       		.byte	0x6
+ 1243 02c8 5E       		.byte	0x5e
+ 1244 02c9 8D000000 		.4byte	0x8d
+ 1245 02cd 2A       		.byte	0x2a
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 29
+
+
+ 1246 02ce 08       		.uleb128 0x8
+ 1247 02cf BB060000 		.4byte	.LASF70
+ 1248 02d3 06       		.byte	0x6
+ 1249 02d4 5F       		.byte	0x5f
+ 1250 02d5 25030000 		.4byte	0x325
+ 1251 02d9 2C       		.byte	0x2c
+ 1252 02da 08       		.uleb128 0x8
+ 1253 02db 77050000 		.4byte	.LASF71
+ 1254 02df 06       		.byte	0x6
+ 1255 02e0 61       		.byte	0x61
+ 1256 02e1 25030000 		.4byte	0x325
+ 1257 02e5 40       		.byte	0x40
+ 1258 02e6 08       		.uleb128 0x8
+ 1259 02e7 4B080000 		.4byte	.LASF72
+ 1260 02eb 06       		.byte	0x6
+ 1261 02ec 63       		.byte	0x63
+ 1262 02ed 8D000000 		.4byte	0x8d
+ 1263 02f1 54       		.byte	0x54
+ 1264 02f2 08       		.uleb128 0x8
+ 1265 02f3 DE000000 		.4byte	.LASF73
+ 1266 02f7 06       		.byte	0x6
+ 1267 02f8 64       		.byte	0x64
+ 1268 02f9 8D000000 		.4byte	0x8d
+ 1269 02fd 56       		.byte	0x56
+ 1270 02fe 08       		.uleb128 0x8
+ 1271 02ff A8040000 		.4byte	.LASF74
+ 1272 0303 06       		.byte	0x6
+ 1273 0304 65       		.byte	0x65
+ 1274 0305 35030000 		.4byte	0x335
+ 1275 0309 58       		.byte	0x58
+ 1276 030a 0F       		.uleb128 0xf
+ 1277 030b B7010000 		.4byte	.LASF75
+ 1278 030f 06       		.byte	0x6
+ 1279 0310 66       		.byte	0x66
+ 1280 0311 8D000000 		.4byte	0x8d
+ 1281 0315 8401     		.2byte	0x184
+ 1282 0317 0F       		.uleb128 0xf
+ 1283 0318 6D050000 		.4byte	.LASF76
+ 1284 031c 06       		.byte	0x6
+ 1285 031d 67       		.byte	0x67
+ 1286 031e 8D000000 		.4byte	0x8d
+ 1287 0322 8601     		.2byte	0x186
+ 1288 0324 00       		.byte	0
+ 1289 0325 0C       		.uleb128 0xc
+ 1290 0326 BF000000 		.4byte	0xbf
+ 1291 032a 35030000 		.4byte	0x335
+ 1292 032e 0D       		.uleb128 0xd
+ 1293 032f CD000000 		.4byte	0xcd
+ 1294 0333 13       		.byte	0x13
+ 1295 0334 00       		.byte	0
+ 1296 0335 0C       		.uleb128 0xc
+ 1297 0336 BF000000 		.4byte	0xbf
+ 1298 033a 4B030000 		.4byte	0x34b
+ 1299 033e 0D       		.uleb128 0xd
+ 1300 033f CD000000 		.4byte	0xcd
+ 1301 0343 13       		.byte	0x13
+ 1302 0344 0D       		.uleb128 0xd
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 30
+
+
+ 1303 0345 CD000000 		.4byte	0xcd
+ 1304 0349 0E       		.byte	0xe
+ 1305 034a 00       		.byte	0
+ 1306 034b 03       		.uleb128 0x3
+ 1307 034c D2010000 		.4byte	.LASF77
+ 1308 0350 06       		.byte	0x6
+ 1309 0351 68       		.byte	0x68
+ 1310 0352 91020000 		.4byte	0x291
+ 1311 0356 10       		.uleb128 0x10
+ 1312 0357 0201     		.2byte	0x102
+ 1313 0359 07       		.byte	0x7
+ 1314 035a 16       		.byte	0x16
+ 1315 035b 79030000 		.4byte	0x379
+ 1316 035f 08       		.uleb128 0x8
+ 1317 0360 100C0000 		.4byte	.LASF78
+ 1318 0364 07       		.byte	0x7
+ 1319 0365 17       		.byte	0x17
+ 1320 0366 79030000 		.4byte	0x379
+ 1321 036a 00       		.byte	0
+ 1322 036b 0F       		.uleb128 0xf
+ 1323 036c 10010000 		.4byte	.LASF79
+ 1324 0370 07       		.byte	0x7
+ 1325 0371 18       		.byte	0x18
+ 1326 0372 8D000000 		.4byte	0x8d
+ 1327 0376 0001     		.2byte	0x100
+ 1328 0378 00       		.byte	0
+ 1329 0379 0C       		.uleb128 0xc
+ 1330 037a BF000000 		.4byte	0xbf
+ 1331 037e 89030000 		.4byte	0x389
+ 1332 0382 0D       		.uleb128 0xd
+ 1333 0383 CD000000 		.4byte	0xcd
+ 1334 0387 FF       		.byte	0xff
+ 1335 0388 00       		.byte	0
+ 1336 0389 03       		.uleb128 0x3
+ 1337 038a 8D070000 		.4byte	.LASF80
+ 1338 038e 07       		.byte	0x7
+ 1339 038f 19       		.byte	0x19
+ 1340 0390 56030000 		.4byte	0x356
+ 1341 0394 11       		.uleb128 0x11
+ 1342 0395 80       		.byte	0x80
+ 1343 0396 08       		.byte	0x8
+ 1344 0397 0D       		.byte	0xd
+ 1345 0398 09040000 		.4byte	0x409
+ 1346 039c 08       		.uleb128 0x8
+ 1347 039d 4D0A0000 		.4byte	.LASF81
+ 1348 03a1 08       		.byte	0x8
+ 1349 03a2 0E       		.byte	0xe
+ 1350 03a3 81000000 		.4byte	0x81
+ 1351 03a7 00       		.byte	0
+ 1352 03a8 08       		.uleb128 0x8
+ 1353 03a9 12040000 		.4byte	.LASF82
+ 1354 03ad 08       		.byte	0x8
+ 1355 03ae 0F       		.byte	0xf
+ 1356 03af A5000000 		.4byte	0xa5
+ 1357 03b3 02       		.byte	0x2
+ 1358 03b4 08       		.uleb128 0x8
+ 1359 03b5 0B010000 		.4byte	.LASF83
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 31
+
+
+ 1360 03b9 08       		.byte	0x8
+ 1361 03ba 11       		.byte	0x11
+ 1362 03bb 09040000 		.4byte	0x409
+ 1363 03bf 04       		.byte	0x4
+ 1364 03c0 08       		.uleb128 0x8
+ 1365 03c1 1C000000 		.4byte	.LASF84
+ 1366 03c5 08       		.byte	0x8
+ 1367 03c6 13       		.byte	0x13
+ 1368 03c7 19040000 		.4byte	0x419
+ 1369 03cb 2C       		.byte	0x2c
+ 1370 03cc 08       		.uleb128 0x8
+ 1371 03cd 100A0000 		.4byte	.LASF85
+ 1372 03d1 08       		.byte	0x8
+ 1373 03d2 14       		.byte	0x14
+ 1374 03d3 19040000 		.4byte	0x419
+ 1375 03d7 3C       		.byte	0x3c
+ 1376 03d8 08       		.uleb128 0x8
+ 1377 03d9 9C000000 		.4byte	.LASF86
+ 1378 03dd 08       		.byte	0x8
+ 1379 03de 15       		.byte	0x15
+ 1380 03df 19040000 		.4byte	0x419
+ 1381 03e3 4C       		.byte	0x4c
+ 1382 03e4 08       		.uleb128 0x8
+ 1383 03e5 F30A0000 		.4byte	.LASF87
+ 1384 03e9 08       		.byte	0x8
+ 1385 03ea 16       		.byte	0x16
+ 1386 03eb 19040000 		.4byte	0x419
+ 1387 03ef 5C       		.byte	0x5c
+ 1388 03f0 0B       		.uleb128 0xb
+ 1389 03f1 4D414300 		.ascii	"MAC\000"
+ 1390 03f5 08       		.byte	0x8
+ 1391 03f6 17       		.byte	0x17
+ 1392 03f7 29040000 		.4byte	0x429
+ 1393 03fb 6C       		.byte	0x6c
+ 1394 03fc 08       		.uleb128 0x8
+ 1395 03fd E3030000 		.4byte	.LASF88
+ 1396 0401 08       		.byte	0x8
+ 1397 0402 19       		.byte	0x19
+ 1398 0403 81000000 		.4byte	0x81
+ 1399 0407 7E       		.byte	0x7e
+ 1400 0408 00       		.byte	0
+ 1401 0409 0C       		.uleb128 0xc
+ 1402 040a BF000000 		.4byte	0xbf
+ 1403 040e 19040000 		.4byte	0x419
+ 1404 0412 0D       		.uleb128 0xd
+ 1405 0413 CD000000 		.4byte	0xcd
+ 1406 0417 27       		.byte	0x27
+ 1407 0418 00       		.byte	0
+ 1408 0419 0C       		.uleb128 0xc
+ 1409 041a BF000000 		.4byte	0xbf
+ 1410 041e 29040000 		.4byte	0x429
+ 1411 0422 0D       		.uleb128 0xd
+ 1412 0423 CD000000 		.4byte	0xcd
+ 1413 0427 0F       		.byte	0xf
+ 1414 0428 00       		.byte	0
+ 1415 0429 0C       		.uleb128 0xc
+ 1416 042a BF000000 		.4byte	0xbf
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 32
+
+
+ 1417 042e 39040000 		.4byte	0x439
+ 1418 0432 0D       		.uleb128 0xd
+ 1419 0433 CD000000 		.4byte	0xcd
+ 1420 0437 11       		.byte	0x11
+ 1421 0438 00       		.byte	0
+ 1422 0439 03       		.uleb128 0x3
+ 1423 043a CA010000 		.4byte	.LASF89
+ 1424 043e 08       		.byte	0x8
+ 1425 043f 1A       		.byte	0x1a
+ 1426 0440 94030000 		.4byte	0x394
+ 1427 0444 11       		.uleb128 0x11
+ 1428 0445 86       		.byte	0x86
+ 1429 0446 09       		.byte	0x9
+ 1430 0447 16       		.byte	0x16
+ 1431 0448 95040000 		.4byte	0x495
+ 1432 044c 08       		.uleb128 0x8
+ 1433 044d A3040000 		.4byte	.LASF90
+ 1434 0451 09       		.byte	0x9
+ 1435 0452 17       		.byte	0x17
+ 1436 0453 95040000 		.4byte	0x495
+ 1437 0457 00       		.byte	0
+ 1438 0458 08       		.uleb128 0x8
+ 1439 0459 75040000 		.4byte	.LASF91
+ 1440 045d 09       		.byte	0x9
+ 1441 045e 18       		.byte	0x18
+ 1442 045f 3A000000 		.4byte	0x3a
+ 1443 0463 32       		.byte	0x32
+ 1444 0464 08       		.uleb128 0x8
+ 1445 0465 0B010000 		.4byte	.LASF83
+ 1446 0469 09       		.byte	0x9
+ 1447 046a 19       		.byte	0x19
+ 1448 046b 09040000 		.4byte	0x409
+ 1449 046f 34       		.byte	0x34
+ 1450 0470 08       		.uleb128 0x8
+ 1451 0471 15010000 		.4byte	.LASF92
+ 1452 0475 09       		.byte	0x9
+ 1453 0476 1A       		.byte	0x1a
+ 1454 0477 25030000 		.4byte	0x325
+ 1455 047b 5C       		.byte	0x5c
+ 1456 047c 08       		.uleb128 0x8
+ 1457 047d 4B020000 		.4byte	.LASF93
+ 1458 0481 09       		.byte	0x9
+ 1459 0482 1B       		.byte	0x1b
+ 1460 0483 25030000 		.4byte	0x325
+ 1461 0487 70       		.byte	0x70
+ 1462 0488 08       		.uleb128 0x8
+ 1463 0489 E00A0000 		.4byte	.LASF94
+ 1464 048d 09       		.byte	0x9
+ 1465 048e 1D       		.byte	0x1d
+ 1466 048f 3A000000 		.4byte	0x3a
+ 1467 0493 84       		.byte	0x84
+ 1468 0494 00       		.byte	0
+ 1469 0495 0C       		.uleb128 0xc
+ 1470 0496 BF000000 		.4byte	0xbf
+ 1471 049a A5040000 		.4byte	0x4a5
+ 1472 049e 0D       		.uleb128 0xd
+ 1473 049f CD000000 		.4byte	0xcd
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 33
+
+
+ 1474 04a3 31       		.byte	0x31
+ 1475 04a4 00       		.byte	0
+ 1476 04a5 03       		.uleb128 0x3
+ 1477 04a6 4B070000 		.4byte	.LASF95
+ 1478 04aa 09       		.byte	0x9
+ 1479 04ab 1E       		.byte	0x1e
+ 1480 04ac 44040000 		.4byte	0x444
+ 1481 04b0 11       		.uleb128 0x11
+ 1482 04b1 1C       		.byte	0x1c
+ 1483 04b2 0A       		.byte	0xa
+ 1484 04b3 0E       		.byte	0xe
+ 1485 04b4 49050000 		.4byte	0x549
+ 1486 04b8 08       		.uleb128 0x8
+ 1487 04b9 E2050000 		.4byte	.LASF96
+ 1488 04bd 0A       		.byte	0xa
+ 1489 04be 0F       		.byte	0xf
+ 1490 04bf 81000000 		.4byte	0x81
+ 1491 04c3 00       		.byte	0
+ 1492 04c4 08       		.uleb128 0x8
+ 1493 04c5 E9040000 		.4byte	.LASF97
+ 1494 04c9 0A       		.byte	0xa
+ 1495 04ca 10       		.byte	0x10
+ 1496 04cb 8D000000 		.4byte	0x8d
+ 1497 04cf 02       		.byte	0x2
+ 1498 04d0 08       		.uleb128 0x8
+ 1499 04d1 32030000 		.4byte	.LASF98
+ 1500 04d5 0A       		.byte	0xa
+ 1501 04d6 11       		.byte	0x11
+ 1502 04d7 8D000000 		.4byte	0x8d
+ 1503 04db 04       		.byte	0x4
+ 1504 04dc 08       		.uleb128 0x8
+ 1505 04dd 2B070000 		.4byte	.LASF99
+ 1506 04e1 0A       		.byte	0xa
+ 1507 04e2 12       		.byte	0x12
+ 1508 04e3 8D000000 		.4byte	0x8d
+ 1509 04e7 06       		.byte	0x6
+ 1510 04e8 08       		.uleb128 0x8
+ 1511 04e9 F7090000 		.4byte	.LASF100
+ 1512 04ed 0A       		.byte	0xa
+ 1513 04ee 14       		.byte	0x14
+ 1514 04ef 8D000000 		.4byte	0x8d
+ 1515 04f3 08       		.byte	0x8
+ 1516 04f4 08       		.uleb128 0x8
+ 1517 04f5 DA040000 		.4byte	.LASF101
+ 1518 04f9 0A       		.byte	0xa
+ 1519 04fa 15       		.byte	0x15
+ 1520 04fb 8D000000 		.4byte	0x8d
+ 1521 04ff 0A       		.byte	0xa
+ 1522 0500 08       		.uleb128 0x8
+ 1523 0501 60080000 		.4byte	.LASF102
+ 1524 0505 0A       		.byte	0xa
+ 1525 0506 16       		.byte	0x16
+ 1526 0507 8D000000 		.4byte	0x8d
+ 1527 050b 0C       		.byte	0xc
+ 1528 050c 08       		.uleb128 0x8
+ 1529 050d 180C0000 		.4byte	.LASF103
+ 1530 0511 0A       		.byte	0xa
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 34
+
+
+ 1531 0512 18       		.byte	0x18
+ 1532 0513 99000000 		.4byte	0x99
+ 1533 0517 10       		.byte	0x10
+ 1534 0518 08       		.uleb128 0x8
+ 1535 0519 A10B0000 		.4byte	.LASF104
+ 1536 051d 0A       		.byte	0xa
+ 1537 051e 1A       		.byte	0x1a
+ 1538 051f 8D000000 		.4byte	0x8d
+ 1539 0523 14       		.byte	0x14
+ 1540 0524 08       		.uleb128 0x8
+ 1541 0525 21060000 		.4byte	.LASF105
+ 1542 0529 0A       		.byte	0xa
+ 1543 052a 1B       		.byte	0x1b
+ 1544 052b 8D000000 		.4byte	0x8d
+ 1545 052f 16       		.byte	0x16
+ 1546 0530 08       		.uleb128 0x8
+ 1547 0531 D8020000 		.4byte	.LASF106
+ 1548 0535 0A       		.byte	0xa
+ 1549 0536 1C       		.byte	0x1c
+ 1550 0537 8D000000 		.4byte	0x8d
+ 1551 053b 18       		.byte	0x18
+ 1552 053c 08       		.uleb128 0x8
+ 1553 053d 00010000 		.4byte	.LASF107
+ 1554 0541 0A       		.byte	0xa
+ 1555 0542 1E       		.byte	0x1e
+ 1556 0543 81000000 		.4byte	0x81
+ 1557 0547 1A       		.byte	0x1a
+ 1558 0548 00       		.byte	0
+ 1559 0549 03       		.uleb128 0x3
+ 1560 054a 8D080000 		.4byte	.LASF108
+ 1561 054e 0A       		.byte	0xa
+ 1562 054f 20       		.byte	0x20
+ 1563 0550 B0040000 		.4byte	0x4b0
+ 1564 0554 11       		.uleb128 0x11
+ 1565 0555 4E       		.byte	0x4e
+ 1566 0556 0B       		.byte	0xb
+ 1567 0557 13       		.byte	0x13
+ 1568 0558 31070000 		.4byte	0x731
+ 1569 055c 08       		.uleb128 0x8
+ 1570 055d 0E080000 		.4byte	.LASF109
+ 1571 0561 0B       		.byte	0xb
+ 1572 0562 15       		.byte	0x15
+ 1573 0563 8D000000 		.4byte	0x8d
+ 1574 0567 00       		.byte	0
+ 1575 0568 08       		.uleb128 0x8
+ 1576 0569 29080000 		.4byte	.LASF110
+ 1577 056d 0B       		.byte	0xb
+ 1578 056e 16       		.byte	0x16
+ 1579 056f 8D000000 		.4byte	0x8d
+ 1580 0573 02       		.byte	0x2
+ 1581 0574 08       		.uleb128 0x8
+ 1582 0575 2C0C0000 		.4byte	.LASF111
+ 1583 0579 0B       		.byte	0xb
+ 1584 057a 17       		.byte	0x17
+ 1585 057b 8D000000 		.4byte	0x8d
+ 1586 057f 04       		.byte	0x4
+ 1587 0580 08       		.uleb128 0x8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 35
+
+
+ 1588 0581 8D0B0000 		.4byte	.LASF112
+ 1589 0585 0B       		.byte	0xb
+ 1590 0586 18       		.byte	0x18
+ 1591 0587 8D000000 		.4byte	0x8d
+ 1592 058b 06       		.byte	0x6
+ 1593 058c 08       		.uleb128 0x8
+ 1594 058d C20B0000 		.4byte	.LASF113
+ 1595 0591 0B       		.byte	0xb
+ 1596 0592 19       		.byte	0x19
+ 1597 0593 8D000000 		.4byte	0x8d
+ 1598 0597 08       		.byte	0x8
+ 1599 0598 08       		.uleb128 0x8
+ 1600 0599 27000000 		.4byte	.LASF114
+ 1601 059d 0B       		.byte	0xb
+ 1602 059e 1A       		.byte	0x1a
+ 1603 059f 8D000000 		.4byte	0x8d
+ 1604 05a3 0A       		.byte	0xa
+ 1605 05a4 08       		.uleb128 0x8
+ 1606 05a5 EE0B0000 		.4byte	.LASF115
+ 1607 05a9 0B       		.byte	0xb
+ 1608 05aa 1B       		.byte	0x1b
+ 1609 05ab 8D000000 		.4byte	0x8d
+ 1610 05af 0C       		.byte	0xc
+ 1611 05b0 08       		.uleb128 0x8
+ 1612 05b1 3C0C0000 		.4byte	.LASF116
+ 1613 05b5 0B       		.byte	0xb
+ 1614 05b6 1C       		.byte	0x1c
+ 1615 05b7 8D000000 		.4byte	0x8d
+ 1616 05bb 0E       		.byte	0xe
+ 1617 05bc 08       		.uleb128 0x8
+ 1618 05bd EE050000 		.4byte	.LASF117
+ 1619 05c1 0B       		.byte	0xb
+ 1620 05c2 1D       		.byte	0x1d
+ 1621 05c3 8D000000 		.4byte	0x8d
+ 1622 05c7 10       		.byte	0x10
+ 1623 05c8 08       		.uleb128 0x8
+ 1624 05c9 BD030000 		.4byte	.LASF118
+ 1625 05cd 0B       		.byte	0xb
+ 1626 05ce 1E       		.byte	0x1e
+ 1627 05cf 8D000000 		.4byte	0x8d
+ 1628 05d3 12       		.byte	0x12
+ 1629 05d4 08       		.uleb128 0x8
+ 1630 05d5 D0030000 		.4byte	.LASF119
+ 1631 05d9 0B       		.byte	0xb
+ 1632 05da 1F       		.byte	0x1f
+ 1633 05db 8D000000 		.4byte	0x8d
+ 1634 05df 14       		.byte	0x14
+ 1635 05e0 08       		.uleb128 0x8
+ 1636 05e1 F7080000 		.4byte	.LASF120
+ 1637 05e5 0B       		.byte	0xb
+ 1638 05e6 20       		.byte	0x20
+ 1639 05e7 8D000000 		.4byte	0x8d
+ 1640 05eb 16       		.byte	0x16
+ 1641 05ec 08       		.uleb128 0x8
+ 1642 05ed D8080000 		.4byte	.LASF121
+ 1643 05f1 0B       		.byte	0xb
+ 1644 05f2 21       		.byte	0x21
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 36
+
+
+ 1645 05f3 8D000000 		.4byte	0x8d
+ 1646 05f7 18       		.byte	0x18
+ 1647 05f8 08       		.uleb128 0x8
+ 1648 05f9 07090000 		.4byte	.LASF122
+ 1649 05fd 0B       		.byte	0xb
+ 1650 05fe 22       		.byte	0x22
+ 1651 05ff 8D000000 		.4byte	0x8d
+ 1652 0603 1A       		.byte	0x1a
+ 1653 0604 08       		.uleb128 0x8
+ 1654 0605 23030000 		.4byte	.LASF123
+ 1655 0609 0B       		.byte	0xb
+ 1656 060a 25       		.byte	0x25
+ 1657 060b 8D000000 		.4byte	0x8d
+ 1658 060f 1C       		.byte	0x1c
+ 1659 0610 08       		.uleb128 0x8
+ 1660 0611 43030000 		.4byte	.LASF124
+ 1661 0615 0B       		.byte	0xb
+ 1662 0616 26       		.byte	0x26
+ 1663 0617 8D000000 		.4byte	0x8d
+ 1664 061b 1E       		.byte	0x1e
+ 1665 061c 08       		.uleb128 0x8
+ 1666 061d 49060000 		.4byte	.LASF125
+ 1667 0621 0B       		.byte	0xb
+ 1668 0622 27       		.byte	0x27
+ 1669 0623 8D000000 		.4byte	0x8d
+ 1670 0627 20       		.byte	0x20
+ 1671 0628 08       		.uleb128 0x8
+ 1672 0629 17060000 		.4byte	.LASF126
+ 1673 062d 0B       		.byte	0xb
+ 1674 062e 28       		.byte	0x28
+ 1675 062f 8D000000 		.4byte	0x8d
+ 1676 0633 22       		.byte	0x22
+ 1677 0634 08       		.uleb128 0x8
+ 1678 0635 1C020000 		.4byte	.LASF127
+ 1679 0639 0B       		.byte	0xb
+ 1680 063a 29       		.byte	0x29
+ 1681 063b 8D000000 		.4byte	0x8d
+ 1682 063f 24       		.byte	0x24
+ 1683 0640 08       		.uleb128 0x8
+ 1684 0641 3A000000 		.4byte	.LASF128
+ 1685 0645 0B       		.byte	0xb
+ 1686 0646 2A       		.byte	0x2a
+ 1687 0647 8D000000 		.4byte	0x8d
+ 1688 064b 26       		.byte	0x26
+ 1689 064c 08       		.uleb128 0x8
+ 1690 064d 30060000 		.4byte	.LASF129
+ 1691 0651 0B       		.byte	0xb
+ 1692 0652 2B       		.byte	0x2b
+ 1693 0653 8D000000 		.4byte	0x8d
+ 1694 0657 28       		.byte	0x28
+ 1695 0658 08       		.uleb128 0x8
+ 1696 0659 CD060000 		.4byte	.LASF130
+ 1697 065d 0B       		.byte	0xb
+ 1698 065e 2C       		.byte	0x2c
+ 1699 065f 8D000000 		.4byte	0x8d
+ 1700 0663 2A       		.byte	0x2a
+ 1701 0664 08       		.uleb128 0x8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 37
+
+
+ 1702 0665 80030000 		.4byte	.LASF131
+ 1703 0669 0B       		.byte	0xb
+ 1704 066a 2D       		.byte	0x2d
+ 1705 066b 8D000000 		.4byte	0x8d
+ 1706 066f 2C       		.byte	0x2c
+ 1707 0670 08       		.uleb128 0x8
+ 1708 0671 00000000 		.4byte	.LASF132
+ 1709 0675 0B       		.byte	0xb
+ 1710 0676 2E       		.byte	0x2e
+ 1711 0677 8D000000 		.4byte	0x8d
+ 1712 067b 2E       		.byte	0x2e
+ 1713 067c 08       		.uleb128 0x8
+ 1714 067d 64000000 		.4byte	.LASF133
+ 1715 0681 0B       		.byte	0xb
+ 1716 0682 2F       		.byte	0x2f
+ 1717 0683 8D000000 		.4byte	0x8d
+ 1718 0687 30       		.byte	0x30
+ 1719 0688 08       		.uleb128 0x8
+ 1720 0689 7D0C0000 		.4byte	.LASF134
+ 1721 068d 0B       		.byte	0xb
+ 1722 068e 30       		.byte	0x30
+ 1723 068f 8D000000 		.4byte	0x8d
+ 1724 0693 32       		.byte	0x32
+ 1725 0694 08       		.uleb128 0x8
+ 1726 0695 950C0000 		.4byte	.LASF135
+ 1727 0699 0B       		.byte	0xb
+ 1728 069a 31       		.byte	0x31
+ 1729 069b 8D000000 		.4byte	0x8d
+ 1730 069f 34       		.byte	0x34
+ 1731 06a0 08       		.uleb128 0x8
+ 1732 06a1 1B090000 		.4byte	.LASF136
+ 1733 06a5 0B       		.byte	0xb
+ 1734 06a6 32       		.byte	0x32
+ 1735 06a7 8D000000 		.4byte	0x8d
+ 1736 06ab 36       		.byte	0x36
+ 1737 06ac 08       		.uleb128 0x8
+ 1738 06ad 17070000 		.4byte	.LASF137
+ 1739 06b1 0B       		.byte	0xb
+ 1740 06b2 33       		.byte	0x33
+ 1741 06b3 8D000000 		.4byte	0x8d
+ 1742 06b7 38       		.byte	0x38
+ 1743 06b8 08       		.uleb128 0x8
+ 1744 06b9 37070000 		.4byte	.LASF138
+ 1745 06bd 0B       		.byte	0xb
+ 1746 06be 34       		.byte	0x34
+ 1747 06bf 8D000000 		.4byte	0x8d
+ 1748 06c3 3A       		.byte	0x3a
+ 1749 06c4 08       		.uleb128 0x8
+ 1750 06c5 F1020000 		.4byte	.LASF139
+ 1751 06c9 0B       		.byte	0xb
+ 1752 06ca 35       		.byte	0x35
+ 1753 06cb 8D000000 		.4byte	0x8d
+ 1754 06cf 3C       		.byte	0x3c
+ 1755 06d0 08       		.uleb128 0x8
+ 1756 06d1 7F050000 		.4byte	.LASF140
+ 1757 06d5 0B       		.byte	0xb
+ 1758 06d6 36       		.byte	0x36
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 38
+
+
+ 1759 06d7 8D000000 		.4byte	0x8d
+ 1760 06db 3E       		.byte	0x3e
+ 1761 06dc 08       		.uleb128 0x8
+ 1762 06dd AE050000 		.4byte	.LASF141
+ 1763 06e1 0B       		.byte	0xb
+ 1764 06e2 37       		.byte	0x37
+ 1765 06e3 8D000000 		.4byte	0x8d
+ 1766 06e7 40       		.byte	0x40
+ 1767 06e8 08       		.uleb128 0x8
+ 1768 06e9 A4000000 		.4byte	.LASF142
+ 1769 06ed 0B       		.byte	0xb
+ 1770 06ee 38       		.byte	0x38
+ 1771 06ef 8D000000 		.4byte	0x8d
+ 1772 06f3 42       		.byte	0x42
+ 1773 06f4 08       		.uleb128 0x8
+ 1774 06f5 EB000000 		.4byte	.LASF143
+ 1775 06f9 0B       		.byte	0xb
+ 1776 06fa 39       		.byte	0x39
+ 1777 06fb 8D000000 		.4byte	0x8d
+ 1778 06ff 44       		.byte	0x44
+ 1779 0700 08       		.uleb128 0x8
+ 1780 0701 E5070000 		.4byte	.LASF144
+ 1781 0705 0B       		.byte	0xb
+ 1782 0706 3A       		.byte	0x3a
+ 1783 0707 8D000000 		.4byte	0x8d
+ 1784 070b 46       		.byte	0x46
+ 1785 070c 08       		.uleb128 0x8
+ 1786 070d E8060000 		.4byte	.LASF145
+ 1787 0711 0B       		.byte	0xb
+ 1788 0712 3B       		.byte	0x3b
+ 1789 0713 8D000000 		.4byte	0x8d
+ 1790 0717 48       		.byte	0x48
+ 1791 0718 08       		.uleb128 0x8
+ 1792 0719 EC080000 		.4byte	.LASF146
+ 1793 071d 0B       		.byte	0xb
+ 1794 071e 3D       		.byte	0x3d
+ 1795 071f 8D000000 		.4byte	0x8d
+ 1796 0723 4A       		.byte	0x4a
+ 1797 0724 08       		.uleb128 0x8
+ 1798 0725 21000000 		.4byte	.LASF147
+ 1799 0729 0B       		.byte	0xb
+ 1800 072a 3E       		.byte	0x3e
+ 1801 072b 8D000000 		.4byte	0x8d
+ 1802 072f 4C       		.byte	0x4c
+ 1803 0730 00       		.byte	0
+ 1804 0731 03       		.uleb128 0x3
+ 1805 0732 6F0B0000 		.4byte	.LASF148
+ 1806 0736 0B       		.byte	0xb
+ 1807 0737 3F       		.byte	0x3f
+ 1808 0738 54050000 		.4byte	0x554
+ 1809 073c 12       		.uleb128 0x12
+ 1810 073d FC060000 		.4byte	.LASF154
+ 1811 0741 01       		.byte	0x1
+ 1812 0742 48       		.byte	0x48
+ 1813 0743 00000000 		.4byte	.LFB63
+ 1814 0747 1C000000 		.4byte	.LFE63-.LFB63
+ 1815 074b 01       		.uleb128 0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 39
+
+
+ 1816 074c 9C       		.byte	0x9c
+ 1817 074d 81070000 		.4byte	0x781
+ 1818 0751 13       		.uleb128 0x13
+ 1819 0752 9D090000 		.4byte	.LASF149
+ 1820 0756 01       		.byte	0x1
+ 1821 0757 48       		.byte	0x48
+ 1822 0758 D4000000 		.4byte	0xd4
+ 1823 075c 00000000 		.4byte	.LLST0
+ 1824 0760 13       		.uleb128 0x13
+ 1825 0761 590A0000 		.4byte	.LASF150
+ 1826 0765 01       		.byte	0x1
+ 1827 0766 48       		.byte	0x48
+ 1828 0767 A5000000 		.4byte	0xa5
+ 1829 076b 2C000000 		.4byte	.LLST1
+ 1830 076f 14       		.uleb128 0x14
+ 1831 0770 10000000 		.4byte	.LVL3
+ 1832 0774 ED0C0000 		.4byte	0xced
+ 1833 0778 15       		.uleb128 0x15
+ 1834 0779 01       		.uleb128 0x1
+ 1835 077a 51       		.byte	0x51
+ 1836 077b 03       		.uleb128 0x3
+ 1837 077c F3       		.byte	0xf3
+ 1838 077d 01       		.uleb128 0x1
+ 1839 077e 50       		.byte	0x50
+ 1840 077f 00       		.byte	0
+ 1841 0780 00       		.byte	0
+ 1842 0781 16       		.uleb128 0x16
+ 1843 0782 EA010000 		.4byte	.LASF151
+ 1844 0786 01       		.byte	0x1
+ 1845 0787 4E       		.byte	0x4e
+ 1846 0788 00000000 		.4byte	.LFB64
+ 1847 078c 10000000 		.4byte	.LFE64-.LFB64
+ 1848 0790 01       		.uleb128 0x1
+ 1849 0791 9C       		.byte	0x9c
+ 1850 0792 AF070000 		.4byte	0x7af
+ 1851 0796 14       		.uleb128 0x14
+ 1852 0797 0A000000 		.4byte	.LVL4
+ 1853 079b F80C0000 		.4byte	0xcf8
+ 1854 079f 15       		.uleb128 0x15
+ 1855 07a0 01       		.uleb128 0x1
+ 1856 07a1 50       		.byte	0x50
+ 1857 07a2 01       		.uleb128 0x1
+ 1858 07a3 31       		.byte	0x31
+ 1859 07a4 15       		.uleb128 0x15
+ 1860 07a5 01       		.uleb128 0x1
+ 1861 07a6 51       		.byte	0x51
+ 1862 07a7 05       		.uleb128 0x5
+ 1863 07a8 03       		.byte	0x3
+ 1864 07a9 00000000 		.4byte	.LC1
+ 1865 07ad 00       		.byte	0
+ 1866 07ae 00       		.byte	0
+ 1867 07af 16       		.uleb128 0x16
+ 1868 07b0 2B090000 		.4byte	.LASF152
+ 1869 07b4 01       		.byte	0x1
+ 1870 07b5 53       		.byte	0x53
+ 1871 07b6 00000000 		.4byte	.LFB65
+ 1872 07ba 34000000 		.4byte	.LFE65-.LFB65
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 40
+
+
+ 1873 07be 01       		.uleb128 0x1
+ 1874 07bf 9C       		.byte	0x9c
+ 1875 07c0 E7070000 		.4byte	0x7e7
+ 1876 07c4 14       		.uleb128 0x14
+ 1877 07c5 1E000000 		.4byte	.LVL5
+ 1878 07c9 F80C0000 		.4byte	0xcf8
+ 1879 07cd 15       		.uleb128 0x15
+ 1880 07ce 01       		.uleb128 0x1
+ 1881 07cf 50       		.byte	0x50
+ 1882 07d0 01       		.uleb128 0x1
+ 1883 07d1 3F       		.byte	0x3f
+ 1884 07d2 15       		.uleb128 0x15
+ 1885 07d3 01       		.uleb128 0x1
+ 1886 07d4 51       		.byte	0x51
+ 1887 07d5 05       		.uleb128 0x5
+ 1888 07d6 03       		.byte	0x3
+ 1889 07d7 10000000 		.4byte	.LC5
+ 1890 07db 15       		.uleb128 0x15
+ 1891 07dc 02       		.uleb128 0x2
+ 1892 07dd 7D       		.byte	0x7d
+ 1893 07de 04       		.sleb128 4
+ 1894 07df 05       		.uleb128 0x5
+ 1895 07e0 03       		.byte	0x3
+ 1896 07e1 38000000 		.4byte	.LC7
+ 1897 07e5 00       		.byte	0
+ 1898 07e6 00       		.byte	0
+ 1899 07e7 16       		.uleb128 0x16
+ 1900 07e8 740A0000 		.4byte	.LASF153
+ 1901 07ec 01       		.byte	0x1
+ 1902 07ed 5E       		.byte	0x5e
+ 1903 07ee 00000000 		.4byte	.LFB66
+ 1904 07f2 18000000 		.4byte	.LFE66-.LFB66
+ 1905 07f6 01       		.uleb128 0x1
+ 1906 07f7 9C       		.byte	0x9c
+ 1907 07f8 15080000 		.4byte	0x815
+ 1908 07fc 14       		.uleb128 0x14
+ 1909 07fd 0C000000 		.4byte	.LVL6
+ 1910 0801 F80C0000 		.4byte	0xcf8
+ 1911 0805 15       		.uleb128 0x15
+ 1912 0806 01       		.uleb128 0x1
+ 1913 0807 50       		.byte	0x50
+ 1914 0808 01       		.uleb128 0x1
+ 1915 0809 35       		.byte	0x35
+ 1916 080a 15       		.uleb128 0x15
+ 1917 080b 01       		.uleb128 0x1
+ 1918 080c 51       		.byte	0x51
+ 1919 080d 05       		.uleb128 0x5
+ 1920 080e 03       		.byte	0x3
+ 1921 080f 48000000 		.4byte	.LC11
+ 1922 0813 00       		.byte	0
+ 1923 0814 00       		.byte	0
+ 1924 0815 17       		.uleb128 0x17
+ 1925 0816 EE030000 		.4byte	.LASF155
+ 1926 081a 01       		.byte	0x1
+ 1927 081b 26       		.byte	0x26
+ 1928 081c 81000000 		.4byte	0x81
+ 1929 0820 00000000 		.4byte	.LFB62
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 41
+
+
+ 1930 0824 8C000000 		.4byte	.LFE62-.LFB62
+ 1931 0828 01       		.uleb128 0x1
+ 1932 0829 9C       		.byte	0x9c
+ 1933 082a D6080000 		.4byte	0x8d6
+ 1934 082e 18       		.uleb128 0x18
+ 1935 082f 0E000000 		.4byte	.LBB2
+ 1936 0833 2A000000 		.4byte	.LBE2-.LBB2
+ 1937 0837 A8080000 		.4byte	0x8a8
+ 1938 083b 19       		.uleb128 0x19
+ 1939 083c 617100   		.ascii	"aq\000"
+ 1940 083f 01       		.byte	0x1
+ 1941 0840 2A       		.byte	0x2a
+ 1942 0841 D6080000 		.4byte	0x8d6
+ 1943 0845 4D000000 		.4byte	.LLST2
+ 1944 0849 1A       		.uleb128 0x1a
+ 1945 084a 75726C00 		.ascii	"url\000"
+ 1946 084e 01       		.byte	0x1
+ 1947 084f 2C       		.byte	0x2c
+ 1948 0850 DC080000 		.4byte	0x8dc
+ 1949 0854 03       		.uleb128 0x3
+ 1950 0855 91       		.byte	0x91
+ 1951 0856 F87B     		.sleb128 -520
+ 1952 0858 1B       		.uleb128 0x1b
+ 1953 0859 12000000 		.4byte	.LVL8
+ 1954 085d 030D0000 		.4byte	0xd03
+ 1955 0861 1C       		.uleb128 0x1c
+ 1956 0862 24000000 		.4byte	.LVL11
+ 1957 0866 0E0D0000 		.4byte	0xd0e
+ 1958 086a 96080000 		.4byte	0x896
+ 1959 086e 15       		.uleb128 0x15
+ 1960 086f 01       		.uleb128 0x1
+ 1961 0870 50       		.byte	0x50
+ 1962 0871 03       		.uleb128 0x3
+ 1963 0872 91       		.byte	0x91
+ 1964 0873 F87B     		.sleb128 -520
+ 1965 0875 15       		.uleb128 0x15
+ 1966 0876 01       		.uleb128 0x1
+ 1967 0877 51       		.byte	0x51
+ 1968 0878 03       		.uleb128 0x3
+ 1969 0879 0A       		.byte	0xa
+ 1970 087a 0002     		.2byte	0x200
+ 1971 087c 15       		.uleb128 0x15
+ 1972 087d 01       		.uleb128 0x1
+ 1973 087e 52       		.byte	0x52
+ 1974 087f 05       		.uleb128 0x5
+ 1975 0880 03       		.byte	0x3
+ 1976 0881 70000000 		.4byte	.LC15
+ 1977 0885 15       		.uleb128 0x15
+ 1978 0886 01       		.uleb128 0x1
+ 1979 0887 53       		.byte	0x53
+ 1980 0888 05       		.uleb128 0x5
+ 1981 0889 03       		.byte	0x3
+ 1982 088a 60000000 		.4byte	.LC13
+ 1983 088e 15       		.uleb128 0x15
+ 1984 088f 02       		.uleb128 0x2
+ 1985 0890 7D       		.byte	0x7d
+ 1986 0891 00       		.sleb128 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 42
+
+
+ 1987 0892 02       		.uleb128 0x2
+ 1988 0893 74       		.byte	0x74
+ 1989 0894 00       		.sleb128 0
+ 1990 0895 00       		.byte	0
+ 1991 0896 14       		.uleb128 0x14
+ 1992 0897 34000000 		.4byte	.LVL12
+ 1993 089b 190D0000 		.4byte	0xd19
+ 1994 089f 15       		.uleb128 0x15
+ 1995 08a0 01       		.uleb128 0x1
+ 1996 08a1 50       		.byte	0x50
+ 1997 08a2 03       		.uleb128 0x3
+ 1998 08a3 91       		.byte	0x91
+ 1999 08a4 F87B     		.sleb128 -520
+ 2000 08a6 00       		.byte	0
+ 2001 08a7 00       		.byte	0
+ 2002 08a8 1B       		.uleb128 0x1b
+ 2003 08a9 0A000000 		.4byte	.LVL7
+ 2004 08ad 240D0000 		.4byte	0xd24
+ 2005 08b1 1B       		.uleb128 0x1b
+ 2006 08b2 46000000 		.4byte	.LVL14
+ 2007 08b6 2F0D0000 		.4byte	0xd2f
+ 2008 08ba 1B       		.uleb128 0x1b
+ 2009 08bb 52000000 		.4byte	.LVL15
+ 2010 08bf 3A0D0000 		.4byte	0xd3a
+ 2011 08c3 1B       		.uleb128 0x1b
+ 2012 08c4 60000000 		.4byte	.LVL16
+ 2013 08c8 E7070000 		.4byte	0x7e7
+ 2014 08cc 1B       		.uleb128 0x1b
+ 2015 08cd 68000000 		.4byte	.LVL17
+ 2016 08d1 450D0000 		.4byte	0xd45
+ 2017 08d5 00       		.byte	0
+ 2018 08d6 06       		.uleb128 0x6
+ 2019 08d7 04       		.byte	0x4
+ 2020 08d8 89030000 		.4byte	0x389
+ 2021 08dc 0C       		.uleb128 0xc
+ 2022 08dd BF000000 		.4byte	0xbf
+ 2023 08e1 ED080000 		.4byte	0x8ed
+ 2024 08e5 1D       		.uleb128 0x1d
+ 2025 08e6 CD000000 		.4byte	0xcd
+ 2026 08ea FF01     		.2byte	0x1ff
+ 2027 08ec 00       		.byte	0
+ 2028 08ed 12       		.uleb128 0x12
+ 2029 08ee D60B0000 		.4byte	.LASF156
+ 2030 08f2 01       		.byte	0x1
+ 2031 08f3 65       		.byte	0x65
+ 2032 08f4 00000000 		.4byte	.LFB67
+ 2033 08f8 18000000 		.4byte	.LFE67-.LFB67
+ 2034 08fc 01       		.uleb128 0x1
+ 2035 08fd 9C       		.byte	0x9c
+ 2036 08fe 31090000 		.4byte	0x931
+ 2037 0902 1E       		.uleb128 0x1e
+ 2038 0903 69647800 		.ascii	"idx\000"
+ 2039 0907 01       		.byte	0x1
+ 2040 0908 65       		.byte	0x65
+ 2041 0909 68000000 		.4byte	0x68
+ 2042 090d 6B000000 		.4byte	.LLST3
+ 2043 0911 14       		.uleb128 0x14
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 43
+
+
+ 2044 0912 0E000000 		.4byte	.LVL20
+ 2045 0916 F80C0000 		.4byte	0xcf8
+ 2046 091a 15       		.uleb128 0x15
+ 2047 091b 01       		.uleb128 0x1
+ 2048 091c 50       		.byte	0x50
+ 2049 091d 01       		.uleb128 0x1
+ 2050 091e 34       		.byte	0x34
+ 2051 091f 15       		.uleb128 0x15
+ 2052 0920 01       		.uleb128 0x1
+ 2053 0921 51       		.byte	0x51
+ 2054 0922 05       		.uleb128 0x5
+ 2055 0923 03       		.byte	0x3
+ 2056 0924 7C000000 		.4byte	.LC20
+ 2057 0928 15       		.uleb128 0x15
+ 2058 0929 01       		.uleb128 0x1
+ 2059 092a 53       		.byte	0x53
+ 2060 092b 03       		.uleb128 0x3
+ 2061 092c F3       		.byte	0xf3
+ 2062 092d 01       		.uleb128 0x1
+ 2063 092e 50       		.byte	0x50
+ 2064 092f 00       		.byte	0
+ 2065 0930 00       		.byte	0
+ 2066 0931 12       		.uleb128 0x12
+ 2067 0932 90060000 		.4byte	.LASF157
+ 2068 0936 01       		.byte	0x1
+ 2069 0937 6E       		.byte	0x6e
+ 2070 0938 00000000 		.4byte	.LFB68
+ 2071 093c 18000000 		.4byte	.LFE68-.LFB68
+ 2072 0940 01       		.uleb128 0x1
+ 2073 0941 9C       		.byte	0x9c
+ 2074 0942 75090000 		.4byte	0x975
+ 2075 0946 1E       		.uleb128 0x1e
+ 2076 0947 69647800 		.ascii	"idx\000"
+ 2077 094b 01       		.byte	0x1
+ 2078 094c 6E       		.byte	0x6e
+ 2079 094d 68000000 		.4byte	0x68
+ 2080 0951 97000000 		.4byte	.LLST4
+ 2081 0955 14       		.uleb128 0x14
+ 2082 0956 0E000000 		.4byte	.LVL23
+ 2083 095a F80C0000 		.4byte	0xcf8
+ 2084 095e 15       		.uleb128 0x15
+ 2085 095f 01       		.uleb128 0x1
+ 2086 0960 50       		.byte	0x50
+ 2087 0961 01       		.uleb128 0x1
+ 2088 0962 34       		.byte	0x34
+ 2089 0963 15       		.uleb128 0x15
+ 2090 0964 01       		.uleb128 0x1
+ 2091 0965 51       		.byte	0x51
+ 2092 0966 05       		.uleb128 0x5
+ 2093 0967 03       		.byte	0x3
+ 2094 0968 A4000000 		.4byte	.LC23
+ 2095 096c 15       		.uleb128 0x15
+ 2096 096d 01       		.uleb128 0x1
+ 2097 096e 53       		.byte	0x53
+ 2098 096f 03       		.uleb128 0x3
+ 2099 0970 F3       		.byte	0xf3
+ 2100 0971 01       		.uleb128 0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 44
+
+
+ 2101 0972 50       		.byte	0x50
+ 2102 0973 00       		.byte	0
+ 2103 0974 00       		.byte	0
+ 2104 0975 12       		.uleb128 0x12
+ 2105 0976 65090000 		.4byte	.LASF158
+ 2106 097a 01       		.byte	0x1
+ 2107 097b 77       		.byte	0x77
+ 2108 097c 00000000 		.4byte	.LFB69
+ 2109 0980 34000000 		.4byte	.LFE69-.LFB69
+ 2110 0984 01       		.uleb128 0x1
+ 2111 0985 9C       		.byte	0x9c
+ 2112 0986 DE090000 		.4byte	0x9de
+ 2113 098a 13       		.uleb128 0x13
+ 2114 098b 750B0000 		.4byte	.LASF159
+ 2115 098f 01       		.byte	0x1
+ 2116 0990 77       		.byte	0x77
+ 2117 0991 99000000 		.4byte	0x99
+ 2118 0995 C3000000 		.4byte	.LLST5
+ 2119 0999 13       		.uleb128 0x13
+ 2120 099a D6050000 		.4byte	.LASF160
+ 2121 099e 01       		.byte	0x1
+ 2122 099f 77       		.byte	0x77
+ 2123 09a0 99000000 		.4byte	0x99
+ 2124 09a4 EF000000 		.4byte	.LLST6
+ 2125 09a8 1B       		.uleb128 0x1b
+ 2126 09a9 10000000 		.4byte	.LVL25
+ 2127 09ad 500D0000 		.4byte	0xd50
+ 2128 09b1 14       		.uleb128 0x14
+ 2129 09b2 22000000 		.4byte	.LVL26
+ 2130 09b6 F80C0000 		.4byte	0xcf8
+ 2131 09ba 15       		.uleb128 0x15
+ 2132 09bb 01       		.uleb128 0x1
+ 2133 09bc 50       		.byte	0x50
+ 2134 09bd 01       		.uleb128 0x1
+ 2135 09be 42       		.byte	0x42
+ 2136 09bf 15       		.uleb128 0x15
+ 2137 09c0 01       		.uleb128 0x1
+ 2138 09c1 51       		.byte	0x51
+ 2139 09c2 05       		.uleb128 0x5
+ 2140 09c3 03       		.byte	0x3
+ 2141 09c4 D0000000 		.4byte	.LC27
+ 2142 09c8 15       		.uleb128 0x15
+ 2143 09c9 01       		.uleb128 0x1
+ 2144 09ca 53       		.byte	0x53
+ 2145 09cb 02       		.uleb128 0x2
+ 2146 09cc 74       		.byte	0x74
+ 2147 09cd 00       		.sleb128 0
+ 2148 09ce 15       		.uleb128 0x15
+ 2149 09cf 02       		.uleb128 0x2
+ 2150 09d0 7D       		.byte	0x7d
+ 2151 09d1 04       		.sleb128 4
+ 2152 09d2 02       		.uleb128 0x2
+ 2153 09d3 75       		.byte	0x75
+ 2154 09d4 00       		.sleb128 0
+ 2155 09d5 15       		.uleb128 0x15
+ 2156 09d6 02       		.uleb128 0x2
+ 2157 09d7 7D       		.byte	0x7d
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 45
+
+
+ 2158 09d8 08       		.sleb128 8
+ 2159 09d9 02       		.uleb128 0x2
+ 2160 09da 76       		.byte	0x76
+ 2161 09db 00       		.sleb128 0
+ 2162 09dc 00       		.byte	0
+ 2163 09dd 00       		.byte	0
+ 2164 09de 1F       		.uleb128 0x1f
+ 2165 09df C2080000 		.4byte	.LASF161
+ 2166 09e3 01       		.byte	0x1
+ 2167 09e4 83       		.byte	0x83
+ 2168 09e5 00000000 		.4byte	.LFB70
+ 2169 09e9 78000000 		.4byte	.LFE70-.LFB70
+ 2170 09ed 01       		.uleb128 0x1
+ 2171 09ee 9C       		.byte	0x9c
+ 2172 09ef 690A0000 		.4byte	0xa69
+ 2173 09f3 13       		.uleb128 0x13
+ 2174 09f4 68070000 		.4byte	.LASF162
+ 2175 09f8 01       		.byte	0x1
+ 2176 09f9 83       		.byte	0x83
+ 2177 09fa 8D000000 		.4byte	0x8d
+ 2178 09fe 1B010000 		.4byte	.LLST7
+ 2179 0a02 20       		.uleb128 0x20
+ 2180 0a03 56020000 		.4byte	.LASF163
+ 2181 0a07 01       		.byte	0x1
+ 2182 0a08 85       		.byte	0x85
+ 2183 0a09 690A0000 		.4byte	0xa69
+ 2184 0a0d 3C010000 		.4byte	.LLST8
+ 2185 0a11 19       		.uleb128 0x19
+ 2186 0a12 70747300 		.ascii	"pts\000"
+ 2187 0a16 01       		.byte	0x1
+ 2188 0a17 86       		.byte	0x86
+ 2189 0a18 99000000 		.4byte	0x99
+ 2190 0a1c 5A010000 		.4byte	.LLST9
+ 2191 0a20 1B       		.uleb128 0x1b
+ 2192 0a21 0E000000 		.4byte	.LVL30
+ 2193 0a25 5B0D0000 		.4byte	0xd5b
+ 2194 0a29 1B       		.uleb128 0x1b
+ 2195 0a2a 14000000 		.4byte	.LVL32
+ 2196 0a2e 660D0000 		.4byte	0xd66
+ 2197 0a32 1B       		.uleb128 0x1b
+ 2198 0a33 1A000000 		.4byte	.LVL34
+ 2199 0a37 710D0000 		.4byte	0xd71
+ 2200 0a3b 14       		.uleb128 0x14
+ 2201 0a3c 60000000 		.4byte	.LVL39
+ 2202 0a40 F80C0000 		.4byte	0xcf8
+ 2203 0a44 15       		.uleb128 0x15
+ 2204 0a45 01       		.uleb128 0x1
+ 2205 0a46 50       		.byte	0x50
+ 2206 0a47 01       		.uleb128 0x1
+ 2207 0a48 40       		.byte	0x40
+ 2208 0a49 15       		.uleb128 0x15
+ 2209 0a4a 01       		.uleb128 0x1
+ 2210 0a4b 51       		.byte	0x51
+ 2211 0a4c 05       		.uleb128 0x5
+ 2212 0a4d 03       		.byte	0x3
+ 2213 0a4e 24010000 		.4byte	.LC31
+ 2214 0a52 15       		.uleb128 0x15
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 46
+
+
+ 2215 0a53 02       		.uleb128 0x2
+ 2216 0a54 7D       		.byte	0x7d
+ 2217 0a55 08       		.sleb128 8
+ 2218 0a56 02       		.uleb128 0x2
+ 2219 0a57 78       		.byte	0x78
+ 2220 0a58 00       		.sleb128 0
+ 2221 0a59 15       		.uleb128 0x15
+ 2222 0a5a 02       		.uleb128 0x2
+ 2223 0a5b 7D       		.byte	0x7d
+ 2224 0a5c 18       		.sleb128 24
+ 2225 0a5d 02       		.uleb128 0x2
+ 2226 0a5e 76       		.byte	0x76
+ 2227 0a5f 00       		.sleb128 0
+ 2228 0a60 15       		.uleb128 0x15
+ 2229 0a61 02       		.uleb128 0x2
+ 2230 0a62 7D       		.byte	0x7d
+ 2231 0a63 1C       		.sleb128 28
+ 2232 0a64 02       		.uleb128 0x2
+ 2233 0a65 77       		.byte	0x77
+ 2234 0a66 00       		.sleb128 0
+ 2235 0a67 00       		.byte	0
+ 2236 0a68 00       		.byte	0
+ 2237 0a69 06       		.uleb128 0x6
+ 2238 0a6a 04       		.byte	0x4
+ 2239 0a6b 31070000 		.4byte	0x731
+ 2240 0a6f 21       		.uleb128 0x21
+ 2241 0a70 B5000000 		.4byte	.LASF164
+ 2242 0a74 01       		.byte	0x1
+ 2243 0a75 B3       		.byte	0xb3
+ 2244 0a76 00000000 		.4byte	.LFB71
+ 2245 0a7a 6C000000 		.4byte	.LFE71-.LFB71
+ 2246 0a7e 01       		.uleb128 0x1
+ 2247 0a7f 9C       		.byte	0x9c
+ 2248 0a80 D80A0000 		.4byte	0xad8
+ 2249 0a84 20       		.uleb128 0x20
+ 2250 0a85 56020000 		.4byte	.LASF163
+ 2251 0a89 01       		.byte	0x1
+ 2252 0a8a B5       		.byte	0xb5
+ 2253 0a8b 690A0000 		.4byte	0xa69
+ 2254 0a8f 78010000 		.4byte	.LLST10
+ 2255 0a93 22       		.uleb128 0x22
+ 2256 0a94 70747300 		.ascii	"pts\000"
+ 2257 0a98 01       		.byte	0x1
+ 2258 0a99 B6       		.byte	0xb6
+ 2259 0a9a 99000000 		.4byte	0x99
+ 2260 0a9e 1B       		.uleb128 0x1b
+ 2261 0a9f 08000000 		.4byte	.LVL42
+ 2262 0aa3 5B0D0000 		.4byte	0xd5b
+ 2263 0aa7 1B       		.uleb128 0x1b
+ 2264 0aa8 0E000000 		.4byte	.LVL44
+ 2265 0aac 660D0000 		.4byte	0xd66
+ 2266 0ab0 1B       		.uleb128 0x1b
+ 2267 0ab1 12000000 		.4byte	.LVL45
+ 2268 0ab5 710D0000 		.4byte	0xd71
+ 2269 0ab9 14       		.uleb128 0x14
+ 2270 0aba 58000000 		.4byte	.LVL50
+ 2271 0abe F80C0000 		.4byte	0xcf8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 47
+
+
+ 2272 0ac2 15       		.uleb128 0x15
+ 2273 0ac3 01       		.uleb128 0x1
+ 2274 0ac4 50       		.byte	0x50
+ 2275 0ac5 01       		.uleb128 0x1
+ 2276 0ac6 41       		.byte	0x41
+ 2277 0ac7 15       		.uleb128 0x15
+ 2278 0ac8 01       		.uleb128 0x1
+ 2279 0ac9 51       		.byte	0x51
+ 2280 0aca 05       		.uleb128 0x5
+ 2281 0acb 03       		.byte	0x3
+ 2282 0acc 64010000 		.4byte	.LC35
+ 2283 0ad0 15       		.uleb128 0x15
+ 2284 0ad1 01       		.uleb128 0x1
+ 2285 0ad2 53       		.byte	0x53
+ 2286 0ad3 02       		.uleb128 0x2
+ 2287 0ad4 75       		.byte	0x75
+ 2288 0ad5 00       		.sleb128 0
+ 2289 0ad6 00       		.byte	0
+ 2290 0ad7 00       		.byte	0
+ 2291 0ad8 16       		.uleb128 0x16
+ 2292 0ad9 7E090000 		.4byte	.LASF165
+ 2293 0add 01       		.byte	0x1
+ 2294 0ade D5       		.byte	0xd5
+ 2295 0adf 00000000 		.4byte	.LFB72
+ 2296 0ae3 34000000 		.4byte	.LFE72-.LFB72
+ 2297 0ae7 01       		.uleb128 0x1
+ 2298 0ae8 9C       		.byte	0x9c
+ 2299 0ae9 100B0000 		.4byte	0xb10
+ 2300 0aed 14       		.uleb128 0x14
+ 2301 0aee 1E000000 		.4byte	.LVL52
+ 2302 0af2 F80C0000 		.4byte	0xcf8
+ 2303 0af6 15       		.uleb128 0x15
+ 2304 0af7 01       		.uleb128 0x1
+ 2305 0af8 50       		.byte	0x50
+ 2306 0af9 01       		.uleb128 0x1
+ 2307 0afa 33       		.byte	0x33
+ 2308 0afb 15       		.uleb128 0x15
+ 2309 0afc 01       		.uleb128 0x1
+ 2310 0afd 51       		.byte	0x51
+ 2311 0afe 05       		.uleb128 0x5
+ 2312 0aff 03       		.byte	0x3
+ 2313 0b00 A4010000 		.4byte	.LC39
+ 2314 0b04 15       		.uleb128 0x15
+ 2315 0b05 02       		.uleb128 0x2
+ 2316 0b06 7D       		.byte	0x7d
+ 2317 0b07 04       		.sleb128 4
+ 2318 0b08 05       		.uleb128 0x5
+ 2319 0b09 03       		.byte	0x3
+ 2320 0b0a 38000000 		.4byte	.LC7
+ 2321 0b0e 00       		.byte	0
+ 2322 0b0f 00       		.byte	0
+ 2323 0b10 16       		.uleb128 0x16
+ 2324 0b11 3B0A0000 		.4byte	.LASF166
+ 2325 0b15 01       		.byte	0x1
+ 2326 0b16 DA       		.byte	0xda
+ 2327 0b17 00000000 		.4byte	.LFB73
+ 2328 0b1b 18000000 		.4byte	.LFE73-.LFB73
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 48
+
+
+ 2329 0b1f 01       		.uleb128 0x1
+ 2330 0b20 9C       		.byte	0x9c
+ 2331 0b21 3E0B0000 		.4byte	0xb3e
+ 2332 0b25 14       		.uleb128 0x14
+ 2333 0b26 0E000000 		.4byte	.LVL53
+ 2334 0b2a F80C0000 		.4byte	0xcf8
+ 2335 0b2e 15       		.uleb128 0x15
+ 2336 0b2f 01       		.uleb128 0x1
+ 2337 0b30 50       		.byte	0x50
+ 2338 0b31 01       		.uleb128 0x1
+ 2339 0b32 37       		.byte	0x37
+ 2340 0b33 15       		.uleb128 0x15
+ 2341 0b34 01       		.uleb128 0x1
+ 2342 0b35 51       		.byte	0x51
+ 2343 0b36 05       		.uleb128 0x5
+ 2344 0b37 03       		.byte	0x3
+ 2345 0b38 CC010000 		.4byte	.LC44
+ 2346 0b3c 00       		.byte	0
+ 2347 0b3d 00       		.byte	0
+ 2348 0b3e 16       		.uleb128 0x16
+ 2349 0b3f A9060000 		.4byte	.LASF167
+ 2350 0b43 01       		.byte	0x1
+ 2351 0b44 DF       		.byte	0xdf
+ 2352 0b45 00000000 		.4byte	.LFB74
+ 2353 0b49 1C000000 		.4byte	.LFE74-.LFB74
+ 2354 0b4d 01       		.uleb128 0x1
+ 2355 0b4e 9C       		.byte	0x9c
+ 2356 0b4f 6C0B0000 		.4byte	0xb6c
+ 2357 0b53 14       		.uleb128 0x14
+ 2358 0b54 12000000 		.4byte	.LVL54
+ 2359 0b58 F80C0000 		.4byte	0xcf8
+ 2360 0b5c 15       		.uleb128 0x15
+ 2361 0b5d 01       		.uleb128 0x1
+ 2362 0b5e 50       		.byte	0x50
+ 2363 0b5f 01       		.uleb128 0x1
+ 2364 0b60 36       		.byte	0x36
+ 2365 0b61 15       		.uleb128 0x15
+ 2366 0b62 01       		.uleb128 0x1
+ 2367 0b63 51       		.byte	0x51
+ 2368 0b64 05       		.uleb128 0x5
+ 2369 0b65 03       		.byte	0x3
+ 2370 0b66 E8010000 		.4byte	.LC47
+ 2371 0b6a 00       		.byte	0
+ 2372 0b6b 00       		.byte	0
+ 2373 0b6c 16       		.uleb128 0x16
+ 2374 0b6d 05030000 		.4byte	.LASF168
+ 2375 0b71 01       		.byte	0x1
+ 2376 0b72 E6       		.byte	0xe6
+ 2377 0b73 00000000 		.4byte	.LFB75
+ 2378 0b77 14000000 		.4byte	.LFE75-.LFB75
+ 2379 0b7b 01       		.uleb128 0x1
+ 2380 0b7c 9C       		.byte	0x9c
+ 2381 0b7d A90B0000 		.4byte	0xba9
+ 2382 0b81 23       		.uleb128 0x23
+ 2383 0b82 56020000 		.4byte	.LASF163
+ 2384 0b86 01       		.byte	0x1
+ 2385 0b87 E8       		.byte	0xe8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 49
+
+
+ 2386 0b88 690A0000 		.4byte	0xa69
+ 2387 0b8c 1B       		.uleb128 0x1b
+ 2388 0b8d 06000000 		.4byte	.LVL55
+ 2389 0b91 5B0D0000 		.4byte	0xd5b
+ 2390 0b95 14       		.uleb128 0x14
+ 2391 0b96 0C000000 		.4byte	.LVL56
+ 2392 0b9a 7C0D0000 		.4byte	0xd7c
+ 2393 0b9e 15       		.uleb128 0x15
+ 2394 0b9f 01       		.uleb128 0x1
+ 2395 0ba0 50       		.byte	0x50
+ 2396 0ba1 05       		.uleb128 0x5
+ 2397 0ba2 03       		.byte	0x3
+ 2398 0ba3 04020000 		.4byte	.LC49
+ 2399 0ba7 00       		.byte	0
+ 2400 0ba8 00       		.byte	0
+ 2401 0ba9 16       		.uleb128 0x16
+ 2402 0baa 2E0B0000 		.4byte	.LASF169
+ 2403 0bae 01       		.byte	0x1
+ 2404 0baf FD       		.byte	0xfd
+ 2405 0bb0 00000000 		.4byte	.LFB76
+ 2406 0bb4 2C000000 		.4byte	.LFE76-.LFB76
+ 2407 0bb8 01       		.uleb128 0x1
+ 2408 0bb9 9C       		.byte	0x9c
+ 2409 0bba 010C0000 		.4byte	0xc01
+ 2410 0bbe 1C       		.uleb128 0x1c
+ 2411 0bbf 08000000 		.4byte	.LVL57
+ 2412 0bc3 8B0D0000 		.4byte	0xd8b
+ 2413 0bc7 D30B0000 		.4byte	0xbd3
+ 2414 0bcb 15       		.uleb128 0x15
+ 2415 0bcc 01       		.uleb128 0x1
+ 2416 0bcd 50       		.byte	0x50
+ 2417 0bce 03       		.uleb128 0x3
+ 2418 0bcf 0A       		.byte	0xa
+ 2419 0bd0 8813     		.2byte	0x1388
+ 2420 0bd2 00       		.byte	0
+ 2421 0bd3 1B       		.uleb128 0x1b
+ 2422 0bd4 10000000 		.4byte	.LVL58
+ 2423 0bd8 81070000 		.4byte	0x781
+ 2424 0bdc 1B       		.uleb128 0x1b
+ 2425 0bdd 14000000 		.4byte	.LVL59
+ 2426 0be1 AF070000 		.4byte	0x7af
+ 2427 0be5 1B       		.uleb128 0x1b
+ 2428 0be6 18000000 		.4byte	.LVL60
+ 2429 0bea E7070000 		.4byte	0x7e7
+ 2430 0bee 1B       		.uleb128 0x1b
+ 2431 0bef 1C000000 		.4byte	.LVL61
+ 2432 0bf3 960D0000 		.4byte	0xd96
+ 2433 0bf7 1B       		.uleb128 0x1b
+ 2434 0bf8 20000000 		.4byte	.LVL62
+ 2435 0bfc A10D0000 		.4byte	0xda1
+ 2436 0c00 00       		.byte	0
+ 2437 0c01 24       		.uleb128 0x24
+ 2438 0c02 37080000 		.4byte	.LASF170
+ 2439 0c06 01       		.byte	0x1
+ 2440 0c07 1D       		.byte	0x1d
+ 2441 0c08 8D000000 		.4byte	0x8d
+ 2442 0c0c 05       		.uleb128 0x5
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 50
+
+
+ 2443 0c0d 03       		.byte	0x3
+ 2444 0c0e 00000000 		.4byte	g_uAndonRequestType
+ 2445 0c12 0C       		.uleb128 0xc
+ 2446 0c13 220C0000 		.4byte	0xc22
+ 2447 0c17 220C0000 		.4byte	0xc22
+ 2448 0c1b 0D       		.uleb128 0xd
+ 2449 0c1c CD000000 		.4byte	0xcd
+ 2450 0c20 0B       		.byte	0xb
+ 2451 0c21 00       		.byte	0
+ 2452 0c22 25       		.uleb128 0x25
+ 2453 0c23 8D000000 		.4byte	0x8d
+ 2454 0c27 26       		.uleb128 0x26
+ 2455 0c28 F7040000 		.4byte	.LASF171
+ 2456 0c2c 0C       		.byte	0xc
+ 2457 0c2d E001     		.2byte	0x1e0
+ 2458 0c2f 330C0000 		.4byte	0xc33
+ 2459 0c33 25       		.uleb128 0x25
+ 2460 0c34 120C0000 		.4byte	0xc12
+ 2461 0c38 27       		.uleb128 0x27
+ 2462 0c39 97090000 		.4byte	.LASF172
+ 2463 0c3d 05       		.byte	0x5
+ 2464 0c3e 35       		.byte	0x35
+ 2465 0c3f DA000000 		.4byte	0xda
+ 2466 0c43 05       		.uleb128 0x5
+ 2467 0c44 03       		.byte	0x3
+ 2468 0c45 00000000 		.4byte	Param
+ 2469 0c49 27       		.uleb128 0x27
+ 2470 0c4a 800B0000 		.4byte	.LASF173
+ 2471 0c4e 01       		.byte	0x1
+ 2472 0c4f 1A       		.byte	0x1a
+ 2473 0c50 86020000 		.4byte	0x286
+ 2474 0c54 05       		.uleb128 0x5
+ 2475 0c55 03       		.byte	0x3
+ 2476 0c56 00000000 		.4byte	g_AndonLists
+ 2477 0c5a 27       		.uleb128 0x27
+ 2478 0c5b A5090000 		.4byte	.LASF174
+ 2479 0c5f 01       		.byte	0x1
+ 2480 0c60 22       		.byte	0x22
+ 2481 0c61 4B030000 		.4byte	0x34b
+ 2482 0c65 05       		.uleb128 0x5
+ 2483 0c66 03       		.byte	0x3
+ 2484 0c67 00000000 		.4byte	g_Info
+ 2485 0c6b 27       		.uleb128 0x27
+ 2486 0c6c 380B0000 		.4byte	.LASF175
+ 2487 0c70 01       		.byte	0x1
+ 2488 0c71 1E       		.byte	0x1e
+ 2489 0c72 81000000 		.4byte	0x81
+ 2490 0c76 05       		.uleb128 0x5
+ 2491 0c77 03       		.byte	0x3
+ 2492 0c78 00000000 		.4byte	g_bTargetReceived
+ 2493 0c7c 27       		.uleb128 0x27
+ 2494 0c7d CC070000 		.4byte	.LASF176
+ 2495 0c81 01       		.byte	0x1
+ 2496 0c82 1F       		.byte	0x1f
+ 2497 0c83 81000000 		.4byte	0x81
+ 2498 0c87 05       		.uleb128 0x5
+ 2499 0c88 03       		.byte	0x3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 51
+
+
+ 2500 0c89 00000000 		.4byte	g_index_request_interval
+ 2501 0c8d 27       		.uleb128 0x27
+ 2502 0c8e 06020000 		.4byte	.LASF177
+ 2503 0c92 01       		.byte	0x1
+ 2504 0c93 20       		.byte	0x20
+ 2505 0c94 81000000 		.4byte	0x81
+ 2506 0c98 05       		.uleb128 0x5
+ 2507 0c99 03       		.byte	0x3
+ 2508 0c9a 00000000 		.4byte	g_bReceivedAndonStart
+ 2509 0c9e 27       		.uleb128 0x27
+ 2510 0c9f 600B0000 		.4byte	.LASF178
+ 2511 0ca3 01       		.byte	0x1
+ 2512 0ca4 1C       		.byte	0x1c
+ 2513 0ca5 81000000 		.4byte	0x81
+ 2514 0ca9 05       		.uleb128 0x5
+ 2515 0caa 03       		.byte	0x3
+ 2516 0cab 00000000 		.4byte	g_uReplyResult
+ 2517 0caf 28       		.uleb128 0x28
+ 2518 0cb0 DE060000 		.4byte	.LASF179
+ 2519 0cb4 08       		.byte	0x8
+ 2520 0cb5 1C       		.byte	0x1c
+ 2521 0cb6 39040000 		.4byte	0x439
+ 2522 0cba 28       		.uleb128 0x28
+ 2523 0cbb 040A0000 		.4byte	.LASF180
+ 2524 0cbf 09       		.byte	0x9
+ 2525 0cc0 25       		.byte	0x25
+ 2526 0cc1 C50C0000 		.4byte	0xcc5
+ 2527 0cc5 06       		.uleb128 0x6
+ 2528 0cc6 04       		.byte	0x4
+ 2529 0cc7 A5040000 		.4byte	0x4a5
+ 2530 0ccb 28       		.uleb128 0x28
+ 2531 0ccc 4A0B0000 		.4byte	.LASF181
+ 2532 0cd0 0A       		.byte	0xa
+ 2533 0cd1 22       		.byte	0x22
+ 2534 0cd2 D60C0000 		.4byte	0xcd6
+ 2535 0cd6 06       		.uleb128 0x6
+ 2536 0cd7 04       		.byte	0x4
+ 2537 0cd8 49050000 		.4byte	0x549
+ 2538 0cdc 27       		.uleb128 0x27
+ 2539 0cdd 1A0B0000 		.4byte	.LASF182
+ 2540 0ce1 01       		.byte	0x1
+ 2541 0ce2 1B       		.byte	0x1b
+ 2542 0ce3 81000000 		.4byte	0x81
+ 2543 0ce7 05       		.uleb128 0x5
+ 2544 0ce8 03       		.byte	0x3
+ 2545 0ce9 00000000 		.4byte	g_bDeviceInfoUpdate
+ 2546 0ced 29       		.uleb128 0x29
+ 2547 0cee D00A0000 		.4byte	.LASF183
+ 2548 0cf2 D00A0000 		.4byte	.LASF183
+ 2549 0cf6 0D       		.byte	0xd
+ 2550 0cf7 13       		.byte	0x13
+ 2551 0cf8 29       		.uleb128 0x29
+ 2552 0cf9 AE0B0000 		.4byte	.LASF184
+ 2553 0cfd AE0B0000 		.4byte	.LASF184
+ 2554 0d01 07       		.byte	0x7
+ 2555 0d02 1F       		.byte	0x1f
+ 2556 0d03 29       		.uleb128 0x29
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 52
+
+
+ 2557 0d04 1C080000 		.4byte	.LASF185
+ 2558 0d08 1C080000 		.4byte	.LASF185
+ 2559 0d0c 07       		.byte	0x7
+ 2560 0d0d 20       		.byte	0x20
+ 2561 0d0e 29       		.uleb128 0x29
+ 2562 0d0f C70A0000 		.4byte	.LASF186
+ 2563 0d13 C70A0000 		.4byte	.LASF186
+ 2564 0d17 0E       		.byte	0xe
+ 2565 0d18 FD       		.byte	0xfd
+ 2566 0d19 29       		.uleb128 0x29
+ 2567 0d1a 72030000 		.4byte	.LASF187
+ 2568 0d1e 72030000 		.4byte	.LASF187
+ 2569 0d22 08       		.byte	0x8
+ 2570 0d23 3A       		.byte	0x3a
+ 2571 0d24 29       		.uleb128 0x29
+ 2572 0d25 E5090000 		.4byte	.LASF188
+ 2573 0d29 E5090000 		.4byte	.LASF188
+ 2574 0d2d 07       		.byte	0x7
+ 2575 0d2e 1D       		.byte	0x1d
+ 2576 0d2f 29       		.uleb128 0x29
+ 2577 0d30 5B060000 		.4byte	.LASF189
+ 2578 0d34 5B060000 		.4byte	.LASF189
+ 2579 0d38 0F       		.byte	0xf
+ 2580 0d39 17       		.byte	0x17
+ 2581 0d3a 29       		.uleb128 0x29
+ 2582 0d3b 52030000 		.4byte	.LASF190
+ 2583 0d3f 52030000 		.4byte	.LASF190
+ 2584 0d43 0F       		.byte	0xf
+ 2585 0d44 20       		.byte	0x20
+ 2586 0d45 29       		.uleb128 0x29
+ 2587 0d46 22040000 		.4byte	.LASF191
+ 2588 0d4a 22040000 		.4byte	.LASF191
+ 2589 0d4e 10       		.byte	0x10
+ 2590 0d4f 22       		.byte	0x22
+ 2591 0d50 29       		.uleb128 0x29
+ 2592 0d51 100B0000 		.4byte	.LASF192
+ 2593 0d55 100B0000 		.4byte	.LASF192
+ 2594 0d59 0A       		.byte	0xa
+ 2595 0d5a 24       		.byte	0x24
+ 2596 0d5b 29       		.uleb128 0x29
+ 2597 0d5c 1B0A0000 		.4byte	.LASF193
+ 2598 0d60 1B0A0000 		.4byte	.LASF193
+ 2599 0d64 0B       		.byte	0xb
+ 2600 0d65 4B       		.byte	0x4b
+ 2601 0d66 29       		.uleb128 0x29
+ 2602 0d67 88000000 		.4byte	.LASF194
+ 2603 0d6b 88000000 		.4byte	.LASF194
+ 2604 0d6f 0B       		.byte	0xb
+ 2605 0d70 4E       		.byte	0x4e
+ 2606 0d71 29       		.uleb128 0x29
+ 2607 0d72 5F020000 		.4byte	.LASF195
+ 2608 0d76 5F020000 		.4byte	.LASF195
+ 2609 0d7a 0B       		.byte	0xb
+ 2610 0d7b 4F       		.byte	0x4f
+ 2611 0d7c 2A       		.uleb128 0x2a
+ 2612 0d7d 56060000 		.4byte	.LASF202
+ 2613 0d81 63030000 		.4byte	.LASF203
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 53
+
+
+ 2614 0d85 13       		.byte	0x13
+ 2615 0d86 00       		.byte	0
+ 2616 0d87 56060000 		.4byte	.LASF202
+ 2617 0d8b 29       		.uleb128 0x29
+ 2618 0d8c 79080000 		.4byte	.LASF196
+ 2619 0d90 79080000 		.4byte	.LASF196
+ 2620 0d94 0F       		.byte	0xf
+ 2621 0d95 1A       		.byte	0x1a
+ 2622 0d96 29       		.uleb128 0x29
+ 2623 0d97 53000000 		.4byte	.LASF197
+ 2624 0d9b 53000000 		.4byte	.LASF197
+ 2625 0d9f 11       		.byte	0x11
+ 2626 0da0 24       		.byte	0x24
+ 2627 0da1 29       		.uleb128 0x29
+ 2628 0da2 91040000 		.4byte	.LASF198
+ 2629 0da6 91040000 		.4byte	.LASF198
+ 2630 0daa 12       		.byte	0x12
+ 2631 0dab 24       		.byte	0x24
+ 2632 0dac 00       		.byte	0
+ 2633              		.section	.debug_abbrev,"",%progbits
+ 2634              	.Ldebug_abbrev0:
+ 2635 0000 01       		.uleb128 0x1
+ 2636 0001 11       		.uleb128 0x11
+ 2637 0002 01       		.byte	0x1
+ 2638 0003 25       		.uleb128 0x25
+ 2639 0004 0E       		.uleb128 0xe
+ 2640 0005 13       		.uleb128 0x13
+ 2641 0006 0B       		.uleb128 0xb
+ 2642 0007 03       		.uleb128 0x3
+ 2643 0008 0E       		.uleb128 0xe
+ 2644 0009 1B       		.uleb128 0x1b
+ 2645 000a 0E       		.uleb128 0xe
+ 2646 000b 55       		.uleb128 0x55
+ 2647 000c 17       		.uleb128 0x17
+ 2648 000d 11       		.uleb128 0x11
+ 2649 000e 01       		.uleb128 0x1
+ 2650 000f 10       		.uleb128 0x10
+ 2651 0010 17       		.uleb128 0x17
+ 2652 0011 00       		.byte	0
+ 2653 0012 00       		.byte	0
+ 2654 0013 02       		.uleb128 0x2
+ 2655 0014 24       		.uleb128 0x24
+ 2656 0015 00       		.byte	0
+ 2657 0016 0B       		.uleb128 0xb
+ 2658 0017 0B       		.uleb128 0xb
+ 2659 0018 3E       		.uleb128 0x3e
+ 2660 0019 0B       		.uleb128 0xb
+ 2661 001a 03       		.uleb128 0x3
+ 2662 001b 0E       		.uleb128 0xe
+ 2663 001c 00       		.byte	0
+ 2664 001d 00       		.byte	0
+ 2665 001e 03       		.uleb128 0x3
+ 2666 001f 16       		.uleb128 0x16
+ 2667 0020 00       		.byte	0
+ 2668 0021 03       		.uleb128 0x3
+ 2669 0022 0E       		.uleb128 0xe
+ 2670 0023 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 54
+
+
+ 2671 0024 0B       		.uleb128 0xb
+ 2672 0025 3B       		.uleb128 0x3b
+ 2673 0026 0B       		.uleb128 0xb
+ 2674 0027 49       		.uleb128 0x49
+ 2675 0028 13       		.uleb128 0x13
+ 2676 0029 00       		.byte	0
+ 2677 002a 00       		.byte	0
+ 2678 002b 04       		.uleb128 0x4
+ 2679 002c 24       		.uleb128 0x24
+ 2680 002d 00       		.byte	0
+ 2681 002e 0B       		.uleb128 0xb
+ 2682 002f 0B       		.uleb128 0xb
+ 2683 0030 3E       		.uleb128 0x3e
+ 2684 0031 0B       		.uleb128 0xb
+ 2685 0032 03       		.uleb128 0x3
+ 2686 0033 08       		.uleb128 0x8
+ 2687 0034 00       		.byte	0
+ 2688 0035 00       		.byte	0
+ 2689 0036 05       		.uleb128 0x5
+ 2690 0037 16       		.uleb128 0x16
+ 2691 0038 00       		.byte	0
+ 2692 0039 03       		.uleb128 0x3
+ 2693 003a 0E       		.uleb128 0xe
+ 2694 003b 3A       		.uleb128 0x3a
+ 2695 003c 0B       		.uleb128 0xb
+ 2696 003d 3B       		.uleb128 0x3b
+ 2697 003e 05       		.uleb128 0x5
+ 2698 003f 49       		.uleb128 0x49
+ 2699 0040 13       		.uleb128 0x13
+ 2700 0041 00       		.byte	0
+ 2701 0042 00       		.byte	0
+ 2702 0043 06       		.uleb128 0x6
+ 2703 0044 0F       		.uleb128 0xf
+ 2704 0045 00       		.byte	0
+ 2705 0046 0B       		.uleb128 0xb
+ 2706 0047 0B       		.uleb128 0xb
+ 2707 0048 49       		.uleb128 0x49
+ 2708 0049 13       		.uleb128 0x13
+ 2709 004a 00       		.byte	0
+ 2710 004b 00       		.byte	0
+ 2711 004c 07       		.uleb128 0x7
+ 2712 004d 13       		.uleb128 0x13
+ 2713 004e 01       		.byte	0x1
+ 2714 004f 03       		.uleb128 0x3
+ 2715 0050 0E       		.uleb128 0xe
+ 2716 0051 0B       		.uleb128 0xb
+ 2717 0052 0B       		.uleb128 0xb
+ 2718 0053 3A       		.uleb128 0x3a
+ 2719 0054 0B       		.uleb128 0xb
+ 2720 0055 3B       		.uleb128 0x3b
+ 2721 0056 0B       		.uleb128 0xb
+ 2722 0057 01       		.uleb128 0x1
+ 2723 0058 13       		.uleb128 0x13
+ 2724 0059 00       		.byte	0
+ 2725 005a 00       		.byte	0
+ 2726 005b 08       		.uleb128 0x8
+ 2727 005c 0D       		.uleb128 0xd
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 55
+
+
+ 2728 005d 00       		.byte	0
+ 2729 005e 03       		.uleb128 0x3
+ 2730 005f 0E       		.uleb128 0xe
+ 2731 0060 3A       		.uleb128 0x3a
+ 2732 0061 0B       		.uleb128 0xb
+ 2733 0062 3B       		.uleb128 0x3b
+ 2734 0063 0B       		.uleb128 0xb
+ 2735 0064 49       		.uleb128 0x49
+ 2736 0065 13       		.uleb128 0x13
+ 2737 0066 38       		.uleb128 0x38
+ 2738 0067 0B       		.uleb128 0xb
+ 2739 0068 00       		.byte	0
+ 2740 0069 00       		.byte	0
+ 2741 006a 09       		.uleb128 0x9
+ 2742 006b 04       		.uleb128 0x4
+ 2743 006c 01       		.byte	0x1
+ 2744 006d 03       		.uleb128 0x3
+ 2745 006e 0E       		.uleb128 0xe
+ 2746 006f 0B       		.uleb128 0xb
+ 2747 0070 0B       		.uleb128 0xb
+ 2748 0071 49       		.uleb128 0x49
+ 2749 0072 13       		.uleb128 0x13
+ 2750 0073 3A       		.uleb128 0x3a
+ 2751 0074 0B       		.uleb128 0xb
+ 2752 0075 3B       		.uleb128 0x3b
+ 2753 0076 0B       		.uleb128 0xb
+ 2754 0077 01       		.uleb128 0x1
+ 2755 0078 13       		.uleb128 0x13
+ 2756 0079 00       		.byte	0
+ 2757 007a 00       		.byte	0
+ 2758 007b 0A       		.uleb128 0xa
+ 2759 007c 28       		.uleb128 0x28
+ 2760 007d 00       		.byte	0
+ 2761 007e 03       		.uleb128 0x3
+ 2762 007f 0E       		.uleb128 0xe
+ 2763 0080 1C       		.uleb128 0x1c
+ 2764 0081 0B       		.uleb128 0xb
+ 2765 0082 00       		.byte	0
+ 2766 0083 00       		.byte	0
+ 2767 0084 0B       		.uleb128 0xb
+ 2768 0085 0D       		.uleb128 0xd
+ 2769 0086 00       		.byte	0
+ 2770 0087 03       		.uleb128 0x3
+ 2771 0088 08       		.uleb128 0x8
+ 2772 0089 3A       		.uleb128 0x3a
+ 2773 008a 0B       		.uleb128 0xb
+ 2774 008b 3B       		.uleb128 0x3b
+ 2775 008c 0B       		.uleb128 0xb
+ 2776 008d 49       		.uleb128 0x49
+ 2777 008e 13       		.uleb128 0x13
+ 2778 008f 38       		.uleb128 0x38
+ 2779 0090 0B       		.uleb128 0xb
+ 2780 0091 00       		.byte	0
+ 2781 0092 00       		.byte	0
+ 2782 0093 0C       		.uleb128 0xc
+ 2783 0094 01       		.uleb128 0x1
+ 2784 0095 01       		.byte	0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 56
+
+
+ 2785 0096 49       		.uleb128 0x49
+ 2786 0097 13       		.uleb128 0x13
+ 2787 0098 01       		.uleb128 0x1
+ 2788 0099 13       		.uleb128 0x13
+ 2789 009a 00       		.byte	0
+ 2790 009b 00       		.byte	0
+ 2791 009c 0D       		.uleb128 0xd
+ 2792 009d 21       		.uleb128 0x21
+ 2793 009e 00       		.byte	0
+ 2794 009f 49       		.uleb128 0x49
+ 2795 00a0 13       		.uleb128 0x13
+ 2796 00a1 2F       		.uleb128 0x2f
+ 2797 00a2 0B       		.uleb128 0xb
+ 2798 00a3 00       		.byte	0
+ 2799 00a4 00       		.byte	0
+ 2800 00a5 0E       		.uleb128 0xe
+ 2801 00a6 13       		.uleb128 0x13
+ 2802 00a7 01       		.byte	0x1
+ 2803 00a8 03       		.uleb128 0x3
+ 2804 00a9 0E       		.uleb128 0xe
+ 2805 00aa 0B       		.uleb128 0xb
+ 2806 00ab 05       		.uleb128 0x5
+ 2807 00ac 3A       		.uleb128 0x3a
+ 2808 00ad 0B       		.uleb128 0xb
+ 2809 00ae 3B       		.uleb128 0x3b
+ 2810 00af 0B       		.uleb128 0xb
+ 2811 00b0 01       		.uleb128 0x1
+ 2812 00b1 13       		.uleb128 0x13
+ 2813 00b2 00       		.byte	0
+ 2814 00b3 00       		.byte	0
+ 2815 00b4 0F       		.uleb128 0xf
+ 2816 00b5 0D       		.uleb128 0xd
+ 2817 00b6 00       		.byte	0
+ 2818 00b7 03       		.uleb128 0x3
+ 2819 00b8 0E       		.uleb128 0xe
+ 2820 00b9 3A       		.uleb128 0x3a
+ 2821 00ba 0B       		.uleb128 0xb
+ 2822 00bb 3B       		.uleb128 0x3b
+ 2823 00bc 0B       		.uleb128 0xb
+ 2824 00bd 49       		.uleb128 0x49
+ 2825 00be 13       		.uleb128 0x13
+ 2826 00bf 38       		.uleb128 0x38
+ 2827 00c0 05       		.uleb128 0x5
+ 2828 00c1 00       		.byte	0
+ 2829 00c2 00       		.byte	0
+ 2830 00c3 10       		.uleb128 0x10
+ 2831 00c4 13       		.uleb128 0x13
+ 2832 00c5 01       		.byte	0x1
+ 2833 00c6 0B       		.uleb128 0xb
+ 2834 00c7 05       		.uleb128 0x5
+ 2835 00c8 3A       		.uleb128 0x3a
+ 2836 00c9 0B       		.uleb128 0xb
+ 2837 00ca 3B       		.uleb128 0x3b
+ 2838 00cb 0B       		.uleb128 0xb
+ 2839 00cc 01       		.uleb128 0x1
+ 2840 00cd 13       		.uleb128 0x13
+ 2841 00ce 00       		.byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 57
+
+
+ 2842 00cf 00       		.byte	0
+ 2843 00d0 11       		.uleb128 0x11
+ 2844 00d1 13       		.uleb128 0x13
+ 2845 00d2 01       		.byte	0x1
+ 2846 00d3 0B       		.uleb128 0xb
+ 2847 00d4 0B       		.uleb128 0xb
+ 2848 00d5 3A       		.uleb128 0x3a
+ 2849 00d6 0B       		.uleb128 0xb
+ 2850 00d7 3B       		.uleb128 0x3b
+ 2851 00d8 0B       		.uleb128 0xb
+ 2852 00d9 01       		.uleb128 0x1
+ 2853 00da 13       		.uleb128 0x13
+ 2854 00db 00       		.byte	0
+ 2855 00dc 00       		.byte	0
+ 2856 00dd 12       		.uleb128 0x12
+ 2857 00de 2E       		.uleb128 0x2e
+ 2858 00df 01       		.byte	0x1
+ 2859 00e0 3F       		.uleb128 0x3f
+ 2860 00e1 19       		.uleb128 0x19
+ 2861 00e2 03       		.uleb128 0x3
+ 2862 00e3 0E       		.uleb128 0xe
+ 2863 00e4 3A       		.uleb128 0x3a
+ 2864 00e5 0B       		.uleb128 0xb
+ 2865 00e6 3B       		.uleb128 0x3b
+ 2866 00e7 0B       		.uleb128 0xb
+ 2867 00e8 27       		.uleb128 0x27
+ 2868 00e9 19       		.uleb128 0x19
+ 2869 00ea 11       		.uleb128 0x11
+ 2870 00eb 01       		.uleb128 0x1
+ 2871 00ec 12       		.uleb128 0x12
+ 2872 00ed 06       		.uleb128 0x6
+ 2873 00ee 40       		.uleb128 0x40
+ 2874 00ef 18       		.uleb128 0x18
+ 2875 00f0 9742     		.uleb128 0x2117
+ 2876 00f2 19       		.uleb128 0x19
+ 2877 00f3 01       		.uleb128 0x1
+ 2878 00f4 13       		.uleb128 0x13
+ 2879 00f5 00       		.byte	0
+ 2880 00f6 00       		.byte	0
+ 2881 00f7 13       		.uleb128 0x13
+ 2882 00f8 05       		.uleb128 0x5
+ 2883 00f9 00       		.byte	0
+ 2884 00fa 03       		.uleb128 0x3
+ 2885 00fb 0E       		.uleb128 0xe
+ 2886 00fc 3A       		.uleb128 0x3a
+ 2887 00fd 0B       		.uleb128 0xb
+ 2888 00fe 3B       		.uleb128 0x3b
+ 2889 00ff 0B       		.uleb128 0xb
+ 2890 0100 49       		.uleb128 0x49
+ 2891 0101 13       		.uleb128 0x13
+ 2892 0102 02       		.uleb128 0x2
+ 2893 0103 17       		.uleb128 0x17
+ 2894 0104 00       		.byte	0
+ 2895 0105 00       		.byte	0
+ 2896 0106 14       		.uleb128 0x14
+ 2897 0107 898201   		.uleb128 0x4109
+ 2898 010a 01       		.byte	0x1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 58
+
+
+ 2899 010b 11       		.uleb128 0x11
+ 2900 010c 01       		.uleb128 0x1
+ 2901 010d 31       		.uleb128 0x31
+ 2902 010e 13       		.uleb128 0x13
+ 2903 010f 00       		.byte	0
+ 2904 0110 00       		.byte	0
+ 2905 0111 15       		.uleb128 0x15
+ 2906 0112 8A8201   		.uleb128 0x410a
+ 2907 0115 00       		.byte	0
+ 2908 0116 02       		.uleb128 0x2
+ 2909 0117 18       		.uleb128 0x18
+ 2910 0118 9142     		.uleb128 0x2111
+ 2911 011a 18       		.uleb128 0x18
+ 2912 011b 00       		.byte	0
+ 2913 011c 00       		.byte	0
+ 2914 011d 16       		.uleb128 0x16
+ 2915 011e 2E       		.uleb128 0x2e
+ 2916 011f 01       		.byte	0x1
+ 2917 0120 3F       		.uleb128 0x3f
+ 2918 0121 19       		.uleb128 0x19
+ 2919 0122 03       		.uleb128 0x3
+ 2920 0123 0E       		.uleb128 0xe
+ 2921 0124 3A       		.uleb128 0x3a
+ 2922 0125 0B       		.uleb128 0xb
+ 2923 0126 3B       		.uleb128 0x3b
+ 2924 0127 0B       		.uleb128 0xb
+ 2925 0128 11       		.uleb128 0x11
+ 2926 0129 01       		.uleb128 0x1
+ 2927 012a 12       		.uleb128 0x12
+ 2928 012b 06       		.uleb128 0x6
+ 2929 012c 40       		.uleb128 0x40
+ 2930 012d 18       		.uleb128 0x18
+ 2931 012e 9742     		.uleb128 0x2117
+ 2932 0130 19       		.uleb128 0x19
+ 2933 0131 01       		.uleb128 0x1
+ 2934 0132 13       		.uleb128 0x13
+ 2935 0133 00       		.byte	0
+ 2936 0134 00       		.byte	0
+ 2937 0135 17       		.uleb128 0x17
+ 2938 0136 2E       		.uleb128 0x2e
+ 2939 0137 01       		.byte	0x1
+ 2940 0138 3F       		.uleb128 0x3f
+ 2941 0139 19       		.uleb128 0x19
+ 2942 013a 03       		.uleb128 0x3
+ 2943 013b 0E       		.uleb128 0xe
+ 2944 013c 3A       		.uleb128 0x3a
+ 2945 013d 0B       		.uleb128 0xb
+ 2946 013e 3B       		.uleb128 0x3b
+ 2947 013f 0B       		.uleb128 0xb
+ 2948 0140 49       		.uleb128 0x49
+ 2949 0141 13       		.uleb128 0x13
+ 2950 0142 11       		.uleb128 0x11
+ 2951 0143 01       		.uleb128 0x1
+ 2952 0144 12       		.uleb128 0x12
+ 2953 0145 06       		.uleb128 0x6
+ 2954 0146 40       		.uleb128 0x40
+ 2955 0147 18       		.uleb128 0x18
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 59
+
+
+ 2956 0148 9742     		.uleb128 0x2117
+ 2957 014a 19       		.uleb128 0x19
+ 2958 014b 01       		.uleb128 0x1
+ 2959 014c 13       		.uleb128 0x13
+ 2960 014d 00       		.byte	0
+ 2961 014e 00       		.byte	0
+ 2962 014f 18       		.uleb128 0x18
+ 2963 0150 0B       		.uleb128 0xb
+ 2964 0151 01       		.byte	0x1
+ 2965 0152 11       		.uleb128 0x11
+ 2966 0153 01       		.uleb128 0x1
+ 2967 0154 12       		.uleb128 0x12
+ 2968 0155 06       		.uleb128 0x6
+ 2969 0156 01       		.uleb128 0x1
+ 2970 0157 13       		.uleb128 0x13
+ 2971 0158 00       		.byte	0
+ 2972 0159 00       		.byte	0
+ 2973 015a 19       		.uleb128 0x19
+ 2974 015b 34       		.uleb128 0x34
+ 2975 015c 00       		.byte	0
+ 2976 015d 03       		.uleb128 0x3
+ 2977 015e 08       		.uleb128 0x8
+ 2978 015f 3A       		.uleb128 0x3a
+ 2979 0160 0B       		.uleb128 0xb
+ 2980 0161 3B       		.uleb128 0x3b
+ 2981 0162 0B       		.uleb128 0xb
+ 2982 0163 49       		.uleb128 0x49
+ 2983 0164 13       		.uleb128 0x13
+ 2984 0165 02       		.uleb128 0x2
+ 2985 0166 17       		.uleb128 0x17
+ 2986 0167 00       		.byte	0
+ 2987 0168 00       		.byte	0
+ 2988 0169 1A       		.uleb128 0x1a
+ 2989 016a 34       		.uleb128 0x34
+ 2990 016b 00       		.byte	0
+ 2991 016c 03       		.uleb128 0x3
+ 2992 016d 08       		.uleb128 0x8
+ 2993 016e 3A       		.uleb128 0x3a
+ 2994 016f 0B       		.uleb128 0xb
+ 2995 0170 3B       		.uleb128 0x3b
+ 2996 0171 0B       		.uleb128 0xb
+ 2997 0172 49       		.uleb128 0x49
+ 2998 0173 13       		.uleb128 0x13
+ 2999 0174 02       		.uleb128 0x2
+ 3000 0175 18       		.uleb128 0x18
+ 3001 0176 00       		.byte	0
+ 3002 0177 00       		.byte	0
+ 3003 0178 1B       		.uleb128 0x1b
+ 3004 0179 898201   		.uleb128 0x4109
+ 3005 017c 00       		.byte	0
+ 3006 017d 11       		.uleb128 0x11
+ 3007 017e 01       		.uleb128 0x1
+ 3008 017f 31       		.uleb128 0x31
+ 3009 0180 13       		.uleb128 0x13
+ 3010 0181 00       		.byte	0
+ 3011 0182 00       		.byte	0
+ 3012 0183 1C       		.uleb128 0x1c
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 60
+
+
+ 3013 0184 898201   		.uleb128 0x4109
+ 3014 0187 01       		.byte	0x1
+ 3015 0188 11       		.uleb128 0x11
+ 3016 0189 01       		.uleb128 0x1
+ 3017 018a 31       		.uleb128 0x31
+ 3018 018b 13       		.uleb128 0x13
+ 3019 018c 01       		.uleb128 0x1
+ 3020 018d 13       		.uleb128 0x13
+ 3021 018e 00       		.byte	0
+ 3022 018f 00       		.byte	0
+ 3023 0190 1D       		.uleb128 0x1d
+ 3024 0191 21       		.uleb128 0x21
+ 3025 0192 00       		.byte	0
+ 3026 0193 49       		.uleb128 0x49
+ 3027 0194 13       		.uleb128 0x13
+ 3028 0195 2F       		.uleb128 0x2f
+ 3029 0196 05       		.uleb128 0x5
+ 3030 0197 00       		.byte	0
+ 3031 0198 00       		.byte	0
+ 3032 0199 1E       		.uleb128 0x1e
+ 3033 019a 05       		.uleb128 0x5
+ 3034 019b 00       		.byte	0
+ 3035 019c 03       		.uleb128 0x3
+ 3036 019d 08       		.uleb128 0x8
+ 3037 019e 3A       		.uleb128 0x3a
+ 3038 019f 0B       		.uleb128 0xb
+ 3039 01a0 3B       		.uleb128 0x3b
+ 3040 01a1 0B       		.uleb128 0xb
+ 3041 01a2 49       		.uleb128 0x49
+ 3042 01a3 13       		.uleb128 0x13
+ 3043 01a4 02       		.uleb128 0x2
+ 3044 01a5 17       		.uleb128 0x17
+ 3045 01a6 00       		.byte	0
+ 3046 01a7 00       		.byte	0
+ 3047 01a8 1F       		.uleb128 0x1f
+ 3048 01a9 2E       		.uleb128 0x2e
+ 3049 01aa 01       		.byte	0x1
+ 3050 01ab 3F       		.uleb128 0x3f
+ 3051 01ac 19       		.uleb128 0x19
+ 3052 01ad 03       		.uleb128 0x3
+ 3053 01ae 0E       		.uleb128 0xe
+ 3054 01af 3A       		.uleb128 0x3a
+ 3055 01b0 0B       		.uleb128 0xb
+ 3056 01b1 3B       		.uleb128 0x3b
+ 3057 01b2 0B       		.uleb128 0xb
+ 3058 01b3 27       		.uleb128 0x27
+ 3059 01b4 19       		.uleb128 0x19
+ 3060 01b5 11       		.uleb128 0x11
+ 3061 01b6 01       		.uleb128 0x1
+ 3062 01b7 12       		.uleb128 0x12
+ 3063 01b8 06       		.uleb128 0x6
+ 3064 01b9 40       		.uleb128 0x40
+ 3065 01ba 18       		.uleb128 0x18
+ 3066 01bb 9642     		.uleb128 0x2116
+ 3067 01bd 19       		.uleb128 0x19
+ 3068 01be 01       		.uleb128 0x1
+ 3069 01bf 13       		.uleb128 0x13
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 61
+
+
+ 3070 01c0 00       		.byte	0
+ 3071 01c1 00       		.byte	0
+ 3072 01c2 20       		.uleb128 0x20
+ 3073 01c3 34       		.uleb128 0x34
+ 3074 01c4 00       		.byte	0
+ 3075 01c5 03       		.uleb128 0x3
+ 3076 01c6 0E       		.uleb128 0xe
+ 3077 01c7 3A       		.uleb128 0x3a
+ 3078 01c8 0B       		.uleb128 0xb
+ 3079 01c9 3B       		.uleb128 0x3b
+ 3080 01ca 0B       		.uleb128 0xb
+ 3081 01cb 49       		.uleb128 0x49
+ 3082 01cc 13       		.uleb128 0x13
+ 3083 01cd 02       		.uleb128 0x2
+ 3084 01ce 17       		.uleb128 0x17
+ 3085 01cf 00       		.byte	0
+ 3086 01d0 00       		.byte	0
+ 3087 01d1 21       		.uleb128 0x21
+ 3088 01d2 2E       		.uleb128 0x2e
+ 3089 01d3 01       		.byte	0x1
+ 3090 01d4 3F       		.uleb128 0x3f
+ 3091 01d5 19       		.uleb128 0x19
+ 3092 01d6 03       		.uleb128 0x3
+ 3093 01d7 0E       		.uleb128 0xe
+ 3094 01d8 3A       		.uleb128 0x3a
+ 3095 01d9 0B       		.uleb128 0xb
+ 3096 01da 3B       		.uleb128 0x3b
+ 3097 01db 0B       		.uleb128 0xb
+ 3098 01dc 11       		.uleb128 0x11
+ 3099 01dd 01       		.uleb128 0x1
+ 3100 01de 12       		.uleb128 0x12
+ 3101 01df 06       		.uleb128 0x6
+ 3102 01e0 40       		.uleb128 0x40
+ 3103 01e1 18       		.uleb128 0x18
+ 3104 01e2 9642     		.uleb128 0x2116
+ 3105 01e4 19       		.uleb128 0x19
+ 3106 01e5 01       		.uleb128 0x1
+ 3107 01e6 13       		.uleb128 0x13
+ 3108 01e7 00       		.byte	0
+ 3109 01e8 00       		.byte	0
+ 3110 01e9 22       		.uleb128 0x22
+ 3111 01ea 34       		.uleb128 0x34
+ 3112 01eb 00       		.byte	0
+ 3113 01ec 03       		.uleb128 0x3
+ 3114 01ed 08       		.uleb128 0x8
+ 3115 01ee 3A       		.uleb128 0x3a
+ 3116 01ef 0B       		.uleb128 0xb
+ 3117 01f0 3B       		.uleb128 0x3b
+ 3118 01f1 0B       		.uleb128 0xb
+ 3119 01f2 49       		.uleb128 0x49
+ 3120 01f3 13       		.uleb128 0x13
+ 3121 01f4 00       		.byte	0
+ 3122 01f5 00       		.byte	0
+ 3123 01f6 23       		.uleb128 0x23
+ 3124 01f7 34       		.uleb128 0x34
+ 3125 01f8 00       		.byte	0
+ 3126 01f9 03       		.uleb128 0x3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 62
+
+
+ 3127 01fa 0E       		.uleb128 0xe
+ 3128 01fb 3A       		.uleb128 0x3a
+ 3129 01fc 0B       		.uleb128 0xb
+ 3130 01fd 3B       		.uleb128 0x3b
+ 3131 01fe 0B       		.uleb128 0xb
+ 3132 01ff 49       		.uleb128 0x49
+ 3133 0200 13       		.uleb128 0x13
+ 3134 0201 00       		.byte	0
+ 3135 0202 00       		.byte	0
+ 3136 0203 24       		.uleb128 0x24
+ 3137 0204 34       		.uleb128 0x34
+ 3138 0205 00       		.byte	0
+ 3139 0206 03       		.uleb128 0x3
+ 3140 0207 0E       		.uleb128 0xe
+ 3141 0208 3A       		.uleb128 0x3a
+ 3142 0209 0B       		.uleb128 0xb
+ 3143 020a 3B       		.uleb128 0x3b
+ 3144 020b 0B       		.uleb128 0xb
+ 3145 020c 49       		.uleb128 0x49
+ 3146 020d 13       		.uleb128 0x13
+ 3147 020e 02       		.uleb128 0x2
+ 3148 020f 18       		.uleb128 0x18
+ 3149 0210 00       		.byte	0
+ 3150 0211 00       		.byte	0
+ 3151 0212 25       		.uleb128 0x25
+ 3152 0213 26       		.uleb128 0x26
+ 3153 0214 00       		.byte	0
+ 3154 0215 49       		.uleb128 0x49
+ 3155 0216 13       		.uleb128 0x13
+ 3156 0217 00       		.byte	0
+ 3157 0218 00       		.byte	0
+ 3158 0219 26       		.uleb128 0x26
+ 3159 021a 34       		.uleb128 0x34
+ 3160 021b 00       		.byte	0
+ 3161 021c 03       		.uleb128 0x3
+ 3162 021d 0E       		.uleb128 0xe
+ 3163 021e 3A       		.uleb128 0x3a
+ 3164 021f 0B       		.uleb128 0xb
+ 3165 0220 3B       		.uleb128 0x3b
+ 3166 0221 05       		.uleb128 0x5
+ 3167 0222 49       		.uleb128 0x49
+ 3168 0223 13       		.uleb128 0x13
+ 3169 0224 3F       		.uleb128 0x3f
+ 3170 0225 19       		.uleb128 0x19
+ 3171 0226 3C       		.uleb128 0x3c
+ 3172 0227 19       		.uleb128 0x19
+ 3173 0228 00       		.byte	0
+ 3174 0229 00       		.byte	0
+ 3175 022a 27       		.uleb128 0x27
+ 3176 022b 34       		.uleb128 0x34
+ 3177 022c 00       		.byte	0
+ 3178 022d 03       		.uleb128 0x3
+ 3179 022e 0E       		.uleb128 0xe
+ 3180 022f 3A       		.uleb128 0x3a
+ 3181 0230 0B       		.uleb128 0xb
+ 3182 0231 3B       		.uleb128 0x3b
+ 3183 0232 0B       		.uleb128 0xb
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 63
+
+
+ 3184 0233 49       		.uleb128 0x49
+ 3185 0234 13       		.uleb128 0x13
+ 3186 0235 3F       		.uleb128 0x3f
+ 3187 0236 19       		.uleb128 0x19
+ 3188 0237 02       		.uleb128 0x2
+ 3189 0238 18       		.uleb128 0x18
+ 3190 0239 00       		.byte	0
+ 3191 023a 00       		.byte	0
+ 3192 023b 28       		.uleb128 0x28
+ 3193 023c 34       		.uleb128 0x34
+ 3194 023d 00       		.byte	0
+ 3195 023e 03       		.uleb128 0x3
+ 3196 023f 0E       		.uleb128 0xe
+ 3197 0240 3A       		.uleb128 0x3a
+ 3198 0241 0B       		.uleb128 0xb
+ 3199 0242 3B       		.uleb128 0x3b
+ 3200 0243 0B       		.uleb128 0xb
+ 3201 0244 49       		.uleb128 0x49
+ 3202 0245 13       		.uleb128 0x13
+ 3203 0246 3F       		.uleb128 0x3f
+ 3204 0247 19       		.uleb128 0x19
+ 3205 0248 3C       		.uleb128 0x3c
+ 3206 0249 19       		.uleb128 0x19
+ 3207 024a 00       		.byte	0
+ 3208 024b 00       		.byte	0
+ 3209 024c 29       		.uleb128 0x29
+ 3210 024d 2E       		.uleb128 0x2e
+ 3211 024e 00       		.byte	0
+ 3212 024f 3F       		.uleb128 0x3f
+ 3213 0250 19       		.uleb128 0x19
+ 3214 0251 3C       		.uleb128 0x3c
+ 3215 0252 19       		.uleb128 0x19
+ 3216 0253 6E       		.uleb128 0x6e
+ 3217 0254 0E       		.uleb128 0xe
+ 3218 0255 03       		.uleb128 0x3
+ 3219 0256 0E       		.uleb128 0xe
+ 3220 0257 3A       		.uleb128 0x3a
+ 3221 0258 0B       		.uleb128 0xb
+ 3222 0259 3B       		.uleb128 0x3b
+ 3223 025a 0B       		.uleb128 0xb
+ 3224 025b 00       		.byte	0
+ 3225 025c 00       		.byte	0
+ 3226 025d 2A       		.uleb128 0x2a
+ 3227 025e 2E       		.uleb128 0x2e
+ 3228 025f 00       		.byte	0
+ 3229 0260 3F       		.uleb128 0x3f
+ 3230 0261 19       		.uleb128 0x19
+ 3231 0262 3C       		.uleb128 0x3c
+ 3232 0263 19       		.uleb128 0x19
+ 3233 0264 6E       		.uleb128 0x6e
+ 3234 0265 0E       		.uleb128 0xe
+ 3235 0266 03       		.uleb128 0x3
+ 3236 0267 0E       		.uleb128 0xe
+ 3237 0268 3A       		.uleb128 0x3a
+ 3238 0269 0B       		.uleb128 0xb
+ 3239 026a 3B       		.uleb128 0x3b
+ 3240 026b 0B       		.uleb128 0xb
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 64
+
+
+ 3241 026c 6E       		.uleb128 0x6e
+ 3242 026d 0E       		.uleb128 0xe
+ 3243 026e 00       		.byte	0
+ 3244 026f 00       		.byte	0
+ 3245 0270 00       		.byte	0
+ 3246              		.section	.debug_loc,"",%progbits
+ 3247              	.Ldebug_loc0:
+ 3248              	.LLST0:
+ 3249 0000 00000000 		.4byte	.LVL0
+ 3250 0004 0A000000 		.4byte	.LVL1
+ 3251 0008 0100     		.2byte	0x1
+ 3252 000a 50       		.byte	0x50
+ 3253 000b 0A000000 		.4byte	.LVL1
+ 3254 000f 0F000000 		.4byte	.LVL3-1
+ 3255 0013 0100     		.2byte	0x1
+ 3256 0015 53       		.byte	0x53
+ 3257 0016 0F000000 		.4byte	.LVL3-1
+ 3258 001a 1C000000 		.4byte	.LFE63
+ 3259 001e 0400     		.2byte	0x4
+ 3260 0020 F3       		.byte	0xf3
+ 3261 0021 01       		.uleb128 0x1
+ 3262 0022 50       		.byte	0x50
+ 3263 0023 9F       		.byte	0x9f
+ 3264 0024 00000000 		.4byte	0
+ 3265 0028 00000000 		.4byte	0
+ 3266              	.LLST1:
+ 3267 002c 00000000 		.4byte	.LVL0
+ 3268 0030 0C000000 		.4byte	.LVL2
+ 3269 0034 0100     		.2byte	0x1
+ 3270 0036 51       		.byte	0x51
+ 3271 0037 0C000000 		.4byte	.LVL2
+ 3272 003b 1C000000 		.4byte	.LFE63
+ 3273 003f 0400     		.2byte	0x4
+ 3274 0041 F3       		.byte	0xf3
+ 3275 0042 01       		.uleb128 0x1
+ 3276 0043 51       		.byte	0x51
+ 3277 0044 9F       		.byte	0x9f
+ 3278 0045 00000000 		.4byte	0
+ 3279 0049 00000000 		.4byte	0
+ 3280              	.LLST2:
+ 3281 004d 14000000 		.4byte	.LVL9
+ 3282 0051 20000000 		.4byte	.LVL10
+ 3283 0055 0100     		.2byte	0x1
+ 3284 0057 50       		.byte	0x50
+ 3285 0058 20000000 		.4byte	.LVL10
+ 3286 005c 36000000 		.4byte	.LVL13
+ 3287 0060 0100     		.2byte	0x1
+ 3288 0062 54       		.byte	0x54
+ 3289 0063 00000000 		.4byte	0
+ 3290 0067 00000000 		.4byte	0
+ 3291              	.LLST3:
+ 3292 006b 00000000 		.4byte	.LVL18
+ 3293 006f 0A000000 		.4byte	.LVL19
+ 3294 0073 0100     		.2byte	0x1
+ 3295 0075 50       		.byte	0x50
+ 3296 0076 0A000000 		.4byte	.LVL19
+ 3297 007a 0D000000 		.4byte	.LVL20-1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 65
+
+
+ 3298 007e 0100     		.2byte	0x1
+ 3299 0080 53       		.byte	0x53
+ 3300 0081 0D000000 		.4byte	.LVL20-1
+ 3301 0085 18000000 		.4byte	.LFE67
+ 3302 0089 0400     		.2byte	0x4
+ 3303 008b F3       		.byte	0xf3
+ 3304 008c 01       		.uleb128 0x1
+ 3305 008d 50       		.byte	0x50
+ 3306 008e 9F       		.byte	0x9f
+ 3307 008f 00000000 		.4byte	0
+ 3308 0093 00000000 		.4byte	0
+ 3309              	.LLST4:
+ 3310 0097 00000000 		.4byte	.LVL21
+ 3311 009b 0A000000 		.4byte	.LVL22
+ 3312 009f 0100     		.2byte	0x1
+ 3313 00a1 50       		.byte	0x50
+ 3314 00a2 0A000000 		.4byte	.LVL22
+ 3315 00a6 0D000000 		.4byte	.LVL23-1
+ 3316 00aa 0100     		.2byte	0x1
+ 3317 00ac 53       		.byte	0x53
+ 3318 00ad 0D000000 		.4byte	.LVL23-1
+ 3319 00b1 18000000 		.4byte	.LFE68
+ 3320 00b5 0400     		.2byte	0x4
+ 3321 00b7 F3       		.byte	0xf3
+ 3322 00b8 01       		.uleb128 0x1
+ 3323 00b9 50       		.byte	0x50
+ 3324 00ba 9F       		.byte	0x9f
+ 3325 00bb 00000000 		.4byte	0
+ 3326 00bf 00000000 		.4byte	0
+ 3327              	.LLST5:
+ 3328 00c3 00000000 		.4byte	.LVL24
+ 3329 00c7 0F000000 		.4byte	.LVL25-1
+ 3330 00cb 0100     		.2byte	0x1
+ 3331 00cd 50       		.byte	0x50
+ 3332 00ce 0F000000 		.4byte	.LVL25-1
+ 3333 00d2 24000000 		.4byte	.LVL27
+ 3334 00d6 0100     		.2byte	0x1
+ 3335 00d8 55       		.byte	0x55
+ 3336 00d9 24000000 		.4byte	.LVL27
+ 3337 00dd 34000000 		.4byte	.LFE69
+ 3338 00e1 0400     		.2byte	0x4
+ 3339 00e3 F3       		.byte	0xf3
+ 3340 00e4 01       		.uleb128 0x1
+ 3341 00e5 50       		.byte	0x50
+ 3342 00e6 9F       		.byte	0x9f
+ 3343 00e7 00000000 		.4byte	0
+ 3344 00eb 00000000 		.4byte	0
+ 3345              	.LLST6:
+ 3346 00ef 00000000 		.4byte	.LVL24
+ 3347 00f3 0F000000 		.4byte	.LVL25-1
+ 3348 00f7 0100     		.2byte	0x1
+ 3349 00f9 51       		.byte	0x51
+ 3350 00fa 0F000000 		.4byte	.LVL25-1
+ 3351 00fe 24000000 		.4byte	.LVL28
+ 3352 0102 0100     		.2byte	0x1
+ 3353 0104 56       		.byte	0x56
+ 3354 0105 24000000 		.4byte	.LVL28
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 66
+
+
+ 3355 0109 34000000 		.4byte	.LFE69
+ 3356 010d 0400     		.2byte	0x4
+ 3357 010f F3       		.byte	0xf3
+ 3358 0110 01       		.uleb128 0x1
+ 3359 0111 51       		.byte	0x51
+ 3360 0112 9F       		.byte	0x9f
+ 3361 0113 00000000 		.4byte	0
+ 3362 0117 00000000 		.4byte	0
+ 3363              	.LLST7:
+ 3364 011b 00000000 		.4byte	.LVL29
+ 3365 011f 0D000000 		.4byte	.LVL30-1
+ 3366 0123 0100     		.2byte	0x1
+ 3367 0125 50       		.byte	0x50
+ 3368 0126 0D000000 		.4byte	.LVL30-1
+ 3369 012a 78000000 		.4byte	.LFE70
+ 3370 012e 0400     		.2byte	0x4
+ 3371 0130 F3       		.byte	0xf3
+ 3372 0131 01       		.uleb128 0x1
+ 3373 0132 50       		.byte	0x50
+ 3374 0133 9F       		.byte	0x9f
+ 3375 0134 00000000 		.4byte	0
+ 3376 0138 00000000 		.4byte	0
+ 3377              	.LLST8:
+ 3378 013c 10000000 		.4byte	.LVL31
+ 3379 0140 13000000 		.4byte	.LVL32-1
+ 3380 0144 0100     		.2byte	0x1
+ 3381 0146 50       		.byte	0x50
+ 3382 0147 13000000 		.4byte	.LVL32-1
+ 3383 014b 62000000 		.4byte	.LVL40
+ 3384 014f 0100     		.2byte	0x1
+ 3385 0151 54       		.byte	0x54
+ 3386 0152 00000000 		.4byte	0
+ 3387 0156 00000000 		.4byte	0
+ 3388              	.LLST9:
+ 3389 015a 16000000 		.4byte	.LVL33
+ 3390 015e 19000000 		.4byte	.LVL34-1
+ 3391 0162 0100     		.2byte	0x1
+ 3392 0164 50       		.byte	0x50
+ 3393 0165 19000000 		.4byte	.LVL34-1
+ 3394 0169 62000000 		.4byte	.LVL41
+ 3395 016d 0100     		.2byte	0x1
+ 3396 016f 57       		.byte	0x57
+ 3397 0170 00000000 		.4byte	0
+ 3398 0174 00000000 		.4byte	0
+ 3399              	.LLST10:
+ 3400 0178 0A000000 		.4byte	.LVL43
+ 3401 017c 0D000000 		.4byte	.LVL44-1
+ 3402 0180 0100     		.2byte	0x1
+ 3403 0182 50       		.byte	0x50
+ 3404 0183 0D000000 		.4byte	.LVL44-1
+ 3405 0187 5A000000 		.4byte	.LVL51
+ 3406 018b 0100     		.2byte	0x1
+ 3407 018d 54       		.byte	0x54
+ 3408 018e 00000000 		.4byte	0
+ 3409 0192 00000000 		.4byte	0
+ 3410              		.section	.debug_aranges,"",%progbits
+ 3411 0000 8C000000 		.4byte	0x8c
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 67
+
+
+ 3412 0004 0200     		.2byte	0x2
+ 3413 0006 00000000 		.4byte	.Ldebug_info0
+ 3414 000a 04       		.byte	0x4
+ 3415 000b 00       		.byte	0
+ 3416 000c 0000     		.2byte	0
+ 3417 000e 0000     		.2byte	0
+ 3418 0010 00000000 		.4byte	.LFB63
+ 3419 0014 1C000000 		.4byte	.LFE63-.LFB63
+ 3420 0018 00000000 		.4byte	.LFB64
+ 3421 001c 10000000 		.4byte	.LFE64-.LFB64
+ 3422 0020 00000000 		.4byte	.LFB65
+ 3423 0024 34000000 		.4byte	.LFE65-.LFB65
+ 3424 0028 00000000 		.4byte	.LFB66
+ 3425 002c 18000000 		.4byte	.LFE66-.LFB66
+ 3426 0030 00000000 		.4byte	.LFB62
+ 3427 0034 8C000000 		.4byte	.LFE62-.LFB62
+ 3428 0038 00000000 		.4byte	.LFB67
+ 3429 003c 18000000 		.4byte	.LFE67-.LFB67
+ 3430 0040 00000000 		.4byte	.LFB68
+ 3431 0044 18000000 		.4byte	.LFE68-.LFB68
+ 3432 0048 00000000 		.4byte	.LFB69
+ 3433 004c 34000000 		.4byte	.LFE69-.LFB69
+ 3434 0050 00000000 		.4byte	.LFB70
+ 3435 0054 78000000 		.4byte	.LFE70-.LFB70
+ 3436 0058 00000000 		.4byte	.LFB71
+ 3437 005c 6C000000 		.4byte	.LFE71-.LFB71
+ 3438 0060 00000000 		.4byte	.LFB72
+ 3439 0064 34000000 		.4byte	.LFE72-.LFB72
+ 3440 0068 00000000 		.4byte	.LFB73
+ 3441 006c 18000000 		.4byte	.LFE73-.LFB73
+ 3442 0070 00000000 		.4byte	.LFB74
+ 3443 0074 1C000000 		.4byte	.LFE74-.LFB74
+ 3444 0078 00000000 		.4byte	.LFB75
+ 3445 007c 14000000 		.4byte	.LFE75-.LFB75
+ 3446 0080 00000000 		.4byte	.LFB76
+ 3447 0084 2C000000 		.4byte	.LFE76-.LFB76
+ 3448 0088 00000000 		.4byte	0
+ 3449 008c 00000000 		.4byte	0
+ 3450              		.section	.debug_ranges,"",%progbits
+ 3451              	.Ldebug_ranges0:
+ 3452 0000 00000000 		.4byte	.LFB63
+ 3453 0004 1C000000 		.4byte	.LFE63
+ 3454 0008 00000000 		.4byte	.LFB64
+ 3455 000c 10000000 		.4byte	.LFE64
+ 3456 0010 00000000 		.4byte	.LFB65
+ 3457 0014 34000000 		.4byte	.LFE65
+ 3458 0018 00000000 		.4byte	.LFB66
+ 3459 001c 18000000 		.4byte	.LFE66
+ 3460 0020 00000000 		.4byte	.LFB62
+ 3461 0024 8C000000 		.4byte	.LFE62
+ 3462 0028 00000000 		.4byte	.LFB67
+ 3463 002c 18000000 		.4byte	.LFE67
+ 3464 0030 00000000 		.4byte	.LFB68
+ 3465 0034 18000000 		.4byte	.LFE68
+ 3466 0038 00000000 		.4byte	.LFB69
+ 3467 003c 34000000 		.4byte	.LFE69
+ 3468 0040 00000000 		.4byte	.LFB70
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 68
+
+
+ 3469 0044 78000000 		.4byte	.LFE70
+ 3470 0048 00000000 		.4byte	.LFB71
+ 3471 004c 6C000000 		.4byte	.LFE71
+ 3472 0050 00000000 		.4byte	.LFB72
+ 3473 0054 34000000 		.4byte	.LFE72
+ 3474 0058 00000000 		.4byte	.LFB73
+ 3475 005c 18000000 		.4byte	.LFE73
+ 3476 0060 00000000 		.4byte	.LFB74
+ 3477 0064 1C000000 		.4byte	.LFE74
+ 3478 0068 00000000 		.4byte	.LFB75
+ 3479 006c 14000000 		.4byte	.LFE75
+ 3480 0070 00000000 		.4byte	.LFB76
+ 3481 0074 2C000000 		.4byte	.LFE76
+ 3482 0078 00000000 		.4byte	0
+ 3483 007c 00000000 		.4byte	0
+ 3484              		.section	.debug_line,"",%progbits
+ 3485              	.Ldebug_line0:
+ 3486 0000 DA030000 		.section	.debug_str,"MS",%progbits,1
+ 3486      02008902 
+ 3486      00000201 
+ 3486      FB0E0D00 
+ 3486      01010101 
+ 3487              	.LASF132:
+ 3488 0000 70617474 		.ascii	"patternCycleTimeSumL\000"
+ 3488      65726E43 
+ 3488      79636C65 
+ 3488      54696D65 
+ 3488      53756D4C 
+ 3489              	.LASF12:
+ 3490 0015 75696E74 		.ascii	"uint16\000"
+ 3490      313600
+ 3491              	.LASF84:
+ 3492 001c 49507634 		.ascii	"IPv4\000"
+ 3492      00
+ 3493              	.LASF147:
+ 3494 0021 72657365 		.ascii	"reset\000"
+ 3494      7400
+ 3495              	.LASF114:
+ 3496 0027 73657769 		.ascii	"sewingMotorRunTime\000"
+ 3496      6E674D6F 
+ 3496      746F7252 
+ 3496      756E5469 
+ 3496      6D6500
+ 3497              	.LASF128:
+ 3498 003a 70617474 		.ascii	"patternEmergencyTimeSumH\000"
+ 3498      65726E45 
+ 3498      6D657267 
+ 3498      656E6379 
+ 3498      54696D65 
+ 3499              	.LASF197:
+ 3500 0053 6D616B65 		.ascii	"makeDownTimeList\000"
+ 3500      446F776E 
+ 3500      54696D65 
+ 3500      4C697374 
+ 3500      00
+ 3501              	.LASF133:
+ 3502 0064 70617474 		.ascii	"patternMotorRunTime\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 69
+
+
+ 3502      65726E4D 
+ 3502      6F746F72 
+ 3502      52756E54 
+ 3502      696D6500 
+ 3503              	.LASF59:
+ 3504 0078 414E444F 		.ascii	"ANDON_LIST_ITEM\000"
+ 3504      4E5F4C49 
+ 3504      53545F49 
+ 3504      54454D00 
+ 3505              	.LASF194:
+ 3506 0088 47657457 		.ascii	"GetWorkingTimeCount\000"
+ 3506      6F726B69 
+ 3506      6E675469 
+ 3506      6D65436F 
+ 3506      756E7400 
+ 3507              	.LASF86:
+ 3508 009c 47617465 		.ascii	"Gateway\000"
+ 3508      77617900 
+ 3509              	.LASF142:
+ 3510 00a4 70617474 		.ascii	"patternTrimCount\000"
+ 3510      65726E54 
+ 3510      72696D43 
+ 3510      6F756E74 
+ 3510      00
+ 3511              	.LASF164:
+ 3512 00b5 6D616B65 		.ascii	"makeAndonPatternCount\000"
+ 3512      416E646F 
+ 3512      6E506174 
+ 3512      7465726E 
+ 3512      436F756E 
+ 3513              	.LASF48:
+ 3514 00cb 414E444F 		.ascii	"ANDON_AUTO_REQUEST\000"
+ 3514      4E5F4155 
+ 3514      544F5F52 
+ 3514      45515545 
+ 3514      535400
+ 3515              	.LASF73:
+ 3516 00de 6E6F7469 		.ascii	"notice_index\000"
+ 3516      63655F69 
+ 3516      6E646578 
+ 3516      00
+ 3517              	.LASF143:
+ 3518 00eb 70617474 		.ascii	"patternTrimCountSumH\000"
+ 3518      65726E54 
+ 3518      72696D43 
+ 3518      6F756E74 
+ 3518      53756D48 
+ 3519              	.LASF107:
+ 3520 0100 62417574 		.ascii	"bAutoReset\000"
+ 3520      6F526573 
+ 3520      657400
+ 3521              	.LASF83:
+ 3522 010b 53534944 		.ascii	"SSID\000"
+ 3522      00
+ 3523              	.LASF79:
+ 3524 0110 74797065 		.ascii	"type\000"
+ 3524      00
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 70
+
+
+ 3525              	.LASF92:
+ 3526 0115 70617373 		.ascii	"password\000"
+ 3526      776F7264 
+ 3526      00
+ 3527              	.LASF199:
+ 3528 011e 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 3528      43313120 
+ 3528      352E342E 
+ 3528      31203230 
+ 3528      31363036 
+ 3529 0151 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 3529      20726576 
+ 3529      6973696F 
+ 3529      6E203233 
+ 3529      37373135 
+ 3530 0184 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 3530      66756E63 
+ 3530      74696F6E 
+ 3530      2D736563 
+ 3530      74696F6E 
+ 3531              	.LASF52:
+ 3532 01ac 52525F46 		.ascii	"RR_FAILURE\000"
+ 3532      41494C55 
+ 3532      524500
+ 3533              	.LASF75:
+ 3534 01b7 6E4E6F4F 		.ascii	"nNoOfLineForNotice\000"
+ 3534      664C696E 
+ 3534      65466F72 
+ 3534      4E6F7469 
+ 3534      636500
+ 3535              	.LASF89:
+ 3536 01ca 4E455457 		.ascii	"NETWORK\000"
+ 3536      4F524B00 
+ 3537              	.LASF77:
+ 3538 01d2 494E464F 		.ascii	"INFO\000"
+ 3538      00
+ 3539              	.LASF35:
+ 3540 01d7 414E444F 		.ascii	"ANDON_NOTICE_CHECK\000"
+ 3540      4E5F4E4F 
+ 3540      54494345 
+ 3540      5F434845 
+ 3540      434B00
+ 3541              	.LASF151:
+ 3542 01ea 6D616B65 		.ascii	"makeAndonCurrentTimeRequest\000"
+ 3542      416E646F 
+ 3542      6E437572 
+ 3542      72656E74 
+ 3542      54696D65 
+ 3543              	.LASF177:
+ 3544 0206 675F6252 		.ascii	"g_bReceivedAndonStart\000"
+ 3544      65636569 
+ 3544      76656441 
+ 3544      6E646F6E 
+ 3544      53746172 
+ 3545              	.LASF127:
+ 3546 021c 70617474 		.ascii	"patternEmergencyTime\000"
+ 3546      65726E45 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 71
+
+
+ 3546      6D657267 
+ 3546      656E6379 
+ 3546      54696D65 
+ 3547              	.LASF6:
+ 3548 0231 6C6F6E67 		.ascii	"long long int\000"
+ 3548      206C6F6E 
+ 3548      6720696E 
+ 3548      7400
+ 3549              	.LASF0:
+ 3550 023f 7369676E 		.ascii	"signed char\000"
+ 3550      65642063 
+ 3550      68617200 
+ 3551              	.LASF93:
+ 3552 024b 64657669 		.ascii	"deviceName\000"
+ 3552      63654E61 
+ 3552      6D6500
+ 3553              	.LASF163:
+ 3554 0256 70747243 		.ascii	"ptrCount\000"
+ 3554      6F756E74 
+ 3554      00
+ 3555              	.LASF195:
+ 3556 025f 52657365 		.ascii	"ResetWorkingTimeCount\000"
+ 3556      74576F72 
+ 3556      6B696E67 
+ 3556      54696D65 
+ 3556      436F756E 
+ 3557              	.LASF201:
+ 3558 0275 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_INTEGR"
+ 3558      554E5445 
+ 3558      43485F44 
+ 3558      45565F43 
+ 3558      4C415544 
+ 3559 02a5 41544544 		.ascii	"ATED\\280CTP_IoT_INTEGRATED_V1\\Project\\Design.cyd"
+ 3559      5C323830 
+ 3559      4354505F 
+ 3559      496F545F 
+ 3559      494E5445 
+ 3560 02d5 736E00   		.ascii	"sn\000"
+ 3561              	.LASF106:
+ 3562 02d8 63757272 		.ascii	"current_sensor_threshold\000"
+ 3562      656E745F 
+ 3562      73656E73 
+ 3562      6F725F74 
+ 3562      68726573 
+ 3563              	.LASF139:
+ 3564 02f1 70617474 		.ascii	"patternStitchLength\000"
+ 3564      65726E53 
+ 3564      74697463 
+ 3564      684C656E 
+ 3564      67746800 
+ 3565              	.LASF168:
+ 3566 0305 6D616B65 		.ascii	"makeAndonSewingCount\000"
+ 3566      416E646F 
+ 3566      6E536577 
+ 3566      696E6743 
+ 3566      6F756E74 
+ 3567              	.LASF4:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 72
+
+
+ 3568 031a 6C6F6E67 		.ascii	"long int\000"
+ 3568      20696E74 
+ 3568      00
+ 3569              	.LASF123:
+ 3570 0323 70617474 		.ascii	"patternActualH\000"
+ 3570      65726E41 
+ 3570      63747561 
+ 3570      6C4800
+ 3571              	.LASF98:
+ 3572 0332 70617474 		.ascii	"patternPairCount\000"
+ 3572      65726E50 
+ 3572      61697243 
+ 3572      6F756E74 
+ 3572      00
+ 3573              	.LASF124:
+ 3574 0343 70617474 		.ascii	"patternActualL\000"
+ 3574      65726E41 
+ 3574      63747561 
+ 3574      6C4C00
+ 3575              	.LASF190:
+ 3576 0352 72657365 		.ascii	"resetCounter_1ms\000"
+ 3576      74436F75 
+ 3576      6E746572 
+ 3576      5F316D73 
+ 3576      00
+ 3577              	.LASF203:
+ 3578 0363 5F5F6275 		.ascii	"__builtin_puts\000"
+ 3578      696C7469 
+ 3578      6E5F7075 
+ 3578      747300
+ 3579              	.LASF187:
+ 3580 0372 77696669 		.ascii	"wifi_cmd_http\000"
+ 3580      5F636D64 
+ 3580      5F687474 
+ 3580      7000
+ 3581              	.LASF131:
+ 3582 0380 70617474 		.ascii	"patternCycleTimeSumH\000"
+ 3582      65726E43 
+ 3582      79636C65 
+ 3582      54696D65 
+ 3582      53756D48 
+ 3583              	.LASF39:
+ 3584 0395 414E444F 		.ascii	"ANDON_SEND_SEWING_COUNT\000"
+ 3584      4E5F5345 
+ 3584      4E445F53 
+ 3584      4557494E 
+ 3584      475F434F 
+ 3585              	.LASF55:
+ 3586 03ad 62557064 		.ascii	"bUpdated\000"
+ 3586      61746564 
+ 3586      00
+ 3587              	.LASF16:
+ 3588 03b6 646F7562 		.ascii	"double\000"
+ 3588      6C6500
+ 3589              	.LASF118:
+ 3590 03bd 73657769 		.ascii	"sewingNoStitchSumH\000"
+ 3590      6E674E6F 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 73
+
+
+ 3590      53746974 
+ 3590      63685375 
+ 3590      6D4800
+ 3591              	.LASF119:
+ 3592 03d0 73657769 		.ascii	"sewingNoStitchSumL\000"
+ 3592      6E674E6F 
+ 3592      53746974 
+ 3592      63685375 
+ 3592      6D4C00
+ 3593              	.LASF88:
+ 3594 03e3 62576966 		.ascii	"bWifiReady\000"
+ 3594      69526561 
+ 3594      647900
+ 3595              	.LASF155:
+ 3596 03ee 616E646F 		.ascii	"andonLoop\000"
+ 3596      6E4C6F6F 
+ 3596      7000
+ 3597              	.LASF13:
+ 3598 03f8 75696E74 		.ascii	"uint32\000"
+ 3598      333200
+ 3599              	.LASF24:
+ 3600 03ff 414E444F 		.ascii	"ANDON_CURRENT_TIME\000"
+ 3600      4E5F4355 
+ 3600      5252454E 
+ 3600      545F5449 
+ 3600      4D4500
+ 3601              	.LASF82:
+ 3602 0412 52535349 		.ascii	"RSSI\000"
+ 3602      00
+ 3603              	.LASF9:
+ 3604 0417 5F5F7569 		.ascii	"__uint32_t\000"
+ 3604      6E743332 
+ 3604      5F7400
+ 3605              	.LASF191:
+ 3606 0422 5761726E 		.ascii	"WarningLight\000"
+ 3606      696E674C 
+ 3606      69676874 
+ 3606      00
+ 3607              	.LASF32:
+ 3608 042f 414E444F 		.ascii	"ANDON_REQUEST_SUB_CATEGORY_NAME\000"
+ 3608      4E5F5245 
+ 3608      51554553 
+ 3608      545F5355 
+ 3608      425F4341 
+ 3609              	.LASF65:
+ 3610 044f 74616749 		.ascii	"tagInfo\000"
+ 3610      6E666F00 
+ 3611              	.LASF64:
+ 3612 0457 414E444F 		.ascii	"ANDON_LISTS\000"
+ 3612      4E5F4C49 
+ 3612      53545300 
+ 3613              	.LASF66:
+ 3614 0463 62557064 		.ascii	"bUpdateDeviceInfo\000"
+ 3614      61746544 
+ 3614      65766963 
+ 3614      65496E66 
+ 3614      6F00
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 74
+
+
+ 3615              	.LASF91:
+ 3616 0475 706F7274 		.ascii	"port\000"
+ 3616      00
+ 3617              	.LASF7:
+ 3618 047a 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 3618      206C6F6E 
+ 3618      6720756E 
+ 3618      7369676E 
+ 3618      65642069 
+ 3619              	.LASF198:
+ 3620 0491 6D616B65 		.ascii	"makeDefectiveList\000"
+ 3620      44656665 
+ 3620      63746976 
+ 3620      654C6973 
+ 3620      7400
+ 3621              	.LASF90:
+ 3622 04a3 686F7374 		.ascii	"host\000"
+ 3622      00
+ 3623              	.LASF74:
+ 3624 04a8 6E6F7469 		.ascii	"notice\000"
+ 3624      636500
+ 3625              	.LASF8:
+ 3626 04af 756E7369 		.ascii	"unsigned int\000"
+ 3626      676E6564 
+ 3626      20696E74 
+ 3626      00
+ 3627              	.LASF38:
+ 3628 04bc 414E444F 		.ascii	"ANDON_START\000"
+ 3628      4E5F5354 
+ 3628      41525400 
+ 3629              	.LASF46:
+ 3630 04c8 454E445F 		.ascii	"END_OF_ANDON_DATA\000"
+ 3630      4F465F41 
+ 3630      4E444F4E 
+ 3630      5F444154 
+ 3630      4100
+ 3631              	.LASF101:
+ 3632 04da 73657769 		.ascii	"sewingPairTrim\000"
+ 3632      6E675061 
+ 3632      69725472 
+ 3632      696D00
+ 3633              	.LASF97:
+ 3634 04e9 70617474 		.ascii	"patternTarget\000"
+ 3634      65726E54 
+ 3634      61726765 
+ 3634      7400
+ 3635              	.LASF171:
+ 3636 04f7 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 3636      64617973 
+ 3636      4265666F 
+ 3636      72654D6F 
+ 3636      6E746854 
+ 3637              	.LASF69:
+ 3638 050e 44657669 		.ascii	"DeviceIdx\000"
+ 3638      63654964 
+ 3638      7800
+ 3639              	.LASF42:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 75
+
+
+ 3640 0518 444F574E 		.ascii	"DOWNTIME_REQUEST_LIST\000"
+ 3640      54494D45 
+ 3640      5F524551 
+ 3640      55455354 
+ 3640      5F4C4953 
+ 3641              	.LASF27:
+ 3642 052e 414E444F 		.ascii	"ANDON_REQUEST_ITEM\000"
+ 3642      4E5F5245 
+ 3642      51554553 
+ 3642      545F4954 
+ 3642      454D00
+ 3643              	.LASF11:
+ 3644 0541 75696E74 		.ascii	"uint8\000"
+ 3644      3800
+ 3645              	.LASF31:
+ 3646 0547 414E444F 		.ascii	"ANDON_REQUEST_TEXT\000"
+ 3646      4E5F5245 
+ 3646      51554553 
+ 3646      545F5445 
+ 3646      585400
+ 3647              	.LASF3:
+ 3648 055a 73686F72 		.ascii	"short unsigned int\000"
+ 3648      7420756E 
+ 3648      7369676E 
+ 3648      65642069 
+ 3648      6E7400
+ 3649              	.LASF76:
+ 3650 056d 6E4E6F4F 		.ascii	"nNoOfPage\000"
+ 3650      66506167 
+ 3650      6500
+ 3651              	.LASF71:
+ 3652 0577 56657273 		.ascii	"Version\000"
+ 3652      696F6E00 
+ 3653              	.LASF140:
+ 3654 057f 70617474 		.ascii	"patternStitchLengthSumH\000"
+ 3654      65726E53 
+ 3654      74697463 
+ 3654      684C656E 
+ 3654      67746853 
+ 3655              	.LASF20:
+ 3656 0597 73746174 		.ascii	"stat_TC_INT\000"
+ 3656      5F54435F 
+ 3656      494E5400 
+ 3657              	.LASF23:
+ 3658 05a3 414E444F 		.ascii	"ANDON_NONE\000"
+ 3658      4E5F4E4F 
+ 3658      4E4500
+ 3659              	.LASF141:
+ 3660 05ae 70617474 		.ascii	"patternStitchLengthSumL\000"
+ 3660      65726E53 
+ 3660      74697463 
+ 3660      684C656E 
+ 3660      67746853 
+ 3661              	.LASF34:
+ 3662 05c6 414E444F 		.ascii	"ANDON_LIST_STAT\000"
+ 3662      4E5F4C49 
+ 3662      53545F53 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 76
+
+
+ 3662      54415400 
+ 3663              	.LASF160:
+ 3664 05d6 656C6173 		.ascii	"elaspedTime\000"
+ 3664      70656454 
+ 3664      696D6500 
+ 3665              	.LASF96:
+ 3666 05e2 6D616368 		.ascii	"machineType\000"
+ 3666      696E6554 
+ 3666      79706500 
+ 3667              	.LASF117:
+ 3668 05ee 73657769 		.ascii	"sewingNoStitch\000"
+ 3668      6E674E6F 
+ 3668      53746974 
+ 3668      636800
+ 3669              	.LASF30:
+ 3670 05fd 414E444F 		.ascii	"ANDON_REQUEST_TARGET\000"
+ 3670      4E5F5245 
+ 3670      51554553 
+ 3670      545F5441 
+ 3670      52474554 
+ 3671              	.LASF63:
+ 3672 0612 6974656D 		.ascii	"item\000"
+ 3672      00
+ 3673              	.LASF126:
+ 3674 0617 70617474 		.ascii	"patternNo\000"
+ 3674      65726E4E 
+ 3674      6F00
+ 3675              	.LASF105:
+ 3676 0621 63757272 		.ascii	"current_enable\000"
+ 3676      656E745F 
+ 3676      656E6162 
+ 3676      6C6500
+ 3677              	.LASF129:
+ 3678 0630 70617474 		.ascii	"patternEmergencyTimeSumL\000"
+ 3678      65726E45 
+ 3678      6D657267 
+ 3678      656E6379 
+ 3678      54696D65 
+ 3679              	.LASF125:
+ 3680 0649 70617474 		.ascii	"patternCount\000"
+ 3680      65726E43 
+ 3680      6F756E74 
+ 3680      00
+ 3681              	.LASF202:
+ 3682 0656 70757473 		.ascii	"puts\000"
+ 3682      00
+ 3683              	.LASF189:
+ 3684 065b 69734669 		.ascii	"isFinishCounter_1ms\000"
+ 3684      6E697368 
+ 3684      436F756E 
+ 3684      7465725F 
+ 3684      316D7300 
+ 3685              	.LASF19:
+ 3686 066f 73697A65 		.ascii	"sizetype\000"
+ 3686      74797065 
+ 3686      00
+ 3687              	.LASF21:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 77
+
+
+ 3688 0678 706F735F 		.ascii	"pos_X\000"
+ 3688      5800
+ 3689              	.LASF22:
+ 3690 067e 706F735F 		.ascii	"pos_Y\000"
+ 3690      5900
+ 3691              	.LASF18:
+ 3692 0684 6C6F6E67 		.ascii	"long double\000"
+ 3692      20646F75 
+ 3692      626C6500 
+ 3693              	.LASF157:
+ 3694 0690 6D616B65 		.ascii	"makeAndonCompleteRequest\000"
+ 3694      416E646F 
+ 3694      6E436F6D 
+ 3694      706C6574 
+ 3694      65526571 
+ 3695              	.LASF167:
+ 3696 06a9 6D616B65 		.ascii	"makeAndonTextList\000"
+ 3696      416E646F 
+ 3696      6E546578 
+ 3696      744C6973 
+ 3696      7400
+ 3697              	.LASF70:
+ 3698 06bb 496E7374 		.ascii	"InstallType\000"
+ 3698      616C6C54 
+ 3698      79706500 
+ 3699              	.LASF14:
+ 3700 06c7 696E7431 		.ascii	"int16\000"
+ 3700      3600
+ 3701              	.LASF130:
+ 3702 06cd 70617474 		.ascii	"patternCycleTime\000"
+ 3702      65726E43 
+ 3702      79636C65 
+ 3702      54696D65 
+ 3702      00
+ 3703              	.LASF179:
+ 3704 06de 675F6E65 		.ascii	"g_network\000"
+ 3704      74776F72 
+ 3704      6B00
+ 3705              	.LASF145:
+ 3706 06e8 70617474 		.ascii	"patternSPM\000"
+ 3706      65726E53 
+ 3706      504D00
+ 3707              	.LASF68:
+ 3708 06f3 4C696E65 		.ascii	"LineName\000"
+ 3708      4E616D65 
+ 3708      00
+ 3709              	.LASF154:
+ 3710 06fc 616E646F 		.ascii	"andonResponse\000"
+ 3710      6E526573 
+ 3710      706F6E73 
+ 3710      6500
+ 3711              	.LASF49:
+ 3712 070a 5245504C 		.ascii	"REPLY_RESULT\000"
+ 3712      595F5245 
+ 3712      53554C54 
+ 3712      00
+ 3713              	.LASF137:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 78
+
+
+ 3714 0717 70617474 		.ascii	"patternNoStitchSumH\000"
+ 3714      65726E4E 
+ 3714      6F537469 
+ 3714      74636853 
+ 3714      756D4800 
+ 3715              	.LASF99:
+ 3716 072b 70617474 		.ascii	"patternPair\000"
+ 3716      65726E50 
+ 3716      61697200 
+ 3717              	.LASF138:
+ 3718 0737 70617474 		.ascii	"patternNoStitchSumL\000"
+ 3718      65726E4E 
+ 3718      6F537469 
+ 3718      74636853 
+ 3718      756D4C00 
+ 3719              	.LASF95:
+ 3720 074b 53455256 		.ascii	"SERVER_INFO\000"
+ 3720      45525F49 
+ 3720      4E464F00 
+ 3721              	.LASF36:
+ 3722 0757 414E444F 		.ascii	"ANDON_REPLY_TEXT\000"
+ 3722      4E5F5245 
+ 3722      504C595F 
+ 3722      54455854 
+ 3722      00
+ 3723              	.LASF162:
+ 3724 0768 656C6170 		.ascii	"elapsedTime\000"
+ 3724      73656454 
+ 3724      696D6500 
+ 3725              	.LASF60:
+ 3726 0774 7461674C 		.ascii	"tagList\000"
+ 3726      69737400 
+ 3727              	.LASF15:
+ 3728 077c 666C6F61 		.ascii	"float\000"
+ 3728      7400
+ 3729              	.LASF51:
+ 3730 0782 52525F53 		.ascii	"RR_SUCCESS\000"
+ 3730      55434345 
+ 3730      535300
+ 3731              	.LASF80:
+ 3732 078d 414E444F 		.ascii	"ANDON_QUEUE\000"
+ 3732      4E5F5155 
+ 3732      45554500 
+ 3733              	.LASF40:
+ 3734 0799 414E444F 		.ascii	"ANDON_SEND_PATTERN_COUNT\000"
+ 3734      4E5F5345 
+ 3734      4E445F50 
+ 3734      41545445 
+ 3734      524E5F43 
+ 3735              	.LASF25:
+ 3736 07b2 414E444F 		.ascii	"ANDON_DEVICE_REGISTRATION\000"
+ 3736      4E5F4445 
+ 3736      56494345 
+ 3736      5F524547 
+ 3736      49535452 
+ 3737              	.LASF176:
+ 3738 07cc 675F696E 		.ascii	"g_index_request_interval\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 79
+
+
+ 3738      6465785F 
+ 3738      72657175 
+ 3738      6573745F 
+ 3738      696E7465 
+ 3739              	.LASF144:
+ 3740 07e5 70617474 		.ascii	"patternTrimCountSumL\000"
+ 3740      65726E54 
+ 3740      72696D43 
+ 3740      6F756E74 
+ 3740      53756D4C 
+ 3741              	.LASF47:
+ 3742 07fa 454E445F 		.ascii	"END_OF_AUTO_REQUEST\000"
+ 3742      4F465F41 
+ 3742      55544F5F 
+ 3742      52455155 
+ 3742      45535400 
+ 3743              	.LASF109:
+ 3744 080e 73657769 		.ascii	"sewingActualH\000"
+ 3744      6E674163 
+ 3744      7475616C 
+ 3744      4800
+ 3745              	.LASF185:
+ 3746 081c 64655175 		.ascii	"deQueueANDON\000"
+ 3746      65756541 
+ 3746      4E444F4E 
+ 3746      00
+ 3747              	.LASF110:
+ 3748 0829 73657769 		.ascii	"sewingActualL\000"
+ 3748      6E674163 
+ 3748      7475616C 
+ 3748      4C00
+ 3749              	.LASF170:
+ 3750 0837 675F7541 		.ascii	"g_uAndonRequestType\000"
+ 3750      6E646F6E 
+ 3750      52657175 
+ 3750      65737454 
+ 3750      79706500 
+ 3751              	.LASF72:
+ 3752 084b 416E646F 		.ascii	"AndonListRequestTime\000"
+ 3752      6E4C6973 
+ 3752      74526571 
+ 3752      75657374 
+ 3752      54696D65 
+ 3753              	.LASF102:
+ 3754 0860 73657769 		.ascii	"sewingPair\000"
+ 3754      6E675061 
+ 3754      697200
+ 3755              	.LASF1:
+ 3756 086b 756E7369 		.ascii	"unsigned char\000"
+ 3756      676E6564 
+ 3756      20636861 
+ 3756      7200
+ 3757              	.LASF196:
+ 3758 0879 72656769 		.ascii	"registerCounter_1ms\000"
+ 3758      73746572 
+ 3758      436F756E 
+ 3758      7465725F 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 80
+
+
+ 3758      316D7300 
+ 3759              	.LASF108:
+ 3760 088d 4D414348 		.ascii	"MACHINE_PARAMETER\000"
+ 3760      494E455F 
+ 3760      50415241 
+ 3760      4D455445 
+ 3760      5200
+ 3761              	.LASF62:
+ 3762 089f 7553656C 		.ascii	"uSelectIndex\000"
+ 3762      65637449 
+ 3762      6E646578 
+ 3762      00
+ 3763              	.LASF54:
+ 3764 08ac 7461674C 		.ascii	"tagListItem\000"
+ 3764      69737449 
+ 3764      74656D00 
+ 3765              	.LASF2:
+ 3766 08b8 73686F72 		.ascii	"short int\000"
+ 3766      7420696E 
+ 3766      7400
+ 3767              	.LASF161:
+ 3768 08c2 6D616B65 		.ascii	"makeAndonSewingCount2\000"
+ 3768      416E646F 
+ 3768      6E536577 
+ 3768      696E6743 
+ 3768      6F756E74 
+ 3769              	.LASF121:
+ 3770 08d8 73657769 		.ascii	"sewingTrimCountSumH\000"
+ 3770      6E675472 
+ 3770      696D436F 
+ 3770      756E7453 
+ 3770      756D4800 
+ 3771              	.LASF146:
+ 3772 08ec 616E646F 		.ascii	"andonEntry\000"
+ 3772      6E456E74 
+ 3772      727900
+ 3773              	.LASF120:
+ 3774 08f7 73657769 		.ascii	"sewingTrimCount\000"
+ 3774      6E675472 
+ 3774      696D436F 
+ 3774      756E7400 
+ 3775              	.LASF122:
+ 3776 0907 73657769 		.ascii	"sewingTrimCountSumL\000"
+ 3776      6E675472 
+ 3776      696D436F 
+ 3776      756E7453 
+ 3776      756D4C00 
+ 3777              	.LASF136:
+ 3778 091b 70617474 		.ascii	"patternNoStitch\000"
+ 3778      65726E4E 
+ 3778      6F537469 
+ 3778      74636800 
+ 3779              	.LASF152:
+ 3780 092b 6D616B65 		.ascii	"makeAndonStart\000"
+ 3780      416E646F 
+ 3780      6E537461 
+ 3780      727400
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 81
+
+
+ 3781              	.LASF37:
+ 3782 093a 414E444F 		.ascii	"ANDON_PATTERN_COUNT\000"
+ 3782      4E5F5041 
+ 3782      54544552 
+ 3782      4E5F434F 
+ 3782      554E5400 
+ 3783              	.LASF45:
+ 3784 094e 44454645 		.ascii	"DEFECTIVE_REQUEST_ITEM\000"
+ 3784      43544956 
+ 3784      455F5245 
+ 3784      51554553 
+ 3784      545F4954 
+ 3785              	.LASF158:
+ 3786 0965 75706461 		.ascii	"updateRuntimeSum\000"
+ 3786      74655275 
+ 3786      6E74696D 
+ 3786      6553756D 
+ 3786      00
+ 3787              	.LASF50:
+ 3788 0976 52525F49 		.ascii	"RR_INIT\000"
+ 3788      4E495400 
+ 3789              	.LASF165:
+ 3790 097e 6D616B65 		.ascii	"makeAndonDevice\000"
+ 3790      416E646F 
+ 3790      6E446576 
+ 3790      69636500 
+ 3791              	.LASF10:
+ 3792 098e 75696E74 		.ascii	"uint32_t\000"
+ 3792      33325F74 
+ 3792      00
+ 3793              	.LASF172:
+ 3794 0997 50617261 		.ascii	"Param\000"
+ 3794      6D00
+ 3795              	.LASF149:
+ 3796 099d 70747254 		.ascii	"ptrText\000"
+ 3796      65787400 
+ 3797              	.LASF174:
+ 3798 09a5 675F496E 		.ascii	"g_Info\000"
+ 3798      666F00
+ 3799              	.LASF53:
+ 3800 09ac 73506172 		.ascii	"sParameter\000"
+ 3800      616D6574 
+ 3800      657200
+ 3801              	.LASF5:
+ 3802 09b7 6C6F6E67 		.ascii	"long unsigned int\000"
+ 3802      20756E73 
+ 3802      69676E65 
+ 3802      6420696E 
+ 3802      7400
+ 3803              	.LASF17:
+ 3804 09c9 63686172 		.ascii	"char\000"
+ 3804      00
+ 3805              	.LASF57:
+ 3806 09ce 74657874 		.ascii	"text\000"
+ 3806      00
+ 3807              	.LASF58:
+ 3808 09d3 6E6F745F 		.ascii	"not_completed_qty\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 82
+
+
+ 3808      636F6D70 
+ 3808      6C657465 
+ 3808      645F7174 
+ 3808      7900
+ 3809              	.LASF188:
+ 3810 09e5 6973456D 		.ascii	"isEmptyQueueANDON\000"
+ 3810      70747951 
+ 3810      75657565 
+ 3810      414E444F 
+ 3810      4E00
+ 3811              	.LASF100:
+ 3812 09f7 73657769 		.ascii	"sewingTarget\000"
+ 3812      6E675461 
+ 3812      72676574 
+ 3812      00
+ 3813              	.LASF180:
+ 3814 0a04 675F7074 		.ascii	"g_ptrServer\000"
+ 3814      72536572 
+ 3814      76657200 
+ 3815              	.LASF85:
+ 3816 0a10 5375626E 		.ascii	"SubnetMask\000"
+ 3816      65744D61 
+ 3816      736B00
+ 3817              	.LASF193:
+ 3818 0a1b 67657443 		.ascii	"getCount\000"
+ 3818      6F756E74 
+ 3818      00
+ 3819              	.LASF44:
+ 3820 0a24 44454645 		.ascii	"DEFECTIVE_REQUEST_LIST\000"
+ 3820      43544956 
+ 3820      455F5245 
+ 3820      51554553 
+ 3820      545F4C49 
+ 3821              	.LASF166:
+ 3822 0a3b 6D616B65 		.ascii	"makeRequestTarget\000"
+ 3822      52657175 
+ 3822      65737454 
+ 3822      61726765 
+ 3822      7400
+ 3823              	.LASF81:
+ 3824 0a4d 6973436F 		.ascii	"isConnectAP\000"
+ 3824      6E6E6563 
+ 3824      74415000 
+ 3825              	.LASF150:
+ 3826 0a59 73697A65 		.ascii	"sizeOfText\000"
+ 3826      4F665465 
+ 3826      787400
+ 3827              	.LASF33:
+ 3828 0a64 414E444F 		.ascii	"ANDON_LIST_SEND\000"
+ 3828      4E5F4C49 
+ 3828      53545F53 
+ 3828      454E4400 
+ 3829              	.LASF153:
+ 3830 0a74 6D616B65 		.ascii	"makeAndonList\000"
+ 3830      416E646F 
+ 3830      6E4C6973 
+ 3830      7400
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 83
+
+
+ 3831              	.LASF26:
+ 3832 0a82 414E444F 		.ascii	"ANDON_GET_DEVICE_NAME\000"
+ 3832      4E5F4745 
+ 3832      545F4445 
+ 3832      56494345 
+ 3832      5F4E414D 
+ 3833              	.LASF43:
+ 3834 0a98 444F574E 		.ascii	"DOWNTIME_REQUEST_ITEM\000"
+ 3834      54494D45 
+ 3834      5F524551 
+ 3834      55455354 
+ 3834      5F495445 
+ 3835              	.LASF41:
+ 3836 0aae 414E444F 		.ascii	"ANDON_UPDATE_RUNTIME_SUM\000"
+ 3836      4E5F5550 
+ 3836      44415445 
+ 3836      5F52554E 
+ 3836      54494D45 
+ 3837              	.LASF186:
+ 3838 0ac7 736E7072 		.ascii	"snprintf\000"
+ 3838      696E7466 
+ 3838      00
+ 3839              	.LASF183:
+ 3840 0ad0 616E646F 		.ascii	"andonJsonParsor\000"
+ 3840      6E4A736F 
+ 3840      6E506172 
+ 3840      736F7200 
+ 3841              	.LASF94:
+ 3842 0ae0 64657669 		.ascii	"deviceIndex\000"
+ 3842      6365496E 
+ 3842      64657800 
+ 3843              	.LASF56:
+ 3844 0aec 73746174 		.ascii	"status\000"
+ 3844      757300
+ 3845              	.LASF87:
+ 3846 0af3 444E5353 		.ascii	"DNSServer\000"
+ 3846      65727665 
+ 3846      7200
+ 3847              	.LASF28:
+ 3848 0afd 414E444F 		.ascii	"ANDON_REQUEST_LIST\000"
+ 3848      4E5F5245 
+ 3848      51554553 
+ 3848      545F4C49 
+ 3848      535400
+ 3849              	.LASF192:
+ 3850 0b10 67657454 		.ascii	"getTarget\000"
+ 3850      61726765 
+ 3850      7400
+ 3851              	.LASF182:
+ 3852 0b1a 675F6244 		.ascii	"g_bDeviceInfoUpdate\000"
+ 3852      65766963 
+ 3852      65496E66 
+ 3852      6F557064 
+ 3852      61746500 
+ 3853              	.LASF169:
+ 3854 0b2e 696E6974 		.ascii	"initAndon\000"
+ 3854      416E646F 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 84
+
+
+ 3854      6E00
+ 3855              	.LASF175:
+ 3856 0b38 675F6254 		.ascii	"g_bTargetReceived\000"
+ 3856      61726765 
+ 3856      74526563 
+ 3856      65697665 
+ 3856      6400
+ 3857              	.LASF181:
+ 3858 0b4a 675F7074 		.ascii	"g_ptrMachineParameter\000"
+ 3858      724D6163 
+ 3858      68696E65 
+ 3858      50617261 
+ 3858      6D657465 
+ 3859              	.LASF178:
+ 3860 0b60 675F7552 		.ascii	"g_uReplyResult\000"
+ 3860      65706C79 
+ 3860      52657375 
+ 3860      6C7400
+ 3861              	.LASF148:
+ 3862 0b6f 434F554E 		.ascii	"COUNT\000"
+ 3862      5400
+ 3863              	.LASF159:
+ 3864 0b75 72756E74 		.ascii	"runtimeSum\000"
+ 3864      696D6553 
+ 3864      756D00
+ 3865              	.LASF173:
+ 3866 0b80 675F416E 		.ascii	"g_AndonLists\000"
+ 3866      646F6E4C 
+ 3866      69737473 
+ 3866      00
+ 3867              	.LASF112:
+ 3868 0b8d 73657769 		.ascii	"sewingCycleTimeSumH\000"
+ 3868      6E674379 
+ 3868      636C6554 
+ 3868      696D6553 
+ 3868      756D4800 
+ 3869              	.LASF104:
+ 3870 0ba1 616E646F 		.ascii	"andon_enable\000"
+ 3870      6E5F656E 
+ 3870      61626C65 
+ 3870      00
+ 3871              	.LASF184:
+ 3872 0bae 656E5175 		.ascii	"enQueueANDON_printf\000"
+ 3872      65756541 
+ 3872      4E444F4E 
+ 3872      5F707269 
+ 3872      6E746600 
+ 3873              	.LASF113:
+ 3874 0bc2 73657769 		.ascii	"sewingCycleTimeSumL\000"
+ 3874      6E674379 
+ 3874      636C6554 
+ 3874      696D6553 
+ 3874      756D4C00 
+ 3875              	.LASF156:
+ 3876 0bd6 6D616B65 		.ascii	"makeAndonWarningRequest\000"
+ 3876      416E646F 
+ 3876      6E576172 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 85
+
+
+ 3876      6E696E67 
+ 3876      52657175 
+ 3877              	.LASF115:
+ 3878 0bee 73657769 		.ascii	"sewingMotorRunTimeSumH\000"
+ 3878      6E674D6F 
+ 3878      746F7252 
+ 3878      756E5469 
+ 3878      6D655375 
+ 3879              	.LASF200:
+ 3880 0c05 616E646F 		.ascii	"andonApi.c\000"
+ 3880      6E417069 
+ 3880      2E6300
+ 3881              	.LASF78:
+ 3882 0c10 6D657373 		.ascii	"message\000"
+ 3882      61676500 
+ 3883              	.LASF103:
+ 3884 0c18 6C617374 		.ascii	"lastPowerOnDateTime\000"
+ 3884      506F7765 
+ 3884      724F6E44 
+ 3884      61746554 
+ 3884      696D6500 
+ 3885              	.LASF111:
+ 3886 0c2c 73657769 		.ascii	"sewingCycleTime\000"
+ 3886      6E674379 
+ 3886      636C6554 
+ 3886      696D6500 
+ 3887              	.LASF116:
+ 3888 0c3c 73657769 		.ascii	"sewingMotorRunTimeSumL\000"
+ 3888      6E674D6F 
+ 3888      746F7252 
+ 3888      756E5469 
+ 3888      6D655375 
+ 3889              	.LASF67:
+ 3890 0c53 44657669 		.ascii	"DeviceNo\000"
+ 3890      63654E6F 
+ 3890      00
+ 3891              	.LASF61:
+ 3892 0c5c 6E6F4F66 		.ascii	"noOfList\000"
+ 3892      4C697374 
+ 3892      00
+ 3893              	.LASF29:
+ 3894 0c65 414E444F 		.ascii	"ANDON_REQUEST_TEXT_LIST\000"
+ 3894      4E5F5245 
+ 3894      51554553 
+ 3894      545F5445 
+ 3894      58545F4C 
+ 3895              	.LASF134:
+ 3896 0c7d 70617474 		.ascii	"patternMotorRunTimeSumH\000"
+ 3896      65726E4D 
+ 3896      6F746F72 
+ 3896      52756E54 
+ 3896      696D6553 
+ 3897              	.LASF135:
+ 3898 0c95 70617474 		.ascii	"patternMotorRunTimeSumL\000"
+ 3898      65726E4D 
+ 3898      6F746F72 
+ 3898      52756E54 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccMH8ZB3.s 			page 86
+
+
+ 3898      696D6553 
+ 3899              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
