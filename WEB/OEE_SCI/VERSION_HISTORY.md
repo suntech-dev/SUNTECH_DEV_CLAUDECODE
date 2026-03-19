@@ -1,7 +1,7 @@
 # OEE_SCI 버전 이력
 
 > 최초 작성: 2026-03-06
-> 마지막 업데이트: 2026-03-09 (사이니지 대시보드 V3 + 햄버거 메뉴 드로어 추가)
+> 마지막 업데이트: 2026-03-19 (AI Dashboard v4 · v5 신규 생성 및 버그 수정)
 
 ---
 
@@ -90,6 +90,15 @@
 | 2026-03-09 | `page/data/dashboard_2.php` Row A 레이아웃 개선 — OEE 4개 지표 카드 전체 너비(`grid-template-columns: repeat(4,1fr)`), Currently Active Andon 섹션을 Row B로 이동, 게이지 폰트 동적 크기 조정(`clamp`) |
 | 2026-03-09 | `page/data/dashboard_2.php` + `page/data/css/dashboard_2.css` — 햄버거 슬라이드 드로어 메뉴 추가: 좌측 240px 오버레이 패널, Setting/Monitoring/Report/Dashboard/AI Dashboard 전체 네비게이션, Dashboard 항목 active 하이라이트 |
 | 2026-03-09 | `page/data/ai_dashboard_3.php` + `page/data/css/ai_dashboard_3.css` — 햄버거 슬라이드 드로어 메뉴 추가 (AI Dashboard 항목 active 하이라이트, dashboard_2와 동일 드로어 구조) |
+| 2026-03-19 | **[AI Dashboard v4]** `page/data/ai_dashboard_4.php` + `page/data/css/ai_dashboard_4.css` 신규 생성 — 사이니지 AI 대시보드 V4: Row A를 5카드 레이아웃으로 확장 (Real-time OEE LIVE 카드 신규 추가), Next 4H AI Forecast 카드 값을 `forecastAvg`(예측 평균)으로 변경, `loadPrediction()` 오버라이드로 두 카드 역할 분리, 날짜 필터 `dateRangeSelect` 추가 (Today/Yesterday/Last 7 Days/Last 30 Days) |
+| 2026-03-19 | **[AI Dashboard v4 Playwright 버그 분석]** "Last 30 Days" 필터 기준 전 섹션 AI 기능 검증 — 발견 버그 5건: ① Real-time OEE 111.1% 표시(오늘 기준이 아닌 30일 집계값 오용 + DB 100% 초과 OEE 클램핑 미적용), ② OEE Forecast 차트 Actual OEE solid 라인 미표시, ③ CI 범위 0~100% 전 구간(seasonal_std 상한 없음), ④ Predictive Maintenance 125.6% 비정상 OEE로 CAUTION 오판정, ⑤ Production Optimization `date_range` 파라미터 완전 무시(항상 고정 14일) |
+| 2026-03-19 | **[AI Dashboard v5]** v4 버그 전체 수정 — `_5` 접미사로 신규 파일 생성 (유지보수 분리): `ai_dashboard_5.php`, `css/ai_dashboard_5.css`, `js/ai_dashboard_5.js`, `js/ai_optimization_5.js`, `proc/ai_oee_prediction_5.php`, `proc/ai_maintenance_5.php`, `proc/ai_optimization_5.php` |
+| 2026-03-19 | `proc/ai_oee_prediction_5.php` — `current_oee` 항상 `CURDATE()` 고정(date_range 영향 없음), `min(100,max(0,...))` PHP 클램핑 + SQL `LEAST(100,GREATEST(0,oee))` 적용, `today_data` 배열 신규 반환(차트 Actual 라인용), `seasonal_std` 상한 15%로 CI 범위 정상화 |
+| 2026-03-19 | `proc/ai_maintenance_5.php` — OEE 조회 SQL에 `LEAST(100,GREATEST(0,oee))` 클램핑 적용 → 125.6% 비정상 값이 표준편차를 왜곡하여 CAUTION 오판정하던 버그 수정 |
+| 2026-03-19 | `proc/ai_optimization_5.php` — `date_range` 파라미터 연동: 7d→7일/30d→30일/today·yesterday→14일 동적 분석 기간, HAVING 최소 데이터 수도 기간별 조정(7일→3건, 30일→7건), `analysis_days` 응답 추가 |
+| 2026-03-19 | `js/ai_dashboard_5.js` — `renderForecastChart()` 개선: `today_data` 기반 Actual OEE solid 파란 라인 추가 + null 구간 spanGaps 처리로 실제/예측 구간 명확히 시각화, `loadMaintenanceRisk()` · `loadLineHealth()` → `proc/ai_maintenance_5.php` 호출, `updateLineHealthSubtitle()` 신규: date_range에 따라 "Based on 7-day / 30-day OEE average per line" 동적 변경 |
+| 2026-03-19 | `js/ai_optimization_5.js` — `proc/ai_optimization_5.php` 호출, `getFilters()`에 `date_range` 포함, `dateRangeSelect` change 이벤트 연동, 이모지 → HTML Entity 교체 |
+| 2026-03-19 | **[v5 Playwright 검증]** 30d 필터 기준 전 항목 정상 확인: Real-time OEE `--`(오늘 데이터 없음, 비정상 111.1% 해소), Maintenance OEE 81.1%(125.6% 해소), Line Health 서브타이틀 "30-day" 동적 변경, Production Optimization `analysis_days:30` 반영, CI 범위 48.4%~99.3%(정상화) |
 
 ---
 

@@ -2,7 +2,7 @@
 
 > 최초 작성: 2026-03-06
 > 분석 버전: OEE_SCI_V2
-> 마지막 업데이트: 2026-03-09 (사이니지 대시보드 V3 + 햄버거 메뉴 드로어 추가)
+> 마지막 업데이트: 2026-03-19 (AI Dashboard v4 · v5 신규 생성 및 버그 수정)
 
 ---
 
@@ -326,6 +326,8 @@ http://oee-sci.test/
 | 2026-03-09 | OEE_SCI_V2 | ai_dashboard_3.php + ai_dashboard_3.css 신규 생성 — 사이니지 AI 대시보드 V3 (Grid 비율 개선, Row D 잘림 해소) |
 | 2026-03-09 | OEE_SCI_V2 | dashboard_2.php Row A 레이아웃 개선 (OEE 4지표 전체 너비, Andon→Row B 이동) |
 | 2026-03-09 | OEE_SCI_V2 | dashboard_2.php + ai_dashboard_3.php 햄버거 슬라이드 드로어 메뉴 추가 (전체 네비게이션, active 하이라이트) |
+| 2026-03-19 | OEE_SCI_V2 | **AI Dashboard v4** 신규 생성 — 5카드 Row A (Real-time OEE LIVE 카드 추가), 날짜 필터 연동, Playwright 버그 분석 5건 발견 |
+| 2026-03-19 | OEE_SCI_V2 | **AI Dashboard v5** 신규 생성 — v4 버그 5건 전체 수정 (_5 접미사 파일 분리, current_oee 클램핑, Actual OEE 차트 라인 추가, date_range 전 API 연동) |
 
 ---
 
@@ -347,6 +349,8 @@ http://oee-sci.test/
 | AI Dashboard | `OEE_SCI_V2\page\data\ai_dashboard.php` |
 | AI Dashboard (사이니지 V2) | `OEE_SCI_V2\page\data\ai_dashboard_2.php` |
 | AI Dashboard (사이니지 V3) | `OEE_SCI_V2\page\data\ai_dashboard_3.php` |
+| AI Dashboard (사이니지 V4) | `OEE_SCI_V2\page\data\ai_dashboard_4.php` |
+| AI Dashboard (사이니지 V5 — 권장) | `OEE_SCI_V2\page\data\ai_dashboard_5.php` |
 | 통합 대시보드 (사이니지) | `OEE_SCI_V2\page\data\dashboard_2.php` |
 | AI 통계 엔진 | `OEE_SCI_V2\lib\statistics.lib.php` |
 | SSE 공통 헬퍼 | `OEE_SCI_V2\lib\stream_helper.lib.php` |
