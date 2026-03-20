@@ -1,0 +1,8 @@
+# CTP280 OTA Server
+Options -Indexes
+
+# db/, firmware/ 직접 접근 차단 (Files 기반으로 대체)
+<FilesMatch "^(version|devices)\.json$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>

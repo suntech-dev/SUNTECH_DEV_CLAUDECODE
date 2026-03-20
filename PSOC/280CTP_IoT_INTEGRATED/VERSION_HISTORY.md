@@ -6,6 +6,232 @@
 
 ---
 
+## 280CTP_IoT_INTEGRATED_V2_BLACK_CPU
+
+| 항목 | 내용 |
+|------|------|
+| **버전 식별자** | `BLACK_CPU V2` |
+| **프로젝트 폴더** | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/` |
+| **워크스페이스** | `Project/Design.cydsn/` |
+| **기반 버전** | `280CTP_IoT_INTEGRATED_V1_BLACK_CPU` (V1_BLACK_CPU 복사본) |
+| **개발 목적** | OTA(Over-The-Air) 무선 펌웨어 업데이트 기능 추가 |
+| **작업 시작일** | 2026-03-19 |
+| **코드 수정 완료** | 2026-03-19 ✅ |
+| **상태** | ✅ 빌드 완료 — OTA 2-Stage 자동 체크 + 수동 메뉴 구현 |
+
+### 메모리 사용량
+
+> 2026-03-20 빌드 결과 (PSoC Creator 실측 — bootloader Build 후 Design Build)
+> Flash Row Size: **256 bytes** / Bootloadable Placement Address: **0x4200** (row 66)
+
+**Bootloader 단독**
+
+| 영역 | 사용 | 전체 | 점유율 | 상태 |
+|------|------|------|--------|------|
+| Flash | **16,749 bytes** | 262,144 bytes | **6.4%** | ✅ |
+| Flash (Application) | 16,493 bytes | — | — | |
+| Flash (Metadata) | 256 bytes | — | — | |
+| SRAM | **1,956 bytes** | 32,768 bytes | **6.0%** | ✅ |
+| Stack | 1,024 bytes | — | — | |
+| Heap | 128 bytes | — | — | |
+
+**Design (Application) — PSoC Creator 기준 전체 표시**
+
+| 영역 | 사용 | 전체 | 점유율 | 상태 |
+|------|------|------|--------|------|
+| Flash | **134,408 bytes** | 262,144 bytes | **51.3%** | ✅ 양호 |
+| Flash (Bootloader 영역) | 16,640 bytes | — | 6.4% | |
+| Flash (Application) | **117,512 bytes** | — | **44.8%** | |
+| Flash (Metadata) | 256 bytes | — | 0.1% | |
+| **SRAM** | **22,972 bytes** | **32,768 bytes** | **70.1%** | ✅ 안정 |
+| Stack | 2,048 bytes | — | — | |
+| Heap | 1,024 bytes | — | — | |
+
+### V1_BLACK_CPU 대비 변경 사항
+
+| 항목 | V1_BLACK_CPU | V2_BLACK_CPU (OTA 추가) |
+|---|---|---|
+| `PROJECT_FIRMWARE_VERSION` | `"BLACK_CPU V1"` | `"BLACK_CPU V2"` |
+| OTA 수동 업데이트 메뉴 | ❌ 없음 | ✅ `otaMenu.c/h` 추가 |
+| OTA 자동 버전 체크 (2-Stage) | ❌ 없음 | ✅ 부팅 후 20초 → 24시간 주기 |
+| `DEFAULT_OTA_API_PATH` | ❌ 없음 | ✅ `server.h`에 `/CTP280_OTA/CTP280_OTA_V1/api` 추가 |
+| `WIFI_CMD_OTA_VERSION` | ❌ 없음 | ✅ `lib/WIFI.c` 케이스 추가 |
+| `WIFI_CMD_OTA_AUTO` | ❌ 없음 | ✅ `lib/WIFI.c` 케이스 추가 |
+| `WIFI_CMD_OTA_CHUNK` | ❌ 없음 | ✅ `lib/WIFI.c` 케이스 추가 |
+| `_wifi_send_httpget_ota()` | ❌ 없음 | ✅ OTA 전용 HTTP GET (pathPart 무시, IP만 추출) |
+| `otaDrawUpdateBadge()` | ❌ 없음 | ✅ `DrawHeader()`에서 호출 — 업데이트 배지 표시 |
+| `otaAutoCheckInit()` | ❌ 없음 | ✅ `initAndon()`에서 호출 — 20초 카운트다운 시작 |
+| `otaAutoCheckLoop()` | ❌ 없음 | ✅ `wifiLoop()`에서 호출 — 타이머 감시 + 요청 트리거 |
+| W25QXX Flash Sector 30 | 미사용 | ✅ OTA 제어 블록 (`OTA_FLAG_BLOCK`) 저장 |
+| W25QXX Flash Sector 32~ | 미사용 | ✅ OTA 펌웨어 데이터 저장 |
+
+### 하드웨어 구성
+
+V1_BLACK_CPU와 동일하며 아래 항목 추가 활용:
+
+| 컴포넌트 | 상태 | 비고 |
+|---------|------|------|
+| `SPIM_FLASH` (W25Qxx) | ✅ 확장 사용 | Sector 30 (OTA 플래그), Sector 32~ (펌웨어 데이터) |
+| `WIFI` (UART_WIFI) | ✅ 사용 확장 | OTA HTTP GET 명령 3종 추가 |
+| `LCD` (ST7789V) | ✅ 사용 확장 | OTA 메뉴 화면 + 헤더 업데이트 배지 |
+
+### 주요 기능
+
+V1_BLACK_CPU의 모든 기능 포함 + 아래 OTA 기능 추가:
+
+- **OTA 2-Stage 자동 버전 체크**:
+  - Stage 1: 부팅 후 20초 딜레이 (`OTA_AUTO_INIT_DELAY_MS`) → ANDON 초기화 완료 대기 후 자동 요청
+  - Stage 2: 응답 수신 후 24시간 주기 (`OTA_AUTO_PERIOD_MS`) 반복 체크
+  - 신버전 감지 시 `g_otaUpdateAvailable = TRUE` → LCD 헤더에 배지 아이콘 표시
+- **OTA 수동 업데이트 메뉴**: `doOtaUpdate()` — 버전 확인 → 다운로드 → Flash 쓰기 → 재부팅
+- **OTA 전용 URL 처리**: `_wifi_send_httpget_ota()` — host의 pathPart(ANDON 경로) 무시하고 IP만 추출하여 OTA 절대경로 직접 사용
+- **OTA API 엔드포인트**: `DEFAULT_OTA_API_PATH` = `/CTP280_OTA/CTP280_OTA_V1/api`
+  - 버전 확인: `/version.php`
+  - 청크 다운로드: `/firmware.php?offset={N}&size={400}`
+  - 완료 보고: `/status.php?mac={MAC}&status=done&version={VER}`
+- **OTA 청크 크기**: `OTA_CHUNK_SIZE = 400` bytes (hex 800자 + JSON 오버헤드 < 2048 버퍼)
+- **OTA Flash 구조**: Sector 30 = `OTA_FLAG_BLOCK` (36 bytes), Sector 32~ = 펌웨어 바이너리
+
+### 수정된 파일 목록
+
+| 파일 | 수정 내용 |
+|------|---------|
+| `otaMenu.c` | 신규 추가 — OTA 수동 메뉴 + 자동 체크 상태 머신 전체 구현 |
+| `otaMenu.h` | 신규 추가 — OTA 상수, 구조체, 상태 enum, 공개 API 선언 |
+| `lib/WIFI.c` | `WIFI_CMD_OTA_VERSION/AUTO/CHUNK` 케이스 추가, `_wifi_send_httpget_ota()` 추가, `otaAutoCheckLoop()` 호출 추가 |
+| `lib/widget.c` | `DrawHeader()`에 `otaDrawUpdateBadge()` 호출 추가 |
+| `lib/widget.h` | `IDX_SCROLL_UP = 0xFD`, `IDX_SCROLL_DOWN = 0xFE` — child index 충돌 방지 (수정 3) |
+| `lib/server.h` | `DEFAULT_OTA_API_PATH "/CTP280_OTA/CTP280_OTA_V1/api"` 추가 |
+| `lib/manageMenu.c` | `manageMenuCreate()` — `otaUpdate` 노드를 root 마지막 자식(index 6)으로 이동 |
+| `Design.cyprj` | `otaMenu.c` (SOURCE_C), `otaMenu.h` (HEADER) 프로젝트 등록 |
+| `bootloader Debug/` | V1_BLACK_CPU에서 `bootloader.hex`(578KB), `bootloader.elf`(765KB) 복사 |
+| `bootloader.cydsn` TopDesign | **SPIM_FLASH** (SPI Master v2.50) 컴포넌트 추가 |
+| `bootloader.cydsn` TopDesign | **Ctrl_MEM_SS** (Digital Output Pin) 컴포넌트 추가 |
+| `bootloader.cyprj` | `w25qxx.c` 소스 등록, `Additional Include Directories = ..\Design.cydsn\lib` 추가 |
+| `bootloader.cydsn/main.c` | `CyFlash_WriteRow` → `CySysFlashWriteRow` (PSoC4 올바른 API) |
+| `bootloader.cydsn/main.c` | `BOOTLOADABLE_BASE_ROW` = `66u` (0x4200 / 256, Flash Row = 256 bytes) |
+| `Design.cydsn` TopDesign | Bootloadable **Placement address** `0x4000` → `0x4200` |
+
+### 빌드 주의사항
+
+- **⚠ 빌드 순서 필수**: `bootloader` 먼저 Build → `Design` Build 순서 지켜야 함. **"Clean and Build All"은 절대 사용 금지** — 프로젝트 순서가 Design 먼저라 bootloader.hex/elf 없는 상태에서 Design 빌드 시도하여 실패
+- **Flash Row Size**: 이 PSoC4 디바이스의 Flash Row = **256 bytes** (PSoC4200M 기준). Bootloadable Placement Address와 BOOTLOADABLE_BASE_ROW는 반드시 256의 배수로 설정
+- **Bootloadable Placement address**: V2 bootloader에 SPIM_FLASH+w25qxx 추가로 bootloader가 16KB 초과 → Placement address 0x4000 → **0x4200** (row 66) 으로 상향 조정됨
+- **`jsoneq()` 반환값**: `jsmn.h`의 `jsoneq()`는 일치 시 `0` 반환 — `== 0` 으로 비교할 것 (`jsonKeyMatch()`는 이 프로젝트에 없음)
+- **색상 상수**: `ST7789V.h` 기준 `GREY` → `LIGHTGREY`, `DARK_GREY` → `DARKGREY`
+- **OTA HTTP GET**: `_wifi_send_httpget()` 사용 금지 — pathPart 자동 추가로 URL 오류 발생. 반드시 `_wifi_send_httpget_ota()` 사용
+
+### 변경 이력
+
+#### 2026-03-20 (V2_BLACK_CPU — OTA 부트로더 완성 + 빌드 성공)
+
+**빌드 성공**: Flash 98,244 bytes (37.5%) / SRAM 19,704 bytes (60.1%)
+> ⚠ 이전에 기록된 "46.8% / 68.8%"는 실수로 V1_BLACK_CPU를 빌드한 잘못된 수치였음
+
+**[수정] V2 OTA 부트로더 미완성 문제** — 4단계 순차 해결:
+
+1. **`w25qxx.h` include 경로 누락** (`bootloader.cyprj`)
+   - `Additional Include Directories` = `..\Design.cydsn\lib` 추가
+   - PSoC Creator는 외부 경로의 소스 파일 디렉토리를 include 경로에 자동 추가하지 않음
+
+2. **`CyFlash_WriteRow` 미정의** (`bootloader/main.c:113`)
+   - PSoC4 정확한 API: `CySysFlashWriteRow()` (PSoC 3/5용 `CyFlash_WriteRow`는 존재하지 않음)
+   - 수정: `CyFlash_WriteRow(...)` → `CySysFlashWriteRow(...)`
+
+3. **Bootloadable Placement address 충돌** (Design.cydsn TopDesign)
+   - V2 bootloader에 SPIM_FLASH + w25qxx 추가로 bootloader가 row 64 (0x4000-0x40FF) 침범
+   - Placement address `0x4000` → `0x4200` 으로 변경 (row 66 = 두 row 마진 확보)
+
+4. **`BOOTLOADABLE_BASE_ROW` 오류** (`bootloader/main.c`)
+   - Flash Row = **256 bytes** (PSoC4200M) 이므로: `0x4200 / 256 = 66`
+   - 최초 설정값 `128u` → `66u` 로 수정
+
+**[수정] bootloader.hex/elf 누락** (`bootloader.cydsn/CortexM0/ARM_GCC_541/Debug/`)
+- **증상**: `Clean and Build all projects` 시 `Bootloadable. The referenced Bootloader is invalid. bootloader.hex/elf: The path does not exist`
+- **근본 원인**: V2 bootloader의 `main.c`가 `w25qxx.h`를 포함하나 프로젝트에 미등록 → bootloader 빌드 실패 → hex/elf 미생성
+- **전체 해결**: 위 4단계 수정 후 bootloader 빌드 성공 → Design 빌드 성공
+
+#### 2026-03-20 (V2_BLACK_CPU — OTA UPDATE 메뉴 네비게이션 버그 수정)
+
+**[수정 3] OTA UPDATE 터치 시 상위 페이지로 스크롤되는 버그** (`lib/widget.h`, `lib/manageMenu.c`)
+
+- **증상**: LCD → MENU → 스크롤 → OTA UPDATE 터치 시 OTA 화면에 진입하지 않고 리스트가 페이지 0으로 스크롤되어 SETTINGS 항목이 보이는 화면으로 돌아감 (사용자 인식: "SETTING으로 돌아간다")
+- **원인**: `widget.h` enum의 `IDX_SCROLL_UP = 6` 값이 `manageMenuCreate()` root 메뉴의 OTA UPDATE child index(6)와 충돌. `doListMenuPage()` switch 문에서 index 6을 `case IDX_SCROLL_UP`으로 매칭하여 `curPage--` (페이지 스크롤 업) 실행
+- **수정**: `IDX_SCROLL_UP = 0xFD`, `IDX_SCROLL_DOWN = 0xFE`로 변경 — child index 최대값(~14)과 `NO_CLICK(0xFF)` 사이 안전한 값으로 이동
+  ```c
+  /* 수정 전 */
+  IDX_SCROLL_UP,    /* = 6 */
+  IDX_SCROLL_DOWN   /* = 7 */
+
+  /* 수정 후 */
+  IDX_SCROLL_UP   = 0xFD,   /* child index(최대 ~24)와 NO_CLICK(0xFF) 충돌 방지 */
+  IDX_SCROLL_DOWN = 0xFE
+  ```
+- **관련**: `manageMenuCreate()` — `otaUpdate` 노드를 root 마지막 자식(index 6)으로 이동. 이전 위치에서는 index 6과 충돌이 없었으나, 이동 후 충돌 발생하여 잠재적 설계 결함이 노출됨
+- **근본 원인 분석**: `getIndexOfClickedListMenu()`가 리스트 아이템 클릭 시 절대 child index를 반환하고, 스크롤 버튼 클릭 시 `IDX_SCROLL_UP/DOWN` enum 값을 반환하는 설계에서, 두 값 공간이 겹칠 경우 오동작 발생. `NO_CLICK = 0xFF` 기준으로 스크롤 상수를 고정값으로 이동하여 해결
+
+---
+
+#### 2026-03-20 (V2_BLACK_CPU — OTA 관련 버그 수정 2건)
+
+**[수정 1] WIFI INFO 정보 미표시 버그** (`lib/WIFI.c`)
+- **증상**: LCD → MENU → WIFI INFO 화면에 RSSI, IP 등 정보가 표시되지 않음
+- **원인**: `wifi_get_response()`에서 OTA HTTP 응답(`WIFI_CMD_OTA_VERSION/AUTO/CHUNK`)도 `andonResponse()`로 전달되어 ANDON 상태 오염 → `andonLoop()` 오작동 → RSSI 체크 블록 미실행 → `g_network.RSSI = INT16_MIN` 유지
+- **수정**: `andonResponse()` 호출 조건에 `g_wifi_cmd == WIFI_CMD_HTTP` 가드 추가
+  ```c
+  /* 수정 전 */
+  if(g_sizeOfHttpText > 0)
+  { andonResponse(...); g_sizeOfHttpText = 0; }
+
+  /* 수정 후 */
+  if(g_sizeOfHttpText > 0 && g_wifi_cmd == WIFI_CMD_HTTP)
+  { andonResponse(...); }
+  g_sizeOfHttpText = 0;
+  g_ptrHttpReceivedText = NULL;
+  ```
+
+**[수정 2] OTA UPDATE 터치 시 디바이스 먹통** (`otaMenu.c:210`)
+- **증상**: LCD → MENU → OTA UPDATE 터치 시 디바이스 완전 응답 없음
+- **원인**: `SetDrawListButtons(NULL, ...)` 호출 → ARM Cortex-M0 HardFault (`menu->noOfDisplayButton` NULL 포인터 역참조)
+- **수정**: `NULL` → `&g_ListMenu` (전역 LIST_MENU 구조체 포인터 전달)
+  ```c
+  /* 수정 전 */
+  SetDrawListButtons(NULL, thisMenu->nodeName, NULL, 0, BUTTON_STYLE_LIST);
+  /* 수정 후 */
+  SetDrawListButtons(&g_ListMenu, thisMenu->nodeName, NULL, 0, BUTTON_STYLE_LIST);
+  ```
+
+**[추가] OTA 웹 관리 페이지 HEX→BIN 자동 변환 기능** (`WEB/CTP280_OTA/CTP280_OTA_V1/index.html`)
+- `Design.hex` 파일을 직접 업로드하면 브라우저에서 Intel HEX → BIN 자동 변환 후 서버 전송
+- `arm-none-eabi-objcopy` 도구 없이 웹 페이지에서 직접 처리
+
+#### 2026-03-19 (V2_BLACK_CPU — OTA 기능 구현 완료)
+- V1_BLACK_CPU 기반으로 V2_BLACK_CPU 신규 버전 분리
+- `otaMenu.c/h` 신규 작성:
+  - `OTA_FLAG_BLOCK` 구조체 (W25QXX Sector 30 저장)
+  - `OTA_STATE` / `OTA_AUTO_STATE` 상태 머신
+  - 수동 메뉴: `initOtaMenu()`, `doOtaUpdate()`
+  - 자동 체크: `otaAutoCheckInit()`, `otaAutoCheckLoop()`, `otaHandleAutoVersionResponse()`
+  - 응답 콜백: `otaHandleVersionResponse()`, `otaHandleChunkResponse()`
+  - 헤더 배지: `otaDrawUpdateBadge()`
+- `lib/WIFI.c` 수정:
+  - `_wifi_send_httpget_ota()` 추가 (host에서 IP만 추출, pathPart 무시)
+  - `wifi_cmd_ota_version()`, `wifi_cmd_ota_auto()`, `wifi_cmd_ota_chunk()` 추가
+  - `wifi_get_response()` switch에 `WIFI_CMD_OTA_VERSION/AUTO/CHUNK` 케이스 추가
+  - `wifiLoop()` `andonLoop()==FALSE` 블록에 `otaAutoCheckLoop()` 추가
+- `lib/widget.c` 수정: `DrawHeader()`에 `otaDrawUpdateBadge()` 추가
+- `lib/server.h` 수정: `DEFAULT_OTA_API_PATH` 상수 추가
+- `Design.cyprj` 수정: `otaMenu.c/h` XML 직접 등록
+- `bootloader Debug/` 복사: V1_BLACK_CPU에서 `bootloader.hex/elf` 복사 (최초 빌드용)
+- 빌드 에러 수정 이력:
+  - `lib/jsonUtil.h: No such file or directory` → `jsonUtil.h`는 루트에 위치, include 경로 수정
+  - `jsonKeyMatch` undeclared → `jsoneq(...) == 0` 패턴으로 교체 (6곳)
+  - `GREY`, `DARK_GREY` undeclared → `LIGHTGREY`, `DARKGREY`로 교체
+  - bootloader hex/elf not found → V1_BLACK_CPU에서 PowerShell Copy-Item으로 복사
+  - OTA URL `/ota/` 경로 → `_wifi_send_httpget_ota()` + `DEFAULT_OTA_API_PATH` 분리 구현
+
+---
+
 ## 280CTP_IoT_INTEGRATED_V1_BLACK_CPU
 
 | 항목 | 내용 |

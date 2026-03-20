@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CTP280 OTA 펌웨어 관리</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    h1 { font-size: 1.6rem; margin-bottom: 6px; color: #90cdf4; }
+    .subtitle { color: #718096; font-size: 0.9rem; margin-bottom: 24px; }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+    @media(max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: #1a202c;
+      border: 1px solid #2d3748;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .card h2 { font-size: 1rem; color: #a0aec0; margin-bottom: 14px; text-transform: uppercase; letter-spacing: .05em; }
+
+    .version-badge {
+      display: inline-block;
+      background: #2b6cb0;
+      color: #bee3f8;
+      font-size: 1.4rem;
+      font-weight: 700;
+      padding: 6px 18px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+    .version-meta { font-size: 0.82rem; color: #718096; }
+
+    .stat-row { display: flex; gap: 16px; margin-top: 12px; }
+    .stat-box {
+      flex: 1;
+      background: #2d3748;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-box .num { font-size: 1.8rem; font-weight: 700; }
+    .stat-box .lbl { font-size: 0.75rem; color: #718096; margin-top: 4px; }
+    .num-total  { color: #90cdf4; }
+    .num-done   { color: #68d391; }
+    .num-old    { color: #fc8181; }
+    .num-active { color: #fbd38d; }
+
+    /* 업로드 카드 */
+    .upload-form { display: flex; flex-direction: column; gap: 10px; }
+    .upload-form input[type=text],
+    .upload-form input[type=file],
+    .upload-form textarea {
+      background: #2d3748;
+      border: 1px solid #4a5568;
+      border-radius: 6px;
+      color: #e2e8f0;
+      padding: 9px 12px;
+      font-size: 0.9rem;
+      width: 100%;
+    }
+    .upload-form textarea { resize: vertical; height: 60px; }
+    .btn {
+      background: #3182ce;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background .2s;
+    }
+    .btn:hover { background: #2c5282; }
+    .btn-sm { padding: 6px 14px; font-size: 0.82rem; }
+    .btn-refresh { background: #2d3748; border: 1px solid #4a5568; }
+    .btn-refresh:hover { background: #4a5568; }
+    #uploadMsg {
+      font-size: 0.85rem;
+      padding: 8px 12px;
+      border-radius: 6px;
+      display: none;
+    }
+    .msg-ok    { background: #1c4532; color: #68d391; display: block !important; }
+    .msg-error { background: #742a2a; color: #fc8181; display: block !important; }
+
+    /* 디바이스 테이블 */
+    .table-wrap { overflow-x: auto; margin-top: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th {
+      background: #2d3748;
+      padding: 10px 12px;
+      text-align: left;
+      color: #a0aec0;
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    td { padding: 10px 12px; border-bottom: 1px solid #2d3748; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #2d3748; }
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .badge-done        { background: #1c4532; color: #68d391; }
+    .badge-downloading { background: #744210; color: #fbd38d; }
+    .badge-error       { background: #742a2a; color: #fc8181; }
+    .badge-old         { background: #2d3748; color: #a0aec0; }
+    .badge-latest      { background: #1a365d; color: #90cdf4; }
+
+    .empty-row td { text-align: center; color: #4a5568; padding: 30px; }
+    .full-card { grid-column: 1 / -1; }
+    .refresh-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .last-update { font-size: 0.78rem; color: #4a5568; }
+    .progress-bar { background: #2d3748; border-radius: 4px; height: 6px; margin-top: 4px; }
+    .progress-fill { height: 6px; border-radius: 4px; background: #48bb78; transition: width .5s; }
+    .hex-badge {
+      display: inline-block;
+      background: #744210;
+      color: #fbd38d;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .convert-info {
+      font-size: 0.8rem;
+      color: #fbd38d;
+      background: #2d2200;
+      border: 1px solid #744210;
+      border-radius: 6px;
+      padding: 7px 12px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<h1>CTP280 OTA 펌웨어 관리</h1>
+<p class="subtitle">SUNTECH IoT Device Over-The-Air Update Management</p>
+
+<div class="grid">
+
+  <!-- 현재 버전 카드 -->
+  <div class="card">
+    <h2>서버 최신 버전</h2>
+    <div class="version-badge" id="latestVer">-</div>
+    <div class="version-meta" id="versionMeta">불러오는 중...</div>
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="num num-total" id="statTotal">-</div>
+        <div class="lbl">전체 디바이스</div>
+      </div>
+      <div class="stat-box">
+        <div class="num num-done" id="statDone">-</div>
+        <div class="lbl">업데이트 완료</div>
+      </div>
+      <div class="stat-box">
+        <div class="num num-old" id="statOld">-</div>
+        <div class="lbl">업데이트 필요</div>
+      </div>
+    </div>
+    <div id="progressWrap" style="margin-top:14px; display:none;">
+      <div style="font-size:.8rem; color:#718096; margin-bottom:4px;">업데이트 완료율</div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div style="font-size:.8rem; color:#a0aec0; margin-top:4px;" id="progressPct">0%</div>
+    </div>
+  </div>
+
+  <!-- 펌웨어 업로드 카드 -->
+  <div class="card">
+    <h2>펌웨어 업로드</h2>
+    <div class="upload-form">
+      <input type="text" id="newVersion" placeholder="버전 (예: V2.0.1)" maxlength="20">
+      <div>
+        <input type="file" id="firmwareFile" accept=".bin,.hex" onchange="onFileChange(this)">
+      </div>
+      <div class="convert-info" id="convertInfo">
+        ⚙ Intel HEX 파일 감지 → 업로드 시 BIN으로 자동 변환됩니다
+      </div>
+      <textarea id="releaseNotes" placeholder="릴리즈 노트 (선택)"></textarea>
+      <button class="btn" onclick="uploadFirmware()">업로드</button>
+      <div id="uploadMsg"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 디바이스 목록 -->
+<div class="card">
+  <div class="refresh-row">
+    <h2 style="margin:0">디바이스 업데이트 현황</h2>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <span class="last-update" id="lastUpdate"></span>
+      <button class="btn btn-sm btn-refresh" onclick="loadDevices()">새로고침</button>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>MAC 주소</th>
+          <th>현재 버전</th>
+          <th>상태</th>
+          <th>최신 여부</th>
+          <th>마지막 업데이트</th>
+          <th>IP</th>
+        </tr>
+      </thead>
+      <tbody id="deviceList">
+        <tr class="empty-row"><td colspan="6">디바이스 데이터 없음</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const API = 'api';
+
+/* ── Intel HEX → Uint8Array 변환 ──────────────────────────────────
+ * 레코드 타입:
+ *   00 = Data, 01 = EOF
+ *   02 = Extended Segment Address, 04 = Extended Linear Address
+ * 갭 영역은 0xFF로 채움 (PSoC flash 소거 상태와 동일)
+ */
+function parseIntelHex(hexText) {
+  const lines = hexText.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+  let extLinear  = 0;
+  let extSegment = 0;
+  let maxAddr    = 0;
+
+  // 1단계: 최대 주소 계산
+  for (const raw of lines) {
+    const s = raw.trim();
+    if (!s.startsWith(':') || s.length < 11) continue;
+    const byteCount = parseInt(s.substr(1, 2), 16);
+    const address   = parseInt(s.substr(3, 4), 16);
+    const recType   = parseInt(s.substr(7, 2), 16);
+    if (recType === 0x04) { extLinear  = parseInt(s.substr(9, 4), 16); }
+    else if (recType === 0x02) { extSegment = parseInt(s.substr(9, 4), 16); }
+    else if (recType === 0x00) {
+      const full = (extLinear << 16) + (extSegment << 4) + address;
+      if (full + byteCount > maxAddr) maxAddr = full + byteCount;
+    }
+  }
+  if (maxAddr === 0) return null;
+
+  // 2단계: 바이너리 버퍼 생성 (0xFF 초기화)
+  const bin = new Uint8Array(maxAddr).fill(0xFF);
+  extLinear  = 0;
+  extSegment = 0;
+
+  for (const raw of lines) {
+    const s = raw.trim();
+    if (!s.startsWith(':') || s.length < 11) continue;
+    const byteCount = parseInt(s.substr(1, 2), 16);
+    const address   = parseInt(s.substr(3, 4), 16);
+    const recType   = parseInt(s.substr(7, 2), 16);
+    if (recType === 0x01) break;
+    if (recType === 0x04) { extLinear  = parseInt(s.substr(9, 4), 16); }
+    else if (recType === 0x02) { extSegment = parseInt(s.substr(9, 4), 16); }
+    else if (recType === 0x00) {
+      const full = (extLinear << 16) + (extSegment << 4) + address;
+      for (let i = 0; i < byteCount; i++) {
+        bin[full + i] = parseInt(s.substr(9 + i * 2, 2), 16);
+      }
+    }
+  }
+  return bin;
+}
+
+function onFileChange(input) {
+  const info = document.getElementById('convertInfo');
+  const file = input.files[0];
+  if (file && file.name.toLowerCase().endsWith('.hex')) {
+    info.style.display = 'block';
+  } else {
+    info.style.display = 'none';
+  }
+}
+
+async function loadVersion() {
+  try {
+    const r = await fetch(`${API}/version.php`);
+    const d = await r.json();
+    document.getElementById('latestVer').textContent = d.version || '-';
+    const sizeKB = d.size ? (d.size / 1024).toFixed(1) + ' KB' : '(파일 없음)';
+    document.getElementById('versionMeta').textContent =
+      `크기: ${sizeKB}  |  CRC: 0x${(d.crc || 0).toString(16).toUpperCase().padStart(4,'0')}`;
+  } catch(e) {
+    document.getElementById('versionMeta').textContent = '서버 연결 실패';
+  }
+}
+
+async function loadDevices() {
+  try {
+    const r = await fetch(`${API}/devices.php`);
+    const d = await r.json();
+    const tbody = document.getElementById('deviceList');
+    const devArr = d.devices || [];
+
+    // 통계 업데이트
+    const total = devArr.length;
+    const done  = devArr.filter(v => v.is_latest).length;
+    const old   = total - done;
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statDone').textContent  = done;
+    document.getElementById('statOld').textContent   = old;
+
+    if (total > 0) {
+      const pct = Math.round(done * 100 / total);
+      document.getElementById('progressWrap').style.display = 'block';
+      document.getElementById('progressFill').style.width   = pct + '%';
+      document.getElementById('progressPct').textContent    = `${done} / ${total} (${pct}%)`;
+    }
+
+    document.getElementById('lastUpdate').textContent =
+      '마지막 갱신: ' + new Date().toLocaleTimeString('ko-KR');
+
+    if (devArr.length === 0) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="6">등록된 디바이스 없음</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = devArr.map(dev => {
+      const statusBadge = {
+        'done':        '<span class="badge badge-done">완료</span>',
+        'downloading': '<span class="badge badge-downloading">다운로드 중</span>',
+        'error':       '<span class="badge badge-error">오류</span>',
+      }[dev.status] || `<span class="badge badge-old">${dev.status || '알 수 없음'}</span>`;
+
+      const latestBadge = dev.is_latest
+        ? '<span class="badge badge-latest">최신</span>'
+        : '<span class="badge badge-old">업데이트 필요</span>';
+
+      return `<tr>
+        <td style="font-family:monospace">${dev.mac || '-'}</td>
+        <td>${dev.version || '-'}</td>
+        <td>${statusBadge}</td>
+        <td>${latestBadge}</td>
+        <td style="color:#718096; font-size:.82rem">${dev.updated_at || '-'}</td>
+        <td style="color:#718096; font-size:.82rem">${dev.ip || '-'}</td>
+      </tr>`;
+    }).join('');
+
+  } catch(e) {
+    document.getElementById('deviceList').innerHTML =
+      '<tr class="empty-row"><td colspan="6">데이터 로드 실패: ' + e.message + '</td></tr>';
+  }
+}
+
+async function uploadFirmware() {
+  const version = document.getElementById('newVersion').value.trim();
+  const file    = document.getElementById('firmwareFile').files[0];
+  const notes   = document.getElementById('releaseNotes').value.trim();
+
+  if (!version) { showMsg('error', '버전을 입력해주세요 (예: V2.0.1)'); return; }
+  if (!file)    { showMsg('error', '펌웨어 파일을 선택해주세요'); return; }
+  if (!/^[Vv]\d+\.\d+\.\d+$/.test(version)) {
+    showMsg('error', '버전 형식이 올바르지 않습니다 (예: V2.0.1)'); return;
+  }
+
+  const fd = new FormData();
+  fd.append('version', version.toUpperCase());
+  fd.append('notes', notes);
+
+  // HEX 파일이면 브라우저에서 BIN으로 변환 후 전송
+  if (file.name.toLowerCase().endsWith('.hex')) {
+    showMsg('', 'HEX → BIN 변환 중...');
+    try {
+      const hexText = await file.text();
+      const binData = parseIntelHex(hexText);
+      if (!binData) { showMsg('error', 'HEX 파일 파싱 실패: 데이터 레코드를 찾을 수 없습니다'); return; }
+      const binBlob = new Blob([binData], { type: 'application/octet-stream' });
+      fd.append('firmware', binBlob, 'firmware.bin');
+      showMsg('', `변환 완료 (${(binData.length / 1024).toFixed(1)} KB) — 업로드 중...`);
+    } catch(e) {
+      showMsg('error', 'HEX 파싱 오류: ' + e.message);
+      return;
+    }
+  } else {
+    showMsg('', '업로드 중...');
+    fd.append('firmware', file);
+  }
+
+  try {
+    const r = await fetch(`${API}/upload.php`, { method: 'POST', body: fd });
+    const d = await r.json();
+    if (d.status === 'ok') {
+      showMsg('ok', `✓ 업로드 완료: ${d.version}  (${(d.size/1024).toFixed(1)} KB, CRC: 0x${d.crc.toString(16).toUpperCase().padStart(4,'0')})`);
+      loadVersion();
+    } else {
+      showMsg('error', '업로드 실패: ' + (d.error || JSON.stringify(d)));
+    }
+  } catch(e) {
+    showMsg('error', '서버 오류: ' + e.message);
+  }
+}
+
+function showMsg(type, text) {
+  const el = document.getElementById('uploadMsg');
+  el.className = type === 'ok' ? 'msg-ok' : type === 'error' ? 'msg-error' : '';
+  el.style.display = 'block';
+  el.textContent = text;
+}
+
+// 초기 로드
+loadVersion();
+loadDevices();
+
+// 30초마다 자동 갱신
+setInterval(loadDevices, 30000);
+</script>
+</body>
+</html>
