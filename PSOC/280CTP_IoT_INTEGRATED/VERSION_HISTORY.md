@@ -110,6 +110,9 @@ V1_BLACK_CPU의 모든 기능 포함 + 아래 OTA 기능 추가:
 | `bootloader.cyprj` | `w25qxx.c` 소스 등록, `Additional Include Directories = ..\Design.cydsn\lib` 추가 |
 | `bootloader.cydsn/main.c` | `CyFlash_WriteRow` → `CySysFlashWriteRow` (PSoC4 올바른 API) |
 | `bootloader.cydsn/main.c` | `BOOTLOADABLE_BASE_ROW` = `66u` (0x4200 / 256, Flash Row = 256 bytes) |
+| `bootloader.cydsn/main.c` | `PSOC4_FLASH_ROW_SIZE` 128→256, `srcAddr` 앱 오프셋 수정, `PSOC4_MAX_APP_ROWS` 240→958, CS init 추가 (수정 7) |
+| `otaMenu.c` | JSMN `tokens[8]` → `tokens[12]`, `jsmn_parse(...,8)` → `jsmn_parse(...,12)` (수정 5) |
+| `lib/WIFI.c` | `WIFI_CMD_OTA_CHUNK` HTTPCLOSE 분기에서 `g_wifi_cmd=IDLE` 제거 (수정 6) |
 | `Design.cydsn` TopDesign | Bootloadable **Placement address** `0x4000` → `0x4200` |
 
 ### 빌드 주의사항
@@ -122,6 +125,93 @@ V1_BLACK_CPU의 모든 기능 포함 + 아래 OTA 기능 추가:
 - **OTA HTTP GET**: `_wifi_send_httpget()` 사용 금지 — pathPart 자동 추가로 URL 오류 발생. 반드시 `_wifi_send_httpget_ota()` 사용
 
 ### 변경 이력
+
+#### 2026-03-20 (V2_BLACK_CPU — V2.0.1 OTA 테스트 중 부트로더 미적용 버그 수정)
+
+**[수정 7] bootloader/main.c — OTA 펌웨어 Flash 프로그래밍 오류 3건** (`bootloader.cydsn/main.c`)
+
+OTA 다운로드는 정상 완료(262,144 bytes 전체 수신 + status=done 전송 + 재부팅)되었으나
+재부팅 후 버전이 V2.0.0 그대로였음. bootloader/main.c 3개 버그 수정.
+
+**버그 1: `PSOC4_FLASH_ROW_SIZE = 128` (정답: 256)**
+- PSoC4200M Flash Row = **256 bytes**. 128로 설정 시 절반 크기로 읽어 Row 정렬 오류 발생
+- `CySysFlashWriteRow(rowNum, data)` 는 256 bytes 고정 요구
+- 수정: `#define PSOC4_FLASH_ROW_SIZE 128u` → `256u`
+
+**버그 2: `srcAddr` 계산 — 부트로더 영역(0x0000~0x41FF)부터 읽기 시작 (정답: 앱 영역 0x4200부터)**
+```c
+/* 수정 전: i=0 → 바이너리 byte 0 (부트로더 인터럽트 벡터!) → flash row 66에 덮어씀 */
+srcAddr = OTA_FIRMWARE_SECTOR * w25qxx.SectorSize + i * PSOC4_FLASH_ROW_SIZE;
+
+/* 수정 후: i=0 → 바이너리 byte 16896 (row 66 = 앱 시작) */
+srcAddr = (uint32)OTA_FIRMWARE_SECTOR * w25qxx.SectorSize
+        + (uint32)(BOOTLOADABLE_BASE_ROW + i) * PSOC4_FLASH_ROW_SIZE;
+```
+- 결과: 실제 앱 바이너리 대신 부트로더 인터럽트 벡터 데이터를 앱 영역에 기록 → 부팅 불가 또는 구버전 유지
+
+**버그 3: `PSOC4_MAX_APP_ROWS = 240` (정답: 1024 - 66 = 958)**
+- 240 × 128 = 30,720 bytes 만 기록 (전체 258,048 bytes 중 극히 일부)
+- 수정: `PSOC4_MAX_APP_ROWS = (PSOC4_TOTAL_ROWS - BOOTLOADABLE_BASE_ROW) = 958`
+- `totalRows` 계산도 수정:
+  ```c
+  /* 수정 전 */
+  totalRows = (flag.firmwareSize + PSOC4_FLASH_ROW_SIZE - 1u) / PSOC4_FLASH_ROW_SIZE;
+  /* 수정 후: 앱 rows만 계산 (= 1024 - 66 = 958) */
+  totalRows = flag.firmwareSize / PSOC4_FLASH_ROW_SIZE - BOOTLOADABLE_BASE_ROW;
+  ```
+
+**추가: CS 핀 HIGH → SPIM_FLASH_Start() 초기화 순서 보장**
+```c
+/* main(): CS HIGH → SPI 시작 → 1ms 대기 → W25qxx_Init() */
+Ctrl_MEM_SS_Write(1u);     /* CS HIGH: flash 비선택 상태로 시작 */
+SPIM_FLASH_Start();
+CyDelay(1u);
+if(W25qxx_Init()) { applyOtaIfPending(); }
+```
+- 부트로더는 GPIO 기본값이 보장되지 않아 CS가 LOW인 채로 SPI 초기화 시 W25QXX가 명령 무시 가능
+
+---
+
+#### 2026-03-20 (V2_BLACK_CPU — OTA 청크 다운로드 중단 버그 수정)
+
+**[수정 6] HTTPCLOSE가 다음 청크 요청의 `g_wifi_cmd` 상태를 덮어쓰는 버그** (`lib/WIFI.c`)
+
+- **증상**: 다운로드 진행 시 첫 청크(400 bytes) 수신 후 화면이 `Downloading... 400 / 262144 bytes 0%` 에서 멈춤
+- **원인**: 청크 HTTPBODY 처리 후 `requestNextChunk()`가 `g_wifi_cmd = WIFI_CMD_OTA_CHUNK`를 유지한 채 다음 청크 요청 전송. 그런데 직전 청크의 `*ICT*HTTPCLOSE:OK`가 뒤늦게 수신되면 `WIFI_CMD_OTA_CHUNK` 핸들러의 HTTPCLOSE 분기에서 `g_wifi_cmd = WIFI_CMD_IDLE`로 덮어씀. 이후 도착하는 다음 청크의 `*ICT*HTTPGET:OK` / `*ICT*HTTPBODY:`는 cmd=0(IDLE)로 처리되어 무시됨
+- **수정**: `WIFI_CMD_OTA_CHUNK` case의 HTTPCLOSE 분기에서 `g_wifi_cmd = WIFI_CMD_IDLE` 제거
+  ```c
+  /* 수정 전 */
+  else if(STRSTR_WIFI_BUFFER("ICT*HTTPCLOSE:OK") != NULL)
+  {
+      g_wifi_cmd = WIFI_CMD_IDLE;   /* ← 다음 청크 요청 상태 파괴 */
+  }
+  /* 수정 후 */
+  else if(STRSTR_WIFI_BUFFER("ICT*HTTPCLOSE:OK") != NULL)
+  {
+      /* IDLE로 변경 안 함: HTTPBODY 처리 후 requestNextChunk()가 이미
+       * g_wifi_cmd=OTA_CHUNK 유지 중. 덮어쓰면 다음 청크 응답 무시됨 */
+  }
+  ```
+
+---
+
+#### 2026-03-20 (V2_BLACK_CPU — OTA 청크 JSON 파싱 오류 수정)
+
+**[수정 5] JSMN token 배열 크기 부족으로 청크 JSON 파싱 실패** (`otaMenu.c`)
+
+- **증상**: `Downloading...` 진입 직후 `[OTA] chunk JSON error` 출력 후 다운로드 멈춤
+- **원인**: 청크 응답 JSON `{"offset":0,"bytes":400,"total":262144,"hex":"..."}` = **9 tokens** (root 1 + key-value 4쌍 × 2). `tokens[8]`로는 토큰 9개 저장 불가 → `jsmn_parse()` 실패 → JSON 파싱 불가
+- **수정**: `tokens[8]` → `tokens[12]`, `jsmn_parse(..., 8)` → `jsmn_parse(..., 12)`
+  ```c
+  /* 수정 전 */
+  jsmntok_t tokens[8];
+  r = jsmn_parse(&p, json, size, tokens, 8);
+  /* 수정 후 */
+  jsmntok_t tokens[12];   /* root(1) + 4 key-value pairs(8) = 9 tokens 최소 → 12로 여유 확보 */
+  r = jsmn_parse(&p, json, size, tokens, 12);
+  ```
+
+---
 
 #### 2026-03-20 (V2_BLACK_CPU — OTA 부트로더 완성 + 빌드 성공)
 

@@ -606,7 +606,13 @@ void wifi_get_response()
             }
             else if(STRSTR_WIFI_BUFFER("ICT*HTTPCLOSE:OK") != NULL)
             {
-                g_wifi_cmd = WIFI_CMD_IDLE;
+                /* [수정] IDLE로 변경하지 않음.
+                 * 이 HTTPCLOSE는 이전 청크 요청의 종료 신호이나,
+                 * HTTPBODY 처리 시 requestNextChunk()가 이미 다음 요청을 전송하고
+                 * g_wifi_cmd = WIFI_CMD_OTA_CHUNK 상태를 유지하고 있음.
+                 * IDLE로 덮어쓰면 다음 청크의 HTTPGET:OK / HTTPBODY가 cmd=0으로
+                 * 도착하여 처리되지 않고 다운로드가 멈추는 버그 발생.
+                 * 상태 전환은 otaHandleChunkResponse() 내에서 직접 관리함. */
             }
         break;
 

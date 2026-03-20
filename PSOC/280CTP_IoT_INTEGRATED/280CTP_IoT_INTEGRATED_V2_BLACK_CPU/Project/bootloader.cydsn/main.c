@@ -27,11 +27,11 @@
 
 /* ─── 상수 정의 ───────────────────────────────────────────────── */
 /* PSoC 4 부트로더블 시작 Flash Row 번호
- * 예) 부트로더가 0x0000~0x3FFF (16KB = 128 rows) 사용 시 Row 128 = 0x4000
- * 실제 값은 PSoC Creator 링커 설정 확인 후 수정할 것                  */
+ * Bootloadable Placement Address = 0x4200 → Row = 0x4200 / 256 = 66          */
 #define BOOTLOADABLE_BASE_ROW   66u         /* 부트로더블 시작 Row 번호 (0x4200 / 256) */
-#define PSOC4_FLASH_ROW_SIZE    128u        /* PSoC 4 Flash Row = 128 bytes */
-#define PSOC4_MAX_APP_ROWS      240u        /* 최대 업데이트 rows (30KB) */
+#define PSOC4_FLASH_ROW_SIZE    256u        /* PSoC 4200M Flash Row = 256 bytes        */
+#define PSOC4_TOTAL_ROWS        1024u       /* 262144 / 256 = 1024 rows (전체 Flash)   */
+#define PSOC4_MAX_APP_ROWS      (PSOC4_TOTAL_ROWS - BOOTLOADABLE_BASE_ROW)  /* = 958 */
 
 /* OTA 제어 블록 */
 #define OTA_FLAG_SECTOR         30u
@@ -87,14 +87,25 @@ static void applyOtaIfPending(void)
     /* LED 빠른 점멸 - OTA 진행 중 표시 */
     LED_Write(1u);
 
-    /* 3. 펌웨어 행(Row) 단위로 읽어서 내부 Flash 프로그래밍 */
-    totalRows = (flag.firmwareSize + PSOC4_FLASH_ROW_SIZE - 1u) / PSOC4_FLASH_ROW_SIZE;
+    /* 3. 펌웨어 행(Row) 단위로 읽어서 내부 Flash 프로그래밍
+     *
+     * 바이너리 구조: 0x0000~0x41FF = 부트로더 (row 0~65)
+     *               0x4200~0xFFFF = 애플리케이션 (row 66~1023)
+     *
+     * srcAddr 계산: 바이너리에서 앱 시작 오프셋(BOOTLOADABLE_BASE_ROW × ROW_SIZE)부터 읽어야 함.
+     * 즉, i번째 앱 row는 바이너리의 (BOOTLOADABLE_BASE_ROW + i) × ROW_SIZE 위치에 있음.
+     *
+     * CySysFlashWriteRow(rowNum, data): rowNum = 절대 row 번호, data = PSOC4_FLASH_ROW_SIZE bytes */
+    if(flag.firmwareSize < (uint32)(BOOTLOADABLE_BASE_ROW + 1u) * PSOC4_FLASH_ROW_SIZE) return;
+    totalRows = flag.firmwareSize / PSOC4_FLASH_ROW_SIZE - BOOTLOADABLE_BASE_ROW;
     if(totalRows > PSOC4_MAX_APP_ROWS) totalRows = PSOC4_MAX_APP_ROWS; /* 안전 상한 */
 
     for(i = 0u; i < totalRows; i++)
     {
+        /* 바이너리의 앱 영역 시작 오프셋에서 읽기:
+         * row i → 바이너리 내 byte (BOOTLOADABLE_BASE_ROW + i) * ROW_SIZE */
         srcAddr = (uint32)OTA_FIRMWARE_SECTOR * w25qxx.SectorSize
-                + i * PSOC4_FLASH_ROW_SIZE;
+                + (uint32)(BOOTLOADABLE_BASE_ROW + i) * PSOC4_FLASH_ROW_SIZE;
 
         /* 외부 Flash에서 한 Row 읽기 */
         W25qxx_ReadBytes(rowBuf, srcAddr, PSOC4_FLASH_ROW_SIZE);
@@ -165,9 +176,12 @@ int main(void)
     initSysTick();
 
     /* ── OTA 확인 및 적용 ──
-     * SPIM_FLASH_Start()는 PSoC Creator TopDesign에서
-     * 생성된 SPIM 컴포넌트 시작 함수. 이름이 다를 경우 수정 필요.   */
+     * CS 핀을 HIGH로 먼저 설정 후 SPIM_FLASH_Start() 호출.
+     * 부트로더는 앱과 달리 GPIO 기본값이 보장되지 않아
+     * CS가 LOW인 채로 SPI가 초기화되면 W25QXX가 명령을 무시할 수 있음.  */
+    Ctrl_MEM_SS_Write(1u);     /* CS HIGH: flash 비선택 상태로 시작 */
     SPIM_FLASH_Start();
+    CyDelay(1u);               /* SPI 안정화 대기 */
     if(W25qxx_Init())          /* SPI Flash 초기화 성공 시 OTA 확인 */
     {
         applyOtaIfPending();

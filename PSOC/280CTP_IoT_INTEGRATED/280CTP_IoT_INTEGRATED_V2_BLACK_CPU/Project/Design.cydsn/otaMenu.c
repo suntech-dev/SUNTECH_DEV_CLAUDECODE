@@ -351,7 +351,7 @@ void otaHandleVersionResponse(char *json, uint16 size)
 void otaHandleChunkResponse(char *json, uint16 size)
 {
     jsmn_parser  p;
-    jsmntok_t    tokens[8];
+    jsmntok_t    tokens[12]; /* {"offset":0,"bytes":400,"total":N,"hex":"..."} = 9 tokens 필요 → 여유 12 */
     int          r;
     int          i;
     char        *hexData  = NULL;
@@ -363,7 +363,7 @@ void otaHandleChunkResponse(char *json, uint16 size)
     uint16       j;
 
     jsmn_init(&p);
-    r = jsmn_parse(&p, json, size, tokens, 8);
+    r = jsmn_parse(&p, json, size, tokens, 12);
 
     if(r < 1)
     {
