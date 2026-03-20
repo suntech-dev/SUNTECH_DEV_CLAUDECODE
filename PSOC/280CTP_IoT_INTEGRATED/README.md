@@ -419,6 +419,7 @@ bootloader.cydsn/
 | 16 | **중간** | `lib/WIFI.c` | MIB 타임아웃 후 `CMD 2 timeout` 반복 + WiFi 미연결 아이콘 표시 | LCD UI 오표시 | ✅ 수정 (수정 1+2 적용) |
 | 17 | **높음** | `lib/WIFI.c` | OTA 응답이 `andonResponse()`로 전달되어 ANDON 상태 오염 → RSSI 미갱신 → WIFI INFO 미표시 | LCD WIFI INFO 화면 데이터 표시 불가 | ✅ 수정 (`g_wifi_cmd == WIFI_CMD_HTTP` 가드 추가) |
 | 18 | **높음** | `lib/widget.h` | `IDX_SCROLL_UP = 6`이 메뉴 child index 6과 충돌 → OTA UPDATE 터치 시 스크롤 업 동작 | OTA 화면 진입 불가, 메뉴 리스트가 페이지 0으로 스크롤됨 | ✅ 수정 (`IDX_SCROLL_UP = 0xFD`, `IDX_SCROLL_DOWN = 0xFE`) |
+| 19 | **높음** | `lib/WIFI.c` | `setCountMax_1ms()`가 `current=0`으로 설정 → 다음 `wifiLoop()`에서 `isFinishCounter_1ms()==TRUE` 즉시 반환 → OTA 버전 요청 직후 타임아웃 발동 | "OTA Error Bad version data" 즉시 표시, 서버 응답 무시 | ✅ 수정 (`_wifi_send_httpget()`, `_wifi_send_httpget_ota()`, `wifi_cmd()` 모두에 `resetCounter_1ms()` 추가) |
 
 ### 9.2 수정 이력
 
@@ -520,6 +521,7 @@ bootloader.cydsn/
 | 2026-03-20 | V2_BLACK_CPU | 버그수정 | WIFI INFO 미표시 (andonResponse 가드), OTA 먹통 (NULL→&g_ListMenu) 수정 |
 | 2026-03-20 | V2_BLACK_CPU | 빌드완료 | OTA 부트로더 완성 (SPIM_FLASH+w25qxx 추가, CySysFlashWriteRow 수정, Placement 0x4200) — Flash 51.3% (134,408 bytes) / SRAM 70.1% (22,972 bytes) |
 | 2026-03-20 | V2_BLACK_CPU | 버그수정 | OTA UPDATE 터치 시 스크롤 업 오동작 (widget.h IDX_SCROLL_UP=6 → 0xFD 충돌 수정), manageMenu.c otaUpdate 노드 위치 이동(index 6) |
+| 2026-03-20 | V2_BLACK_CPU | 버그수정 | OTA 버전 요청 즉시 타임아웃 (setCountMax_1ms=0 → isFinishCounter 즉시 TRUE) — WIFI.c 3곳에 resetCounter_1ms 추가 |
 
 ---
 

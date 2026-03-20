@@ -280,6 +280,7 @@ void wifi_cmd(uint16 cmd)
     }
     g_wifi_cmd = cmd;
     setCountMax_1ms(g_index_Wifi_Test, 3000); /* 모든 명령에 3초 타임아웃 설정 */
+    resetCounter_1ms(g_index_Wifi_Test);       /* current=max 보장: setCountMax는 current=0으로 세팅 */
    // if(g_wifi_cmd == cmd) printf("WIFI_CMD_FACTORY_RESET\n");
 }
 
@@ -309,6 +310,9 @@ static void _wifi_send_httpget(const char *url, uint8 cmd, uint16 timeoutMs)
 
     g_wifi_cmd = cmd;
     setCountMax_1ms(g_index_Wifi_Test, timeoutMs);
+    resetCounter_1ms(g_index_Wifi_Test); /* setCountMax는 current=0으로 세팅 → 다음 wifiLoop에서
+                                          * isFinishCounter가 즉시 TRUE 반환되는 것을 방지.
+                                          * resetCounter로 current=max(=timeoutMs)를 보장한다. */
 }
 
 void wifi_cmd_http(char *url)
@@ -340,6 +344,9 @@ static void _wifi_send_httpget_ota(const char *absolutePath, uint8 cmd, uint16 t
 
     g_wifi_cmd = cmd;
     setCountMax_1ms(g_index_Wifi_Test, timeoutMs);
+    resetCounter_1ms(g_index_Wifi_Test); /* setCountMax는 current=0으로 세팅 → 다음 wifiLoop에서
+                                          * isFinishCounter가 즉시 TRUE 반환되는 것을 방지.
+                                          * resetCounter로 current=max(=timeoutMs)를 보장한다. */
 }
 
 void wifi_cmd_ota_version(char *url)

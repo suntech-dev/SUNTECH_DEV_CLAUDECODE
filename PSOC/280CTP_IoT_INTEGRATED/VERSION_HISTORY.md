@@ -98,7 +98,7 @@ V1_BLACK_CPU의 모든 기능 포함 + 아래 OTA 기능 추가:
 |------|---------|
 | `otaMenu.c` | 신규 추가 — OTA 수동 메뉴 + 자동 체크 상태 머신 전체 구현 |
 | `otaMenu.h` | 신규 추가 — OTA 상수, 구조체, 상태 enum, 공개 API 선언 |
-| `lib/WIFI.c` | `WIFI_CMD_OTA_VERSION/AUTO/CHUNK` 케이스 추가, `_wifi_send_httpget_ota()` 추가, `otaAutoCheckLoop()` 호출 추가 |
+| `lib/WIFI.c` | `WIFI_CMD_OTA_VERSION/AUTO/CHUNK` 케이스 추가, `_wifi_send_httpget_ota()` 추가, `otaAutoCheckLoop()` 호출 추가, `resetCounter_1ms()` 추가 (수정 4) |
 | `lib/widget.c` | `DrawHeader()`에 `otaDrawUpdateBadge()` 호출 추가 |
 | `lib/widget.h` | `IDX_SCROLL_UP = 0xFD`, `IDX_SCROLL_DOWN = 0xFE` — child index 충돌 방지 (수정 3) |
 | `lib/server.h` | `DEFAULT_OTA_API_PATH "/CTP280_OTA/CTP280_OTA_V1/api"` 추가 |
@@ -150,6 +150,46 @@ V1_BLACK_CPU의 모든 기능 포함 + 아래 OTA 기능 추가:
 - **증상**: `Clean and Build all projects` 시 `Bootloadable. The referenced Bootloader is invalid. bootloader.hex/elf: The path does not exist`
 - **근본 원인**: V2 bootloader의 `main.c`가 `w25qxx.h`를 포함하나 프로젝트에 미등록 → bootloader 빌드 실패 → hex/elf 미생성
 - **전체 해결**: 위 4단계 수정 후 bootloader 빌드 성공 → Design 빌드 성공
+
+#### 2026-03-20 (V2_BLACK_CPU — OTA 버전 확인 즉시 타임아웃 버그 수정)
+
+**[수정 4] `setCountMax_1ms` 직후 `isFinishCounter_1ms` 즉시 TRUE 반환 버그** (`lib/WIFI.c`)
+
+- **증상**: MENU → OTA UPDATE 진입 시 서버 응답 대기 없이 즉시 "OTA Error Bad version data" 표시. 시리얼 로그에서 `[WIFI] CMD 9 timeout -> IDLE` 이 HTTP 응답(`*ICT*HTTPGET:OK`) 보다 먼저 출력됨
+- **원인 — sysTick.c 구현 특성**:
+  ```c
+  // sysTick.c setCountMax_1ms 구현
+  void setCountMax_1ms(uint16 index, uint32 maxCount)
+  {
+      g_timerCounter_1ms[index].current = 0;   // ← 즉시 0으로 설정
+      g_timerCounter_1ms[index].max     = maxCount;
+  }
+  // isFinishCounter_1ms: current==0 → TRUE 반환
+  ```
+  `setCountMax_1ms`는 `current=0`으로 설정. SysTick ISR이 `current==0`을 감지해 `max`로 재로드하기 전에 메인루프가 `wifiLoop()`를 실행하면 `isFinishCounter_1ms()==TRUE` → 즉시 타임아웃 발동
+- **실행 흐름 (버그)**:
+  ```
+  MenuLoop() → requestVersion() → wifi_cmd_ota_version() → setCountMax(15000) → current=0
+  ↓ (1ms ISR 아직 미실행 — 메인루프가 ISR보다 빠름)
+  wifiLoop() → isFinishCounter(g_index_Wifi_Test): current==0 → TRUE
+  → "[WIFI] CMD 9 timeout → IDLE" → otaHandleVersionResponse("{}", 2u)
+  → r=1 (빈 객체 {}), 루프 미실행 → g_otaLatestVersion[0]=='\0' → "Bad version data"
+  ↓ (이후 실제 HTTP 응답 도착하지만 g_wifi_cmd=IDLE → 무시)
+  ```
+- **수정**: `_wifi_send_httpget()`, `_wifi_send_httpget_ota()`, `wifi_cmd()` 세 함수에 `resetCounter_1ms(g_index_Wifi_Test)` 추가
+  ```c
+  /* 수정 전 */
+  g_wifi_cmd = cmd;
+  setCountMax_1ms(g_index_Wifi_Test, timeoutMs);
+
+  /* 수정 후 */
+  g_wifi_cmd = cmd;
+  setCountMax_1ms(g_index_Wifi_Test, timeoutMs);
+  resetCounter_1ms(g_index_Wifi_Test);  // current=max 보장 (current=0 즉시발동 방지)
+  ```
+- **근거**: `resetCounter_1ms`는 `current=max`로 즉시 설정 → ISR 실행 여부와 무관하게 타이머가 정상적으로 카운트다운 시작. `wifiConnectAP()` case 1에서 이미 이 패턴 사용 (`wifi_cmd(GET_MAC)` 후 `resetCounter_1ms()` 명시적 호출)
+
+---
 
 #### 2026-03-20 (V2_BLACK_CPU — OTA UPDATE 메뉴 네비게이션 버그 수정)
 
