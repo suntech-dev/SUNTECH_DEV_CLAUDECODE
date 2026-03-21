@@ -423,6 +423,7 @@ bootloader.cydsn/
 | 20 | **높음** | `otaMenu.c` | JSMN `tokens[8]` 크기 부족 — 청크 응답 JSON 9 tokens 필요한데 8개만 할당 | `jsmn_parse()` 실패 → "[OTA] chunk JSON error" → 다운로드 중단 | ✅ 수정 (`tokens[12]`, `jsmn_parse(...,12)`) |
 | 21 | **높음** | `lib/WIFI.c` | 청크 HTTPBODY 처리 후 `requestNextChunk()`가 다음 요청 전송했는데, 이전 청크의 HTTPCLOSE가 늦게 도착하며 `g_wifi_cmd=IDLE`로 덮어씀 | 다운로드 첫 청크(400 bytes) 후 완전 중단 | ✅ 수정 (HTTPCLOSE 분기에서 `g_wifi_cmd=IDLE` 제거) |
 | 22 | **치명** | `bootloader.cydsn/main.c` | (1) `PSOC4_FLASH_ROW_SIZE=128` (정답 256), (2) `srcAddr` 앱 오프셋 누락 — 부트로더 영역 데이터를 앱 Row에 기록, (3) `PSOC4_MAX_APP_ROWS=240` 과소 — 전체 앱 미기록 | OTA 다운로드 완료 후 재부팅해도 버전 미변경 | ✅ 수정 (ROW_SIZE=256, srcAddr=BOOTLOADABLE_BASE_ROW 오프셋 추가, MAX_APP_ROWS=958) |
+| 23 | **치명** | `otaMenu.c` | `W25qxx_WritePage(bytesCnt=400)` — 내부에서 PageSize(256)로 잘라냄. 400바이트 청크 → 256바이트만 기록, 144바이트 유실 → W25QXX 펌웨어 데이터 전체 손상 | OTA 다운로드 완료 후 부트로더가 0xFF 데이터만 읽어 PSoC Flash 기록 실패 | ✅ 수정 (`W25qxx_WriteSector` + 섹터 경계 분할 루프로 교체) |
 
 ### 9.2 수정 이력
 
@@ -526,6 +527,7 @@ bootloader.cydsn/
 | 2026-03-20 | V2_BLACK_CPU | 버그수정 | OTA UPDATE 터치 시 스크롤 업 오동작 (widget.h IDX_SCROLL_UP=6 → 0xFD 충돌 수정), manageMenu.c otaUpdate 노드 위치 이동(index 6) |
 | 2026-03-20 | V2_BLACK_CPU | 버그수정 | OTA 버전 요청 즉시 타임아웃 (setCountMax_1ms=0 → isFinishCounter 즉시 TRUE) — WIFI.c 3곳에 resetCounter_1ms 추가 |
 | 2026-03-20 | V2_BLACK_CPU | 버그수정 | OTA 청크 JSON 파싱 오류 (tokens[8]→tokens[12]), 청크 다운로드 중단 (HTTPCLOSE가 g_wifi_cmd=IDLE 덮어씀 수정), bootloader OTA 미적용 (ROW_SIZE 128→256, srcAddr 오프셋 수정, MAX_APP_ROWS 240→958) — V2.0.1 OTA 테스트 중 발견 |
+| 2026-03-21 | V2_BLACK_CPU | 버그수정 | W25qxx_WritePage(400bytes) → 256바이트로 잘림으로 W25QXX 데이터 손상 → W25qxx_WriteSector + 섹터경계 분할 루프로 교체 (이슈 #23) |
 
 ---
 

@@ -357,9 +357,6 @@ void otaHandleChunkResponse(char *json, uint16 size)
     char        *hexData  = NULL;
     uint16       hexLen   = 0;
     uint16       bytesCnt = 0;
-    uint32       flashAddr;
-    uint32       sectorOffset;
-    uint32       sectorNum;
     uint16       j;
 
     jsmn_init(&p);
@@ -399,20 +396,34 @@ void otaHandleChunkResponse(char *json, uint16 size)
     /* ※ g_otaCRC는 이 함수가 끝난 후 서버의 최종 CRC와 비교할 때 사용
      *   (현재는 서버 CRC로 검증, 계산 CRC는 부트로더에서 재검증) */
 
-    /* W25QXX Flash에 기록 */
-    /* 섹터 경계: 새 섹터 시작 시 먼저 Erase */
-    sectorOffset = g_otaDownloadOffset % w25qxx.SectorSize;
-    if(sectorOffset == 0u)
+    /* W25QXX Flash에 기록
+     * [수정] W25qxx_WritePage는 한 번에 PageSize(256) 초과 불가 — 400바이트 청크 사용 시
+     *        256바이트만 기록되고 나머지 144바이트가 유실됨.
+     *        W25qxx_WriteSector를 사용해야 페이지 경계를 내부에서 처리.
+     *        청크가 섹터 경계를 넘을 경우에도 분할 처리가 필요.           */
     {
-        sectorNum = (uint32)OTA_FIRMWARE_SECTOR + (g_otaDownloadOffset / w25qxx.SectorSize);
-        W25qxx_EraseSector(sectorNum);
-    }
+        uint32 remaining = (uint32)bytesCnt;
+        uint32 wOffset   = g_otaDownloadOffset;
+        uint8  *src      = g_chunkBuf;
 
-    flashAddr = (uint32)OTA_FIRMWARE_SECTOR * w25qxx.SectorSize + g_otaDownloadOffset;
-    W25qxx_WritePage(g_chunkBuf,
-                     flashAddr / w25qxx.PageSize,
-                     (uint32)(flashAddr % w25qxx.PageSize),
-                     bytesCnt);
+        while(remaining > 0u)
+        {
+            uint32 sN    = (uint32)OTA_FIRMWARE_SECTOR + (wOffset / w25qxx.SectorSize);
+            uint32 sOff  = wOffset % w25qxx.SectorSize;
+            uint32 avail = w25qxx.SectorSize - sOff;
+            uint32 now   = (remaining < avail) ? remaining : avail;
+
+            /* 섹터 시작(offset=0)일 때만 지우기 */
+            if(sOff == 0u)
+                W25qxx_EraseSector(sN);
+
+            W25qxx_WriteSector(src, sN, sOff, now);
+
+            src       += now;
+            wOffset   += now;
+            remaining -= now;
+        }
+    }
 
     g_otaDownloadOffset += bytesCnt;
 

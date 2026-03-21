@@ -197,6 +197,31 @@ if(W25qxx_Init()) { applyOtaIfPending(); }
 
 #### 2026-03-20 (V2_BLACK_CPU — OTA 청크 JSON 파싱 오류 수정)
 
+**[수정 8] W25qxx_WritePage 400바이트 청크 → 256바이트로 잘림 (데이터 유실)** (`otaMenu.c`)
+
+- **증상**: OTA 다운로드 완료 후 부트로더가 0xFF만 읽어 PSoC Flash 기록 실패 → 펌웨어 적용 안 됨
+- **원인**: `W25qxx_WritePage()` 내부 구현이 `PageSize(256)` 초과 시 자동으로 잘라냄
+  ```c
+  // w25qxx.c line 358-359
+  if(((NumByteToWrite + OffsetInByte) > w25qxx.PageSize) ...)
+      NumByteToWrite = w25qxx.PageSize - OffsetInByte;  // 최대 256으로 제한
+  ```
+  OTA_CHUNK_SIZE=400 → 256바이트만 기록, 144바이트 유실. 이후 청크들도 잘못된 오프셋에 기록 → W25QXX 전체 데이터 손상
+- **수정**: `W25qxx_WriteSector`로 교체 + 섹터 경계 넘는 청크 분할 처리 루프 적용
+  ```c
+  /* 수정 전 */
+  W25qxx_WritePage(g_chunkBuf, flashAddr/PageSize, flashAddr%PageSize, bytesCnt);
+  /* 수정 후: 섹터 단위 루프 */
+  while(remaining > 0u) {
+      if(sOff == 0u) W25qxx_EraseSector(sN);
+      W25qxx_WriteSector(src, sN, sOff, now);  /* 내부에서 페이지 경계 처리 */
+      ... /* 다음 섹터로 진행 */
+  }
+  ```
+  `W25qxx_WriteSector`는 내부에서 여러 페이지를 순차적으로 기록하므로 400바이트 전체 올바르게 처리
+
+---
+
 **[수정 5] JSMN token 배열 크기 부족으로 청크 JSON 파싱 실패** (`otaMenu.c`)
 
 - **증상**: `Downloading...` 진입 직후 `[OTA] chunk JSON error` 출력 후 다운로드 멈춤
