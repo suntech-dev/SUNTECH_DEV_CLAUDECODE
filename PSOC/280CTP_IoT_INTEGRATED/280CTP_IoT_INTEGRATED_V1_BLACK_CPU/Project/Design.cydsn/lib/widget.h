@@ -133,6 +133,5 @@ extern YES_NO_MENU  g_YesNoMenu;
 //extern BUTTON_ARRAY g_btnList;
 extern IMAGE g_imageUpArrow;
 extern IMAGE g_imageDownArrow;
-extern IMAGE g_imageWifi;
 #endif    
 /* [] END OF FILE */

@@ -24,16 +24,6 @@ IMAGE g_imageDownArrow =
     .height=32,
 };
 
-IMAGE g_imageWifi =
-{
-    .image = image_wifi_4,
-    .width = 32,
-    .height=32,
-    //.width = 0,
-    //.height=0,
-};
-
-RECT             g_rectWifi;
 BUTTON           g_wifi_strength;
 BUTTON           g_TitleBar;
 LIST_MENU        g_ListMenu;
@@ -51,14 +41,8 @@ void initWidget()
     SetDefaultButtonStyle(&g_wifi_strength);    
     SetButtonStyleColor(&g_wifi_strength,BUTTON_STYLE_TEXT);
         
-    /* wifi Icon */
-    g_rectWifi.right  = g_wifi_strength.rect.left-1;
-    g_rectWifi.left   = g_rectWifi.right - g_imageWifi.width;
-    g_rectWifi.top    = g_wifi_strength.rect.top;
-    g_rectWifi.bottom = g_wifi_strength.rect.bottom;
-    
     /* title Bar */
-    g_TitleBar.rect.right  = g_rectWifi.left;
+    g_TitleBar.rect.right  = g_wifi_strength.rect.left;
     g_TitleBar.rect.left   = 0;
     g_TitleBar.rect.top    = 0;
     g_TitleBar.rect.bottom = DEFAULT_TOP_TITLE_HEIGHT-2;
@@ -1031,39 +1015,33 @@ void DrawWifi()
     switch(uLevel)
     {
         case 0:
-            SetButtonText(&g_wifi_strength,"");
-            g_wifi_strength.foregroundColor = WHITE;
+            SetButtonText(&g_wifi_strength,"0");
+            g_wifi_strength.foregroundColor = RED;
             DrawButton(&g_wifi_strength);
-            g_imageWifi.image = image_wifi_0;
-        
             break;
         default:
             SetButtonText(&g_wifi_strength,"%d",uLevel);
             switch(uLevel)
             {
-                case 0:
-                case 1: g_wifi_strength.foregroundColor = RED;   
+                case 1: g_wifi_strength.foregroundColor = RED;
                         g_uLED1_Color = LED_RED;
                         break;
                 case 2: g_wifi_strength.foregroundColor = ORANGE;
-                        g_uLED1_Color = LED_PINK;                
+                        g_uLED1_Color = LED_PINK;
                         break;
                 case 3: g_wifi_strength.foregroundColor = YELLOW;
-                         g_uLED1_Color = LED_YELLOW;    
+                         g_uLED1_Color = LED_YELLOW;
                         break;
                 case 4: g_wifi_strength.foregroundColor = GREEN;
-                         g_uLED1_Color = LED_GREEN;   
+                         g_uLED1_Color = LED_GREEN;
                         break;
                 case 5: g_wifi_strength.foregroundColor = BLUE;
-                         g_uLED1_Color = LED_BLUE;   
-                        break;             
+                         g_uLED1_Color = LED_BLUE;
+                        break;
             }
             DrawButton(&g_wifi_strength);
-            g_imageWifi.image = image_wifi_4;  
-            break;            
+            break;
     }
- 
-    DrawImageRect(&g_rectWifi,&g_imageWifi,BLACK);
 
 }
 

@@ -21,20 +21,20 @@
 
 ### 메모리 사용량
 
-> 2026-03-17 코드 수정 후 빌드 결과 (실측)
+> 2026-03-23 WiFi 아이콘 제거 후 빌드 결과 (실측)
 
 | 영역 | 사용 | 전체 | 점유율 | 상태 |
 |------|------|------|--------|------|
-| Flash (전체) | 122,812 bytes | 262,144 bytes | 46.8% | ✅ 양호 |
+| Flash (전체) | 118,620 bytes | 262,144 bytes | 45.2% | ✅ 양호 |
 | Flash (Bootloader) | 13,568 bytes | — | 5.2% | |
-| Flash (Application) | 108,988 bytes | — | 41.6% | |
+| Flash (Application) | 104,796 bytes | — | 40.0% | |
 | Flash (Metadata) | 256 bytes | — | 0.1% | |
-| **SRAM** | **22,532 bytes** | **32,768 bytes** | **68.8%** | ✅ 안정 |
+| **SRAM** | **22,516 bytes** | **32,768 bytes** | **68.7%** | ✅ 안정 |
 | Stack | 2,048 bytes | — | — | |
 | Heap | 1,024 bytes | — | — | |
 
-> V1 대비 변화: Flash -8,504 bytes (-3.3%), SRAM -112 bytes (68.8% vs 69.1%)
-> ※ ADC_SAR_Seq TopDesign 제거 후 추가 절감 예상
+> 2026-03-17 대비 변화: Flash -4,192 bytes (-1.6%), SRAM -16 bytes (68.7% vs 68.8%)
+> V1 대비 누적 변화: Flash -13,008 bytes (-5.0%), SRAM -128 bytes
 
 ### V1 대비 변경 사항
 
@@ -96,6 +96,14 @@ V1과 동일하나 아래 항목 비활성화:
 > **모든 작업 완료** — Flash 46.8% / SRAM 68.8% (ADC stub이 이미 ADC 참조 없었으므로 메모리 수치 동일)
 
 ### 변경 이력
+
+#### 2026-03-23 (LCD 상단 WiFi 아이콘 제거 — Flash 최적화)
+- `lib/image.h` WiFi 아이콘 배열 5개 전체 제거 (`image_wifi_0` ~ `image_wifi_4`, 약 10KB)
+- `lib/widget.c` `DrawWifi()` 수정: 미연결 시 빈 텍스트 대신 빨간 `"0"` 표시
+- `lib/widget.c` `initWidget()` WiFi 아이콘 좌표 섹션 제거, TitleBar 영역 확장 (176px → 208px)
+- `lib/widget.c` `g_imageWifi`, `g_rectWifi` 변수 제거
+- `lib/widget.h` `extern IMAGE g_imageWifi` 선언 제거
+- Flash: 122,812 → 118,620 bytes (-4,192 bytes, -1.6%), SRAM: 22,532 → 22,516 bytes (-16 bytes)
 
 #### 2026-03-17 (BLACK_CPU V1 코드 수정 완료)
 - V1 통합 버전 기반으로 PATTERN_MACHINE 전용 BLACK CPU 버전 분리
