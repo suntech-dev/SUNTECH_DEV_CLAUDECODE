@@ -280,14 +280,15 @@ void wifi_get_response()
 
     printf("%s - %d\r\n",g_WIFI_ReceiveBuffer, g_wifi_cmd);
 
-    /* [수정 2] IDLE 상태에서 늦게 도착한 MIB 응답 처리 (2026-03-10)
-     * 기존 문제: MIB 타임아웃(CMD 2 timeout→IDLE) 후 응답이 늦게 오면
-     *            g_wifi_cmd=0(IDLE)이므로 switch 내 처리 케이스가 없어 무시됨
-     *            → DrawWifi() 미호출 → g_network.RSSI = INT16_MIN(초기값) 유지
-     *            → WiFi 연결됐음에도 화면에 WiFi 미연결 아이콘 표시
-     * 해결: switch 진입 전 IDLE 상태의 MIB 응답을 먼저 처리하여 RSSI 갱신 및 DrawWifi() 호출
-     * 롤백: 아래 if 블록 전체(6줄)를 제거하면 원복됨 */
-    if(g_wifi_cmd == WIFI_CMD_IDLE && STRSTR_WIFI_BUFFER("ICT*MIB:OK") != NULL)
+    /* [수정 2] IDLE/HTTP 상태에서 늦게 도착한 MIB 응답 처리 (2026-03-10, 2026-03-23 확장)
+     * 기존 문제(2026-03-10): MIB 타임아웃 후 IDLE 상태에서 응답 도착 → 무시됨
+     * 추가 문제(2026-03-23): 부팅 시 case3에서 wifi_cmd(RECEIVED_STRENGTH) 직후 initAndon()이
+     *            wifi_cmd_http()를 호출 → g_wifi_cmd = WIFI_CMD_HTTP 로 덮어씀
+     *            → MIB 신호강도 응답이 도착해도 switch case WIFI_CMD_HTTP는 ICT*MIB:OK 처리 없음
+     *            → RSSI 미갱신 → 신호강도 0 표기 (5회 부팅 중 약 2회 발생)
+     * 해결: IDLE 외에 WIFI_CMD_HTTP 상태도 MIB 응답 선처리 대상에 추가
+     * 롤백: 아래 if 조건을 (g_wifi_cmd == WIFI_CMD_IDLE) 으로 되돌리면 원복됨 */
+    if((g_wifi_cmd == WIFI_CMD_IDLE || g_wifi_cmd == WIFI_CMD_HTTP) && STRSTR_WIFI_BUFFER("ICT*MIB:OK") != NULL)
     {
         p = STRSTR_WIFI_BUFFER(" "); p++;
         g_network.RSSI = atoi(p);

@@ -21,20 +21,20 @@
 
 ### 메모리 사용량
 
-> 2026-03-23 RESTART 메뉴 추가 후 빌드 결과 (실측)
+> 2026-03-24 WiFi RSSI 버그 수정 후 빌드 결과 (실측)
 
 | 영역 | 사용 | 전체 | 점유율 | 상태 |
 |------|------|------|--------|------|
-| Flash (전체) | 118,796 bytes | 262,144 bytes | 45.3% | ✅ 양호 |
+| Flash (전체) | 118,804 bytes | 262,144 bytes | 45.3% | ✅ 양호 |
 | Flash (Bootloader) | 13,568 bytes | — | 5.2% | |
-| Flash (Application) | 104,972 bytes | — | 40.0% | |
+| Flash (Application) | 104,980 bytes | — | 40.0% | |
 | Flash (Metadata) | 256 bytes | — | 0.1% | |
 | **SRAM** | **22,580 bytes** | **32,768 bytes** | **68.9%** | ✅ 안정 |
 | Stack | 2,048 bytes | — | — | |
 | Heap | 1,024 bytes | — | — | |
 
-> WiFi 아이콘 제거(2026-03-23) 대비 변화: Flash +176 bytes (RESTART 코드), SRAM +64 bytes (doRestart static 변수)
-> V1 대비 누적 변화: Flash -13,008 bytes (-5.0%), SRAM -128 bytes
+> 2026-03-23 RESTART 메뉴 추가 대비 변화: Flash +8 bytes (조건 확장), SRAM 동일
+> V1 대비 누적 변화: Flash -13,000 bytes (-5.0%), SRAM -128 bytes
 
 ### V1 대비 변경 사항
 
@@ -96,6 +96,26 @@ V1과 동일하나 아래 항목 비활성화:
 > **모든 작업 완료** — Flash 46.8% / SRAM 68.8% (ADC stub이 이미 ADC 참조 없었으므로 메모리 수치 동일)
 
 ### 변경 이력
+
+#### 2026-03-24 (WiFi 신호강도 0 버그 수정 — 부팅 시 레이스 컨디션)
+
+**버그**: 부팅 후 WiFi 신호강도가 0으로 표기됨 (5회 중 약 2회 발생)
+
+**원인 — `lib/WIFI.c` `case 3` 레이스 컨디션**
+- 부팅 시 `case 3`에서 `wifi_cmd(WIFI_CMD_RECEIVED_STRENGTH)` 직후 `initAndon()` 즉시 호출
+- `initAndon()` → `wifi_cmd_http()` → `g_wifi_cmd = WIFI_CMD_HTTP` 로 덮어씀
+- MIB 신호강도 응답(`*ICT*MIB:OK -30 - 2`) 도착 시 `g_wifi_cmd == WIFI_CMD_HTTP` 상태
+- 기존 pre-check(`g_wifi_cmd == WIFI_CMD_IDLE`만 검사) 통과 실패
+- `switch case WIFI_CMD_HTTP`는 `ICT*MIB:OK` 처리 없음 → RSSI 미갱신 → 신호강도 0 표기
+
+**수정 — `lib/WIFI.c` `wifi_get_response()` pre-check 조건 확장**
+- 변경 전: `if(g_wifi_cmd == WIFI_CMD_IDLE && STRSTR_WIFI_BUFFER("ICT*MIB:OK") != NULL)`
+- 변경 후: `if((g_wifi_cmd == WIFI_CMD_IDLE || g_wifi_cmd == WIFI_CMD_HTTP) && STRSTR_WIFI_BUFFER("ICT*MIB:OK") != NULL)`
+- HTTP 처리 중 MIB 응답 도착 시에도 RSSI 갱신 + `DrawWifi()` 호출 후 return (HTTP 흐름 무영향)
+
+**빌드 결과**: Flash 118,796 → 118,804 bytes (+8 bytes), SRAM 동일
+
+---
 
 #### 2026-03-23 (RESTART 메뉴 추가 + 스크롤 버그 수정 + 미사용 폰트 비활성화)
 
