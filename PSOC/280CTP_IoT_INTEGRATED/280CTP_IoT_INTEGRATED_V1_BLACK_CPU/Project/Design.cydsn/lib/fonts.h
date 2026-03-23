@@ -11,11 +11,11 @@
 #define FONT_NO_CHAR     4
 
 #define  _FONT_Grotesk16x32_
-#define  _FONT_DotMatrix_M_16x22_
-#define  _FONT_AlibriNumBold32x48_
-#define  _FONT_ArialNumFontPlus32x50_
+//#define  _FONT_DotMatrix_M_16x22_        // 미사용 폰트 제거 — Flash 4,184 bytes 절감
+//#define  _FONT_AlibriNumBold32x48_       // 미사용 폰트 제거 — Flash 1,924 bytes 절감
+//#define  _FONT_ArialNumFontPlus32x50_    // 미사용 폰트 제거 — Flash 2,204 bytes 절감
 #define  _FONT_SmallFont8x12_
-#define  _FONT_SevenSegNumFontPlusPlus32x50_
+//#define  _FONT_SevenSegNumFontPlusPlus32x50_  // 미사용 폰트 제거 — Flash 2,604 bytes 절감
 #define  _FONT_Arial_round_16x24_
 
 #ifdef _FONT_AlibriNumBold32x48_

@@ -21,19 +21,19 @@
 
 ### 메모리 사용량
 
-> 2026-03-23 WiFi 아이콘 제거 후 빌드 결과 (실측)
+> 2026-03-23 RESTART 메뉴 추가 후 빌드 결과 (실측)
 
 | 영역 | 사용 | 전체 | 점유율 | 상태 |
 |------|------|------|--------|------|
-| Flash (전체) | 118,620 bytes | 262,144 bytes | 45.2% | ✅ 양호 |
+| Flash (전체) | 118,796 bytes | 262,144 bytes | 45.3% | ✅ 양호 |
 | Flash (Bootloader) | 13,568 bytes | — | 5.2% | |
-| Flash (Application) | 104,796 bytes | — | 40.0% | |
+| Flash (Application) | 104,972 bytes | — | 40.0% | |
 | Flash (Metadata) | 256 bytes | — | 0.1% | |
-| **SRAM** | **22,516 bytes** | **32,768 bytes** | **68.7%** | ✅ 안정 |
+| **SRAM** | **22,580 bytes** | **32,768 bytes** | **68.9%** | ✅ 안정 |
 | Stack | 2,048 bytes | — | — | |
 | Heap | 1,024 bytes | — | — | |
 
-> 2026-03-17 대비 변화: Flash -4,192 bytes (-1.6%), SRAM -16 bytes (68.7% vs 68.8%)
+> WiFi 아이콘 제거(2026-03-23) 대비 변화: Flash +176 bytes (RESTART 코드), SRAM +64 bytes (doRestart static 변수)
 > V1 대비 누적 변화: Flash -13,008 bytes (-5.0%), SRAM -128 bytes
 
 ### V1 대비 변경 사항
@@ -96,6 +96,30 @@ V1과 동일하나 아래 항목 비활성화:
 > **모든 작업 완료** — Flash 46.8% / SRAM 68.8% (ADC stub이 이미 ADC 참조 없었으므로 메모리 수치 동일)
 
 ### 변경 이력
+
+#### 2026-03-23 (RESTART 메뉴 추가 + 스크롤 버그 수정 + 미사용 폰트 비활성화)
+
+**RESTART 메뉴 추가**
+- `lib/manageMenu.c` `doRestart()` 함수 추가 — `doFactoryReset` 패턴과 동일한 YES/NO 확인 다이얼로그
+  - 터치 흐름: LCD → MENU → RESTART → "Do you want ?" → OK → `CySoftwareReset()` 재부팅
+  - QUIT 버튼: 이전 메뉴로 복귀, OK 버튼: `ShowWaitMessage()` 후 소프트웨어 리셋
+- `lib/manageMenu.c` `manageMenuCreate()` 에 `createMENUNODE(root, "RESTART", &doRestart)` 추가 (WIFI INFO 다음, 마지막 위치)
+
+**스크롤 버그 수정 (7번째+ 메뉴 터치 시 이전 페이지로 이동하는 문제)**
+- `lib/widget.h` `enum BASIC_MENU_IDX` 의 `IDX_SCROLL_UP`, `IDX_SCROLL_DOWN` 값 변경
+  - 변경 전: `IDX_SCROLL_UP=6`, `IDX_SCROLL_DOWN=7`
+  - 변경 후: `IDX_SCROLL_UP=0x10(16)`, `IDX_SCROLL_DOWN=0x11(17)`
+  - 원인: `getIndexOfClickedListMenu()`가 7번째 아이템 클릭 시 인덱스 6 반환 → `doListMenuPage` switch에서 `IDX_SCROLL_UP(=6)` 케이스로 잘못 분기 → 페이지 감소(이전 단계 이동)
+  - 수정 효과: `listText` 최대 15개이므로 인덱스 최대 14, 0x10(16) 이상 값은 충돌 없음
+
+**미사용 폰트 비활성화 (`lib/fonts.h`)**
+- `#define _FONT_DotMatrix_M_16x22_`, `_FONT_AlibriNumBold32x48_`, `_FONT_ArialNumFontPlus32x50_`, `_FONT_SevenSegNumFontPlusPlus32x50_` 주석 처리
+- 활성 유지: `_FONT_Grotesk16x32_`, `_FONT_SmallFont8x12_`, `_FONT_Arial_round_16x24_`
+- 비고: PSoC Creator `--gc-sections` 링커가 미참조 `static const` 배열을 이미 제거하므로 Flash 크기 변화 없음, 향후 유지보수 명확화 목적
+
+**빌드 결과**: Flash 118,620 → 118,796 bytes (+176 bytes), SRAM 22,516 → 22,580 bytes (+64 bytes)
+
+---
 
 #### 2026-03-23 (LCD 상단 WiFi 아이콘 제거 — Flash 최적화)
 - `lib/image.h` WiFi 아이콘 배열 5개 전체 제거 (`image_wifi_0` ~ `image_wifi_4`, 약 10KB)

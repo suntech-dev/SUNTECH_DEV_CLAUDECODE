@@ -487,6 +487,46 @@ int doListMenuSetting(void *this, uint8 reflash)
     return doListMenuPage(this, reflash, &page) ;
 }
 
+int doRestart(void *this, uint8 reflash) /////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+{
+    MENUNODE *thisMenu = (MENUNODE *) this;
+    static YES_NO_MENU menu;
+
+    switch(reflash)
+    {
+        case TRUE: // 화면이 바뀔때 실행
+            {
+                strcpy(menu.title, thisMenu->nodeName);
+                SetDrawYesNoButtons(&menu, "Do you want ?");
+                SetDrawBottomButtons("QUIT", "OK", BUTTON_STYLE_R_GREEN, BUTTON_STYLE_R_BLUE);
+            }
+            break;
+
+        case FALSE: // Cliking Check
+            {
+                TOUCH tc = GetTouch();
+                if(tc.isClick == FALSE) break;
+
+                switch(getIndexOfClickedButton(&tc, g_btnBottom, 2))
+                {
+                    case BOTTOM_LEFT:
+                    {
+                        return MENU_RETURN_PARENT;
+                    }
+                    case BOTTOM_RIGHT:
+                    {
+                        ShowWaitMessage();
+                        CySoftwareReset();
+                        return MENU_RETURN_PARENT;
+                    }
+                }
+            }
+            break;
+    }
+    return MENU_RETURN_THIS;
+}
+
 MENUNODE * manageMenuCreate(MENUNODE *parent)
 {
     // Main Menu  ............................................
@@ -500,7 +540,8 @@ MENUNODE * manageMenuCreate(MENUNODE *parent)
             MENUNODE *defectiveRequest= createMENUNODE(defective, "REQUEST",       &doDefectiveRequest);        
         MENUNODE *reset               = createMENUNODE(root,      "RESET",         &doReset);
         MENUNODE *deviceInfo          = createMENUNODE(root,      "DEVICE INFO",   &doDeviceInfo);
-        MENUNODE *wifiInfo            = createMENUNODE(root,      "WIFI INFO",     &doWifiInfo);       
+        MENUNODE *wifiInfo            = createMENUNODE(root,      "WIFI INFO",     &doWifiInfo);
+        MENUNODE *restart             = createMENUNODE(root,      "RESTART",       &doRestart);
    return root;
 }
 /* [] END OF FILE */

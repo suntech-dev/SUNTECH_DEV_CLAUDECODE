@@ -25,8 +25,8 @@ enum BASIC_MENU_IDX
     IDX_LIST_BTN3,
     IDX_LIST_BTN4,
     IDX_LIST_BTN5,
-    IDX_SCROLL_UP,
-    IDX_SCROLL_DOWN
+    IDX_SCROLL_UP   = 0x10,   // 0x10(16): 아이템 인덱스(최대 14)와 충돌 방지
+    IDX_SCROLL_DOWN = 0x11    // 0x11(17): 기존값 6,7은 7,8번째 메뉴 터치 시 오동작
 };
 enum BOTTOM_BUTTON {
     BOTTOM_LEFT = 0,
