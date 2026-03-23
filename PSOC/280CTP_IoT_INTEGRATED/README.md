@@ -1,10 +1,10 @@
 # 280CTP_IoT_INTEGRATED 프로젝트 분석 문서
 
 > 최초 작성: 2026-03-09
-> 분석 버전: V2_BLACK_CPU (OTA 무선 업데이트 추가)
-> 마지막 빌드: 2026-03-20 (성공 — bootloader + Design 순차 빌드)
-> 마지막 코드 개선: 2026-03-20 (bootloader OTA 프로그래밍 버그 3건, 청크 JSON 파싱 오류, 청크 상태 덮어쓰기 버그)
-> 마지막 업데이트: 2026-03-20
+> 분석 버전: V1_BLACK_CPU (PATTERN_MACHINE 전용)
+> 마지막 빌드: 2026-03-17 (성공 — bootloader + Design 순차 빌드)
+> 마지막 코드 개선: 2026-03-17 (ADC_SAR_Seq TopDesign 제거 + currentSensor.c 프로젝트 제거)
+> 마지막 업데이트: 2026-03-23
 
 ---
 
@@ -37,19 +37,7 @@ LCD 터치 디스플레이를 통해 작업 지시, 가동 현황, 불량 관리
 
 ```
 280CTP_IoT_INTEGRATED/
-├── 280CTP_IoT_INTEGRATED_V2_BLACK_CPU/          # V2 - OTA 무선 업데이트 추가 (2026.03) ← 최신
-│   ├── Project/
-│   │   ├── Design.cydsn/                        # 메인 애플리케이션 펌웨어
-│   │   │   ├── otaMenu.c / otaMenu.h            # OTA 업데이트 메뉴 + 자동 체크 (신규)
-│   │   │   ├── lib/WIFI.c                       # WiFi 통신 (OTA HTTP GET 케이스 추가)
-│   │   │   ├── lib/widget.c                     # LCD 위젯 (DrawHeader OTA 배지 추가)
-│   │   │   ├── lib/server.h                     # 서버 설정 (DEFAULT_OTA_API_PATH 추가)
-│   │   │   └── ...                              # V1_BLACK_CPU와 동일한 나머지 파일
-│   │   ├── bootloader.cydsn/                    # OTA 부트로더 (W25QXX 외부 Flash → 내부 Flash 프로그래밍)
-│   │   └── *.cyprj / *.cywrk
-│   └── SuntechIoTConfig_V1/                     # C# 설정 도구
-│
-├── 280CTP_IoT_INTEGRATED_V1_BLACK_CPU/          # V1 - PATTERN_MACHINE 전용 (2026.03)
+├── 280CTP_IoT_INTEGRATED_V1_BLACK_CPU/          # V1 - PATTERN_MACHINE 전용 (2026.03) ← 최신
 │   ├── Project/
 │   │   ├── Design.cydsn/                        # SEWING_MACHINE/전류센서 제거 버전
 │   │   └── bootloader.cydsn/
@@ -417,13 +405,6 @@ bootloader.cydsn/
 | 14 | **높음** | `lib/server.h` | `DEFAULT_SERVER_HOST` 소문자 경로 — Linux 서버 대소문자 구분으로 404 반환 | API 통신 전체 실패 | ✅ 수정 (`CTP280_API` 대소문자 수정) |
 | 15 | **중간** | `andonApi.c` | `initAndon()` 순서 오류 — `start` 전에 `get_downtimeList/defectiveList` 호출 | `req_interval` 미수신으로 주기 설정 지연 | ✅ 수정 (순서 재정렬) |
 | 16 | **중간** | `lib/WIFI.c` | MIB 타임아웃 후 `CMD 2 timeout` 반복 + WiFi 미연결 아이콘 표시 | LCD UI 오표시 | ✅ 수정 (수정 1+2 적용) |
-| 17 | **높음** | `lib/WIFI.c` | OTA 응답이 `andonResponse()`로 전달되어 ANDON 상태 오염 → RSSI 미갱신 → WIFI INFO 미표시 | LCD WIFI INFO 화면 데이터 표시 불가 | ✅ 수정 (`g_wifi_cmd == WIFI_CMD_HTTP` 가드 추가) |
-| 18 | **높음** | `lib/widget.h` | `IDX_SCROLL_UP = 6`이 메뉴 child index 6과 충돌 → OTA UPDATE 터치 시 스크롤 업 동작 | OTA 화면 진입 불가, 메뉴 리스트가 페이지 0으로 스크롤됨 | ✅ 수정 (`IDX_SCROLL_UP = 0xFD`, `IDX_SCROLL_DOWN = 0xFE`) |
-| 19 | **높음** | `lib/WIFI.c` | `setCountMax_1ms()`가 `current=0`으로 설정 → 다음 `wifiLoop()`에서 `isFinishCounter_1ms()==TRUE` 즉시 반환 → OTA 버전 요청 직후 타임아웃 발동 | "OTA Error Bad version data" 즉시 표시, 서버 응답 무시 | ✅ 수정 (`_wifi_send_httpget()`, `_wifi_send_httpget_ota()`, `wifi_cmd()` 모두에 `resetCounter_1ms()` 추가) |
-| 20 | **높음** | `otaMenu.c` | JSMN `tokens[8]` 크기 부족 — 청크 응답 JSON 9 tokens 필요한데 8개만 할당 | `jsmn_parse()` 실패 → "[OTA] chunk JSON error" → 다운로드 중단 | ✅ 수정 (`tokens[12]`, `jsmn_parse(...,12)`) |
-| 21 | **높음** | `lib/WIFI.c` | 청크 HTTPBODY 처리 후 `requestNextChunk()`가 다음 요청 전송했는데, 이전 청크의 HTTPCLOSE가 늦게 도착하며 `g_wifi_cmd=IDLE`로 덮어씀 | 다운로드 첫 청크(400 bytes) 후 완전 중단 | ✅ 수정 (HTTPCLOSE 분기에서 `g_wifi_cmd=IDLE` 제거) |
-| 22 | **치명** | `bootloader.cydsn/main.c` | (1) `PSOC4_FLASH_ROW_SIZE=128` (정답 256), (2) `srcAddr` 앱 오프셋 누락 — 부트로더 영역 데이터를 앱 Row에 기록, (3) `PSOC4_MAX_APP_ROWS=240` 과소 — 전체 앱 미기록 | OTA 다운로드 완료 후 재부팅해도 버전 미변경 | ✅ 수정 (ROW_SIZE=256, srcAddr=BOOTLOADABLE_BASE_ROW 오프셋 추가, MAX_APP_ROWS=958) |
-| 23 | **치명** | `otaMenu.c` | `W25qxx_WritePage(bytesCnt=400)` — 내부에서 PageSize(256)로 잘라냄. 400바이트 청크 → 256바이트만 기록, 144바이트 유실 → W25QXX 펌웨어 데이터 전체 손상 | OTA 다운로드 완료 후 부트로더가 0xFF 데이터만 읽어 PSoC Flash 기록 실패 | ✅ 수정 (`W25qxx_WriteSector` + 섹터 경계 분할 루프로 교체) |
 
 ### 9.2 수정 이력
 
@@ -446,6 +427,7 @@ bootloader.cydsn/
 | 2026-03-10 | 이슈 #11 — `userMenuPatternSewingMachine.c` 정리: 중복 `count.h` include 제거, 주석 처리된 구버전 `doTargetInfoMenu` (130줄) 제거, 빈 switch 블록 정리 (931 → 763 라인) |
 | 2026-03-10 | 이슈 #13 — `server.h` `DEFAULT_SERVER_HOST` 소문자 → 대소문자 수정 (`CTP280_API`), `andonApi.c` `initAndon()` API 순서 재정렬 (start 우선) |
 | 2026-03-10 | 이슈 #14 — `WIFI.c` MIB 타임아웃 반복 방지 (수정 1) + IDLE 상태 MIB 응답 처리로 WiFi 미연결 아이콘 버그 수정 (수정 2) |
+| 2026-03-17 | V1_BLACK_CPU — PATTERN_MACHINE 전용 버전 분리 (SEWING/전류센서 제거, ADC_SAR_Seq TopDesign 제거) |
 | 2026-03-09 | V1 최초 문서 분석 — 이슈 목록 작성 |
 
 ---
@@ -518,43 +500,31 @@ bootloader.cydsn/
 | 2025-11-17 | V1 | 운영 중 | 통합 버전 최초 구현 (IoT_SCI_2025.07.23 기반) |
 | 2025-12-20 | V1 | 패치 | SRAM 최적화 — const 추가, 8,192 bytes 절감 |
 | 2026-03-09 | V1 | 문서화 | 프로젝트 최초 문서 분석 및 이슈 목록 작성 |
-| 2026-03-20 | - | 문서화 | OTA 웹 서버 가이드 신규 (`WEB/CTP280_OTA/`) |
 | 2026-03-10 | V1 | 수정 | 이슈 #5~#16 전체 수정 (서버 설정, WiFi 타임아웃, MIB 버그 등) |
 | 2026-03-17 | V1_BLACK_CPU | 신규 | PATTERN_MACHINE 전용 BLACK CPU 버전 분리 (SEWING/전류센서 제거) |
-| 2026-03-19 | V2_BLACK_CPU | 신규 | OTA 무선 업데이트 기능 추가 (2-Stage 자동 체크 + 수동 메뉴) |
-| 2026-03-20 | V2_BLACK_CPU | 버그수정 | WIFI INFO 미표시 (andonResponse 가드), OTA 먹통 (NULL→&g_ListMenu) 수정 |
-| 2026-03-20 | V2_BLACK_CPU | 빌드완료 | OTA 부트로더 완성 (SPIM_FLASH+w25qxx 추가, CySysFlashWriteRow 수정, Placement 0x4200) — Flash 51.3% (134,408 bytes) / SRAM 70.1% (22,972 bytes) |
-| 2026-03-20 | V2_BLACK_CPU | 버그수정 | OTA UPDATE 터치 시 스크롤 업 오동작 (widget.h IDX_SCROLL_UP=6 → 0xFD 충돌 수정), manageMenu.c otaUpdate 노드 위치 이동(index 6) |
-| 2026-03-20 | V2_BLACK_CPU | 버그수정 | OTA 버전 요청 즉시 타임아웃 (setCountMax_1ms=0 → isFinishCounter 즉시 TRUE) — WIFI.c 3곳에 resetCounter_1ms 추가 |
-| 2026-03-20 | V2_BLACK_CPU | 버그수정 | OTA 청크 JSON 파싱 오류 (tokens[8]→tokens[12]), 청크 다운로드 중단 (HTTPCLOSE가 g_wifi_cmd=IDLE 덮어씀 수정), bootloader OTA 미적용 (ROW_SIZE 128→256, srcAddr 오프셋 수정, MAX_APP_ROWS 240→958) — V2.0.1 OTA 테스트 중 발견 |
-| 2026-03-21 | V2_BLACK_CPU | 버그수정 | W25qxx_WritePage(400bytes) → 256바이트로 잘림으로 W25QXX 데이터 손상 → W25qxx_WriteSector + 섹터경계 분할 루프로 교체 (이슈 #23) |
+| 2026-03-23 | V1_BLACK_CPU | 정리 | OTA UPDATE 코드 전체 제거 (otaMenu, WIFI OTA 케이스, widget 배지, manageMenu 노드) |
 
 ---
 
 ## 13. 관련 파일 경로 빠른 참조
 
-> 최신 버전(`V2_BLACK_CPU`) 기준. 동일 파일명이 V1/V1_BLACK_CPU에도 존재함.
+> 최신 버전(`V1_BLACK_CPU`) 기준. 동일 파일명이 V1에도 존재함.
 
 | 파일 | 경로 |
 |------|------|
-| 메인 로직 | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/Project/Design.cydsn/main.c` |
-| ANDON API | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/Project/Design.cydsn/andonApi.c` |
-| ANDON JSON 파싱 | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/Project/Design.cydsn/andonJson.c` |
-| WiFi 통신 | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/Project/Design.cydsn/lib/WIFI.c` |
-| 서버 설정 | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/Project/Design.cydsn/lib/server.h` |
-| **OTA 메뉴** | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/Project/Design.cydsn/otaMenu.c` |
-| **OTA 헤더** | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/Project/Design.cydsn/otaMenu.h` |
-| **OTA 웹 관리 페이지** | `C:\SUNTECH_DEV_CLAUDECODE\WEB\CTP280_OTA\CTP280_OTA_V1\index.html` |
-| **OTA 웹 서버 가이드** | `C:\SUNTECH_DEV_CLAUDECODE\WEB\CTP280_OTA\CTP280_OTA_V1\README.md` |
-| 카운팅 로직 | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/Project/Design.cydsn/count.c` |
-| 가동 중단 | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/Project/Design.cydsn/downtime.c` |
-| 불량 관리 | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/Project/Design.cydsn/defective.c` |
-| 외부 Flash | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/Project/Design.cydsn/lib/externalFlash.c` |
-| 내부 EEPROM | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/Project/Design.cydsn/lib/internalFlash.c` |
-| 프로젝트 타입 | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/Project/Design.cydsn/package.h` |
-| 설정 구조체 | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/Project/Design.cydsn/lib/config.h` |
-| 설정 도구 | `280CTP_IoT_INTEGRATED_V2_BLACK_CPU/SuntechIoTConfig_V1/MainForm.cs` |
-| **OTA 구현 가이드** | `OTA_IMPLEMENTATION_GUIDE.md` |
+| 메인 로직 | `280CTP_IoT_INTEGRATED_V1_BLACK_CPU/Project/Design.cydsn/main.c` |
+| ANDON API | `280CTP_IoT_INTEGRATED_V1_BLACK_CPU/Project/Design.cydsn/andonApi.c` |
+| ANDON JSON 파싱 | `280CTP_IoT_INTEGRATED_V1_BLACK_CPU/Project/Design.cydsn/andonJson.c` |
+| WiFi 통신 | `280CTP_IoT_INTEGRATED_V1_BLACK_CPU/Project/Design.cydsn/lib/WIFI.c` |
+| 서버 설정 | `280CTP_IoT_INTEGRATED_V1_BLACK_CPU/Project/Design.cydsn/lib/server.h` |
+| 카운팅 로직 | `280CTP_IoT_INTEGRATED_V1_BLACK_CPU/Project/Design.cydsn/count.c` |
+| 가동 중단 | `280CTP_IoT_INTEGRATED_V1_BLACK_CPU/Project/Design.cydsn/downtime.c` |
+| 불량 관리 | `280CTP_IoT_INTEGRATED_V1_BLACK_CPU/Project/Design.cydsn/defective.c` |
+| 외부 Flash | `280CTP_IoT_INTEGRATED_V1_BLACK_CPU/Project/Design.cydsn/lib/externalFlash.c` |
+| 내부 EEPROM | `280CTP_IoT_INTEGRATED_V1_BLACK_CPU/Project/Design.cydsn/lib/internalFlash.c` |
+| 프로젝트 타입 | `280CTP_IoT_INTEGRATED_V1_BLACK_CPU/Project/Design.cydsn/package.h` |
+| 설정 구조체 | `280CTP_IoT_INTEGRATED_V1_BLACK_CPU/Project/Design.cydsn/lib/config.h` |
+| 설정 도구 | `280CTP_IoT_INTEGRATED_V1_BLACK_CPU/SuntechIoTConfig_V1/MainForm.cs` |
 
 ---
 
