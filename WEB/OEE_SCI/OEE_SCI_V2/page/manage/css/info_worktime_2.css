@@ -1,0 +1,144 @@
+/* info_worktime_2.css
+ * signage-header + nav-drawer 전용 스타일
+ * worktime_head.php 환경 (fiori-page.css 없음 — Fiori light 색상값 직접 사용)
+ * Fiori Horizon Light: surface-1=#fff, text-primary=#32363b, border=#d6dae3, accent=#0070f2
+ */
+
+/* Fixed signage header */
+.signage-header {
+    height: 52px;
+    background: #ffffff;
+    border-bottom: 1px solid #d6dae3;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    box-sizing: border-box;
+}
+
+.signage-header__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #32363b;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-right: 4px;
+}
+
+.signage-header__filters {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+/* Hamburger button
+ * worktime_style.css: button:not(:disabled){ color:#fff } (0,1,1)
+ * button.nav-drawer-btn 으로 특이도를 맞춰 후순위로 override
+ */
+button.nav-drawer-btn {
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #32363b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-right: 0;
+    padding: 0;
+}
+button.nav-drawer-btn:hover {
+    background: #edeff3;
+}
+
+/* Overlay */
+.nav-drawer-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 900;
+}
+.nav-drawer-overlay.is-open {
+    display: block;
+}
+
+/* Drawer */
+.nav-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100vh;
+    background: #ffffff;
+    border-right: 1px solid #d6dae3;
+    box-shadow: 2px 0 8px rgba(50, 54, 59, 0.15);
+    z-index: 901;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.nav-drawer.is-open {
+    transform: translateX(0);
+}
+.nav-drawer__header {
+    padding: 14px 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #32363b;
+    border-bottom: 1px solid #d6dae3;
+    flex-shrink: 0;
+}
+.nav-drawer__menu {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+}
+.nav-drawer__group {
+    padding: 4px 0;
+}
+.nav-drawer__group-title {
+    padding: 6px 16px 2px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #6b7884;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+.nav-drawer__link {
+    display: block;
+    padding: 7px 16px 7px 24px;
+    font-size: 0.875rem;
+    color: #32363b;
+    text-decoration: none;
+}
+.nav-drawer__link:hover {
+    background: #edeff3;
+}
+.nav-drawer__link--active {
+    color: #0070f2;
+    font-weight: 600;
+}
+.nav-drawer__divider {
+    height: 1px;
+    background: #d6dae3;
+    margin: 6px 0;
+}
+
+/* body offset: fixed header 52px */
+.wt-body {
+    margin-top: 60px;
+}

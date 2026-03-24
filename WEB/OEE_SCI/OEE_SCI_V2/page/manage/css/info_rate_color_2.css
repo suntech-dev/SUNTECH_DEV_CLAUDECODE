@@ -1,0 +1,349 @@
+/* info_rate_color_2.css — 1920x1080 Fullscreen Layout */
+
+/* ─── 전체 고정 ──────────────────────────────────────────── */
+html,
+body {
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+/* ─── Signage Header ────────────────────────────────────── */
+.signage-header {
+    height: 52px;
+    background: var(--sap-surface-1);
+    border-bottom: 1px solid var(--sap-border-neutral);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 10px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.signage-header__title {
+    font-size: var(--sap-font-size-lg);
+    font-weight: var(--sap-font-weight-semibold);
+    color: var(--sap-text-primary);
+    white-space: nowrap;
+    margin-right: 4px;
+}
+
+.signage-header__filters {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.signage-header .fiori-btn {
+    height: 30px;
+    padding: 0 10px;
+    font-size: var(--sap-font-size-sm);
+}
+
+/* ─── 메인 영역 ──────────────────────────────────────────── */
+.rate-main {
+    height: calc(100vh - 52px);
+    overflow-y: auto;
+    padding: 6px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* ─── 카드 ───────────────────────────────────────────────── */
+.rate-main .fiori-card {
+    flex-shrink: 0;
+    margin-bottom: 0;
+}
+
+.rate-main .fiori-card__header {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.rate-main .fiori-card__header .quick-actions {
+    padding: 0;
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+/* ─── Stage 카드 ─────────────────────────────────────────── */
+.rate-stage-card {
+    background: var(--sap-surface-1);
+    border: 1px solid var(--sap-border-neutral);
+    border-radius: var(--sap-radius-md);
+    padding: var(--sap-spacing-md);
+    margin-bottom: var(--sap-spacing-sm);
+    transition: border-color 0.2s ease;
+    overflow: visible;
+}
+
+.rate-stage-card:hover {
+    border-color: var(--sap-brand-primary);
+}
+
+.rate-stage-card:last-child {
+    margin-bottom: 0;
+}
+
+.rate-stage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--sap-spacing-sm);
+}
+
+.rate-stage-title {
+    font-weight: var(--sap-font-weight-medium);
+    font-size: var(--sap-font-size-md);
+    color: var(--sap-text-primary);
+}
+
+/* ─── Range Slider ──────────────────────────────────────── */
+.rate-range-container {
+    margin-top: var(--sap-spacing-sm);
+}
+
+.range-slider-wrapper {
+    padding: 28px var(--sap-spacing-md) 20px;
+    background: var(--sap-surface-2);
+    border-radius: var(--sap-radius-sm);
+    overflow: visible;
+}
+
+.range-fixed-label {
+    padding: var(--sap-spacing-sm) var(--sap-spacing-md);
+    background: var(--sap-surface-2);
+    border-radius: var(--sap-radius-sm);
+    font-size: var(--sap-font-size-sm);
+    color: var(--sap-text-secondary);
+    text-align: center;
+}
+
+/* Ion Range Slider Fiori 테마 */
+.irs.irs--fiori {
+    font-family: var(--sap-font-family);
+}
+
+.irs--fiori .irs-line {
+    background: var(--sap-border-neutral);
+    height: 4px;
+    border-radius: 2px;
+}
+
+.irs--fiori .irs-bar {
+    background: var(--sap-brand-primary);
+    height: 4px;
+    border-radius: 2px;
+}
+
+.irs--fiori .irs-handle {
+    background: var(--sap-surface-1);
+    border: 2px solid var(--sap-brand-primary);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    top: -8px;
+    cursor: pointer;
+}
+
+.irs--fiori .irs-handle:hover {
+    background: var(--sap-brand-primary);
+}
+
+.irs--fiori .irs-from,
+.irs--fiori .irs-to,
+.irs--fiori .irs-single {
+    background: var(--sap-brand-primary);
+    color: var(--sap-text-inverse);
+    border-radius: var(--sap-radius-sm);
+    font-size: var(--sap-font-size-sm);
+    padding: 4px 8px;
+    font-weight: var(--sap-font-weight-medium);
+}
+
+.irs--fiori .irs-grid-text {
+    color: var(--sap-text-secondary);
+    font-size: var(--sap-font-size-xs);
+}
+
+/* ─── Spectrum Color Picker ─────────────────────────────── */
+.selected-color-preview {
+    display: flex;
+    align-items: center;
+}
+
+.spectrum-colorpicker {
+    border: 1px solid var(--sap-border-neutral);
+    border-radius: var(--sap-radius-sm);
+    padding: var(--sap-spacing-xs) var(--sap-spacing-sm);
+    font-family: var(--sap-font-family);
+    font-size: var(--sap-font-size-sm);
+    background: var(--sap-surface-1);
+    color: var(--sap-text-primary);
+    cursor: pointer;
+}
+
+.spectrum-colorpicker:hover {
+    border-color: var(--sap-brand-primary);
+}
+
+/* ─── Preview Grid ───────────────────────────────────────── */
+.preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--sap-spacing-sm);
+    padding: var(--sap-spacing-sm);
+}
+
+.stage-color-box {
+    border: 1px solid var(--sap-border-neutral);
+    border-radius: var(--sap-radius-sm);
+    transition: transform 0.15s ease;
+}
+
+.stage-color-box:hover {
+    transform: scale(1.05);
+}
+
+/* ─── Modal 팔레트 ───────────────────────────────────────── */
+.modal-palette-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: var(--sap-spacing-sm);
+}
+
+.modal-color-item {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--sap-radius-sm);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.modal-color-item:hover {
+    transform: scale(1.15);
+    border-color: var(--sap-text-primary);
+}
+
+.modal-color-item.selected {
+    border-color: var(--sap-brand-primary);
+    box-shadow: 0 0 0 2px rgba(0, 112, 242, 0.3);
+}
+
+.modal-color-item .color-inner {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+}
+
+/* ─── Alert ──────────────────────────────────────────────── */
+.rate-color-alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
+}
+
+/* ─── 햄버거 버튼 ───────────────────────────────────────── */
+.nav-drawer-btn {
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--sap-text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--sap-radius-sm);
+    flex-shrink: 0;
+}
+
+.nav-drawer-btn:hover { background: var(--sap-surface-3); }
+
+/* ─── 드로어 오버레이 ───────────────────────────────────── */
+.nav-drawer-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 900;
+}
+
+.nav-drawer-overlay.is-open { display: block; }
+
+/* ─── 드로어 패널 ───────────────────────────────────────── */
+.nav-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--sap-surface-1);
+    border-right: 1px solid var(--sap-border-neutral);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    z-index: 901;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.nav-drawer.is-open { transform: translateX(0); }
+
+.nav-drawer__header {
+    padding: 14px 16px;
+    font-size: var(--sap-font-size-md);
+    font-weight: var(--sap-font-weight-semibold);
+    color: var(--sap-text-primary);
+    border-bottom: 1px solid var(--sap-border-neutral);
+    flex-shrink: 0;
+}
+
+.nav-drawer__menu {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+}
+
+.nav-drawer__group-title {
+    padding: 6px 16px 2px;
+    font-size: var(--sap-font-size-xs);
+    color: var(--sap-text-secondary);
+    font-weight: var(--sap-font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.nav-drawer__link {
+    display: block;
+    padding: 7px 16px 7px 24px;
+    font-size: var(--sap-font-size-sm);
+    color: var(--sap-text-primary);
+    text-decoration: none;
+}
+
+.nav-drawer__link:hover       { background: var(--sap-surface-3); }
+.nav-drawer__link--active     { color: var(--sap-color-accent); font-weight: var(--sap-font-weight-semibold); }
+.nav-drawer__divider          { height: 1px; background: var(--sap-border-neutral); margin: 6px 0; }
+
+/* ─── 스크롤바 ──────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--sap-surface-3); }
+::-webkit-scrollbar-thumb { background: var(--sap-border-neutral); border-radius: 2px; }

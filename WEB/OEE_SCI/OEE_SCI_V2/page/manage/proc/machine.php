@@ -20,18 +20,16 @@ set_error_handler(function($severity, $message, $file, $line) {
 require_once(__DIR__ . '/../../../lib/config.php');
 require_once(__DIR__ . '/../../../lib/db.php');
 
-// PhpSpreadsheet 클래스 사용
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 // Request routing
 $for = $_GET['for'] ?? '';
 if (isset($_GET['export']) && $_GET['export'] === 'true') {
-  require_once __DIR__ . '/../../lib/vendor/autoload.php';
+  require_once __DIR__ . '/../../../lib/vendor/autoload.php';
   exportMachines($pdo);
   exit;
 }

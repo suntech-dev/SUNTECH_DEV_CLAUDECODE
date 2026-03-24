@@ -1,0 +1,593 @@
+/* info_design_process_2.css — 1920x1080 Fullscreen Layout */
+
+/* ─── 전체 고정 ──────────────────────────────────────────── */
+html,
+body {
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+/* ─── Signage Header ────────────────────────────────────── */
+.signage-header {
+    height: 52px;
+    background: var(--sap-surface-1);
+    border-bottom: 1px solid var(--sap-border-neutral);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 10px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.signage-header__title {
+    font-size: var(--sap-font-size-lg);
+    font-weight: var(--sap-font-weight-semibold);
+    color: var(--sap-text-primary);
+    white-space: nowrap;
+    margin-right: 4px;
+}
+
+.signage-header__filters {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+}
+
+.signage-header .search-container {
+    max-width: 220px;
+}
+
+.signage-header .search-input {
+    height: 30px;
+    padding-left: 0.5rem;
+    font-size: var(--sap-font-size-sm);
+}
+
+.signage-header .fiori-select {
+    height: 30px;
+    font-size: var(--sap-font-size-sm);
+    padding: 0 6px;
+    width: 130px;
+    flex-shrink: 0;
+}
+
+.signage-header .fiori-btn {
+    height: 30px;
+    padding: 0 10px;
+    font-size: var(--sap-font-size-sm);
+}
+
+/* ─── 메인 영역 ──────────────────────────────────────────── */
+.manage-main {
+    height: calc(100vh - 52px);
+    display: flex;
+    flex-direction: column;
+    padding: 6px;
+    box-sizing: border-box;
+    gap: 0;
+}
+
+/* ─── Process-Machine 섹션 (토글 패널) ──────────────────── */
+.manage-main .process-machine-panel {
+    display: none;
+}
+
+/* 패널 열림: flex:1 로 전체 영역 차지 */
+.manage-main .process-machine-panel.is-open {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* 패널 열릴 때 테이블 카드·페이지네이션 숨김 */
+.manage-main.panel-open>.fiori-card,
+.manage-main.panel-open>.fiori-pagination {
+    display: none;
+}
+
+.manage-main .process-machine-panel .fiori-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin-bottom: 0;
+    min-height: 0;
+}
+
+.manage-main .process-machine-panel .fiori-card__header {
+    flex-shrink: 0;
+    padding: 6px 12px;
+}
+
+.manage-main .process-machine-panel .fiori-card__content {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+/* ─── 테이블 카드 ─────────────────────────────────────────── */
+.manage-main>.fiori-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin-bottom: 0;
+    min-height: 0;
+}
+
+.manage-main>.fiori-card .fiori-card__header {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.manage-main>.fiori-card .fiori-card__header .quick-actions {
+    padding: 0;
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.manage-main>.fiori-card .fiori-card__content {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+.manage-main>.fiori-card .fiori-card__content>div[style*="overflow-x"] {
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+/* thead 고정 */
+.manage-main .fiori-table {
+    width: 100%;
+}
+
+.manage-main .fiori-table__header th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--sap-surface-2);
+}
+
+/* ─── 페이지네이션 ───────────────────────────────────────── */
+.manage-main .fiori-pagination {
+    flex-shrink: 0;
+    padding: 5px 0 0;
+}
+
+/* ─── 햄버거 버튼 ───────────────────────────────────────── */
+.nav-drawer-btn {
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--sap-text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--sap-radius-sm);
+    flex-shrink: 0;
+}
+
+.nav-drawer-btn:hover {
+    background: var(--sap-surface-3);
+}
+
+/* ─── 드로어 오버레이 ───────────────────────────────────── */
+.nav-drawer-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 900;
+}
+
+.nav-drawer-overlay.is-open {
+    display: block;
+}
+
+/* ─── 드로어 패널 ───────────────────────────────────────── */
+.nav-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--sap-surface-1);
+    border-right: 1px solid var(--sap-border-neutral);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    z-index: 901;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.nav-drawer.is-open {
+    transform: translateX(0);
+}
+
+.nav-drawer__header {
+    padding: 14px 16px;
+    font-size: var(--sap-font-size-md);
+    font-weight: var(--sap-font-weight-semibold);
+    color: var(--sap-text-primary);
+    border-bottom: 1px solid var(--sap-border-neutral);
+    flex-shrink: 0;
+}
+
+.nav-drawer__menu {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+}
+
+.nav-drawer__group-title {
+    padding: 6px 16px 2px;
+    font-size: var(--sap-font-size-xs);
+    color: var(--sap-text-secondary);
+    font-weight: var(--sap-font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.nav-drawer__link {
+    display: block;
+    padding: 7px 16px 7px 24px;
+    font-size: var(--sap-font-size-sm);
+    color: var(--sap-text-primary);
+    text-decoration: none;
+}
+
+.nav-drawer__link:hover {
+    background: var(--sap-surface-3);
+}
+
+.nav-drawer__link--active {
+    color: var(--sap-color-accent);
+    font-weight: var(--sap-font-weight-semibold);
+}
+
+.nav-drawer__divider {
+    height: 1px;
+    background: var(--sap-border-neutral);
+    margin: 6px 0;
+}
+
+/* ─── Process-Machine 컨테이너 ──────────────────────────── */
+.process-machine-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sap-spacing-xs);
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 6px 8px;
+    box-sizing: border-box;
+}
+
+.process-machine-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.process-machine-container::-webkit-scrollbar-track {
+    background: var(--sap-surface-1);
+}
+
+.process-machine-container::-webkit-scrollbar-thumb {
+    background: var(--sap-border-default);
+    border-radius: 2px;
+}
+
+.process-row {
+    display: flex;
+    gap: var(--sap-spacing-xs);
+    align-items: stretch;
+    padding: var(--sap-spacing-xs);
+    background: var(--sap-surface-1);
+    border-radius: var(--sap-radius-sm);
+    border: 1px solid var(--sap-border-subtle);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.process-box {
+    min-width: 200px;
+    max-width: 200px;
+    min-height: 70px;
+    padding: var(--sap-spacing-xs);
+    background: var(--sap-surface-2);
+    border: 2px solid var(--sap-border-default);
+    border-radius: var(--sap-radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.process-box:hover {
+    border-color: var(--sap-border-interactive);
+}
+
+.process-box.editing {
+    border-color: var(--sap-status-info);
+    background: var(--sap-surface-3);
+}
+
+.process-box.empty {
+    background: var(--sap-surface-0);
+    border-style: dashed;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sap-text-secondary);
+    font-style: italic;
+    font-size: 12px;
+}
+
+.process-box-view,
+.process-box-edit {
+    width: 100%;
+}
+
+.process-name {
+    font-weight: 600;
+    color: var(--sap-text-primary);
+    font-size: var(--sap-font-size-sm);
+    margin-bottom: 2px;
+}
+
+.process-capacity {
+    font-size: 12px;
+    color: var(--sap-text-secondary);
+}
+
+.process-capacity-badge {
+    display: inline-block;
+    padding: 1px 5px;
+    background: var(--sap-status-info);
+    color: white;
+    border-radius: var(--sap-radius-sm);
+    font-weight: 500;
+    font-size: 11px;
+}
+
+.process-capacity-badge.full {
+    background: var(--sap-status-error);
+}
+
+.machine-count {
+    font-size: 12px;
+    color: var(--sap-text-secondary);
+    margin-top: 3px;
+    padding-top: 3px;
+    border-top: 1px solid var(--sap-border-subtle);
+}
+
+.machine-count-current {
+    font-weight: 600;
+    color: var(--sap-text-primary);
+}
+
+.machine-count-available {
+    color: var(--sap-status-success);
+}
+
+.machine-count-available.full {
+    color: var(--sap-status-error);
+}
+
+.process-box.editing .process-box-view {
+    display: none;
+}
+
+.process-box.editing .process-box-edit {
+    display: block;
+}
+
+.process-box-edit {
+    display: none;
+}
+
+.machines-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+    align-content: flex-start;
+    min-height: 70px;
+}
+
+.machine-box {
+    padding: 6px 8px;
+    min-height: 52px;
+    min-width: 130px;
+    background: white;
+    border: 1px solid var(--sap-border-default);
+    border-radius: var(--sap-radius-sm);
+    cursor: move;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 12px;
+    /* box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06); */
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.machine-box:hover {
+    border-color: var(--sap-border-interactive);
+    transform: translateY(-1px);
+}
+
+.machine-box.dragging {
+    opacity: 0.6;
+    cursor: grabbing;
+    transform: scale(1.02);
+}
+
+.machine-box-factory {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--sap-status-info);
+    text-transform: uppercase;
+}
+
+.machine-box-line {
+    font-size: 10px;
+    color: var(--sap-text-secondary);
+}
+
+.machine-box-number {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sap-text-primary);
+}
+
+.drop-zone {
+    min-height: 70px;
+    height: 100%;
+    border: 1px dashed var(--sap-border-subtle);
+    border-radius: var(--sap-radius-sm);
+    padding: 6px;
+    background: var(--sap-surface-0);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.drop-zone.drag-over {
+    border-color: var(--sap-status-success);
+    border-width: 2px;
+    background: rgba(16, 148, 101, 0.12);
+    padding: 5px;
+}
+
+.drop-zone:empty::before {
+    content: 'Drop machines here';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    color: var(--sap-text-placeholder, #999);
+    font-size: 11px;
+    font-style: italic;
+}
+
+/* ─── Line Filter Bar ──────────────────────────────────── */
+.line-filter-bar {
+    display: flex;
+    gap: var(--sap-spacing-xs);
+    padding: 6px 12px;
+    background: var(--sap-surface-0);
+    border-bottom: 1px solid var(--sap-border-subtle);
+    overflow-x: auto;
+    flex-wrap: wrap;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.line-filter-label {
+    font-size: var(--sap-font-size-sm);
+    font-weight: 600;
+    color: var(--sap-text-secondary);
+    white-space: nowrap;
+}
+
+.line-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: var(--sap-font-size-sm);
+    color: var(--sap-text-primary);
+    background: white;
+    border: 1px solid var(--sap-border-default);
+    border-radius: var(--sap-radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.line-filter-btn:hover {
+    border-color: var(--sap-border-interactive);
+    background: var(--sap-surface-1);
+}
+
+.line-filter-btn.active {
+    background: var(--sap-status-info);
+    color: white;
+    border-color: var(--sap-status-info);
+    font-weight: 600;
+}
+
+.line-filter-count {
+    display: inline-block;
+    padding: 1px 5px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: var(--sap-radius-sm);
+    font-size: 11px;
+}
+
+.line-filter-btn.active .line-filter-count {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* ─── 삭제 버튼 ──────────────────────────────────────── */
+.delete-btn {
+    font-size: 16px !important;
+    transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+    background-color: var(--sap-status-error) !important;
+    border-color: var(--sap-status-error) !important;
+    transform: scale(1.1);
+}
+
+.fiori-table tbody tr td:last-child {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* ─── 스크롤바 ──────────────────────────────────────────── */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--sap-surface-3);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--sap-border-neutral);
+    border-radius: 2px;
+}
