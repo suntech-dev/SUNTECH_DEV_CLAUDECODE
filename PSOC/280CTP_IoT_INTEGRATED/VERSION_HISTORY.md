@@ -97,6 +97,43 @@ V1과 동일하나 아래 항목 비활성화:
 
 ### 변경 이력
 
+#### 2026-03-24 (IBM VGA 계열 폰트 5종 추가 + LCD 렌더러 수정)
+
+**배경**: DOWNTIME 리스트 폰트(`Grotesk16x32`, 16px 폭)가 너무 커서 한 줄에 13자밖에 표시 못하는 문제
+
+**LCD 렌더러 버그 수정 — `lib/UI.c` `LCD_DrawFont()`**
+
+1. **DataSize 오계산 수정**: `DataSize = width * height / 8` → `DataSize = ceil(width/8) * height`
+   - 8의 배수가 아닌 폭(12px, 10px 등)의 폰트는 캐릭터 오프셋 오계산으로 깨진 화면 출력
+   - 기존 폰트(8px, 16px 폭)는 두 공식이 일치하여 영향 없음
+2. **패딩 비트 클리핑 추가**: 내부 루프에 `if(j*8+i >= width) break;` 추가
+   - non-8-aligned 폰트에서 ST7789V 윈도우 오버플로우 방지
+
+**SetButtonStyleColor 구조 파악 (중요)**
+- `SetButtonStyleColor()` 내부에서 `SetDefaultButtonStyle()` 재호출 → `btn->font` 덮어씌움
+- 폰트 변경 시 반드시 `SetButtonStyleColor()` **이후**에 `btn->font` 설정해야 함
+
+**IBM VGA 계열 폰트 5종 추가 — `lib/fonts.h`**
+
+| 폰트 | 크기 | Flash | 한 줄 글자 수 |
+|------|------|-------|------------|
+| `Font8x16` | 8×16 | 1,524 bytes | 26자 |
+| `Font12x16` | 12×16 | 3,044 bytes | 17자 |
+| `Font10x20` | 10×20 | 3,804 bytes | 20자 |
+| `Font14x24` | 14×24 | 4,564 bytes | 14자 |
+| `Font16x24` | 16×24 | 4,564 bytes | 13자 |
+
+- 출처: `280CTP_IoT_UART_TEST_V1` 프로젝트의 `Font8x16` (IBM VGA 8×16 터미널 폰트) 비트맵을 nearest-neighbor 스케일링
+- 생성 스크립트: `C:\SUNTECH_DEV_CLAUDECODE\tools\gen_font_from_bitmap.py`
+- 폰트간 굵기·비율·스타일 완전 일관성 보장
+
+**downtime.c 적용**
+- `SetDowntimeListButtons()` → `btn->font = Font10x20` 적용 (13자 → 20자/줄로 향상)
+
+**빌드 결과**: Flash 118,804 bytes (45.3%) / SRAM 22,580 bytes (68.9%) ✅
+
+---
+
 #### 2026-03-24 (WiFi 신호강도 0 버그 수정 — 부팅 시 레이스 컨디션)
 
 **버그**: 부팅 후 WiFi 신호강도가 0으로 표기됨 (5회 중 약 2회 발생)

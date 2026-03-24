@@ -4,7 +4,7 @@
 > 분석 버전: V1_BLACK_CPU (PATTERN_MACHINE 전용)
 > 마지막 빌드: 2026-03-17 (성공 — bootloader + Design 순차 빌드)
 > 마지막 코드 개선: 2026-03-17 (ADC_SAR_Seq TopDesign 제거 + currentSensor.c 프로젝트 제거)
-> 마지막 업데이트: 2026-03-23
+> 마지막 업데이트: 2026-03-24 (IBM VGA 계열 폰트 5종 추가, LCD 렌더러 non-8-aligned 수정)
 
 ---
 
@@ -348,6 +348,81 @@ ROOT (TOP MENU)
 | WiFi 최대 AP 수 | `10` | `WIFI.h` | 최적화 완료 (40→10) |
 | WiFi 수신 버퍼 | `2048` bytes | `WIFI.h` | 수정 완료 (1024→2048) |
 
+### 6.4 LCD 폰트 리소스 현황
+
+> 분석 기준: `V1_BLACK_CPU` — `lib/fonts.h`
+> 폰트 데이터는 `fontdatatype` (`const unsigned char`) 배열로 선언되며 Flash에 배치됨.
+
+#### 폰트 배열 구조
+
+```c
+fontdatatype FontName[N] = {
+    [0] = 폰트 너비 (픽셀),
+    [1] = 폰트 높이 (픽셀),
+    [2] = ASCII 시작 문자 코드,
+    [3] = 포함 문자 수,
+    [4...] = 문자별 비트맵 데이터  // bytes_per_char = ceil(width/8) * height
+};
+```
+
+#### IBM VGA 계열 폰트 (신규 — 2026-03-24)
+
+> **출처**: IBM VGA 8×16 터미널 폰트 (`Font8x16`) 비트맵을 nearest-neighbor 스케일링
+> **특징**: 동일 소스에서 파생 → 굵기·비율·스타일 완전 일관성 보장
+> **생성 도구**: `C:\SUNTECH_DEV_CLAUDECODE\tools\gen_font_from_bitmap.py`
+> **원본 위치**: `280CTP_IoT_UART_TEST_V1/Project/Design.cydsn/lib/fonts.h` — `_FONT_Font8x16_`
+
+| 폰트 이름 | 픽셀 크기 | 스케일 (W×H) | Flash 크기 | 한 줄 글자 수 | 비고 |
+|----------|---------|------------|-----------|------------|------|
+| `Font8x16` | 8×16 | 1.0× | 1,524 bytes | 26자 | IBM VGA 원본 |
+| `Font12x16` | 12×16 | 1.5×/1.0× | 3,044 bytes | 17자 | 너비 확장 |
+| `Font10x20` | 10×20 | 1.25×/1.25× | 3,804 bytes | 20자 | 균등 확장 |
+| `Font14x24` | 14×24 | 1.75×/1.5× | 4,564 bytes | 14자 | 중형 |
+| `Font16x24` | 16×24 | 2.0×/1.5× | 4,564 bytes | 13자 | 중형 (너비 Grotesk 동일) |
+
+> 새 IBM VGA 계열 폰트 추가 방법:
+> 1. `C:\SUNTECH_DEV_CLAUDECODE\tools\gen_font_from_bitmap.py` 수정 → `generate(dst_w, dst_h, "Font??x??", "...")` 추가
+> 2. `fonts.h` 상단 `#define _FONT_Font??x??_` 추가
+> 3. `LCD_DrawFont()` 렌더러는 non-8-aligned 폭도 정상 지원 (2026-03-24 수정 완료)
+
+#### 전체 폰트 목록 (선언 기준)
+
+| 폰트 이름 | 픽셀 크기 | Flash 크기 | 활성 여부 | 계열 |
+|----------|---------|-----------|---------|------|
+| `SmallFont8x12` | 8×12 | 1,144 bytes | **활성** ✓ | 기존 |
+| `Arial_round_16x24` | 16×24 | 4,564 bytes | **활성** ✓ | 기존 |
+| `Grotesk16x32` | 16×32 | 6,084 bytes | **활성** ✓ | 기존 (버튼 기본값) |
+| `Font8x16` | 8×16 | 1,524 bytes | **활성** ✓ | IBM VGA |
+| `Font12x16` | 12×16 | 3,044 bytes | **활성** ✓ | IBM VGA |
+| `Font10x20` | 10×20 | 3,804 bytes | **활성** ✓ | IBM VGA |
+| `Font14x24` | 14×24 | 4,564 bytes | **활성** ✓ | IBM VGA |
+| `Font16x24` | 16×24 | 4,564 bytes | **활성** ✓ | IBM VGA |
+| `DotMatrix_M_16x22` | 16×22 | 4,184 bytes | 비활성 ⊗ | 기존 |
+| `AlibriNumBold32x48` | 32×48 | 1,924 bytes | 비활성 ⊗ | 기존 |
+| `ArialNumFontPlus32x50` | 32×50 | 2,204 bytes | 비활성 ⊗ | 기존 |
+| `SevenSegNumFontPlusPlus32x50` | 32×50 | 2,604 bytes | 비활성 ⊗ | 기존 |
+
+#### 실제 사용 중인 폰트 (코드 참조 기준)
+
+| 폰트 | 사용 파일 | 주요 용도 |
+|------|---------|---------|
+| `SmallFont8x12` | `manageMenu.c` | IP/Subnet/Gateway, MAC 주소, 버전 정보, 텍스트 입력 표시 |
+| `Arial_round_16x24` | `manageMenu.c`, `currentSensor.c` | 버튼 텍스트, 센서 값 표시 |
+| `Grotesk16x32` | `button.c`, `userMenuPatternSewingMachine.c` | 버튼 기본 폰트 (`btn->font`), 주요 메시지 |
+| `Font10x20` | `downtime.c` | 가동 중단 리스트 항목 (20자/줄) |
+
+#### Flash 메모리 현황
+
+| 구분 | 크기 |
+|------|------|
+| 활성 폰트 합계 (기존 3종) | 11,792 bytes |
+| 활성 폰트 추가 (IBM VGA 5종) | 17,480 bytes |
+| **활성 폰트 총계** | **29,272 bytes** |
+| 비활성 폰트 합계 | 10,916 bytes |
+
+> 비활성 폰트 활성화: `fonts.h` 상단 `#define _FONT_폰트명_` 주석 해제
+> `SetButtonStyleColor()` 호출 이후에 `btn->font` 를 설정해야 함 — 내부에서 `SetDefaultButtonStyle()` 재호출로 덮어씌워지는 구조임
+
 ---
 
 ## 7. C# 설정 도구 (SuntechIoTConfig_V1)
@@ -503,6 +578,7 @@ bootloader.cydsn/
 | 2026-03-10 | V1 | 수정 | 이슈 #5~#16 전체 수정 (서버 설정, WiFi 타임아웃, MIB 버그 등) |
 | 2026-03-17 | V1_BLACK_CPU | 신규 | PATTERN_MACHINE 전용 BLACK CPU 버전 분리 (SEWING/전류센서 제거) |
 | 2026-03-23 | V1_BLACK_CPU | 정리 | OTA UPDATE 코드 전체 제거 (otaMenu, WIFI OTA 케이스, widget 배지, manageMenu 노드) |
+| 2026-03-24 | V1_BLACK_CPU | 기능 | IBM VGA 계열 폰트 5종 추가 (Font8x16/12x16/10x20/14x24/16x24), LCD 렌더러 non-8-aligned 수정, downtime 리스트 Font10x20 적용 |
 
 ---
 

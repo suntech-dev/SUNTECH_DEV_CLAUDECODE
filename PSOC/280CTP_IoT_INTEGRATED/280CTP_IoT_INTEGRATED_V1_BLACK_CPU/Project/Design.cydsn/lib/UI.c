@@ -191,14 +191,13 @@ void LCD_DrawFont(uint16 xPos, uint16 yPos, uint16 foregroundColor, uint16 backg
     uint16 height = font[1];
     uint16 ascii_start = font[2];
     uint16 noFont = font[3];
-    uint16 DataSize = width * height / 8;
-        
-    uint32 p = DataSize * (st-ascii_start) + 4;
 
     float n = width / 8.0;
     uint16 r = (uint16) n;
-
     if(n != (float) r) r++;
+
+    uint16 DataSize = r * height;  /* bytes/char = ceil(width/8) * height — non-8-aligned 폰트 지원 */
+    uint32 p = DataSize * (st-ascii_start) + 4;
     
 //  printf("width  = %d \r\n",width);
 //  printf("height = %d \r\n",height);
@@ -214,16 +213,17 @@ void LCD_DrawFont(uint16 xPos, uint16 yPos, uint16 foregroundColor, uint16 backg
         for(int j=0; j < r; j++)
         {
              uint8 data = font[p];
-        
+
             for(int i = 0; i < 8; i++)
             {
-                if((data  & (0x80 >> i)) == 0) 
+                if(j * 8 + i >= width) break;  /* 패딩 비트 제외 (non-8-aligned 폰트 지원) */
+                if((data  & (0x80 >> i)) == 0)
                 {
-                    ST7789V_pushcolour(backgroundColor); 
+                    ST7789V_pushcolour(backgroundColor);
                 }else{
-                    ST7789V_pushcolour(foregroundColor);   
+                    ST7789V_pushcolour(foregroundColor);
                 }
-            }            
+            }
             p++;
         }        
     }

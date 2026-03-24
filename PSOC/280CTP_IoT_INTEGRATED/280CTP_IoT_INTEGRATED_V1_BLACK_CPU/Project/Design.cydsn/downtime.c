@@ -210,7 +210,6 @@ void SetDowntimeListButtons(LIST_MENU *menu, char *title, DOWNTIME_LISTS *list)
     {
         BUTTON *btn = &menu->btns[i];
         SetDefaultButtonStyle(btn);
-
         SetButtonSize      (btn, yPos, g_DEFAULT_BUTTON_HEIGHT, BUTTON_X_FULL, BUTTON_Y,withScroll);
 
         uint16 textIdx = menu->noOfDisplayButton * menu->curPage + i;
@@ -224,6 +223,7 @@ void SetDowntimeListButtons(LIST_MENU *menu, char *title, DOWNTIME_LISTS *list)
         else
             SetButtonStyleColor(btn, BUTTON_STYLE_R_RED);
 
+        //btn->font  = Font16x24;        /* SetButtonStyleColor 이후 설정 — 내부에서 SetDefaultButtonStyle 호출로 덮어씌워지므로 */
         btn->align = TEXT_ALIGN_LEFT;
 
         sprintf(menu->listText[textIdx],"%-10s",item->text);
