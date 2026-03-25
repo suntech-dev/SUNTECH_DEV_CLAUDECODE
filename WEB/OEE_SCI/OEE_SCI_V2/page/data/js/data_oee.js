@@ -829,6 +829,12 @@ function setupEventListeners() {
     toggleChartsBtn.addEventListener('click', toggleChartsDisplay);
   }
 
+  // Toggle data (table) button
+  const toggleDataBtn = document.getElementById('toggleDataBtn');
+  if (toggleDataBtn) {
+    toggleDataBtn.addEventListener('click', toggleDataDisplay);
+  }
+
   const timeRangeSelect = document.getElementById('timeRangeSelect');
   if (timeRangeSelect) {
     timeRangeSelect.addEventListener('change', handleTimeRangeChange);
@@ -2030,6 +2036,7 @@ function toggleStatsDisplay() {
  */
 function toggleChartsDisplay() {
   const chartSections = document.querySelectorAll('.oee-main-layout, .oee-additional-charts');
+  const oeeChartsRow = document.getElementById('oeeChartsRow');
   const toggleBtn = document.getElementById('toggleChartsBtn');
 
   if (!toggleBtn) {
@@ -2049,14 +2056,58 @@ function toggleChartsDisplay() {
     chartSections.forEach(section => {
       section.classList.remove('hidden');
     });
+    if (oeeChartsRow) oeeChartsRow.classList.remove('hidden');
     toggleBtn.textContent = '📈 Hide Charts';
   } else {
     // Hide charts
     chartSections.forEach(section => {
       section.classList.add('hidden');
     });
+    if (oeeChartsRow) oeeChartsRow.classList.add('hidden');
     toggleBtn.textContent = '📈 Show Charts';
   }
+
+  // Chart.js 리사이즈 (레이아웃 변경 후)
+  setTimeout(function () {
+    Object.values(charts).forEach(function (c) { if (c) c.resize(); });
+  }, 50);
+}
+
+/**
+ * Toggle data table display
+ */
+function toggleDataDisplay() {
+  const realtimeCard = document.querySelector('.oee-realtime-card');
+  const paginationControls = document.getElementById('pagination-controls');
+  const manageMain = document.querySelector('.manage-main');
+  const toggleBtn = document.getElementById('toggleDataBtn');
+
+  if (!realtimeCard || !toggleBtn) return;
+
+  const isHidden = realtimeCard.classList.contains('hidden');
+
+  if (isHidden) {
+    realtimeCard.classList.remove('hidden');
+    if (paginationControls) paginationControls.classList.remove('hidden');
+    manageMain.classList.remove('table-hidden');
+    toggleBtn.textContent = 'Hide Table';
+  } else {
+    realtimeCard.classList.add('hidden');
+    if (paginationControls) paginationControls.classList.add('hidden');
+    manageMain.classList.add('table-hidden');
+    toggleBtn.textContent = 'Show Table';
+  }
+
+  // Chart.js 4.x는 ResizeObserver 기반이므로 window resize 이벤트로 리사이즈 트리거
+  requestAnimationFrame(function () {
+    Object.values(charts).forEach(function (c) {
+      if (c && c.canvas) {
+        c.canvas.style.height = '';
+        c.canvas.style.width = '';
+      }
+    });
+    window.dispatchEvent(new Event('resize'));
+  });
 }
 
 document.addEventListener('keydown', function (event) {

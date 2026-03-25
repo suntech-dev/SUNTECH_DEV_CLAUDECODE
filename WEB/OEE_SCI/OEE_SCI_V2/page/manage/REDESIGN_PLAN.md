@@ -272,6 +272,90 @@ require_once(__DIR__ . '/../../inc/head.php');
 
 ---
 
+## 테이블 행 높이 조정 (Table Row Height)
+
+### 배경
+
+Playwright 실측 결과 (2026-03-25):
+
+| 요소 | 실측 높이 | 원인 |
+| ---- | --------- | ---- |
+| `signage-header` | 52px | CSS 고정값 |
+| `thead th` | 55px | padding 16+16 + lineHeight 22px |
+| `tbody tr` (실제 데이터) | 78px | `TIME_UPDATE` 등 날짜+시간 셀이 공백에서 줄바꿈되어 2줄 렌더링 |
+
+→ signage-header(52px)보다 tbody row(78px)가 훨씬 커서 시각적으로 불균형.
+
+### 해결책 (50px 고정)
+
+각 페이지 CSS 파일의 **스크롤바 섹션 바로 위**에 아래 블록을 추가한다.
+
+**data 폴더 파일** (`.oee-table-wrap` 래퍼 사용):
+```css
+/* ─── 테이블 행 높이 조정 ─────────────────────────────── */
+.oee-table-wrap .fiori-table th,
+.oee-table-wrap .fiori-table td {
+    height: 50px;
+    padding-top: 0;
+    padding-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+}
+```
+
+**manage 폴더 파일** (`.manage-main` 래퍼 사용):
+```css
+/* ─── 테이블 행 높이 조정 ─────────────────────────────── */
+.manage-main .fiori-table th,
+.manage-main .fiori-table td {
+    height: 50px;
+    padding-top: 0;
+    padding-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+}
+```
+
+### 적용 완료 현황
+
+| 파일 | 적용 | 날짜 |
+| ---- | ---- | ---- |
+| `page/data/css/log_oee_row_2.css` | ✅ | 2026-03-25 |
+| `page/data/css/log_oee_hourly_2.css` | ✅ | 2026-03-25 |
+| `page/data/css/log_oee_2.css` | ✅ | 2026-03-25 |
+| `page/manage/css/info_factory_2.css` | - | - |
+| `page/manage/css/info_line_2.css` | - | - |
+| `page/manage/css/info_machine_model_2.css` | - | - |
+| `page/manage/css/info_machine_2.css` | - | - |
+| `page/manage/css/info_design_process_2.css` | - | - |
+| `page/manage/css/info_andon_2.css` | - | - |
+| `page/manage/css/info_downtime_2.css` | - | - |
+| `page/manage/css/info_defective_2.css` | - | - |
+| `page/manage/css/info_rate_color_2.css` | - | - |
+| `page/manage/css/info_worktime_2.css` | - | - |
+
+### 나중에 적용할 때 명령 방법
+
+아래 명령 중 하나를 사용하면 된다.
+
+**전체 manage CSS 한 번에 적용:**
+```
+manage 폴더의 _2.css 파일 전체에 테이블 행 높이 50px 적용해줘.
+REDESIGN_PLAN.md 의 "테이블 행 높이 조정" 섹션 참고.
+```
+
+**특정 파일만 적용:**
+```
+info_factory_2.css 에 테이블 행 높이 50px 적용해줘.
+REDESIGN_PLAN.md 의 "테이블 행 높이 조정" 섹션 참고.
+```
+
+---
+
 ## 변경 이력
 
 | 날짜       | 내용                                                                                                                                                                                                                                                                                                                                                     |
@@ -295,3 +379,4 @@ require_once(__DIR__ . '/../../inc/head.php');
 | 2026-03-24 | 햄버거 드로어 공통 include 분리 — `inc/nav-drawer-manage.php` 생성, 전체 10개 `_2.php`에서 드로어 HTML + IIFE 스크립트 제거 후 `<?php $nav_active = '...'; require_once(...)` 1줄로 교체. `$nav_active` 변수로 활성 링크 자동 제어. `info_factory_2.php` 오타(`info_andon.php_2`) 수정, `info_worktime_2.php` 등 모니터링/리포트 링크 `_2` 버전으로 통일 |
 | 2026-03-24 | 드로어 버그 수정 — `nav-drawer-manage.php` 스크립트를 `DOMContentLoaded`로 감쌈. include가 signage-header보다 먼저 실행되어 `navDrawerBtn`이 DOM에 없는 상태에서 `getElementById`가 null 반환하던 문제, 사용자 확인 완료                                                                                                                                 |
 | 2026-03-24 | `machine.php` export 경로 버그 수정 — `proc` 기준 `../../lib/vendor/autoload.php`(2단계 → `page/lib/...`)를 `../../../lib/vendor/autoload.php`(3단계 → `OEE_SCI_V2/lib/...`)로 수정. 다른 proc 파일에 export 추가 시 동일 규칙 적용 필요                                                                                                                 |
+| 2026-03-25 | 테이블 행 높이 조정 — Playwright 실측 결과 tbody tr=78px(signage-header 52px 대비 과대), `height:50px + padding-top/bottom:0 + white-space:nowrap` 적용. data 폴더 3개 CSS(`log_oee_row_2`, `log_oee_hourly_2`, `log_oee_2`) 완료. manage 폴더 미적용 — 적용 방법은 "테이블 행 높이 조정" 섹션 참고 |

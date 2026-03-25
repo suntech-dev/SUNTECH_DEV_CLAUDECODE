@@ -237,34 +237,22 @@ const API = 'api';
  * 레코드 타입:
  *   00 = Data, 01 = EOF
  *   02 = Extended Segment Address, 04 = Extended Linear Address
- * 갭 영역은 0xFF로 채움 (PSoC flash 소거 상태와 동일)
+ *
+ * PSoC4 주의:
+ *   PSoC Creator HEX에는 SFLASH/NVL 구성 데이터가 0x90300000~0x90600000
+ *   고주소 영역에 포함됨. 이를 포함하면 2.4GB 버퍼가 생성되어 크래시.
+ *   → PSoC4 플래시 크기(262144 bytes) 이상 주소는 무시.
+ *   → 미사용 영역은 0x00 (PSoC4 소거 상태) 으로 초기화.
  */
+const PSOC4_FLASH_SIZE = 262144; /* 1024 rows × 256 bytes */
+
 function parseIntelHex(hexText) {
   const lines = hexText.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
   let extLinear  = 0;
   let extSegment = 0;
-  let maxAddr    = 0;
 
-  // 1단계: 최대 주소 계산
-  for (const raw of lines) {
-    const s = raw.trim();
-    if (!s.startsWith(':') || s.length < 11) continue;
-    const byteCount = parseInt(s.substr(1, 2), 16);
-    const address   = parseInt(s.substr(3, 4), 16);
-    const recType   = parseInt(s.substr(7, 2), 16);
-    if (recType === 0x04) { extLinear  = parseInt(s.substr(9, 4), 16); }
-    else if (recType === 0x02) { extSegment = parseInt(s.substr(9, 4), 16); }
-    else if (recType === 0x00) {
-      const full = (extLinear << 16) + (extSegment << 4) + address;
-      if (full + byteCount > maxAddr) maxAddr = full + byteCount;
-    }
-  }
-  if (maxAddr === 0) return null;
-
-  // 2단계: 바이너리 버퍼 생성 (0xFF 초기화)
-  const bin = new Uint8Array(maxAddr).fill(0xFF);
-  extLinear  = 0;
-  extSegment = 0;
+  // PSoC4 플래시 크기로 고정 버퍼 생성 (0x00 초기화 = PSoC4 소거 상태)
+  const bin = new Uint8Array(PSOC4_FLASH_SIZE);
 
   for (const raw of lines) {
     const s = raw.trim();
@@ -277,12 +265,18 @@ function parseIntelHex(hexText) {
     else if (recType === 0x02) { extSegment = parseInt(s.substr(9, 4), 16); }
     else if (recType === 0x00) {
       const full = (extLinear << 16) + (extSegment << 4) + address;
-      for (let i = 0; i < byteCount; i++) {
+      /* PSoC4 플래시 범위(0~262143) 밖 주소 무시 (SFLASH/NVL 0x90xx0000 등) */
+      if (full >= PSOC4_FLASH_SIZE) continue;
+      const actualBytes = Math.min(byteCount, PSOC4_FLASH_SIZE - full);
+      for (let i = 0; i < actualBytes; i++) {
         bin[full + i] = parseInt(s.substr(9 + i * 2, 2), 16);
       }
     }
   }
-  return bin;
+
+  /* 데이터가 하나도 없으면 null 반환 */
+  const hasData = bin.some(b => b !== 0);
+  return hasData ? bin : null;
 }
 
 function onFileChange(input) {

@@ -902,7 +902,7 @@ body {
 /* 포커스 관리 */
 .fiori-skip-link {
   position: absolute;
-  top: -40px;
+  top: -38px;
   left: 6px;
   background: var(--sap-brand-primary);
   color: var(--sap-text-inverted);
@@ -910,11 +910,7 @@ body {
   text-decoration: none;
   border-radius: var(--sap-radius-sm);
   z-index: 1000;
-  transition: top var(--sap-transition-fast);
-}
-
-.fiori-skip-link:focus {
-  top: 6px;
+  pointer-events: none;
 }
 
 /* 스크린 리더 전용 */

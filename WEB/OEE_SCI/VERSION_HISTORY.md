@@ -1,7 +1,7 @@
 # OEE_SCI 버전 이력
 
 > 최초 작성: 2026-03-06
-> 마지막 업데이트: 2026-03-19 (AI Dashboard v4 · v5 신규 생성 및 버그 수정)
+> 마지막 업데이트: 2026-03-25 (log_oee_row_2 · log_oee_hourly_2 · log_oee_2 테이블 컬럼 고정 기능 추가)
 
 ---
 
@@ -99,6 +99,9 @@
 | 2026-03-19 | `js/ai_dashboard_5.js` — `renderForecastChart()` 개선: `today_data` 기반 Actual OEE solid 파란 라인 추가 + null 구간 spanGaps 처리로 실제/예측 구간 명확히 시각화, `loadMaintenanceRisk()` · `loadLineHealth()` → `proc/ai_maintenance_5.php` 호출, `updateLineHealthSubtitle()` 신규: date_range에 따라 "Based on 7-day / 30-day OEE average per line" 동적 변경 |
 | 2026-03-19 | `js/ai_optimization_5.js` — `proc/ai_optimization_5.php` 호출, `getFilters()`에 `date_range` 포함, `dateRangeSelect` change 이벤트 연동, 이모지 → HTML Entity 교체 |
 | 2026-03-19 | **[v5 Playwright 검증]** 30d 필터 기준 전 항목 정상 확인: Real-time OEE `--`(오늘 데이터 없음, 비정상 111.1% 해소), Maintenance OEE 81.1%(125.6% 해소), Line Health 서브타이틀 "30-day" 동적 변경, Production Optimization `analysis_days:30` 반영, CI 범위 48.4%~99.3%(정상화) |
+| 2026-03-25 | **[리디자인 _2 페이지 테이블 컬럼 고정]** `log_oee_row_2`, `log_oee_hourly_2`, `log_oee_2` 3개 페이지에 MACHIN_NO 기준 가로 스크롤 컬럼 고정 기능 추가 — CSS `position: sticky`가 `overflow: clip` 부모 구조에서 Chromium 버그로 미작동, **JS scroll 리스너 + `transform: translateX` 방식으로 해결** (Playwright 검증 완료: scrollLeft=400 시 diff=0) |
+| 2026-03-25 | `page/data/css/log_oee_row_2.css` · `log_oee_hourly_2.css` · `log_oee_2.css` — 외부 컨테이너 `overflow: hidden` → `overflow: clip` + `min-width: 0`, `.sticky-column`: `position: sticky` → `position: relative` + `will-change: transform`, 테이블 `border-collapse: separate !important` 추가 |
+| 2026-03-25 | `page/data/js/log_oee_row_2.js` · `log_oee_hourly_2.js` · `log_oee_2.js` — `initStickyColumnsScroll()` 함수 신규: `offsetLeft` 자연 위치 캡처 후 scroll 이벤트마다 `translateX(scrollLeft − naturalOffset)` 적용, `updateTableFromAPI()` 끝에서 `_refreshStickyColumns()` 호출 (페이지 전환 시 offset 재측정) |
 
 ---
 

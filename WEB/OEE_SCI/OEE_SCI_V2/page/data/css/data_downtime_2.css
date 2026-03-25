@@ -1,0 +1,408 @@
+/* data_downtime_2.css — Row Grid Layout (data_oee_2 model) */
+
+/* ─── 전체 고정 ─────────────────────────────────────────── */
+html, body {
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+/* ─── Signage Header ─────────────────────────────────────── */
+.signage-header {
+    height: 52px;
+    background: var(--sap-surface-1);
+    border-bottom: 1px solid var(--sap-border-neutral);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.signage-header__title {
+    font-size: var(--sap-font-size-lg);
+    font-weight: var(--sap-font-weight-semibold);
+    color: var(--sap-text-primary);
+    white-space: nowrap;
+    margin-right: 4px;
+}
+
+.signage-header__filters {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+}
+
+.signage-header .fiori-select {
+    height: 30px;
+    font-size: var(--sap-font-size-sm);
+    padding: 0 6px;
+    width: 130px;
+    flex-shrink: 0;
+}
+
+.signage-header .date-range-input {
+    height: 30px;
+    font-size: var(--sap-font-size-sm);
+    padding: 0 6px;
+    width: 175px;
+    flex-shrink: 0;
+}
+
+.signage-header .fiori-btn {
+    height: 30px;
+    padding: 0 10px;
+    font-size: var(--sap-font-size-sm);
+    white-space: nowrap;
+}
+
+/* ─── 햄버거 버튼 ───────────────────────────────────────── */
+.nav-drawer-btn {
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--sap-text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--sap-radius-sm);
+    flex-shrink: 0;
+}
+
+.nav-drawer-btn:hover { background: var(--sap-surface-3); }
+
+/* ─── 드로어 오버레이 ───────────────────────────────────── */
+.nav-drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.3); z-index: 900; }
+.nav-drawer-overlay.is-open { display: block; }
+
+/* ─── 드로어 패널 ───────────────────────────────────────── */
+.nav-drawer {
+    position: fixed; top: 0; left: 0; width: 240px; height: 100vh;
+    background: var(--sap-surface-1); border-right: 1px solid var(--sap-border-neutral);
+    box-shadow: 2px 0 8px rgba(0,0,0,.15); z-index: 901;
+    transform: translateX(-100%); transition: transform .25s ease;
+    display: flex; flex-direction: column; overflow: hidden;
+}
+
+.nav-drawer.is-open { transform: translateX(0); }
+
+.nav-drawer__header {
+    padding: 14px 16px;
+    font-size: var(--sap-font-size-md);
+    font-weight: var(--sap-font-weight-semibold);
+    color: var(--sap-text-primary);
+    border-bottom: 1px solid var(--sap-border-neutral);
+    flex-shrink: 0;
+}
+
+.nav-drawer__menu { flex: 1; overflow-y: auto; padding: 8px 0; }
+
+.nav-drawer__group-title {
+    padding: 6px 16px 2px;
+    font-size: var(--sap-font-size-xs);
+    color: var(--sap-text-secondary);
+    font-weight: var(--sap-font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.nav-drawer__link { display: block; padding: 7px 16px 7px 24px; font-size: var(--sap-font-size-sm); color: var(--sap-text-primary); text-decoration: none; }
+.nav-drawer__link:hover { background: var(--sap-surface-3); }
+.nav-drawer__link--active { color: var(--sap-color-accent); font-weight: var(--sap-font-weight-semibold); }
+.nav-drawer__divider { height: 1px; background: var(--sap-border-neutral); margin: 6px 0; }
+
+/* ─── 메인 그리드 ─────────────────────────────────────── */
+.dt-signage-main {
+    height: calc(100vh - 52px);
+    display: grid;
+    grid-template-rows: 1fr auto; /* JS가 updateLayout()으로 덮어씀 */
+    gap: 5px;
+    padding: 5px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* ─── 행 기본 ─────────────────────────────────────────── */
+.dt-row {
+    min-height: 0;
+    overflow: hidden;
+}
+
+.dt-row.hidden { display: none; }
+
+/* ─── Row A: Stats ────────────────────────────────────── */
+.dt-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+    height: 100%;
+}
+
+/* ─── Row B: Charts Top ───────────────────────────────── */
+.dt-charts-top-grid {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: 5px;
+    height: 100%;
+    min-height: 0;
+}
+
+.dt-charts-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    height: 100%;
+    min-height: 0;
+}
+
+/* ─── Row C: Charts Bottom ────────────────────────────── */
+.dt-charts-trio {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 5px;
+    height: 100%;
+    min-height: 0;
+}
+
+/* ─── Row D: Table ────────────────────────────────────── */
+.dt-row--table {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ─── 카드 (ai_dashboard_5 패턴) ─────────────────────── */
+.dt-signage-main .fiori-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+.dt-signage-main .fiori-card__header {
+    flex-shrink: 0;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dt-signage-main .fiori-card__title {
+    font-size: var(--sap-font-size-md);
+}
+
+.dt-signage-main .fiori-card__subtitle {
+    font-size: var(--sap-font-size-xs);
+    margin: 0;
+}
+
+.dt-signage-main .fiori-card__content {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 6px 8px;
+}
+
+/* ─── 차트 컨테이너 ───────────────────────────────────── */
+.dt-signage-main .chart-container {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+/* ─── 카드 타이틀 인라인 ──────────────────────────────── */
+.card-title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+}
+
+.card-title-row .fiori-card__title { white-space: nowrap; flex-shrink: 0; }
+
+.card-subtitle-inline {
+    font-size: var(--sap-font-size-xs);
+    color: var(--sap-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ─── Downtime Details 리스트 ─────────────────────────── */
+.dt-details-list {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.dt-component-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    border: 1px solid var(--sap-border-subtle);
+    border-radius: var(--sap-radius-sm);
+    margin-bottom: 4px;
+    background: var(--sap-surface-2);
+}
+
+.dt-component-name {
+    font-weight: var(--sap-font-weight-semibold);
+    font-size: var(--sap-font-size-sm);
+    color: var(--sap-text-primary);
+}
+
+.dt-component-details {
+    font-size: var(--sap-font-size-xs);
+    color: var(--sap-text-secondary);
+    margin-top: 2px;
+}
+
+.dt-detail-item { margin-right: 8px; }
+
+.dt-component-value {
+    font-size: 1rem;
+    font-weight: var(--sap-font-weight-bold);
+    color: var(--sap-text-primary);
+}
+
+/* ─── Stat Cards ──────────────────────────────────────── */
+.stat-card {
+    background: var(--sap-surface-2);
+    border: 1px solid var(--sap-border-subtle);
+    border-radius: var(--sap-radius-md);
+    padding: 8px 10px 8px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 0;
+}
+
+.stat-card--red     { border-left: 3px solid var(--sap-status-error); }
+.stat-card--rose    { border-left: 3px solid #e26b0a; }
+.stat-card--success { border-left: 3px solid var(--sap-status-success); }
+.stat-card--info    { border-left: 3px solid var(--sap-status-info); }
+.stat-card--warning { border-left: 3px solid var(--sap-status-warning); }
+.stat-card--maroon  { border-left: 3px solid #800000; }
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: var(--sap-font-weight-bold);
+    color: var(--sap-text-primary);
+}
+
+.stat-label {
+    font-size: var(--sap-font-size-xs);
+    color: var(--sap-text-secondary);
+    margin-top: 2px;
+}
+
+/* ─── 테이블 행 컨텐츠 ────────────────────────────────── */
+.dt-signage-main .dt-row--table .fiori-card__content {
+    padding: 0;
+}
+
+.dt-table-wrap {
+    overflow: auto;
+    height: 100%;
+}
+
+/* ─── Duration in-progress 셀 ────────────────────────── */
+.duration-in-progress {
+    color: var(--sap-status-error);
+    font-weight: var(--sap-font-weight-semibold);
+}
+
+/* ─── Real-time status ────────────────────────────────── */
+.real-time-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--sap-font-size-xs);
+    color: var(--sap-status-success);
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--sap-status-success);
+    animation: pulse 2s infinite;
+    flex-shrink: 0;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.connection-status-info {
+    margin-left: 4px;
+    font-size: var(--sap-font-size-xs);
+    color: var(--sap-text-secondary);
+}
+
+.data-table-centered {
+    text-align: center;
+    padding: var(--sap-spacing-xl);
+}
+
+/* ─── Downtime Detail Modal ───────────────────────────── */
+.dt-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sap-spacing-md);
+}
+
+.dt-detail-section-title {
+    font-size: var(--sap-font-size-sm);
+    font-weight: var(--sap-font-weight-semibold);
+    color: var(--sap-text-primary);
+    margin-bottom: var(--sap-spacing-sm);
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--sap-border-subtle);
+}
+
+.dt-detail-section--full { grid-column: 1 / -1; }
+
+.dt-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: var(--sap-font-size-sm);
+    border-bottom: 1px solid var(--sap-border-subtle);
+}
+
+.dt-detail-label { color: var(--sap-text-secondary); }
+.dt-detail-value { font-weight: var(--sap-font-weight-semibold); color: var(--sap-text-primary); }
+
+.dt-detail-actions {
+    display: flex;
+    gap: var(--sap-spacing-sm);
+    justify-content: flex-end;
+}
+
+.dt-color-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    margin-right: 4px;
+    vertical-align: middle;
+    background: var(--sap-border-neutral);
+}
+
+/* ─── 스크롤바 ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--sap-surface-3); }
+::-webkit-scrollbar-thumb { background: var(--sap-border-neutral); border-radius: 2px; }

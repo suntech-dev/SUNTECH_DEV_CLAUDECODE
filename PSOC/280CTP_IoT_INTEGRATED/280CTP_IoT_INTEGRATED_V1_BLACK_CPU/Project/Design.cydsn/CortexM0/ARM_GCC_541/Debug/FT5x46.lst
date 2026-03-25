@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
   31              		@ frame_needed = 0, uses_anonymous_args = 0
   32              	.LVL0:
   33 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 2
 
 
   34              		.cfi_def_cfa_offset 24
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
   81              	.LVL10:
   82              	.L6:
   32:lib/FT5x46.c  ****     {
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 3
 
 
   33:lib/FT5x46.c  ****         if(error ==  I2C_TC_I2C_MSTR_NO_ERROR) I2C_TC_I2CMasterReadByte(I2C_TC_I2C_ACK_DATA,dest + 
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  126 006e 2800     		movs	r0, r5
  127              		@ sp needed
  128              	.LVL18:
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 4
 
 
  129              	.LVL19:
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
   49:lib/FT5x46.c  **** }
  174              		.loc 1 49 0
  175              		@ sp needed
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 5
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 5
 
 
  176 0018 7047     		bx	lr
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  221              		.global	TouchPos
  222              		.code	16
  223              		.thumb_func
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 6
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 6
 
 
  224              		.type	TouchPos, %function
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  264              		.loc 1 72 0
  265 002a 8378     		ldrb	r3, [r0, #2]
  266              	.LVL34:
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 7
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 7
 
 
  267 002c 1B02     		lsls	r3, r3, #8
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  306              		.loc 1 87 0
  307              		.cfi_startproc
  308              		@ args = 0, pretend = 0, frame = 16
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 8
 
 
  309              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  347 0032 0330     		adds	r0, r0, #3
  348 0034 C0B2     		uxtb	r0, r0
  349 0036 0622     		movs	r2, #6
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 9
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 9
 
 
  350 0038 01A9     		add	r1, sp, #4
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  394              	.LFB67:
  112:lib/FT5x46.c  **** 
  113:lib/FT5x46.c  **** uint16_t mchpTouchScreenVersion = 0x0000;
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 10
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 10
 
 
  114:lib/FT5x46.c  **** void TouchStoreCalibration(void) { return; }
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  446              		.global	touchActive
  447              		.global	gesture
  448              		.global	numTouches
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 11
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 11
 
 
  449              		.comm	Param,6,4
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  503 0034 08       		.byte	0x8
  504 0035 05       		.byte	0x5
  505 0036 78010000 		.4byte	.LASF1
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 12
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 12
 
 
  506 003a 03       		.uleb128 0x3
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  560 009d 48000000 		.4byte	0x48
  561 00a1 04       		.uleb128 0x4
  562 00a2 73030000 		.4byte	.LASF15
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 13
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 13
 
 
  563 00a6 03       		.byte	0x3
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  617 0114 06       		.byte	0x6
  618 0115 2B       		.byte	0x2b
  619 0116 AC000000 		.4byte	0xac
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 14
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 14
 
 
  620 011a 00       		.byte	0
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  674 0191 6E000000 		.4byte	.LLST3
  675 0195 0F       		.uleb128 0xf
  676 0196 6900     		.ascii	"i\000"
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 15
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 15
 
 
  677 0198 01       		.byte	0x1
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  731 01ef 01       		.uleb128 0x1
  732 01f0 51       		.byte	0x51
  733 01f1 01       		.uleb128 0x1
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 16
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 16
 
 
  734 01f2 31       		.byte	0x31
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  788 023a 01       		.uleb128 0x1
  789 023b 52       		.byte	0x52
  790 023c 02       		.uleb128 0x2
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 17
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 17
 
 
  791 023d 08       		.byte	0x8
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  845 02ac 01       		.byte	0x1
  846 02ad 2B       		.byte	0x2b
  847 02ae 96000000 		.4byte	0x96
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 18
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 18
 
 
  848 02b2 0C010000 		.4byte	.LLST7
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  902 031c 01       		.byte	0x1
  903 031d 3D       		.byte	0x3d
  904 031e 00000000 		.4byte	.LFB65
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 19
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 19
 
 
  905 0322 4C000000 		.4byte	.LFE65-.LFB65
@@ -1138,7 +1138,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  959 0398 0E000000 		.4byte	.LVL40
  960 039c 40010000 		.4byte	0x140
  961 03a0 B5030000 		.4byte	0x3b5
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 20
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 20
 
 
  962 03a4 11       		.uleb128 0x11
@@ -1198,7 +1198,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1016 03e9 02       		.uleb128 0x2
  1017 03ea 91       		.byte	0x91
  1018 03eb 6C       		.sleb128 -20
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 21
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 21
 
 
  1019 03ec 11       		.uleb128 0x11
@@ -1258,7 +1258,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1073 0459 37040000 		.4byte	0x437
  1074 045d 1B       		.uleb128 0x1b
  1075 045e A5010000 		.4byte	.LASF39
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 22
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 22
 
 
  1076 0462 05       		.byte	0x5
@@ -1318,7 +1318,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1130 04d8 08       		.byte	0x8
  1131 04d9 1E01     		.2byte	0x11e
  1132 04db 1C       		.uleb128 0x1c
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 23
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 23
 
 
  1133 04dc 60000000 		.4byte	.LASF47
@@ -1378,7 +1378,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1187 0011 00       		.byte	0
  1188 0012 00       		.byte	0
  1189 0013 02       		.uleb128 0x2
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 24
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 24
 
 
  1190 0014 24       		.uleb128 0x24
@@ -1438,7 +1438,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1244 004a 3A       		.uleb128 0x3a
  1245 004b 0B       		.uleb128 0xb
  1246 004c 3B       		.uleb128 0x3b
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 25
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 25
 
 
  1247 004d 0B       		.uleb128 0xb
@@ -1498,7 +1498,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1301 0083 2E       		.uleb128 0x2e
  1302 0084 01       		.byte	0x1
  1303 0085 3F       		.uleb128 0x3f
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 26
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 26
 
 
  1304 0086 19       		.uleb128 0x19
@@ -1558,7 +1558,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1358 00bd 34       		.uleb128 0x34
  1359 00be 00       		.byte	0
  1360 00bf 03       		.uleb128 0x3
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 27
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 27
 
 
  1361 00c0 0E       		.uleb128 0xe
@@ -1618,7 +1618,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1415 00fd 00       		.byte	0
  1416 00fe 13       		.uleb128 0x13
  1417 00ff 898201   		.uleb128 0x4109
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 28
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 28
 
 
  1418 0102 01       		.byte	0x1
@@ -1678,7 +1678,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1472 0139 00       		.byte	0
  1473 013a 00       		.byte	0
  1474 013b 17       		.uleb128 0x17
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 29
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 29
 
 
  1475 013c 34       		.uleb128 0x34
@@ -1738,7 +1738,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1529 0173 13       		.uleb128 0x13
  1530 0174 3F       		.uleb128 0x3f
  1531 0175 19       		.uleb128 0x19
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 30
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 30
 
 
  1532 0176 3C       		.uleb128 0x3c
@@ -1798,7 +1798,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1586 01ac 00       		.byte	0
  1587 01ad 00       		.byte	0
  1588              		.section	.debug_loc,"",%progbits
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 31
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 31
 
 
  1589              	.Ldebug_loc0:
@@ -1858,7 +1858,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1643              	.LLST4:
  1644 0081 32000000 		.4byte	.LVL9
  1645 0085 36000000 		.4byte	.LVL10
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 32
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 32
 
 
  1646 0089 0200     		.2byte	0x2
@@ -1918,7 +1918,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1700 0114 0100     		.2byte	0x1
  1701 0116 52       		.byte	0x52
  1702 0117 06000000 		.4byte	.LVL23
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 33
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 33
 
 
  1703 011b 10000000 		.4byte	.LVL25
@@ -1978,7 +1978,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1757 01a6 4E000000 		.4byte	.LVL47
  1758 01aa 0100     		.2byte	0x1
  1759 01ac 50       		.byte	0x50
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 34
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 34
 
 
  1760 01ad 00000000 		.4byte	0
@@ -2038,7 +2038,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1814 0024 60000000 		.4byte	.LFE66
  1815 0028 00000000 		.4byte	.LFB67
  1816 002c 02000000 		.4byte	.LFE67
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 35
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 35
 
 
  1817 0030 00000000 		.4byte	.LFB68
@@ -2098,7 +2098,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1844              	.LASF54:
  1845 007c 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
  1845      43313120 
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 36
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 36
 
 
  1845      352E342E 
@@ -2158,7 +2158,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1866              	.LASF35:
  1867 0186 546F7563 		.ascii	"TouchStoreCalibration\000"
  1867      6853746F 
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 37
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 37
 
 
  1867      72654361 
@@ -2218,7 +2218,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1893 022b 7369676E 		.ascii	"signed char\000"
  1893      65642063 
  1893      68617200 
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 38
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 38
 
 
  1894              	.LASF11:
@@ -2278,7 +2278,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1915 0317 64617461 		.ascii	"data\000"
  1915      00
  1916              	.LASF34:
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 39
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 39
 
 
  1917 031c 72427566 		.ascii	"rBuf\000"
@@ -2338,7 +2338,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 1
  1941 03c7 6E6F5F54 		.ascii	"no_Touches\000"
  1941      6F756368 
  1941      657300
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccG48hqZ.s 			page 40
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc5suZBp.s 			page 40
 
 
  1942              	.LASF53:

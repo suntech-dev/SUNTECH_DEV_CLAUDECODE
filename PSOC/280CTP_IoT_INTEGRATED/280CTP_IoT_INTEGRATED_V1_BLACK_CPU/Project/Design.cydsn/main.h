@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdarg.h>
         
-#define FIRMWARE_VERSION "20250612"
+//#define FIRMWARE_VERSION "20250612"
     
 #ifndef ON
     #define ON (1u)

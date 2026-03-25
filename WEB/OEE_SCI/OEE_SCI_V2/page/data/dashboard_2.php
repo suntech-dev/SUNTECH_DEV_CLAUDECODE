@@ -20,8 +20,12 @@ require_once(__DIR__ . '/../../inc/head.php');
 /* nav-fiori.php 제거 — 사이니지에는 네비게이션 불필요 */
 ?>
 
+<?php $nav_context = 'data';
+$nav_active = 'oee_dashboard';
+require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
+
 <!-- Hamburger Drawer -->
-<div id="navDrawerOverlay" class="nav-drawer-overlay"></div>
+<!-- <div id="navDrawerOverlay" class="nav-drawer-overlay"></div>
 <div id="navDrawer" class="nav-drawer">
   <div class="nav-drawer__header">OEE SYSTEM</div>
   <nav class="nav-drawer__menu">
@@ -57,7 +61,7 @@ require_once(__DIR__ . '/../../inc/head.php');
     <a href="dashboard_2.php" class="nav-drawer__link nav-drawer__link--active">Dashboard</a>
     <a href="ai_dashboard_3.php" class="nav-drawer__link">AI Dashboard</a>
   </nav>
-</div>
+</div> -->
 
 <!-- Signage Header (nav 대체, 52px) -->
 <div class="signage-header">
@@ -343,17 +347,27 @@ require_once(__DIR__ . '/../../inc/head.php');
 <script src="js/dashboard.js"></script>
 
 <!-- 햄버거 드로어 -->
-<script>
+<!-- <script>
   (function() {
     var btn = document.getElementById('navDrawerBtn');
     var drawer = document.getElementById('navDrawer');
     var overlay = document.getElementById('navDrawerOverlay');
-    function open() { drawer.classList.add('is-open'); overlay.classList.add('is-open'); }
-    function close() { drawer.classList.remove('is-open'); overlay.classList.remove('is-open'); }
-    btn.addEventListener('click', function() { drawer.classList.contains('is-open') ? close() : open(); });
+
+    function open() {
+      drawer.classList.add('is-open');
+      overlay.classList.add('is-open');
+    }
+
+    function close() {
+      drawer.classList.remove('is-open');
+      overlay.classList.remove('is-open');
+    }
+    btn.addEventListener('click', function() {
+      drawer.classList.contains('is-open') ? close() : open();
+    });
     overlay.addEventListener('click', close);
   })();
-</script>
+</script> -->
 
 <!-- 사이니지 전용: 실시간 시계 -->
 <script>

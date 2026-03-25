@@ -33,8 +33,12 @@ require_once(__DIR__ . '/../../inc/head.php');
 /* nav-fiori.php 제거 */
 ?>
 
+<?php $nav_context = 'data';
+$nav_active = 'ai_dashboard';
+require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
+
 <!-- Hamburger Drawer -->
-<div id="navDrawerOverlay" class="nav-drawer-overlay"></div>
+<!-- <div id="navDrawerOverlay" class="nav-drawer-overlay"></div>
 <div id="navDrawer" class="nav-drawer">
   <div class="nav-drawer__header">OEE SYSTEM</div>
   <nav class="nav-drawer__menu">
@@ -72,7 +76,7 @@ require_once(__DIR__ . '/../../inc/head.php');
     <a href="ai_dashboard_4.php" class="nav-drawer__link">AI Dashboard v4</a>
     <a href="ai_dashboard_5.php" class="nav-drawer__link nav-drawer__link--active">AI Dashboard v5</a>
   </nav>
-</div>
+</div> -->
 
 <!-- Signage Header -->
 <div class="signage-header">
@@ -372,8 +376,8 @@ require_once(__DIR__ . '/../../inc/head.php');
         }
 
         /* ── 카드1: Real-time OEE (항상 오늘 기준, 클램핑 완료) ── */
-        var curOee = (data.current_oee !== null && data.current_oee !== undefined)
-          ? parseFloat(data.current_oee) : null;
+        var curOee = (data.current_oee !== null && data.current_oee !== undefined) ?
+          parseFloat(data.current_oee) : null;
 
         if (curOee !== null) {
           var colorClass = curOee >= 85 ? 'ai-oee-good' : (curOee >= 60 ? 'ai-oee-warning' : 'ai-oee-danger');
@@ -383,7 +387,7 @@ require_once(__DIR__ . '/../../inc/head.php');
             .addClass(colorClass);
 
           var badgeText = curOee >= 85 ? 'GOOD' : (curOee >= 60 ? 'WARNING' : 'CRITICAL');
-          var badgeCls  = curOee >= 85 ? 'ai-status-badge--normal' : (curOee >= 60 ? 'ai-status-badge--warning' : 'ai-status-badge--danger');
+          var badgeCls = curOee >= 85 ? 'ai-status-badge--normal' : (curOee >= 60 ? 'ai-status-badge--warning' : 'ai-status-badge--danger');
           $('#aiRealtimeBadge')
             .show()
             .text(badgeText)
@@ -394,22 +398,29 @@ require_once(__DIR__ . '/../../inc/head.php');
           $('#aiRealtimeBadge').hide();
         }
 
-        var hourLabel = (data.current_hour !== undefined && data.current_hour !== null)
-          ? 'Current: ' + String(data.current_hour).padStart(2, '0') + ':00'
-          : 'Current hour';
+        var hourLabel = (data.current_hour !== undefined && data.current_hour !== null) ?
+          'Current: ' + String(data.current_hour).padStart(2, '0') + ':00' :
+          'Current hour';
         $('#aiRealtimeSub').text(hourLabel);
 
         /* ── 카드2: Next 4H AI Forecast ──────────────── */
         var forecastAvg = null;
-        var ciMin = null, ciMax = null;
+        var ciMin = null,
+          ciMax = null;
 
         if (data.forecast && data.forecast.length > 0) {
           var sum = 0;
-          data.forecast.forEach(function(f) { sum += parseFloat(f.oee); });
+          data.forecast.forEach(function(f) {
+            sum += parseFloat(f.oee);
+          });
           forecastAvg = (sum / data.forecast.length).toFixed(1);
 
-          ciMin = Math.min.apply(null, data.forecast.map(function(f) { return parseFloat(f.lower); })).toFixed(1);
-          ciMax = Math.max.apply(null, data.forecast.map(function(f) { return parseFloat(f.upper); })).toFixed(1);
+          ciMin = Math.min.apply(null, data.forecast.map(function(f) {
+            return parseFloat(f.lower);
+          })).toFixed(1);
+          ciMax = Math.max.apply(null, data.forecast.map(function(f) {
+            return parseFloat(f.upper);
+          })).toFixed(1);
 
           $('#aiPredForecastOee').text(forecastAvg + '%');
           $('#aiPredSub').text('CI: ' + ciMin + '% ~ ' + ciMax + '%');
@@ -420,9 +431,18 @@ require_once(__DIR__ . '/../../inc/head.php');
 
         /* ── 트렌드 배지 ──────────────────────────────── */
         var trendMap = {
-          up:     { cls: 'ai-trend-badge--up',     text: 'Trending Up' },
-          down:   { cls: 'ai-trend-badge--down',   text: 'Trending Down' },
-          stable: { cls: 'ai-trend-badge--stable', text: 'Stable' },
+          up: {
+            cls: 'ai-trend-badge--up',
+            text: 'Trending Up'
+          },
+          down: {
+            cls: 'ai-trend-badge--down',
+            text: 'Trending Down'
+          },
+          stable: {
+            cls: 'ai-trend-badge--stable',
+            text: 'Stable'
+          },
         };
         var trend = trendMap[data.trend] || trendMap.stable;
         $('#aiPredTrendBadge')
@@ -472,15 +492,30 @@ require_once(__DIR__ . '/../../inc/head.php');
   (function() {
     var modal = document.getElementById('exportModal');
 
-    function fmtDate(d) { return d.toISOString().slice(0, 10); }
+    function fmtDate(d) {
+      return d.toISOString().slice(0, 10);
+    }
 
     function calcRange(range) {
-      var now = new Date(), ms = 86400000;
+      var now = new Date(),
+        ms = 86400000;
       var map = {
-        today:     { from: fmtDate(now),               to: fmtDate(now) },
-        yesterday: { from: fmtDate(new Date(now - ms)), to: fmtDate(new Date(now - ms)) },
-        '1w':      { from: fmtDate(new Date(now - 6 * ms)), to: fmtDate(now) },
-        '1m':      { from: fmtDate(new Date(now - 29 * ms)), to: fmtDate(now) },
+        today: {
+          from: fmtDate(now),
+          to: fmtDate(now)
+        },
+        yesterday: {
+          from: fmtDate(new Date(now - ms)),
+          to: fmtDate(new Date(now - ms))
+        },
+        '1w': {
+          from: fmtDate(new Date(now - 6 * ms)),
+          to: fmtDate(now)
+        },
+        '1m': {
+          from: fmtDate(new Date(now - 29 * ms)),
+          to: fmtDate(now)
+        },
       };
       return map[range] || map['today'];
     }
@@ -488,10 +523,10 @@ require_once(__DIR__ . '/../../inc/head.php');
     function setPreset(range) {
       var r = calcRange(range);
       document.getElementById('exportDateFrom').value = r.from;
-      document.getElementById('exportDateTo').value   = r.to;
+      document.getElementById('exportDateTo').value = r.to;
       document.querySelectorAll('.export-preset').forEach(function(b) {
         b.classList.toggle('fiori-btn--emphasized', b.dataset.range === range);
-        b.classList.toggle('fiori-btn--tertiary',   b.dataset.range !== range);
+        b.classList.toggle('fiori-btn--tertiary', b.dataset.range !== range);
       });
     }
 
@@ -501,7 +536,9 @@ require_once(__DIR__ . '/../../inc/head.php');
     });
 
     document.querySelectorAll('.export-preset').forEach(function(btn) {
-      btn.addEventListener('click', function() { setPreset(this.dataset.range); });
+      btn.addEventListener('click', function() {
+        setPreset(this.dataset.range);
+      });
     });
 
     ['exportDateFrom', 'exportDateTo'].forEach(function(id) {
@@ -515,10 +552,15 @@ require_once(__DIR__ . '/../../inc/head.php');
 
     document.getElementById('exportConfirmBtn').addEventListener('click', function() {
       var from = document.getElementById('exportDateFrom').value;
-      var to   = document.getElementById('exportDateTo').value;
-      if (!from || !to) { alert('Please select a date range.'); return; }
+      var to = document.getElementById('exportDateTo').value;
+      if (!from || !to) {
+        alert('Please select a date range.');
+        return;
+      }
       var p = getFilterParams();
-      p.range = 'custom'; p.date_from = from; p.date_to = to;
+      p.range = 'custom';
+      p.date_from = from;
+      p.date_to = to;
       window.open('proc/ai_report_export.php?' + new URLSearchParams(p), '_blank');
       modal.style.display = 'none';
     });
@@ -534,21 +576,28 @@ require_once(__DIR__ . '/../../inc/head.php');
 </script>
 
 <!-- 햄버거 드로어 -->
-<script>
+<!-- <script>
   (function() {
-    var btn     = document.getElementById('navDrawerBtn');
-    var drawer  = document.getElementById('navDrawer');
+    var btn = document.getElementById('navDrawerBtn');
+    var drawer = document.getElementById('navDrawer');
     var overlay = document.getElementById('navDrawerOverlay');
 
-    function open()  { drawer.classList.add('is-open');    overlay.classList.add('is-open');    }
-    function close() { drawer.classList.remove('is-open'); overlay.classList.remove('is-open'); }
+    function open() {
+      drawer.classList.add('is-open');
+      overlay.classList.add('is-open');
+    }
+
+    function close() {
+      drawer.classList.remove('is-open');
+      overlay.classList.remove('is-open');
+    }
 
     btn.addEventListener('click', function() {
       drawer.classList.contains('is-open') ? close() : open();
     });
     overlay.addEventListener('click', close);
   })();
-</script>
+</script> -->
 
 <!-- 실시간 시계 -->
 <script>

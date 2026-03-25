@@ -105,19 +105,11 @@
 
     // 스킵 링크 추가
     addSkipLinks: function () {
-      const skipLink = document.createElement('a');
-      skipLink.href = '#main-content';
+      const skipLink = document.createElement('span');
       skipLink.className = 'fiori-skip-link';
       skipLink.textContent = '메인 콘텐츠로 건너뛰기';
-      skipLink.setAttribute('accesskey', 's');
 
       document.body.insertAdjacentElement('afterbegin', skipLink);
-
-      // 메인 콘텐츠 영역 식별
-      const main = document.querySelector('main, [role="main"], .fiori-container');
-      if (main && !main.id) {
-        main.id = 'main-content';
-      }
     },
 
     // ARIA 라벨 자동 추가
