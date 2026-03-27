@@ -52,7 +52,8 @@ $allowedCodes = [
     'send_downtime_warning',   // 비가동 경고 전송
     'send_downtime_completed', // 비가동 완료 전송
     'send_defective_warning',  // 불량 경고 전송
-    'send_pCount'             // 생산수량 전송
+    'send_pCount',            // 생산수량 전송 (재봉기)
+    'send_eCount'             // 자수기 생산데이터 전송
 ];
 
 // 코드 유효성 검증 (보안: 경로 탐색 공격 방지)

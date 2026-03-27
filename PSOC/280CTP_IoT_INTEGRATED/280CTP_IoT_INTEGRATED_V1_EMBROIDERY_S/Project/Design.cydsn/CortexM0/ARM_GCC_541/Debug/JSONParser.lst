@@ -1,0 +1,5229 @@
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"JSONParser.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.jsmn_alloc_token,"ax",%progbits
+  20              		.align	2
+  21              		.code	16
+  22              		.thumb_func
+  23              		.type	jsmn_alloc_token, %function
+  24              	jsmn_alloc_token:
+  25              	.LFB61:
+  26              		.file 1 "jsmn-master/jsmn.h"
+   1:jsmn-master/jsmn.h **** /*
+   2:jsmn-master/jsmn.h ****  * MIT License
+   3:jsmn-master/jsmn.h ****  *
+   4:jsmn-master/jsmn.h ****  * Copyright (c) 2010 Serge Zaitsev
+   5:jsmn-master/jsmn.h ****  *
+   6:jsmn-master/jsmn.h ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+   7:jsmn-master/jsmn.h ****  * of this software and associated documentation files (the "Software"), to deal
+   8:jsmn-master/jsmn.h ****  * in the Software without restriction, including without limitation the rights
+   9:jsmn-master/jsmn.h ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  10:jsmn-master/jsmn.h ****  * copies of the Software, and to permit persons to whom the Software is
+  11:jsmn-master/jsmn.h ****  * furnished to do so, subject to the following conditions:
+  12:jsmn-master/jsmn.h ****  *
+  13:jsmn-master/jsmn.h ****  * The above copyright notice and this permission notice shall be included in
+  14:jsmn-master/jsmn.h ****  * all copies or substantial portions of the Software.
+  15:jsmn-master/jsmn.h ****  *
+  16:jsmn-master/jsmn.h ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  17:jsmn-master/jsmn.h ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  18:jsmn-master/jsmn.h ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  19:jsmn-master/jsmn.h ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  20:jsmn-master/jsmn.h ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  21:jsmn-master/jsmn.h ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  22:jsmn-master/jsmn.h ****  * SOFTWARE.
+  23:jsmn-master/jsmn.h ****  */
+  24:jsmn-master/jsmn.h **** #ifndef JSMN_H
+  25:jsmn-master/jsmn.h **** #define JSMN_H
+  26:jsmn-master/jsmn.h **** 
+  27:jsmn-master/jsmn.h **** #include <stddef.h>
+  28:jsmn-master/jsmn.h **** 
+  29:jsmn-master/jsmn.h **** #ifdef __cplusplus
+  30:jsmn-master/jsmn.h **** extern "C" {
+  31:jsmn-master/jsmn.h **** #endif
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 2
+
+
+  32:jsmn-master/jsmn.h **** 
+  33:jsmn-master/jsmn.h **** #ifdef JSMN_STATIC
+  34:jsmn-master/jsmn.h **** #define JSMN_API static
+  35:jsmn-master/jsmn.h **** #else
+  36:jsmn-master/jsmn.h **** #define JSMN_API extern
+  37:jsmn-master/jsmn.h **** #endif
+  38:jsmn-master/jsmn.h **** 
+  39:jsmn-master/jsmn.h **** /**
+  40:jsmn-master/jsmn.h ****  * JSON type identifier. Basic types are:
+  41:jsmn-master/jsmn.h ****  * 	o Object
+  42:jsmn-master/jsmn.h ****  * 	o Array
+  43:jsmn-master/jsmn.h ****  * 	o String
+  44:jsmn-master/jsmn.h ****  * 	o Other primitive: number, boolean (true/false) or null
+  45:jsmn-master/jsmn.h ****  */
+  46:jsmn-master/jsmn.h **** typedef enum {
+  47:jsmn-master/jsmn.h ****   JSMN_UNDEFINED = 0,
+  48:jsmn-master/jsmn.h ****   JSMN_OBJECT = 1,
+  49:jsmn-master/jsmn.h ****   JSMN_ARRAY = 2,
+  50:jsmn-master/jsmn.h ****   JSMN_STRING = 3,
+  51:jsmn-master/jsmn.h ****   JSMN_PRIMITIVE = 4
+  52:jsmn-master/jsmn.h **** } jsmntype_t;
+  53:jsmn-master/jsmn.h **** 
+  54:jsmn-master/jsmn.h **** enum jsmnerr {
+  55:jsmn-master/jsmn.h ****   /* Not enough tokens were provided */
+  56:jsmn-master/jsmn.h ****   JSMN_ERROR_NOMEM = -1,
+  57:jsmn-master/jsmn.h ****   /* Invalid character inside JSON string */
+  58:jsmn-master/jsmn.h ****   JSMN_ERROR_INVAL = -2,
+  59:jsmn-master/jsmn.h ****   /* The string is not a full JSON packet, more bytes expected */
+  60:jsmn-master/jsmn.h ****   JSMN_ERROR_PART = -3
+  61:jsmn-master/jsmn.h **** };
+  62:jsmn-master/jsmn.h **** 
+  63:jsmn-master/jsmn.h **** /**
+  64:jsmn-master/jsmn.h ****  * JSON token description.
+  65:jsmn-master/jsmn.h ****  * type		type (object, array, string etc.)
+  66:jsmn-master/jsmn.h ****  * start	start position in JSON data string
+  67:jsmn-master/jsmn.h ****  * end		end position in JSON data string
+  68:jsmn-master/jsmn.h ****  */
+  69:jsmn-master/jsmn.h **** typedef struct jsmntok {
+  70:jsmn-master/jsmn.h ****   jsmntype_t type;
+  71:jsmn-master/jsmn.h ****   int start;
+  72:jsmn-master/jsmn.h ****   int end;
+  73:jsmn-master/jsmn.h ****   int size;
+  74:jsmn-master/jsmn.h **** #ifdef JSMN_PARENT_LINKS
+  75:jsmn-master/jsmn.h ****   int parent;
+  76:jsmn-master/jsmn.h **** #endif
+  77:jsmn-master/jsmn.h **** } jsmntok_t;
+  78:jsmn-master/jsmn.h **** 
+  79:jsmn-master/jsmn.h **** /**
+  80:jsmn-master/jsmn.h ****  * JSON parser. Contains an array of token blocks available. Also stores
+  81:jsmn-master/jsmn.h ****  * the string being parsed now and current position in that string.
+  82:jsmn-master/jsmn.h ****  */
+  83:jsmn-master/jsmn.h **** typedef struct jsmn_parser {
+  84:jsmn-master/jsmn.h ****   unsigned int pos;     /* offset in the JSON string */
+  85:jsmn-master/jsmn.h ****   unsigned int toknext; /* next token to allocate */
+  86:jsmn-master/jsmn.h ****   int toksuper;         /* superior token node, e.g. parent object or array */
+  87:jsmn-master/jsmn.h **** } jsmn_parser;
+  88:jsmn-master/jsmn.h **** 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 3
+
+
+  89:jsmn-master/jsmn.h **** /**
+  90:jsmn-master/jsmn.h ****  * Create JSON parser over an array of tokens
+  91:jsmn-master/jsmn.h ****  */
+  92:jsmn-master/jsmn.h **** JSMN_API void jsmn_init(jsmn_parser *parser);
+  93:jsmn-master/jsmn.h **** 
+  94:jsmn-master/jsmn.h **** /**
+  95:jsmn-master/jsmn.h ****  * Run JSON parser. It parses a JSON data string into and array of tokens, each
+  96:jsmn-master/jsmn.h ****  * describing
+  97:jsmn-master/jsmn.h ****  * a single JSON object.
+  98:jsmn-master/jsmn.h ****  */
+  99:jsmn-master/jsmn.h **** JSMN_API int jsmn_parse(jsmn_parser *parser, const char *js, const size_t len,
+ 100:jsmn-master/jsmn.h ****                         jsmntok_t *tokens, const unsigned int num_tokens);
+ 101:jsmn-master/jsmn.h **** 
+ 102:jsmn-master/jsmn.h **** #ifndef JSMN_HEADER
+ 103:jsmn-master/jsmn.h **** /**
+ 104:jsmn-master/jsmn.h ****  * Allocates a fresh unused token from the token pool.
+ 105:jsmn-master/jsmn.h ****  */
+ 106:jsmn-master/jsmn.h **** static jsmntok_t *jsmn_alloc_token(jsmn_parser *parser, jsmntok_t *tokens,
+ 107:jsmn-master/jsmn.h ****                                    const size_t num_tokens) {
+  27              		.loc 1 107 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  32              	.LVL0:
+ 108:jsmn-master/jsmn.h ****   jsmntok_t *tok;
+ 109:jsmn-master/jsmn.h ****   if (parser->toknext >= num_tokens) {
+  33              		.loc 1 109 0
+  34 0000 4368     		ldr	r3, [r0, #4]
+  35 0002 9342     		cmp	r3, r2
+  36 0004 0BD2     		bcs	.L3
+ 110:jsmn-master/jsmn.h ****     return NULL;
+ 111:jsmn-master/jsmn.h ****   }
+ 112:jsmn-master/jsmn.h ****   tok = &tokens[parser->toknext++];
+  37              		.loc 1 112 0
+  38 0006 5A1C     		adds	r2, r3, #1
+  39              	.LVL1:
+  40 0008 4260     		str	r2, [r0, #4]
+  41 000a 1B01     		lsls	r3, r3, #4
+  42 000c C918     		adds	r1, r1, r3
+  43              	.LVL2:
+ 113:jsmn-master/jsmn.h ****   tok->start = tok->end = -1;
+  44              		.loc 1 113 0
+  45 000e 0123     		movs	r3, #1
+  46 0010 5B42     		rsbs	r3, r3, #0
+  47 0012 8B60     		str	r3, [r1, #8]
+  48 0014 4B60     		str	r3, [r1, #4]
+ 114:jsmn-master/jsmn.h ****   tok->size = 0;
+  49              		.loc 1 114 0
+  50 0016 0023     		movs	r3, #0
+  51 0018 CB60     		str	r3, [r1, #12]
+ 115:jsmn-master/jsmn.h **** #ifdef JSMN_PARENT_LINKS
+ 116:jsmn-master/jsmn.h ****   tok->parent = -1;
+ 117:jsmn-master/jsmn.h **** #endif
+ 118:jsmn-master/jsmn.h ****   return tok;
+  52              		.loc 1 118 0
+  53 001a 0800     		movs	r0, r1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 4
+
+
+  54              	.LVL3:
+  55 001c 00E0     		b	.L2
+  56              	.LVL4:
+  57              	.L3:
+ 110:jsmn-master/jsmn.h ****   }
+  58              		.loc 1 110 0
+  59 001e 0020     		movs	r0, #0
+  60              	.LVL5:
+  61              	.L2:
+ 119:jsmn-master/jsmn.h **** }
+  62              		.loc 1 119 0
+  63              		@ sp needed
+  64 0020 7047     		bx	lr
+  65              		.cfi_endproc
+  66              	.LFE61:
+  67              		.size	jsmn_alloc_token, .-jsmn_alloc_token
+  68 0022 C046     		.section	.text.jsmn_fill_token,"ax",%progbits
+  69              		.align	2
+  70              		.code	16
+  71              		.thumb_func
+  72              		.type	jsmn_fill_token, %function
+  73              	jsmn_fill_token:
+  74              	.LFB62:
+ 120:jsmn-master/jsmn.h **** 
+ 121:jsmn-master/jsmn.h **** /**
+ 122:jsmn-master/jsmn.h ****  * Fills token type and boundaries.
+ 123:jsmn-master/jsmn.h ****  */
+ 124:jsmn-master/jsmn.h **** static void jsmn_fill_token(jsmntok_t *token, const jsmntype_t type,
+ 125:jsmn-master/jsmn.h ****                             const int start, const int end) {
+  75              		.loc 1 125 0
+  76              		.cfi_startproc
+  77              		@ args = 0, pretend = 0, frame = 0
+  78              		@ frame_needed = 0, uses_anonymous_args = 0
+  79              		@ link register save eliminated.
+  80              	.LVL6:
+ 126:jsmn-master/jsmn.h ****   token->type = type;
+  81              		.loc 1 126 0
+  82 0000 0170     		strb	r1, [r0]
+ 127:jsmn-master/jsmn.h ****   token->start = start;
+  83              		.loc 1 127 0
+  84 0002 4260     		str	r2, [r0, #4]
+ 128:jsmn-master/jsmn.h ****   token->end = end;
+  85              		.loc 1 128 0
+  86 0004 8360     		str	r3, [r0, #8]
+ 129:jsmn-master/jsmn.h ****   token->size = 0;
+  87              		.loc 1 129 0
+  88 0006 0023     		movs	r3, #0
+  89              	.LVL7:
+  90 0008 C360     		str	r3, [r0, #12]
+ 130:jsmn-master/jsmn.h **** }
+  91              		.loc 1 130 0
+  92              		@ sp needed
+  93 000a 7047     		bx	lr
+  94              		.cfi_endproc
+  95              	.LFE62:
+  96              		.size	jsmn_fill_token, .-jsmn_fill_token
+  97              		.section	.text.jsmn_parse_primitive,"ax",%progbits
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 5
+
+
+  98              		.align	2
+  99              		.code	16
+ 100              		.thumb_func
+ 101              		.type	jsmn_parse_primitive, %function
+ 102              	jsmn_parse_primitive:
+ 103              	.LFB63:
+ 131:jsmn-master/jsmn.h **** 
+ 132:jsmn-master/jsmn.h **** /**
+ 133:jsmn-master/jsmn.h ****  * Fills next available token with JSON primitive.
+ 134:jsmn-master/jsmn.h ****  */
+ 135:jsmn-master/jsmn.h **** static int jsmn_parse_primitive(jsmn_parser *parser, const char *js,
+ 136:jsmn-master/jsmn.h ****                                 const size_t len, jsmntok_t *tokens,
+ 137:jsmn-master/jsmn.h ****                                 const size_t num_tokens) {
+ 104              		.loc 1 137 0
+ 105              		.cfi_startproc
+ 106              		@ args = 4, pretend = 0, frame = 0
+ 107              		@ frame_needed = 0, uses_anonymous_args = 0
+ 108              	.LVL8:
+ 109 0000 70B5     		push	{r4, r5, r6, lr}
+ 110              		.cfi_def_cfa_offset 16
+ 111              		.cfi_offset 4, -16
+ 112              		.cfi_offset 5, -12
+ 113              		.cfi_offset 6, -8
+ 114              		.cfi_offset 14, -4
+ 115 0002 0500     		movs	r5, r0
+ 138:jsmn-master/jsmn.h ****   jsmntok_t *token;
+ 139:jsmn-master/jsmn.h ****   int start;
+ 140:jsmn-master/jsmn.h **** 
+ 141:jsmn-master/jsmn.h ****   start = parser->pos;
+ 116              		.loc 1 141 0
+ 117 0004 0668     		ldr	r6, [r0]
+ 118              	.LVL9:
+ 142:jsmn-master/jsmn.h **** 
+ 143:jsmn-master/jsmn.h ****   for (; parser->pos < len && js[parser->pos] != '\0'; parser->pos++) {
+ 119              		.loc 1 143 0
+ 120 0006 1DE0     		b	.L6
+ 121              	.LVL10:
+ 122              	.L13:
+ 144:jsmn-master/jsmn.h ****     switch (js[parser->pos]) {
+ 123              		.loc 1 144 0
+ 124 0008 2028     		cmp	r0, #32
+ 125 000a 21D0     		beq	.L8
+ 126 000c 06D8     		bhi	.L9
+ 127 000e 0928     		cmp	r0, #9
+ 128 0010 0ED3     		bcc	.L7
+ 129 0012 0A28     		cmp	r0, #10
+ 130 0014 1CD9     		bls	.L8
+ 131 0016 0D28     		cmp	r0, #13
+ 132 0018 0AD1     		bne	.L7
+ 133 001a 19E0     		b	.L8
+ 134              	.L9:
+ 135 001c 3A28     		cmp	r0, #58
+ 136 001e 17D0     		beq	.L8
+ 137 0020 02D8     		bhi	.L10
+ 138 0022 2C28     		cmp	r0, #44
+ 139 0024 04D1     		bne	.L7
+ 140 0026 13E0     		b	.L8
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 6
+
+
+ 141              	.L10:
+ 142 0028 5D28     		cmp	r0, #93
+ 143 002a 11D0     		beq	.L8
+ 144 002c 7D28     		cmp	r0, #125
+ 145 002e 0FD0     		beq	.L8
+ 146              	.L7:
+ 145:jsmn-master/jsmn.h **** #ifndef JSMN_STRICT
+ 146:jsmn-master/jsmn.h ****     /* In strict mode primitive must be followed by "," or "}" or "]" */
+ 147:jsmn-master/jsmn.h ****     case ':':
+ 148:jsmn-master/jsmn.h **** #endif
+ 149:jsmn-master/jsmn.h ****     case '\t':
+ 150:jsmn-master/jsmn.h ****     case '\r':
+ 151:jsmn-master/jsmn.h ****     case '\n':
+ 152:jsmn-master/jsmn.h ****     case ' ':
+ 153:jsmn-master/jsmn.h ****     case ',':
+ 154:jsmn-master/jsmn.h ****     case ']':
+ 155:jsmn-master/jsmn.h ****     case '}':
+ 156:jsmn-master/jsmn.h ****       goto found;
+ 157:jsmn-master/jsmn.h ****     default:
+ 158:jsmn-master/jsmn.h ****                    /* to quiet a warning from gcc*/
+ 159:jsmn-master/jsmn.h ****       break;
+ 160:jsmn-master/jsmn.h ****     }
+ 161:jsmn-master/jsmn.h ****     if (js[parser->pos] < 32 || js[parser->pos] >= 127) {
+ 147              		.loc 1 161 0
+ 148 0030 2038     		subs	r0, r0, #32
+ 149 0032 C0B2     		uxtb	r0, r0
+ 150 0034 5E28     		cmp	r0, #94
+ 151 0036 03D9     		bls	.L11
+ 162:jsmn-master/jsmn.h ****       parser->pos = start;
+ 152              		.loc 1 162 0
+ 153 0038 2E60     		str	r6, [r5]
+ 163:jsmn-master/jsmn.h ****       return JSMN_ERROR_INVAL;
+ 154              		.loc 1 163 0
+ 155 003a 0220     		movs	r0, #2
+ 156 003c 4042     		rsbs	r0, r0, #0
+ 157 003e 20E0     		b	.L12
+ 158              	.L11:
+ 143:jsmn-master/jsmn.h ****     switch (js[parser->pos]) {
+ 159              		.loc 1 143 0
+ 160 0040 0134     		adds	r4, r4, #1
+ 161 0042 2C60     		str	r4, [r5]
+ 162              	.L6:
+ 143:jsmn-master/jsmn.h ****     switch (js[parser->pos]) {
+ 163              		.loc 1 143 0 is_stmt 0 discriminator 1
+ 164 0044 2C68     		ldr	r4, [r5]
+ 165 0046 9442     		cmp	r4, r2
+ 166 0048 02D2     		bcs	.L8
+ 143:jsmn-master/jsmn.h ****     switch (js[parser->pos]) {
+ 167              		.loc 1 143 0 discriminator 2
+ 168 004a 085D     		ldrb	r0, [r1, r4]
+ 169 004c 0028     		cmp	r0, #0
+ 170 004e DBD1     		bne	.L13
+ 171              	.L8:
+ 164:jsmn-master/jsmn.h ****     }
+ 165:jsmn-master/jsmn.h ****   }
+ 166:jsmn-master/jsmn.h **** #ifdef JSMN_STRICT
+ 167:jsmn-master/jsmn.h ****   /* In strict mode primitive must be followed by a comma/object/array */
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 7
+
+
+ 168:jsmn-master/jsmn.h ****   parser->pos = start;
+ 169:jsmn-master/jsmn.h ****   return JSMN_ERROR_PART;
+ 170:jsmn-master/jsmn.h **** #endif
+ 171:jsmn-master/jsmn.h **** 
+ 172:jsmn-master/jsmn.h **** found:
+ 173:jsmn-master/jsmn.h ****   if (tokens == NULL) {
+ 172              		.loc 1 173 0 is_stmt 1
+ 173 0050 002B     		cmp	r3, #0
+ 174 0052 03D1     		bne	.L14
+ 174:jsmn-master/jsmn.h ****     parser->pos--;
+ 175              		.loc 1 174 0
+ 176 0054 013C     		subs	r4, r4, #1
+ 177 0056 2C60     		str	r4, [r5]
+ 175:jsmn-master/jsmn.h ****     return 0;
+ 178              		.loc 1 175 0
+ 179 0058 0020     		movs	r0, #0
+ 180 005a 12E0     		b	.L12
+ 181              	.L14:
+ 176:jsmn-master/jsmn.h ****   }
+ 177:jsmn-master/jsmn.h ****   token = jsmn_alloc_token(parser, tokens, num_tokens);
+ 182              		.loc 1 177 0
+ 183 005c 049A     		ldr	r2, [sp, #16]
+ 184              	.LVL11:
+ 185 005e 1900     		movs	r1, r3
+ 186              	.LVL12:
+ 187 0060 2800     		movs	r0, r5
+ 188 0062 FFF7FEFF 		bl	jsmn_alloc_token
+ 189              	.LVL13:
+ 178:jsmn-master/jsmn.h ****   if (token == NULL) {
+ 190              		.loc 1 178 0
+ 191 0066 0028     		cmp	r0, #0
+ 192 0068 02D1     		bne	.L15
+ 179:jsmn-master/jsmn.h ****     parser->pos = start;
+ 193              		.loc 1 179 0
+ 194 006a 2E60     		str	r6, [r5]
+ 180:jsmn-master/jsmn.h ****     return JSMN_ERROR_NOMEM;
+ 195              		.loc 1 180 0
+ 196 006c 0138     		subs	r0, r0, #1
+ 197              	.LVL14:
+ 198 006e 08E0     		b	.L12
+ 199              	.LVL15:
+ 200              	.L15:
+ 181:jsmn-master/jsmn.h ****   }
+ 182:jsmn-master/jsmn.h ****   jsmn_fill_token(token, JSMN_PRIMITIVE, start, parser->pos);
+ 201              		.loc 1 182 0
+ 202 0070 2B68     		ldr	r3, [r5]
+ 203 0072 3200     		movs	r2, r6
+ 204 0074 0421     		movs	r1, #4
+ 205 0076 FFF7FEFF 		bl	jsmn_fill_token
+ 206              	.LVL16:
+ 183:jsmn-master/jsmn.h **** #ifdef JSMN_PARENT_LINKS
+ 184:jsmn-master/jsmn.h ****   token->parent = parser->toksuper;
+ 185:jsmn-master/jsmn.h **** #endif
+ 186:jsmn-master/jsmn.h ****   parser->pos--;
+ 207              		.loc 1 186 0
+ 208 007a 2B68     		ldr	r3, [r5]
+ 209 007c 013B     		subs	r3, r3, #1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 8
+
+
+ 210 007e 2B60     		str	r3, [r5]
+ 187:jsmn-master/jsmn.h ****   return 0;
+ 211              		.loc 1 187 0
+ 212 0080 0020     		movs	r0, #0
+ 213              	.L12:
+ 188:jsmn-master/jsmn.h **** }
+ 214              		.loc 1 188 0
+ 215              		@ sp needed
+ 216              	.LVL17:
+ 217              	.LVL18:
+ 218 0082 70BD     		pop	{r4, r5, r6, pc}
+ 219              		.cfi_endproc
+ 220              	.LFE63:
+ 221              		.size	jsmn_parse_primitive, .-jsmn_parse_primitive
+ 222              		.section	.text.jsmn_parse_string,"ax",%progbits
+ 223              		.align	2
+ 224              		.code	16
+ 225              		.thumb_func
+ 226              		.type	jsmn_parse_string, %function
+ 227              	jsmn_parse_string:
+ 228              	.LFB64:
+ 189:jsmn-master/jsmn.h **** 
+ 190:jsmn-master/jsmn.h **** /**
+ 191:jsmn-master/jsmn.h ****  * Fills next token with JSON string.
+ 192:jsmn-master/jsmn.h ****  */
+ 193:jsmn-master/jsmn.h **** static int jsmn_parse_string(jsmn_parser *parser, const char *js,
+ 194:jsmn-master/jsmn.h ****                              const size_t len, jsmntok_t *tokens,
+ 195:jsmn-master/jsmn.h ****                              const size_t num_tokens) {
+ 229              		.loc 1 195 0
+ 230              		.cfi_startproc
+ 231              		@ args = 4, pretend = 0, frame = 8
+ 232              		@ frame_needed = 0, uses_anonymous_args = 0
+ 233              	.LVL19:
+ 234 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 235              		.cfi_def_cfa_offset 20
+ 236              		.cfi_offset 4, -20
+ 237              		.cfi_offset 5, -16
+ 238              		.cfi_offset 6, -12
+ 239              		.cfi_offset 7, -8
+ 240              		.cfi_offset 14, -4
+ 241 0002 83B0     		sub	sp, sp, #12
+ 242              		.cfi_def_cfa_offset 32
+ 243 0004 0500     		movs	r5, r0
+ 244 0006 0193     		str	r3, [sp, #4]
+ 196:jsmn-master/jsmn.h ****   jsmntok_t *token;
+ 197:jsmn-master/jsmn.h **** 
+ 198:jsmn-master/jsmn.h ****   int start = parser->pos;
+ 245              		.loc 1 198 0
+ 246 0008 0668     		ldr	r6, [r0]
+ 247              	.LVL20:
+ 199:jsmn-master/jsmn.h **** 
+ 200:jsmn-master/jsmn.h ****   parser->pos++;
+ 248              		.loc 1 200 0
+ 249 000a 701C     		adds	r0, r6, #1
+ 250              	.LVL21:
+ 251 000c 2860     		str	r0, [r5]
+ 201:jsmn-master/jsmn.h **** 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 9
+
+
+ 202:jsmn-master/jsmn.h ****   /* Skip starting quote */
+ 203:jsmn-master/jsmn.h ****   for (; parser->pos < len && js[parser->pos] != '\0'; parser->pos++) {
+ 252              		.loc 1 203 0
+ 253 000e 50E0     		b	.L17
+ 254              	.LVL22:
+ 255              	.L30:
+ 256              	.LBB2:
+ 204:jsmn-master/jsmn.h ****     char c = js[parser->pos];
+ 205:jsmn-master/jsmn.h **** 
+ 206:jsmn-master/jsmn.h ****     /* Quote: end of string */
+ 207:jsmn-master/jsmn.h ****     if (c == '\"') {
+ 257              		.loc 1 207 0
+ 258 0010 222C     		cmp	r4, #34
+ 259 0012 13D1     		bne	.L18
+ 208:jsmn-master/jsmn.h ****       if (tokens == NULL) {
+ 260              		.loc 1 208 0
+ 261 0014 019B     		ldr	r3, [sp, #4]
+ 262 0016 002B     		cmp	r3, #0
+ 263 0018 55D0     		beq	.L31
+ 209:jsmn-master/jsmn.h ****         return 0;
+ 210:jsmn-master/jsmn.h ****       }
+ 211:jsmn-master/jsmn.h ****       token = jsmn_alloc_token(parser, tokens, num_tokens);
+ 264              		.loc 1 211 0
+ 265 001a 089A     		ldr	r2, [sp, #32]
+ 266              	.LVL23:
+ 267 001c 1900     		movs	r1, r3
+ 268              	.LVL24:
+ 269 001e 2800     		movs	r0, r5
+ 270 0020 FFF7FEFF 		bl	jsmn_alloc_token
+ 271              	.LVL25:
+ 212:jsmn-master/jsmn.h ****       if (token == NULL) {
+ 272              		.loc 1 212 0
+ 273 0024 0028     		cmp	r0, #0
+ 274 0026 02D1     		bne	.L20
+ 213:jsmn-master/jsmn.h ****         parser->pos = start;
+ 275              		.loc 1 213 0
+ 276 0028 2E60     		str	r6, [r5]
+ 214:jsmn-master/jsmn.h ****         return JSMN_ERROR_NOMEM;
+ 277              		.loc 1 214 0
+ 278 002a 0138     		subs	r0, r0, #1
+ 279              	.LVL26:
+ 280 002c 4CE0     		b	.L19
+ 281              	.LVL27:
+ 282              	.L20:
+ 215:jsmn-master/jsmn.h ****       }
+ 216:jsmn-master/jsmn.h ****       jsmn_fill_token(token, JSMN_STRING, start + 1, parser->pos);
+ 283              		.loc 1 216 0
+ 284 002e 2B68     		ldr	r3, [r5]
+ 285 0030 721C     		adds	r2, r6, #1
+ 286 0032 0321     		movs	r1, #3
+ 287 0034 FFF7FEFF 		bl	jsmn_fill_token
+ 288              	.LVL28:
+ 217:jsmn-master/jsmn.h **** #ifdef JSMN_PARENT_LINKS
+ 218:jsmn-master/jsmn.h ****       token->parent = parser->toksuper;
+ 219:jsmn-master/jsmn.h **** #endif
+ 220:jsmn-master/jsmn.h ****       return 0;
+ 289              		.loc 1 220 0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 10
+
+
+ 290 0038 0020     		movs	r0, #0
+ 291 003a 45E0     		b	.L19
+ 292              	.LVL29:
+ 293              	.L18:
+ 221:jsmn-master/jsmn.h ****     }
+ 222:jsmn-master/jsmn.h **** 
+ 223:jsmn-master/jsmn.h ****     /* Backslash: Quoted symbol expected */
+ 224:jsmn-master/jsmn.h ****     if (c == '\\' && parser->pos + 1 < len) {
+ 294              		.loc 1 224 0
+ 295 003c 5C2C     		cmp	r4, #92
+ 296 003e 35D1     		bne	.L21
+ 297              		.loc 1 224 0 is_stmt 0 discriminator 1
+ 298 0040 0130     		adds	r0, r0, #1
+ 299 0042 8242     		cmp	r2, r0
+ 300 0044 32D9     		bls	.L21
+ 301              	.LBB3:
+ 225:jsmn-master/jsmn.h ****       int i;
+ 226:jsmn-master/jsmn.h ****       parser->pos++;
+ 302              		.loc 1 226 0 is_stmt 1
+ 303 0046 2860     		str	r0, [r5]
+ 227:jsmn-master/jsmn.h ****       switch (js[parser->pos]) {
+ 304              		.loc 1 227 0
+ 305 0048 0C5C     		ldrb	r4, [r1, r0]
+ 306              	.LVL30:
+ 307 004a 223C     		subs	r4, r4, #34
+ 308 004c E7B2     		uxtb	r7, r4
+ 309 004e 532F     		cmp	r7, #83
+ 310 0050 28D8     		bhi	.L22
+ 311 0052 BC00     		lsls	r4, r7, #2
+ 312 0054 1D4F     		ldr	r7, .L32
+ 313 0056 3C59     		ldr	r4, [r7, r4]
+ 314 0058 A746     		mov	pc, r4
+ 315              		.section	.rodata
+ 316              		.align	2
+ 317              	.L23:
+ 318 0000 AC000000 		.word	.L21
+ 319 0004 A4000000 		.word	.L22
+ 320 0008 A4000000 		.word	.L22
+ 321 000c A4000000 		.word	.L22
+ 322 0010 A4000000 		.word	.L22
+ 323 0014 A4000000 		.word	.L22
+ 324 0018 A4000000 		.word	.L22
+ 325 001c A4000000 		.word	.L22
+ 326 0020 A4000000 		.word	.L22
+ 327 0024 A4000000 		.word	.L22
+ 328 0028 A4000000 		.word	.L22
+ 329 002c A4000000 		.word	.L22
+ 330 0030 A4000000 		.word	.L22
+ 331 0034 AC000000 		.word	.L21
+ 332 0038 A4000000 		.word	.L22
+ 333 003c A4000000 		.word	.L22
+ 334 0040 A4000000 		.word	.L22
+ 335 0044 A4000000 		.word	.L22
+ 336 0048 A4000000 		.word	.L22
+ 337 004c A4000000 		.word	.L22
+ 338 0050 A4000000 		.word	.L22
+ 339 0054 A4000000 		.word	.L22
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 11
+
+
+ 340 0058 A4000000 		.word	.L22
+ 341 005c A4000000 		.word	.L22
+ 342 0060 A4000000 		.word	.L22
+ 343 0064 A4000000 		.word	.L22
+ 344 0068 A4000000 		.word	.L22
+ 345 006c A4000000 		.word	.L22
+ 346 0070 A4000000 		.word	.L22
+ 347 0074 A4000000 		.word	.L22
+ 348 0078 A4000000 		.word	.L22
+ 349 007c A4000000 		.word	.L22
+ 350 0080 A4000000 		.word	.L22
+ 351 0084 A4000000 		.word	.L22
+ 352 0088 A4000000 		.word	.L22
+ 353 008c A4000000 		.word	.L22
+ 354 0090 A4000000 		.word	.L22
+ 355 0094 A4000000 		.word	.L22
+ 356 0098 A4000000 		.word	.L22
+ 357 009c A4000000 		.word	.L22
+ 358 00a0 A4000000 		.word	.L22
+ 359 00a4 A4000000 		.word	.L22
+ 360 00a8 A4000000 		.word	.L22
+ 361 00ac A4000000 		.word	.L22
+ 362 00b0 A4000000 		.word	.L22
+ 363 00b4 A4000000 		.word	.L22
+ 364 00b8 A4000000 		.word	.L22
+ 365 00bc A4000000 		.word	.L22
+ 366 00c0 A4000000 		.word	.L22
+ 367 00c4 A4000000 		.word	.L22
+ 368 00c8 A4000000 		.word	.L22
+ 369 00cc A4000000 		.word	.L22
+ 370 00d0 A4000000 		.word	.L22
+ 371 00d4 A4000000 		.word	.L22
+ 372 00d8 A4000000 		.word	.L22
+ 373 00dc A4000000 		.word	.L22
+ 374 00e0 A4000000 		.word	.L22
+ 375 00e4 A4000000 		.word	.L22
+ 376 00e8 AC000000 		.word	.L21
+ 377 00ec A4000000 		.word	.L22
+ 378 00f0 A4000000 		.word	.L22
+ 379 00f4 A4000000 		.word	.L22
+ 380 00f8 A4000000 		.word	.L22
+ 381 00fc A4000000 		.word	.L22
+ 382 0100 AC000000 		.word	.L21
+ 383 0104 A4000000 		.word	.L22
+ 384 0108 A4000000 		.word	.L22
+ 385 010c A4000000 		.word	.L22
+ 386 0110 AC000000 		.word	.L21
+ 387 0114 A4000000 		.word	.L22
+ 388 0118 A4000000 		.word	.L22
+ 389 011c A4000000 		.word	.L22
+ 390 0120 A4000000 		.word	.L22
+ 391 0124 A4000000 		.word	.L22
+ 392 0128 A4000000 		.word	.L22
+ 393 012c A4000000 		.word	.L22
+ 394 0130 AC000000 		.word	.L21
+ 395 0134 A4000000 		.word	.L22
+ 396 0138 A4000000 		.word	.L22
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 12
+
+
+ 397 013c A4000000 		.word	.L22
+ 398 0140 AC000000 		.word	.L21
+ 399 0144 A4000000 		.word	.L22
+ 400 0148 AC000000 		.word	.L21
+ 401 014c 5A000000 		.word	.L24
+ 402              		.section	.text.jsmn_parse_string
+ 403              	.L24:
+ 228:jsmn-master/jsmn.h ****       /* Allowed escaped symbols */
+ 229:jsmn-master/jsmn.h ****       case '\"':
+ 230:jsmn-master/jsmn.h ****       case '/':
+ 231:jsmn-master/jsmn.h ****       case '\\':
+ 232:jsmn-master/jsmn.h ****       case 'b':
+ 233:jsmn-master/jsmn.h ****       case 'f':
+ 234:jsmn-master/jsmn.h ****       case 'r':
+ 235:jsmn-master/jsmn.h ****       case 'n':
+ 236:jsmn-master/jsmn.h ****       case 't':
+ 237:jsmn-master/jsmn.h ****         break;
+ 238:jsmn-master/jsmn.h ****       /* Allows escaped symbol \uXXXX */
+ 239:jsmn-master/jsmn.h ****       case 'u':
+ 240:jsmn-master/jsmn.h ****         parser->pos++;
+ 404              		.loc 1 240 0
+ 405 005a 0130     		adds	r0, r0, #1
+ 406 005c 2860     		str	r0, [r5]
+ 407              	.LVL31:
+ 241:jsmn-master/jsmn.h ****         for (i = 0; i < 4 && parser->pos < len && js[parser->pos] != '\0';
+ 408              		.loc 1 241 0
+ 409 005e 0023     		movs	r3, #0
+ 410 0060 14E0     		b	.L25
+ 411              	.LVL32:
+ 412              	.L28:
+ 242:jsmn-master/jsmn.h ****              i++) {
+ 243:jsmn-master/jsmn.h ****           /* If it isn't a hex character we have an error */
+ 244:jsmn-master/jsmn.h ****           if (!((js[parser->pos] >= 48 && js[parser->pos] <= 57) ||   /* 0-9 */
+ 413              		.loc 1 244 0
+ 414 0062 2700     		movs	r7, r4
+ 415 0064 303F     		subs	r7, r7, #48
+ 416 0066 FFB2     		uxtb	r7, r7
+ 417 0068 092F     		cmp	r7, #9
+ 418 006a 0CD9     		bls	.L26
+ 245:jsmn-master/jsmn.h ****                 (js[parser->pos] >= 65 && js[parser->pos] <= 70) ||   /* A-F */
+ 419              		.loc 1 245 0 discriminator 1
+ 420 006c 2700     		movs	r7, r4
+ 421 006e 413F     		subs	r7, r7, #65
+ 422 0070 FFB2     		uxtb	r7, r7
+ 244:jsmn-master/jsmn.h ****                 (js[parser->pos] >= 65 && js[parser->pos] <= 70) ||   /* A-F */
+ 423              		.loc 1 244 0 discriminator 1
+ 424 0072 052F     		cmp	r7, #5
+ 425 0074 07D9     		bls	.L26
+ 246:jsmn-master/jsmn.h ****                 (js[parser->pos] >= 97 && js[parser->pos] <= 102))) { /* a-f */
+ 426              		.loc 1 246 0 discriminator 2
+ 427 0076 613C     		subs	r4, r4, #97
+ 428 0078 E4B2     		uxtb	r4, r4
+ 244:jsmn-master/jsmn.h ****                 (js[parser->pos] >= 65 && js[parser->pos] <= 70) ||   /* A-F */
+ 429              		.loc 1 244 0 discriminator 2
+ 430 007a 052C     		cmp	r4, #5
+ 431 007c 03D9     		bls	.L26
+ 247:jsmn-master/jsmn.h ****             parser->pos = start;
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 13
+
+
+ 432              		.loc 1 247 0
+ 433 007e 2E60     		str	r6, [r5]
+ 248:jsmn-master/jsmn.h ****             return JSMN_ERROR_INVAL;
+ 434              		.loc 1 248 0
+ 435 0080 0220     		movs	r0, #2
+ 436 0082 4042     		rsbs	r0, r0, #0
+ 437 0084 20E0     		b	.L19
+ 438              	.L26:
+ 249:jsmn-master/jsmn.h ****           }
+ 250:jsmn-master/jsmn.h ****           parser->pos++;
+ 439              		.loc 1 250 0
+ 440 0086 0130     		adds	r0, r0, #1
+ 441 0088 2860     		str	r0, [r5]
+ 242:jsmn-master/jsmn.h ****           /* If it isn't a hex character we have an error */
+ 442              		.loc 1 242 0
+ 443 008a 0133     		adds	r3, r3, #1
+ 444              	.LVL33:
+ 445              	.L25:
+ 241:jsmn-master/jsmn.h ****              i++) {
+ 446              		.loc 1 241 0 discriminator 1
+ 447 008c 032B     		cmp	r3, #3
+ 448 008e 05DC     		bgt	.L27
+ 241:jsmn-master/jsmn.h ****              i++) {
+ 449              		.loc 1 241 0 is_stmt 0 discriminator 2
+ 450 0090 2868     		ldr	r0, [r5]
+ 451 0092 8242     		cmp	r2, r0
+ 452 0094 02D9     		bls	.L27
+ 241:jsmn-master/jsmn.h ****              i++) {
+ 453              		.loc 1 241 0 discriminator 3
+ 454 0096 0C5C     		ldrb	r4, [r1, r0]
+ 455 0098 002C     		cmp	r4, #0
+ 456 009a E2D1     		bne	.L28
+ 457              	.L27:
+ 251:jsmn-master/jsmn.h ****         }
+ 252:jsmn-master/jsmn.h ****         parser->pos--;
+ 458              		.loc 1 252 0 is_stmt 1
+ 459 009c 2B68     		ldr	r3, [r5]
+ 460              	.LVL34:
+ 461 009e 581E     		subs	r0, r3, #1
+ 462 00a0 2860     		str	r0, [r5]
+ 253:jsmn-master/jsmn.h ****         break;
+ 463              		.loc 1 253 0
+ 464 00a2 03E0     		b	.L21
+ 465              	.L22:
+ 254:jsmn-master/jsmn.h ****       /* Unexpected symbol */
+ 255:jsmn-master/jsmn.h ****       default:
+ 256:jsmn-master/jsmn.h ****         parser->pos = start;
+ 466              		.loc 1 256 0
+ 467 00a4 2E60     		str	r6, [r5]
+ 257:jsmn-master/jsmn.h ****         return JSMN_ERROR_INVAL;
+ 468              		.loc 1 257 0
+ 469 00a6 0220     		movs	r0, #2
+ 470 00a8 4042     		rsbs	r0, r0, #0
+ 471 00aa 0DE0     		b	.L19
+ 472              	.L21:
+ 473              	.LBE3:
+ 474              	.LBE2:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 14
+
+
+ 203:jsmn-master/jsmn.h ****     char c = js[parser->pos];
+ 475              		.loc 1 203 0
+ 476 00ac 2B68     		ldr	r3, [r5]
+ 477 00ae 581C     		adds	r0, r3, #1
+ 478 00b0 2860     		str	r0, [r5]
+ 479              	.L17:
+ 203:jsmn-master/jsmn.h ****     char c = js[parser->pos];
+ 480              		.loc 1 203 0 is_stmt 0 discriminator 1
+ 481 00b2 2868     		ldr	r0, [r5]
+ 482 00b4 9042     		cmp	r0, r2
+ 483 00b6 02D2     		bcs	.L29
+ 203:jsmn-master/jsmn.h ****     char c = js[parser->pos];
+ 484              		.loc 1 203 0 discriminator 2
+ 485 00b8 0C5C     		ldrb	r4, [r1, r0]
+ 486 00ba 002C     		cmp	r4, #0
+ 487 00bc A8D1     		bne	.L30
+ 488              	.L29:
+ 258:jsmn-master/jsmn.h ****       }
+ 259:jsmn-master/jsmn.h ****     }
+ 260:jsmn-master/jsmn.h ****   }
+ 261:jsmn-master/jsmn.h ****   parser->pos = start;
+ 489              		.loc 1 261 0 is_stmt 1
+ 490 00be 2E60     		str	r6, [r5]
+ 262:jsmn-master/jsmn.h ****   return JSMN_ERROR_PART;
+ 491              		.loc 1 262 0
+ 492 00c0 0320     		movs	r0, #3
+ 493 00c2 4042     		rsbs	r0, r0, #0
+ 494 00c4 00E0     		b	.L19
+ 495              	.LVL35:
+ 496              	.L31:
+ 497              	.LBB4:
+ 209:jsmn-master/jsmn.h ****       }
+ 498              		.loc 1 209 0
+ 499 00c6 0020     		movs	r0, #0
+ 500              	.LVL36:
+ 501              	.L19:
+ 502              	.LBE4:
+ 263:jsmn-master/jsmn.h **** }
+ 503              		.loc 1 263 0
+ 504 00c8 03B0     		add	sp, sp, #12
+ 505              		@ sp needed
+ 506              	.LVL37:
+ 507              	.LVL38:
+ 508 00ca F0BD     		pop	{r4, r5, r6, r7, pc}
+ 509              	.L33:
+ 510              		.align	2
+ 511              	.L32:
+ 512 00cc 00000000 		.word	.L23
+ 513              		.cfi_endproc
+ 514              	.LFE64:
+ 515              		.size	jsmn_parse_string, .-jsmn_parse_string
+ 516              		.section	.text.jsmn_parse,"ax",%progbits
+ 517              		.align	2
+ 518              		.global	jsmn_parse
+ 519              		.code	16
+ 520              		.thumb_func
+ 521              		.type	jsmn_parse, %function
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 15
+
+
+ 522              	jsmn_parse:
+ 523              	.LFB65:
+ 264:jsmn-master/jsmn.h **** 
+ 265:jsmn-master/jsmn.h **** /**
+ 266:jsmn-master/jsmn.h ****  * Parse JSON string and fill tokens.
+ 267:jsmn-master/jsmn.h ****  */
+ 268:jsmn-master/jsmn.h **** JSMN_API int jsmn_parse(jsmn_parser *parser, const char *js, const size_t len,
+ 269:jsmn-master/jsmn.h ****                         jsmntok_t *tokens, const unsigned int num_tokens) {
+ 524              		.loc 1 269 0
+ 525              		.cfi_startproc
+ 526              		@ args = 4, pretend = 0, frame = 0
+ 527              		@ frame_needed = 0, uses_anonymous_args = 0
+ 528              	.LVL39:
+ 529 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 530              		.cfi_def_cfa_offset 20
+ 531              		.cfi_offset 4, -20
+ 532              		.cfi_offset 5, -16
+ 533              		.cfi_offset 6, -12
+ 534              		.cfi_offset 7, -8
+ 535              		.cfi_offset 14, -4
+ 536 0002 4F46     		mov	r7, r9
+ 537 0004 4646     		mov	r6, r8
+ 538 0006 C0B4     		push	{r6, r7}
+ 539              		.cfi_def_cfa_offset 28
+ 540              		.cfi_offset 8, -28
+ 541              		.cfi_offset 9, -24
+ 542 0008 83B0     		sub	sp, sp, #12
+ 543              		.cfi_def_cfa_offset 40
+ 544 000a 0600     		movs	r6, r0
+ 545 000c 8846     		mov	r8, r1
+ 546 000e 1700     		movs	r7, r2
+ 547 0010 1C00     		movs	r4, r3
+ 270:jsmn-master/jsmn.h ****   int r;
+ 271:jsmn-master/jsmn.h ****   int i;
+ 272:jsmn-master/jsmn.h ****   jsmntok_t *token;
+ 273:jsmn-master/jsmn.h ****   int count = parser->toknext;
+ 548              		.loc 1 273 0
+ 549 0012 4368     		ldr	r3, [r0, #4]
+ 550              	.LVL40:
+ 551 0014 9946     		mov	r9, r3
+ 552              	.LVL41:
+ 274:jsmn-master/jsmn.h **** 
+ 275:jsmn-master/jsmn.h ****   for (; parser->pos < len && js[parser->pos] != '\0'; parser->pos++) {
+ 553              		.loc 1 275 0
+ 554 0016 CBE0     		b	.L35
+ 555              	.LVL42:
+ 556              	.L61:
+ 557              	.LBB5:
+ 276:jsmn-master/jsmn.h ****     char c;
+ 277:jsmn-master/jsmn.h ****     jsmntype_t type;
+ 278:jsmn-master/jsmn.h **** 
+ 279:jsmn-master/jsmn.h ****     c = js[parser->pos];
+ 280:jsmn-master/jsmn.h ****     switch (c) {
+ 558              		.loc 1 280 0
+ 559 0018 2C2D     		cmp	r5, #44
+ 560 001a 00D1     		bne	.LCB489
+ 561 001c 8DE0     		b	.L37	@long jump
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 16
+
+
+ 562              	.LCB489:
+ 563 001e 10D8     		bhi	.L38
+ 564 0020 0D2D     		cmp	r5, #13
+ 565 0022 00D1     		bne	.LCB493
+ 566 0024 C1E0     		b	.L39	@long jump
+ 567              	.LCB493:
+ 568 0026 06D8     		bhi	.L40
+ 569 0028 2B00     		movs	r3, r5
+ 570              	.LVL43:
+ 571 002a 093B     		subs	r3, r3, #9
+ 572 002c DBB2     		uxtb	r3, r3
+ 573 002e 012B     		cmp	r3, #1
+ 574 0030 00D8     		bhi	.LCB501
+ 575 0032 BAE0     		b	.L39	@long jump
+ 576              	.LCB501:
+ 577 0034 A2E0     		b	.L36
+ 578              	.LVL44:
+ 579              	.L40:
+ 580 0036 202D     		cmp	r5, #32
+ 581 0038 00D1     		bne	.LCB508
+ 582 003a B6E0     		b	.L39	@long jump
+ 583              	.LCB508:
+ 584 003c 222D     		cmp	r5, #34
+ 585 003e 60D0     		beq	.L41
+ 586 0040 9CE0     		b	.L36
+ 587              	.L38:
+ 588 0042 5D2D     		cmp	r5, #93
+ 589 0044 2CD0     		beq	.L42
+ 590 0046 04D8     		bhi	.L43
+ 591 0048 3A2D     		cmp	r5, #58
+ 592 004a 72D0     		beq	.L44
+ 593 004c 5B2D     		cmp	r5, #91
+ 594 004e 05D0     		beq	.L45
+ 595 0050 94E0     		b	.L36
+ 596              	.L43:
+ 597 0052 7B2D     		cmp	r5, #123
+ 598 0054 02D0     		beq	.L45
+ 599 0056 7D2D     		cmp	r5, #125
+ 600 0058 22D0     		beq	.L42
+ 601 005a 8FE0     		b	.L36
+ 602              	.L45:
+ 281:jsmn-master/jsmn.h ****     case '{':
+ 282:jsmn-master/jsmn.h ****     case '[':
+ 283:jsmn-master/jsmn.h ****       count++;
+ 603              		.loc 1 283 0
+ 604 005c 0123     		movs	r3, #1
+ 605              	.LVL45:
+ 606 005e 9C46     		mov	ip, r3
+ 607 0060 E144     		add	r9, r9, ip
+ 608              	.LVL46:
+ 284:jsmn-master/jsmn.h ****       if (tokens == NULL) {
+ 609              		.loc 1 284 0
+ 610 0062 002C     		cmp	r4, #0
+ 611 0064 00D1     		bne	.LCB542
+ 612 0066 A0E0     		b	.L39	@long jump
+ 613              	.LCB542:
+ 285:jsmn-master/jsmn.h ****         break;
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 17
+
+
+ 286:jsmn-master/jsmn.h ****       }
+ 287:jsmn-master/jsmn.h ****       token = jsmn_alloc_token(parser, tokens, num_tokens);
+ 614              		.loc 1 287 0
+ 615 0068 0A9A     		ldr	r2, [sp, #40]
+ 616 006a 2100     		movs	r1, r4
+ 617 006c 3000     		movs	r0, r6
+ 618 006e FFF7FEFF 		bl	jsmn_alloc_token
+ 619              	.LVL47:
+ 288:jsmn-master/jsmn.h ****       if (token == NULL) {
+ 620              		.loc 1 288 0
+ 621 0072 0028     		cmp	r0, #0
+ 622 0074 00D1     		bne	.LCB550
+ 623 0076 B5E0     		b	.L65	@long jump
+ 624              	.LCB550:
+ 289:jsmn-master/jsmn.h ****         return JSMN_ERROR_NOMEM;
+ 290:jsmn-master/jsmn.h ****       }
+ 291:jsmn-master/jsmn.h ****       if (parser->toksuper != -1) {
+ 625              		.loc 1 291 0
+ 626 0078 B368     		ldr	r3, [r6, #8]
+ 627 007a 5A1C     		adds	r2, r3, #1
+ 628 007c 04D0     		beq	.L47
+ 629              	.LBB6:
+ 292:jsmn-master/jsmn.h ****         jsmntok_t *t = &tokens[parser->toksuper];
+ 630              		.loc 1 292 0
+ 631 007e 1B01     		lsls	r3, r3, #4
+ 632 0080 E318     		adds	r3, r4, r3
+ 633              	.LVL48:
+ 293:jsmn-master/jsmn.h **** #ifdef JSMN_STRICT
+ 294:jsmn-master/jsmn.h ****         /* In strict mode an object or array can't become a key */
+ 295:jsmn-master/jsmn.h ****         if (t->type == JSMN_OBJECT) {
+ 296:jsmn-master/jsmn.h ****           return JSMN_ERROR_INVAL;
+ 297:jsmn-master/jsmn.h ****         }
+ 298:jsmn-master/jsmn.h **** #endif
+ 299:jsmn-master/jsmn.h ****         t->size++;
+ 634              		.loc 1 299 0
+ 635 0082 DA68     		ldr	r2, [r3, #12]
+ 636 0084 0132     		adds	r2, r2, #1
+ 637 0086 DA60     		str	r2, [r3, #12]
+ 638              	.LVL49:
+ 639              	.L47:
+ 640              	.LBE6:
+ 300:jsmn-master/jsmn.h **** #ifdef JSMN_PARENT_LINKS
+ 301:jsmn-master/jsmn.h ****         token->parent = parser->toksuper;
+ 302:jsmn-master/jsmn.h **** #endif
+ 303:jsmn-master/jsmn.h ****       }
+ 304:jsmn-master/jsmn.h ****       token->type = (c == '{' ? JSMN_OBJECT : JSMN_ARRAY);
+ 641              		.loc 1 304 0
+ 642 0088 7B2D     		cmp	r5, #123
+ 643 008a 01D1     		bne	.L66
+ 644 008c 0123     		movs	r3, #1
+ 645 008e 00E0     		b	.L48
+ 646              	.L66:
+ 647 0090 0223     		movs	r3, #2
+ 648              	.L48:
+ 649              		.loc 1 304 0 is_stmt 0 discriminator 4
+ 650 0092 0370     		strb	r3, [r0]
+ 305:jsmn-master/jsmn.h ****       token->start = parser->pos;
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 18
+
+
+ 651              		.loc 1 305 0 is_stmt 1 discriminator 4
+ 652 0094 3368     		ldr	r3, [r6]
+ 653 0096 4360     		str	r3, [r0, #4]
+ 306:jsmn-master/jsmn.h ****       parser->toksuper = parser->toknext - 1;
+ 654              		.loc 1 306 0 discriminator 4
+ 655 0098 7368     		ldr	r3, [r6, #4]
+ 656 009a 013B     		subs	r3, r3, #1
+ 657 009c B360     		str	r3, [r6, #8]
+ 307:jsmn-master/jsmn.h ****       break;
+ 658              		.loc 1 307 0 discriminator 4
+ 659 009e 84E0     		b	.L39
+ 660              	.LVL50:
+ 661              	.L42:
+ 308:jsmn-master/jsmn.h ****     case '}':
+ 309:jsmn-master/jsmn.h ****     case ']':
+ 310:jsmn-master/jsmn.h ****       if (tokens == NULL) {
+ 662              		.loc 1 310 0
+ 663 00a0 002C     		cmp	r4, #0
+ 664 00a2 00D1     		bne	.LCB594
+ 665 00a4 81E0     		b	.L39	@long jump
+ 666              	.LCB594:
+ 311:jsmn-master/jsmn.h ****         break;
+ 312:jsmn-master/jsmn.h ****       }
+ 313:jsmn-master/jsmn.h ****       type = (c == '}' ? JSMN_OBJECT : JSMN_ARRAY);
+ 667              		.loc 1 313 0
+ 668 00a6 7D2D     		cmp	r5, #125
+ 669 00a8 01D1     		bne	.L67
+ 670 00aa 0120     		movs	r0, #1
+ 671 00ac 00E0     		b	.L49
+ 672              	.L67:
+ 673 00ae 0220     		movs	r0, #2
+ 674              	.L49:
+ 675              	.LVL51:
+ 314:jsmn-master/jsmn.h **** #ifdef JSMN_PARENT_LINKS
+ 315:jsmn-master/jsmn.h ****       if (parser->toknext < 1) {
+ 316:jsmn-master/jsmn.h ****         return JSMN_ERROR_INVAL;
+ 317:jsmn-master/jsmn.h ****       }
+ 318:jsmn-master/jsmn.h ****       token = &tokens[parser->toknext - 1];
+ 319:jsmn-master/jsmn.h ****       for (;;) {
+ 320:jsmn-master/jsmn.h ****         if (token->start != -1 && token->end == -1) {
+ 321:jsmn-master/jsmn.h ****           if (token->type != type) {
+ 322:jsmn-master/jsmn.h ****             return JSMN_ERROR_INVAL;
+ 323:jsmn-master/jsmn.h ****           }
+ 324:jsmn-master/jsmn.h ****           token->end = parser->pos + 1;
+ 325:jsmn-master/jsmn.h ****           parser->toksuper = token->parent;
+ 326:jsmn-master/jsmn.h ****           break;
+ 327:jsmn-master/jsmn.h ****         }
+ 328:jsmn-master/jsmn.h ****         if (token->parent == -1) {
+ 329:jsmn-master/jsmn.h ****           if (token->type != type || parser->toksuper == -1) {
+ 330:jsmn-master/jsmn.h ****             return JSMN_ERROR_INVAL;
+ 331:jsmn-master/jsmn.h ****           }
+ 332:jsmn-master/jsmn.h ****           break;
+ 333:jsmn-master/jsmn.h ****         }
+ 334:jsmn-master/jsmn.h ****         token = &tokens[token->parent];
+ 335:jsmn-master/jsmn.h ****       }
+ 336:jsmn-master/jsmn.h **** #else
+ 337:jsmn-master/jsmn.h ****       for (i = parser->toknext - 1; i >= 0; i--) {
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 19
+
+
+ 676              		.loc 1 337 0 discriminator 4
+ 677 00b0 7368     		ldr	r3, [r6, #4]
+ 678              	.LVL52:
+ 679 00b2 013B     		subs	r3, r3, #1
+ 680              	.LVL53:
+ 681 00b4 12E0     		b	.L50
+ 682              	.LVL54:
+ 683              	.L53:
+ 338:jsmn-master/jsmn.h ****         token = &tokens[i];
+ 684              		.loc 1 338 0
+ 685 00b6 1A01     		lsls	r2, r3, #4
+ 686 00b8 A218     		adds	r2, r4, r2
+ 687              	.LVL55:
+ 339:jsmn-master/jsmn.h ****         if (token->start != -1 && token->end == -1) {
+ 688              		.loc 1 339 0
+ 689 00ba 5568     		ldr	r5, [r2, #4]
+ 690 00bc 0135     		adds	r5, r5, #1
+ 691 00be 0CD0     		beq	.L51
+ 692              		.loc 1 339 0 is_stmt 0 discriminator 1
+ 693 00c0 9568     		ldr	r5, [r2, #8]
+ 694 00c2 0135     		adds	r5, r5, #1
+ 695 00c4 09D1     		bne	.L51
+ 340:jsmn-master/jsmn.h ****           if (token->type != type) {
+ 696              		.loc 1 340 0 is_stmt 1
+ 697 00c6 1578     		ldrb	r5, [r2]
+ 698 00c8 A842     		cmp	r0, r5
+ 699 00ca 00D0     		beq	.LCB632
+ 700 00cc 8DE0     		b	.L68	@long jump
+ 701              	.LCB632:
+ 341:jsmn-master/jsmn.h ****             return JSMN_ERROR_INVAL;
+ 342:jsmn-master/jsmn.h ****           }
+ 343:jsmn-master/jsmn.h ****           parser->toksuper = -1;
+ 702              		.loc 1 343 0
+ 703 00ce 0120     		movs	r0, #1
+ 704              	.LVL56:
+ 705 00d0 4042     		rsbs	r0, r0, #0
+ 706 00d2 B060     		str	r0, [r6, #8]
+ 344:jsmn-master/jsmn.h ****           token->end = parser->pos + 1;
+ 707              		.loc 1 344 0
+ 708 00d4 0131     		adds	r1, r1, #1
+ 709 00d6 9160     		str	r1, [r2, #8]
+ 345:jsmn-master/jsmn.h ****           break;
+ 710              		.loc 1 345 0
+ 711 00d8 02E0     		b	.L52
+ 712              	.LVL57:
+ 713              	.L51:
+ 337:jsmn-master/jsmn.h ****         token = &tokens[i];
+ 714              		.loc 1 337 0 discriminator 2
+ 715 00da 013B     		subs	r3, r3, #1
+ 716              	.LVL58:
+ 717              	.L50:
+ 337:jsmn-master/jsmn.h ****         token = &tokens[i];
+ 718              		.loc 1 337 0 is_stmt 0 discriminator 1
+ 719 00dc 002B     		cmp	r3, #0
+ 720 00de EADA     		bge	.L53
+ 721              	.LVL59:
+ 722              	.L52:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 20
+
+
+ 346:jsmn-master/jsmn.h ****         }
+ 347:jsmn-master/jsmn.h ****       }
+ 348:jsmn-master/jsmn.h ****       /* Error if unmatched closing bracket */
+ 349:jsmn-master/jsmn.h ****       if (i == -1) {
+ 723              		.loc 1 349 0 is_stmt 1
+ 724 00e0 5A1C     		adds	r2, r3, #1
+ 725 00e2 0BD1     		bne	.L54
+ 726 00e4 84E0     		b	.L69
+ 727              	.L56:
+ 350:jsmn-master/jsmn.h ****         return JSMN_ERROR_INVAL;
+ 351:jsmn-master/jsmn.h ****       }
+ 352:jsmn-master/jsmn.h ****       for (; i >= 0; i--) {
+ 353:jsmn-master/jsmn.h ****         token = &tokens[i];
+ 728              		.loc 1 353 0
+ 729 00e6 1A01     		lsls	r2, r3, #4
+ 730 00e8 A218     		adds	r2, r4, r2
+ 731              	.LVL60:
+ 354:jsmn-master/jsmn.h ****         if (token->start != -1 && token->end == -1) {
+ 732              		.loc 1 354 0
+ 733 00ea 5168     		ldr	r1, [r2, #4]
+ 734 00ec 0131     		adds	r1, r1, #1
+ 735 00ee 04D0     		beq	.L55
+ 736              		.loc 1 354 0 is_stmt 0 discriminator 1
+ 737 00f0 9268     		ldr	r2, [r2, #8]
+ 738              	.LVL61:
+ 739 00f2 0132     		adds	r2, r2, #1
+ 740 00f4 01D1     		bne	.L55
+ 355:jsmn-master/jsmn.h ****           parser->toksuper = i;
+ 741              		.loc 1 355 0 is_stmt 1
+ 742 00f6 B360     		str	r3, [r6, #8]
+ 356:jsmn-master/jsmn.h ****           break;
+ 743              		.loc 1 356 0
+ 744 00f8 57E0     		b	.L39
+ 745              	.L55:
+ 352:jsmn-master/jsmn.h ****         token = &tokens[i];
+ 746              		.loc 1 352 0
+ 747 00fa 013B     		subs	r3, r3, #1
+ 748              	.LVL62:
+ 749              	.L54:
+ 352:jsmn-master/jsmn.h ****         token = &tokens[i];
+ 750              		.loc 1 352 0 is_stmt 0 discriminator 1
+ 751 00fc 002B     		cmp	r3, #0
+ 752 00fe F2DA     		bge	.L56
+ 753 0100 53E0     		b	.L39
+ 754              	.LVL63:
+ 755              	.L41:
+ 357:jsmn-master/jsmn.h ****         }
+ 358:jsmn-master/jsmn.h ****       }
+ 359:jsmn-master/jsmn.h **** #endif
+ 360:jsmn-master/jsmn.h ****       break;
+ 361:jsmn-master/jsmn.h ****     case '\"':
+ 362:jsmn-master/jsmn.h ****       r = jsmn_parse_string(parser, js, len, tokens, num_tokens);
+ 756              		.loc 1 362 0 is_stmt 1
+ 757 0102 0A9B     		ldr	r3, [sp, #40]
+ 758              	.LVL64:
+ 759 0104 0093     		str	r3, [sp]
+ 760 0106 2300     		movs	r3, r4
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 21
+
+
+ 761 0108 3A00     		movs	r2, r7
+ 762 010a 4146     		mov	r1, r8
+ 763 010c 3000     		movs	r0, r6
+ 764 010e FFF7FEFF 		bl	jsmn_parse_string
+ 765              	.LVL65:
+ 363:jsmn-master/jsmn.h ****       if (r < 0) {
+ 766              		.loc 1 363 0
+ 767 0112 0028     		cmp	r0, #0
+ 768 0114 73DB     		blt	.L46
+ 364:jsmn-master/jsmn.h ****         return r;
+ 365:jsmn-master/jsmn.h ****       }
+ 366:jsmn-master/jsmn.h ****       count++;
+ 769              		.loc 1 366 0
+ 770 0116 0123     		movs	r3, #1
+ 771 0118 9C46     		mov	ip, r3
+ 772 011a E144     		add	r9, r9, ip
+ 773              	.LVL66:
+ 367:jsmn-master/jsmn.h ****       if (parser->toksuper != -1 && tokens != NULL) {
+ 774              		.loc 1 367 0
+ 775 011c B368     		ldr	r3, [r6, #8]
+ 776 011e 5A1C     		adds	r2, r3, #1
+ 777 0120 43D0     		beq	.L39
+ 778              		.loc 1 367 0 is_stmt 0 discriminator 1
+ 779 0122 002C     		cmp	r4, #0
+ 780 0124 41D0     		beq	.L39
+ 368:jsmn-master/jsmn.h ****         tokens[parser->toksuper].size++;
+ 781              		.loc 1 368 0 is_stmt 1
+ 782 0126 1B01     		lsls	r3, r3, #4
+ 783 0128 E318     		adds	r3, r4, r3
+ 784 012a DA68     		ldr	r2, [r3, #12]
+ 785 012c 0132     		adds	r2, r2, #1
+ 786 012e DA60     		str	r2, [r3, #12]
+ 787 0130 3BE0     		b	.L39
+ 788              	.LVL67:
+ 789              	.L44:
+ 369:jsmn-master/jsmn.h ****       }
+ 370:jsmn-master/jsmn.h ****       break;
+ 371:jsmn-master/jsmn.h ****     case '\t':
+ 372:jsmn-master/jsmn.h ****     case '\r':
+ 373:jsmn-master/jsmn.h ****     case '\n':
+ 374:jsmn-master/jsmn.h ****     case ' ':
+ 375:jsmn-master/jsmn.h ****       break;
+ 376:jsmn-master/jsmn.h ****     case ':':
+ 377:jsmn-master/jsmn.h ****       parser->toksuper = parser->toknext - 1;
+ 790              		.loc 1 377 0
+ 791 0132 7368     		ldr	r3, [r6, #4]
+ 792              	.LVL68:
+ 793 0134 013B     		subs	r3, r3, #1
+ 794 0136 B360     		str	r3, [r6, #8]
+ 378:jsmn-master/jsmn.h ****       break;
+ 795              		.loc 1 378 0
+ 796 0138 37E0     		b	.L39
+ 797              	.LVL69:
+ 798              	.L37:
+ 379:jsmn-master/jsmn.h ****     case ',':
+ 380:jsmn-master/jsmn.h ****       if (tokens != NULL && parser->toksuper != -1 &&
+ 799              		.loc 1 380 0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 22
+
+
+ 800 013a 002C     		cmp	r4, #0
+ 801 013c 35D0     		beq	.L39
+ 802              		.loc 1 380 0 is_stmt 0 discriminator 1
+ 803 013e B368     		ldr	r3, [r6, #8]
+ 804              	.LVL70:
+ 805 0140 5A1C     		adds	r2, r3, #1
+ 806 0142 32D0     		beq	.L39
+ 381:jsmn-master/jsmn.h ****           tokens[parser->toksuper].type != JSMN_ARRAY &&
+ 807              		.loc 1 381 0 is_stmt 1 discriminator 2
+ 808 0144 1B01     		lsls	r3, r3, #4
+ 809 0146 E35C     		ldrb	r3, [r4, r3]
+ 380:jsmn-master/jsmn.h ****           tokens[parser->toksuper].type != JSMN_ARRAY &&
+ 810              		.loc 1 380 0 discriminator 2
+ 811 0148 022B     		cmp	r3, #2
+ 812 014a 2ED0     		beq	.L39
+ 813              		.loc 1 381 0
+ 814 014c 012B     		cmp	r3, #1
+ 815 014e 2CD0     		beq	.L39
+ 382:jsmn-master/jsmn.h ****           tokens[parser->toksuper].type != JSMN_OBJECT) {
+ 383:jsmn-master/jsmn.h **** #ifdef JSMN_PARENT_LINKS
+ 384:jsmn-master/jsmn.h ****         parser->toksuper = tokens[parser->toksuper].parent;
+ 385:jsmn-master/jsmn.h **** #else
+ 386:jsmn-master/jsmn.h ****         for (i = parser->toknext - 1; i >= 0; i--) {
+ 816              		.loc 1 386 0
+ 817 0150 7368     		ldr	r3, [r6, #4]
+ 818 0152 591E     		subs	r1, r3, #1
+ 819              	.LVL71:
+ 820 0154 0FE0     		b	.L57
+ 821              	.L59:
+ 387:jsmn-master/jsmn.h ****           if (tokens[i].type == JSMN_ARRAY || tokens[i].type == JSMN_OBJECT) {
+ 822              		.loc 1 387 0
+ 823 0156 0A01     		lsls	r2, r1, #4
+ 824 0158 A218     		adds	r2, r4, r2
+ 825 015a 1378     		ldrb	r3, [r2]
+ 826 015c 013B     		subs	r3, r3, #1
+ 827 015e DBB2     		uxtb	r3, r3
+ 828 0160 012B     		cmp	r3, #1
+ 829 0162 07D8     		bhi	.L58
+ 388:jsmn-master/jsmn.h ****             if (tokens[i].start != -1 && tokens[i].end == -1) {
+ 830              		.loc 1 388 0
+ 831 0164 5368     		ldr	r3, [r2, #4]
+ 832 0166 0133     		adds	r3, r3, #1
+ 833 0168 04D0     		beq	.L58
+ 834              		.loc 1 388 0 is_stmt 0 discriminator 1
+ 835 016a 9368     		ldr	r3, [r2, #8]
+ 836 016c 0133     		adds	r3, r3, #1
+ 837 016e 01D1     		bne	.L58
+ 389:jsmn-master/jsmn.h ****               parser->toksuper = i;
+ 838              		.loc 1 389 0 is_stmt 1
+ 839 0170 B160     		str	r1, [r6, #8]
+ 390:jsmn-master/jsmn.h ****               break;
+ 840              		.loc 1 390 0
+ 841 0172 1AE0     		b	.L39
+ 842              	.L58:
+ 386:jsmn-master/jsmn.h ****           if (tokens[i].type == JSMN_ARRAY || tokens[i].type == JSMN_OBJECT) {
+ 843              		.loc 1 386 0 discriminator 2
+ 844 0174 0139     		subs	r1, r1, #1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 23
+
+
+ 845              	.LVL72:
+ 846              	.L57:
+ 386:jsmn-master/jsmn.h ****           if (tokens[i].type == JSMN_ARRAY || tokens[i].type == JSMN_OBJECT) {
+ 847              		.loc 1 386 0 is_stmt 0 discriminator 1
+ 848 0176 0029     		cmp	r1, #0
+ 849 0178 EDDA     		bge	.L59
+ 850 017a 16E0     		b	.L39
+ 851              	.LVL73:
+ 852              	.L36:
+ 391:jsmn-master/jsmn.h ****             }
+ 392:jsmn-master/jsmn.h ****           }
+ 393:jsmn-master/jsmn.h ****         }
+ 394:jsmn-master/jsmn.h **** #endif
+ 395:jsmn-master/jsmn.h ****       }
+ 396:jsmn-master/jsmn.h ****       break;
+ 397:jsmn-master/jsmn.h **** #ifdef JSMN_STRICT
+ 398:jsmn-master/jsmn.h ****     /* In strict mode primitives are: numbers and booleans */
+ 399:jsmn-master/jsmn.h ****     case '-':
+ 400:jsmn-master/jsmn.h ****     case '0':
+ 401:jsmn-master/jsmn.h ****     case '1':
+ 402:jsmn-master/jsmn.h ****     case '2':
+ 403:jsmn-master/jsmn.h ****     case '3':
+ 404:jsmn-master/jsmn.h ****     case '4':
+ 405:jsmn-master/jsmn.h ****     case '5':
+ 406:jsmn-master/jsmn.h ****     case '6':
+ 407:jsmn-master/jsmn.h ****     case '7':
+ 408:jsmn-master/jsmn.h ****     case '8':
+ 409:jsmn-master/jsmn.h ****     case '9':
+ 410:jsmn-master/jsmn.h ****     case 't':
+ 411:jsmn-master/jsmn.h ****     case 'f':
+ 412:jsmn-master/jsmn.h ****     case 'n':
+ 413:jsmn-master/jsmn.h ****       /* And they must not be keys of the object */
+ 414:jsmn-master/jsmn.h ****       if (tokens != NULL && parser->toksuper != -1) {
+ 415:jsmn-master/jsmn.h ****         const jsmntok_t *t = &tokens[parser->toksuper];
+ 416:jsmn-master/jsmn.h ****         if (t->type == JSMN_OBJECT ||
+ 417:jsmn-master/jsmn.h ****             (t->type == JSMN_STRING && t->size != 0)) {
+ 418:jsmn-master/jsmn.h ****           return JSMN_ERROR_INVAL;
+ 419:jsmn-master/jsmn.h ****         }
+ 420:jsmn-master/jsmn.h ****       }
+ 421:jsmn-master/jsmn.h **** #else
+ 422:jsmn-master/jsmn.h ****     /* In non-strict mode every unquoted value is a primitive */
+ 423:jsmn-master/jsmn.h ****     default:
+ 424:jsmn-master/jsmn.h **** #endif
+ 425:jsmn-master/jsmn.h ****       r = jsmn_parse_primitive(parser, js, len, tokens, num_tokens);
+ 853              		.loc 1 425 0 is_stmt 1
+ 854 017c 0A9B     		ldr	r3, [sp, #40]
+ 855 017e 0093     		str	r3, [sp]
+ 856 0180 2300     		movs	r3, r4
+ 857 0182 3A00     		movs	r2, r7
+ 858 0184 4146     		mov	r1, r8
+ 859 0186 3000     		movs	r0, r6
+ 860 0188 FFF7FEFF 		bl	jsmn_parse_primitive
+ 861              	.LVL74:
+ 426:jsmn-master/jsmn.h ****       if (r < 0) {
+ 862              		.loc 1 426 0
+ 863 018c 0028     		cmp	r0, #0
+ 864 018e 36DB     		blt	.L46
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 24
+
+
+ 427:jsmn-master/jsmn.h ****         return r;
+ 428:jsmn-master/jsmn.h ****       }
+ 429:jsmn-master/jsmn.h ****       count++;
+ 865              		.loc 1 429 0
+ 866 0190 0123     		movs	r3, #1
+ 867 0192 9C46     		mov	ip, r3
+ 868 0194 E144     		add	r9, r9, ip
+ 869              	.LVL75:
+ 430:jsmn-master/jsmn.h ****       if (parser->toksuper != -1 && tokens != NULL) {
+ 870              		.loc 1 430 0
+ 871 0196 B368     		ldr	r3, [r6, #8]
+ 872 0198 5A1C     		adds	r2, r3, #1
+ 873 019a 06D0     		beq	.L39
+ 874              		.loc 1 430 0 is_stmt 0 discriminator 1
+ 875 019c 002C     		cmp	r4, #0
+ 876 019e 04D0     		beq	.L39
+ 431:jsmn-master/jsmn.h ****         tokens[parser->toksuper].size++;
+ 877              		.loc 1 431 0 is_stmt 1
+ 878 01a0 1B01     		lsls	r3, r3, #4
+ 879 01a2 E318     		adds	r3, r4, r3
+ 880 01a4 DA68     		ldr	r2, [r3, #12]
+ 881 01a6 0132     		adds	r2, r2, #1
+ 882 01a8 DA60     		str	r2, [r3, #12]
+ 883              	.LVL76:
+ 884              	.L39:
+ 885              	.LBE5:
+ 275:jsmn-master/jsmn.h ****     char c;
+ 886              		.loc 1 275 0
+ 887 01aa 3368     		ldr	r3, [r6]
+ 888 01ac 0133     		adds	r3, r3, #1
+ 889 01ae 3360     		str	r3, [r6]
+ 890              	.L35:
+ 275:jsmn-master/jsmn.h ****     char c;
+ 891              		.loc 1 275 0 is_stmt 0 discriminator 1
+ 892 01b0 3168     		ldr	r1, [r6]
+ 893 01b2 B942     		cmp	r1, r7
+ 894 01b4 04D2     		bcs	.L60
+ 275:jsmn-master/jsmn.h ****     char c;
+ 895              		.loc 1 275 0 discriminator 2
+ 896 01b6 4346     		mov	r3, r8
+ 897 01b8 5D5C     		ldrb	r5, [r3, r1]
+ 898 01ba 002D     		cmp	r5, #0
+ 899 01bc 00D0     		beq	.LCB880
+ 900 01be 2BE7     		b	.L61	@long jump
+ 901              	.LCB880:
+ 902              	.L60:
+ 432:jsmn-master/jsmn.h ****       }
+ 433:jsmn-master/jsmn.h ****       break;
+ 434:jsmn-master/jsmn.h **** 
+ 435:jsmn-master/jsmn.h **** #ifdef JSMN_STRICT
+ 436:jsmn-master/jsmn.h ****     /* Unexpected char in strict mode */
+ 437:jsmn-master/jsmn.h ****     default:
+ 438:jsmn-master/jsmn.h ****       return JSMN_ERROR_INVAL;
+ 439:jsmn-master/jsmn.h **** #endif
+ 440:jsmn-master/jsmn.h ****     }
+ 441:jsmn-master/jsmn.h ****   }
+ 442:jsmn-master/jsmn.h **** 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 25
+
+
+ 443:jsmn-master/jsmn.h ****   if (tokens != NULL) {
+ 903              		.loc 1 443 0 is_stmt 1
+ 904 01c0 002C     		cmp	r4, #0
+ 905 01c2 18D0     		beq	.L72
+ 444:jsmn-master/jsmn.h ****     for (i = parser->toknext - 1; i >= 0; i--) {
+ 906              		.loc 1 444 0
+ 907 01c4 7268     		ldr	r2, [r6, #4]
+ 908 01c6 013A     		subs	r2, r2, #1
+ 909              	.LVL77:
+ 910 01c8 08E0     		b	.L62
+ 911              	.L64:
+ 445:jsmn-master/jsmn.h ****       /* Unmatched opened object or array */
+ 446:jsmn-master/jsmn.h ****       if (tokens[i].start != -1 && tokens[i].end == -1) {
+ 912              		.loc 1 446 0
+ 913 01ca 1301     		lsls	r3, r2, #4
+ 914 01cc E318     		adds	r3, r4, r3
+ 915 01ce 5968     		ldr	r1, [r3, #4]
+ 916 01d0 0131     		adds	r1, r1, #1
+ 917 01d2 02D0     		beq	.L63
+ 918              		.loc 1 446 0 is_stmt 0 discriminator 1
+ 919 01d4 9B68     		ldr	r3, [r3, #8]
+ 920 01d6 0133     		adds	r3, r3, #1
+ 921 01d8 0FD0     		beq	.L73
+ 922              	.L63:
+ 444:jsmn-master/jsmn.h ****     for (i = parser->toknext - 1; i >= 0; i--) {
+ 923              		.loc 1 444 0 is_stmt 1 discriminator 2
+ 924 01da 013A     		subs	r2, r2, #1
+ 925              	.LVL78:
+ 926              	.L62:
+ 444:jsmn-master/jsmn.h ****     for (i = parser->toknext - 1; i >= 0; i--) {
+ 927              		.loc 1 444 0 is_stmt 0 discriminator 1
+ 928 01dc 002A     		cmp	r2, #0
+ 929 01de F4DA     		bge	.L64
+ 447:jsmn-master/jsmn.h ****         return JSMN_ERROR_PART;
+ 448:jsmn-master/jsmn.h ****       }
+ 449:jsmn-master/jsmn.h ****     }
+ 450:jsmn-master/jsmn.h ****   }
+ 451:jsmn-master/jsmn.h **** 
+ 452:jsmn-master/jsmn.h ****   return count;
+ 930              		.loc 1 452 0 is_stmt 1
+ 931 01e0 4846     		mov	r0, r9
+ 932 01e2 0CE0     		b	.L46
+ 933              	.LVL79:
+ 934              	.L65:
+ 935              	.LBB7:
+ 289:jsmn-master/jsmn.h ****       }
+ 936              		.loc 1 289 0
+ 937 01e4 0120     		movs	r0, #1
+ 938              	.LVL80:
+ 939 01e6 4042     		rsbs	r0, r0, #0
+ 940 01e8 09E0     		b	.L46
+ 941              	.LVL81:
+ 942              	.L68:
+ 341:jsmn-master/jsmn.h ****           }
+ 943              		.loc 1 341 0
+ 944 01ea 0220     		movs	r0, #2
+ 945              	.LVL82:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 26
+
+
+ 946 01ec 4042     		rsbs	r0, r0, #0
+ 947 01ee 06E0     		b	.L46
+ 948              	.LVL83:
+ 949              	.L69:
+ 350:jsmn-master/jsmn.h ****       }
+ 950              		.loc 1 350 0
+ 951 01f0 0220     		movs	r0, #2
+ 952 01f2 4042     		rsbs	r0, r0, #0
+ 953 01f4 03E0     		b	.L46
+ 954              	.LVL84:
+ 955              	.L72:
+ 956              	.LBE7:
+ 957              		.loc 1 452 0
+ 958 01f6 4846     		mov	r0, r9
+ 959 01f8 01E0     		b	.L46
+ 960              	.LVL85:
+ 961              	.L73:
+ 447:jsmn-master/jsmn.h ****       }
+ 962              		.loc 1 447 0
+ 963 01fa 0320     		movs	r0, #3
+ 964 01fc 4042     		rsbs	r0, r0, #0
+ 965              	.LVL86:
+ 966              	.L46:
+ 453:jsmn-master/jsmn.h **** }
+ 967              		.loc 1 453 0
+ 968 01fe 03B0     		add	sp, sp, #12
+ 969              		@ sp needed
+ 970              	.LVL87:
+ 971              	.LVL88:
+ 972              	.LVL89:
+ 973              	.LVL90:
+ 974              	.LVL91:
+ 975 0200 0CBC     		pop	{r2, r3}
+ 976 0202 9046     		mov	r8, r2
+ 977 0204 9946     		mov	r9, r3
+ 978 0206 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 979              		.cfi_endproc
+ 980              	.LFE65:
+ 981              		.size	jsmn_parse, .-jsmn_parse
+ 982              		.section	.text.jsmn_init,"ax",%progbits
+ 983              		.align	2
+ 984              		.global	jsmn_init
+ 985              		.code	16
+ 986              		.thumb_func
+ 987              		.type	jsmn_init, %function
+ 988              	jsmn_init:
+ 989              	.LFB66:
+ 454:jsmn-master/jsmn.h **** 
+ 455:jsmn-master/jsmn.h **** /**
+ 456:jsmn-master/jsmn.h ****  * Creates a new parser based over a given buffer with an array of tokens
+ 457:jsmn-master/jsmn.h ****  * available.
+ 458:jsmn-master/jsmn.h ****  */
+ 459:jsmn-master/jsmn.h **** JSMN_API void jsmn_init(jsmn_parser *parser) {
+ 990              		.loc 1 459 0
+ 991              		.cfi_startproc
+ 992              		@ args = 0, pretend = 0, frame = 0
+ 993              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 27
+
+
+ 994              		@ link register save eliminated.
+ 995              	.LVL92:
+ 460:jsmn-master/jsmn.h ****   parser->pos = 0;
+ 996              		.loc 1 460 0
+ 997 0000 0023     		movs	r3, #0
+ 998 0002 0360     		str	r3, [r0]
+ 461:jsmn-master/jsmn.h ****   parser->toknext = 0;
+ 999              		.loc 1 461 0
+ 1000 0004 4360     		str	r3, [r0, #4]
+ 462:jsmn-master/jsmn.h ****   parser->toksuper = -1;
+ 1001              		.loc 1 462 0
+ 1002 0006 013B     		subs	r3, r3, #1
+ 1003 0008 8360     		str	r3, [r0, #8]
+ 463:jsmn-master/jsmn.h **** }
+ 1004              		.loc 1 463 0
+ 1005              		@ sp needed
+ 1006 000a 7047     		bx	lr
+ 1007              		.cfi_endproc
+ 1008              	.LFE66:
+ 1009              		.size	jsmn_init, .-jsmn_init
+ 1010              		.section	.text.resetCharJSON,"ax",%progbits
+ 1011              		.align	2
+ 1012              		.global	resetCharJSON
+ 1013              		.code	16
+ 1014              		.thumb_func
+ 1015              		.type	resetCharJSON, %function
+ 1016              	resetCharJSON:
+ 1017              	.LFB67:
+ 1018              		.file 2 "JSONParser.c"
+   1:JSONParser.c  **** /* ========================================
+   2:JSONParser.c  ****  *
+   3:JSONParser.c  ****  * Copyright YOUR COMPANY, THE YEAR
+   4:JSONParser.c  ****  * All Rights Reserved
+   5:JSONParser.c  ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:JSONParser.c  ****  *
+   7:JSONParser.c  ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:JSONParser.c  ****  * WHICH IS THE PROPERTY OF your company.
+   9:JSONParser.c  ****  *
+  10:JSONParser.c  ****  * ========================================
+  11:JSONParser.c  **** */
+  12:JSONParser.c  **** #include "JSONParser.h"
+  13:JSONParser.c  **** 
+  14:JSONParser.c  **** #include "jsmn-master/jsmn.h"
+  15:JSONParser.c  **** #include "uart.h"
+  16:JSONParser.c  **** #include "displayInfo.h"
+  17:JSONParser.c  **** 
+  18:JSONParser.c  **** #include "menu.h"
+  19:JSONParser.c  **** #include "RealTimeClock.h"
+  20:JSONParser.c  **** #include "LEDControl.h"
+  21:JSONParser.c  **** #include "USBUARTConfig.h"
+  22:JSONParser.c  **** #include "eeprom.h"
+  23:JSONParser.c  **** 
+  24:JSONParser.c  **** #define JSON_SIZE 1000
+  25:JSONParser.c  **** 
+  26:JSONParser.c  **** char g_JSONString[JSON_SIZE+1];
+  27:JSONParser.c  **** uint16 g_nSizeOfJONString = 0;
+  28:JSONParser.c  **** 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 28
+
+
+  29:JSONParser.c  **** static uint8 g_bJSONStart = FALSE;
+  30:JSONParser.c  **** static uint32 g_uJSONCount = 0;
+  31:JSONParser.c  **** static uint32 g_uJSONStringCount = 0;
+  32:JSONParser.c  **** static uint8 g_bLastJSON = FALSE;
+  33:JSONParser.c  **** 
+  34:JSONParser.c  **** void resetCharJSON()
+  35:JSONParser.c  **** {
+ 1019              		.loc 2 35 0
+ 1020              		.cfi_startproc
+ 1021              		@ args = 0, pretend = 0, frame = 0
+ 1022              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1023              		@ link register save eliminated.
+  36:JSONParser.c  ****     g_nSizeOfJONString = 0;
+ 1024              		.loc 2 36 0
+ 1025 0000 054B     		ldr	r3, .L76
+ 1026 0002 0022     		movs	r2, #0
+ 1027 0004 1A80     		strh	r2, [r3]
+  37:JSONParser.c  ****     g_uJSONStringCount = 0;
+ 1028              		.loc 2 37 0
+ 1029 0006 5A60     		str	r2, [r3, #4]
+  38:JSONParser.c  ****     
+  39:JSONParser.c  ****     g_bJSONStart = FALSE;
+ 1030              		.loc 2 39 0
+ 1031 0008 0021     		movs	r1, #0
+ 1032 000a 0020     		movs	r0, #0
+ 1033 000c 1872     		strb	r0, [r3, #8]
+  40:JSONParser.c  ****     g_uJSONCount = 0;
+ 1034              		.loc 2 40 0
+ 1035 000e DA60     		str	r2, [r3, #12]
+  41:JSONParser.c  ****     g_bLastJSON = FALSE;  
+ 1036              		.loc 2 41 0
+ 1037 0010 1974     		strb	r1, [r3, #16]
+  42:JSONParser.c  ****     
+  43:JSONParser.c  ****     g_JSONString[0] = 0;
+ 1038              		.loc 2 43 0
+ 1039 0012 024B     		ldr	r3, .L76+4
+ 1040 0014 1970     		strb	r1, [r3]
+  44:JSONParser.c  **** }
+ 1041              		.loc 2 44 0
+ 1042              		@ sp needed
+ 1043 0016 7047     		bx	lr
+ 1044              	.L77:
+ 1045              		.align	2
+ 1046              	.L76:
+ 1047 0018 00000000 		.word	.LANCHOR0
+ 1048 001c 00000000 		.word	g_JSONString
+ 1049              		.cfi_endproc
+ 1050              	.LFE67:
+ 1051              		.size	resetCharJSON, .-resetCharJSON
+ 1052              		.section	.text.pushCharJSON,"ax",%progbits
+ 1053              		.align	2
+ 1054              		.global	pushCharJSON
+ 1055              		.code	16
+ 1056              		.thumb_func
+ 1057              		.type	pushCharJSON, %function
+ 1058              	pushCharJSON:
+ 1059              	.LFB68:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 29
+
+
+  45:JSONParser.c  **** 
+  46:JSONParser.c  **** uint8 pushCharJSON(char c)
+  47:JSONParser.c  **** {
+ 1060              		.loc 2 47 0
+ 1061              		.cfi_startproc
+ 1062              		@ args = 0, pretend = 0, frame = 0
+ 1063              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1064              		@ link register save eliminated.
+ 1065              	.LVL93:
+  48:JSONParser.c  ****     g_JSONString[g_nSizeOfJONString++] = c;
+ 1066              		.loc 2 48 0
+ 1067 0000 064A     		ldr	r2, .L79
+ 1068 0002 1188     		ldrh	r1, [r2]
+ 1069 0004 4B1C     		adds	r3, r1, #1
+ 1070 0006 9BB2     		uxth	r3, r3
+ 1071 0008 1380     		strh	r3, [r2]
+ 1072 000a 054A     		ldr	r2, .L79+4
+ 1073 000c 5054     		strb	r0, [r2, r1]
+  49:JSONParser.c  ****     g_JSONString[g_nSizeOfJONString]  = '\0';
+ 1074              		.loc 2 49 0
+ 1075 000e 0020     		movs	r0, #0
+ 1076              	.LVL94:
+ 1077 0010 D054     		strb	r0, [r2, r3]
+ 1078              	.LVL95:
+  50:JSONParser.c  **** 
+  51:JSONParser.c  ****  //    UART_RS232_PutChar(c);
+  52:JSONParser.c  ****    //  DEBUG_PutChar(c);
+  53:JSONParser.c  ****     return (g_nSizeOfJONString < JSON_SIZE);
+ 1079              		.loc 2 53 0
+ 1080 0012 044A     		ldr	r2, .L79+8
+ 1081 0014 9A42     		cmp	r2, r3
+ 1082 0016 4041     		adcs	r0, r0, r0
+ 1083 0018 C0B2     		uxtb	r0, r0
+  54:JSONParser.c  **** }
+ 1084              		.loc 2 54 0
+ 1085              		@ sp needed
+ 1086 001a 7047     		bx	lr
+ 1087              	.L80:
+ 1088              		.align	2
+ 1089              	.L79:
+ 1090 001c 00000000 		.word	.LANCHOR0
+ 1091 0020 00000000 		.word	g_JSONString
+ 1092 0024 E7030000 		.word	999
+ 1093              		.cfi_endproc
+ 1094              	.LFE68:
+ 1095              		.size	pushCharJSON, .-pushCharJSON
+ 1096              		.section	.text.printJSON,"ax",%progbits
+ 1097              		.align	2
+ 1098              		.global	printJSON
+ 1099              		.code	16
+ 1100              		.thumb_func
+ 1101              		.type	printJSON, %function
+ 1102              	printJSON:
+ 1103              	.LFB71:
+  55:JSONParser.c  **** //
+  56:JSONParser.c  **** // return 0: not JSON, 1: JSON, 2: End of JSON
+  57:JSONParser.c  **** uint8 pushJSON(char c)
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 30
+
+
+  58:JSONParser.c  **** {
+  59:JSONParser.c  ****     switch(c)
+  60:JSONParser.c  ****     {
+  61:JSONParser.c  ****         case '[':
+  62:JSONParser.c  ****         case '{': g_uJSONCount++; break;
+  63:JSONParser.c  ****         case ']':
+  64:JSONParser.c  ****         case '}': g_uJSONCount--; break;
+  65:JSONParser.c  ****         case LF :
+  66:JSONParser.c  ****         case CR : if(g_bLastJSON)
+  67:JSONParser.c  ****         {
+  68:JSONParser.c  ****         //    DEBUG_immediately_printf("<-CR]");
+  69:JSONParser.c  ****             return 2;
+  70:JSONParser.c  ****         }break;
+  71:JSONParser.c  ****     }
+  72:JSONParser.c  ****      //   DEBUG_printf("%c",c);    
+  73:JSONParser.c  ****     if(g_uJSONCount > 0)
+  74:JSONParser.c  ****     {
+  75:JSONParser.c  ****         g_bJSONStart = TRUE;
+  76:JSONParser.c  ****         g_uJSONStringCount++;
+  77:JSONParser.c  ****     }
+  78:JSONParser.c  ****     
+  79:JSONParser.c  ****     if(g_uJSONCount > 0 || (g_uJSONCount == 0 && (c == '}' || c == ']')))  
+  80:JSONParser.c  ****     {        
+  81:JSONParser.c  ****         g_bLastJSON = TRUE;
+  82:JSONParser.c  ****         pushCharJSON(c);
+  83:JSONParser.c  **** 
+  84:JSONParser.c  ****         if(g_bJSONStart && g_uJSONCount == 0)
+  85:JSONParser.c  ****         {     
+  86:JSONParser.c  ****         //    DEBUG_printf(".");
+  87:JSONParser.c  ****             
+  88:JSONParser.c  ****               //   DEBUG_printf("JSON:%s::::\r\n",g_JSONString);
+  89:JSONParser.c  ****             if(JSONParse() == FALSE) return 3;
+  90:JSONParser.c  ****            // DEBUG_printf("PARSING OK <-END]");
+  91:JSONParser.c  **** 
+  92:JSONParser.c  ****             return 2;
+  93:JSONParser.c  ****         }
+  94:JSONParser.c  ****         
+  95:JSONParser.c  ****         return 1;
+  96:JSONParser.c  ****     }
+  97:JSONParser.c  ****     
+  98:JSONParser.c  ****     g_bJSONStart = FALSE;
+  99:JSONParser.c  ****     g_bLastJSON = FALSE;
+ 100:JSONParser.c  ****     return 0;
+ 101:JSONParser.c  **** }
+ 102:JSONParser.c  **** 
+ 103:JSONParser.c  **** 
+ 104:JSONParser.c  **** uint8 parsingReceivedData(uint8 *data)
+ 105:JSONParser.c  **** {
+ 106:JSONParser.c  ****     uint16 nLength = strlen((char *) data);
+ 107:JSONParser.c  ****     //DEBUG_printf("PARSING START--->\r\n");
+ 108:JSONParser.c  ****     uint8 uLastStat=0;
+ 109:JSONParser.c  ****     for(int i=0; i < nLength; i++)
+ 110:JSONParser.c  ****     {
+ 111:JSONParser.c  ****    //     DEBUG_printf("%d : %c\r\n",i, data[i]);
+ 112:JSONParser.c  ****         if((uLastStat = pushJSON(data[i]))==2)
+ 113:JSONParser.c  ****         {
+ 114:JSONParser.c  ****             resetCharJSON();
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 31
+
+
+ 115:JSONParser.c  ****             break;
+ 116:JSONParser.c  ****         }
+ 117:JSONParser.c  ****     }
+ 118:JSONParser.c  ****   //  DEBUG_printf("PARSING END--->\r\n");
+ 119:JSONParser.c  **** //    DEBUG_printf("LastStat %d\r\n", uLastStat);
+ 120:JSONParser.c  ****     return uLastStat;
+ 121:JSONParser.c  **** }
+ 122:JSONParser.c  **** 
+ 123:JSONParser.c  **** void printJSON()
+ 124:JSONParser.c  **** {
+ 1104              		.loc 2 124 0
+ 1105              		.cfi_startproc
+ 1106              		@ args = 0, pretend = 0, frame = 0
+ 1107              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1108 0000 10B5     		push	{r4, lr}
+ 1109              		.cfi_def_cfa_offset 8
+ 1110              		.cfi_offset 4, -8
+ 1111              		.cfi_offset 14, -4
+ 125:JSONParser.c  ****     DEBUG_printf(g_JSONString);
+ 1112              		.loc 2 125 0
+ 1113 0002 0248     		ldr	r0, .L82
+ 1114 0004 FFF7FEFF 		bl	DEBUG_printf
+ 1115              	.LVL96:
+ 126:JSONParser.c  **** }
+ 1116              		.loc 2 126 0
+ 1117              		@ sp needed
+ 1118 0008 10BD     		pop	{r4, pc}
+ 1119              	.L83:
+ 1120 000a C046     		.align	2
+ 1121              	.L82:
+ 1122 000c 00000000 		.word	g_JSONString
+ 1123              		.cfi_endproc
+ 1124              	.LFE71:
+ 1125              		.size	printJSON, .-printJSON
+ 1126              		.section	.text.GetJSON_Token_String,"ax",%progbits
+ 1127              		.align	2
+ 1128              		.global	GetJSON_Token_String
+ 1129              		.code	16
+ 1130              		.thumb_func
+ 1131              		.type	GetJSON_Token_String, %function
+ 1132              	GetJSON_Token_String:
+ 1133              	.LFB73:
+ 127:JSONParser.c  **** 
+ 128:JSONParser.c  **** 
+ 129:JSONParser.c  **** static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
+ 130:JSONParser.c  ****   if (tok->type == JSMN_STRING && (int)strlen(s) == tok->end - tok->start &&
+ 131:JSONParser.c  ****       strncmp(json + tok->start, s, tok->end - tok->start) == 0) {
+ 132:JSONParser.c  ****     return 0;
+ 133:JSONParser.c  ****   }
+ 134:JSONParser.c  ****   return -1;
+ 135:JSONParser.c  **** }
+ 136:JSONParser.c  **** 
+ 137:JSONParser.c  **** char *GetJSON_Token_String(jsmntok_t *tok, const char * g_JSONString)
+ 138:JSONParser.c  **** {
+ 1134              		.loc 2 138 0
+ 1135              		.cfi_startproc
+ 1136              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 32
+
+
+ 1137              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1138              	.LVL97:
+ 1139 0000 10B5     		push	{r4, lr}
+ 1140              		.cfi_def_cfa_offset 8
+ 1141              		.cfi_offset 4, -8
+ 1142              		.cfi_offset 14, -4
+ 139:JSONParser.c  ****     static char buff[1024];
+ 140:JSONParser.c  ****     
+ 141:JSONParser.c  ****     sprintf(buff,"%.*s",tok->end - tok->start, g_JSONString + tok->start);
+ 1143              		.loc 2 141 0
+ 1144 0002 8268     		ldr	r2, [r0, #8]
+ 1145 0004 4068     		ldr	r0, [r0, #4]
+ 1146              	.LVL98:
+ 1147 0006 0B18     		adds	r3, r1, r0
+ 1148 0008 121A     		subs	r2, r2, r0
+ 1149 000a 044C     		ldr	r4, .L85
+ 1150 000c 1434     		adds	r4, r4, #20
+ 1151 000e 0449     		ldr	r1, .L85+4
+ 1152              	.LVL99:
+ 1153 0010 2000     		movs	r0, r4
+ 1154 0012 FFF7FEFF 		bl	sprintf
+ 1155              	.LVL100:
+ 142:JSONParser.c  ****     
+ 143:JSONParser.c  ****     return buff;
+ 144:JSONParser.c  **** }
+ 1156              		.loc 2 144 0
+ 1157 0016 2000     		movs	r0, r4
+ 1158              		@ sp needed
+ 1159 0018 10BD     		pop	{r4, pc}
+ 1160              	.L86:
+ 1161 001a C046     		.align	2
+ 1162              	.L85:
+ 1163 001c 00000000 		.word	.LANCHOR0
+ 1164 0020 00000000 		.word	.LC6
+ 1165              		.cfi_endproc
+ 1166              	.LFE73:
+ 1167              		.size	GetJSON_Token_String, .-GetJSON_Token_String
+ 1168              		.section	.text.JSONParse,"ax",%progbits
+ 1169              		.align	2
+ 1170              		.global	JSONParse
+ 1171              		.code	16
+ 1172              		.thumb_func
+ 1173              		.type	JSONParse, %function
+ 1174              	JSONParse:
+ 1175              	.LFB74:
+ 145:JSONParser.c  **** 
+ 146:JSONParser.c  **** 
+ 147:JSONParser.c  **** uint8 JSONParse()
+ 148:JSONParser.c  **** {
+ 1176              		.loc 2 148 0
+ 1177              		.cfi_startproc
+ 1178              		@ args = 0, pretend = 0, frame = 0
+ 1179              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1180              		@ link register save eliminated.
+ 149:JSONParser.c  ****     if(g_nSizeOfJONString == 0) return FALSE;
+ 1181              		.loc 2 149 0
+ 1182 0000 034B     		ldr	r3, .L90
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 33
+
+
+ 1183 0002 1B88     		ldrh	r3, [r3]
+ 1184 0004 002B     		cmp	r3, #0
+ 1185 0006 01D1     		bne	.L89
+ 1186 0008 0020     		movs	r0, #0
+ 1187 000a 00E0     		b	.L88
+ 1188              	.L89:
+ 150:JSONParser.c  ****  
+ 151:JSONParser.c  **** //    uint16 type = g_uAndonRequestType;
+ 152:JSONParser.c  **** //    g_uAndonRequestType = ANDON_NONE;
+ 153:JSONParser.c  **** //    
+ 154:JSONParser.c  **** //    switch(type)
+ 155:JSONParser.c  **** //    {
+ 156:JSONParser.c  **** //        case ANDON_CURRENT_TIME:        return JSON_CurrentTimeParsing(); break;
+ 157:JSONParser.c  **** //        case ANDON_GET_DEVICE_NAME:     return JSON_GetDeviceName();      break;
+ 158:JSONParser.c  **** //        case ANDON_REQUEST_LIST:        return JSON_MenuParsing();        break;
+ 159:JSONParser.c  **** //        case ANDON_LIST_SEND   :        return JSON_ListSend();           break;
+ 160:JSONParser.c  **** //        case ANDON_LIST_STAT   :        return JSON_ListStat();           break;      
+ 161:JSONParser.c  **** //        case ANDON_DEVICE_REGISTRATION: return JSON_DeviceRegistration(); break;
+ 162:JSONParser.c  **** //        // NONE ANDON COMMAND        
+ 163:JSONParser.c  **** //        default:                        return JSON_Config();             break;
+ 164:JSONParser.c  **** //    }
+ 165:JSONParser.c  ****             
+ 166:JSONParser.c  ****     return TRUE;
+ 1189              		.loc 2 166 0
+ 1190 000c 0120     		movs	r0, #1
+ 1191              	.L88:
+ 167:JSONParser.c  ****     
+ 168:JSONParser.c  **** }
+ 1192              		.loc 2 168 0
+ 1193              		@ sp needed
+ 1194 000e 7047     		bx	lr
+ 1195              	.L91:
+ 1196              		.align	2
+ 1197              	.L90:
+ 1198 0010 00000000 		.word	.LANCHOR0
+ 1199              		.cfi_endproc
+ 1200              	.LFE74:
+ 1201              		.size	JSONParse, .-JSONParse
+ 1202              		.section	.text.pushJSON,"ax",%progbits
+ 1203              		.align	2
+ 1204              		.global	pushJSON
+ 1205              		.code	16
+ 1206              		.thumb_func
+ 1207              		.type	pushJSON, %function
+ 1208              	pushJSON:
+ 1209              	.LFB69:
+  58:JSONParser.c  ****     switch(c)
+ 1210              		.loc 2 58 0
+ 1211              		.cfi_startproc
+ 1212              		@ args = 0, pretend = 0, frame = 0
+ 1213              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1214              	.LVL101:
+ 1215 0000 10B5     		push	{r4, lr}
+ 1216              		.cfi_def_cfa_offset 8
+ 1217              		.cfi_offset 4, -8
+ 1218              		.cfi_offset 14, -4
+  59:JSONParser.c  ****     {
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 34
+
+
+ 1219              		.loc 2 59 0
+ 1220 0002 5B28     		cmp	r0, #91
+ 1221 0004 0CD0     		beq	.L94
+ 1222 0006 04D8     		bhi	.L95
+ 1223 0008 0A28     		cmp	r0, #10
+ 1224 000a 13D0     		beq	.L96
+ 1225 000c 0D28     		cmp	r0, #13
+ 1226 000e 11D0     		beq	.L96
+ 1227 0010 14E0     		b	.L93
+ 1228              	.L95:
+ 1229 0012 7B28     		cmp	r0, #123
+ 1230 0014 04D0     		beq	.L94
+ 1231 0016 7D28     		cmp	r0, #125
+ 1232 0018 07D0     		beq	.L97
+ 1233 001a 5D28     		cmp	r0, #93
+ 1234 001c 0ED1     		bne	.L93
+ 1235 001e 04E0     		b	.L97
+ 1236              	.L94:
+  62:JSONParser.c  ****         case ']':
+ 1237              		.loc 2 62 0
+ 1238 0020 1E4A     		ldr	r2, .L106
+ 1239 0022 D368     		ldr	r3, [r2, #12]
+ 1240 0024 0133     		adds	r3, r3, #1
+ 1241 0026 D360     		str	r3, [r2, #12]
+ 1242 0028 08E0     		b	.L93
+ 1243              	.L97:
+  64:JSONParser.c  ****         case LF :
+ 1244              		.loc 2 64 0
+ 1245 002a 1C4A     		ldr	r2, .L106
+ 1246 002c D368     		ldr	r3, [r2, #12]
+ 1247 002e 013B     		subs	r3, r3, #1
+ 1248 0030 D360     		str	r3, [r2, #12]
+ 1249 0032 03E0     		b	.L93
+ 1250              	.L96:
+  66:JSONParser.c  ****         {
+ 1251              		.loc 2 66 0
+ 1252 0034 194B     		ldr	r3, .L106
+ 1253 0036 1B7C     		ldrb	r3, [r3, #16]
+ 1254 0038 002B     		cmp	r3, #0
+ 1255 003a 27D1     		bne	.L102
+ 1256              	.L93:
+  73:JSONParser.c  ****     {
+ 1257              		.loc 2 73 0
+ 1258 003c 174B     		ldr	r3, .L106
+ 1259 003e DB68     		ldr	r3, [r3, #12]
+ 1260 0040 002B     		cmp	r3, #0
+ 1261 0042 05D0     		beq	.L99
+  75:JSONParser.c  ****         g_uJSONStringCount++;
+ 1262              		.loc 2 75 0
+ 1263 0044 154A     		ldr	r2, .L106
+ 1264 0046 0121     		movs	r1, #1
+ 1265 0048 1172     		strb	r1, [r2, #8]
+  76:JSONParser.c  ****     }
+ 1266              		.loc 2 76 0
+ 1267 004a 5168     		ldr	r1, [r2, #4]
+ 1268 004c 0131     		adds	r1, r1, #1
+ 1269 004e 5160     		str	r1, [r2, #4]
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 35
+
+
+ 1270              	.L99:
+  79:JSONParser.c  ****     {        
+ 1271              		.loc 2 79 0
+ 1272 0050 002B     		cmp	r3, #0
+ 1273 0052 03D1     		bne	.L100
+  79:JSONParser.c  ****     {        
+ 1274              		.loc 2 79 0 is_stmt 0 discriminator 1
+ 1275 0054 7D28     		cmp	r0, #125
+ 1276 0056 01D0     		beq	.L100
+  79:JSONParser.c  ****     {        
+ 1277              		.loc 2 79 0 discriminator 2
+ 1278 0058 5D28     		cmp	r0, #93
+ 1279 005a 11D1     		bne	.L101
+ 1280              	.L100:
+  81:JSONParser.c  ****         pushCharJSON(c);
+ 1281              		.loc 2 81 0 is_stmt 1
+ 1282 005c 0F4C     		ldr	r4, .L106
+ 1283 005e 0123     		movs	r3, #1
+ 1284 0060 2374     		strb	r3, [r4, #16]
+  82:JSONParser.c  **** 
+ 1285              		.loc 2 82 0
+ 1286 0062 FFF7FEFF 		bl	pushCharJSON
+ 1287              	.LVL102:
+  84:JSONParser.c  ****         {     
+ 1288              		.loc 2 84 0
+ 1289 0066 237A     		ldrb	r3, [r4, #8]
+ 1290 0068 002B     		cmp	r3, #0
+ 1291 006a 11D0     		beq	.L103
+  84:JSONParser.c  ****         {     
+ 1292              		.loc 2 84 0 is_stmt 0 discriminator 1
+ 1293 006c 0B4B     		ldr	r3, .L106
+ 1294 006e DB68     		ldr	r3, [r3, #12]
+ 1295 0070 002B     		cmp	r3, #0
+ 1296 0072 0FD1     		bne	.L104
+  89:JSONParser.c  ****            // DEBUG_printf("PARSING OK <-END]");
+ 1297              		.loc 2 89 0 is_stmt 1
+ 1298 0074 FFF7FEFF 		bl	JSONParse
+ 1299              	.LVL103:
+ 1300 0078 0028     		cmp	r0, #0
+ 1301 007a 0DD1     		bne	.L105
+ 1302 007c 0330     		adds	r0, r0, #3
+ 1303 007e 0CE0     		b	.L98
+ 1304              	.LVL104:
+ 1305              	.L101:
+  98:JSONParser.c  ****     g_bLastJSON = FALSE;
+ 1306              		.loc 2 98 0
+ 1307 0080 064B     		ldr	r3, .L106
+ 1308 0082 0022     		movs	r2, #0
+ 1309 0084 1A72     		strb	r2, [r3, #8]
+  99:JSONParser.c  ****     return 0;
+ 1310              		.loc 2 99 0
+ 1311 0086 1A74     		strb	r2, [r3, #16]
+ 100:JSONParser.c  **** }
+ 1312              		.loc 2 100 0
+ 1313 0088 0020     		movs	r0, #0
+ 1314              	.LVL105:
+ 1315 008a 06E0     		b	.L98
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 36
+
+
+ 1316              	.LVL106:
+ 1317              	.L102:
+  69:JSONParser.c  ****         }break;
+ 1318              		.loc 2 69 0
+ 1319 008c 0220     		movs	r0, #2
+ 1320              	.LVL107:
+ 1321 008e 04E0     		b	.L98
+ 1322              	.L103:
+  95:JSONParser.c  ****     }
+ 1323              		.loc 2 95 0
+ 1324 0090 0120     		movs	r0, #1
+ 1325 0092 02E0     		b	.L98
+ 1326              	.L104:
+ 1327 0094 0120     		movs	r0, #1
+ 1328 0096 00E0     		b	.L98
+ 1329              	.L105:
+  92:JSONParser.c  ****         }
+ 1330              		.loc 2 92 0
+ 1331 0098 0220     		movs	r0, #2
+ 1332              	.L98:
+ 101:JSONParser.c  **** 
+ 1333              		.loc 2 101 0
+ 1334              		@ sp needed
+ 1335 009a 10BD     		pop	{r4, pc}
+ 1336              	.L107:
+ 1337              		.align	2
+ 1338              	.L106:
+ 1339 009c 00000000 		.word	.LANCHOR0
+ 1340              		.cfi_endproc
+ 1341              	.LFE69:
+ 1342              		.size	pushJSON, .-pushJSON
+ 1343              		.section	.text.parsingReceivedData,"ax",%progbits
+ 1344              		.align	2
+ 1345              		.global	parsingReceivedData
+ 1346              		.code	16
+ 1347              		.thumb_func
+ 1348              		.type	parsingReceivedData, %function
+ 1349              	parsingReceivedData:
+ 1350              	.LFB70:
+ 105:JSONParser.c  ****     uint16 nLength = strlen((char *) data);
+ 1351              		.loc 2 105 0
+ 1352              		.cfi_startproc
+ 1353              		@ args = 0, pretend = 0, frame = 0
+ 1354              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1355              	.LVL108:
+ 1356 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 1357              		.cfi_def_cfa_offset 24
+ 1358              		.cfi_offset 3, -24
+ 1359              		.cfi_offset 4, -20
+ 1360              		.cfi_offset 5, -16
+ 1361              		.cfi_offset 6, -12
+ 1362              		.cfi_offset 7, -8
+ 1363              		.cfi_offset 14, -4
+ 1364 0002 0700     		movs	r7, r0
+ 106:JSONParser.c  ****     //DEBUG_printf("PARSING START--->\r\n");
+ 1365              		.loc 2 106 0
+ 1366 0004 FFF7FEFF 		bl	strlen
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 37
+
+
+ 1367              	.LVL109:
+ 1368 0008 0600     		movs	r6, r0
+ 1369              	.LVL110:
+ 1370              	.LBB8:
+ 109:JSONParser.c  ****     {
+ 1371              		.loc 2 109 0
+ 1372 000a 0025     		movs	r5, #0
+ 1373              	.LBE8:
+ 108:JSONParser.c  ****     for(int i=0; i < nLength; i++)
+ 1374              		.loc 2 108 0
+ 1375 000c 0024     		movs	r4, #0
+ 1376              	.LBB9:
+ 109:JSONParser.c  ****     {
+ 1377              		.loc 2 109 0
+ 1378 000e 09E0     		b	.L109
+ 1379              	.LVL111:
+ 1380              	.L112:
+ 112:JSONParser.c  ****         {
+ 1381              		.loc 2 112 0
+ 1382 0010 785D     		ldrb	r0, [r7, r5]
+ 1383 0012 FFF7FEFF 		bl	pushJSON
+ 1384              	.LVL112:
+ 1385 0016 0400     		movs	r4, r0
+ 1386              	.LVL113:
+ 1387 0018 0228     		cmp	r0, #2
+ 1388 001a 02D1     		bne	.L110
+ 114:JSONParser.c  ****             break;
+ 1389              		.loc 2 114 0
+ 1390 001c FFF7FEFF 		bl	resetCharJSON
+ 1391              	.LVL114:
+ 115:JSONParser.c  ****         }
+ 1392              		.loc 2 115 0
+ 1393 0020 04E0     		b	.L111
+ 1394              	.LVL115:
+ 1395              	.L110:
+ 109:JSONParser.c  ****     {
+ 1396              		.loc 2 109 0 discriminator 2
+ 1397 0022 0135     		adds	r5, r5, #1
+ 1398              	.LVL116:
+ 1399              	.L109:
+ 109:JSONParser.c  ****     {
+ 1400              		.loc 2 109 0 is_stmt 0 discriminator 1
+ 1401 0024 3304     		lsls	r3, r6, #16
+ 1402 0026 1B0C     		lsrs	r3, r3, #16
+ 1403 0028 9D42     		cmp	r5, r3
+ 1404 002a F1DB     		blt	.L112
+ 1405              	.LVL117:
+ 1406              	.L111:
+ 1407              	.LBE9:
+ 121:JSONParser.c  **** 
+ 1408              		.loc 2 121 0 is_stmt 1
+ 1409 002c 2000     		movs	r0, r4
+ 1410              		@ sp needed
+ 1411              	.LVL118:
+ 1412              	.LVL119:
+ 1413              	.LVL120:
+ 1414              	.LVL121:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 38
+
+
+ 1415 002e F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 1416              		.cfi_endproc
+ 1417              	.LFE70:
+ 1418              		.size	parsingReceivedData, .-parsingReceivedData
+ 1419              		.global	g_nSizeOfJONString
+ 1420              		.comm	g_JSONString,1001,4
+ 1421              		.comm	Param,6,4
+ 1422              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 1423              		.align	2
+ 1424              	.LC6:
+ 1425 0000 252E2A73 		.ascii	"%.*s\000"
+ 1425      00
+ 1426              		.bss
+ 1427              		.align	2
+ 1428              		.set	.LANCHOR0,. + 0
+ 1429              		.type	g_nSizeOfJONString, %object
+ 1430              		.size	g_nSizeOfJONString, 2
+ 1431              	g_nSizeOfJONString:
+ 1432 0000 0000     		.space	2
+ 1433 0002 0000     		.space	2
+ 1434              		.type	g_uJSONStringCount, %object
+ 1435              		.size	g_uJSONStringCount, 4
+ 1436              	g_uJSONStringCount:
+ 1437 0004 00000000 		.space	4
+ 1438              		.type	g_bJSONStart, %object
+ 1439              		.size	g_bJSONStart, 1
+ 1440              	g_bJSONStart:
+ 1441 0008 00       		.space	1
+ 1442 0009 000000   		.space	3
+ 1443              		.type	g_uJSONCount, %object
+ 1444              		.size	g_uJSONCount, 4
+ 1445              	g_uJSONCount:
+ 1446 000c 00000000 		.space	4
+ 1447              		.type	g_bLastJSON, %object
+ 1448              		.size	g_bLastJSON, 1
+ 1449              	g_bLastJSON:
+ 1450 0010 00       		.space	1
+ 1451 0011 000000   		.space	3
+ 1452              		.type	buff.9008, %object
+ 1453              		.size	buff.9008, 1024
+ 1454              	buff.9008:
+ 1455 0014 00000000 		.space	1024
+ 1455      00000000 
+ 1455      00000000 
+ 1455      00000000 
+ 1455      00000000 
+ 1456              		.text
+ 1457              	.Letext0:
+ 1458              		.file 3 "Generated_Source\\PSoC4/cytypes.h"
+ 1459              		.file 4 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 1460              		.file 5 "main.h"
+ 1461              		.file 6 "uart.h"
+ 1462              		.file 7 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 1463              		.file 8 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 1464              		.section	.debug_info,"",%progbits
+ 1465              	.Ldebug_info0:
+ 1466 0000 18080000 		.4byte	0x818
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 39
+
+
+ 1467 0004 0400     		.2byte	0x4
+ 1468 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 1469 000a 04       		.byte	0x4
+ 1470 000b 01       		.uleb128 0x1
+ 1471 000c 9E000000 		.4byte	.LASF66
+ 1472 0010 0C       		.byte	0xc
+ 1473 0011 DA030000 		.4byte	.LASF67
+ 1474 0015 A3030000 		.4byte	.LASF68
+ 1475 0019 48000000 		.4byte	.Ldebug_ranges0+0x48
+ 1476 001d 00000000 		.4byte	0
+ 1477 0021 00000000 		.4byte	.Ldebug_line0
+ 1478 0025 02       		.uleb128 0x2
+ 1479 0026 01       		.byte	0x1
+ 1480 0027 06       		.byte	0x6
+ 1481 0028 5C010000 		.4byte	.LASF0
+ 1482 002c 02       		.uleb128 0x2
+ 1483 002d 01       		.byte	0x1
+ 1484 002e 08       		.byte	0x8
+ 1485 002f C7010000 		.4byte	.LASF1
+ 1486 0033 02       		.uleb128 0x2
+ 1487 0034 02       		.byte	0x2
+ 1488 0035 05       		.byte	0x5
+ 1489 0036 78000000 		.4byte	.LASF2
+ 1490 003a 02       		.uleb128 0x2
+ 1491 003b 02       		.byte	0x2
+ 1492 003c 07       		.byte	0x7
+ 1493 003d 96020000 		.4byte	.LASF3
+ 1494 0041 02       		.uleb128 0x2
+ 1495 0042 04       		.byte	0x4
+ 1496 0043 05       		.byte	0x5
+ 1497 0044 DD020000 		.4byte	.LASF4
+ 1498 0048 02       		.uleb128 0x2
+ 1499 0049 04       		.byte	0x4
+ 1500 004a 07       		.byte	0x7
+ 1501 004b 68020000 		.4byte	.LASF5
+ 1502 004f 02       		.uleb128 0x2
+ 1503 0050 08       		.byte	0x8
+ 1504 0051 05       		.byte	0x5
+ 1505 0052 6E010000 		.4byte	.LASF6
+ 1506 0056 02       		.uleb128 0x2
+ 1507 0057 08       		.byte	0x8
+ 1508 0058 07       		.byte	0x7
+ 1509 0059 3F020000 		.4byte	.LASF7
+ 1510 005d 03       		.uleb128 0x3
+ 1511 005e 04       		.byte	0x4
+ 1512 005f 05       		.byte	0x5
+ 1513 0060 696E7400 		.ascii	"int\000"
+ 1514 0064 02       		.uleb128 0x2
+ 1515 0065 04       		.byte	0x4
+ 1516 0066 07       		.byte	0x7
+ 1517 0067 5B020000 		.4byte	.LASF8
+ 1518 006b 04       		.uleb128 0x4
+ 1519 006c 3F010000 		.4byte	.LASF9
+ 1520 0070 03       		.byte	0x3
+ 1521 0071 FC01     		.2byte	0x1fc
+ 1522 0073 2C000000 		.4byte	0x2c
+ 1523 0077 04       		.uleb128 0x4
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 40
+
+
+ 1524 0078 97000000 		.4byte	.LASF10
+ 1525 007c 03       		.byte	0x3
+ 1526 007d FD01     		.2byte	0x1fd
+ 1527 007f 3A000000 		.4byte	0x3a
+ 1528 0083 04       		.uleb128 0x4
+ 1529 0084 2C030000 		.4byte	.LASF11
+ 1530 0088 03       		.byte	0x3
+ 1531 0089 FE01     		.2byte	0x1fe
+ 1532 008b 48000000 		.4byte	0x48
+ 1533 008f 02       		.uleb128 0x2
+ 1534 0090 04       		.byte	0x4
+ 1535 0091 04       		.byte	0x4
+ 1536 0092 68010000 		.4byte	.LASF12
+ 1537 0096 02       		.uleb128 0x2
+ 1538 0097 08       		.byte	0x8
+ 1539 0098 04       		.byte	0x4
+ 1540 0099 50030000 		.4byte	.LASF13
+ 1541 009d 02       		.uleb128 0x2
+ 1542 009e 01       		.byte	0x1
+ 1543 009f 08       		.byte	0x8
+ 1544 00a0 D8020000 		.4byte	.LASF14
+ 1545 00a4 05       		.uleb128 0x5
+ 1546 00a5 2A000000 		.4byte	.LASF15
+ 1547 00a9 04       		.byte	0x4
+ 1548 00aa D8       		.byte	0xd8
+ 1549 00ab 64000000 		.4byte	0x64
+ 1550 00af 02       		.uleb128 0x2
+ 1551 00b0 08       		.byte	0x8
+ 1552 00b1 04       		.byte	0x4
+ 1553 00b2 E7010000 		.4byte	.LASF16
+ 1554 00b6 02       		.uleb128 0x2
+ 1555 00b7 04       		.byte	0x4
+ 1556 00b8 07       		.byte	0x7
+ 1557 00b9 B8010000 		.4byte	.LASF17
+ 1558 00bd 06       		.uleb128 0x6
+ 1559 00be 04       		.byte	0x4
+ 1560 00bf 9D000000 		.4byte	0x9d
+ 1561 00c3 06       		.uleb128 0x6
+ 1562 00c4 04       		.byte	0x4
+ 1563 00c5 C9000000 		.4byte	0xc9
+ 1564 00c9 07       		.uleb128 0x7
+ 1565 00ca 9D000000 		.4byte	0x9d
+ 1566 00ce 06       		.uleb128 0x6
+ 1567 00cf 04       		.byte	0x4
+ 1568 00d0 6B000000 		.4byte	0x6b
+ 1569 00d4 08       		.uleb128 0x8
+ 1570 00d5 FF020000 		.4byte	.LASF30
+ 1571 00d9 06       		.byte	0x6
+ 1572 00da 05       		.byte	0x5
+ 1573 00db 31       		.byte	0x31
+ 1574 00dc 05010000 		.4byte	0x105
+ 1575 00e0 09       		.uleb128 0x9
+ 1576 00e1 57030000 		.4byte	.LASF18
+ 1577 00e5 05       		.byte	0x5
+ 1578 00e6 33       		.byte	0x33
+ 1579 00e7 6B000000 		.4byte	0x6b
+ 1580 00eb 00       		.byte	0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 41
+
+
+ 1581 00ec 09       		.uleb128 0x9
+ 1582 00ed 50010000 		.4byte	.LASF19
+ 1583 00f1 05       		.byte	0x5
+ 1584 00f2 34       		.byte	0x34
+ 1585 00f3 77000000 		.4byte	0x77
+ 1586 00f7 02       		.byte	0x2
+ 1587 00f8 09       		.uleb128 0x9
+ 1588 00f9 56010000 		.4byte	.LASF20
+ 1589 00fd 05       		.byte	0x5
+ 1590 00fe 35       		.byte	0x35
+ 1591 00ff 77000000 		.4byte	0x77
+ 1592 0103 04       		.byte	0x4
+ 1593 0104 00       		.byte	0
+ 1594 0105 0A       		.uleb128 0xa
+ 1595 0106 01       		.byte	0x1
+ 1596 0107 2C000000 		.4byte	0x2c
+ 1597 010b 01       		.byte	0x1
+ 1598 010c 2E       		.byte	0x2e
+ 1599 010d 30010000 		.4byte	0x130
+ 1600 0111 0B       		.uleb128 0xb
+ 1601 0112 44000000 		.4byte	.LASF21
+ 1602 0116 00       		.byte	0
+ 1603 0117 0B       		.uleb128 0xb
+ 1604 0118 E7030000 		.4byte	.LASF22
+ 1605 011c 01       		.byte	0x1
+ 1606 011d 0B       		.uleb128 0xb
+ 1607 011e 89010000 		.4byte	.LASF23
+ 1608 0122 02       		.byte	0x2
+ 1609 0123 0B       		.uleb128 0xb
+ 1610 0124 2C010000 		.4byte	.LASF24
+ 1611 0128 03       		.byte	0x3
+ 1612 0129 0B       		.uleb128 0xb
+ 1613 012a 28020000 		.4byte	.LASF25
+ 1614 012e 04       		.byte	0x4
+ 1615 012f 00       		.byte	0
+ 1616 0130 05       		.uleb128 0x5
+ 1617 0131 8E030000 		.4byte	.LASF26
+ 1618 0135 01       		.byte	0x1
+ 1619 0136 34       		.byte	0x34
+ 1620 0137 05010000 		.4byte	0x105
+ 1621 013b 0C       		.uleb128 0xc
+ 1622 013c ED020000 		.4byte	.LASF69
+ 1623 0140 01       		.byte	0x1
+ 1624 0141 25000000 		.4byte	0x25
+ 1625 0145 01       		.byte	0x1
+ 1626 0146 36       		.byte	0x36
+ 1627 0147 5E010000 		.4byte	0x15e
+ 1628 014b 0D       		.uleb128 0xd
+ 1629 014c B3020000 		.4byte	.LASF27
+ 1630 0150 7F       		.sleb128 -1
+ 1631 0151 0D       		.uleb128 0xd
+ 1632 0152 0F020000 		.4byte	.LASF28
+ 1633 0156 7E       		.sleb128 -2
+ 1634 0157 0D       		.uleb128 0xd
+ 1635 0158 94010000 		.4byte	.LASF29
+ 1636 015c 7D       		.sleb128 -3
+ 1637 015d 00       		.byte	0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 42
+
+
+ 1638 015e 08       		.uleb128 0x8
+ 1639 015f 31000000 		.4byte	.LASF31
+ 1640 0163 10       		.byte	0x10
+ 1641 0164 01       		.byte	0x1
+ 1642 0165 45       		.byte	0x45
+ 1643 0166 9B010000 		.4byte	0x19b
+ 1644 016a 09       		.uleb128 0x9
+ 1645 016b 56020000 		.4byte	.LASF32
+ 1646 016f 01       		.byte	0x1
+ 1647 0170 46       		.byte	0x46
+ 1648 0171 30010000 		.4byte	0x130
+ 1649 0175 00       		.byte	0
+ 1650 0176 09       		.uleb128 0x9
+ 1651 0177 90020000 		.4byte	.LASF33
+ 1652 017b 01       		.byte	0x1
+ 1653 017c 47       		.byte	0x47
+ 1654 017d 5D000000 		.4byte	0x5d
+ 1655 0181 04       		.byte	0x4
+ 1656 0182 0E       		.uleb128 0xe
+ 1657 0183 656E6400 		.ascii	"end\000"
+ 1658 0187 01       		.byte	0x1
+ 1659 0188 48       		.byte	0x48
+ 1660 0189 5D000000 		.4byte	0x5d
+ 1661 018d 08       		.byte	0x8
+ 1662 018e 09       		.uleb128 0x9
+ 1663 018f 63030000 		.4byte	.LASF34
+ 1664 0193 01       		.byte	0x1
+ 1665 0194 49       		.byte	0x49
+ 1666 0195 5D000000 		.4byte	0x5d
+ 1667 0199 0C       		.byte	0xc
+ 1668 019a 00       		.byte	0
+ 1669 019b 05       		.uleb128 0x5
+ 1670 019c 18030000 		.4byte	.LASF35
+ 1671 01a0 01       		.byte	0x1
+ 1672 01a1 4D       		.byte	0x4d
+ 1673 01a2 5E010000 		.4byte	0x15e
+ 1674 01a6 08       		.uleb128 0x8
+ 1675 01a7 44030000 		.4byte	.LASF36
+ 1676 01ab 0C       		.byte	0xc
+ 1677 01ac 01       		.byte	0x1
+ 1678 01ad 53       		.byte	0x53
+ 1679 01ae D7010000 		.4byte	0x1d7
+ 1680 01b2 0E       		.uleb128 0xe
+ 1681 01b3 706F7300 		.ascii	"pos\000"
+ 1682 01b7 01       		.byte	0x1
+ 1683 01b8 54       		.byte	0x54
+ 1684 01b9 64000000 		.4byte	0x64
+ 1685 01bd 00       		.byte	0
+ 1686 01be 09       		.uleb128 0x9
+ 1687 01bf 37020000 		.4byte	.LASF37
+ 1688 01c3 01       		.byte	0x1
+ 1689 01c4 55       		.byte	0x55
+ 1690 01c5 64000000 		.4byte	0x64
+ 1691 01c9 04       		.byte	0x4
+ 1692 01ca 09       		.uleb128 0x9
+ 1693 01cb 87020000 		.4byte	.LASF38
+ 1694 01cf 01       		.byte	0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 43
+
+
+ 1695 01d0 56       		.byte	0x56
+ 1696 01d1 5D000000 		.4byte	0x5d
+ 1697 01d5 08       		.byte	0x8
+ 1698 01d6 00       		.byte	0
+ 1699 01d7 05       		.uleb128 0x5
+ 1700 01d8 44030000 		.4byte	.LASF36
+ 1701 01dc 01       		.byte	0x1
+ 1702 01dd 57       		.byte	0x57
+ 1703 01de A6010000 		.4byte	0x1a6
+ 1704 01e2 0F       		.uleb128 0xf
+ 1705 01e3 33030000 		.4byte	.LASF43
+ 1706 01e7 01       		.byte	0x1
+ 1707 01e8 6A       		.byte	0x6a
+ 1708 01e9 38020000 		.4byte	0x238
+ 1709 01ed 00000000 		.4byte	.LFB61
+ 1710 01f1 22000000 		.4byte	.LFE61-.LFB61
+ 1711 01f5 01       		.uleb128 0x1
+ 1712 01f6 9C       		.byte	0x9c
+ 1713 01f7 38020000 		.4byte	0x238
+ 1714 01fb 10       		.uleb128 0x10
+ 1715 01fc 38010000 		.4byte	.LASF39
+ 1716 0200 01       		.byte	0x1
+ 1717 0201 6A       		.byte	0x6a
+ 1718 0202 3E020000 		.4byte	0x23e
+ 1719 0206 00000000 		.4byte	.LLST0
+ 1720 020a 10       		.uleb128 0x10
+ 1721 020b 6E030000 		.4byte	.LASF40
+ 1722 020f 01       		.byte	0x1
+ 1723 0210 6A       		.byte	0x6a
+ 1724 0211 38020000 		.4byte	0x238
+ 1725 0215 3A000000 		.4byte	.LLST1
+ 1726 0219 10       		.uleb128 0x10
+ 1727 021a 39000000 		.4byte	.LASF41
+ 1728 021e 01       		.byte	0x1
+ 1729 021f 6B       		.byte	0x6b
+ 1730 0220 44020000 		.4byte	0x244
+ 1731 0224 74000000 		.4byte	.LLST2
+ 1732 0228 11       		.uleb128 0x11
+ 1733 0229 746F6B00 		.ascii	"tok\000"
+ 1734 022d 01       		.byte	0x1
+ 1735 022e 6C       		.byte	0x6c
+ 1736 022f 38020000 		.4byte	0x238
+ 1737 0233 AE000000 		.4byte	.LLST3
+ 1738 0237 00       		.byte	0
+ 1739 0238 06       		.uleb128 0x6
+ 1740 0239 04       		.byte	0x4
+ 1741 023a 9B010000 		.4byte	0x19b
+ 1742 023e 06       		.uleb128 0x6
+ 1743 023f 04       		.byte	0x4
+ 1744 0240 D7010000 		.4byte	0x1d7
+ 1745 0244 07       		.uleb128 0x7
+ 1746 0245 A4000000 		.4byte	0xa4
+ 1747 0249 12       		.uleb128 0x12
+ 1748 024a FF010000 		.4byte	.LASF70
+ 1749 024e 01       		.byte	0x1
+ 1750 024f 7C       		.byte	0x7c
+ 1751 0250 00000000 		.4byte	.LFB62
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 44
+
+
+ 1752 0254 0C000000 		.4byte	.LFE62-.LFB62
+ 1753 0258 01       		.uleb128 0x1
+ 1754 0259 9C       		.byte	0x9c
+ 1755 025a 95020000 		.4byte	0x295
+ 1756 025e 13       		.uleb128 0x13
+ 1757 025f C1010000 		.4byte	.LASF42
+ 1758 0263 01       		.byte	0x1
+ 1759 0264 7C       		.byte	0x7c
+ 1760 0265 38020000 		.4byte	0x238
+ 1761 0269 01       		.uleb128 0x1
+ 1762 026a 50       		.byte	0x50
+ 1763 026b 13       		.uleb128 0x13
+ 1764 026c 56020000 		.4byte	.LASF32
+ 1765 0270 01       		.byte	0x1
+ 1766 0271 7C       		.byte	0x7c
+ 1767 0272 95020000 		.4byte	0x295
+ 1768 0276 01       		.uleb128 0x1
+ 1769 0277 51       		.byte	0x51
+ 1770 0278 13       		.uleb128 0x13
+ 1771 0279 90020000 		.4byte	.LASF33
+ 1772 027d 01       		.byte	0x1
+ 1773 027e 7D       		.byte	0x7d
+ 1774 027f 9A020000 		.4byte	0x29a
+ 1775 0283 01       		.uleb128 0x1
+ 1776 0284 52       		.byte	0x52
+ 1777 0285 14       		.uleb128 0x14
+ 1778 0286 656E6400 		.ascii	"end\000"
+ 1779 028a 01       		.byte	0x1
+ 1780 028b 7D       		.byte	0x7d
+ 1781 028c 9A020000 		.4byte	0x29a
+ 1782 0290 C1000000 		.4byte	.LLST4
+ 1783 0294 00       		.byte	0
+ 1784 0295 07       		.uleb128 0x7
+ 1785 0296 30010000 		.4byte	0x130
+ 1786 029a 07       		.uleb128 0x7
+ 1787 029b 5D000000 		.4byte	0x5d
+ 1788 029f 0F       		.uleb128 0xf
+ 1789 02a0 82000000 		.4byte	.LASF44
+ 1790 02a4 01       		.byte	0x1
+ 1791 02a5 87       		.byte	0x87
+ 1792 02a6 5D000000 		.4byte	0x5d
+ 1793 02aa 00000000 		.4byte	.LFB63
+ 1794 02ae 84000000 		.4byte	.LFE63-.LFB63
+ 1795 02b2 01       		.uleb128 0x1
+ 1796 02b3 9C       		.byte	0x9c
+ 1797 02b4 62030000 		.4byte	0x362
+ 1798 02b8 10       		.uleb128 0x10
+ 1799 02b9 38010000 		.4byte	.LASF39
+ 1800 02bd 01       		.byte	0x1
+ 1801 02be 87       		.byte	0x87
+ 1802 02bf 3E020000 		.4byte	0x23e
+ 1803 02c3 E0000000 		.4byte	.LLST5
+ 1804 02c7 14       		.uleb128 0x14
+ 1805 02c8 6A7300   		.ascii	"js\000"
+ 1806 02cb 01       		.byte	0x1
+ 1807 02cc 87       		.byte	0x87
+ 1808 02cd C3000000 		.4byte	0xc3
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 45
+
+
+ 1809 02d1 0C010000 		.4byte	.LLST6
+ 1810 02d5 14       		.uleb128 0x14
+ 1811 02d6 6C656E00 		.ascii	"len\000"
+ 1812 02da 01       		.byte	0x1
+ 1813 02db 88       		.byte	0x88
+ 1814 02dc 44020000 		.4byte	0x244
+ 1815 02e0 2D010000 		.4byte	.LLST7
+ 1816 02e4 10       		.uleb128 0x10
+ 1817 02e5 6E030000 		.4byte	.LASF40
+ 1818 02e9 01       		.byte	0x1
+ 1819 02ea 88       		.byte	0x88
+ 1820 02eb 38020000 		.4byte	0x238
+ 1821 02ef 4E010000 		.4byte	.LLST8
+ 1822 02f3 13       		.uleb128 0x13
+ 1823 02f4 39000000 		.4byte	.LASF41
+ 1824 02f8 01       		.byte	0x1
+ 1825 02f9 89       		.byte	0x89
+ 1826 02fa 44020000 		.4byte	0x244
+ 1827 02fe 02       		.uleb128 0x2
+ 1828 02ff 91       		.byte	0x91
+ 1829 0300 00       		.sleb128 0
+ 1830 0301 15       		.uleb128 0x15
+ 1831 0302 C1010000 		.4byte	.LASF42
+ 1832 0306 01       		.byte	0x1
+ 1833 0307 8A       		.byte	0x8a
+ 1834 0308 38020000 		.4byte	0x238
+ 1835 030c 6F010000 		.4byte	.LLST9
+ 1836 0310 15       		.uleb128 0x15
+ 1837 0311 90020000 		.4byte	.LASF33
+ 1838 0315 01       		.byte	0x1
+ 1839 0316 8B       		.byte	0x8b
+ 1840 0317 5D000000 		.4byte	0x5d
+ 1841 031b 9A010000 		.4byte	.LLST10
+ 1842 031f 16       		.uleb128 0x16
+ 1843 0320 68030000 		.4byte	.LASF71
+ 1844 0324 01       		.byte	0x1
+ 1845 0325 AC       		.byte	0xac
+ 1846 0326 50000000 		.4byte	.L8
+ 1847 032a 17       		.uleb128 0x17
+ 1848 032b 66000000 		.4byte	.LVL13
+ 1849 032f E2010000 		.4byte	0x1e2
+ 1850 0333 4C030000 		.4byte	0x34c
+ 1851 0337 18       		.uleb128 0x18
+ 1852 0338 01       		.uleb128 0x1
+ 1853 0339 50       		.byte	0x50
+ 1854 033a 02       		.uleb128 0x2
+ 1855 033b 75       		.byte	0x75
+ 1856 033c 00       		.sleb128 0
+ 1857 033d 18       		.uleb128 0x18
+ 1858 033e 01       		.uleb128 0x1
+ 1859 033f 51       		.byte	0x51
+ 1860 0340 03       		.uleb128 0x3
+ 1861 0341 F3       		.byte	0xf3
+ 1862 0342 01       		.uleb128 0x1
+ 1863 0343 53       		.byte	0x53
+ 1864 0344 18       		.uleb128 0x18
+ 1865 0345 01       		.uleb128 0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 46
+
+
+ 1866 0346 52       		.byte	0x52
+ 1867 0347 03       		.uleb128 0x3
+ 1868 0348 91       		.byte	0x91
+ 1869 0349 00       		.sleb128 0
+ 1870 034a 06       		.byte	0x6
+ 1871 034b 00       		.byte	0
+ 1872 034c 19       		.uleb128 0x19
+ 1873 034d 7A000000 		.4byte	.LVL16
+ 1874 0351 49020000 		.4byte	0x249
+ 1875 0355 18       		.uleb128 0x18
+ 1876 0356 01       		.uleb128 0x1
+ 1877 0357 51       		.byte	0x51
+ 1878 0358 01       		.uleb128 0x1
+ 1879 0359 34       		.byte	0x34
+ 1880 035a 18       		.uleb128 0x18
+ 1881 035b 01       		.uleb128 0x1
+ 1882 035c 52       		.byte	0x52
+ 1883 035d 02       		.uleb128 0x2
+ 1884 035e 76       		.byte	0x76
+ 1885 035f 00       		.sleb128 0
+ 1886 0360 00       		.byte	0
+ 1887 0361 00       		.byte	0
+ 1888 0362 0F       		.uleb128 0xf
+ 1889 0363 D5010000 		.4byte	.LASF45
+ 1890 0367 01       		.byte	0x1
+ 1891 0368 C1       		.byte	0xc1
+ 1892 0369 5D000000 		.4byte	0x5d
+ 1893 036d 00000000 		.4byte	.LFB64
+ 1894 0371 D0000000 		.4byte	.LFE64-.LFB64
+ 1895 0375 01       		.uleb128 0x1
+ 1896 0376 9C       		.byte	0x9c
+ 1897 0377 48040000 		.4byte	0x448
+ 1898 037b 10       		.uleb128 0x10
+ 1899 037c 38010000 		.4byte	.LASF39
+ 1900 0380 01       		.byte	0x1
+ 1901 0381 C1       		.byte	0xc1
+ 1902 0382 3E020000 		.4byte	0x23e
+ 1903 0386 AD010000 		.4byte	.LLST11
+ 1904 038a 14       		.uleb128 0x14
+ 1905 038b 6A7300   		.ascii	"js\000"
+ 1906 038e 01       		.byte	0x1
+ 1907 038f C1       		.byte	0xc1
+ 1908 0390 C3000000 		.4byte	0xc3
+ 1909 0394 D9010000 		.4byte	.LLST12
+ 1910 0398 14       		.uleb128 0x14
+ 1911 0399 6C656E00 		.ascii	"len\000"
+ 1912 039d 01       		.byte	0x1
+ 1913 039e C2       		.byte	0xc2
+ 1914 039f 44020000 		.4byte	0x244
+ 1915 03a3 13020000 		.4byte	.LLST13
+ 1916 03a7 10       		.uleb128 0x10
+ 1917 03a8 6E030000 		.4byte	.LASF40
+ 1918 03ac 01       		.byte	0x1
+ 1919 03ad C2       		.byte	0xc2
+ 1920 03ae 38020000 		.4byte	0x238
+ 1921 03b2 4D020000 		.4byte	.LLST14
+ 1922 03b6 13       		.uleb128 0x13
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 47
+
+
+ 1923 03b7 39000000 		.4byte	.LASF41
+ 1924 03bb 01       		.byte	0x1
+ 1925 03bc C3       		.byte	0xc3
+ 1926 03bd 44020000 		.4byte	0x244
+ 1927 03c1 02       		.uleb128 0x2
+ 1928 03c2 91       		.byte	0x91
+ 1929 03c3 00       		.sleb128 0
+ 1930 03c4 15       		.uleb128 0x15
+ 1931 03c5 C1010000 		.4byte	.LASF42
+ 1932 03c9 01       		.byte	0x1
+ 1933 03ca C4       		.byte	0xc4
+ 1934 03cb 38020000 		.4byte	0x238
+ 1935 03cf 6C020000 		.4byte	.LLST15
+ 1936 03d3 15       		.uleb128 0x15
+ 1937 03d4 90020000 		.4byte	.LASF33
+ 1938 03d8 01       		.byte	0x1
+ 1939 03d9 C6       		.byte	0xc6
+ 1940 03da 5D000000 		.4byte	0x5d
+ 1941 03de 97020000 		.4byte	.LLST16
+ 1942 03e2 1A       		.uleb128 0x1a
+ 1943 03e3 00000000 		.4byte	.Ldebug_ranges0+0
+ 1944 03e7 11       		.uleb128 0x11
+ 1945 03e8 6300     		.ascii	"c\000"
+ 1946 03ea 01       		.byte	0x1
+ 1947 03eb CC       		.byte	0xcc
+ 1948 03ec 9D000000 		.4byte	0x9d
+ 1949 03f0 AA020000 		.4byte	.LLST17
+ 1950 03f4 1B       		.uleb128 0x1b
+ 1951 03f5 46000000 		.4byte	.LBB3
+ 1952 03f9 66000000 		.4byte	.LBE3-.LBB3
+ 1953 03fd 0F040000 		.4byte	0x40f
+ 1954 0401 11       		.uleb128 0x11
+ 1955 0402 6900     		.ascii	"i\000"
+ 1956 0404 01       		.byte	0x1
+ 1957 0405 E1       		.byte	0xe1
+ 1958 0406 5D000000 		.4byte	0x5d
+ 1959 040a C8020000 		.4byte	.LLST18
+ 1960 040e 00       		.byte	0
+ 1961 040f 17       		.uleb128 0x17
+ 1962 0410 24000000 		.4byte	.LVL25
+ 1963 0414 E2010000 		.4byte	0x1e2
+ 1964 0418 31040000 		.4byte	0x431
+ 1965 041c 18       		.uleb128 0x18
+ 1966 041d 01       		.uleb128 0x1
+ 1967 041e 50       		.byte	0x50
+ 1968 041f 02       		.uleb128 0x2
+ 1969 0420 75       		.byte	0x75
+ 1970 0421 00       		.sleb128 0
+ 1971 0422 18       		.uleb128 0x18
+ 1972 0423 01       		.uleb128 0x1
+ 1973 0424 51       		.byte	0x51
+ 1974 0425 03       		.uleb128 0x3
+ 1975 0426 91       		.byte	0x91
+ 1976 0427 64       		.sleb128 -28
+ 1977 0428 06       		.byte	0x6
+ 1978 0429 18       		.uleb128 0x18
+ 1979 042a 01       		.uleb128 0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 48
+
+
+ 1980 042b 52       		.byte	0x52
+ 1981 042c 03       		.uleb128 0x3
+ 1982 042d 91       		.byte	0x91
+ 1983 042e 00       		.sleb128 0
+ 1984 042f 06       		.byte	0x6
+ 1985 0430 00       		.byte	0
+ 1986 0431 19       		.uleb128 0x19
+ 1987 0432 38000000 		.4byte	.LVL28
+ 1988 0436 49020000 		.4byte	0x249
+ 1989 043a 18       		.uleb128 0x18
+ 1990 043b 01       		.uleb128 0x1
+ 1991 043c 51       		.byte	0x51
+ 1992 043d 01       		.uleb128 0x1
+ 1993 043e 33       		.byte	0x33
+ 1994 043f 18       		.uleb128 0x18
+ 1995 0440 01       		.uleb128 0x1
+ 1996 0441 52       		.byte	0x52
+ 1997 0442 02       		.uleb128 0x2
+ 1998 0443 76       		.byte	0x76
+ 1999 0444 01       		.sleb128 1
+ 2000 0445 00       		.byte	0
+ 2001 0446 00       		.byte	0
+ 2002 0447 00       		.byte	0
+ 2003 0448 1C       		.uleb128 0x1c
+ 2004 0449 45010000 		.4byte	.LASF47
+ 2005 044d 01       		.byte	0x1
+ 2006 044e 0C01     		.2byte	0x10c
+ 2007 0450 5D000000 		.4byte	0x5d
+ 2008 0454 00000000 		.4byte	.LFB65
+ 2009 0458 08020000 		.4byte	.LFE65-.LFB65
+ 2010 045c 01       		.uleb128 0x1
+ 2011 045d 9C       		.byte	0x9c
+ 2012 045e A6050000 		.4byte	0x5a6
+ 2013 0462 1D       		.uleb128 0x1d
+ 2014 0463 38010000 		.4byte	.LASF39
+ 2015 0467 01       		.byte	0x1
+ 2016 0468 0C01     		.2byte	0x10c
+ 2017 046a 3E020000 		.4byte	0x23e
+ 2018 046e E7020000 		.4byte	.LLST19
+ 2019 0472 1E       		.uleb128 0x1e
+ 2020 0473 6A7300   		.ascii	"js\000"
+ 2021 0476 01       		.byte	0x1
+ 2022 0477 0C01     		.2byte	0x10c
+ 2023 0479 C3000000 		.4byte	0xc3
+ 2024 047d 13030000 		.4byte	.LLST20
+ 2025 0481 1E       		.uleb128 0x1e
+ 2026 0482 6C656E00 		.ascii	"len\000"
+ 2027 0486 01       		.byte	0x1
+ 2028 0487 0C01     		.2byte	0x10c
+ 2029 0489 44020000 		.4byte	0x244
+ 2030 048d B8030000 		.4byte	.LLST21
+ 2031 0491 1D       		.uleb128 0x1d
+ 2032 0492 6E030000 		.4byte	.LASF40
+ 2033 0496 01       		.byte	0x1
+ 2034 0497 0D01     		.2byte	0x10d
+ 2035 0499 38020000 		.4byte	0x238
+ 2036 049d E4030000 		.4byte	.LLST22
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 49
+
+
+ 2037 04a1 1F       		.uleb128 0x1f
+ 2038 04a2 39000000 		.4byte	.LASF41
+ 2039 04a6 01       		.byte	0x1
+ 2040 04a7 0D01     		.2byte	0x10d
+ 2041 04a9 A6050000 		.4byte	0x5a6
+ 2042 04ad 02       		.uleb128 0x2
+ 2043 04ae 91       		.byte	0x91
+ 2044 04af 00       		.sleb128 0
+ 2045 04b0 20       		.uleb128 0x20
+ 2046 04b1 7200     		.ascii	"r\000"
+ 2047 04b3 01       		.byte	0x1
+ 2048 04b4 0E01     		.2byte	0x10e
+ 2049 04b6 5D000000 		.4byte	0x5d
+ 2050 04ba 10040000 		.4byte	.LLST23
+ 2051 04be 20       		.uleb128 0x20
+ 2052 04bf 6900     		.ascii	"i\000"
+ 2053 04c1 01       		.byte	0x1
+ 2054 04c2 0F01     		.2byte	0x10f
+ 2055 04c4 5D000000 		.4byte	0x5d
+ 2056 04c8 2E040000 		.4byte	.LLST24
+ 2057 04cc 21       		.uleb128 0x21
+ 2058 04cd C1010000 		.4byte	.LASF42
+ 2059 04d1 01       		.byte	0x1
+ 2060 04d2 1001     		.2byte	0x110
+ 2061 04d4 38020000 		.4byte	0x238
+ 2062 04d8 6D040000 		.4byte	.LLST25
+ 2063 04dc 21       		.uleb128 0x21
+ 2064 04dd 75030000 		.4byte	.LASF46
+ 2065 04e1 01       		.byte	0x1
+ 2066 04e2 1101     		.2byte	0x111
+ 2067 04e4 5D000000 		.4byte	0x5d
+ 2068 04e8 BE040000 		.4byte	.LLST26
+ 2069 04ec 1A       		.uleb128 0x1a
+ 2070 04ed 18000000 		.4byte	.Ldebug_ranges0+0x18
+ 2071 04f1 20       		.uleb128 0x20
+ 2072 04f2 6300     		.ascii	"c\000"
+ 2073 04f4 01       		.byte	0x1
+ 2074 04f5 1401     		.2byte	0x114
+ 2075 04f7 9D000000 		.4byte	0x9d
+ 2076 04fb DC040000 		.4byte	.LLST27
+ 2077 04ff 21       		.uleb128 0x21
+ 2078 0500 56020000 		.4byte	.LASF32
+ 2079 0504 01       		.byte	0x1
+ 2080 0505 1501     		.2byte	0x115
+ 2081 0507 30010000 		.4byte	0x130
+ 2082 050b 05050000 		.4byte	.LLST28
+ 2083 050f 1B       		.uleb128 0x1b
+ 2084 0510 7E000000 		.4byte	.LBB6
+ 2085 0514 0A000000 		.4byte	.LBE6-.LBB6
+ 2086 0518 2B050000 		.4byte	0x52b
+ 2087 051c 20       		.uleb128 0x20
+ 2088 051d 7400     		.ascii	"t\000"
+ 2089 051f 01       		.byte	0x1
+ 2090 0520 2401     		.2byte	0x124
+ 2091 0522 38020000 		.4byte	0x238
+ 2092 0526 2E050000 		.4byte	.LLST29
+ 2093 052a 00       		.byte	0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 50
+
+
+ 2094 052b 17       		.uleb128 0x17
+ 2095 052c 72000000 		.4byte	.LVL47
+ 2096 0530 E2010000 		.4byte	0x1e2
+ 2097 0534 4C050000 		.4byte	0x54c
+ 2098 0538 18       		.uleb128 0x18
+ 2099 0539 01       		.uleb128 0x1
+ 2100 053a 50       		.byte	0x50
+ 2101 053b 02       		.uleb128 0x2
+ 2102 053c 76       		.byte	0x76
+ 2103 053d 00       		.sleb128 0
+ 2104 053e 18       		.uleb128 0x18
+ 2105 053f 01       		.uleb128 0x1
+ 2106 0540 51       		.byte	0x51
+ 2107 0541 02       		.uleb128 0x2
+ 2108 0542 74       		.byte	0x74
+ 2109 0543 00       		.sleb128 0
+ 2110 0544 18       		.uleb128 0x18
+ 2111 0545 01       		.uleb128 0x1
+ 2112 0546 52       		.byte	0x52
+ 2113 0547 03       		.uleb128 0x3
+ 2114 0548 91       		.byte	0x91
+ 2115 0549 00       		.sleb128 0
+ 2116 054a 06       		.byte	0x6
+ 2117 054b 00       		.byte	0
+ 2118 054c 17       		.uleb128 0x17
+ 2119 054d 12010000 		.4byte	.LVL65
+ 2120 0551 62030000 		.4byte	0x362
+ 2121 0555 7A050000 		.4byte	0x57a
+ 2122 0559 18       		.uleb128 0x18
+ 2123 055a 01       		.uleb128 0x1
+ 2124 055b 50       		.byte	0x50
+ 2125 055c 02       		.uleb128 0x2
+ 2126 055d 76       		.byte	0x76
+ 2127 055e 00       		.sleb128 0
+ 2128 055f 18       		.uleb128 0x18
+ 2129 0560 01       		.uleb128 0x1
+ 2130 0561 51       		.byte	0x51
+ 2131 0562 02       		.uleb128 0x2
+ 2132 0563 78       		.byte	0x78
+ 2133 0564 00       		.sleb128 0
+ 2134 0565 18       		.uleb128 0x18
+ 2135 0566 01       		.uleb128 0x1
+ 2136 0567 52       		.byte	0x52
+ 2137 0568 02       		.uleb128 0x2
+ 2138 0569 77       		.byte	0x77
+ 2139 056a 00       		.sleb128 0
+ 2140 056b 18       		.uleb128 0x18
+ 2141 056c 01       		.uleb128 0x1
+ 2142 056d 53       		.byte	0x53
+ 2143 056e 02       		.uleb128 0x2
+ 2144 056f 74       		.byte	0x74
+ 2145 0570 00       		.sleb128 0
+ 2146 0571 18       		.uleb128 0x18
+ 2147 0572 02       		.uleb128 0x2
+ 2148 0573 7D       		.byte	0x7d
+ 2149 0574 00       		.sleb128 0
+ 2150 0575 03       		.uleb128 0x3
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 51
+
+
+ 2151 0576 91       		.byte	0x91
+ 2152 0577 00       		.sleb128 0
+ 2153 0578 06       		.byte	0x6
+ 2154 0579 00       		.byte	0
+ 2155 057a 19       		.uleb128 0x19
+ 2156 057b 8C010000 		.4byte	.LVL74
+ 2157 057f 9F020000 		.4byte	0x29f
+ 2158 0583 18       		.uleb128 0x18
+ 2159 0584 01       		.uleb128 0x1
+ 2160 0585 50       		.byte	0x50
+ 2161 0586 02       		.uleb128 0x2
+ 2162 0587 76       		.byte	0x76
+ 2163 0588 00       		.sleb128 0
+ 2164 0589 18       		.uleb128 0x18
+ 2165 058a 01       		.uleb128 0x1
+ 2166 058b 51       		.byte	0x51
+ 2167 058c 02       		.uleb128 0x2
+ 2168 058d 78       		.byte	0x78
+ 2169 058e 00       		.sleb128 0
+ 2170 058f 18       		.uleb128 0x18
+ 2171 0590 01       		.uleb128 0x1
+ 2172 0591 52       		.byte	0x52
+ 2173 0592 02       		.uleb128 0x2
+ 2174 0593 77       		.byte	0x77
+ 2175 0594 00       		.sleb128 0
+ 2176 0595 18       		.uleb128 0x18
+ 2177 0596 01       		.uleb128 0x1
+ 2178 0597 53       		.byte	0x53
+ 2179 0598 02       		.uleb128 0x2
+ 2180 0599 74       		.byte	0x74
+ 2181 059a 00       		.sleb128 0
+ 2182 059b 18       		.uleb128 0x18
+ 2183 059c 02       		.uleb128 0x2
+ 2184 059d 7D       		.byte	0x7d
+ 2185 059e 00       		.sleb128 0
+ 2186 059f 03       		.uleb128 0x3
+ 2187 05a0 91       		.byte	0x91
+ 2188 05a1 00       		.sleb128 0
+ 2189 05a2 06       		.byte	0x6
+ 2190 05a3 00       		.byte	0
+ 2191 05a4 00       		.byte	0
+ 2192 05a5 00       		.byte	0
+ 2193 05a6 07       		.uleb128 0x7
+ 2194 05a7 64000000 		.4byte	0x64
+ 2195 05ab 22       		.uleb128 0x22
+ 2196 05ac A9020000 		.4byte	.LASF72
+ 2197 05b0 01       		.byte	0x1
+ 2198 05b1 CB01     		.2byte	0x1cb
+ 2199 05b3 00000000 		.4byte	.LFB66
+ 2200 05b7 0C000000 		.4byte	.LFE66-.LFB66
+ 2201 05bb 01       		.uleb128 0x1
+ 2202 05bc 9C       		.byte	0x9c
+ 2203 05bd D0050000 		.4byte	0x5d0
+ 2204 05c1 1F       		.uleb128 0x1f
+ 2205 05c2 38010000 		.4byte	.LASF39
+ 2206 05c6 01       		.byte	0x1
+ 2207 05c7 CB01     		.2byte	0x1cb
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 52
+
+
+ 2208 05c9 3E020000 		.4byte	0x23e
+ 2209 05cd 01       		.uleb128 0x1
+ 2210 05ce 50       		.byte	0x50
+ 2211 05cf 00       		.byte	0
+ 2212 05d0 23       		.uleb128 0x23
+ 2213 05d1 A4010000 		.4byte	.LASF73
+ 2214 05d5 02       		.byte	0x2
+ 2215 05d6 22       		.byte	0x22
+ 2216 05d7 00000000 		.4byte	.LFB67
+ 2217 05db 20000000 		.4byte	.LFE67-.LFB67
+ 2218 05df 01       		.uleb128 0x1
+ 2219 05e0 9C       		.byte	0x9c
+ 2220 05e1 24       		.uleb128 0x24
+ 2221 05e2 F3030000 		.4byte	.LASF48
+ 2222 05e6 02       		.byte	0x2
+ 2223 05e7 2E       		.byte	0x2e
+ 2224 05e8 6B000000 		.4byte	0x6b
+ 2225 05ec 00000000 		.4byte	.LFB68
+ 2226 05f0 28000000 		.4byte	.LFE68-.LFB68
+ 2227 05f4 01       		.uleb128 0x1
+ 2228 05f5 9C       		.byte	0x9c
+ 2229 05f6 08060000 		.4byte	0x608
+ 2230 05fa 14       		.uleb128 0x14
+ 2231 05fb 6300     		.ascii	"c\000"
+ 2232 05fd 02       		.byte	0x2
+ 2233 05fe 2E       		.byte	0x2e
+ 2234 05ff 9D000000 		.4byte	0x9d
+ 2235 0603 41050000 		.4byte	.LLST30
+ 2236 0607 00       		.byte	0
+ 2237 0608 25       		.uleb128 0x25
+ 2238 0609 F5020000 		.4byte	.LASF74
+ 2239 060d 02       		.byte	0x2
+ 2240 060e 7B       		.byte	0x7b
+ 2241 060f 00000000 		.4byte	.LFB71
+ 2242 0613 10000000 		.4byte	.LFE71-.LFB71
+ 2243 0617 01       		.uleb128 0x1
+ 2244 0618 9C       		.byte	0x9c
+ 2245 0619 31060000 		.4byte	0x631
+ 2246 061d 19       		.uleb128 0x19
+ 2247 061e 08000000 		.4byte	.LVL96
+ 2248 0622 FA070000 		.4byte	0x7fa
+ 2249 0626 18       		.uleb128 0x18
+ 2250 0627 01       		.uleb128 0x1
+ 2251 0628 50       		.byte	0x50
+ 2252 0629 05       		.uleb128 0x5
+ 2253 062a 03       		.byte	0x3
+ 2254 062b 00000000 		.4byte	g_JSONString
+ 2255 062f 00       		.byte	0
+ 2256 0630 00       		.byte	0
+ 2257 0631 24       		.uleb128 0x24
+ 2258 0632 0D000000 		.4byte	.LASF49
+ 2259 0636 02       		.byte	0x2
+ 2260 0637 89       		.byte	0x89
+ 2261 0638 BD000000 		.4byte	0xbd
+ 2262 063c 00000000 		.4byte	.LFB73
+ 2263 0640 24000000 		.4byte	.LFE73-.LFB73
+ 2264 0644 01       		.uleb128 0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 53
+
+
+ 2265 0645 9C       		.byte	0x9c
+ 2266 0646 93060000 		.4byte	0x693
+ 2267 064a 14       		.uleb128 0x14
+ 2268 064b 746F6B00 		.ascii	"tok\000"
+ 2269 064f 02       		.byte	0x2
+ 2270 0650 89       		.byte	0x89
+ 2271 0651 38020000 		.4byte	0x238
+ 2272 0655 71050000 		.4byte	.LLST31
+ 2273 0659 10       		.uleb128 0x10
+ 2274 065a 7A020000 		.4byte	.LASF50
+ 2275 065e 02       		.byte	0x2
+ 2276 065f 89       		.byte	0x89
+ 2277 0660 C3000000 		.4byte	0xc3
+ 2278 0664 92050000 		.4byte	.LLST32
+ 2279 0668 26       		.uleb128 0x26
+ 2280 0669 53000000 		.4byte	.LASF51
+ 2281 066d 02       		.byte	0x2
+ 2282 066e 8B       		.byte	0x8b
+ 2283 066f 93060000 		.4byte	0x693
+ 2284 0673 05       		.uleb128 0x5
+ 2285 0674 03       		.byte	0x3
+ 2286 0675 14000000 		.4byte	buff.9008
+ 2287 0679 19       		.uleb128 0x19
+ 2288 067a 16000000 		.4byte	.LVL100
+ 2289 067e 05080000 		.4byte	0x805
+ 2290 0682 18       		.uleb128 0x18
+ 2291 0683 01       		.uleb128 0x1
+ 2292 0684 50       		.byte	0x50
+ 2293 0685 02       		.uleb128 0x2
+ 2294 0686 74       		.byte	0x74
+ 2295 0687 00       		.sleb128 0
+ 2296 0688 18       		.uleb128 0x18
+ 2297 0689 01       		.uleb128 0x1
+ 2298 068a 51       		.byte	0x51
+ 2299 068b 05       		.uleb128 0x5
+ 2300 068c 03       		.byte	0x3
+ 2301 068d 00000000 		.4byte	.LC6
+ 2302 0691 00       		.byte	0
+ 2303 0692 00       		.byte	0
+ 2304 0693 27       		.uleb128 0x27
+ 2305 0694 9D000000 		.4byte	0x9d
+ 2306 0698 A4060000 		.4byte	0x6a4
+ 2307 069c 28       		.uleb128 0x28
+ 2308 069d B6000000 		.4byte	0xb6
+ 2309 06a1 FF03     		.2byte	0x3ff
+ 2310 06a3 00       		.byte	0
+ 2311 06a4 29       		.uleb128 0x29
+ 2312 06a5 22030000 		.4byte	.LASF75
+ 2313 06a9 02       		.byte	0x2
+ 2314 06aa 93       		.byte	0x93
+ 2315 06ab 6B000000 		.4byte	0x6b
+ 2316 06af 00000000 		.4byte	.LFB74
+ 2317 06b3 14000000 		.4byte	.LFE74-.LFB74
+ 2318 06b7 01       		.uleb128 0x1
+ 2319 06b8 9C       		.byte	0x9c
+ 2320 06b9 24       		.uleb128 0x24
+ 2321 06ba 0F030000 		.4byte	.LASF52
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 54
+
+
+ 2322 06be 02       		.byte	0x2
+ 2323 06bf 39       		.byte	0x39
+ 2324 06c0 6B000000 		.4byte	0x6b
+ 2325 06c4 00000000 		.4byte	.LFB69
+ 2326 06c8 A0000000 		.4byte	.LFE69-.LFB69
+ 2327 06cc 01       		.uleb128 0x1
+ 2328 06cd 9C       		.byte	0x9c
+ 2329 06ce F2060000 		.4byte	0x6f2
+ 2330 06d2 14       		.uleb128 0x14
+ 2331 06d3 6300     		.ascii	"c\000"
+ 2332 06d5 02       		.byte	0x2
+ 2333 06d6 39       		.byte	0x39
+ 2334 06d7 9D000000 		.4byte	0x9d
+ 2335 06db B3050000 		.4byte	.LLST33
+ 2336 06df 2A       		.uleb128 0x2a
+ 2337 06e0 66000000 		.4byte	.LVL102
+ 2338 06e4 E1050000 		.4byte	0x5e1
+ 2339 06e8 2A       		.uleb128 0x2a
+ 2340 06e9 78000000 		.4byte	.LVL103
+ 2341 06ed A4060000 		.4byte	0x6a4
+ 2342 06f1 00       		.byte	0
+ 2343 06f2 24       		.uleb128 0x24
+ 2344 06f3 C4020000 		.4byte	.LASF53
+ 2345 06f7 02       		.byte	0x2
+ 2346 06f8 68       		.byte	0x68
+ 2347 06f9 6B000000 		.4byte	0x6b
+ 2348 06fd 00000000 		.4byte	.LFB70
+ 2349 0701 30000000 		.4byte	.LFE70-.LFB70
+ 2350 0705 01       		.uleb128 0x1
+ 2351 0706 9C       		.byte	0x9c
+ 2352 0707 72070000 		.4byte	0x772
+ 2353 070b 10       		.uleb128 0x10
+ 2354 070c 0A030000 		.4byte	.LASF54
+ 2355 0710 02       		.byte	0x2
+ 2356 0711 68       		.byte	0x68
+ 2357 0712 CE000000 		.4byte	0xce
+ 2358 0716 06060000 		.4byte	.LLST34
+ 2359 071a 15       		.uleb128 0x15
+ 2360 071b 22000000 		.4byte	.LASF55
+ 2361 071f 02       		.byte	0x2
+ 2362 0720 6A       		.byte	0x6a
+ 2363 0721 77000000 		.4byte	0x77
+ 2364 0725 32060000 		.4byte	.LLST35
+ 2365 0729 15       		.uleb128 0x15
+ 2366 072a 99030000 		.4byte	.LASF56
+ 2367 072e 02       		.byte	0x2
+ 2368 072f 6C       		.byte	0x6c
+ 2369 0730 6B000000 		.4byte	0x6b
+ 2370 0734 50060000 		.4byte	.LLST36
+ 2371 0738 2B       		.uleb128 0x2b
+ 2372 0739 30000000 		.4byte	.Ldebug_ranges0+0x30
+ 2373 073d 61070000 		.4byte	0x761
+ 2374 0741 11       		.uleb128 0x11
+ 2375 0742 6900     		.ascii	"i\000"
+ 2376 0744 02       		.byte	0x2
+ 2377 0745 6D       		.byte	0x6d
+ 2378 0746 5D000000 		.4byte	0x5d
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 55
+
+
+ 2379 074a 9B060000 		.4byte	.LLST37
+ 2380 074e 2A       		.uleb128 0x2a
+ 2381 074f 16000000 		.4byte	.LVL112
+ 2382 0753 B9060000 		.4byte	0x6b9
+ 2383 0757 2A       		.uleb128 0x2a
+ 2384 0758 20000000 		.4byte	.LVL114
+ 2385 075c D0050000 		.4byte	0x5d0
+ 2386 0760 00       		.byte	0
+ 2387 0761 19       		.uleb128 0x19
+ 2388 0762 08000000 		.4byte	.LVL109
+ 2389 0766 10080000 		.4byte	0x810
+ 2390 076a 18       		.uleb128 0x18
+ 2391 076b 01       		.uleb128 0x1
+ 2392 076c 50       		.byte	0x50
+ 2393 076d 02       		.uleb128 0x2
+ 2394 076e 77       		.byte	0x77
+ 2395 076f 00       		.sleb128 0
+ 2396 0770 00       		.byte	0
+ 2397 0771 00       		.byte	0
+ 2398 0772 26       		.uleb128 0x26
+ 2399 0773 7C010000 		.4byte	.LASF57
+ 2400 0777 02       		.byte	0x2
+ 2401 0778 1D       		.byte	0x1d
+ 2402 0779 6B000000 		.4byte	0x6b
+ 2403 077d 05       		.uleb128 0x5
+ 2404 077e 03       		.byte	0x3
+ 2405 077f 08000000 		.4byte	g_bJSONStart
+ 2406 0783 26       		.uleb128 0x26
+ 2407 0784 6B000000 		.4byte	.LASF58
+ 2408 0788 02       		.byte	0x2
+ 2409 0789 1E       		.byte	0x1e
+ 2410 078a 83000000 		.4byte	0x83
+ 2411 078e 05       		.uleb128 0x5
+ 2412 078f 03       		.byte	0x3
+ 2413 0790 0C000000 		.4byte	g_uJSONCount
+ 2414 0794 26       		.uleb128 0x26
+ 2415 0795 58000000 		.4byte	.LASF59
+ 2416 0799 02       		.byte	0x2
+ 2417 079a 1F       		.byte	0x1f
+ 2418 079b 83000000 		.4byte	0x83
+ 2419 079f 05       		.uleb128 0x5
+ 2420 07a0 03       		.byte	0x3
+ 2421 07a1 04000000 		.4byte	g_uJSONStringCount
+ 2422 07a5 26       		.uleb128 0x26
+ 2423 07a6 F3010000 		.4byte	.LASF60
+ 2424 07aa 02       		.byte	0x2
+ 2425 07ab 20       		.byte	0x20
+ 2426 07ac 6B000000 		.4byte	0x6b
+ 2427 07b0 05       		.uleb128 0x5
+ 2428 07b1 03       		.byte	0x3
+ 2429 07b2 10000000 		.4byte	g_bLastJSON
+ 2430 07b6 2C       		.uleb128 0x2c
+ 2431 07b7 B2010000 		.4byte	.LASF61
+ 2432 07bb 05       		.byte	0x5
+ 2433 07bc 38       		.byte	0x38
+ 2434 07bd D4000000 		.4byte	0xd4
+ 2435 07c1 05       		.uleb128 0x5
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 56
+
+
+ 2436 07c2 03       		.byte	0x3
+ 2437 07c3 00000000 		.4byte	Param
+ 2438 07c7 27       		.uleb128 0x27
+ 2439 07c8 9D000000 		.4byte	0x9d
+ 2440 07cc D8070000 		.4byte	0x7d8
+ 2441 07d0 28       		.uleb128 0x28
+ 2442 07d1 B6000000 		.4byte	0xb6
+ 2443 07d5 E803     		.2byte	0x3e8
+ 2444 07d7 00       		.byte	0
+ 2445 07d8 2C       		.uleb128 0x2c
+ 2446 07d9 7A020000 		.4byte	.LASF50
+ 2447 07dd 02       		.byte	0x2
+ 2448 07de 1A       		.byte	0x1a
+ 2449 07df C7070000 		.4byte	0x7c7
+ 2450 07e3 05       		.uleb128 0x5
+ 2451 07e4 03       		.byte	0x3
+ 2452 07e5 00000000 		.4byte	g_JSONString
+ 2453 07e9 2C       		.uleb128 0x2c
+ 2454 07ea 7B030000 		.4byte	.LASF62
+ 2455 07ee 02       		.byte	0x2
+ 2456 07ef 1B       		.byte	0x1b
+ 2457 07f0 77000000 		.4byte	0x77
+ 2458 07f4 05       		.uleb128 0x5
+ 2459 07f5 03       		.byte	0x3
+ 2460 07f6 00000000 		.4byte	g_nSizeOfJONString
+ 2461 07fa 2D       		.uleb128 0x2d
+ 2462 07fb 00000000 		.4byte	.LASF63
+ 2463 07ff 00000000 		.4byte	.LASF63
+ 2464 0803 06       		.byte	0x6
+ 2465 0804 0D       		.byte	0xd
+ 2466 0805 2D       		.uleb128 0x2d
+ 2467 0806 20020000 		.4byte	.LASF64
+ 2468 080a 20020000 		.4byte	.LASF64
+ 2469 080e 07       		.byte	0x7
+ 2470 080f E7       		.byte	0xe7
+ 2471 0810 2D       		.uleb128 0x2d
+ 2472 0811 E6020000 		.4byte	.LASF65
+ 2473 0815 E6020000 		.4byte	.LASF65
+ 2474 0819 08       		.byte	0x8
+ 2475 081a 21       		.byte	0x21
+ 2476 081b 00       		.byte	0
+ 2477              		.section	.debug_abbrev,"",%progbits
+ 2478              	.Ldebug_abbrev0:
+ 2479 0000 01       		.uleb128 0x1
+ 2480 0001 11       		.uleb128 0x11
+ 2481 0002 01       		.byte	0x1
+ 2482 0003 25       		.uleb128 0x25
+ 2483 0004 0E       		.uleb128 0xe
+ 2484 0005 13       		.uleb128 0x13
+ 2485 0006 0B       		.uleb128 0xb
+ 2486 0007 03       		.uleb128 0x3
+ 2487 0008 0E       		.uleb128 0xe
+ 2488 0009 1B       		.uleb128 0x1b
+ 2489 000a 0E       		.uleb128 0xe
+ 2490 000b 55       		.uleb128 0x55
+ 2491 000c 17       		.uleb128 0x17
+ 2492 000d 11       		.uleb128 0x11
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 57
+
+
+ 2493 000e 01       		.uleb128 0x1
+ 2494 000f 10       		.uleb128 0x10
+ 2495 0010 17       		.uleb128 0x17
+ 2496 0011 00       		.byte	0
+ 2497 0012 00       		.byte	0
+ 2498 0013 02       		.uleb128 0x2
+ 2499 0014 24       		.uleb128 0x24
+ 2500 0015 00       		.byte	0
+ 2501 0016 0B       		.uleb128 0xb
+ 2502 0017 0B       		.uleb128 0xb
+ 2503 0018 3E       		.uleb128 0x3e
+ 2504 0019 0B       		.uleb128 0xb
+ 2505 001a 03       		.uleb128 0x3
+ 2506 001b 0E       		.uleb128 0xe
+ 2507 001c 00       		.byte	0
+ 2508 001d 00       		.byte	0
+ 2509 001e 03       		.uleb128 0x3
+ 2510 001f 24       		.uleb128 0x24
+ 2511 0020 00       		.byte	0
+ 2512 0021 0B       		.uleb128 0xb
+ 2513 0022 0B       		.uleb128 0xb
+ 2514 0023 3E       		.uleb128 0x3e
+ 2515 0024 0B       		.uleb128 0xb
+ 2516 0025 03       		.uleb128 0x3
+ 2517 0026 08       		.uleb128 0x8
+ 2518 0027 00       		.byte	0
+ 2519 0028 00       		.byte	0
+ 2520 0029 04       		.uleb128 0x4
+ 2521 002a 16       		.uleb128 0x16
+ 2522 002b 00       		.byte	0
+ 2523 002c 03       		.uleb128 0x3
+ 2524 002d 0E       		.uleb128 0xe
+ 2525 002e 3A       		.uleb128 0x3a
+ 2526 002f 0B       		.uleb128 0xb
+ 2527 0030 3B       		.uleb128 0x3b
+ 2528 0031 05       		.uleb128 0x5
+ 2529 0032 49       		.uleb128 0x49
+ 2530 0033 13       		.uleb128 0x13
+ 2531 0034 00       		.byte	0
+ 2532 0035 00       		.byte	0
+ 2533 0036 05       		.uleb128 0x5
+ 2534 0037 16       		.uleb128 0x16
+ 2535 0038 00       		.byte	0
+ 2536 0039 03       		.uleb128 0x3
+ 2537 003a 0E       		.uleb128 0xe
+ 2538 003b 3A       		.uleb128 0x3a
+ 2539 003c 0B       		.uleb128 0xb
+ 2540 003d 3B       		.uleb128 0x3b
+ 2541 003e 0B       		.uleb128 0xb
+ 2542 003f 49       		.uleb128 0x49
+ 2543 0040 13       		.uleb128 0x13
+ 2544 0041 00       		.byte	0
+ 2545 0042 00       		.byte	0
+ 2546 0043 06       		.uleb128 0x6
+ 2547 0044 0F       		.uleb128 0xf
+ 2548 0045 00       		.byte	0
+ 2549 0046 0B       		.uleb128 0xb
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 58
+
+
+ 2550 0047 0B       		.uleb128 0xb
+ 2551 0048 49       		.uleb128 0x49
+ 2552 0049 13       		.uleb128 0x13
+ 2553 004a 00       		.byte	0
+ 2554 004b 00       		.byte	0
+ 2555 004c 07       		.uleb128 0x7
+ 2556 004d 26       		.uleb128 0x26
+ 2557 004e 00       		.byte	0
+ 2558 004f 49       		.uleb128 0x49
+ 2559 0050 13       		.uleb128 0x13
+ 2560 0051 00       		.byte	0
+ 2561 0052 00       		.byte	0
+ 2562 0053 08       		.uleb128 0x8
+ 2563 0054 13       		.uleb128 0x13
+ 2564 0055 01       		.byte	0x1
+ 2565 0056 03       		.uleb128 0x3
+ 2566 0057 0E       		.uleb128 0xe
+ 2567 0058 0B       		.uleb128 0xb
+ 2568 0059 0B       		.uleb128 0xb
+ 2569 005a 3A       		.uleb128 0x3a
+ 2570 005b 0B       		.uleb128 0xb
+ 2571 005c 3B       		.uleb128 0x3b
+ 2572 005d 0B       		.uleb128 0xb
+ 2573 005e 01       		.uleb128 0x1
+ 2574 005f 13       		.uleb128 0x13
+ 2575 0060 00       		.byte	0
+ 2576 0061 00       		.byte	0
+ 2577 0062 09       		.uleb128 0x9
+ 2578 0063 0D       		.uleb128 0xd
+ 2579 0064 00       		.byte	0
+ 2580 0065 03       		.uleb128 0x3
+ 2581 0066 0E       		.uleb128 0xe
+ 2582 0067 3A       		.uleb128 0x3a
+ 2583 0068 0B       		.uleb128 0xb
+ 2584 0069 3B       		.uleb128 0x3b
+ 2585 006a 0B       		.uleb128 0xb
+ 2586 006b 49       		.uleb128 0x49
+ 2587 006c 13       		.uleb128 0x13
+ 2588 006d 38       		.uleb128 0x38
+ 2589 006e 0B       		.uleb128 0xb
+ 2590 006f 00       		.byte	0
+ 2591 0070 00       		.byte	0
+ 2592 0071 0A       		.uleb128 0xa
+ 2593 0072 04       		.uleb128 0x4
+ 2594 0073 01       		.byte	0x1
+ 2595 0074 0B       		.uleb128 0xb
+ 2596 0075 0B       		.uleb128 0xb
+ 2597 0076 49       		.uleb128 0x49
+ 2598 0077 13       		.uleb128 0x13
+ 2599 0078 3A       		.uleb128 0x3a
+ 2600 0079 0B       		.uleb128 0xb
+ 2601 007a 3B       		.uleb128 0x3b
+ 2602 007b 0B       		.uleb128 0xb
+ 2603 007c 01       		.uleb128 0x1
+ 2604 007d 13       		.uleb128 0x13
+ 2605 007e 00       		.byte	0
+ 2606 007f 00       		.byte	0
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 59
+
+
+ 2607 0080 0B       		.uleb128 0xb
+ 2608 0081 28       		.uleb128 0x28
+ 2609 0082 00       		.byte	0
+ 2610 0083 03       		.uleb128 0x3
+ 2611 0084 0E       		.uleb128 0xe
+ 2612 0085 1C       		.uleb128 0x1c
+ 2613 0086 0B       		.uleb128 0xb
+ 2614 0087 00       		.byte	0
+ 2615 0088 00       		.byte	0
+ 2616 0089 0C       		.uleb128 0xc
+ 2617 008a 04       		.uleb128 0x4
+ 2618 008b 01       		.byte	0x1
+ 2619 008c 03       		.uleb128 0x3
+ 2620 008d 0E       		.uleb128 0xe
+ 2621 008e 0B       		.uleb128 0xb
+ 2622 008f 0B       		.uleb128 0xb
+ 2623 0090 49       		.uleb128 0x49
+ 2624 0091 13       		.uleb128 0x13
+ 2625 0092 3A       		.uleb128 0x3a
+ 2626 0093 0B       		.uleb128 0xb
+ 2627 0094 3B       		.uleb128 0x3b
+ 2628 0095 0B       		.uleb128 0xb
+ 2629 0096 01       		.uleb128 0x1
+ 2630 0097 13       		.uleb128 0x13
+ 2631 0098 00       		.byte	0
+ 2632 0099 00       		.byte	0
+ 2633 009a 0D       		.uleb128 0xd
+ 2634 009b 28       		.uleb128 0x28
+ 2635 009c 00       		.byte	0
+ 2636 009d 03       		.uleb128 0x3
+ 2637 009e 0E       		.uleb128 0xe
+ 2638 009f 1C       		.uleb128 0x1c
+ 2639 00a0 0D       		.uleb128 0xd
+ 2640 00a1 00       		.byte	0
+ 2641 00a2 00       		.byte	0
+ 2642 00a3 0E       		.uleb128 0xe
+ 2643 00a4 0D       		.uleb128 0xd
+ 2644 00a5 00       		.byte	0
+ 2645 00a6 03       		.uleb128 0x3
+ 2646 00a7 08       		.uleb128 0x8
+ 2647 00a8 3A       		.uleb128 0x3a
+ 2648 00a9 0B       		.uleb128 0xb
+ 2649 00aa 3B       		.uleb128 0x3b
+ 2650 00ab 0B       		.uleb128 0xb
+ 2651 00ac 49       		.uleb128 0x49
+ 2652 00ad 13       		.uleb128 0x13
+ 2653 00ae 38       		.uleb128 0x38
+ 2654 00af 0B       		.uleb128 0xb
+ 2655 00b0 00       		.byte	0
+ 2656 00b1 00       		.byte	0
+ 2657 00b2 0F       		.uleb128 0xf
+ 2658 00b3 2E       		.uleb128 0x2e
+ 2659 00b4 01       		.byte	0x1
+ 2660 00b5 03       		.uleb128 0x3
+ 2661 00b6 0E       		.uleb128 0xe
+ 2662 00b7 3A       		.uleb128 0x3a
+ 2663 00b8 0B       		.uleb128 0xb
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 60
+
+
+ 2664 00b9 3B       		.uleb128 0x3b
+ 2665 00ba 0B       		.uleb128 0xb
+ 2666 00bb 27       		.uleb128 0x27
+ 2667 00bc 19       		.uleb128 0x19
+ 2668 00bd 49       		.uleb128 0x49
+ 2669 00be 13       		.uleb128 0x13
+ 2670 00bf 11       		.uleb128 0x11
+ 2671 00c0 01       		.uleb128 0x1
+ 2672 00c1 12       		.uleb128 0x12
+ 2673 00c2 06       		.uleb128 0x6
+ 2674 00c3 40       		.uleb128 0x40
+ 2675 00c4 18       		.uleb128 0x18
+ 2676 00c5 9742     		.uleb128 0x2117
+ 2677 00c7 19       		.uleb128 0x19
+ 2678 00c8 01       		.uleb128 0x1
+ 2679 00c9 13       		.uleb128 0x13
+ 2680 00ca 00       		.byte	0
+ 2681 00cb 00       		.byte	0
+ 2682 00cc 10       		.uleb128 0x10
+ 2683 00cd 05       		.uleb128 0x5
+ 2684 00ce 00       		.byte	0
+ 2685 00cf 03       		.uleb128 0x3
+ 2686 00d0 0E       		.uleb128 0xe
+ 2687 00d1 3A       		.uleb128 0x3a
+ 2688 00d2 0B       		.uleb128 0xb
+ 2689 00d3 3B       		.uleb128 0x3b
+ 2690 00d4 0B       		.uleb128 0xb
+ 2691 00d5 49       		.uleb128 0x49
+ 2692 00d6 13       		.uleb128 0x13
+ 2693 00d7 02       		.uleb128 0x2
+ 2694 00d8 17       		.uleb128 0x17
+ 2695 00d9 00       		.byte	0
+ 2696 00da 00       		.byte	0
+ 2697 00db 11       		.uleb128 0x11
+ 2698 00dc 34       		.uleb128 0x34
+ 2699 00dd 00       		.byte	0
+ 2700 00de 03       		.uleb128 0x3
+ 2701 00df 08       		.uleb128 0x8
+ 2702 00e0 3A       		.uleb128 0x3a
+ 2703 00e1 0B       		.uleb128 0xb
+ 2704 00e2 3B       		.uleb128 0x3b
+ 2705 00e3 0B       		.uleb128 0xb
+ 2706 00e4 49       		.uleb128 0x49
+ 2707 00e5 13       		.uleb128 0x13
+ 2708 00e6 02       		.uleb128 0x2
+ 2709 00e7 17       		.uleb128 0x17
+ 2710 00e8 00       		.byte	0
+ 2711 00e9 00       		.byte	0
+ 2712 00ea 12       		.uleb128 0x12
+ 2713 00eb 2E       		.uleb128 0x2e
+ 2714 00ec 01       		.byte	0x1
+ 2715 00ed 03       		.uleb128 0x3
+ 2716 00ee 0E       		.uleb128 0xe
+ 2717 00ef 3A       		.uleb128 0x3a
+ 2718 00f0 0B       		.uleb128 0xb
+ 2719 00f1 3B       		.uleb128 0x3b
+ 2720 00f2 0B       		.uleb128 0xb
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 61
+
+
+ 2721 00f3 27       		.uleb128 0x27
+ 2722 00f4 19       		.uleb128 0x19
+ 2723 00f5 11       		.uleb128 0x11
+ 2724 00f6 01       		.uleb128 0x1
+ 2725 00f7 12       		.uleb128 0x12
+ 2726 00f8 06       		.uleb128 0x6
+ 2727 00f9 40       		.uleb128 0x40
+ 2728 00fa 18       		.uleb128 0x18
+ 2729 00fb 9742     		.uleb128 0x2117
+ 2730 00fd 19       		.uleb128 0x19
+ 2731 00fe 01       		.uleb128 0x1
+ 2732 00ff 13       		.uleb128 0x13
+ 2733 0100 00       		.byte	0
+ 2734 0101 00       		.byte	0
+ 2735 0102 13       		.uleb128 0x13
+ 2736 0103 05       		.uleb128 0x5
+ 2737 0104 00       		.byte	0
+ 2738 0105 03       		.uleb128 0x3
+ 2739 0106 0E       		.uleb128 0xe
+ 2740 0107 3A       		.uleb128 0x3a
+ 2741 0108 0B       		.uleb128 0xb
+ 2742 0109 3B       		.uleb128 0x3b
+ 2743 010a 0B       		.uleb128 0xb
+ 2744 010b 49       		.uleb128 0x49
+ 2745 010c 13       		.uleb128 0x13
+ 2746 010d 02       		.uleb128 0x2
+ 2747 010e 18       		.uleb128 0x18
+ 2748 010f 00       		.byte	0
+ 2749 0110 00       		.byte	0
+ 2750 0111 14       		.uleb128 0x14
+ 2751 0112 05       		.uleb128 0x5
+ 2752 0113 00       		.byte	0
+ 2753 0114 03       		.uleb128 0x3
+ 2754 0115 08       		.uleb128 0x8
+ 2755 0116 3A       		.uleb128 0x3a
+ 2756 0117 0B       		.uleb128 0xb
+ 2757 0118 3B       		.uleb128 0x3b
+ 2758 0119 0B       		.uleb128 0xb
+ 2759 011a 49       		.uleb128 0x49
+ 2760 011b 13       		.uleb128 0x13
+ 2761 011c 02       		.uleb128 0x2
+ 2762 011d 17       		.uleb128 0x17
+ 2763 011e 00       		.byte	0
+ 2764 011f 00       		.byte	0
+ 2765 0120 15       		.uleb128 0x15
+ 2766 0121 34       		.uleb128 0x34
+ 2767 0122 00       		.byte	0
+ 2768 0123 03       		.uleb128 0x3
+ 2769 0124 0E       		.uleb128 0xe
+ 2770 0125 3A       		.uleb128 0x3a
+ 2771 0126 0B       		.uleb128 0xb
+ 2772 0127 3B       		.uleb128 0x3b
+ 2773 0128 0B       		.uleb128 0xb
+ 2774 0129 49       		.uleb128 0x49
+ 2775 012a 13       		.uleb128 0x13
+ 2776 012b 02       		.uleb128 0x2
+ 2777 012c 17       		.uleb128 0x17
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 62
+
+
+ 2778 012d 00       		.byte	0
+ 2779 012e 00       		.byte	0
+ 2780 012f 16       		.uleb128 0x16
+ 2781 0130 0A       		.uleb128 0xa
+ 2782 0131 00       		.byte	0
+ 2783 0132 03       		.uleb128 0x3
+ 2784 0133 0E       		.uleb128 0xe
+ 2785 0134 3A       		.uleb128 0x3a
+ 2786 0135 0B       		.uleb128 0xb
+ 2787 0136 3B       		.uleb128 0x3b
+ 2788 0137 0B       		.uleb128 0xb
+ 2789 0138 11       		.uleb128 0x11
+ 2790 0139 01       		.uleb128 0x1
+ 2791 013a 00       		.byte	0
+ 2792 013b 00       		.byte	0
+ 2793 013c 17       		.uleb128 0x17
+ 2794 013d 898201   		.uleb128 0x4109
+ 2795 0140 01       		.byte	0x1
+ 2796 0141 11       		.uleb128 0x11
+ 2797 0142 01       		.uleb128 0x1
+ 2798 0143 31       		.uleb128 0x31
+ 2799 0144 13       		.uleb128 0x13
+ 2800 0145 01       		.uleb128 0x1
+ 2801 0146 13       		.uleb128 0x13
+ 2802 0147 00       		.byte	0
+ 2803 0148 00       		.byte	0
+ 2804 0149 18       		.uleb128 0x18
+ 2805 014a 8A8201   		.uleb128 0x410a
+ 2806 014d 00       		.byte	0
+ 2807 014e 02       		.uleb128 0x2
+ 2808 014f 18       		.uleb128 0x18
+ 2809 0150 9142     		.uleb128 0x2111
+ 2810 0152 18       		.uleb128 0x18
+ 2811 0153 00       		.byte	0
+ 2812 0154 00       		.byte	0
+ 2813 0155 19       		.uleb128 0x19
+ 2814 0156 898201   		.uleb128 0x4109
+ 2815 0159 01       		.byte	0x1
+ 2816 015a 11       		.uleb128 0x11
+ 2817 015b 01       		.uleb128 0x1
+ 2818 015c 31       		.uleb128 0x31
+ 2819 015d 13       		.uleb128 0x13
+ 2820 015e 00       		.byte	0
+ 2821 015f 00       		.byte	0
+ 2822 0160 1A       		.uleb128 0x1a
+ 2823 0161 0B       		.uleb128 0xb
+ 2824 0162 01       		.byte	0x1
+ 2825 0163 55       		.uleb128 0x55
+ 2826 0164 17       		.uleb128 0x17
+ 2827 0165 00       		.byte	0
+ 2828 0166 00       		.byte	0
+ 2829 0167 1B       		.uleb128 0x1b
+ 2830 0168 0B       		.uleb128 0xb
+ 2831 0169 01       		.byte	0x1
+ 2832 016a 11       		.uleb128 0x11
+ 2833 016b 01       		.uleb128 0x1
+ 2834 016c 12       		.uleb128 0x12
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 63
+
+
+ 2835 016d 06       		.uleb128 0x6
+ 2836 016e 01       		.uleb128 0x1
+ 2837 016f 13       		.uleb128 0x13
+ 2838 0170 00       		.byte	0
+ 2839 0171 00       		.byte	0
+ 2840 0172 1C       		.uleb128 0x1c
+ 2841 0173 2E       		.uleb128 0x2e
+ 2842 0174 01       		.byte	0x1
+ 2843 0175 3F       		.uleb128 0x3f
+ 2844 0176 19       		.uleb128 0x19
+ 2845 0177 03       		.uleb128 0x3
+ 2846 0178 0E       		.uleb128 0xe
+ 2847 0179 3A       		.uleb128 0x3a
+ 2848 017a 0B       		.uleb128 0xb
+ 2849 017b 3B       		.uleb128 0x3b
+ 2850 017c 05       		.uleb128 0x5
+ 2851 017d 27       		.uleb128 0x27
+ 2852 017e 19       		.uleb128 0x19
+ 2853 017f 49       		.uleb128 0x49
+ 2854 0180 13       		.uleb128 0x13
+ 2855 0181 11       		.uleb128 0x11
+ 2856 0182 01       		.uleb128 0x1
+ 2857 0183 12       		.uleb128 0x12
+ 2858 0184 06       		.uleb128 0x6
+ 2859 0185 40       		.uleb128 0x40
+ 2860 0186 18       		.uleb128 0x18
+ 2861 0187 9742     		.uleb128 0x2117
+ 2862 0189 19       		.uleb128 0x19
+ 2863 018a 01       		.uleb128 0x1
+ 2864 018b 13       		.uleb128 0x13
+ 2865 018c 00       		.byte	0
+ 2866 018d 00       		.byte	0
+ 2867 018e 1D       		.uleb128 0x1d
+ 2868 018f 05       		.uleb128 0x5
+ 2869 0190 00       		.byte	0
+ 2870 0191 03       		.uleb128 0x3
+ 2871 0192 0E       		.uleb128 0xe
+ 2872 0193 3A       		.uleb128 0x3a
+ 2873 0194 0B       		.uleb128 0xb
+ 2874 0195 3B       		.uleb128 0x3b
+ 2875 0196 05       		.uleb128 0x5
+ 2876 0197 49       		.uleb128 0x49
+ 2877 0198 13       		.uleb128 0x13
+ 2878 0199 02       		.uleb128 0x2
+ 2879 019a 17       		.uleb128 0x17
+ 2880 019b 00       		.byte	0
+ 2881 019c 00       		.byte	0
+ 2882 019d 1E       		.uleb128 0x1e
+ 2883 019e 05       		.uleb128 0x5
+ 2884 019f 00       		.byte	0
+ 2885 01a0 03       		.uleb128 0x3
+ 2886 01a1 08       		.uleb128 0x8
+ 2887 01a2 3A       		.uleb128 0x3a
+ 2888 01a3 0B       		.uleb128 0xb
+ 2889 01a4 3B       		.uleb128 0x3b
+ 2890 01a5 05       		.uleb128 0x5
+ 2891 01a6 49       		.uleb128 0x49
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 64
+
+
+ 2892 01a7 13       		.uleb128 0x13
+ 2893 01a8 02       		.uleb128 0x2
+ 2894 01a9 17       		.uleb128 0x17
+ 2895 01aa 00       		.byte	0
+ 2896 01ab 00       		.byte	0
+ 2897 01ac 1F       		.uleb128 0x1f
+ 2898 01ad 05       		.uleb128 0x5
+ 2899 01ae 00       		.byte	0
+ 2900 01af 03       		.uleb128 0x3
+ 2901 01b0 0E       		.uleb128 0xe
+ 2902 01b1 3A       		.uleb128 0x3a
+ 2903 01b2 0B       		.uleb128 0xb
+ 2904 01b3 3B       		.uleb128 0x3b
+ 2905 01b4 05       		.uleb128 0x5
+ 2906 01b5 49       		.uleb128 0x49
+ 2907 01b6 13       		.uleb128 0x13
+ 2908 01b7 02       		.uleb128 0x2
+ 2909 01b8 18       		.uleb128 0x18
+ 2910 01b9 00       		.byte	0
+ 2911 01ba 00       		.byte	0
+ 2912 01bb 20       		.uleb128 0x20
+ 2913 01bc 34       		.uleb128 0x34
+ 2914 01bd 00       		.byte	0
+ 2915 01be 03       		.uleb128 0x3
+ 2916 01bf 08       		.uleb128 0x8
+ 2917 01c0 3A       		.uleb128 0x3a
+ 2918 01c1 0B       		.uleb128 0xb
+ 2919 01c2 3B       		.uleb128 0x3b
+ 2920 01c3 05       		.uleb128 0x5
+ 2921 01c4 49       		.uleb128 0x49
+ 2922 01c5 13       		.uleb128 0x13
+ 2923 01c6 02       		.uleb128 0x2
+ 2924 01c7 17       		.uleb128 0x17
+ 2925 01c8 00       		.byte	0
+ 2926 01c9 00       		.byte	0
+ 2927 01ca 21       		.uleb128 0x21
+ 2928 01cb 34       		.uleb128 0x34
+ 2929 01cc 00       		.byte	0
+ 2930 01cd 03       		.uleb128 0x3
+ 2931 01ce 0E       		.uleb128 0xe
+ 2932 01cf 3A       		.uleb128 0x3a
+ 2933 01d0 0B       		.uleb128 0xb
+ 2934 01d1 3B       		.uleb128 0x3b
+ 2935 01d2 05       		.uleb128 0x5
+ 2936 01d3 49       		.uleb128 0x49
+ 2937 01d4 13       		.uleb128 0x13
+ 2938 01d5 02       		.uleb128 0x2
+ 2939 01d6 17       		.uleb128 0x17
+ 2940 01d7 00       		.byte	0
+ 2941 01d8 00       		.byte	0
+ 2942 01d9 22       		.uleb128 0x22
+ 2943 01da 2E       		.uleb128 0x2e
+ 2944 01db 01       		.byte	0x1
+ 2945 01dc 3F       		.uleb128 0x3f
+ 2946 01dd 19       		.uleb128 0x19
+ 2947 01de 03       		.uleb128 0x3
+ 2948 01df 0E       		.uleb128 0xe
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 65
+
+
+ 2949 01e0 3A       		.uleb128 0x3a
+ 2950 01e1 0B       		.uleb128 0xb
+ 2951 01e2 3B       		.uleb128 0x3b
+ 2952 01e3 05       		.uleb128 0x5
+ 2953 01e4 27       		.uleb128 0x27
+ 2954 01e5 19       		.uleb128 0x19
+ 2955 01e6 11       		.uleb128 0x11
+ 2956 01e7 01       		.uleb128 0x1
+ 2957 01e8 12       		.uleb128 0x12
+ 2958 01e9 06       		.uleb128 0x6
+ 2959 01ea 40       		.uleb128 0x40
+ 2960 01eb 18       		.uleb128 0x18
+ 2961 01ec 9742     		.uleb128 0x2117
+ 2962 01ee 19       		.uleb128 0x19
+ 2963 01ef 01       		.uleb128 0x1
+ 2964 01f0 13       		.uleb128 0x13
+ 2965 01f1 00       		.byte	0
+ 2966 01f2 00       		.byte	0
+ 2967 01f3 23       		.uleb128 0x23
+ 2968 01f4 2E       		.uleb128 0x2e
+ 2969 01f5 00       		.byte	0
+ 2970 01f6 3F       		.uleb128 0x3f
+ 2971 01f7 19       		.uleb128 0x19
+ 2972 01f8 03       		.uleb128 0x3
+ 2973 01f9 0E       		.uleb128 0xe
+ 2974 01fa 3A       		.uleb128 0x3a
+ 2975 01fb 0B       		.uleb128 0xb
+ 2976 01fc 3B       		.uleb128 0x3b
+ 2977 01fd 0B       		.uleb128 0xb
+ 2978 01fe 11       		.uleb128 0x11
+ 2979 01ff 01       		.uleb128 0x1
+ 2980 0200 12       		.uleb128 0x12
+ 2981 0201 06       		.uleb128 0x6
+ 2982 0202 40       		.uleb128 0x40
+ 2983 0203 18       		.uleb128 0x18
+ 2984 0204 9742     		.uleb128 0x2117
+ 2985 0206 19       		.uleb128 0x19
+ 2986 0207 00       		.byte	0
+ 2987 0208 00       		.byte	0
+ 2988 0209 24       		.uleb128 0x24
+ 2989 020a 2E       		.uleb128 0x2e
+ 2990 020b 01       		.byte	0x1
+ 2991 020c 3F       		.uleb128 0x3f
+ 2992 020d 19       		.uleb128 0x19
+ 2993 020e 03       		.uleb128 0x3
+ 2994 020f 0E       		.uleb128 0xe
+ 2995 0210 3A       		.uleb128 0x3a
+ 2996 0211 0B       		.uleb128 0xb
+ 2997 0212 3B       		.uleb128 0x3b
+ 2998 0213 0B       		.uleb128 0xb
+ 2999 0214 27       		.uleb128 0x27
+ 3000 0215 19       		.uleb128 0x19
+ 3001 0216 49       		.uleb128 0x49
+ 3002 0217 13       		.uleb128 0x13
+ 3003 0218 11       		.uleb128 0x11
+ 3004 0219 01       		.uleb128 0x1
+ 3005 021a 12       		.uleb128 0x12
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 66
+
+
+ 3006 021b 06       		.uleb128 0x6
+ 3007 021c 40       		.uleb128 0x40
+ 3008 021d 18       		.uleb128 0x18
+ 3009 021e 9742     		.uleb128 0x2117
+ 3010 0220 19       		.uleb128 0x19
+ 3011 0221 01       		.uleb128 0x1
+ 3012 0222 13       		.uleb128 0x13
+ 3013 0223 00       		.byte	0
+ 3014 0224 00       		.byte	0
+ 3015 0225 25       		.uleb128 0x25
+ 3016 0226 2E       		.uleb128 0x2e
+ 3017 0227 01       		.byte	0x1
+ 3018 0228 3F       		.uleb128 0x3f
+ 3019 0229 19       		.uleb128 0x19
+ 3020 022a 03       		.uleb128 0x3
+ 3021 022b 0E       		.uleb128 0xe
+ 3022 022c 3A       		.uleb128 0x3a
+ 3023 022d 0B       		.uleb128 0xb
+ 3024 022e 3B       		.uleb128 0x3b
+ 3025 022f 0B       		.uleb128 0xb
+ 3026 0230 11       		.uleb128 0x11
+ 3027 0231 01       		.uleb128 0x1
+ 3028 0232 12       		.uleb128 0x12
+ 3029 0233 06       		.uleb128 0x6
+ 3030 0234 40       		.uleb128 0x40
+ 3031 0235 18       		.uleb128 0x18
+ 3032 0236 9742     		.uleb128 0x2117
+ 3033 0238 19       		.uleb128 0x19
+ 3034 0239 01       		.uleb128 0x1
+ 3035 023a 13       		.uleb128 0x13
+ 3036 023b 00       		.byte	0
+ 3037 023c 00       		.byte	0
+ 3038 023d 26       		.uleb128 0x26
+ 3039 023e 34       		.uleb128 0x34
+ 3040 023f 00       		.byte	0
+ 3041 0240 03       		.uleb128 0x3
+ 3042 0241 0E       		.uleb128 0xe
+ 3043 0242 3A       		.uleb128 0x3a
+ 3044 0243 0B       		.uleb128 0xb
+ 3045 0244 3B       		.uleb128 0x3b
+ 3046 0245 0B       		.uleb128 0xb
+ 3047 0246 49       		.uleb128 0x49
+ 3048 0247 13       		.uleb128 0x13
+ 3049 0248 02       		.uleb128 0x2
+ 3050 0249 18       		.uleb128 0x18
+ 3051 024a 00       		.byte	0
+ 3052 024b 00       		.byte	0
+ 3053 024c 27       		.uleb128 0x27
+ 3054 024d 01       		.uleb128 0x1
+ 3055 024e 01       		.byte	0x1
+ 3056 024f 49       		.uleb128 0x49
+ 3057 0250 13       		.uleb128 0x13
+ 3058 0251 01       		.uleb128 0x1
+ 3059 0252 13       		.uleb128 0x13
+ 3060 0253 00       		.byte	0
+ 3061 0254 00       		.byte	0
+ 3062 0255 28       		.uleb128 0x28
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 67
+
+
+ 3063 0256 21       		.uleb128 0x21
+ 3064 0257 00       		.byte	0
+ 3065 0258 49       		.uleb128 0x49
+ 3066 0259 13       		.uleb128 0x13
+ 3067 025a 2F       		.uleb128 0x2f
+ 3068 025b 05       		.uleb128 0x5
+ 3069 025c 00       		.byte	0
+ 3070 025d 00       		.byte	0
+ 3071 025e 29       		.uleb128 0x29
+ 3072 025f 2E       		.uleb128 0x2e
+ 3073 0260 00       		.byte	0
+ 3074 0261 3F       		.uleb128 0x3f
+ 3075 0262 19       		.uleb128 0x19
+ 3076 0263 03       		.uleb128 0x3
+ 3077 0264 0E       		.uleb128 0xe
+ 3078 0265 3A       		.uleb128 0x3a
+ 3079 0266 0B       		.uleb128 0xb
+ 3080 0267 3B       		.uleb128 0x3b
+ 3081 0268 0B       		.uleb128 0xb
+ 3082 0269 49       		.uleb128 0x49
+ 3083 026a 13       		.uleb128 0x13
+ 3084 026b 11       		.uleb128 0x11
+ 3085 026c 01       		.uleb128 0x1
+ 3086 026d 12       		.uleb128 0x12
+ 3087 026e 06       		.uleb128 0x6
+ 3088 026f 40       		.uleb128 0x40
+ 3089 0270 18       		.uleb128 0x18
+ 3090 0271 9742     		.uleb128 0x2117
+ 3091 0273 19       		.uleb128 0x19
+ 3092 0274 00       		.byte	0
+ 3093 0275 00       		.byte	0
+ 3094 0276 2A       		.uleb128 0x2a
+ 3095 0277 898201   		.uleb128 0x4109
+ 3096 027a 00       		.byte	0
+ 3097 027b 11       		.uleb128 0x11
+ 3098 027c 01       		.uleb128 0x1
+ 3099 027d 31       		.uleb128 0x31
+ 3100 027e 13       		.uleb128 0x13
+ 3101 027f 00       		.byte	0
+ 3102 0280 00       		.byte	0
+ 3103 0281 2B       		.uleb128 0x2b
+ 3104 0282 0B       		.uleb128 0xb
+ 3105 0283 01       		.byte	0x1
+ 3106 0284 55       		.uleb128 0x55
+ 3107 0285 17       		.uleb128 0x17
+ 3108 0286 01       		.uleb128 0x1
+ 3109 0287 13       		.uleb128 0x13
+ 3110 0288 00       		.byte	0
+ 3111 0289 00       		.byte	0
+ 3112 028a 2C       		.uleb128 0x2c
+ 3113 028b 34       		.uleb128 0x34
+ 3114 028c 00       		.byte	0
+ 3115 028d 03       		.uleb128 0x3
+ 3116 028e 0E       		.uleb128 0xe
+ 3117 028f 3A       		.uleb128 0x3a
+ 3118 0290 0B       		.uleb128 0xb
+ 3119 0291 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 68
+
+
+ 3120 0292 0B       		.uleb128 0xb
+ 3121 0293 49       		.uleb128 0x49
+ 3122 0294 13       		.uleb128 0x13
+ 3123 0295 3F       		.uleb128 0x3f
+ 3124 0296 19       		.uleb128 0x19
+ 3125 0297 02       		.uleb128 0x2
+ 3126 0298 18       		.uleb128 0x18
+ 3127 0299 00       		.byte	0
+ 3128 029a 00       		.byte	0
+ 3129 029b 2D       		.uleb128 0x2d
+ 3130 029c 2E       		.uleb128 0x2e
+ 3131 029d 00       		.byte	0
+ 3132 029e 3F       		.uleb128 0x3f
+ 3133 029f 19       		.uleb128 0x19
+ 3134 02a0 3C       		.uleb128 0x3c
+ 3135 02a1 19       		.uleb128 0x19
+ 3136 02a2 6E       		.uleb128 0x6e
+ 3137 02a3 0E       		.uleb128 0xe
+ 3138 02a4 03       		.uleb128 0x3
+ 3139 02a5 0E       		.uleb128 0xe
+ 3140 02a6 3A       		.uleb128 0x3a
+ 3141 02a7 0B       		.uleb128 0xb
+ 3142 02a8 3B       		.uleb128 0x3b
+ 3143 02a9 0B       		.uleb128 0xb
+ 3144 02aa 00       		.byte	0
+ 3145 02ab 00       		.byte	0
+ 3146 02ac 00       		.byte	0
+ 3147              		.section	.debug_loc,"",%progbits
+ 3148              	.Ldebug_loc0:
+ 3149              	.LLST0:
+ 3150 0000 00000000 		.4byte	.LVL0
+ 3151 0004 1C000000 		.4byte	.LVL3
+ 3152 0008 0100     		.2byte	0x1
+ 3153 000a 50       		.byte	0x50
+ 3154 000b 1C000000 		.4byte	.LVL3
+ 3155 000f 1E000000 		.4byte	.LVL4
+ 3156 0013 0400     		.2byte	0x4
+ 3157 0015 F3       		.byte	0xf3
+ 3158 0016 01       		.uleb128 0x1
+ 3159 0017 50       		.byte	0x50
+ 3160 0018 9F       		.byte	0x9f
+ 3161 0019 1E000000 		.4byte	.LVL4
+ 3162 001d 20000000 		.4byte	.LVL5
+ 3163 0021 0100     		.2byte	0x1
+ 3164 0023 50       		.byte	0x50
+ 3165 0024 20000000 		.4byte	.LVL5
+ 3166 0028 22000000 		.4byte	.LFE61
+ 3167 002c 0400     		.2byte	0x4
+ 3168 002e F3       		.byte	0xf3
+ 3169 002f 01       		.uleb128 0x1
+ 3170 0030 50       		.byte	0x50
+ 3171 0031 9F       		.byte	0x9f
+ 3172 0032 00000000 		.4byte	0
+ 3173 0036 00000000 		.4byte	0
+ 3174              	.LLST1:
+ 3175 003a 00000000 		.4byte	.LVL0
+ 3176 003e 0E000000 		.4byte	.LVL2
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 69
+
+
+ 3177 0042 0100     		.2byte	0x1
+ 3178 0044 51       		.byte	0x51
+ 3179 0045 0E000000 		.4byte	.LVL2
+ 3180 0049 1E000000 		.4byte	.LVL4
+ 3181 004d 0400     		.2byte	0x4
+ 3182 004f F3       		.byte	0xf3
+ 3183 0050 01       		.uleb128 0x1
+ 3184 0051 51       		.byte	0x51
+ 3185 0052 9F       		.byte	0x9f
+ 3186 0053 1E000000 		.4byte	.LVL4
+ 3187 0057 20000000 		.4byte	.LVL5
+ 3188 005b 0100     		.2byte	0x1
+ 3189 005d 51       		.byte	0x51
+ 3190 005e 20000000 		.4byte	.LVL5
+ 3191 0062 22000000 		.4byte	.LFE61
+ 3192 0066 0400     		.2byte	0x4
+ 3193 0068 F3       		.byte	0xf3
+ 3194 0069 01       		.uleb128 0x1
+ 3195 006a 51       		.byte	0x51
+ 3196 006b 9F       		.byte	0x9f
+ 3197 006c 00000000 		.4byte	0
+ 3198 0070 00000000 		.4byte	0
+ 3199              	.LLST2:
+ 3200 0074 00000000 		.4byte	.LVL0
+ 3201 0078 08000000 		.4byte	.LVL1
+ 3202 007c 0100     		.2byte	0x1
+ 3203 007e 52       		.byte	0x52
+ 3204 007f 08000000 		.4byte	.LVL1
+ 3205 0083 1E000000 		.4byte	.LVL4
+ 3206 0087 0400     		.2byte	0x4
+ 3207 0089 F3       		.byte	0xf3
+ 3208 008a 01       		.uleb128 0x1
+ 3209 008b 52       		.byte	0x52
+ 3210 008c 9F       		.byte	0x9f
+ 3211 008d 1E000000 		.4byte	.LVL4
+ 3212 0091 20000000 		.4byte	.LVL5
+ 3213 0095 0100     		.2byte	0x1
+ 3214 0097 52       		.byte	0x52
+ 3215 0098 20000000 		.4byte	.LVL5
+ 3216 009c 22000000 		.4byte	.LFE61
+ 3217 00a0 0400     		.2byte	0x4
+ 3218 00a2 F3       		.byte	0xf3
+ 3219 00a3 01       		.uleb128 0x1
+ 3220 00a4 52       		.byte	0x52
+ 3221 00a5 9F       		.byte	0x9f
+ 3222 00a6 00000000 		.4byte	0
+ 3223 00aa 00000000 		.4byte	0
+ 3224              	.LLST3:
+ 3225 00ae 0E000000 		.4byte	.LVL2
+ 3226 00b2 1E000000 		.4byte	.LVL4
+ 3227 00b6 0100     		.2byte	0x1
+ 3228 00b8 51       		.byte	0x51
+ 3229 00b9 00000000 		.4byte	0
+ 3230 00bd 00000000 		.4byte	0
+ 3231              	.LLST4:
+ 3232 00c1 00000000 		.4byte	.LVL6
+ 3233 00c5 08000000 		.4byte	.LVL7
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 70
+
+
+ 3234 00c9 0100     		.2byte	0x1
+ 3235 00cb 53       		.byte	0x53
+ 3236 00cc 08000000 		.4byte	.LVL7
+ 3237 00d0 0C000000 		.4byte	.LFE62
+ 3238 00d4 0200     		.2byte	0x2
+ 3239 00d6 70       		.byte	0x70
+ 3240 00d7 08       		.sleb128 8
+ 3241 00d8 00000000 		.4byte	0
+ 3242 00dc 00000000 		.4byte	0
+ 3243              	.LLST5:
+ 3244 00e0 00000000 		.4byte	.LVL8
+ 3245 00e4 08000000 		.4byte	.LVL10
+ 3246 00e8 0100     		.2byte	0x1
+ 3247 00ea 50       		.byte	0x50
+ 3248 00eb 08000000 		.4byte	.LVL10
+ 3249 00ef 82000000 		.4byte	.LVL17
+ 3250 00f3 0100     		.2byte	0x1
+ 3251 00f5 55       		.byte	0x55
+ 3252 00f6 82000000 		.4byte	.LVL17
+ 3253 00fa 84000000 		.4byte	.LFE63
+ 3254 00fe 0400     		.2byte	0x4
+ 3255 0100 F3       		.byte	0xf3
+ 3256 0101 01       		.uleb128 0x1
+ 3257 0102 50       		.byte	0x50
+ 3258 0103 9F       		.byte	0x9f
+ 3259 0104 00000000 		.4byte	0
+ 3260 0108 00000000 		.4byte	0
+ 3261              	.LLST6:
+ 3262 010c 00000000 		.4byte	.LVL8
+ 3263 0110 60000000 		.4byte	.LVL12
+ 3264 0114 0100     		.2byte	0x1
+ 3265 0116 51       		.byte	0x51
+ 3266 0117 60000000 		.4byte	.LVL12
+ 3267 011b 84000000 		.4byte	.LFE63
+ 3268 011f 0400     		.2byte	0x4
+ 3269 0121 F3       		.byte	0xf3
+ 3270 0122 01       		.uleb128 0x1
+ 3271 0123 51       		.byte	0x51
+ 3272 0124 9F       		.byte	0x9f
+ 3273 0125 00000000 		.4byte	0
+ 3274 0129 00000000 		.4byte	0
+ 3275              	.LLST7:
+ 3276 012d 00000000 		.4byte	.LVL8
+ 3277 0131 5E000000 		.4byte	.LVL11
+ 3278 0135 0100     		.2byte	0x1
+ 3279 0137 52       		.byte	0x52
+ 3280 0138 5E000000 		.4byte	.LVL11
+ 3281 013c 84000000 		.4byte	.LFE63
+ 3282 0140 0400     		.2byte	0x4
+ 3283 0142 F3       		.byte	0xf3
+ 3284 0143 01       		.uleb128 0x1
+ 3285 0144 52       		.byte	0x52
+ 3286 0145 9F       		.byte	0x9f
+ 3287 0146 00000000 		.4byte	0
+ 3288 014a 00000000 		.4byte	0
+ 3289              	.LLST8:
+ 3290 014e 00000000 		.4byte	.LVL8
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 71
+
+
+ 3291 0152 65000000 		.4byte	.LVL13-1
+ 3292 0156 0100     		.2byte	0x1
+ 3293 0158 53       		.byte	0x53
+ 3294 0159 65000000 		.4byte	.LVL13-1
+ 3295 015d 84000000 		.4byte	.LFE63
+ 3296 0161 0400     		.2byte	0x4
+ 3297 0163 F3       		.byte	0xf3
+ 3298 0164 01       		.uleb128 0x1
+ 3299 0165 53       		.byte	0x53
+ 3300 0166 9F       		.byte	0x9f
+ 3301 0167 00000000 		.4byte	0
+ 3302 016b 00000000 		.4byte	0
+ 3303              	.LLST9:
+ 3304 016f 66000000 		.4byte	.LVL13
+ 3305 0173 6E000000 		.4byte	.LVL14
+ 3306 0177 0100     		.2byte	0x1
+ 3307 0179 50       		.byte	0x50
+ 3308 017a 6E000000 		.4byte	.LVL14
+ 3309 017e 70000000 		.4byte	.LVL15
+ 3310 0182 0300     		.2byte	0x3
+ 3311 0184 70       		.byte	0x70
+ 3312 0185 01       		.sleb128 1
+ 3313 0186 9F       		.byte	0x9f
+ 3314 0187 70000000 		.4byte	.LVL15
+ 3315 018b 79000000 		.4byte	.LVL16-1
+ 3316 018f 0100     		.2byte	0x1
+ 3317 0191 50       		.byte	0x50
+ 3318 0192 00000000 		.4byte	0
+ 3319 0196 00000000 		.4byte	0
+ 3320              	.LLST10:
+ 3321 019a 06000000 		.4byte	.LVL9
+ 3322 019e 82000000 		.4byte	.LVL18
+ 3323 01a2 0100     		.2byte	0x1
+ 3324 01a4 56       		.byte	0x56
+ 3325 01a5 00000000 		.4byte	0
+ 3326 01a9 00000000 		.4byte	0
+ 3327              	.LLST11:
+ 3328 01ad 00000000 		.4byte	.LVL19
+ 3329 01b1 0C000000 		.4byte	.LVL21
+ 3330 01b5 0100     		.2byte	0x1
+ 3331 01b7 50       		.byte	0x50
+ 3332 01b8 0C000000 		.4byte	.LVL21
+ 3333 01bc CA000000 		.4byte	.LVL37
+ 3334 01c0 0100     		.2byte	0x1
+ 3335 01c2 55       		.byte	0x55
+ 3336 01c3 CA000000 		.4byte	.LVL37
+ 3337 01c7 D0000000 		.4byte	.LFE64
+ 3338 01cb 0400     		.2byte	0x4
+ 3339 01cd F3       		.byte	0xf3
+ 3340 01ce 01       		.uleb128 0x1
+ 3341 01cf 50       		.byte	0x50
+ 3342 01d0 9F       		.byte	0x9f
+ 3343 01d1 00000000 		.4byte	0
+ 3344 01d5 00000000 		.4byte	0
+ 3345              	.LLST12:
+ 3346 01d9 00000000 		.4byte	.LVL19
+ 3347 01dd 1E000000 		.4byte	.LVL24
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 72
+
+
+ 3348 01e1 0100     		.2byte	0x1
+ 3349 01e3 51       		.byte	0x51
+ 3350 01e4 1E000000 		.4byte	.LVL24
+ 3351 01e8 3C000000 		.4byte	.LVL29
+ 3352 01ec 0400     		.2byte	0x4
+ 3353 01ee F3       		.byte	0xf3
+ 3354 01ef 01       		.uleb128 0x1
+ 3355 01f0 51       		.byte	0x51
+ 3356 01f1 9F       		.byte	0x9f
+ 3357 01f2 3C000000 		.4byte	.LVL29
+ 3358 01f6 C8000000 		.4byte	.LVL36
+ 3359 01fa 0100     		.2byte	0x1
+ 3360 01fc 51       		.byte	0x51
+ 3361 01fd C8000000 		.4byte	.LVL36
+ 3362 0201 D0000000 		.4byte	.LFE64
+ 3363 0205 0400     		.2byte	0x4
+ 3364 0207 F3       		.byte	0xf3
+ 3365 0208 01       		.uleb128 0x1
+ 3366 0209 51       		.byte	0x51
+ 3367 020a 9F       		.byte	0x9f
+ 3368 020b 00000000 		.4byte	0
+ 3369 020f 00000000 		.4byte	0
+ 3370              	.LLST13:
+ 3371 0213 00000000 		.4byte	.LVL19
+ 3372 0217 1C000000 		.4byte	.LVL23
+ 3373 021b 0100     		.2byte	0x1
+ 3374 021d 52       		.byte	0x52
+ 3375 021e 1C000000 		.4byte	.LVL23
+ 3376 0222 3C000000 		.4byte	.LVL29
+ 3377 0226 0400     		.2byte	0x4
+ 3378 0228 F3       		.byte	0xf3
+ 3379 0229 01       		.uleb128 0x1
+ 3380 022a 52       		.byte	0x52
+ 3381 022b 9F       		.byte	0x9f
+ 3382 022c 3C000000 		.4byte	.LVL29
+ 3383 0230 C8000000 		.4byte	.LVL36
+ 3384 0234 0100     		.2byte	0x1
+ 3385 0236 52       		.byte	0x52
+ 3386 0237 C8000000 		.4byte	.LVL36
+ 3387 023b D0000000 		.4byte	.LFE64
+ 3388 023f 0400     		.2byte	0x4
+ 3389 0241 F3       		.byte	0xf3
+ 3390 0242 01       		.uleb128 0x1
+ 3391 0243 52       		.byte	0x52
+ 3392 0244 9F       		.byte	0x9f
+ 3393 0245 00000000 		.4byte	0
+ 3394 0249 00000000 		.4byte	0
+ 3395              	.LLST14:
+ 3396 024d 00000000 		.4byte	.LVL19
+ 3397 0251 10000000 		.4byte	.LVL22
+ 3398 0255 0100     		.2byte	0x1
+ 3399 0257 53       		.byte	0x53
+ 3400 0258 10000000 		.4byte	.LVL22
+ 3401 025c D0000000 		.4byte	.LFE64
+ 3402 0260 0200     		.2byte	0x2
+ 3403 0262 91       		.byte	0x91
+ 3404 0263 64       		.sleb128 -28
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 73
+
+
+ 3405 0264 00000000 		.4byte	0
+ 3406 0268 00000000 		.4byte	0
+ 3407              	.LLST15:
+ 3408 026c 24000000 		.4byte	.LVL25
+ 3409 0270 2C000000 		.4byte	.LVL26
+ 3410 0274 0100     		.2byte	0x1
+ 3411 0276 50       		.byte	0x50
+ 3412 0277 2C000000 		.4byte	.LVL26
+ 3413 027b 2E000000 		.4byte	.LVL27
+ 3414 027f 0300     		.2byte	0x3
+ 3415 0281 70       		.byte	0x70
+ 3416 0282 01       		.sleb128 1
+ 3417 0283 9F       		.byte	0x9f
+ 3418 0284 2E000000 		.4byte	.LVL27
+ 3419 0288 37000000 		.4byte	.LVL28-1
+ 3420 028c 0100     		.2byte	0x1
+ 3421 028e 50       		.byte	0x50
+ 3422 028f 00000000 		.4byte	0
+ 3423 0293 00000000 		.4byte	0
+ 3424              	.LLST16:
+ 3425 0297 0A000000 		.4byte	.LVL20
+ 3426 029b CA000000 		.4byte	.LVL38
+ 3427 029f 0100     		.2byte	0x1
+ 3428 02a1 56       		.byte	0x56
+ 3429 02a2 00000000 		.4byte	0
+ 3430 02a6 00000000 		.4byte	0
+ 3431              	.LLST17:
+ 3432 02aa 10000000 		.4byte	.LVL22
+ 3433 02ae 4A000000 		.4byte	.LVL30
+ 3434 02b2 0100     		.2byte	0x1
+ 3435 02b4 54       		.byte	0x54
+ 3436 02b5 C6000000 		.4byte	.LVL35
+ 3437 02b9 C8000000 		.4byte	.LVL36
+ 3438 02bd 0100     		.2byte	0x1
+ 3439 02bf 54       		.byte	0x54
+ 3440 02c0 00000000 		.4byte	0
+ 3441 02c4 00000000 		.4byte	0
+ 3442              	.LLST18:
+ 3443 02c8 5E000000 		.4byte	.LVL31
+ 3444 02cc 62000000 		.4byte	.LVL32
+ 3445 02d0 0200     		.2byte	0x2
+ 3446 02d2 30       		.byte	0x30
+ 3447 02d3 9F       		.byte	0x9f
+ 3448 02d4 62000000 		.4byte	.LVL32
+ 3449 02d8 9E000000 		.4byte	.LVL34
+ 3450 02dc 0100     		.2byte	0x1
+ 3451 02de 53       		.byte	0x53
+ 3452 02df 00000000 		.4byte	0
+ 3453 02e3 00000000 		.4byte	0
+ 3454              	.LLST19:
+ 3455 02e7 00000000 		.4byte	.LVL39
+ 3456 02eb 18000000 		.4byte	.LVL42
+ 3457 02ef 0100     		.2byte	0x1
+ 3458 02f1 50       		.byte	0x50
+ 3459 02f2 18000000 		.4byte	.LVL42
+ 3460 02f6 00020000 		.4byte	.LVL88
+ 3461 02fa 0100     		.2byte	0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 74
+
+
+ 3462 02fc 56       		.byte	0x56
+ 3463 02fd 00020000 		.4byte	.LVL88
+ 3464 0301 08020000 		.4byte	.LFE65
+ 3465 0305 0400     		.2byte	0x4
+ 3466 0307 F3       		.byte	0xf3
+ 3467 0308 01       		.uleb128 0x1
+ 3468 0309 50       		.byte	0x50
+ 3469 030a 9F       		.byte	0x9f
+ 3470 030b 00000000 		.4byte	0
+ 3471 030f 00000000 		.4byte	0
+ 3472              	.LLST20:
+ 3473 0313 00000000 		.4byte	.LVL39
+ 3474 0317 18000000 		.4byte	.LVL42
+ 3475 031b 0100     		.2byte	0x1
+ 3476 031d 51       		.byte	0x51
+ 3477 031e 18000000 		.4byte	.LVL42
+ 3478 0322 2A000000 		.4byte	.LVL43
+ 3479 0326 0100     		.2byte	0x1
+ 3480 0328 53       		.byte	0x53
+ 3481 0329 2A000000 		.4byte	.LVL43
+ 3482 032d 36000000 		.4byte	.LVL44
+ 3483 0331 0100     		.2byte	0x1
+ 3484 0333 58       		.byte	0x58
+ 3485 0334 36000000 		.4byte	.LVL44
+ 3486 0338 5E000000 		.4byte	.LVL45
+ 3487 033c 0100     		.2byte	0x1
+ 3488 033e 53       		.byte	0x53
+ 3489 033f 5E000000 		.4byte	.LVL45
+ 3490 0343 A0000000 		.4byte	.LVL50
+ 3491 0347 0100     		.2byte	0x1
+ 3492 0349 58       		.byte	0x58
+ 3493 034a A0000000 		.4byte	.LVL50
+ 3494 034e B2000000 		.4byte	.LVL52
+ 3495 0352 0100     		.2byte	0x1
+ 3496 0354 53       		.byte	0x53
+ 3497 0355 B2000000 		.4byte	.LVL52
+ 3498 0359 02010000 		.4byte	.LVL63
+ 3499 035d 0100     		.2byte	0x1
+ 3500 035f 58       		.byte	0x58
+ 3501 0360 02010000 		.4byte	.LVL63
+ 3502 0364 04010000 		.4byte	.LVL64
+ 3503 0368 0100     		.2byte	0x1
+ 3504 036a 53       		.byte	0x53
+ 3505 036b 04010000 		.4byte	.LVL64
+ 3506 036f 32010000 		.4byte	.LVL67
+ 3507 0373 0100     		.2byte	0x1
+ 3508 0375 58       		.byte	0x58
+ 3509 0376 32010000 		.4byte	.LVL67
+ 3510 037a 34010000 		.4byte	.LVL68
+ 3511 037e 0100     		.2byte	0x1
+ 3512 0380 53       		.byte	0x53
+ 3513 0381 34010000 		.4byte	.LVL68
+ 3514 0385 3A010000 		.4byte	.LVL69
+ 3515 0389 0100     		.2byte	0x1
+ 3516 038b 58       		.byte	0x58
+ 3517 038c 3A010000 		.4byte	.LVL69
+ 3518 0390 40010000 		.4byte	.LVL70
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 75
+
+
+ 3519 0394 0100     		.2byte	0x1
+ 3520 0396 53       		.byte	0x53
+ 3521 0397 40010000 		.4byte	.LVL70
+ 3522 039b 00020000 		.4byte	.LVL90
+ 3523 039f 0100     		.2byte	0x1
+ 3524 03a1 58       		.byte	0x58
+ 3525 03a2 00020000 		.4byte	.LVL90
+ 3526 03a6 08020000 		.4byte	.LFE65
+ 3527 03aa 0400     		.2byte	0x4
+ 3528 03ac F3       		.byte	0xf3
+ 3529 03ad 01       		.uleb128 0x1
+ 3530 03ae 51       		.byte	0x51
+ 3531 03af 9F       		.byte	0x9f
+ 3532 03b0 00000000 		.4byte	0
+ 3533 03b4 00000000 		.4byte	0
+ 3534              	.LLST21:
+ 3535 03b8 00000000 		.4byte	.LVL39
+ 3536 03bc 18000000 		.4byte	.LVL42
+ 3537 03c0 0100     		.2byte	0x1
+ 3538 03c2 52       		.byte	0x52
+ 3539 03c3 18000000 		.4byte	.LVL42
+ 3540 03c7 00020000 		.4byte	.LVL89
+ 3541 03cb 0100     		.2byte	0x1
+ 3542 03cd 57       		.byte	0x57
+ 3543 03ce 00020000 		.4byte	.LVL89
+ 3544 03d2 08020000 		.4byte	.LFE65
+ 3545 03d6 0400     		.2byte	0x4
+ 3546 03d8 F3       		.byte	0xf3
+ 3547 03d9 01       		.uleb128 0x1
+ 3548 03da 52       		.byte	0x52
+ 3549 03db 9F       		.byte	0x9f
+ 3550 03dc 00000000 		.4byte	0
+ 3551 03e0 00000000 		.4byte	0
+ 3552              	.LLST22:
+ 3553 03e4 00000000 		.4byte	.LVL39
+ 3554 03e8 14000000 		.4byte	.LVL40
+ 3555 03ec 0100     		.2byte	0x1
+ 3556 03ee 53       		.byte	0x53
+ 3557 03ef 14000000 		.4byte	.LVL40
+ 3558 03f3 00020000 		.4byte	.LVL87
+ 3559 03f7 0100     		.2byte	0x1
+ 3560 03f9 54       		.byte	0x54
+ 3561 03fa 00020000 		.4byte	.LVL87
+ 3562 03fe 08020000 		.4byte	.LFE65
+ 3563 0402 0400     		.2byte	0x4
+ 3564 0404 F3       		.byte	0xf3
+ 3565 0405 01       		.uleb128 0x1
+ 3566 0406 53       		.byte	0x53
+ 3567 0407 9F       		.byte	0x9f
+ 3568 0408 00000000 		.4byte	0
+ 3569 040c 00000000 		.4byte	0
+ 3570              	.LLST23:
+ 3571 0410 12010000 		.4byte	.LVL65
+ 3572 0414 32010000 		.4byte	.LVL67
+ 3573 0418 0100     		.2byte	0x1
+ 3574 041a 50       		.byte	0x50
+ 3575 041b 8C010000 		.4byte	.LVL74
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 76
+
+
+ 3576 041f AA010000 		.4byte	.LVL76
+ 3577 0423 0100     		.2byte	0x1
+ 3578 0425 50       		.byte	0x50
+ 3579 0426 00000000 		.4byte	0
+ 3580 042a 00000000 		.4byte	0
+ 3581              	.LLST24:
+ 3582 042e B4000000 		.4byte	.LVL53
+ 3583 0432 02010000 		.4byte	.LVL63
+ 3584 0436 0100     		.2byte	0x1
+ 3585 0438 53       		.byte	0x53
+ 3586 0439 54010000 		.4byte	.LVL71
+ 3587 043d 7C010000 		.4byte	.LVL73
+ 3588 0441 0100     		.2byte	0x1
+ 3589 0443 51       		.byte	0x51
+ 3590 0444 C8010000 		.4byte	.LVL77
+ 3591 0448 E4010000 		.4byte	.LVL79
+ 3592 044c 0100     		.2byte	0x1
+ 3593 044e 52       		.byte	0x52
+ 3594 044f EA010000 		.4byte	.LVL81
+ 3595 0453 F6010000 		.4byte	.LVL84
+ 3596 0457 0100     		.2byte	0x1
+ 3597 0459 53       		.byte	0x53
+ 3598 045a FA010000 		.4byte	.LVL85
+ 3599 045e FE010000 		.4byte	.LVL86
+ 3600 0462 0100     		.2byte	0x1
+ 3601 0464 52       		.byte	0x52
+ 3602 0465 00000000 		.4byte	0
+ 3603 0469 00000000 		.4byte	0
+ 3604              	.LLST25:
+ 3605 046d 72000000 		.4byte	.LVL47
+ 3606 0471 A0000000 		.4byte	.LVL50
+ 3607 0475 0100     		.2byte	0x1
+ 3608 0477 50       		.byte	0x50
+ 3609 0478 BA000000 		.4byte	.LVL55
+ 3610 047c DC000000 		.4byte	.LVL58
+ 3611 0480 0100     		.2byte	0x1
+ 3612 0482 52       		.byte	0x52
+ 3613 0483 EA000000 		.4byte	.LVL60
+ 3614 0487 F2000000 		.4byte	.LVL61
+ 3615 048b 0100     		.2byte	0x1
+ 3616 048d 52       		.byte	0x52
+ 3617 048e F2000000 		.4byte	.LVL61
+ 3618 0492 FC000000 		.4byte	.LVL62
+ 3619 0496 0800     		.2byte	0x8
+ 3620 0498 73       		.byte	0x73
+ 3621 0499 00       		.sleb128 0
+ 3622 049a 34       		.byte	0x34
+ 3623 049b 24       		.byte	0x24
+ 3624 049c 74       		.byte	0x74
+ 3625 049d 00       		.sleb128 0
+ 3626 049e 22       		.byte	0x22
+ 3627 049f 9F       		.byte	0x9f
+ 3628 04a0 E4010000 		.4byte	.LVL79
+ 3629 04a4 E6010000 		.4byte	.LVL80
+ 3630 04a8 0100     		.2byte	0x1
+ 3631 04aa 50       		.byte	0x50
+ 3632 04ab EA010000 		.4byte	.LVL81
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 77
+
+
+ 3633 04af F0010000 		.4byte	.LVL83
+ 3634 04b3 0100     		.2byte	0x1
+ 3635 04b5 52       		.byte	0x52
+ 3636 04b6 00000000 		.4byte	0
+ 3637 04ba 00000000 		.4byte	0
+ 3638              	.LLST26:
+ 3639 04be 16000000 		.4byte	.LVL41
+ 3640 04c2 18000000 		.4byte	.LVL42
+ 3641 04c6 0100     		.2byte	0x1
+ 3642 04c8 53       		.byte	0x53
+ 3643 04c9 18000000 		.4byte	.LVL42
+ 3644 04cd 00020000 		.4byte	.LVL91
+ 3645 04d1 0100     		.2byte	0x1
+ 3646 04d3 59       		.byte	0x59
+ 3647 04d4 00000000 		.4byte	0
+ 3648 04d8 00000000 		.4byte	0
+ 3649              	.LLST27:
+ 3650 04dc 18000000 		.4byte	.LVL42
+ 3651 04e0 B6000000 		.4byte	.LVL54
+ 3652 04e4 0100     		.2byte	0x1
+ 3653 04e6 55       		.byte	0x55
+ 3654 04e7 02010000 		.4byte	.LVL63
+ 3655 04eb AA010000 		.4byte	.LVL76
+ 3656 04ef 0100     		.2byte	0x1
+ 3657 04f1 55       		.byte	0x55
+ 3658 04f2 E4010000 		.4byte	.LVL79
+ 3659 04f6 EA010000 		.4byte	.LVL81
+ 3660 04fa 0100     		.2byte	0x1
+ 3661 04fc 55       		.byte	0x55
+ 3662 04fd 00000000 		.4byte	0
+ 3663 0501 00000000 		.4byte	0
+ 3664              	.LLST28:
+ 3665 0505 B0000000 		.4byte	.LVL51
+ 3666 0509 D0000000 		.4byte	.LVL56
+ 3667 050d 0100     		.2byte	0x1
+ 3668 050f 50       		.byte	0x50
+ 3669 0510 DA000000 		.4byte	.LVL57
+ 3670 0514 E0000000 		.4byte	.LVL59
+ 3671 0518 0100     		.2byte	0x1
+ 3672 051a 50       		.byte	0x50
+ 3673 051b EA010000 		.4byte	.LVL81
+ 3674 051f EC010000 		.4byte	.LVL82
+ 3675 0523 0100     		.2byte	0x1
+ 3676 0525 50       		.byte	0x50
+ 3677 0526 00000000 		.4byte	0
+ 3678 052a 00000000 		.4byte	0
+ 3679              	.LLST29:
+ 3680 052e 82000000 		.4byte	.LVL48
+ 3681 0532 88000000 		.4byte	.LVL49
+ 3682 0536 0100     		.2byte	0x1
+ 3683 0538 53       		.byte	0x53
+ 3684 0539 00000000 		.4byte	0
+ 3685 053d 00000000 		.4byte	0
+ 3686              	.LLST30:
+ 3687 0541 00000000 		.4byte	.LVL93
+ 3688 0545 10000000 		.4byte	.LVL94
+ 3689 0549 0100     		.2byte	0x1
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 78
+
+
+ 3690 054b 50       		.byte	0x50
+ 3691 054c 10000000 		.4byte	.LVL94
+ 3692 0550 12000000 		.4byte	.LVL95
+ 3693 0554 0500     		.2byte	0x5
+ 3694 0556 72       		.byte	0x72
+ 3695 0557 00       		.sleb128 0
+ 3696 0558 71       		.byte	0x71
+ 3697 0559 00       		.sleb128 0
+ 3698 055a 22       		.byte	0x22
+ 3699 055b 12000000 		.4byte	.LVL95
+ 3700 055f 28000000 		.4byte	.LFE68
+ 3701 0563 0400     		.2byte	0x4
+ 3702 0565 F3       		.byte	0xf3
+ 3703 0566 01       		.uleb128 0x1
+ 3704 0567 50       		.byte	0x50
+ 3705 0568 9F       		.byte	0x9f
+ 3706 0569 00000000 		.4byte	0
+ 3707 056d 00000000 		.4byte	0
+ 3708              	.LLST31:
+ 3709 0571 00000000 		.4byte	.LVL97
+ 3710 0575 06000000 		.4byte	.LVL98
+ 3711 0579 0100     		.2byte	0x1
+ 3712 057b 50       		.byte	0x50
+ 3713 057c 06000000 		.4byte	.LVL98
+ 3714 0580 24000000 		.4byte	.LFE73
+ 3715 0584 0400     		.2byte	0x4
+ 3716 0586 F3       		.byte	0xf3
+ 3717 0587 01       		.uleb128 0x1
+ 3718 0588 50       		.byte	0x50
+ 3719 0589 9F       		.byte	0x9f
+ 3720 058a 00000000 		.4byte	0
+ 3721 058e 00000000 		.4byte	0
+ 3722              	.LLST32:
+ 3723 0592 00000000 		.4byte	.LVL97
+ 3724 0596 10000000 		.4byte	.LVL99
+ 3725 059a 0100     		.2byte	0x1
+ 3726 059c 51       		.byte	0x51
+ 3727 059d 10000000 		.4byte	.LVL99
+ 3728 05a1 24000000 		.4byte	.LFE73
+ 3729 05a5 0400     		.2byte	0x4
+ 3730 05a7 F3       		.byte	0xf3
+ 3731 05a8 01       		.uleb128 0x1
+ 3732 05a9 51       		.byte	0x51
+ 3733 05aa 9F       		.byte	0x9f
+ 3734 05ab 00000000 		.4byte	0
+ 3735 05af 00000000 		.4byte	0
+ 3736              	.LLST33:
+ 3737 05b3 00000000 		.4byte	.LVL101
+ 3738 05b7 65000000 		.4byte	.LVL102-1
+ 3739 05bb 0100     		.2byte	0x1
+ 3740 05bd 50       		.byte	0x50
+ 3741 05be 65000000 		.4byte	.LVL102-1
+ 3742 05c2 80000000 		.4byte	.LVL104
+ 3743 05c6 0400     		.2byte	0x4
+ 3744 05c8 F3       		.byte	0xf3
+ 3745 05c9 01       		.uleb128 0x1
+ 3746 05ca 50       		.byte	0x50
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 79
+
+
+ 3747 05cb 9F       		.byte	0x9f
+ 3748 05cc 80000000 		.4byte	.LVL104
+ 3749 05d0 8A000000 		.4byte	.LVL105
+ 3750 05d4 0100     		.2byte	0x1
+ 3751 05d6 50       		.byte	0x50
+ 3752 05d7 8A000000 		.4byte	.LVL105
+ 3753 05db 8C000000 		.4byte	.LVL106
+ 3754 05df 0400     		.2byte	0x4
+ 3755 05e1 F3       		.byte	0xf3
+ 3756 05e2 01       		.uleb128 0x1
+ 3757 05e3 50       		.byte	0x50
+ 3758 05e4 9F       		.byte	0x9f
+ 3759 05e5 8C000000 		.4byte	.LVL106
+ 3760 05e9 8E000000 		.4byte	.LVL107
+ 3761 05ed 0100     		.2byte	0x1
+ 3762 05ef 50       		.byte	0x50
+ 3763 05f0 8E000000 		.4byte	.LVL107
+ 3764 05f4 A0000000 		.4byte	.LFE69
+ 3765 05f8 0400     		.2byte	0x4
+ 3766 05fa F3       		.byte	0xf3
+ 3767 05fb 01       		.uleb128 0x1
+ 3768 05fc 50       		.byte	0x50
+ 3769 05fd 9F       		.byte	0x9f
+ 3770 05fe 00000000 		.4byte	0
+ 3771 0602 00000000 		.4byte	0
+ 3772              	.LLST34:
+ 3773 0606 00000000 		.4byte	.LVL108
+ 3774 060a 07000000 		.4byte	.LVL109-1
+ 3775 060e 0100     		.2byte	0x1
+ 3776 0610 50       		.byte	0x50
+ 3777 0611 07000000 		.4byte	.LVL109-1
+ 3778 0615 2E000000 		.4byte	.LVL121
+ 3779 0619 0100     		.2byte	0x1
+ 3780 061b 57       		.byte	0x57
+ 3781 061c 2E000000 		.4byte	.LVL121
+ 3782 0620 30000000 		.4byte	.LFE70
+ 3783 0624 0400     		.2byte	0x4
+ 3784 0626 F3       		.byte	0xf3
+ 3785 0627 01       		.uleb128 0x1
+ 3786 0628 50       		.byte	0x50
+ 3787 0629 9F       		.byte	0x9f
+ 3788 062a 00000000 		.4byte	0
+ 3789 062e 00000000 		.4byte	0
+ 3790              	.LLST35:
+ 3791 0632 0A000000 		.4byte	.LVL110
+ 3792 0636 10000000 		.4byte	.LVL111
+ 3793 063a 0100     		.2byte	0x1
+ 3794 063c 50       		.byte	0x50
+ 3795 063d 10000000 		.4byte	.LVL111
+ 3796 0641 2E000000 		.4byte	.LVL120
+ 3797 0645 0100     		.2byte	0x1
+ 3798 0647 56       		.byte	0x56
+ 3799 0648 00000000 		.4byte	0
+ 3800 064c 00000000 		.4byte	0
+ 3801              	.LLST36:
+ 3802 0650 0A000000 		.4byte	.LVL110
+ 3803 0654 10000000 		.4byte	.LVL111
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 80
+
+
+ 3804 0658 0200     		.2byte	0x2
+ 3805 065a 30       		.byte	0x30
+ 3806 065b 9F       		.byte	0x9f
+ 3807 065c 10000000 		.4byte	.LVL111
+ 3808 0660 18000000 		.4byte	.LVL113
+ 3809 0664 0100     		.2byte	0x1
+ 3810 0666 54       		.byte	0x54
+ 3811 0667 18000000 		.4byte	.LVL113
+ 3812 066b 1F000000 		.4byte	.LVL114-1
+ 3813 066f 0100     		.2byte	0x1
+ 3814 0671 50       		.byte	0x50
+ 3815 0672 1F000000 		.4byte	.LVL114-1
+ 3816 0676 22000000 		.4byte	.LVL115
+ 3817 067a 0100     		.2byte	0x1
+ 3818 067c 54       		.byte	0x54
+ 3819 067d 22000000 		.4byte	.LVL115
+ 3820 0681 24000000 		.4byte	.LVL116
+ 3821 0685 0100     		.2byte	0x1
+ 3822 0687 50       		.byte	0x50
+ 3823 0688 24000000 		.4byte	.LVL116
+ 3824 068c 2E000000 		.4byte	.LVL118
+ 3825 0690 0100     		.2byte	0x1
+ 3826 0692 54       		.byte	0x54
+ 3827 0693 00000000 		.4byte	0
+ 3828 0697 00000000 		.4byte	0
+ 3829              	.LLST37:
+ 3830 069b 0A000000 		.4byte	.LVL110
+ 3831 069f 10000000 		.4byte	.LVL111
+ 3832 06a3 0200     		.2byte	0x2
+ 3833 06a5 30       		.byte	0x30
+ 3834 06a6 9F       		.byte	0x9f
+ 3835 06a7 10000000 		.4byte	.LVL111
+ 3836 06ab 2E000000 		.4byte	.LVL119
+ 3837 06af 0100     		.2byte	0x1
+ 3838 06b1 55       		.byte	0x55
+ 3839 06b2 00000000 		.4byte	0
+ 3840 06b6 00000000 		.4byte	0
+ 3841              		.section	.debug_aranges,"",%progbits
+ 3842 0000 7C000000 		.4byte	0x7c
+ 3843 0004 0200     		.2byte	0x2
+ 3844 0006 00000000 		.4byte	.Ldebug_info0
+ 3845 000a 04       		.byte	0x4
+ 3846 000b 00       		.byte	0
+ 3847 000c 0000     		.2byte	0
+ 3848 000e 0000     		.2byte	0
+ 3849 0010 00000000 		.4byte	.LFB61
+ 3850 0014 22000000 		.4byte	.LFE61-.LFB61
+ 3851 0018 00000000 		.4byte	.LFB62
+ 3852 001c 0C000000 		.4byte	.LFE62-.LFB62
+ 3853 0020 00000000 		.4byte	.LFB63
+ 3854 0024 84000000 		.4byte	.LFE63-.LFB63
+ 3855 0028 00000000 		.4byte	.LFB64
+ 3856 002c D0000000 		.4byte	.LFE64-.LFB64
+ 3857 0030 00000000 		.4byte	.LFB65
+ 3858 0034 08020000 		.4byte	.LFE65-.LFB65
+ 3859 0038 00000000 		.4byte	.LFB66
+ 3860 003c 0C000000 		.4byte	.LFE66-.LFB66
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 81
+
+
+ 3861 0040 00000000 		.4byte	.LFB67
+ 3862 0044 20000000 		.4byte	.LFE67-.LFB67
+ 3863 0048 00000000 		.4byte	.LFB68
+ 3864 004c 28000000 		.4byte	.LFE68-.LFB68
+ 3865 0050 00000000 		.4byte	.LFB71
+ 3866 0054 10000000 		.4byte	.LFE71-.LFB71
+ 3867 0058 00000000 		.4byte	.LFB73
+ 3868 005c 24000000 		.4byte	.LFE73-.LFB73
+ 3869 0060 00000000 		.4byte	.LFB74
+ 3870 0064 14000000 		.4byte	.LFE74-.LFB74
+ 3871 0068 00000000 		.4byte	.LFB69
+ 3872 006c A0000000 		.4byte	.LFE69-.LFB69
+ 3873 0070 00000000 		.4byte	.LFB70
+ 3874 0074 30000000 		.4byte	.LFE70-.LFB70
+ 3875 0078 00000000 		.4byte	0
+ 3876 007c 00000000 		.4byte	0
+ 3877              		.section	.debug_ranges,"",%progbits
+ 3878              	.Ldebug_ranges0:
+ 3879 0000 10000000 		.4byte	.LBB2
+ 3880 0004 AC000000 		.4byte	.LBE2
+ 3881 0008 C6000000 		.4byte	.LBB4
+ 3882 000c C8000000 		.4byte	.LBE4
+ 3883 0010 00000000 		.4byte	0
+ 3884 0014 00000000 		.4byte	0
+ 3885 0018 18000000 		.4byte	.LBB5
+ 3886 001c AA010000 		.4byte	.LBE5
+ 3887 0020 E4010000 		.4byte	.LBB7
+ 3888 0024 F6010000 		.4byte	.LBE7
+ 3889 0028 00000000 		.4byte	0
+ 3890 002c 00000000 		.4byte	0
+ 3891 0030 0A000000 		.4byte	.LBB8
+ 3892 0034 0C000000 		.4byte	.LBE8
+ 3893 0038 0E000000 		.4byte	.LBB9
+ 3894 003c 2C000000 		.4byte	.LBE9
+ 3895 0040 00000000 		.4byte	0
+ 3896 0044 00000000 		.4byte	0
+ 3897 0048 00000000 		.4byte	.LFB61
+ 3898 004c 22000000 		.4byte	.LFE61
+ 3899 0050 00000000 		.4byte	.LFB62
+ 3900 0054 0C000000 		.4byte	.LFE62
+ 3901 0058 00000000 		.4byte	.LFB63
+ 3902 005c 84000000 		.4byte	.LFE63
+ 3903 0060 00000000 		.4byte	.LFB64
+ 3904 0064 D0000000 		.4byte	.LFE64
+ 3905 0068 00000000 		.4byte	.LFB65
+ 3906 006c 08020000 		.4byte	.LFE65
+ 3907 0070 00000000 		.4byte	.LFB66
+ 3908 0074 0C000000 		.4byte	.LFE66
+ 3909 0078 00000000 		.4byte	.LFB67
+ 3910 007c 20000000 		.4byte	.LFE67
+ 3911 0080 00000000 		.4byte	.LFB68
+ 3912 0084 28000000 		.4byte	.LFE68
+ 3913 0088 00000000 		.4byte	.LFB71
+ 3914 008c 10000000 		.4byte	.LFE71
+ 3915 0090 00000000 		.4byte	.LFB73
+ 3916 0094 24000000 		.4byte	.LFE73
+ 3917 0098 00000000 		.4byte	.LFB74
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 82
+
+
+ 3918 009c 14000000 		.4byte	.LFE74
+ 3919 00a0 00000000 		.4byte	.LFB69
+ 3920 00a4 A0000000 		.4byte	.LFE69
+ 3921 00a8 00000000 		.4byte	.LFB70
+ 3922 00ac 30000000 		.4byte	.LFE70
+ 3923 00b0 00000000 		.4byte	0
+ 3924 00b4 00000000 		.4byte	0
+ 3925              		.section	.debug_line,"",%progbits
+ 3926              	.Ldebug_line0:
+ 3927 0000 2C040000 		.section	.debug_str,"MS",%progbits,1
+ 3927      02007201 
+ 3927      00000201 
+ 3927      FB0E0D00 
+ 3927      01010101 
+ 3928              	.LASF63:
+ 3929 0000 44454255 		.ascii	"DEBUG_printf\000"
+ 3929      475F7072 
+ 3929      696E7466 
+ 3929      00
+ 3930              	.LASF49:
+ 3931 000d 4765744A 		.ascii	"GetJSON_Token_String\000"
+ 3931      534F4E5F 
+ 3931      546F6B65 
+ 3931      6E5F5374 
+ 3931      72696E67 
+ 3932              	.LASF55:
+ 3933 0022 6E4C656E 		.ascii	"nLength\000"
+ 3933      67746800 
+ 3934              	.LASF15:
+ 3935 002a 73697A65 		.ascii	"size_t\000"
+ 3935      5F7400
+ 3936              	.LASF31:
+ 3937 0031 6A736D6E 		.ascii	"jsmntok\000"
+ 3937      746F6B00 
+ 3938              	.LASF41:
+ 3939 0039 6E756D5F 		.ascii	"num_tokens\000"
+ 3939      746F6B65 
+ 3939      6E7300
+ 3940              	.LASF21:
+ 3941 0044 4A534D4E 		.ascii	"JSMN_UNDEFINED\000"
+ 3941      5F554E44 
+ 3941      4546494E 
+ 3941      454400
+ 3942              	.LASF51:
+ 3943 0053 62756666 		.ascii	"buff\000"
+ 3943      00
+ 3944              	.LASF59:
+ 3945 0058 675F754A 		.ascii	"g_uJSONStringCount\000"
+ 3945      534F4E53 
+ 3945      7472696E 
+ 3945      67436F75 
+ 3945      6E7400
+ 3946              	.LASF58:
+ 3947 006b 675F754A 		.ascii	"g_uJSONCount\000"
+ 3947      534F4E43 
+ 3947      6F756E74 
+ 3947      00
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 83
+
+
+ 3948              	.LASF2:
+ 3949 0078 73686F72 		.ascii	"short int\000"
+ 3949      7420696E 
+ 3949      7400
+ 3950              	.LASF44:
+ 3951 0082 6A736D6E 		.ascii	"jsmn_parse_primitive\000"
+ 3951      5F706172 
+ 3951      73655F70 
+ 3951      72696D69 
+ 3951      74697665 
+ 3952              	.LASF10:
+ 3953 0097 75696E74 		.ascii	"uint16\000"
+ 3953      313600
+ 3954              	.LASF66:
+ 3955 009e 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 3955      43313120 
+ 3955      352E342E 
+ 3955      31203230 
+ 3955      31363036 
+ 3956 00d1 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 3956      20726576 
+ 3956      6973696F 
+ 3956      6E203233 
+ 3956      37373135 
+ 3957 0104 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 3957      66756E63 
+ 3957      74696F6E 
+ 3957      2D736563 
+ 3957      74696F6E 
+ 3958              	.LASF24:
+ 3959 012c 4A534D4E 		.ascii	"JSMN_STRING\000"
+ 3959      5F535452 
+ 3959      494E4700 
+ 3960              	.LASF39:
+ 3961 0138 70617273 		.ascii	"parser\000"
+ 3961      657200
+ 3962              	.LASF9:
+ 3963 013f 75696E74 		.ascii	"uint8\000"
+ 3963      3800
+ 3964              	.LASF47:
+ 3965 0145 6A736D6E 		.ascii	"jsmn_parse\000"
+ 3965      5F706172 
+ 3965      736500
+ 3966              	.LASF19:
+ 3967 0150 706F735F 		.ascii	"pos_X\000"
+ 3967      5800
+ 3968              	.LASF20:
+ 3969 0156 706F735F 		.ascii	"pos_Y\000"
+ 3969      5900
+ 3970              	.LASF0:
+ 3971 015c 7369676E 		.ascii	"signed char\000"
+ 3971      65642063 
+ 3971      68617200 
+ 3972              	.LASF12:
+ 3973 0168 666C6F61 		.ascii	"float\000"
+ 3973      7400
+ 3974              	.LASF6:
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 84
+
+
+ 3975 016e 6C6F6E67 		.ascii	"long long int\000"
+ 3975      206C6F6E 
+ 3975      6720696E 
+ 3975      7400
+ 3976              	.LASF57:
+ 3977 017c 675F624A 		.ascii	"g_bJSONStart\000"
+ 3977      534F4E53 
+ 3977      74617274 
+ 3977      00
+ 3978              	.LASF23:
+ 3979 0189 4A534D4E 		.ascii	"JSMN_ARRAY\000"
+ 3979      5F415252 
+ 3979      415900
+ 3980              	.LASF29:
+ 3981 0194 4A534D4E 		.ascii	"JSMN_ERROR_PART\000"
+ 3981      5F455252 
+ 3981      4F525F50 
+ 3981      41525400 
+ 3982              	.LASF73:
+ 3983 01a4 72657365 		.ascii	"resetCharJSON\000"
+ 3983      74436861 
+ 3983      724A534F 
+ 3983      4E00
+ 3984              	.LASF61:
+ 3985 01b2 50617261 		.ascii	"Param\000"
+ 3985      6D00
+ 3986              	.LASF17:
+ 3987 01b8 73697A65 		.ascii	"sizetype\000"
+ 3987      74797065 
+ 3987      00
+ 3988              	.LASF42:
+ 3989 01c1 746F6B65 		.ascii	"token\000"
+ 3989      6E00
+ 3990              	.LASF1:
+ 3991 01c7 756E7369 		.ascii	"unsigned char\000"
+ 3991      676E6564 
+ 3991      20636861 
+ 3991      7200
+ 3992              	.LASF45:
+ 3993 01d5 6A736D6E 		.ascii	"jsmn_parse_string\000"
+ 3993      5F706172 
+ 3993      73655F73 
+ 3993      7472696E 
+ 3993      6700
+ 3994              	.LASF16:
+ 3995 01e7 6C6F6E67 		.ascii	"long double\000"
+ 3995      20646F75 
+ 3995      626C6500 
+ 3996              	.LASF60:
+ 3997 01f3 675F624C 		.ascii	"g_bLastJSON\000"
+ 3997      6173744A 
+ 3997      534F4E00 
+ 3998              	.LASF70:
+ 3999 01ff 6A736D6E 		.ascii	"jsmn_fill_token\000"
+ 3999      5F66696C 
+ 3999      6C5F746F 
+ 3999      6B656E00 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 85
+
+
+ 4000              	.LASF28:
+ 4001 020f 4A534D4E 		.ascii	"JSMN_ERROR_INVAL\000"
+ 4001      5F455252 
+ 4001      4F525F49 
+ 4001      4E56414C 
+ 4001      00
+ 4002              	.LASF64:
+ 4003 0220 73707269 		.ascii	"sprintf\000"
+ 4003      6E746600 
+ 4004              	.LASF25:
+ 4005 0228 4A534D4E 		.ascii	"JSMN_PRIMITIVE\000"
+ 4005      5F505249 
+ 4005      4D495449 
+ 4005      564500
+ 4006              	.LASF37:
+ 4007 0237 746F6B6E 		.ascii	"toknext\000"
+ 4007      65787400 
+ 4008              	.LASF7:
+ 4009 023f 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 4009      206C6F6E 
+ 4009      6720756E 
+ 4009      7369676E 
+ 4009      65642069 
+ 4010              	.LASF32:
+ 4011 0256 74797065 		.ascii	"type\000"
+ 4011      00
+ 4012              	.LASF8:
+ 4013 025b 756E7369 		.ascii	"unsigned int\000"
+ 4013      676E6564 
+ 4013      20696E74 
+ 4013      00
+ 4014              	.LASF5:
+ 4015 0268 6C6F6E67 		.ascii	"long unsigned int\000"
+ 4015      20756E73 
+ 4015      69676E65 
+ 4015      6420696E 
+ 4015      7400
+ 4016              	.LASF50:
+ 4017 027a 675F4A53 		.ascii	"g_JSONString\000"
+ 4017      4F4E5374 
+ 4017      72696E67 
+ 4017      00
+ 4018              	.LASF38:
+ 4019 0287 746F6B73 		.ascii	"toksuper\000"
+ 4019      75706572 
+ 4019      00
+ 4020              	.LASF33:
+ 4021 0290 73746172 		.ascii	"start\000"
+ 4021      7400
+ 4022              	.LASF3:
+ 4023 0296 73686F72 		.ascii	"short unsigned int\000"
+ 4023      7420756E 
+ 4023      7369676E 
+ 4023      65642069 
+ 4023      6E7400
+ 4024              	.LASF72:
+ 4025 02a9 6A736D6E 		.ascii	"jsmn_init\000"
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 86
+
+
+ 4025      5F696E69 
+ 4025      7400
+ 4026              	.LASF27:
+ 4027 02b3 4A534D4E 		.ascii	"JSMN_ERROR_NOMEM\000"
+ 4027      5F455252 
+ 4027      4F525F4E 
+ 4027      4F4D454D 
+ 4027      00
+ 4028              	.LASF53:
+ 4029 02c4 70617273 		.ascii	"parsingReceivedData\000"
+ 4029      696E6752 
+ 4029      65636569 
+ 4029      76656444 
+ 4029      61746100 
+ 4030              	.LASF14:
+ 4031 02d8 63686172 		.ascii	"char\000"
+ 4031      00
+ 4032              	.LASF4:
+ 4033 02dd 6C6F6E67 		.ascii	"long int\000"
+ 4033      20696E74 
+ 4033      00
+ 4034              	.LASF65:
+ 4035 02e6 7374726C 		.ascii	"strlen\000"
+ 4035      656E00
+ 4036              	.LASF69:
+ 4037 02ed 6A736D6E 		.ascii	"jsmnerr\000"
+ 4037      65727200 
+ 4038              	.LASF74:
+ 4039 02f5 7072696E 		.ascii	"printJSON\000"
+ 4039      744A534F 
+ 4039      4E00
+ 4040              	.LASF30:
+ 4041 02ff 73506172 		.ascii	"sParameter\000"
+ 4041      616D6574 
+ 4041      657200
+ 4042              	.LASF54:
+ 4043 030a 64617461 		.ascii	"data\000"
+ 4043      00
+ 4044              	.LASF52:
+ 4045 030f 70757368 		.ascii	"pushJSON\000"
+ 4045      4A534F4E 
+ 4045      00
+ 4046              	.LASF35:
+ 4047 0318 6A736D6E 		.ascii	"jsmntok_t\000"
+ 4047      746F6B5F 
+ 4047      7400
+ 4048              	.LASF75:
+ 4049 0322 4A534F4E 		.ascii	"JSONParse\000"
+ 4049      50617273 
+ 4049      6500
+ 4050              	.LASF11:
+ 4051 032c 75696E74 		.ascii	"uint32\000"
+ 4051      333200
+ 4052              	.LASF43:
+ 4053 0333 6A736D6E 		.ascii	"jsmn_alloc_token\000"
+ 4053      5F616C6C 
+ 4053      6F635F74 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 87
+
+
+ 4053      6F6B656E 
+ 4053      00
+ 4054              	.LASF36:
+ 4055 0344 6A736D6E 		.ascii	"jsmn_parser\000"
+ 4055      5F706172 
+ 4055      73657200 
+ 4056              	.LASF13:
+ 4057 0350 646F7562 		.ascii	"double\000"
+ 4057      6C6500
+ 4058              	.LASF18:
+ 4059 0357 73746174 		.ascii	"stat_TC_INT\000"
+ 4059      5F54435F 
+ 4059      494E5400 
+ 4060              	.LASF34:
+ 4061 0363 73697A65 		.ascii	"size\000"
+ 4061      00
+ 4062              	.LASF71:
+ 4063 0368 666F756E 		.ascii	"found\000"
+ 4063      6400
+ 4064              	.LASF40:
+ 4065 036e 746F6B65 		.ascii	"tokens\000"
+ 4065      6E7300
+ 4066              	.LASF46:
+ 4067 0375 636F756E 		.ascii	"count\000"
+ 4067      7400
+ 4068              	.LASF62:
+ 4069 037b 675F6E53 		.ascii	"g_nSizeOfJONString\000"
+ 4069      697A654F 
+ 4069      664A4F4E 
+ 4069      53747269 
+ 4069      6E6700
+ 4070              	.LASF26:
+ 4071 038e 6A736D6E 		.ascii	"jsmntype_t\000"
+ 4071      74797065 
+ 4071      5F7400
+ 4072              	.LASF56:
+ 4073 0399 754C6173 		.ascii	"uLastStat\000"
+ 4073      74537461 
+ 4073      7400
+ 4074              	.LASF68:
+ 4075 03a3 443A5C44 		.ascii	"D:\\DATA\\IoT\\TouchIoT-Integrated\\TrimCount\\Desi"
+ 4075      4154415C 
+ 4075      496F545C 
+ 4075      546F7563 
+ 4075      68496F54 
+ 4076 03d1 676E2E63 		.ascii	"gn.cydsn\000"
+ 4076      7964736E 
+ 4076      00
+ 4077              	.LASF67:
+ 4078 03da 4A534F4E 		.ascii	"JSONParser.c\000"
+ 4078      50617273 
+ 4078      65722E63 
+ 4078      00
+ 4079              	.LASF22:
+ 4080 03e7 4A534D4E 		.ascii	"JSMN_OBJECT\000"
+ 4080      5F4F424A 
+ 4080      45435400 
+ARM GAS  C:\Users\theGu\AppData\Local\Temp\ccrdky73.s 			page 88
+
+
+ 4081              	.LASF48:
+ 4082 03f3 70757368 		.ascii	"pushCharJSON\000"
+ 4082      43686172 
+ 4082      4A534F4E 
+ 4082      00
+ 4083              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

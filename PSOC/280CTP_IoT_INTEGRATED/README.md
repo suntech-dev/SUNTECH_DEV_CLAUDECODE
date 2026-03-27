@@ -1,10 +1,10 @@
 # 280CTP_IoT_INTEGRATED 프로젝트 분석 문서
 
 > 최초 작성: 2026-03-09
-> 분석 버전: V1_BLACK_CPU (PATTERN_MACHINE 전용)
-> 마지막 빌드: 2026-03-17 (성공 — bootloader + Design 순차 빌드)
-> 마지막 코드 개선: 2026-03-17 (ADC_SAR_Seq TopDesign 제거 + currentSensor.c 프로젝트 제거)
-> 마지막 업데이트: 2026-03-24 (IBM VGA 계열 폰트 5종 추가, LCD 렌더러 non-8-aligned 수정)
+> 분석 버전: V1_BLACK_CPU / V1_EMBROIDERY_S (파생 버전 포함)
+> 마지막 빌드: 2026-03-26 (EMBROIDERY_S V1 성공 — Flash 45.7% / SRAM 84.6%)
+> 마지막 코드 개선: 2026-03-27 (EMBROIDERY_S LCD UART TEST 헤더 타이틀 잔류 버그 수정)
+> 마지막 업데이트: 2026-03-27 (EMBROIDERY_S V1 파생 버전 추가 — 자수기 전용 세미콜론 UART 파서)
 
 ---
 
@@ -37,7 +37,13 @@ LCD 터치 디스플레이를 통해 작업 지시, 가동 현황, 불량 관리
 
 ```
 280CTP_IoT_INTEGRATED/
-├── 280CTP_IoT_INTEGRATED_V1_BLACK_CPU/          # V1 - PATTERN_MACHINE 전용 (2026.03) ← 최신
+├── 280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S/       # V1 파생 — 자수기 전용 (2026.03) ← 최신 파생
+│   ├── Project/
+│   │   └── Design.cydsn/                        # 세미콜론 UART 파서 + uartTestMenu 신규
+│   ├── SuntechIoTConfig_V1/
+│   └── EMBROIDERY_PLAN.md                       # 구현 계획 및 버그 수정 이력 문서
+│
+├── 280CTP_IoT_INTEGRATED_V1_BLACK_CPU/          # V1 - PATTERN_MACHINE 전용 (2026.03)
 │   ├── Project/
 │   │   ├── Design.cydsn/                        # SEWING_MACHINE/전류센서 제거 버전
 │   │   └── bootloader.cydsn/
@@ -503,6 +509,8 @@ bootloader.cydsn/
 | 2026-03-10 | 이슈 #13 — `server.h` `DEFAULT_SERVER_HOST` 소문자 → 대소문자 수정 (`CTP280_API`), `andonApi.c` `initAndon()` API 순서 재정렬 (start 우선) |
 | 2026-03-10 | 이슈 #14 — `WIFI.c` MIB 타임아웃 반복 방지 (수정 1) + IDLE 상태 MIB 응답 처리로 WiFi 미연결 아이콘 버그 수정 (수정 2) |
 | 2026-03-17 | V1_BLACK_CPU — PATTERN_MACHINE 전용 버전 분리 (SEWING/전류센서 제거, ADC_SAR_Seq TopDesign 제거) |
+| 2026-03-26 | V1_EMBROIDERY_S — 자수기 전용 파생 버전 신규 생성 (세미콜론 UART 파서, embThreadBreakage 필드, UART TEST 뷰어) |
+| 2026-03-27 | V1_EMBROIDERY_S — echo 루프백 버그 수정 (DBG printf 제거, index=0 숫자 필터), LCD 타이틀 잔류 버그 수정 (DrawHeader 복원) |
 | 2026-03-09 | V1 최초 문서 분석 — 이슈 목록 작성 |
 
 ---
@@ -579,6 +587,8 @@ bootloader.cydsn/
 | 2026-03-17 | V1_BLACK_CPU | 신규 | PATTERN_MACHINE 전용 BLACK CPU 버전 분리 (SEWING/전류센서 제거) |
 | 2026-03-23 | V1_BLACK_CPU | 정리 | OTA UPDATE 코드 전체 제거 (otaMenu, WIFI OTA 케이스, widget 배지, manageMenu 노드) |
 | 2026-03-24 | V1_BLACK_CPU | 기능 | IBM VGA 계열 폰트 5종 추가 (Font8x16/12x16/10x20/14x24/16x24), LCD 렌더러 non-8-aligned 수정, downtime 리스트 Font10x20 적용 |
+| 2026-03-26 | V1_EMBROIDERY_S | 신규 | BLACK_CPU 기반 자수기 전용 파생 버전 — 세미콜론 UART 파서, embThreadBreakageQty 필드, UART TEST 뷰어, send_eCount API, log_embroidery 뷰어 |
+| 2026-03-27 | V1_EMBROIDERY_S | 수정 | echo 루프백 버그(DBG printf 제거·index=0 숫자 필터), LCD UART TEST 헤더 타이틀 잔류 버그(DrawHeader 복원) 수정 |
 
 ---
 

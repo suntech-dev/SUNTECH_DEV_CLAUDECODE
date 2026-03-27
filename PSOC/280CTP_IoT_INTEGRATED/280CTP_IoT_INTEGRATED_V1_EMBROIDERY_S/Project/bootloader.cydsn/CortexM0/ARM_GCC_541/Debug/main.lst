@@ -1,0 +1,895 @@
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc2bOclE.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.global	__aeabi_uidivmod
+  20              		.section	.text.SysTickISRCallback,"ax",%progbits
+  21              		.align	2
+  22              		.global	SysTickISRCallback
+  23              		.code	16
+  24              		.thumb_func
+  25              		.type	SysTickISRCallback, %function
+  26              	SysTickISRCallback:
+  27              	.LFB34:
+  28              		.file 1 "main.c"
+   1:main.c        **** /* ========================================
+   2:main.c        ****  *
+   3:main.c        ****  * Copyright YOUR COMPANY, THE YEAR
+   4:main.c        ****  * All Rights Reserved
+   5:main.c        ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:main.c        ****  *
+   7:main.c        ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:main.c        ****  * WHICH IS THE PROPERTY OF your company.
+   9:main.c        ****  *
+  10:main.c        ****  * ========================================
+  11:main.c        **** */
+  12:main.c        **** #include "project.h"
+  13:main.c        **** 
+  14:main.c        **** unsigned long int timerCount =0;
+  15:main.c        **** 
+  16:main.c        **** void SysTickISRCallback(void)
+  17:main.c        **** { 
+  29              		.loc 1 17 0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  18:main.c        ****     timerCount++;
+  37              		.loc 1 18 0
+  38 0002 084B     		ldr	r3, .L3
+  39 0004 1A68     		ldr	r2, [r3]
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc2bOclE.s 			page 2
+
+
+  40 0006 501C     		adds	r0, r2, #1
+  41 0008 1860     		str	r0, [r3]
+  19:main.c        ****     
+  20:main.c        ****     if((timerCount % 100) == 0) LED_Write(~LED_Read());    
+  42              		.loc 1 20 0
+  43 000a 6421     		movs	r1, #100
+  44 000c FFF7FEFF 		bl	__aeabi_uidivmod
+  45              	.LVL0:
+  46 0010 0029     		cmp	r1, #0
+  47 0012 05D1     		bne	.L1
+  48              		.loc 1 20 0 is_stmt 0 discriminator 1
+  49 0014 FFF7FEFF 		bl	LED_Read
+  50              	.LVL1:
+  51 0018 C043     		mvns	r0, r0
+  52 001a C0B2     		uxtb	r0, r0
+  53 001c FFF7FEFF 		bl	LED_Write
+  54              	.LVL2:
+  55              	.L1:
+  21:main.c        **** }
+  56              		.loc 1 21 0 is_stmt 1
+  57              		@ sp needed
+  58 0020 10BD     		pop	{r4, pc}
+  59              	.L4:
+  60 0022 C046     		.align	2
+  61              	.L3:
+  62 0024 00000000 		.word	.LANCHOR0
+  63              		.cfi_endproc
+  64              	.LFE34:
+  65              		.size	SysTickISRCallback, .-SysTickISRCallback
+  66              		.section	.text.initSysTick,"ax",%progbits
+  67              		.align	2
+  68              		.global	initSysTick
+  69              		.code	16
+  70              		.thumb_func
+  71              		.type	initSysTick, %function
+  72              	initSysTick:
+  73              	.LFB35:
+  22:main.c        **** 
+  23:main.c        **** void initSysTick()
+  24:main.c        **** {
+  74              		.loc 1 24 0
+  75              		.cfi_startproc
+  76              		@ args = 0, pretend = 0, frame = 0
+  77              		@ frame_needed = 0, uses_anonymous_args = 0
+  78 0000 10B5     		push	{r4, lr}
+  79              		.cfi_def_cfa_offset 8
+  80              		.cfi_offset 4, -8
+  81              		.cfi_offset 14, -4
+  25:main.c        ****     CySysTickStart();
+  82              		.loc 1 25 0
+  83 0002 FFF7FEFF 		bl	CySysTickStart
+  84              	.LVL3:
+  26:main.c        ****     uint32 i;
+  27:main.c        ****     
+  28:main.c        ****     /* Find unused callback slot and assign the callback. */
+  29:main.c        ****     for (i = 0u; i < CY_SYS_SYST_NUM_OF_CALLBACKS; ++i)
+  85              		.loc 1 29 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc2bOclE.s 			page 3
+
+
+  86 0006 0024     		movs	r4, #0
+  87 0008 0AE0     		b	.L6
+  88              	.LVL4:
+  89              	.L9:
+  30:main.c        ****     {
+  31:main.c        ****         if (CySysTickGetCallback(i) == NULL)
+  90              		.loc 1 31 0
+  91 000a 2000     		movs	r0, r4
+  92 000c FFF7FEFF 		bl	CySysTickGetCallback
+  93              	.LVL5:
+  94 0010 0028     		cmp	r0, #0
+  95 0012 04D1     		bne	.L7
+  32:main.c        ****         {
+  33:main.c        ****             /* Set callback */
+  34:main.c        ****             CySysTickSetCallback(i, SysTickISRCallback);
+  96              		.loc 1 34 0
+  97 0014 0449     		ldr	r1, .L10
+  98 0016 2000     		movs	r0, r4
+  99 0018 FFF7FEFF 		bl	CySysTickSetCallback
+ 100              	.LVL6:
+  35:main.c        ****             break;
+ 101              		.loc 1 35 0
+ 102 001c 02E0     		b	.L5
+ 103              	.L7:
+  29:main.c        ****     {
+ 104              		.loc 1 29 0 discriminator 2
+ 105 001e 0134     		adds	r4, r4, #1
+ 106              	.LVL7:
+ 107              	.L6:
+  29:main.c        ****     {
+ 108              		.loc 1 29 0 is_stmt 0 discriminator 1
+ 109 0020 042C     		cmp	r4, #4
+ 110 0022 F2D9     		bls	.L9
+ 111              	.L5:
+  36:main.c        ****         }
+  37:main.c        ****     }
+  38:main.c        **** }
+ 112              		.loc 1 38 0 is_stmt 1
+ 113              		@ sp needed
+ 114              	.LVL8:
+ 115 0024 10BD     		pop	{r4, pc}
+ 116              	.L11:
+ 117 0026 C046     		.align	2
+ 118              	.L10:
+ 119 0028 00000000 		.word	SysTickISRCallback
+ 120              		.cfi_endproc
+ 121              	.LFE35:
+ 122              		.size	initSysTick, .-initSysTick
+ 123              		.section	.text.main,"ax",%progbits
+ 124              		.align	2
+ 125              		.global	main
+ 126              		.code	16
+ 127              		.thumb_func
+ 128              		.type	main, %function
+ 129              	main:
+ 130              	.LFB36:
+  39:main.c        **** 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc2bOclE.s 			page 4
+
+
+  40:main.c        **** int main(void)
+  41:main.c        **** {
+ 131              		.loc 1 41 0
+ 132              		.cfi_startproc
+ 133              		@ Volatile: function does not return.
+ 134              		@ args = 0, pretend = 0, frame = 0
+ 135              		@ frame_needed = 0, uses_anonymous_args = 0
+ 136 0000 10B5     		push	{r4, lr}
+ 137              		.cfi_def_cfa_offset 8
+ 138              		.cfi_offset 4, -8
+ 139              		.cfi_offset 14, -4
+  42:main.c        ****     CyGlobalIntEnable; /* Enable global interrupts. */
+ 140              		.loc 1 42 0
+ 141              		.syntax divided
+ 142              	@ 42 "main.c" 1
+ 143 0002 62B6     		CPSIE   i
+ 144              	@ 0 "" 2
+  43:main.c        ****  
+  44:main.c        ****     initSysTick();
+ 145              		.loc 1 44 0
+ 146              		.thumb
+ 147              		.syntax unified
+ 148 0004 FFF7FEFF 		bl	initSysTick
+ 149              	.LVL9:
+  45:main.c        ****    
+  46:main.c        ****     Bootloader_Start();
+ 150              		.loc 1 46 0
+ 151 0008 FFF7FEFF 		bl	Bootloader_Start
+ 152              	.LVL10:
+ 153              	.L13:
+ 154 000c FEE7     		b	.L13
+ 155              		.cfi_endproc
+ 156              	.LFE36:
+ 157              		.size	main, .-main
+ 158              		.global	timerCount
+ 159 000e C046     		.bss
+ 160              		.align	2
+ 161              		.set	.LANCHOR0,. + 0
+ 162              		.type	timerCount, %object
+ 163              		.size	timerCount, 4
+ 164              	timerCount:
+ 165 0000 00000000 		.space	4
+ 166              		.text
+ 167              	.Letext0:
+ 168              		.file 2 "Generated_Source\\PSoC4/LED.h"
+ 169              		.file 3 "Generated_Source\\PSoC4/CyLib.h"
+ 170              		.file 4 "Generated_Source\\PSoC4/Bootloader.h"
+ 171              		.file 5 "Generated_Source\\PSoC4/cytypes.h"
+ 172              		.section	.debug_info,"",%progbits
+ 173              	.Ldebug_info0:
+ 174 0000 9A010000 		.4byte	0x19a
+ 175 0004 0400     		.2byte	0x4
+ 176 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 177 000a 04       		.byte	0x4
+ 178 000b 01       		.uleb128 0x1
+ 179 000c ED000000 		.4byte	.LASF20
+ 180 0010 0C       		.byte	0xc
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc2bOclE.s 			page 5
+
+
+ 181 0011 22000000 		.4byte	.LASF21
+ 182 0015 B1010000 		.4byte	.LASF22
+ 183 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 184 001d 00000000 		.4byte	0
+ 185 0021 00000000 		.4byte	.Ldebug_line0
+ 186 0025 02       		.uleb128 0x2
+ 187 0026 01       		.byte	0x1
+ 188 0027 06       		.byte	0x6
+ 189 0028 8E010000 		.4byte	.LASF0
+ 190 002c 02       		.uleb128 0x2
+ 191 002d 01       		.byte	0x1
+ 192 002e 08       		.byte	0x8
+ 193 002f A6000000 		.4byte	.LASF1
+ 194 0033 02       		.uleb128 0x2
+ 195 0034 02       		.byte	0x2
+ 196 0035 05       		.byte	0x5
+ 197 0036 22020000 		.4byte	.LASF2
+ 198 003a 02       		.uleb128 0x2
+ 199 003b 02       		.byte	0x2
+ 200 003c 07       		.byte	0x7
+ 201 003d 7B010000 		.4byte	.LASF3
+ 202 0041 02       		.uleb128 0x2
+ 203 0042 04       		.byte	0x4
+ 204 0043 05       		.byte	0x5
+ 205 0044 CC000000 		.4byte	.LASF4
+ 206 0048 02       		.uleb128 0x2
+ 207 0049 04       		.byte	0x4
+ 208 004a 07       		.byte	0x7
+ 209 004b 54000000 		.4byte	.LASF5
+ 210 004f 02       		.uleb128 0x2
+ 211 0050 08       		.byte	0x8
+ 212 0051 05       		.byte	0x5
+ 213 0052 00000000 		.4byte	.LASF6
+ 214 0056 02       		.uleb128 0x2
+ 215 0057 08       		.byte	0x8
+ 216 0058 07       		.byte	0x7
+ 217 0059 66000000 		.4byte	.LASF7
+ 218 005d 03       		.uleb128 0x3
+ 219 005e 04       		.byte	0x4
+ 220 005f 05       		.byte	0x5
+ 221 0060 696E7400 		.ascii	"int\000"
+ 222 0064 02       		.uleb128 0x2
+ 223 0065 04       		.byte	0x4
+ 224 0066 07       		.byte	0x7
+ 225 0067 15000000 		.4byte	.LASF8
+ 226 006b 04       		.uleb128 0x4
+ 227 006c 0E000000 		.4byte	.LASF23
+ 228 0070 05       		.byte	0x5
+ 229 0071 FE01     		.2byte	0x1fe
+ 230 0073 48000000 		.4byte	0x48
+ 231 0077 02       		.uleb128 0x2
+ 232 0078 04       		.byte	0x4
+ 233 0079 04       		.byte	0x4
+ 234 007a AB010000 		.4byte	.LASF9
+ 235 007e 02       		.uleb128 0x2
+ 236 007f 08       		.byte	0x8
+ 237 0080 04       		.byte	0x4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc2bOclE.s 			page 6
+
+
+ 238 0081 E6000000 		.4byte	.LASF10
+ 239 0085 02       		.uleb128 0x2
+ 240 0086 01       		.byte	0x1
+ 241 0087 08       		.byte	0x8
+ 242 0088 B4000000 		.4byte	.LASF11
+ 243 008c 02       		.uleb128 0x2
+ 244 008d 08       		.byte	0x8
+ 245 008e 04       		.byte	0x4
+ 246 008f 9A010000 		.4byte	.LASF12
+ 247 0093 02       		.uleb128 0x2
+ 248 0094 04       		.byte	0x4
+ 249 0095 07       		.byte	0x7
+ 250 0096 2C020000 		.4byte	.LASF13
+ 251 009a 05       		.uleb128 0x5
+ 252 009b B9000000 		.4byte	.LASF24
+ 253 009f 01       		.byte	0x1
+ 254 00a0 10       		.byte	0x10
+ 255 00a1 00000000 		.4byte	.LFB34
+ 256 00a5 28000000 		.4byte	.LFE34-.LFB34
+ 257 00a9 01       		.uleb128 0x1
+ 258 00aa 9C       		.byte	0x9c
+ 259 00ab C2000000 		.4byte	0xc2
+ 260 00af 06       		.uleb128 0x6
+ 261 00b0 18000000 		.4byte	.LVL1
+ 262 00b4 58010000 		.4byte	0x158
+ 263 00b8 06       		.uleb128 0x6
+ 264 00b9 20000000 		.4byte	.LVL2
+ 265 00bd 63010000 		.4byte	0x163
+ 266 00c1 00       		.byte	0
+ 267 00c2 07       		.uleb128 0x7
+ 268 00c3 3E000000 		.4byte	.LASF25
+ 269 00c7 01       		.byte	0x1
+ 270 00c8 17       		.byte	0x17
+ 271 00c9 00000000 		.4byte	.LFB35
+ 272 00cd 2C000000 		.4byte	.LFE35-.LFB35
+ 273 00d1 01       		.uleb128 0x1
+ 274 00d2 9C       		.byte	0x9c
+ 275 00d3 1B010000 		.4byte	0x11b
+ 276 00d7 08       		.uleb128 0x8
+ 277 00d8 6900     		.ascii	"i\000"
+ 278 00da 01       		.byte	0x1
+ 279 00db 1A       		.byte	0x1a
+ 280 00dc 6B000000 		.4byte	0x6b
+ 281 00e0 00000000 		.4byte	.LLST0
+ 282 00e4 06       		.uleb128 0x6
+ 283 00e5 06000000 		.4byte	.LVL3
+ 284 00e9 6E010000 		.4byte	0x16e
+ 285 00ed 09       		.uleb128 0x9
+ 286 00ee 10000000 		.4byte	.LVL5
+ 287 00f2 7A010000 		.4byte	0x17a
+ 288 00f6 01010000 		.4byte	0x101
+ 289 00fa 0A       		.uleb128 0xa
+ 290 00fb 01       		.uleb128 0x1
+ 291 00fc 50       		.byte	0x50
+ 292 00fd 02       		.uleb128 0x2
+ 293 00fe 74       		.byte	0x74
+ 294 00ff 00       		.sleb128 0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc2bOclE.s 			page 7
+
+
+ 295 0100 00       		.byte	0
+ 296 0101 0B       		.uleb128 0xb
+ 297 0102 1C000000 		.4byte	.LVL6
+ 298 0106 86010000 		.4byte	0x186
+ 299 010a 0A       		.uleb128 0xa
+ 300 010b 01       		.uleb128 0x1
+ 301 010c 50       		.byte	0x50
+ 302 010d 02       		.uleb128 0x2
+ 303 010e 74       		.byte	0x74
+ 304 010f 00       		.sleb128 0
+ 305 0110 0A       		.uleb128 0xa
+ 306 0111 01       		.uleb128 0x1
+ 307 0112 51       		.byte	0x51
+ 308 0113 05       		.uleb128 0x5
+ 309 0114 03       		.byte	0x3
+ 310 0115 00000000 		.4byte	SysTickISRCallback
+ 311 0119 00       		.byte	0
+ 312 011a 00       		.byte	0
+ 313 011b 0C       		.uleb128 0xc
+ 314 011c A6010000 		.4byte	.LASF26
+ 315 0120 01       		.byte	0x1
+ 316 0121 28       		.byte	0x28
+ 317 0122 5D000000 		.4byte	0x5d
+ 318 0126 00000000 		.4byte	.LFB36
+ 319 012a 0E000000 		.4byte	.LFE36-.LFB36
+ 320 012e 01       		.uleb128 0x1
+ 321 012f 9C       		.byte	0x9c
+ 322 0130 47010000 		.4byte	0x147
+ 323 0134 06       		.uleb128 0x6
+ 324 0135 08000000 		.4byte	.LVL9
+ 325 0139 C2000000 		.4byte	0xc2
+ 326 013d 06       		.uleb128 0x6
+ 327 013e 0C000000 		.4byte	.LVL10
+ 328 0142 92010000 		.4byte	0x192
+ 329 0146 00       		.byte	0
+ 330 0147 0D       		.uleb128 0xd
+ 331 0148 9B000000 		.4byte	.LASF27
+ 332 014c 01       		.byte	0x1
+ 333 014d 0E       		.byte	0xe
+ 334 014e 48000000 		.4byte	0x48
+ 335 0152 05       		.uleb128 0x5
+ 336 0153 03       		.byte	0x3
+ 337 0154 00000000 		.4byte	timerCount
+ 338 0158 0E       		.uleb128 0xe
+ 339 0159 92000000 		.4byte	.LASF14
+ 340 015d 92000000 		.4byte	.LASF14
+ 341 0161 02       		.byte	0x2
+ 342 0162 32       		.byte	0x32
+ 343 0163 0E       		.uleb128 0xe
+ 344 0164 4A000000 		.4byte	.LASF15
+ 345 0168 4A000000 		.4byte	.LASF15
+ 346 016c 02       		.byte	0x2
+ 347 016d 33       		.byte	0x33
+ 348 016e 0F       		.uleb128 0xf
+ 349 016f 35020000 		.4byte	.LASF16
+ 350 0173 35020000 		.4byte	.LASF16
+ 351 0177 03       		.byte	0x3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc2bOclE.s 			page 8
+
+
+ 352 0178 0A01     		.2byte	0x10a
+ 353 017a 0F       		.uleb128 0xf
+ 354 017b 7D000000 		.4byte	.LASF17
+ 355 017f 7D000000 		.4byte	.LASF17
+ 356 0183 03       		.byte	0x3
+ 357 0184 1401     		.2byte	0x114
+ 358 0186 0F       		.uleb128 0xf
+ 359 0187 29000000 		.4byte	.LASF18
+ 360 018b 29000000 		.4byte	.LASF18
+ 361 018f 03       		.byte	0x3
+ 362 0190 1301     		.2byte	0x113
+ 363 0192 0E       		.uleb128 0xe
+ 364 0193 D5000000 		.4byte	.LASF19
+ 365 0197 D5000000 		.4byte	.LASF19
+ 366 019b 04       		.byte	0x4
+ 367 019c E6       		.byte	0xe6
+ 368 019d 00       		.byte	0
+ 369              		.section	.debug_abbrev,"",%progbits
+ 370              	.Ldebug_abbrev0:
+ 371 0000 01       		.uleb128 0x1
+ 372 0001 11       		.uleb128 0x11
+ 373 0002 01       		.byte	0x1
+ 374 0003 25       		.uleb128 0x25
+ 375 0004 0E       		.uleb128 0xe
+ 376 0005 13       		.uleb128 0x13
+ 377 0006 0B       		.uleb128 0xb
+ 378 0007 03       		.uleb128 0x3
+ 379 0008 0E       		.uleb128 0xe
+ 380 0009 1B       		.uleb128 0x1b
+ 381 000a 0E       		.uleb128 0xe
+ 382 000b 55       		.uleb128 0x55
+ 383 000c 17       		.uleb128 0x17
+ 384 000d 11       		.uleb128 0x11
+ 385 000e 01       		.uleb128 0x1
+ 386 000f 10       		.uleb128 0x10
+ 387 0010 17       		.uleb128 0x17
+ 388 0011 00       		.byte	0
+ 389 0012 00       		.byte	0
+ 390 0013 02       		.uleb128 0x2
+ 391 0014 24       		.uleb128 0x24
+ 392 0015 00       		.byte	0
+ 393 0016 0B       		.uleb128 0xb
+ 394 0017 0B       		.uleb128 0xb
+ 395 0018 3E       		.uleb128 0x3e
+ 396 0019 0B       		.uleb128 0xb
+ 397 001a 03       		.uleb128 0x3
+ 398 001b 0E       		.uleb128 0xe
+ 399 001c 00       		.byte	0
+ 400 001d 00       		.byte	0
+ 401 001e 03       		.uleb128 0x3
+ 402 001f 24       		.uleb128 0x24
+ 403 0020 00       		.byte	0
+ 404 0021 0B       		.uleb128 0xb
+ 405 0022 0B       		.uleb128 0xb
+ 406 0023 3E       		.uleb128 0x3e
+ 407 0024 0B       		.uleb128 0xb
+ 408 0025 03       		.uleb128 0x3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc2bOclE.s 			page 9
+
+
+ 409 0026 08       		.uleb128 0x8
+ 410 0027 00       		.byte	0
+ 411 0028 00       		.byte	0
+ 412 0029 04       		.uleb128 0x4
+ 413 002a 16       		.uleb128 0x16
+ 414 002b 00       		.byte	0
+ 415 002c 03       		.uleb128 0x3
+ 416 002d 0E       		.uleb128 0xe
+ 417 002e 3A       		.uleb128 0x3a
+ 418 002f 0B       		.uleb128 0xb
+ 419 0030 3B       		.uleb128 0x3b
+ 420 0031 05       		.uleb128 0x5
+ 421 0032 49       		.uleb128 0x49
+ 422 0033 13       		.uleb128 0x13
+ 423 0034 00       		.byte	0
+ 424 0035 00       		.byte	0
+ 425 0036 05       		.uleb128 0x5
+ 426 0037 2E       		.uleb128 0x2e
+ 427 0038 01       		.byte	0x1
+ 428 0039 3F       		.uleb128 0x3f
+ 429 003a 19       		.uleb128 0x19
+ 430 003b 03       		.uleb128 0x3
+ 431 003c 0E       		.uleb128 0xe
+ 432 003d 3A       		.uleb128 0x3a
+ 433 003e 0B       		.uleb128 0xb
+ 434 003f 3B       		.uleb128 0x3b
+ 435 0040 0B       		.uleb128 0xb
+ 436 0041 27       		.uleb128 0x27
+ 437 0042 19       		.uleb128 0x19
+ 438 0043 11       		.uleb128 0x11
+ 439 0044 01       		.uleb128 0x1
+ 440 0045 12       		.uleb128 0x12
+ 441 0046 06       		.uleb128 0x6
+ 442 0047 40       		.uleb128 0x40
+ 443 0048 18       		.uleb128 0x18
+ 444 0049 9642     		.uleb128 0x2116
+ 445 004b 19       		.uleb128 0x19
+ 446 004c 01       		.uleb128 0x1
+ 447 004d 13       		.uleb128 0x13
+ 448 004e 00       		.byte	0
+ 449 004f 00       		.byte	0
+ 450 0050 06       		.uleb128 0x6
+ 451 0051 898201   		.uleb128 0x4109
+ 452 0054 00       		.byte	0
+ 453 0055 11       		.uleb128 0x11
+ 454 0056 01       		.uleb128 0x1
+ 455 0057 31       		.uleb128 0x31
+ 456 0058 13       		.uleb128 0x13
+ 457 0059 00       		.byte	0
+ 458 005a 00       		.byte	0
+ 459 005b 07       		.uleb128 0x7
+ 460 005c 2E       		.uleb128 0x2e
+ 461 005d 01       		.byte	0x1
+ 462 005e 3F       		.uleb128 0x3f
+ 463 005f 19       		.uleb128 0x19
+ 464 0060 03       		.uleb128 0x3
+ 465 0061 0E       		.uleb128 0xe
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc2bOclE.s 			page 10
+
+
+ 466 0062 3A       		.uleb128 0x3a
+ 467 0063 0B       		.uleb128 0xb
+ 468 0064 3B       		.uleb128 0x3b
+ 469 0065 0B       		.uleb128 0xb
+ 470 0066 11       		.uleb128 0x11
+ 471 0067 01       		.uleb128 0x1
+ 472 0068 12       		.uleb128 0x12
+ 473 0069 06       		.uleb128 0x6
+ 474 006a 40       		.uleb128 0x40
+ 475 006b 18       		.uleb128 0x18
+ 476 006c 9742     		.uleb128 0x2117
+ 477 006e 19       		.uleb128 0x19
+ 478 006f 01       		.uleb128 0x1
+ 479 0070 13       		.uleb128 0x13
+ 480 0071 00       		.byte	0
+ 481 0072 00       		.byte	0
+ 482 0073 08       		.uleb128 0x8
+ 483 0074 34       		.uleb128 0x34
+ 484 0075 00       		.byte	0
+ 485 0076 03       		.uleb128 0x3
+ 486 0077 08       		.uleb128 0x8
+ 487 0078 3A       		.uleb128 0x3a
+ 488 0079 0B       		.uleb128 0xb
+ 489 007a 3B       		.uleb128 0x3b
+ 490 007b 0B       		.uleb128 0xb
+ 491 007c 49       		.uleb128 0x49
+ 492 007d 13       		.uleb128 0x13
+ 493 007e 02       		.uleb128 0x2
+ 494 007f 17       		.uleb128 0x17
+ 495 0080 00       		.byte	0
+ 496 0081 00       		.byte	0
+ 497 0082 09       		.uleb128 0x9
+ 498 0083 898201   		.uleb128 0x4109
+ 499 0086 01       		.byte	0x1
+ 500 0087 11       		.uleb128 0x11
+ 501 0088 01       		.uleb128 0x1
+ 502 0089 31       		.uleb128 0x31
+ 503 008a 13       		.uleb128 0x13
+ 504 008b 01       		.uleb128 0x1
+ 505 008c 13       		.uleb128 0x13
+ 506 008d 00       		.byte	0
+ 507 008e 00       		.byte	0
+ 508 008f 0A       		.uleb128 0xa
+ 509 0090 8A8201   		.uleb128 0x410a
+ 510 0093 00       		.byte	0
+ 511 0094 02       		.uleb128 0x2
+ 512 0095 18       		.uleb128 0x18
+ 513 0096 9142     		.uleb128 0x2111
+ 514 0098 18       		.uleb128 0x18
+ 515 0099 00       		.byte	0
+ 516 009a 00       		.byte	0
+ 517 009b 0B       		.uleb128 0xb
+ 518 009c 898201   		.uleb128 0x4109
+ 519 009f 01       		.byte	0x1
+ 520 00a0 11       		.uleb128 0x11
+ 521 00a1 01       		.uleb128 0x1
+ 522 00a2 31       		.uleb128 0x31
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc2bOclE.s 			page 11
+
+
+ 523 00a3 13       		.uleb128 0x13
+ 524 00a4 00       		.byte	0
+ 525 00a5 00       		.byte	0
+ 526 00a6 0C       		.uleb128 0xc
+ 527 00a7 2E       		.uleb128 0x2e
+ 528 00a8 01       		.byte	0x1
+ 529 00a9 3F       		.uleb128 0x3f
+ 530 00aa 19       		.uleb128 0x19
+ 531 00ab 03       		.uleb128 0x3
+ 532 00ac 0E       		.uleb128 0xe
+ 533 00ad 3A       		.uleb128 0x3a
+ 534 00ae 0B       		.uleb128 0xb
+ 535 00af 3B       		.uleb128 0x3b
+ 536 00b0 0B       		.uleb128 0xb
+ 537 00b1 27       		.uleb128 0x27
+ 538 00b2 19       		.uleb128 0x19
+ 539 00b3 49       		.uleb128 0x49
+ 540 00b4 13       		.uleb128 0x13
+ 541 00b5 8701     		.uleb128 0x87
+ 542 00b7 19       		.uleb128 0x19
+ 543 00b8 11       		.uleb128 0x11
+ 544 00b9 01       		.uleb128 0x1
+ 545 00ba 12       		.uleb128 0x12
+ 546 00bb 06       		.uleb128 0x6
+ 547 00bc 40       		.uleb128 0x40
+ 548 00bd 18       		.uleb128 0x18
+ 549 00be 9742     		.uleb128 0x2117
+ 550 00c0 19       		.uleb128 0x19
+ 551 00c1 01       		.uleb128 0x1
+ 552 00c2 13       		.uleb128 0x13
+ 553 00c3 00       		.byte	0
+ 554 00c4 00       		.byte	0
+ 555 00c5 0D       		.uleb128 0xd
+ 556 00c6 34       		.uleb128 0x34
+ 557 00c7 00       		.byte	0
+ 558 00c8 03       		.uleb128 0x3
+ 559 00c9 0E       		.uleb128 0xe
+ 560 00ca 3A       		.uleb128 0x3a
+ 561 00cb 0B       		.uleb128 0xb
+ 562 00cc 3B       		.uleb128 0x3b
+ 563 00cd 0B       		.uleb128 0xb
+ 564 00ce 49       		.uleb128 0x49
+ 565 00cf 13       		.uleb128 0x13
+ 566 00d0 3F       		.uleb128 0x3f
+ 567 00d1 19       		.uleb128 0x19
+ 568 00d2 02       		.uleb128 0x2
+ 569 00d3 18       		.uleb128 0x18
+ 570 00d4 00       		.byte	0
+ 571 00d5 00       		.byte	0
+ 572 00d6 0E       		.uleb128 0xe
+ 573 00d7 2E       		.uleb128 0x2e
+ 574 00d8 00       		.byte	0
+ 575 00d9 3F       		.uleb128 0x3f
+ 576 00da 19       		.uleb128 0x19
+ 577 00db 3C       		.uleb128 0x3c
+ 578 00dc 19       		.uleb128 0x19
+ 579 00dd 6E       		.uleb128 0x6e
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc2bOclE.s 			page 12
+
+
+ 580 00de 0E       		.uleb128 0xe
+ 581 00df 03       		.uleb128 0x3
+ 582 00e0 0E       		.uleb128 0xe
+ 583 00e1 3A       		.uleb128 0x3a
+ 584 00e2 0B       		.uleb128 0xb
+ 585 00e3 3B       		.uleb128 0x3b
+ 586 00e4 0B       		.uleb128 0xb
+ 587 00e5 00       		.byte	0
+ 588 00e6 00       		.byte	0
+ 589 00e7 0F       		.uleb128 0xf
+ 590 00e8 2E       		.uleb128 0x2e
+ 591 00e9 00       		.byte	0
+ 592 00ea 3F       		.uleb128 0x3f
+ 593 00eb 19       		.uleb128 0x19
+ 594 00ec 3C       		.uleb128 0x3c
+ 595 00ed 19       		.uleb128 0x19
+ 596 00ee 6E       		.uleb128 0x6e
+ 597 00ef 0E       		.uleb128 0xe
+ 598 00f0 03       		.uleb128 0x3
+ 599 00f1 0E       		.uleb128 0xe
+ 600 00f2 3A       		.uleb128 0x3a
+ 601 00f3 0B       		.uleb128 0xb
+ 602 00f4 3B       		.uleb128 0x3b
+ 603 00f5 05       		.uleb128 0x5
+ 604 00f6 00       		.byte	0
+ 605 00f7 00       		.byte	0
+ 606 00f8 00       		.byte	0
+ 607              		.section	.debug_loc,"",%progbits
+ 608              	.Ldebug_loc0:
+ 609              	.LLST0:
+ 610 0000 06000000 		.4byte	.LVL3
+ 611 0004 0A000000 		.4byte	.LVL4
+ 612 0008 0200     		.2byte	0x2
+ 613 000a 30       		.byte	0x30
+ 614 000b 9F       		.byte	0x9f
+ 615 000c 0A000000 		.4byte	.LVL4
+ 616 0010 24000000 		.4byte	.LVL8
+ 617 0014 0100     		.2byte	0x1
+ 618 0016 54       		.byte	0x54
+ 619 0017 00000000 		.4byte	0
+ 620 001b 00000000 		.4byte	0
+ 621              		.section	.debug_aranges,"",%progbits
+ 622 0000 2C000000 		.4byte	0x2c
+ 623 0004 0200     		.2byte	0x2
+ 624 0006 00000000 		.4byte	.Ldebug_info0
+ 625 000a 04       		.byte	0x4
+ 626 000b 00       		.byte	0
+ 627 000c 0000     		.2byte	0
+ 628 000e 0000     		.2byte	0
+ 629 0010 00000000 		.4byte	.LFB34
+ 630 0014 28000000 		.4byte	.LFE34-.LFB34
+ 631 0018 00000000 		.4byte	.LFB35
+ 632 001c 2C000000 		.4byte	.LFE35-.LFB35
+ 633 0020 00000000 		.4byte	.LFB36
+ 634 0024 0E000000 		.4byte	.LFE36-.LFB36
+ 635 0028 00000000 		.4byte	0
+ 636 002c 00000000 		.4byte	0
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc2bOclE.s 			page 13
+
+
+ 637              		.section	.debug_ranges,"",%progbits
+ 638              	.Ldebug_ranges0:
+ 639 0000 00000000 		.4byte	.LFB34
+ 640 0004 28000000 		.4byte	.LFE34
+ 641 0008 00000000 		.4byte	.LFB35
+ 642 000c 2C000000 		.4byte	.LFE35
+ 643 0010 00000000 		.4byte	.LFB36
+ 644 0014 0E000000 		.4byte	.LFE36
+ 645 0018 00000000 		.4byte	0
+ 646 001c 00000000 		.4byte	0
+ 647              		.section	.debug_line,"",%progbits
+ 648              	.Ldebug_line0:
+ 649 0000 BB000000 		.section	.debug_str,"MS",%progbits,1
+ 649      02006500 
+ 649      00000201 
+ 649      FB0E0D00 
+ 649      01010101 
+ 650              	.LASF6:
+ 651 0000 6C6F6E67 		.ascii	"long long int\000"
+ 651      206C6F6E 
+ 651      6720696E 
+ 651      7400
+ 652              	.LASF23:
+ 653 000e 75696E74 		.ascii	"uint32\000"
+ 653      333200
+ 654              	.LASF8:
+ 655 0015 756E7369 		.ascii	"unsigned int\000"
+ 655      676E6564 
+ 655      20696E74 
+ 655      00
+ 656              	.LASF21:
+ 657 0022 6D61696E 		.ascii	"main.c\000"
+ 657      2E6300
+ 658              	.LASF18:
+ 659 0029 43795379 		.ascii	"CySysTickSetCallback\000"
+ 659      73546963 
+ 659      6B536574 
+ 659      43616C6C 
+ 659      6261636B 
+ 660              	.LASF25:
+ 661 003e 696E6974 		.ascii	"initSysTick\000"
+ 661      53797354 
+ 661      69636B00 
+ 662              	.LASF15:
+ 663 004a 4C45445F 		.ascii	"LED_Write\000"
+ 663      57726974 
+ 663      6500
+ 664              	.LASF5:
+ 665 0054 6C6F6E67 		.ascii	"long unsigned int\000"
+ 665      20756E73 
+ 665      69676E65 
+ 665      6420696E 
+ 665      7400
+ 666              	.LASF7:
+ 667 0066 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 667      206C6F6E 
+ 667      6720756E 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc2bOclE.s 			page 14
+
+
+ 667      7369676E 
+ 667      65642069 
+ 668              	.LASF17:
+ 669 007d 43795379 		.ascii	"CySysTickGetCallback\000"
+ 669      73546963 
+ 669      6B476574 
+ 669      43616C6C 
+ 669      6261636B 
+ 670              	.LASF14:
+ 671 0092 4C45445F 		.ascii	"LED_Read\000"
+ 671      52656164 
+ 671      00
+ 672              	.LASF27:
+ 673 009b 74696D65 		.ascii	"timerCount\000"
+ 673      72436F75 
+ 673      6E7400
+ 674              	.LASF1:
+ 675 00a6 756E7369 		.ascii	"unsigned char\000"
+ 675      676E6564 
+ 675      20636861 
+ 675      7200
+ 676              	.LASF11:
+ 677 00b4 63686172 		.ascii	"char\000"
+ 677      00
+ 678              	.LASF24:
+ 679 00b9 53797354 		.ascii	"SysTickISRCallback\000"
+ 679      69636B49 
+ 679      53524361 
+ 679      6C6C6261 
+ 679      636B00
+ 680              	.LASF4:
+ 681 00cc 6C6F6E67 		.ascii	"long int\000"
+ 681      20696E74 
+ 681      00
+ 682              	.LASF19:
+ 683 00d5 426F6F74 		.ascii	"Bootloader_Start\000"
+ 683      6C6F6164 
+ 683      65725F53 
+ 683      74617274 
+ 683      00
+ 684              	.LASF10:
+ 685 00e6 646F7562 		.ascii	"double\000"
+ 685      6C6500
+ 686              	.LASF20:
+ 687 00ed 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 687      43313120 
+ 687      352E342E 
+ 687      31203230 
+ 687      31363036 
+ 688 0120 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 688      20726576 
+ 688      6973696F 
+ 688      6E203233 
+ 688      37373135 
+ 689 0153 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 689      66756E63 
+ 689      74696F6E 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc2bOclE.s 			page 15
+
+
+ 689      2D736563 
+ 689      74696F6E 
+ 690              	.LASF3:
+ 691 017b 73686F72 		.ascii	"short unsigned int\000"
+ 691      7420756E 
+ 691      7369676E 
+ 691      65642069 
+ 691      6E7400
+ 692              	.LASF0:
+ 693 018e 7369676E 		.ascii	"signed char\000"
+ 693      65642063 
+ 693      68617200 
+ 694              	.LASF12:
+ 695 019a 6C6F6E67 		.ascii	"long double\000"
+ 695      20646F75 
+ 695      626C6500 
+ 696              	.LASF26:
+ 697 01a6 6D61696E 		.ascii	"main\000"
+ 697      00
+ 698              	.LASF9:
+ 699 01ab 666C6F61 		.ascii	"float\000"
+ 699      7400
+ 700              	.LASF22:
+ 701 01b1 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_INTEGR"
+ 701      554E5445 
+ 701      43485F44 
+ 701      45565F43 
+ 701      4C415544 
+ 702 01e1 41544544 		.ascii	"ATED\\280CTP_IoT_INTEGRATED_V1_BLACK_CPU\\Project\\"
+ 702      5C323830 
+ 702      4354505F 
+ 702      496F545F 
+ 702      494E5445 
+ 703 0211 626F6F74 		.ascii	"bootloader.cydsn\000"
+ 703      6C6F6164 
+ 703      65722E63 
+ 703      7964736E 
+ 703      00
+ 704              	.LASF2:
+ 705 0222 73686F72 		.ascii	"short int\000"
+ 705      7420696E 
+ 705      7400
+ 706              	.LASF13:
+ 707 022c 73697A65 		.ascii	"sizetype\000"
+ 707      74797065 
+ 707      00
+ 708              	.LASF16:
+ 709 0235 43795379 		.ascii	"CySysTickStart\000"
+ 709      73546963 
+ 709      6B537461 
+ 709      727400
+ 710              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

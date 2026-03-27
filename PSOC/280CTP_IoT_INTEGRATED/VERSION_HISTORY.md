@@ -6,6 +6,146 @@
 
 ---
 
+## 280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S
+
+| 항목 | 내용 |
+|------|------|
+| **버전 식별자** | `EMBROIDERY_S V1` |
+| **프로젝트 폴더** | `280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S/` |
+| **워크스페이스** | `Project/Design.cydsn/` |
+| **기반 버전** | `280CTP_IoT_INTEGRATED_V1_BLACK_CPU` (복사본) |
+| **개발 목적** | 컴퓨터자수기(Computer Embroidery Machine) 전용 — 세미콜론 구분 UART 프로토콜 수신 |
+| **계획 수립일** | 2026-03-26 |
+| **초기 구현 완료** | 2026-03-26 ✅ |
+| **버그 수정 완료** | 2026-03-27 ✅ |
+| **상태** | ✅ 완전 완료 — 3회 연속 패킷 수신·서버 전송 검증 완료 |
+
+### 메모리 사용량
+
+> 빌드 후 실측값 기록 필요
+
+| 영역 | 사용 | 전체 | 점유율 | 상태 |
+|------|------|------|--------|------|
+| Flash (전체) | — | 262,144 bytes | — | |
+| **SRAM** | — | **32,768 bytes** | — | |
+
+> 기준: BLACK_CPU Flash 118,804 bytes (45.3%) / SRAM 22,580 bytes (68.9%)
+
+### BLACK_CPU 대비 변경 사항
+
+| 항목 | BLACK_CPU | EMBROIDERY_S |
+|---|---|---|
+| `PROJECT_FIRMWARE_VERSION` | `"BLACK_CPU V1"` | `"EMBROIDERY_S V1"` |
+| UART 프로토콜 | JSON `{"cmd":"count",...}` | 세미콜론 구분 텍스트 |
+| 종료 조건 | `}` 문자 감지 | 4번째 `;` 문자 감지 |
+| 파서 | `jsmn` 라이브러리 | 직접 구현 (`uartJson.c` 전면 교체) |
+| 전송 데이터 | actual_qty, ct, mrt, noStitch, trimCount | actual_qty, ct, tb(실끊김), mrt |
+| COUNT 구조체 | 기존 pattern* 필드 | `embThreadBreakageQty/SumH/SumL` 필드 추가 |
+| LCD Page 2 (NoStitch/Trim) | 있음 | 제거 |
+| UART TEST 뷰어 | 없음 | `uartTestMenu.c/.h` 신규 추가 |
+| WebAPI | `send_pCount` | `send_eCount` (자수기 전용) |
+| 로그 뷰어 | 없음 | `log_embroidery.php` 신규 추가 |
+
+### 하드웨어 구성
+
+BLACK_CPU와 동일 (PCB, PSoC4, LCD, WiFi, BUZZER):
+
+| 컴포넌트 | 상태 | 비고 |
+|---------|------|------|
+| `UART_` | ✅ 사용 | 자수기 UART 세미콜론 패킷 수신 |
+| `UART_WIFI` | ✅ 사용 | ICT WiFi 모듈 |
+| `TrimPin` | ❌ 미사용 | BLACK_CPU와 동일 (ISR 없음) |
+| `ADC_SAR_Seq` | ❌ 미사용 | BLACK_CPU와 동일 (제거됨) |
+
+### 주요 기능
+
+- **세미콜론 구분 UART 파싱**: `actual_qty;cycle_time_ms;thread_breakage_qty;motor_runtime_ms;` 포맷
+  - 4번째 `;` 수신 시 파싱 시작, 범위 검증 후 COUNT 구조체에 할당
+  - index=0 시 숫자가 아닌 바이트 무시 (echo 루프백 오염 방어)
+- **자수기 전용 서버 API 연동**: `send_eCount` → `api/sewing/send_eCount.php` → `data_embroidery` 테이블
+  - ms → 초(소수점 1자리) 변환 후 전송: `ct=701.0`, `mrt=806.0`
+- **실끊김(Thread Breakage) 추적**: `embThreadBreakageQty/SumH/SumL` 누산, 서버 전송, LCD 표시
+- **UART TEST 뷰어**: 수신 패킷 마지막 5줄 LCD 표시 (`uartTestMenu.c`)
+- **데이터 로그 뷰어**: `log_embroidery.php` — 당일/어제/7일 필터, 통계 카드, 자동 새로고침 10초
+
+### 수정/신규 파일 목록
+
+| 파일 | 변경 내용 |
+|------|---------|
+| `uartJson.c` | JSON 파서 → 세미콜론 파서 전면 교체. index=0 숫자 필터 추가. DBG printf 제거 |
+| `count.h` | `embThreadBreakageQty`, `embThreadBreakageQtySumH/L` 3개 필드 추가 |
+| `count.c` | `ResetCount()` 에 embThread 3개 필드 초기화 추가. `CountSaveFlashIfDirty()` 추가 |
+| `package.h` | `PROJECT_FIRMWARE_VERSION` → `"EMBROIDERY_S V1"` |
+| `andonApi.c` | `makeAndonPatternCount()` — `send_eCount` 파라메타로 수정 (ct, tb, mrt) |
+| `userMenuPatternSewingMachine.c` | LCD Page 구조 변경 — Page 2 삭제, Page 1 항목 수정 (tb 추가) |
+| `uartTestMenu.c` | **신규** — UART TEST 뷰어 (LCD 수신 패킷 표시) |
+| `uartTestMenu.h` | **신규** — `uartTestAddLine()` / `doUartTestMenu()` 선언 |
+| `WEB/CTP280_API/api/sewing/send_eCount.php` | **신규** — 자수기 데이터 수신 API |
+| `WEB/CTP280_API/log_embroidery.php` | **신규** — data_embroidery 테이블 로그 뷰어 |
+
+### 변경 이력
+
+#### 2026-03-27 (echo 루프백 버그 수정 — 2번째 패킷 파싱 실패)
+
+**버그**: 2초 이상 간격으로 2개 이상 패킷 전송 시 2번째 패킷부터 `uartEmbParsor` 실패
+
+**원인 — printf echo 루프백에 의한 버퍼 오염**
+- `printf` 출력이 `UART_` 컴포넌트 TX를 통해 나감
+- 테스트 터미널이 TX → RX로 echo(로컬 에코 설정)
+- `[DBG] 4SC found: buf='16;701070;1;701070;'\r\n` 문자열에 세미콜론 4개 포함
+- echo 수신 시 가짜 4SC 트리거 → `uartEmbParsor` 실패(첫 토큰 `[`는 숫자 아님) → 버퍼 클리어
+- 클리어 직후 잔류 바이트 `'`(apostrophe) 등이 `g_UART_buff[0]`에 저장됨
+- 2번째 실제 패킷이 index=4 지점부터 append → `uartEmbParsor` case 0: 첫 바이트 비숫자 → `return FALSE`
+
+**증상 로그**:
+```
+[DBG] 4SC found: buf='\r\n18;706090;2;806090;'   ← 버퍼 앞에 쓰레기 존재
+20;676090;0;776090;\r\n+뷏T챸)枯?...              ← 3번째 패킷에서 메모리 오염
+```
+
+**수정 — `uartJson.c` 2개 변경**
+1. `g_UART_buff_index == 0` 시 `'0'`~`'9'` 외 바이트 무시 (1줄 추가)
+2. `[DBG] 4SC found: buf='%s'` printf 제거 — echo 루프백 원인 차단
+3. `[DBG] uartJsonLoop: rxBuf/idx` printf 블록 제거 — 불필요 진단 출력 제거
+
+**검증 — 2초 간격 3회 연속 전송**:
+```
+16;701070;1;701070; → PARSE OK → id=16 ✓
+18;706090;2;806090; → PARSE OK → id=17 ✓
+20;676090;0;776090; → PARSE OK → id=18 ✓
+LCD actual 누적: 54 (16+18+20) ✓
+```
+
+---
+
+#### 2026-03-27 (UART TEST → MENU 복귀 시 타이틀 잔류 버그 수정)
+
+**버그**: LCD → MENU → UART TEST → QUIT → MENU 복귀 시 상단 헤더에 "EMBROIDERY UART RX TEST" 타이틀 잔류
+
+**원인**:
+- `uartTestDrawScreen()`이 표준 헤더 영역(`y:0~39`)을 진한 파랑(`VIEW_HDR_BG`)으로 덮어씀
+- `UART_VIEW_HEADER_H = 40` = `DEFAULT_TOP_TITLE_HEIGHT = 40` — 크기 일치로 표준 헤더 정확히 덮어씌워짐
+- MENU 복귀 시 `doListMenuPage`는 바디 영역(`y≥41`)만 갱신하고 `DrawHeader()`를 호출하지 않음
+
+**수정 — `uartTestMenu.c` 1줄 추가**:
+- QUIT 감지 후 `DrawHeader()` 호출 → 표준 헤더(WiFi 아이콘 + TitleBar) 복원 후 `MENU_RETURN_PARENT` 반환
+
+---
+
+#### 2026-03-26 (EMBROIDERY_S V1 초기 구현)
+
+- `280CTP_IoT_INTEGRATED_V1_BLACK_CPU` 복사본 기반으로 자수기 전용 펌웨어 분리
+- `uartJson.c` 전면 교체: JSON 파서 → 세미콜론 4개 기반 파서
+- `count.h/c` 수정: `embThreadBreakageQty` 관련 3개 필드 추가
+- `andonApi.c` 수정: `makeAndonPatternCount()` → `send_eCount` 파라메타 (ct, tb, mrt)
+- LCD Page 2 제거, Page 1에 실끊김(tb) 항목 추가
+- `uartTestMenu.c/.h` 신규 생성: 수신 패킷 LCD 미러 뷰어
+- `package.h`: `PROJECT_FIRMWARE_VERSION` → `"EMBROIDERY_S V1"`
+- WebAPI `send_eCount.php` 신규 생성: `data_embroidery` 테이블 INSERT
+- `log_embroidery.php` 신규 생성: 자수기 데이터 로그 뷰어 (필터, 통계, 자동 새로고침)
+
+---
+
 ## 280CTP_IoT_INTEGRATED_V1_BLACK_CPU
 
 | 항목 | 내용 |
