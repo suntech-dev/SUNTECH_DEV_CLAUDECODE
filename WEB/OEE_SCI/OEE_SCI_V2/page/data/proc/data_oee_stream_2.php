@@ -161,12 +161,16 @@ function getOeeAggregated($pdo, $where_sql, $params) {
     $row['overall_quality_rate'] = $row['total_actual_output'] > 0
       ? round(($row['total_good_products'] / $row['total_actual_output']) * 100, 2) : 0;
 
+    // [FIX v2] Availability = (planned - downtime) / planned
+    // - SUM(runtime)/SUM(planned) 는 미분류 대기시간(교대 전후 등)을 손실로 오인
+    // - downtime=0 이면 무조건 100% 여야 하는 비즈니스 정의에 맞지 않음
+    // - 올바른 공식: (planned_work_time - downtime) / planned_work_time
     $row['overall_availability_rate'] = $row['total_planned_time'] > 0
-      ? round(($row['total_runtime'] / $row['total_planned_time']) * 100, 2) : 0;
+      ? round((($row['total_planned_time'] - ($row['total_downtime'] ?? 0)) / $row['total_planned_time']) * 100, 2) : 0;
 
     // Stat-card aliases
     $row['overall_oee']  = $row['avg_overall_oee'];
-    $row['availability'] = $row['avg_availability'];
+    $row['availability'] = $row['overall_availability_rate'];
     $row['performance']  = $row['avg_performance'];
     $row['quality']      = $row['avg_quality'];
 
@@ -177,7 +181,7 @@ function getOeeAggregated($pdo, $where_sql, $params) {
     $row['previous_day_oee']   = getPreviousDayOeeAvg($pdo, $where_sql, $params);
 
     // oee_details (derived from same row — no extra query)
-    $runtime_min      = $row['total_runtime'] ? round($row['total_runtime'] / 60, 1) : 0;
+    $downtime_min     = $row['total_downtime'] ? round($row['total_downtime'] / 60, 1) : 0;
     $planned_time_min = $row['total_planned_time'] ? round($row['total_planned_time'] / 60, 1) : 0;
     $target_oee       = 85;
     $target_achievement = $row['avg_overall_oee']
@@ -185,10 +189,10 @@ function getOeeAggregated($pdo, $where_sql, $params) {
 
     $oee_details = [
       'overall_oee'       => $row['avg_overall_oee'],
-      'availability'      => $row['avg_availability'],
+      'availability'      => $row['overall_availability_rate'],  // [FIX] AVG → 집계 비율
       'performance'       => $row['avg_performance'],
       'quality'           => $row['avg_quality'],
-      'runtime'           => $runtime_min,
+      'downtime'          => $downtime_min,
       'planned_time'      => $planned_time_min,
       'actual_output'     => $row['total_actual_output'],
       'theoretical_output' => $row['total_theoretical_output'],
@@ -199,7 +203,7 @@ function getOeeAggregated($pdo, $where_sql, $params) {
 
     // oee_component_stats (subset of same row — no extra query)
     $oee_component_stats = [
-      'availability' => $row['avg_availability'],
+      'availability' => $row['overall_availability_rate'],  // [FIX] AVG → 집계 비율
       'performance'  => $row['avg_performance'],
       'quality'      => $row['avg_quality'],
       'overall_oee'  => $row['avg_overall_oee']

@@ -178,6 +178,7 @@ function getOEEData($pdo, $filter) {
         ROUND((AVG(do.availabilty_rate) * (SUM(do.actual_output) / NULLIF(SUM(do.theoritical_output), 0)) * AVG(do.quality_rate)) / 100, 2) as avg_oee,
         SUM(do.runtime) as total_runtime,
         SUM(do.planned_work_time) as total_planned_time,
+        SUM(do.downtime) as total_downtime,
         SUM(do.actual_output) as total_actual_output,
         SUM(do.theoritical_output) as total_theoretical_output,
         SUM(do.actual_a_grade) as total_good_products,
@@ -205,7 +206,13 @@ function getOEEData($pdo, $filter) {
       $v = $value ?? 0;
       return $v >= 100 ? 100 : floor($v * 10) / 10;
     };
-    $availability = $formatRate($result['avg_availability']);
+
+    // [FIX v2] Availability = (planned - downtime) / planned
+    // - SUM(runtime)/SUM(planned) 는 미분류 대기시간을 손실로 오인
+    // - 올바른 공식: downtime=0 이면 100%, downtime>0 이면 비례 감소
+    $avail_rate = ($result['total_planned_time'] ?? 0) > 0
+      ? (($result['total_planned_time'] - ($result['total_downtime'] ?? 0)) / $result['total_planned_time']) * 100 : 0;
+    $availability = $formatRate($avail_rate);
     $performance = $formatRate($result['avg_performance']);
     $quality = $formatRate($result['avg_quality']);
     $overall = $formatRate($result['avg_oee']);
@@ -226,10 +233,11 @@ function getOEEData($pdo, $filter) {
 
     return [
       'availability' => [
-        'value' => $availability,
-        'runtime' => round(($result['total_runtime'] / max($result['total_planned_time'], 1)) * 100, 1),
-        'planned_time' => 100,
-        'trend' => $availability_change > 0 ? '↗️' : ($availability_change < 0 ? '↘️' : '→'),
+        'value'        => $availability,
+        'downtime'     => round(($result['total_downtime'] ?? 0) / 60, 1),
+        'planned_time' => round(($result['total_planned_time'] ?? 0) / 60, 1),
+        'downtime_pct' => round(($result['total_downtime'] ?? 0) / max($result['total_planned_time'], 1) * 100, 1),
+        'trend'  => $availability_change > 0 ? '↗️' : ($availability_change < 0 ? '↘️' : '→'),
         'change' => $availability_change
       ],
       'performance' => [

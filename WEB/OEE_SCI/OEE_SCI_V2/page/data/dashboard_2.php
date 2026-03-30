@@ -119,7 +119,7 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
         </div>
         <div class="availability-metrics" style="width:100%">
           <div class="metric-row">
-            <span class="metric-label" style="font-size:0.8rem">Runtime</span>
+            <span class="metric-label" style="font-size:0.8rem">Downtime</span>
             <span class="metric-value" id="runtime-value">-</span>
           </div>
           <div class="metric-progress">

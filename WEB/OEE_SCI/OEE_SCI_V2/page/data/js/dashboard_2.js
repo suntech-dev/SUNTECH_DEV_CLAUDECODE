@@ -612,18 +612,18 @@ class DashboardManager {
       }
     };
 
-    // Availability 메트릭
+    // Availability 메트릭 (공식: (planned-downtime)/planned — downtime 기반 표시)
     if (oeeData.availability) {
-      updateElement('runtime-value', oeeData.availability.runtime, '%');
-      updateElement('planned-time-value', oeeData.availability.planned_time, '%');
+      updateElement('runtime-value', oeeData.availability.downtime, 'h');
+      updateElement('planned-time-value', oeeData.availability.planned_time, 'h');
       updateElement('availabilityTrend', oeeData.availability.trend || '→');
       updateElement('availabilityChange',
         `${oeeData.availability.change > 0 ? '+' : ''}${oeeData.availability.change || 0}% vs Last Day`);
 
-      // Progress bar 업데이트
+      // Progress bar: downtime_pct(%) 사용 — downtime 비율 시각화
       const runtimeProgress = document.getElementById('runtime-progress');
       if (runtimeProgress) {
-        runtimeProgress.style.width = `${oeeData.availability.runtime || 0}%`;
+        runtimeProgress.style.width = `${Math.min(oeeData.availability.downtime_pct || 0, 100)}%`;
       }
     }
 

@@ -471,6 +471,18 @@ body {
     justify-content: flex-end;
 }
 
+/* ─── 테이블 행 높이 조정 ─────────────────────────────── */
+.oee-table-wrap .fiori-table th,
+.oee-table-wrap .fiori-table td {
+    height: 50px;
+    padding-top: 0;
+    padding-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+}
+
 /* ─── 스크롤바 ──────────────────────────────────────────── */
 ::-webkit-scrollbar {
     width: 4px;

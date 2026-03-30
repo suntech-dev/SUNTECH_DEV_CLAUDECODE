@@ -1,7 +1,8 @@
 /* data_downtime_2.css — Row Grid Layout (data_oee_2 model) */
 
 /* ─── 전체 고정 ─────────────────────────────────────────── */
-html, body {
+html,
+body {
     height: 100vh;
     overflow: hidden;
     margin: 0;
@@ -75,22 +76,44 @@ html, body {
     flex-shrink: 0;
 }
 
-.nav-drawer-btn:hover { background: var(--sap-surface-3); }
+.nav-drawer-btn:hover {
+    background: var(--sap-surface-3);
+}
 
 /* ─── 드로어 오버레이 ───────────────────────────────────── */
-.nav-drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.3); z-index: 900; }
-.nav-drawer-overlay.is-open { display: block; }
+.nav-drawer-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .3);
+    z-index: 900;
+}
+
+.nav-drawer-overlay.is-open {
+    display: block;
+}
 
 /* ─── 드로어 패널 ───────────────────────────────────────── */
 .nav-drawer {
-    position: fixed; top: 0; left: 0; width: 240px; height: 100vh;
-    background: var(--sap-surface-1); border-right: 1px solid var(--sap-border-neutral);
-    box-shadow: 2px 0 8px rgba(0,0,0,.15); z-index: 901;
-    transform: translateX(-100%); transition: transform .25s ease;
-    display: flex; flex-direction: column; overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--sap-surface-1);
+    border-right: 1px solid var(--sap-border-neutral);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, .15);
+    z-index: 901;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.nav-drawer.is-open { transform: translateX(0); }
+.nav-drawer.is-open {
+    transform: translateX(0);
+}
 
 .nav-drawer__header {
     padding: 14px 16px;
@@ -101,7 +124,11 @@ html, body {
     flex-shrink: 0;
 }
 
-.nav-drawer__menu { flex: 1; overflow-y: auto; padding: 8px 0; }
+.nav-drawer__menu {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+}
 
 .nav-drawer__group-title {
     padding: 6px 16px 2px;
@@ -112,16 +139,35 @@ html, body {
     letter-spacing: 0.04em;
 }
 
-.nav-drawer__link { display: block; padding: 7px 16px 7px 24px; font-size: var(--sap-font-size-sm); color: var(--sap-text-primary); text-decoration: none; }
-.nav-drawer__link:hover { background: var(--sap-surface-3); }
-.nav-drawer__link--active { color: var(--sap-color-accent); font-weight: var(--sap-font-weight-semibold); }
-.nav-drawer__divider { height: 1px; background: var(--sap-border-neutral); margin: 6px 0; }
+.nav-drawer__link {
+    display: block;
+    padding: 7px 16px 7px 24px;
+    font-size: var(--sap-font-size-sm);
+    color: var(--sap-text-primary);
+    text-decoration: none;
+}
+
+.nav-drawer__link:hover {
+    background: var(--sap-surface-3);
+}
+
+.nav-drawer__link--active {
+    color: var(--sap-color-accent);
+    font-weight: var(--sap-font-weight-semibold);
+}
+
+.nav-drawer__divider {
+    height: 1px;
+    background: var(--sap-border-neutral);
+    margin: 6px 0;
+}
 
 /* ─── 메인 그리드 ─────────────────────────────────────── */
 .dt-signage-main {
     height: calc(100vh - 52px);
     display: grid;
-    grid-template-rows: 1fr auto; /* JS가 updateLayout()으로 덮어씀 */
+    grid-template-rows: 1fr auto;
+    /* JS가 updateLayout()으로 덮어씀 */
     gap: 5px;
     padding: 5px;
     box-sizing: border-box;
@@ -134,7 +180,9 @@ html, body {
     overflow: hidden;
 }
 
-.dt-row.hidden { display: none; }
+.dt-row.hidden {
+    display: none;
+}
 
 /* ─── Row A: Stats ────────────────────────────────────── */
 .dt-stats-grid {
@@ -228,7 +276,10 @@ html, body {
     flex: 1;
 }
 
-.card-title-row .fiori-card__title { white-space: nowrap; flex-shrink: 0; }
+.card-title-row .fiori-card__title {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
 
 .card-subtitle-inline {
     font-size: var(--sap-font-size-xs);
@@ -268,7 +319,9 @@ html, body {
     margin-top: 2px;
 }
 
-.dt-detail-item { margin-right: 8px; }
+.dt-detail-item {
+    margin-right: 8px;
+}
 
 .dt-component-value {
     font-size: 1rem;
@@ -288,12 +341,29 @@ html, body {
     min-height: 0;
 }
 
-.stat-card--red     { border-left: 3px solid var(--sap-status-error); }
-.stat-card--rose    { border-left: 3px solid #e26b0a; }
-.stat-card--success { border-left: 3px solid var(--sap-status-success); }
-.stat-card--info    { border-left: 3px solid var(--sap-status-info); }
-.stat-card--warning { border-left: 3px solid var(--sap-status-warning); }
-.stat-card--maroon  { border-left: 3px solid #800000; }
+.stat-card--red {
+    border-left: 3px solid var(--sap-status-error);
+}
+
+.stat-card--rose {
+    border-left: 3px solid #e26b0a;
+}
+
+.stat-card--success {
+    border-left: 3px solid var(--sap-status-success);
+}
+
+.stat-card--info {
+    border-left: 3px solid var(--sap-status-info);
+}
+
+.stat-card--warning {
+    border-left: 3px solid var(--sap-status-warning);
+}
+
+.stat-card--maroon {
+    border-left: 3px solid #800000;
+}
 
 .stat-value {
     font-size: 1.5rem;
@@ -342,8 +412,15 @@ html, body {
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
 }
 
 .connection-status-info {
@@ -373,7 +450,9 @@ html, body {
     border-bottom: 1px solid var(--sap-border-subtle);
 }
 
-.dt-detail-section--full { grid-column: 1 / -1; }
+.dt-detail-section--full {
+    grid-column: 1 / -1;
+}
 
 .dt-detail-row {
     display: flex;
@@ -383,8 +462,14 @@ html, body {
     border-bottom: 1px solid var(--sap-border-subtle);
 }
 
-.dt-detail-label { color: var(--sap-text-secondary); }
-.dt-detail-value { font-weight: var(--sap-font-weight-semibold); color: var(--sap-text-primary); }
+.dt-detail-label {
+    color: var(--sap-text-secondary);
+}
+
+.dt-detail-value {
+    font-weight: var(--sap-font-weight-semibold);
+    color: var(--sap-text-primary);
+}
 
 .dt-detail-actions {
     display: flex;
@@ -402,7 +487,29 @@ html, body {
     background: var(--sap-border-neutral);
 }
 
+/* ─── 테이블 행 높이 조정 ─────────────────────────────── */
+.dt-table-wrap .fiori-table th,
+.dt-table-wrap .fiori-table td {
+    height: 50px;
+    padding-top: 0;
+    padding-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+}
+
 /* ─── 스크롤바 ──────────────────────────────────────────── */
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: var(--sap-surface-3); }
-::-webkit-scrollbar-thumb { background: var(--sap-border-neutral); border-radius: 2px; }
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--sap-surface-3);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--sap-border-neutral);
+    border-radius: 2px;
+}

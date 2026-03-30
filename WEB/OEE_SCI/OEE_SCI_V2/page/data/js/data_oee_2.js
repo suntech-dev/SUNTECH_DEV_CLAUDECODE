@@ -541,7 +541,7 @@ function updateOeeDetailsFromAPI(d) {
         oeeRateDetail:      formatPercentage(d.overall_oee || 0),
         overallEfficiency:  formatPercentage(d.overall_oee || 0),
         targetAchievement:  d.target_achievement || '-',
-        runtime:            d.runtime || '-',
+        runtime:            d.downtime != null ? d.downtime : (d.runtime || '-'),
         plannedTime:        d.planned_time || '-',
         availabilityDetail: formatPercentage(d.availability || 0),
         actualOutput:       d.actual_output || '-',
