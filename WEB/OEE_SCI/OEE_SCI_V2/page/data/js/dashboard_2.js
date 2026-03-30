@@ -614,8 +614,8 @@ class DashboardManager {
 
     // Availability 메트릭 (공식: (planned-downtime)/planned — downtime 기반 표시)
     if (oeeData.availability) {
-      updateElement('runtime-value', oeeData.availability.downtime, 'h');
-      updateElement('planned-time-value', oeeData.availability.planned_time, 'h');
+      updateElement('runtime-value', oeeData.availability.downtime, 'm');
+      updateElement('planned-time-value', oeeData.availability.planned_time, 'm');
       updateElement('availabilityTrend', oeeData.availability.trend || '→');
       updateElement('availabilityChange',
         `${oeeData.availability.change > 0 ? '+' : ''}${oeeData.availability.change || 0}% vs Last Day`);

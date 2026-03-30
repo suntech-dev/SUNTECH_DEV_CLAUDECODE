@@ -114,8 +114,8 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
                             <div class="oee-component-info">
                                 <div class="oee-component-name">Availability Rate</div>
                                 <div class="oee-component-details">
-                                    <span class="oee-detail-item">Downtime: <span id="runtime">-</span>h</span>
-                                    <span class="oee-detail-item">Planned Time: <span id="plannedTime">-</span>h</span>
+                                    <span class="oee-detail-item">Downtime: <span id="runtime">-</span>m</span>
+                                    <span class="oee-detail-item">Planned Time: <span id="plannedTime">-</span>m</span>
                                 </div>
                             </div>
                             <div class="oee-component-value"><span id="availabilityDetail">-</span></div>
