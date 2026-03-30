@@ -1,5 +1,5 @@
 /**
- * AI Intelligence Dashboard JavaScript v5
+ * AI Intelligence Dashboard JavaScript
  * v4(ai_dashboard.js) 대비 수정:
  *  - renderForecastChart(): today_data 기반 Actual OEE solid 라인 추가
  *  - loadMaintenanceRisk() / loadLineHealth(): proc/ai_maintenance_5.php 호출
@@ -118,7 +118,7 @@ function updateLastUpdateTime() {
   $('#aiLastUpdateTime').text('Updated: ' + hh + ':' + mm + ':' + ss);
 }
 
-// Line Health 서브타이틀 동적 업데이트 (v5 신규)
+// Line Health 서브타이틀 동적 업데이트
 function updateLineHealthSubtitle() {
   const sel = document.getElementById('dateRangeSelect');
   const rangeMap = {
@@ -133,7 +133,7 @@ function updateLineHealthSubtitle() {
 }
 
 // ============================================================
-// 1. OEE 예측 (기본 구현 — ai_dashboard_5.php 에서 오버라이드)
+// 1. OEE 예측 (기본 구현 — ai_dashboard_2.php 에서 오버라이드)
 // ============================================================
 function loadPrediction() {
   $.getJSON('proc/ai_oee_prediction_5.php', getFilterParams(), function(data) {
@@ -170,7 +170,7 @@ function loadPrediction() {
 }
 
 // ============================================================
-// 1-1. OEE 예측 차트 — v5: Actual OEE solid 라인 추가
+// 1-1. OEE 예측 차트 — Actual OEE solid 라인 추가
 // ============================================================
 function renderForecastChart(predData) {
   const canvas = document.getElementById('aiOeeForecastChart');
@@ -226,7 +226,7 @@ function renderForecastChart(predData) {
 
   const datasets = [];
 
-  // Actual OEE solid 라인 (v5 신규)
+  // Actual OEE solid 라인
   if (actualFull.length > 0) {
     datasets.push({
       label: 'Actual OEE',
@@ -431,7 +431,7 @@ function renderAnomalyEmpty(msg) {
 }
 
 // ============================================================
-// 3. 예방정비 위험도 — v5: ai_maintenance_5.php 호출
+// 3. 예방정비 위험도 — ai_maintenance_5.php 호출
 // ============================================================
 function loadMaintenanceRisk() {
   $.getJSON('proc/ai_maintenance_5.php', getFilterParams(), function(data) {
@@ -514,7 +514,7 @@ function renderMaintenanceEmpty(msg) {
 }
 
 // ============================================================
-// 4. 라인 건강지수 — v5: ai_maintenance_5.php 호출
+// 4. 라인 건강지수 — ai_maintenance_5.php 호출
 // ============================================================
 function loadLineHealth() {
   $.getJSON('proc/ai_maintenance_5.php', Object.assign({}, getFilterParams(), { limit: 50 }), function(data) {

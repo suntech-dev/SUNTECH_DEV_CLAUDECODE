@@ -153,8 +153,8 @@ $data_base_path = $project_root . '/page/data';
       </li>
 
       <!-- AI Dashboard (단독) -->
-      <li class="fiori-nav-menu__item <?php echo ($current_page == 'ai_dashboard_5.php') ? 'fiori-nav-menu__item--active' : ''; ?>">
-        <a href="<?php echo $data_base_path; ?>/ai_dashboard_5.php" class="fiori-nav-menu__link">
+      <li class="fiori-nav-menu__item <?php echo ($current_page == 'ai_dashboard_2.php') ? 'fiori-nav-menu__item--active' : ''; ?>">
+        <a href="<?php echo $data_base_path; ?>/ai_dashboard_2.php" class="fiori-nav-menu__link">
           AI Dashboard
         </a>
       </li>

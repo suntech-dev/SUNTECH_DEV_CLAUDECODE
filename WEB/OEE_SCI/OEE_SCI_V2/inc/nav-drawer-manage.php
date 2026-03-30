@@ -55,8 +55,8 @@ function _nav_cls(string $key, string $active): string
         <div class="nav-drawer__group">
             <div class="nav-drawer__group-title">Dashboard</div>
             <a href="<?= $_d ?>dashboard_2.php" class="<?= _nav_cls('oee_dashboard', $_nav) ?>">OEE Dashboard</a>
-            <!-- <a href="<?= $_d ?>ai_dashboard_5.php" class="nav-drawer__link">AI Dashboard v5</a> -->
-            <a href="<?= $_d ?>ai_dashboard_5.php" class="<?= _nav_cls('ai_dashboard', $_nav) ?>">AI Dashboard</a>
+            <!-- <a href="<?= $_d ?>ai_dashboard_2.php" class="nav-drawer__link">AI Dashboard</a> -->
+            <a href="<?= $_d ?>ai_dashboard_2.php" class="<?= _nav_cls('ai_dashboard', $_nav) ?>">AI Dashboard</a>
         </div>
     </nav>
 </div>
