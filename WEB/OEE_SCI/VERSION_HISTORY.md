@@ -1,7 +1,7 @@
 # OEE_SCI 버전 이력
 
 > 최초 작성: 2026-03-06
-> 마지막 업데이트: 2026-03-25 (log_oee_row_2 · log_oee_hourly_2 · log_oee_2 테이블 컬럼 고정 기능 추가)
+> 마지막 업데이트: 2026-03-30 (dashboard_stream_2.php 버그 3건 수정 — Production Heatmap No data 해소)
 
 ---
 
@@ -102,6 +102,7 @@
 | 2026-03-25 | **[리디자인 _2 페이지 테이블 컬럼 고정]** `log_oee_row_2`, `log_oee_hourly_2`, `log_oee_2` 3개 페이지에 MACHIN_NO 기준 가로 스크롤 컬럼 고정 기능 추가 — CSS `position: sticky`가 `overflow: clip` 부모 구조에서 Chromium 버그로 미작동, **JS scroll 리스너 + `transform: translateX` 방식으로 해결** (Playwright 검증 완료: scrollLeft=400 시 diff=0) |
 | 2026-03-25 | `page/data/css/log_oee_row_2.css` · `log_oee_hourly_2.css` · `log_oee_2.css` — 외부 컨테이너 `overflow: hidden` → `overflow: clip` + `min-width: 0`, `.sticky-column`: `position: sticky` → `position: relative` + `will-change: transform`, 테이블 `border-collapse: separate !important` 추가 |
 | 2026-03-25 | `page/data/js/log_oee_row_2.js` · `log_oee_hourly_2.js` · `log_oee_2.js` — `initStickyColumnsScroll()` 함수 신규: `offsetLeft` 자연 위치 캡처 후 scroll 이벤트마다 `translateX(scrollLeft − naturalOffset)` 적용, `updateTableFromAPI()` 끝에서 `_refreshStickyColumns()` 호출 (페이지 전환 시 offset 재측정) |
+| 2026-03-30 | **[dashboard_stream_2.php 버그 3건 수정]** `page/data/proc/dashboard_stream_2.php` — ① `array_fill(0,24,null)` → `array_fill(0,max(24,$work_end_hour+1),null)` (야간근무 hour>23 PHP Notice 해소) ② Heatmap SQL `CURDATE()` 하드코딩 → `$heatmap_base` 파라미터 바인딩 (`end_date`/`start_date`/`today` 우선순위 결정, 과거 날짜 조회 시 전체 No data 버그 수정) ③ weekday_map 날짜 계산 `strtotime("-{$i} days")` → `strtotime($heatmap_base." -{$i} days")` (요일 레이블 현재 날짜 기준 오류 수정). Playwright 검증: 2026-03-06 조회 시 Production Heatmap Mon~Fri 각 시간대 OEE 색상 정상 표시 확인. |
 
 ---
 

@@ -1004,8 +1004,8 @@ function getProductionData($pdo, $filter) {
     $stmt->execute($timeline_params);
     $timeline_raw = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // 24시간 OEE 상태 배열 초기화
-    $hourly_oee = array_fill(0, 24, null);
+    // 24시간 OEE 상태 배열 초기화 (야간 근무 시 work_end_hour가 23 초과 가능하므로 동적 크기)
+    $hourly_oee = array_fill(0, max(24, $work_end_hour + 1), null);
     foreach ($timeline_raw as $row) {
       $hour = (int)$row['hour'];
       $hourly_oee[$hour] = round($row['avg_oee'], 1);
@@ -1098,9 +1098,12 @@ function getProductionData($pdo, $filter) {
     }
     unset($segment);
     
-    // 히트맵 데이터 생성 (최근 6일: 월~토 x 24시간: 0H~23H)
+    // 히트맵 데이터 생성 (필터 기준 최근 6 평일+토 x 24시간)
     // data_oee_rows_hourly 테이블 사용, OEE Timeline과 동일한 색상 로직 적용
-    // WEEKDAY() 사용: 0=월요일, 1=화요일, ..., 5=토요일, 6=일요일 (PHP date('N')과 일관성 유지)
+    // 필터 end_date(또는 start_date) 기준으로 최근 7일 조회 — CURDATE() 하드코딩 제거
+    $heatmap_base = !empty($_GET['end_date']) ? $_GET['end_date']
+                  : (!empty($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d'));
+
     $heatmap_sql = "
       SELECT
         doh.work_date,
@@ -1108,7 +1111,8 @@ function getProductionData($pdo, $filter) {
         ROUND((AVG(doh.availabilty_rate) * (SUM(doh.actual_output) / NULLIF(SUM(doh.theoritical_output), 0)) * AVG(doh.quality_rate)) / 100, 2) as avg_oee
       FROM data_oee_rows_hourly doh
       LEFT JOIN info_machine m ON doh.machine_idx = m.idx
-      WHERE doh.work_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+      WHERE doh.work_date >= DATE_SUB(?, INTERVAL 7 DAY)
+        AND doh.work_date <= ?
         AND WEEKDAY(doh.work_date) BETWEEN 0 AND 5
         AND m.status = 'Y'
       GROUP BY doh.work_date, doh.work_hour
@@ -1116,7 +1120,7 @@ function getProductionData($pdo, $filter) {
     ";
 
     $stmt = $pdo->prepare($heatmap_sql);
-    $stmt->execute();
+    $stmt->execute([$heatmap_base, $heatmap_base]);
     $heatmap_raw = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // 히트맵 데이터 초기화 (6일 x 24시간)
@@ -1140,7 +1144,7 @@ function getProductionData($pdo, $filter) {
     $day_name_map = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
     for ($i = 6; $i >= 0 && $weekday_count < 6; $i--) {
-      $date = date('Y-m-d', strtotime("-{$i} days"));
+      $date = date('Y-m-d', strtotime($heatmap_base . " -{$i} days"));
       $day_of_week = date('N', strtotime($date)); // 1=월요일, 7=일요일
 
       // 월~토 (일요일 제외)

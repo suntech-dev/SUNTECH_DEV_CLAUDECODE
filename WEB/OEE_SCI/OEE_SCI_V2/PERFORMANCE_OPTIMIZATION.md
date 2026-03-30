@@ -1,6 +1,6 @@
 > 최초 작성: 2026-03-07
 > 분석 버전: OEE_SCI_V2
-> 마지막 업데이트: 2026-03-07 (Phase 4 완료: 타임존 중앙화 + report_stream 버그 수정)
+> 마지막 업데이트: 2026-03-30 (Phase 5: dashboard_stream_2.php 버그 3건 수정)
 
 # OEE_SCI_V2 성능 최적화 계획
 
@@ -319,6 +319,90 @@ FcgidOutputBufferSize 0
 - `getDBConnection()` 함수가 프로젝트 어디에도 선언되지 않아 Fatal error 발생
 - `global $pdo; $this->pdo = $pdo;` 로 수정 (db.php 전역 변수 직접 참조)
 - 중복 null 체크 `if (!$this->pdo) die(...)` 제거 (db.php에서 이미 처리)
+
+---
+
+---
+
+## 5-4. Phase 5 완료 기록 (2026-03-30)
+
+### 대상: `proc/dashboard_stream_2.php` — 기능 점검 및 버그 수정
+
+사이니지 전용 대시보드 (`dashboard_2.php`) 를 2026-03-06 날짜로 조회 시
+각 섹션 데이터 정확성을 검증한 결과 3건의 버그 발견 및 수정.
+
+#### Bug 1 — PHP Notice "Undefined offset: 24~30" (중간)
+
+**원인:** `$hourly_oee = array_fill(0, 24, null)` — 야간 근무(Shift 2: 21:00~06:00) 시
+`work_end_hour = floor(1800/60) = 30` 이 되어 배열 인덱스 0~23 범위 초과.
+PHP Notice HTML 태그가 SSE 스트림에 섞여 출력됨 (브라우저는 비표준 필드 무시하여 실제 수신은 가능).
+
+**수정:**
+```php
+// 수정 전
+$hourly_oee = array_fill(0, 24, null);
+
+// 수정 후
+$hourly_oee = array_fill(0, max(24, $work_end_hour + 1), null);
+```
+
+---
+
+#### Bug 2 — Production Heatmap 전체 "No data" [Critical]
+
+**원인:** Heatmap SQL에 `CURDATE()` 하드코딩. 과거 날짜(2026-03-06)를 조회하면
+현재(2026-03-30) 기준 7일 범위에 포함되지 않아 전체 No data 반환.
+
+```sql
+-- 수정 전 (CURDATE() 하드코딩)
+WHERE doh.work_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+
+-- 수정 후 ($heatmap_base 파라미터 바인딩)
+WHERE doh.work_date >= DATE_SUB(?, INTERVAL 7 DAY)
+  AND doh.work_date <= ?
+```
+
+**$heatmap_base 결정 로직:**
+```php
+$heatmap_base = !empty($_GET['end_date'])   ? $_GET['end_date']
+              : (!empty($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d'));
+$stmt->execute([$heatmap_base, $heatmap_base]);
+```
+
+---
+
+#### Bug 3 — weekday_map 날짜 오류 (중간)
+
+**원인:** `date('Y-m-d', strtotime("-{$i} days"))` 가 `CURDATE()` 기준으로 계산되어
+Heatmap 요일 헤더(Mon~Sat)가 현재 날짜 기준으로 생성됨.
+필터로 과거 날짜를 조회해도 현재 날짜 기준 요일 레이블 표시.
+
+**수정:**
+```php
+// 수정 전
+$date = date('Y-m-d', strtotime("-{$i} days"));
+
+// 수정 후
+$date = date('Y-m-d', strtotime($heatmap_base . " -{$i} days"));
+```
+
+---
+
+### Playwright 검증 결과 (2026-03-30)
+
+검색 날짜: 2026-03-06 ~ 2026-03-06
+
+| 섹션 | 결과 | 주요 값 |
+|------|------|---------|
+| Availability | ✅ | 100% (Runtime 93.9%, Planned Time 100%) |
+| Performance | ✅ | 76.7% (-10.1% vs Last Day) |
+| Quality | ✅ | 100% (Good 30,075, Defective 0) |
+| OEE | ✅ | 76.7% |
+| Downtime | ✅ | "6S", "MENUNGGU OPERATOR" 항목 표시 |
+| Defective | ✅ | "BEKAS LUBANG JARUM" 등 3개 항목 표시 |
+| Active Andon | ✅ | 0 active alerts |
+| OEE Timeline | ✅ | 07H~15H 최고성능/우수, 21H~23H 최고성능 |
+| Production Heatmap | ✅ (수정 후) | Mon~Fri 각 시간대 OEE 색상 정상 표시 |
 
 ---
 
