@@ -1,4 +1,4 @@
---------------- Rebuild Started: 03/17/2026 11:52:29 Project: Design, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
+--------------- Rebuild Started: 03/20/2026 09:50:33 Project: Design, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
 Deleting file ".\CortexM0\ARM_GCC_541\Debug\FT5x46.o"
 Deleting file ".\CortexM0\ARM_GCC_541\Debug\IODefine.o"
 Deleting file ".\CortexM0\ARM_GCC_541\Debug\IOUtil.o"
@@ -172,19 +172,12 @@ Deleting file ".\CortexM0\ARM_GCC_541\Debug\Ctrl_MEM_SS.o"
 Deleting file ".\CortexM0\ARM_GCC_541\Debug\Ctrl_MEM_SS_PM.o"
 Deleting file ".\CortexM0\ARM_GCC_541\Debug\trim_Int.o"
 Deleting file ".\CortexM0\ARM_GCC_541\Debug\SwClk.o"
-Deleting file ".\CortexM0\ARM_GCC_541\Debug\InputPin.o"
-Deleting file ".\CortexM0\ARM_GCC_541\Debug\InputPin_PM.o"
 Deleting file ".\CortexM0\ARM_GCC_541\Debug\WIFI_RESET.o"
 Deleting file ".\CortexM0\ARM_GCC_541\Debug\WIFI_RESET_PM.o"
 Deleting file ".\CortexM0\ARM_GCC_541\Debug\TrimPin.o"
 Deleting file ".\CortexM0\ARM_GCC_541\Debug\TrimPin_PM.o"
 Deleting file ".\CortexM0\ARM_GCC_541\Debug\Reg_Pattern.o"
 Deleting file ".\CortexM0\ARM_GCC_541\Debug\Reg_Pattern_PM.o"
-Deleting file ".\CortexM0\ARM_GCC_541\Debug\ADC_SAR_Seq.o"
-Deleting file ".\CortexM0\ARM_GCC_541\Debug\ADC_SAR_Seq_PM.o"
-Deleting file ".\CortexM0\ARM_GCC_541\Debug\ADC_SAR_Seq_INT.o"
-Deleting file ".\CortexM0\ARM_GCC_541\Debug\ADC_SAR_Seq_IRQ.o"
-Deleting file ".\CortexM0\ARM_GCC_541\Debug\ADC_SAR_Seq_intClock.o"
 Deleting file ".\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_3.o"
 Deleting file ".\CortexM0\ARM_GCC_541\Debug\RESERVED_OUT_3_PM.o"
 Deleting file ".\CortexM0\ARM_GCC_541\Debug\Design.hex"
@@ -633,4 +626,4 @@ Checksum calculated and stored in ELF section .cymeta
 cyelftool.exe -S C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_BLACK_CPU\Project\Design.cydsn\CortexM0\ARM_GCC_541\Debug\Design.elf
 Flash used: 122812 of 262144 bytes (46.8%). Bootloader: 13568 bytes. Application: 108988 bytes. Metadata: 256 bytes.
 SRAM used: 22532 of 32768 bytes (68.8%). Stack: 2048 bytes. Heap: 1024 bytes.
---------------- Rebuild Succeeded: 03/17/2026 11:53:21 ---------------
+--------------- Rebuild Succeeded: 03/20/2026 09:51:24 ---------------

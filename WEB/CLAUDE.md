@@ -246,6 +246,19 @@ const { chromium } = require('playwright');
 - **Xdebug**: 포트 9003, `xdebug.start_with_request=yes`
 - **로컬 URL**: `http://localhost/dev/{프로젝트명}/{버전폴더}/` 또는 `http://{프로젝트명}.test`
 - **Laragon 매핑**: `C:\laragon\www\dev` → `C:\SUNTECH_DEV_CLAUDECODE\WEB` (junction)
+- **SFTP**: host `49.247.26.228`, port 22, user `root`, remotePath `/var/www/html`, uploadOnSave: true
+
+### 경로 → URL 변환 규칙 (필수)
+
+> `WEB\` 경로에는 `dev`가 없지만, URL에는 반드시 `/dev/`가 포함된다.
+
+```
+C:\SUNTECH_DEV_CLAUDECODE\WEB\{프로젝트명}\{버전폴더}\
+→ http://localhost/dev/{프로젝트명}/{버전폴더}/
+```
+
+- `WEB\` = `http://localhost/dev/` (1:1 대응)
+- Bash로 URL 점검 시 `/dev/` 누락 금지
 - **환경변수**: 프로젝트 루트에 `.env` 파일로 DB 설정 오버라이드
 
 **.env 파일 예시 (로컬 개발용)**:
