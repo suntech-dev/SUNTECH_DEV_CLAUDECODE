@@ -320,7 +320,7 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
 <script src="../../assets/js/moment.min.js"></script>
 <script src="../../assets/js/daterangepicker.js"></script>
 <script src="js/data_downtime_2.js"></script>
-<script src="js/ai_downtime_risk.js"></script>
+<script src="js/ai_downtime_risk_2.js"></script>
 
 
 </body>

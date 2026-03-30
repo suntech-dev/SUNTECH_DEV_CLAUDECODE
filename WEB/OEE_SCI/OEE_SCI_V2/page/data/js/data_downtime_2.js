@@ -472,7 +472,7 @@ function getFilterParams() {
 async function startAutoTracking() {
     if (isTracking) return;
     var params = new URLSearchParams(getFilterParams());
-    eventSource = new EventSource('proc/data_downtime_stream.php?' + params.toString());
+    eventSource = new EventSource('proc/data_downtime_stream_2.php?' + params.toString());
     setupSSEEventListeners();
     isTracking = true;
     var el = document.getElementById('connectionStatus');
@@ -634,7 +634,7 @@ function updateTableFromAPI(list) {
             '<td>' + (dt.update_date || '-') + '</td>' +
             durationCell +
             '<td>' + (dt.work_date || '-') + '</td>' +
-            '<td></td>' + // AI Risk — ai_downtime_risk.js 가 채움
+            '<td></td>' + // AI Risk — ai_downtime_risk_2.js 가 채움
             '<td><button class="fiori-btn fiori-btn--tertiary dt-details-btn" style="padding:.25rem .5rem;font-size:.75rem;" data-dt-data=\'' + JSON.stringify(dt).replace(/'/g, '&#39;') + '\'>Details</button></td>';
         tbody.appendChild(tr);
     });
@@ -939,7 +939,7 @@ function exportData() {
     if (f.shift_filter)   p.append('shift_filter',   f.shift_filter);
     if (f.start_date)     p.append('start_date',     f.start_date);
     if (f.end_date)       p.append('end_date',       f.end_date);
-    window.open('proc/data_downtime_export.php?' + p.toString(), '_blank');
+    window.open('proc/data_downtime_export_2.php?' + p.toString(), '_blank');
 }
 
 async function refreshData() {

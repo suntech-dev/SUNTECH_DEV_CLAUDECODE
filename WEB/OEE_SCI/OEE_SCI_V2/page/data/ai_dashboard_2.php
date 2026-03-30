@@ -16,8 +16,8 @@
  *  - css/ai_dashboard_2.css
  *  - js/ai_dashboard_2.js
  *  - js/ai_optimization_2.js
- *  - proc/ai_oee_prediction_5.php
- *  - proc/ai_maintenance_5.php
+ *  - proc/ai_oee_prediction_dash_2.php
+ *  - proc/ai_maintenance_dash_2.php
  *  - proc/ai_optimization_2.php
  */
 
@@ -345,7 +345,7 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
 
 <!-- AI Dashboard JS -->
 <script src="js/ai_dashboard_2.js"></script>
-<script src="js/ai_stream_monitor.js"></script>
+<script src="js/ai_stream_monitor_2.js"></script>
 <script src="js/ai_optimization_2.js"></script>
 
 <!-- 날짜 필터 getFilterParams() 확장 -->
@@ -368,7 +368,7 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
 <script>
   (function() {
     loadPrediction = function() {
-      $.getJSON('proc/ai_oee_prediction_5.php', getFilterParams(), function(data) {
+      $.getJSON('proc/ai_oee_prediction_dash_2.php', getFilterParams(), function(data) {
         if (data.code !== '00') {
           $('#aiRealtimeSub').text('API error');
           $('#aiPredSub').text('API error');
@@ -561,7 +561,7 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
       p.range = 'custom';
       p.date_from = from;
       p.date_to = to;
-      window.open('proc/ai_report_export.php?' + new URLSearchParams(p), '_blank');
+      window.open('proc/ai_report_export_2.php?' + new URLSearchParams(p), '_blank');
       modal.style.display = 'none';
     });
 

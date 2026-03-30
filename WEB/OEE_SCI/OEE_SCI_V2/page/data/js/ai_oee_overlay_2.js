@@ -27,7 +27,7 @@
 
     const qs = buildQS(getFilters());
     try {
-      const res  = await fetch(`proc/ai_oee_prediction.php?${qs}`);
+      const res  = await fetch(`proc/ai_oee_prediction_2.php?${qs}`);
       const data = await res.json();
 
       if (data.code !== '00' || !data.forecast?.length) return;

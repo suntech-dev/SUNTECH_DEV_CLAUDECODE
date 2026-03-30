@@ -744,16 +744,16 @@ try {
 ## API 사용 예시
 
 ### 1. 기본 사용
-GET /data/proc/data_downtime_stream.php
+GET /data/proc/data_downtime_stream_2.php
 
 ### 2. 필터 적용
-GET /data/proc/data_downtime_stream.php?factory_filter=1&line_filter=2
+GET /data/proc/data_downtime_stream_2.php?factory_filter=1&line_filter=2
 
 ### 3. 날짜 범위 지정
-GET /data/proc/data_downtime_stream.php?start_date=2025-01-01&end_date=2025-01-07
+GET /data/proc/data_downtime_stream_2.php?start_date=2025-01-01&end_date=2025-01-07
 
 ### 4. 조합 필터
-GET /data/proc/data_downtime_stream.php?factory_filter=1&start_date=2025-01-01&limit=50
+GET /data/proc/data_downtime_stream_2.php?factory_filter=1&start_date=2025-01-01&limit=50
 
 ## SSE 이벤트 타입
 

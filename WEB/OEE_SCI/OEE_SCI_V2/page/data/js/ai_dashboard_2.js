@@ -2,7 +2,7 @@
  * AI Intelligence Dashboard JavaScript
  * v4(ai_dashboard.js) 대비 수정:
  *  - renderForecastChart(): today_data 기반 Actual OEE solid 라인 추가
- *  - loadMaintenanceRisk() / loadLineHealth(): proc/ai_maintenance_5.php 호출
+ *  - loadMaintenanceRisk() / loadLineHealth(): proc/ai_maintenance_dash_2.php 호출
  *  - updateLineHealthSubtitle(): date_range 에 맞게 서브타이틀 동적 변경
  */
 
@@ -136,7 +136,7 @@ function updateLineHealthSubtitle() {
 // 1. OEE 예측 (기본 구현 — ai_dashboard_2.php 에서 오버라이드)
 // ============================================================
 function loadPrediction() {
-  $.getJSON('proc/ai_oee_prediction_5.php', getFilterParams(), function(data) {
+  $.getJSON('proc/ai_oee_prediction_dash_2.php', getFilterParams(), function(data) {
     if (data.code !== '00') return;
 
     const curOee = data.current_oee !== null ? data.current_oee : '--';
@@ -345,7 +345,7 @@ function renderForecastChart(predData) {
 // 2. 이상 감지
 // ============================================================
 function loadAnomalyDetection() {
-  $.getJSON('proc/ai_anomaly.php', getFilterParams(), function(data) {
+  $.getJSON('proc/ai_anomaly_2.php', getFilterParams(), function(data) {
     if (data.code !== '00') { renderAnomalyEmpty('API error'); return; }
 
     const summary = data.summary || {};
@@ -431,10 +431,10 @@ function renderAnomalyEmpty(msg) {
 }
 
 // ============================================================
-// 3. 예방정비 위험도 — ai_maintenance_5.php 호출
+// 3. 예방정비 위험도 — ai_maintenance_dash_2.php 호출
 // ============================================================
 function loadMaintenanceRisk() {
-  $.getJSON('proc/ai_maintenance_5.php', getFilterParams(), function(data) {
+  $.getJSON('proc/ai_maintenance_dash_2.php', getFilterParams(), function(data) {
     if (data.code !== '00') { renderMaintenanceEmpty('API error'); return; }
 
     const summary = data.summary || {};
@@ -514,10 +514,10 @@ function renderMaintenanceEmpty(msg) {
 }
 
 // ============================================================
-// 4. 라인 건강지수 — ai_maintenance_5.php 호출
+// 4. 라인 건강지수 — ai_maintenance_dash_2.php 호출
 // ============================================================
 function loadLineHealth() {
-  $.getJSON('proc/ai_maintenance_5.php', Object.assign({}, getFilterParams(), { limit: 50 }), function(data) {
+  $.getJSON('proc/ai_maintenance_dash_2.php', Object.assign({}, getFilterParams(), { limit: 50 }), function(data) {
     if (data.code !== '00') return;
 
     const lineMap = {};

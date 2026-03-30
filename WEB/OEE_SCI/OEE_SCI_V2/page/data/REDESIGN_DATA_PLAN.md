@@ -238,7 +238,7 @@ function updateLayout() {
 | `data_oee_2.php`       | HTML 구조 (Row Grid 방식)      |
 | `css/data_oee_2.css`   | ai_dashboard_5 패턴 CSS        |
 | `js/data_oee_2.js`     | 데이터/SSE + updateLayout 토글 |
-| `js/ai_oee_overlay.js` | AI 예측 오버레이 (재사용)      |
+| `js/ai_oee_overlay_2.js` | AI 예측 오버레이 (재사용)      |
 
 **제거:** `data_oee.js` (구 버전, data_oee_2.js로 대체)
 

@@ -365,7 +365,7 @@ async function startAutoTracking() {
 
     var filters = getFilterParams();
     var params = new URLSearchParams(filters);
-    var sseUrl = 'proc/data_andon_stream.php?' + params.toString();
+    var sseUrl = 'proc/data_andon_stream_2.php?' + params.toString();
 
     eventSource = new EventSource(sseUrl);
     setupSSEEventListeners();
@@ -817,7 +817,7 @@ function exportData() {
     if (filters.shift_filter)   params.append('shift_filter',   filters.shift_filter);
     if (filters.start_date)     params.append('start_date',     filters.start_date);
     if (filters.end_date)       params.append('end_date',       filters.end_date);
-    window.location.href = 'proc/data_andon_export.php?' + params.toString();
+    window.location.href = 'proc/data_andon_export_2.php?' + params.toString();
 }
 
 async function refreshData() {

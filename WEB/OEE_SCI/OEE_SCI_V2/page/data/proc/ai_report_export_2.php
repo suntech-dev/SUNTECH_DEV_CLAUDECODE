@@ -1,7 +1,7 @@
 <?php
 /**
- * ai_report_export.php — HTML 리포트 다운로드
- * ai_report_engine.php 데이터를 받아 독립형 HTML 파일 생성
+ * ai_report_export_2.php — HTML 리포트 다운로드
+ * ai_report_engine_2.php 데이터를 받아 독립형 HTML 파일 생성
  * 브라우저에서 Ctrl+P → PDF 저장 가능
  *
  * Method: GET (report.php와 동일한 파라미터)
@@ -10,10 +10,10 @@
 require_once(__DIR__ . '/../../../lib/db.php');
 require_once(__DIR__ . '/../../../lib/statistics.lib.php');
 
-// ai_report_engine.php 의 핵심 로직 재사용 (include)
+// ai_report_engine_2.php 의 핵심 로직 재사용 (include)
 ob_start();
 $_SERVER['REQUEST_METHOD'] = 'GET'; // ensure
-include __DIR__ . '/ai_report_engine.php';
+include __DIR__ . '/ai_report_engine_2.php';
 $json = ob_get_clean();
 $data = json_decode($json, true);
 

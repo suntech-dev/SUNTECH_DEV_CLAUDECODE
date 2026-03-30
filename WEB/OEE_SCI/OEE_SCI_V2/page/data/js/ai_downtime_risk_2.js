@@ -27,7 +27,7 @@
   async function loadRiskData() {
     const qs = buildQS(getFilters());
     try {
-      const res  = await fetch(`proc/ai_maintenance.php?${qs}`);
+      const res  = await fetch(`proc/ai_maintenance_2.php?${qs}`);
       const data = await res.json();
 
       riskMap = {};

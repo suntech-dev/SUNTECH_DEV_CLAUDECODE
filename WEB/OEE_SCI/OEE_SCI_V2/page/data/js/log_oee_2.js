@@ -409,7 +409,7 @@ function getFilterParams() {
 async function startAutoTracking() {
     if (isTracking) return;
     const params = new URLSearchParams(getFilterParams());
-    eventSource   = new EventSource('proc/log_oee_stream.php?' + params.toString());
+    eventSource   = new EventSource('proc/log_oee_stream_2.php?' + params.toString());
     setupSSEEventListeners();
     isTracking = true;
     const el = document.getElementById('connectionStatus');
@@ -665,7 +665,7 @@ function exportData() {
         if (filters.shift_filter)   params.append('shift_filter',   filters.shift_filter);
         if (filters.start_date)     params.append('start_date',     filters.start_date);
         if (filters.end_date)       params.append('end_date',       filters.end_date);
-        window.open('proc/log_oee_export.php?' + params.toString(), '_blank');
+        window.open('proc/log_oee_export_2.php?' + params.toString(), '_blank');
     } catch (e) {
         console.error('Export error:', e);
     }

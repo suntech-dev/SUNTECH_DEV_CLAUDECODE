@@ -493,7 +493,7 @@ class DashboardManager {
 
     const filters = this.getFilterParams();
     const params = new URLSearchParams(filters);
-    const streamUrl = `proc/dashboard_stream.php?${params.toString()}`;
+    const streamUrl = `proc/dashboard_stream_2.php?${params.toString()}`;
 
     eventSource = new EventSource(streamUrl);
 

@@ -5,7 +5,7 @@
  * dashboard.php 의 사이니지 전용 버전
  * - nav 제거, 슬림 헤더 55px
  * - CSS Grid 4행 고정 레이아웃 (overflow: hidden)
- * - js/dashboard.js 100% 재사용
+ * - js/dashboard_2.js 100% 재사용
  */
 
 $page_title = 'SCI OEE Dashboard - Signage';
@@ -344,7 +344,7 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
 <script src="../../assets/js/daterangepicker.js"></script>
 
 <!-- Dashboard JS (100% 재사용) -->
-<script src="js/dashboard.js"></script>
+<script src="js/dashboard_2.js"></script>
 
 <!-- 햄버거 드로어 -->
 <!-- <script>

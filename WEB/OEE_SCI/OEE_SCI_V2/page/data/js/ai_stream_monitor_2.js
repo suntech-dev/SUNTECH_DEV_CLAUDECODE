@@ -126,7 +126,7 @@
     clearTimeout(reconnectTimer);
 
     const qs  = buildQS(getFilters());
-    const url = `proc/ai_stream_analysis.php${qs ? '?' + qs : ''}`;
+    const url = `proc/ai_stream_analysis_2.php${qs ? '?' + qs : ''}`;
 
     es = new EventSource(url);
 
