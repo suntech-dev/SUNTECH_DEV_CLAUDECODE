@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
   28:lib/LEDControl.c **** }
   29:lib/LEDControl.c **** 
   30:lib/LEDControl.c **** void LED_Brightness(uint16 brightness)
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 2
 
 
   31:lib/LEDControl.c **** {
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
   74              		.loc 1 25 0
   75 0014 FFF7FEFF 		bl	getMiscConfig
   76              	.LVL5:
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 3
 
 
   77 0018 FFF7FEFF 		bl	getMiscConfig
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  121 0002 174A     		ldr	r2, .L13
  122 0004 1379     		ldrb	r3, [r2, #4]
  123 0006 5942     		rsbs	r1, r3, #0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 4
 
 
  124 0008 4B41     		adcs	r3, r3, r1
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  165 0044 9878     		ldrb	r0, [r3, #2]
  166 0046 FFF7FEFF 		bl	Control_Reg_LED_2_Write
  167              	.LVL13:
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 5
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 5
 
 
  168 004a 07E0     		b	.L6
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  216              		.type	g_bLED2_Flickering, %object
  217              		.size	g_bLED2_Flickering, 1
  218              	g_bLED2_Flickering:
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 6
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 6
 
 
  219 0006 00       		.space	1
@@ -318,17 +318,17 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  233 0006 00000000 		.4byte	.Ldebug_abbrev0
  234 000a 04       		.byte	0x4
  235 000b 01       		.uleb128 0x1
- 236 000c 81010000 		.4byte	.LASF34
+ 236 000c E3010000 		.4byte	.LASF34
  237 0010 0C       		.byte	0xc
- 238 0011 98020000 		.4byte	.LASF35
- 239 0015 0F020000 		.4byte	.LASF36
+ 238 0011 9B020000 		.4byte	.LASF35
+ 239 0015 DD000000 		.4byte	.LASF36
  240 0019 00000000 		.4byte	.Ldebug_ranges0+0
  241 001d 00000000 		.4byte	0
  242 0021 00000000 		.4byte	.Ldebug_line0
  243 0025 02       		.uleb128 0x2
  244 0026 01       		.byte	0x1
  245 0027 06       		.byte	0x6
- 246 0028 DB020000 		.4byte	.LASF0
+ 246 0028 DE020000 		.4byte	.LASF0
  247 002c 02       		.uleb128 0x2
  248 002d 01       		.byte	0x1
  249 002e 08       		.byte	0x8
@@ -336,7 +336,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  251 0033 02       		.uleb128 0x2
  252 0034 02       		.byte	0x2
  253 0035 05       		.byte	0x5
- 254 0036 F7000000 		.4byte	.LASF2
+ 254 0036 59010000 		.4byte	.LASF2
  255 003a 02       		.uleb128 0x2
  256 003b 02       		.byte	0x2
  257 003c 07       		.byte	0x7
@@ -344,7 +344,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  259 0041 02       		.uleb128 0x2
  260 0042 04       		.byte	0x4
  261 0043 05       		.byte	0x5
- 262 0044 AF020000 		.4byte	.LASF4
+ 262 0044 B2020000 		.4byte	.LASF4
  263 0048 02       		.uleb128 0x2
  264 0049 04       		.byte	0x4
  265 004a 07       		.byte	0x7
@@ -352,13 +352,13 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  267 004f 02       		.uleb128 0x2
  268 0050 08       		.byte	0x8
  269 0051 05       		.byte	0x5
- 270 0052 85020000 		.4byte	.LASF6
+ 270 0052 88020000 		.4byte	.LASF6
  271 0056 02       		.uleb128 0x2
  272 0057 08       		.byte	0x8
  273 0058 07       		.byte	0x7
- 274 0059 42010000 		.4byte	.LASF7
+ 274 0059 A4010000 		.4byte	.LASF7
  275 005d 03       		.uleb128 0x3
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 7
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 7
 
 
  276 005e 04       		.byte	0x4
@@ -367,14 +367,14 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  279 0064 02       		.uleb128 0x2
  280 0065 04       		.byte	0x4
  281 0066 07       		.byte	0x7
- 282 0067 1D010000 		.4byte	.LASF8
+ 282 0067 7F010000 		.4byte	.LASF8
  283 006b 04       		.uleb128 0x4
- 284 006c A9020000 		.4byte	.LASF9
+ 284 006c AC020000 		.4byte	.LASF9
  285 0070 02       		.byte	0x2
  286 0071 FC01     		.2byte	0x1fc
  287 0073 2C000000 		.4byte	0x2c
  288 0077 04       		.uleb128 0x4
- 289 0078 01010000 		.4byte	.LASF10
+ 289 0078 63010000 		.4byte	.LASF10
  290 007c 02       		.byte	0x2
  291 007d FD01     		.2byte	0x1fd
  292 007f 3A000000 		.4byte	0x3a
@@ -389,15 +389,15 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  301 0091 02       		.uleb128 0x2
  302 0092 01       		.byte	0x1
  303 0093 08       		.byte	0x8
- 304 0094 93020000 		.4byte	.LASF13
+ 304 0094 96020000 		.4byte	.LASF13
  305 0098 02       		.uleb128 0x2
  306 0099 08       		.byte	0x8
  307 009a 04       		.byte	0x4
- 308 009b CF020000 		.4byte	.LASF14
+ 308 009b D2020000 		.4byte	.LASF14
  309 009f 02       		.uleb128 0x2
  310 00a0 04       		.byte	0x4
  311 00a1 07       		.byte	0x7
- 312 00a2 7C020000 		.4byte	.LASF15
+ 312 00a2 7F020000 		.4byte	.LASF15
  313 00a6 05       		.uleb128 0x5
  314 00a7 9A000000 		.4byte	.LASF37
  315 00ab 06       		.byte	0x6
@@ -411,14 +411,14 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  323 00b9 6B000000 		.4byte	0x6b
  324 00bd 00       		.byte	0
  325 00be 06       		.uleb128 0x6
- 326 00bf DC000000 		.4byte	.LASF17
+ 326 00bf 4D010000 		.4byte	.LASF17
  327 00c3 03       		.byte	0x3
  328 00c4 31       		.byte	0x31
  329 00c5 77000000 		.4byte	0x77
  330 00c9 02       		.byte	0x2
  331 00ca 06       		.uleb128 0x6
- 332 00cb E2000000 		.4byte	.LASF18
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 8
+ 332 00cb 53010000 		.4byte	.LASF18
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 8
 
 
  333 00cf 03       		.byte	0x3
@@ -427,7 +427,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  336 00d5 04       		.byte	0x4
  337 00d6 00       		.byte	0
  338 00d7 07       		.uleb128 0x7
- 339 00d8 08010000 		.4byte	.LASF38
+ 339 00d8 6A010000 		.4byte	.LASF38
  340 00dc 01       		.byte	0x1
  341 00dd 1E       		.byte	0x1e
  342 00de 00000000 		.4byte	.LFB63
@@ -446,7 +446,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  355 0100 5B020000 		.4byte	0x25b
  356 0104 00       		.byte	0
  357 0105 0A       		.uleb128 0xa
- 358 0106 E8000000 		.4byte	.LASF19
+ 358 0106 CE000000 		.4byte	.LASF19
  359 010a 01       		.byte	0x1
  360 010b 13       		.byte	0x13
  361 010c 00000000 		.4byte	.LFB62
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  387 0159 09       		.uleb128 0x9
  388 015a 34000000 		.4byte	.LVL9
  389 015e D7000000 		.4byte	0xd7
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 9
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 9
 
 
  390 0162 00       		.byte	0
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  444 01d7 5C000000 		.4byte	.LVL15
  445 01db 7E020000 		.4byte	0x27e
  446 01df 00       		.byte	0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 10
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 10
 
 
  447 01e0 0F       		.uleb128 0xf
@@ -551,14 +551,14 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  454 01f0 11       		.uleb128 0x11
  455 01f1 77000000 		.4byte	0x77
  456 01f5 12       		.uleb128 0x12
- 457 01f6 B8020000 		.4byte	.LASF23
+ 457 01f6 BB020000 		.4byte	.LASF23
  458 01fa 04       		.byte	0x4
  459 01fb E001     		.2byte	0x1e0
  460 01fd 01020000 		.4byte	0x201
  461 0201 11       		.uleb128 0x11
  462 0202 E0010000 		.4byte	0x1e0
  463 0206 13       		.uleb128 0x13
- 464 0207 17010000 		.4byte	.LASF24
+ 464 0207 79010000 		.4byte	.LASF24
  465 020b 03       		.byte	0x3
  466 020c 35       		.byte	0x35
  467 020d A6000000 		.4byte	0xa6
@@ -590,7 +590,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  493 0245 03       		.byte	0x3
  494 0246 00000000 		.4byte	g_bLED1_Flickering
  495 024a 13       		.uleb128 0x13
- 496 024b E7020000 		.4byte	.LASF28
+ 496 024b EA020000 		.4byte	.LASF28
  497 024f 01       		.byte	0x1
  498 0250 11       		.byte	0x11
  499 0251 6B000000 		.4byte	0x6b
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  501 0256 03       		.byte	0x3
  502 0257 00000000 		.4byte	g_bLED2_Flickering
  503 025b 14       		.uleb128 0x14
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 11
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 11
 
 
  504 025c 21000000 		.4byte	.LASF29
@@ -606,23 +606,23 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  506 0264 05       		.byte	0x5
  507 0265 5501     		.2byte	0x155
  508 0267 14       		.uleb128 0x14
- 509 0268 71010000 		.4byte	.LASF30
- 510 026c 71010000 		.4byte	.LASF30
+ 509 0268 D3010000 		.4byte	.LASF30
+ 510 026c D3010000 		.4byte	.LASF30
  511 0270 05       		.byte	0x5
  512 0271 3201     		.2byte	0x132
  513 0273 15       		.uleb128 0x15
- 514 0274 59010000 		.4byte	.LASF31
- 515 0278 59010000 		.4byte	.LASF31
+ 514 0274 BB010000 		.4byte	.LASF31
+ 515 0278 BB010000 		.4byte	.LASF31
  516 027c 06       		.byte	0x6
  517 027d 2F       		.byte	0x2f
  518 027e 15       		.uleb128 0x15
- 519 027f 2A010000 		.4byte	.LASF32
- 520 0283 2A010000 		.4byte	.LASF32
+ 519 027f 8C010000 		.4byte	.LASF32
+ 520 0283 8C010000 		.4byte	.LASF32
  521 0287 07       		.byte	0x7
  522 0288 2F       		.byte	0x2f
  523 0289 15       		.uleb128 0x15
- 524 028a CE000000 		.4byte	.LASF33
- 525 028e CE000000 		.4byte	.LASF33
+ 524 028a 71020000 		.4byte	.LASF33
+ 525 028e 71020000 		.4byte	.LASF33
  526 0292 08       		.byte	0x8
  527 0293 37       		.byte	0x37
  528 0294 00       		.byte	0
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  558 001b 0E       		.uleb128 0xe
  559 001c 00       		.byte	0
  560 001d 00       		.byte	0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 12
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 12
 
 
  561 001e 03       		.uleb128 0x3
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  615 0054 07       		.uleb128 0x7
  616 0055 2E       		.uleb128 0x2e
  617 0056 01       		.byte	0x1
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 13
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 13
 
 
  618 0057 3F       		.uleb128 0x3f
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  672 0090 0B       		.uleb128 0xb
  673 0091 3B       		.uleb128 0x3b
  674 0092 0B       		.uleb128 0xb
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 14
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 14
 
 
  675 0093 11       		.uleb128 0x11
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  729 00cc 8A8201   		.uleb128 0x410a
  730 00cf 00       		.byte	0
  731 00d0 02       		.uleb128 0x2
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 15
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 15
 
 
  732 00d1 18       		.uleb128 0x18
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  786 0108 3B       		.uleb128 0x3b
  787 0109 0B       		.uleb128 0xb
  788 010a 49       		.uleb128 0x49
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 16
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 16
 
 
  789 010b 13       		.uleb128 0x13
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  843 0017 50       		.byte	0x50
  844 0018 9F       		.byte	0x9f
  845 0019 00000000 		.4byte	0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 17
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 17
 
 
  846 001d 00000000 		.4byte	0
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  885 003e 675F754C 		.ascii	"g_uLED2_Color\000"
  885      4544325F 
  885      436F6C6F 
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 18
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 18
 
 
  885      7200
@@ -1068,146 +1068,146 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 1
  905 00c3 466C6963 		.ascii	"Flickering\000"
  905      6B657269 
  905      6E6700
- 906              	.LASF33:
- 907 00ce 6765744D 		.ascii	"getMiscConfig\000"
- 907      69736343 
- 907      6F6E6669 
- 907      6700
- 908              	.LASF17:
- 909 00dc 706F735F 		.ascii	"pos_X\000"
- 909      5800
- 910              	.LASF18:
- 911 00e2 706F735F 		.ascii	"pos_Y\000"
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 19
+ 906              	.LASF19:
+ 907 00ce 696E6974 		.ascii	"initLEDControl\000"
+ 907      4C454443 
+ 907      6F6E7472 
+ 907      6F6C00
+ 908              	.LASF36:
+ 909 00dd 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_INTEGR"
+ 909      554E5445 
+ 909      43485F44 
+ 909      45565F43 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 19
 
 
- 911      5900
- 912              	.LASF19:
- 913 00e8 696E6974 		.ascii	"initLEDControl\000"
- 913      4C454443 
- 913      6F6E7472 
- 913      6F6C00
- 914              	.LASF2:
- 915 00f7 73686F72 		.ascii	"short int\000"
- 915      7420696E 
- 915      7400
- 916              	.LASF10:
- 917 0101 75696E74 		.ascii	"uint16\000"
- 917      313600
- 918              	.LASF38:
- 919 0108 4C45445F 		.ascii	"LED_Brightness\000"
- 919      42726967 
- 919      68746E65 
- 919      737300
- 920              	.LASF24:
- 921 0117 50617261 		.ascii	"Param\000"
- 921      6D00
- 922              	.LASF8:
- 923 011d 756E7369 		.ascii	"unsigned int\000"
- 923      676E6564 
- 923      20696E74 
- 923      00
- 924              	.LASF32:
- 925 012a 436F6E74 		.ascii	"Control_Reg_LED_2_Write\000"
- 925      726F6C5F 
- 925      5265675F 
- 925      4C45445F 
- 925      325F5772 
- 926              	.LASF7:
- 927 0142 6C6F6E67 		.ascii	"long long unsigned int\000"
- 927      206C6F6E 
- 927      6720756E 
- 927      7369676E 
- 927      65642069 
- 928              	.LASF31:
- 929 0159 436F6E74 		.ascii	"Control_Reg_LED_1_Write\000"
- 929      726F6C5F 
- 929      5265675F 
- 929      4C45445F 
- 929      315F5772 
- 930              	.LASF30:
- 931 0171 54435057 		.ascii	"TCPWM_LED_Start\000"
- 931      4D5F4C45 
- 931      445F5374 
- 931      61727400 
- 932              	.LASF34:
- 933 0181 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
- 933      43313120 
- 933      352E342E 
- 933      31203230 
- 933      31363036 
- 934 01b4 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
- 934      20726576 
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 20
+ 909      4C415544 
+ 910 010d 41544544 		.ascii	"ATED\\280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S\\Projec"
+ 910      5C323830 
+ 910      4354505F 
+ 910      496F545F 
+ 910      494E5445 
+ 911 013e 745C4465 		.ascii	"t\\Design.cydsn\000"
+ 911      7369676E 
+ 911      2E637964 
+ 911      736E00
+ 912              	.LASF17:
+ 913 014d 706F735F 		.ascii	"pos_X\000"
+ 913      5800
+ 914              	.LASF18:
+ 915 0153 706F735F 		.ascii	"pos_Y\000"
+ 915      5900
+ 916              	.LASF2:
+ 917 0159 73686F72 		.ascii	"short int\000"
+ 917      7420696E 
+ 917      7400
+ 918              	.LASF10:
+ 919 0163 75696E74 		.ascii	"uint16\000"
+ 919      313600
+ 920              	.LASF38:
+ 921 016a 4C45445F 		.ascii	"LED_Brightness\000"
+ 921      42726967 
+ 921      68746E65 
+ 921      737300
+ 922              	.LASF24:
+ 923 0179 50617261 		.ascii	"Param\000"
+ 923      6D00
+ 924              	.LASF8:
+ 925 017f 756E7369 		.ascii	"unsigned int\000"
+ 925      676E6564 
+ 925      20696E74 
+ 925      00
+ 926              	.LASF32:
+ 927 018c 436F6E74 		.ascii	"Control_Reg_LED_2_Write\000"
+ 927      726F6C5F 
+ 927      5265675F 
+ 927      4C45445F 
+ 927      325F5772 
+ 928              	.LASF7:
+ 929 01a4 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 929      206C6F6E 
+ 929      6720756E 
+ 929      7369676E 
+ 929      65642069 
+ 930              	.LASF31:
+ 931 01bb 436F6E74 		.ascii	"Control_Reg_LED_1_Write\000"
+ 931      726F6C5F 
+ 931      5265675F 
+ 931      4C45445F 
+ 931      315F5772 
+ 932              	.LASF30:
+ 933 01d3 54435057 		.ascii	"TCPWM_LED_Start\000"
+ 933      4D5F4C45 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 20
 
 
- 934      6973696F 
- 934      6E203233 
- 934      37373135 
- 935 01e7 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
- 935      66756E63 
- 935      74696F6E 
- 935      2D736563 
- 935      74696F6E 
- 936              	.LASF36:
- 937 020f 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_INTEGR"
- 937      554E5445 
- 937      43485F44 
- 937      45565F43 
- 937      4C415544 
- 938 023f 41544544 		.ascii	"ATED\\280CTP_IoT_INTEGRATED_V1_BLACK_CPU\\Project\\"
- 938      5C323830 
- 938      4354505F 
- 938      496F545F 
- 938      494E5445 
- 939 026f 44657369 		.ascii	"Design.cydsn\000"
- 939      676E2E63 
- 939      7964736E 
- 939      00
+ 933      445F5374 
+ 933      61727400 
+ 934              	.LASF34:
+ 935 01e3 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 935      43313120 
+ 935      352E342E 
+ 935      31203230 
+ 935      31363036 
+ 936 0216 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 936      20726576 
+ 936      6973696F 
+ 936      6E203233 
+ 936      37373135 
+ 937 0249 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 937      66756E63 
+ 937      74696F6E 
+ 937      2D736563 
+ 937      74696F6E 
+ 938              	.LASF33:
+ 939 0271 6765744D 		.ascii	"getMiscConfig\000"
+ 939      69736343 
+ 939      6F6E6669 
+ 939      6700
  940              	.LASF15:
- 941 027c 73697A65 		.ascii	"sizetype\000"
+ 941 027f 73697A65 		.ascii	"sizetype\000"
  941      74797065 
  941      00
  942              	.LASF6:
- 943 0285 6C6F6E67 		.ascii	"long long int\000"
+ 943 0288 6C6F6E67 		.ascii	"long long int\000"
  943      206C6F6E 
  943      6720696E 
  943      7400
  944              	.LASF13:
- 945 0293 63686172 		.ascii	"char\000"
+ 945 0296 63686172 		.ascii	"char\000"
  945      00
  946              	.LASF35:
- 947 0298 6C69625C 		.ascii	"lib\\LEDControl.c\000"
+ 947 029b 6C69625C 		.ascii	"lib\\LEDControl.c\000"
  947      4C454443 
  947      6F6E7472 
  947      6F6C2E63 
  947      00
  948              	.LASF9:
- 949 02a9 75696E74 		.ascii	"uint8\000"
+ 949 02ac 75696E74 		.ascii	"uint8\000"
  949      3800
  950              	.LASF4:
- 951 02af 6C6F6E67 		.ascii	"long int\000"
+ 951 02b2 6C6F6E67 		.ascii	"long int\000"
  951      20696E74 
  951      00
  952              	.LASF23:
- 953 02b8 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 953 02bb 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
  953      64617973 
  953      4265666F 
  953      72654D6F 
  953      6E746854 
  954              	.LASF14:
- 955 02cf 6C6F6E67 		.ascii	"long double\000"
+ 955 02d2 6C6F6E67 		.ascii	"long double\000"
  955      20646F75 
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccVzqKhV.s 			page 21
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc7WUaiP.s 			page 21
 
 
  955      626C6500 
  956              	.LASF0:
- 957 02db 7369676E 		.ascii	"signed char\000"
+ 957 02de 7369676E 		.ascii	"signed char\000"
  957      65642063 
  957      68617200 
  958              	.LASF28:
- 959 02e7 675F624C 		.ascii	"g_bLED2_Flickering\000"
+ 959 02ea 675F624C 		.ascii	"g_bLED2_Flickering\000"
  959      4544325F 
  959      466C6963 
  959      6B657269 

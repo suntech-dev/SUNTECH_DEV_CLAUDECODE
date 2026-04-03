@@ -1,22 +1,5 @@
---------------- Build Started: 03/24/2026 11:41:00 Project: Design, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
+--------------- Build Started: 03/30/2026 14:08:14 Project: Design, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
 The code generation step is up to date.
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/FT5x46.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\FT5x46.c -o .\CortexM0\ARM_GCC_541\Debug\FT5x46.o
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/IODefine.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\IODefine.c -o .\CortexM0\ARM_GCC_541\Debug\IODefine.o
-lib\IODefine.c: In function 'getSensor':
-lib\IODefine.c:20:10: warning: unused variable 'shift' [-Wunused-variable]
-     char shift = 0;
-          ^
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/IOUtil.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\IOUtil.c -o .\CortexM0\ARM_GCC_541\Debug\IOUtil.o
-lib\IOUtil.c: In function 'updateIOTimer':
-lib\IOUtil.c:108:18: warning: implicit declaration of function 'get1msecTimerReset' [-Wimplicit-function-declaration]
-     uint8 b1ms = get1msecTimerReset();
-                  ^
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/LEDControl.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\LEDControl.c -o .\CortexM0\ARM_GCC_541\Debug\LEDControl.o
-lib\LEDControl.c: In function 'LED_OneSecondControl':
-lib\LEDControl.c:37:18: warning: unused variable 'count' [-Wunused-variable]
-     static uint8 count =0;
-                  ^
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/RealTimeClock.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\RealTimeClock.c -o .\CortexM0\ARM_GCC_541\Debug\RealTimeClock.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/ST7789V.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\ST7789V.c -o .\CortexM0\ARM_GCC_541\Debug\ST7789V.o
 In file included from lib\ST7789V.h:42:0,
                  from lib\ST7789V.c:42:
@@ -40,10 +23,7 @@ lib\ST7789V.c: At top level:
 lib\ST7789V.c:54:16: warning: 'init_ENH_OB130SB128' defined but not used [-Wunused-variable]
  static uint8_t init_ENH_OB130SB128[30] = {  0x40, 0x81, 0x80, 0xA0, 0xA4, 0xA6, 0xA8, 0x3F, 0xC0,
                 ^
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/stdout.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\stdout.c -o .\CortexM0\ARM_GCC_541\Debug\stdout.o
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/sysTick.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\sysTick.c -o .\CortexM0\ARM_GCC_541\Debug\sysTick.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/menu.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\menu.c -o .\CortexM0\ARM_GCC_541\Debug\menu.o
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/USB.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\USB.c -o .\CortexM0\ARM_GCC_541\Debug\USB.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/UI.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\UI.c -o .\CortexM0\ARM_GCC_541\Debug\UI.o
 In file included from lib\UI.h:16:0,
                  from lib\UI.c:12:
@@ -120,7 +100,6 @@ lib\button.c:78:12: warning: unused variable 'marginTopBottom' [-Wunused-variabl
 lib\button.c:77:12: warning: unused variable 'marginLeftRight' [-Wunused-variable]
      uint16 marginLeftRight;
             ^
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/internalFlash.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\internalFlash.c -o .\CortexM0\ARM_GCC_541\Debug\internalFlash.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/externalFlash.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\externalFlash.c -o .\CortexM0\ARM_GCC_541\Debug\externalFlash.o
 In file included from lib\UI.h:16:0,
                  from lib\externalFlash.c:3:
@@ -210,7 +189,6 @@ lib\fonts.h:1093:243: warning: multi-line comment [-Wcomment]
  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xC0,0x00,0xC0,0x00,0xF0,0x00,0xFC,0x00,0xFC,0x00,0x3F,0x00,0x0F,0xC0,0x0F,0xC0,0x03,0xF0,0x00,0xFC,0x00,0xFC,0x00,0x3C,0x00,0x0C,0x00,0x0C,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,  // \
                                                                                                                                                                                                                                                    ^
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/server.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\server.c -o .\CortexM0\ARM_GCC_541\Debug\server.o
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/utility.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\utility.c -o .\CortexM0\ARM_GCC_541\Debug\utility.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/main.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c main.c -o .\CortexM0\ARM_GCC_541\Debug\main.o
 In file included from lib/UI.h:16:0,
                  from menuDesign.h:16,
@@ -282,7 +260,6 @@ andonApi.c: In function 'makeAndonPatternCount':
 andonApi.c:122:12: warning: unused variable 'pts' [-Wunused-variable]
      uint32 pts =   GetWorkingTimeCount();
             ^
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/andonMessageQueue.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c andonMessageQueue.c -o .\CortexM0\ARM_GCC_541\Debug\andonMessageQueue.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/andonJson.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c andonJson.c -o .\CortexM0\ARM_GCC_541\Debug\andonJson.o
 In file included from lib/UI.h:16:0,
                  from lib/widget.h:16,
@@ -314,11 +291,6 @@ andonJson.c:503:9: warning: variable 'r' set but not used [-Wunused-but-set-vari
 andonJson.c:502:9: warning: unused variable 'i' [-Wunused-variable]
      int i;
          ^
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/jsonUtil.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c jsonUtil.c -o .\CortexM0\ARM_GCC_541\Debug\jsonUtil.o
-jsonUtil.c: In function 'removeDoubleSlash':
-jsonUtil.c:99:18: warning: unused variable 'c' [-Wunused-variable]
-             char c = str[i];
-                  ^
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/menuDesign.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c menuDesign.c -o .\CortexM0\ARM_GCC_541\Debug\menuDesign.o
 In file included from lib/UI.h:16:0,
                  from menuDesign.h:16,
@@ -423,8 +395,6 @@ userMenuPatternSewingMachine.c:641:18: warning: unused variable 'pairsInfoMenuNo
 userMenuPatternSewingMachine.c:612:15: warning: variable 'g_ptrAndonMenuNode' set but not used [-Wunused-but-set-variable]
      MENUNODE *g_ptrAndonMenuNode = NULL;
                ^
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/userProjectPatternSewing.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c userProjectPatternSewing.c -o .\CortexM0\ARM_GCC_541\Debug\userProjectPatternSewing.o
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/count.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c count.c -o .\CortexM0\ARM_GCC_541\Debug\count.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/uartJson.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c uartJson.c -o .\CortexM0\ARM_GCC_541\Debug\uartJson.o
 In file included from lib/UI.h:16:0,
                  from lib/widget.h:16,
@@ -445,7 +415,6 @@ uartJson.c: In function 'uartJsonLoop':
 uartJson.c:55:28: warning: unused variable 'tmp' [-Wunused-variable]
                      uint32 tmp = CONVERT_TO_4BYTE(ptrCount->patternActualH, ptrCount->patternActualL) + g_ptrMachineParameter->patternPair;
                             ^
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/WarningLight.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c WarningLight.c -o .\CortexM0\ARM_GCC_541\Debug\WarningLight.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/andonMenu.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c andonMenu.c -o .\CortexM0\ARM_GCC_541\Debug\andonMenu.o
 In file included from lib/UI.h:16:0,
                  from lib/widget.h:16,
@@ -474,7 +443,6 @@ andonMenu.c: In function 'doAndonSet':
 andonMenu.c:271:15: warning: unused variable 'thisMenu' [-Wunused-variable]
      MENUNODE *thisMenu = (MENUNODE *) this;    
                ^
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/uartProcess.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c uartProcess.c -o .\CortexM0\ARM_GCC_541\Debug\uartProcess.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/downtime.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c downtime.c -o .\CortexM0\ARM_GCC_541\Debug\downtime.o
 In file included from lib/UI.h:16:0,
                  from lib/widget.h:16,
@@ -556,4 +524,4 @@ Checksum calculated and stored in ELF section .cymeta
 cyelftool.exe -S C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_BLACK_CPU\Project\Design.cydsn\CortexM0\ARM_GCC_541\Debug\Design.elf
 Flash used: 118804 of 262144 bytes (45.3%). Bootloader: 13568 bytes. Application: 104980 bytes. Metadata: 256 bytes.
 SRAM used: 22580 of 32768 bytes (68.9%). Stack: 2048 bytes. Heap: 1024 bytes.
---------------- Build Succeeded: 03/24/2026 11:41:11 ---------------
+--------------- Build Succeeded: 03/30/2026 14:08:23 ---------------

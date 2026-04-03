@@ -4581,7 +4581,7 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000    0xc1c5d
+.debug_info     0x00000000    0xc1c60
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x52d .\CortexM0\ARM_GCC_541\Debug\FT5x46.o
  .debug_info    0x0000052d      0x286 .\CortexM0\ARM_GCC_541\Debug\IODefine.o
@@ -4674,13 +4674,13 @@ END GROUP
  .debug_info    0x000c08cd      0x305 .\CortexM0\ARM_GCC_541\Debug\Design.a(trim_Int.o)
  .debug_info    0x000c0bd2      0x19d .\CortexM0\ARM_GCC_541\Debug\Design.a(WIFI_RESET.o)
  .debug_info    0x000c0d6f      0x19d .\CortexM0\ARM_GCC_541\Debug\Design.a(RESERVED_OUT_3.o)
- .debug_info    0x000c0f0c       0xbb .\CortexM0\ARM_GCC_541\Debug\Design.a(CyBootAsmGnu.o)
- .debug_info    0x000c0fc7      0x1a8 .\CortexM0\ARM_GCC_541\Debug\Design.a(I2C_TC_I2C_INT.o)
- .debug_info    0x000c116f      0x187 .\CortexM0\ARM_GCC_541\Debug\Design.a(UART_SPI_UART_INT.o)
- .debug_info    0x000c12f6      0x1ea .\CortexM0\ARM_GCC_541\Debug\Design.a(USBUART_cls.o)
- .debug_info    0x000c14e0      0x2a4 .\CortexM0\ARM_GCC_541\Debug\Design.a(USBUART_descr.o)
- .debug_info    0x000c1784      0x352 .\CortexM0\ARM_GCC_541\Debug\Design.a(CyFlash.o)
- .debug_info    0x000c1ad6      0x187 .\CortexM0\ARM_GCC_541\Debug\Design.a(UART_WIFI_SPI_UART_INT.o)
+ .debug_info    0x000c0f0c       0xbe .\CortexM0\ARM_GCC_541\Debug\Design.a(CyBootAsmGnu.o)
+ .debug_info    0x000c0fca      0x1a8 .\CortexM0\ARM_GCC_541\Debug\Design.a(I2C_TC_I2C_INT.o)
+ .debug_info    0x000c1172      0x187 .\CortexM0\ARM_GCC_541\Debug\Design.a(UART_SPI_UART_INT.o)
+ .debug_info    0x000c12f9      0x1ea .\CortexM0\ARM_GCC_541\Debug\Design.a(USBUART_cls.o)
+ .debug_info    0x000c14e3      0x2a4 .\CortexM0\ARM_GCC_541\Debug\Design.a(USBUART_descr.o)
+ .debug_info    0x000c1787      0x352 .\CortexM0\ARM_GCC_541\Debug\Design.a(CyFlash.o)
+ .debug_info    0x000c1ad9      0x187 .\CortexM0\ARM_GCC_541\Debug\Design.a(UART_WIFI_SPI_UART_INT.o)
 
 .debug_abbrev   0x00000000     0x941f
  *(.debug_abbrev)
@@ -5062,29 +5062,29 @@ END GROUP
 
 .debug_str      0x00000000     0x96d9
  *(.debug_str)
- .debug_str     0x00000000      0x376 .\CortexM0\ARM_GCC_541\Debug\FT5x46.o
-                                0x3e5 (size before relaxing)
- .debug_str     0x00000376       0xbf .\CortexM0\ARM_GCC_541\Debug\IODefine.o
-                                0x2b2 (size before relaxing)
- .debug_str     0x00000435       0xed .\CortexM0\ARM_GCC_541\Debug\IOUtil.o
-                                0x370 (size before relaxing)
- .debug_str     0x00000522       0xf6 .\CortexM0\ARM_GCC_541\Debug\LEDControl.o
-                                0x2fa (size before relaxing)
- .debug_str     0x00000618      0x2bd .\CortexM0\ARM_GCC_541\Debug\RealTimeClock.o
-                                0x4da (size before relaxing)
- .debug_str     0x000008d5      0x1d0 .\CortexM0\ARM_GCC_541\Debug\ST7789V.o
+ .debug_str     0x00000000      0x379 .\CortexM0\ARM_GCC_541\Debug\FT5x46.o
+                                0x3e8 (size before relaxing)
+ .debug_str     0x00000379       0xbf .\CortexM0\ARM_GCC_541\Debug\IODefine.o
+                                0x2b5 (size before relaxing)
+ .debug_str     0x00000438       0xed .\CortexM0\ARM_GCC_541\Debug\IOUtil.o
+                                0x373 (size before relaxing)
+ .debug_str     0x00000525       0xf6 .\CortexM0\ARM_GCC_541\Debug\LEDControl.o
+                                0x2fd (size before relaxing)
+ .debug_str     0x0000061b      0x2bd .\CortexM0\ARM_GCC_541\Debug\RealTimeClock.o
+                                0x4dd (size before relaxing)
+ .debug_str     0x000008d8      0x160 .\CortexM0\ARM_GCC_541\Debug\ST7789V.o
                                 0x3ac (size before relaxing)
- .debug_str     0x00000aa5       0x31 .\CortexM0\ARM_GCC_541\Debug\stdout.o
-                                0x22b (size before relaxing)
- .debug_str     0x00000ad6      0x10a .\CortexM0\ARM_GCC_541\Debug\sysTick.o
-                                0x33d (size before relaxing)
- .debug_str     0x00000be0      0x528 .\CortexM0\ARM_GCC_541\Debug\w25qxx.o
-                                0x782 (size before relaxing)
- .debug_str     0x00001108      0x110 .\CortexM0\ARM_GCC_541\Debug\menu.o
+ .debug_str     0x00000a38       0x31 .\CortexM0\ARM_GCC_541\Debug\stdout.o
+                                0x22e (size before relaxing)
+ .debug_str     0x00000a69      0x10a .\CortexM0\ARM_GCC_541\Debug\sysTick.o
+                                0x340 (size before relaxing)
+ .debug_str     0x00000b73      0x528 .\CortexM0\ARM_GCC_541\Debug\w25qxx.o
+                                0x785 (size before relaxing)
+ .debug_str     0x0000109b      0x110 .\CortexM0\ARM_GCC_541\Debug\menu.o
                                 0x329 (size before relaxing)
- .debug_str     0x00001218      0x1ff .\CortexM0\ARM_GCC_541\Debug\USB.o
-                                0x458 (size before relaxing)
- .debug_str     0x00001417      0x145 .\CortexM0\ARM_GCC_541\Debug\jsmn.o
+ .debug_str     0x000011ab      0x1ff .\CortexM0\ARM_GCC_541\Debug\USB.o
+                                0x45b (size before relaxing)
+ .debug_str     0x000013aa      0x1b2 .\CortexM0\ARM_GCC_541\Debug\jsmn.o
                                 0x30f (size before relaxing)
  .debug_str     0x0000155c      0x4ce .\CortexM0\ARM_GCC_541\Debug\UI.o
                                 0x88f (size before relaxing)
@@ -5093,7 +5093,7 @@ END GROUP
  .debug_str     0x0000259f       0xa2 .\CortexM0\ARM_GCC_541\Debug\button.o
                                 0x97d (size before relaxing)
  .debug_str     0x00002641      0x23a .\CortexM0\ARM_GCC_541\Debug\internalFlash.o
-                                0x489 (size before relaxing)
+                                0x48c (size before relaxing)
  .debug_str     0x0000287b      0x214 .\CortexM0\ARM_GCC_541\Debug\externalFlash.o
                                 0x687 (size before relaxing)
  .debug_str     0x00002a8f      0x1c8 .\CortexM0\ARM_GCC_541\Debug\manageMenu.o
@@ -5101,9 +5101,9 @@ END GROUP
  .debug_str     0x00002c57      0x32f .\CortexM0\ARM_GCC_541\Debug\WIFI.o
                                 0x72b (size before relaxing)
  .debug_str     0x00002f86       0x24 .\CortexM0\ARM_GCC_541\Debug\server.o
-                                0x304 (size before relaxing)
+                                0x307 (size before relaxing)
  .debug_str     0x00002faa       0x43 .\CortexM0\ARM_GCC_541\Debug\utility.o
-                                0x248 (size before relaxing)
+                                0x24b (size before relaxing)
  .debug_str     0x00002fed       0xa3 .\CortexM0\ARM_GCC_541\Debug\main.o
                                 0x377 (size before relaxing)
  .debug_str     0x00003090       0x95 .\CortexM0\ARM_GCC_541\Debug\setup.o
@@ -5115,11 +5115,11 @@ END GROUP
  .debug_str     0x00003296      0x8ed .\CortexM0\ARM_GCC_541\Debug\andonApi.o
                                 0xc46 (size before relaxing)
  .debug_str     0x00003b83       0xd4 .\CortexM0\ARM_GCC_541\Debug\andonMessageQueue.o
-                                0x362 (size before relaxing)
+                                0x365 (size before relaxing)
  .debug_str     0x00003c57      0x18b .\CortexM0\ARM_GCC_541\Debug\andonJson.o
                                 0xa61 (size before relaxing)
  .debug_str     0x00003de2       0xb9 .\CortexM0\ARM_GCC_541\Debug\jsonUtil.o
-                                0x498 (size before relaxing)
+                                0x49b (size before relaxing)
  .debug_str     0x00003e9b        0xd .\CortexM0\ARM_GCC_541\Debug\menuDesign.o
                                 0x325 (size before relaxing)
  .debug_str     0x00003ea8       0x13 .\CortexM0\ARM_GCC_541\Debug\userMenuProject1.o
@@ -5135,11 +5135,11 @@ END GROUP
  .debug_str     0x000042ee      0x161 .\CortexM0\ARM_GCC_541\Debug\uartTestMenu.o
                                 0x512 (size before relaxing)
  .debug_str     0x0000444f      0x135 .\CortexM0\ARM_GCC_541\Debug\WarningLight.o
-                                0x3cc (size before relaxing)
+                                0x3cf (size before relaxing)
  .debug_str     0x00004584       0x91 .\CortexM0\ARM_GCC_541\Debug\andonMenu.o
                                 0xd82 (size before relaxing)
  .debug_str     0x00004615        0xe .\CortexM0\ARM_GCC_541\Debug\uartProcess.o
-                                0x21c (size before relaxing)
+                                0x21f (size before relaxing)
  .debug_str     0x00004623      0x133 .\CortexM0\ARM_GCC_541\Debug\downtime.o
                                 0xf26 (size before relaxing)
  .debug_str     0x00004756       0xba .\CortexM0\ARM_GCC_541\Debug\defective.o
@@ -5147,25 +5147,25 @@ END GROUP
  .debug_str     0x00004810       0x14 .\CortexM0\ARM_GCC_541\Debug\resetMenu.o
                                 0x6ac (size before relaxing)
  .debug_str     0x00004824      0x194 .\CortexM0\ARM_GCC_541\Debug\cyfitter_cfg.o
-                                0x3a8 (size before relaxing)
+                                0x3ab (size before relaxing)
  .debug_str     0x000049b8       0x35 .\CortexM0\ARM_GCC_541\Debug\cymetadata.o
                                 0x1cf (size before relaxing)
  .debug_str     0x000049ed      0x144 .\CortexM0\ARM_GCC_541\Debug\Cm0Start.o
-                                0x33b (size before relaxing)
+                                0x33e (size before relaxing)
  .debug_str     0x00004b31       0x78 .\CortexM0\ARM_GCC_541\Debug\cybootloader.o
-                                0x218 (size before relaxing)
+                                0x21b (size before relaxing)
  .debug_str     0x00004ba9      0x335 .\CortexM0\ARM_GCC_541\Debug\Design.a(RTC.o)
-                                0x5ff (size before relaxing)
+                                0x602 (size before relaxing)
  .debug_str     0x00004ede       0xb6 .\CortexM0\ARM_GCC_541\Debug\Design.a(TC_RESET.o)
-                                0x276 (size before relaxing)
+                                0x279 (size before relaxing)
  .debug_str     0x00004f94       0x82 .\CortexM0\ARM_GCC_541\Debug\Design.a(TC_INT.o)
-                                0x268 (size before relaxing)
+                                0x26b (size before relaxing)
  .debug_str     0x00005016      0x13c .\CortexM0\ARM_GCC_541\Debug\Design.a(I2C_TC.o)
-                                0x313 (size before relaxing)
+                                0x316 (size before relaxing)
  .debug_str     0x00005152       0x97 .\CortexM0\ARM_GCC_541\Debug\Design.a(I2C_TC_I2C.o)
-                                0x291 (size before relaxing)
+                                0x294 (size before relaxing)
  .debug_str     0x000051e9      0x23e .\CortexM0\ARM_GCC_541\Debug\Design.a(I2C_TC_I2C_MASTER.o)
-                                0x535 (size before relaxing)
+                                0x538 (size before relaxing)
  .debug_str     0x00005427      0x103 .\CortexM0\ARM_GCC_541\Debug\Design.a(UART.o)
                                 0x33b (size before relaxing)
  .debug_str     0x0000552a      0x19b .\CortexM0\ARM_GCC_541\Debug\Design.a(UART_SPI_UART.o)
@@ -5173,89 +5173,89 @@ END GROUP
  .debug_str     0x000056c5      0x181 .\CortexM0\ARM_GCC_541\Debug\Design.a(UART_UART.o)
                                 0x490 (size before relaxing)
  .debug_str     0x00005846       0x3e .\CortexM0\ARM_GCC_541\Debug\Design.a(Ctrl_LCD_RS.o)
-                                0x1ec (size before relaxing)
+                                0x1ef (size before relaxing)
  .debug_str     0x00005884       0xab .\CortexM0\ARM_GCC_541\Debug\Design.a(LCD_Backlight.o)
-                                0x299 (size before relaxing)
+                                0x29c (size before relaxing)
  .debug_str     0x0000592f      0x2af .\CortexM0\ARM_GCC_541\Debug\Design.a(SPIM_LCD.o)
-                                0x4b1 (size before relaxing)
+                                0x4b4 (size before relaxing)
  .debug_str     0x00005bde       0x87 .\CortexM0\ARM_GCC_541\Debug\Design.a(LCD_RES.o)
-                                0x26f (size before relaxing)
+                                0x272 (size before relaxing)
  .debug_str     0x00005c65       0x81 .\CortexM0\ARM_GCC_541\Debug\Design.a(BUZZER.o)
-                                0x268 (size before relaxing)
+                                0x26b (size before relaxing)
  .debug_str     0x00005ce6      0x48f .\CortexM0\ARM_GCC_541\Debug\Design.a(USBUART.o)
-                                0x74d (size before relaxing)
+                                0x750 (size before relaxing)
  .debug_str     0x00006175      0x49f .\CortexM0\ARM_GCC_541\Debug\Design.a(USBUART_cdc.o)
-                                0x803 (size before relaxing)
+                                0x806 (size before relaxing)
  .debug_str     0x00006614      0x291 .\CortexM0\ARM_GCC_541\Debug\Design.a(USBUART_drv.o)
-                                0x67b (size before relaxing)
+                                0x67e (size before relaxing)
  .debug_str     0x000068a5       0xf6 .\CortexM0\ARM_GCC_541\Debug\Design.a(USBUART_episr.o)
-                                0x395 (size before relaxing)
+                                0x398 (size before relaxing)
  .debug_str     0x0000699b       0xf8 .\CortexM0\ARM_GCC_541\Debug\Design.a(USBUART_pm.o)
-                                0x33f (size before relaxing)
+                                0x342 (size before relaxing)
  .debug_str     0x00006a93      0x270 .\CortexM0\ARM_GCC_541\Debug\Design.a(USBUART_std.o)
-                                0x845 (size before relaxing)
+                                0x848 (size before relaxing)
  .debug_str     0x00006d03       0x25 .\CortexM0\ARM_GCC_541\Debug\Design.a(USBUART_vnd.o)
-                                0x21f (size before relaxing)
+                                0x222 (size before relaxing)
  .debug_str     0x00006d28      0x222 .\CortexM0\ARM_GCC_541\Debug\Design.a(SPIM_FLASH.o)
-                                0x4ed (size before relaxing)
+                                0x4f0 (size before relaxing)
  .debug_str     0x00006f4a       0x87 .\CortexM0\ARM_GCC_541\Debug\Design.a(WIFI_EN.o)
-                                0x26f (size before relaxing)
+                                0x272 (size before relaxing)
  .debug_str     0x00006fd1       0x96 .\CortexM0\ARM_GCC_541\Debug\Design.a(RESERVED_OUT_2.o)
-                                0x2a0 (size before relaxing)
+                                0x2a3 (size before relaxing)
  .debug_str     0x00007067       0x96 .\CortexM0\ARM_GCC_541\Debug\Design.a(RESERVED_OUT_1.o)
-                                0x2a0 (size before relaxing)
+                                0x2a3 (size before relaxing)
  .debug_str     0x000070fd       0xe2 .\CortexM0\ARM_GCC_541\Debug\Design.a(SPIM_LCD_IntClock.o)
-                                0x2be (size before relaxing)
+                                0x2c1 (size before relaxing)
  .debug_str     0x000071df       0x90 .\CortexM0\ARM_GCC_541\Debug\Design.a(USBUART_Dp.o)
-                                0x284 (size before relaxing)
+                                0x287 (size before relaxing)
  .debug_str     0x0000726f       0xb6 .\CortexM0\ARM_GCC_541\Debug\Design.a(SPIM_FLASH_IntClock.o)
-                                0x2ca (size before relaxing)
+                                0x2cd (size before relaxing)
  .debug_str     0x00007325      0x7b6 .\CortexM0\ARM_GCC_541\Debug\Design.a(CyLib.o)
-                                0xb73 (size before relaxing)
+                                0xb76 (size before relaxing)
  .debug_str     0x00007adb      0x6d1 .\CortexM0\ARM_GCC_541\Debug\Design.a(CyLFClk.o)
-                                0x948 (size before relaxing)
+                                0x94b (size before relaxing)
  .debug_str     0x000081ac      0x322 .\CortexM0\ARM_GCC_541\Debug\Design.a(cy_em_eeprom.o)
-                                0x661 (size before relaxing)
+                                0x664 (size before relaxing)
  .debug_str     0x000084ce      0x174 .\CortexM0\ARM_GCC_541\Debug\Design.a(UART_WIFI.o)
-                                0x390 (size before relaxing)
- .debug_str     0x00008642      0x189 .\CortexM0\ARM_GCC_541\Debug\Design.a(UART_WIFI_SPI_UART.o)
-                                0x401 (size before relaxing)
- .debug_str     0x000087cb      0x14f .\CortexM0\ARM_GCC_541\Debug\Design.a(UART_WIFI_UART.o)
-                                0x50d (size before relaxing)
- .debug_str     0x0000891a      0x21d .\CortexM0\ARM_GCC_541\Debug\Design.a(PWM_ONE_SECOND.o)
-                                0x434 (size before relaxing)
- .debug_str     0x00008b37      0x15c .\CortexM0\ARM_GCC_541\Debug\Design.a(isr_ONE_SECOND.o)
                                 0x393 (size before relaxing)
+ .debug_str     0x00008642      0x189 .\CortexM0\ARM_GCC_541\Debug\Design.a(UART_WIFI_SPI_UART.o)
+                                0x404 (size before relaxing)
+ .debug_str     0x000087cb      0x14f .\CortexM0\ARM_GCC_541\Debug\Design.a(UART_WIFI_UART.o)
+                                0x510 (size before relaxing)
+ .debug_str     0x0000891a      0x21d .\CortexM0\ARM_GCC_541\Debug\Design.a(PWM_ONE_SECOND.o)
+                                0x437 (size before relaxing)
+ .debug_str     0x00008b37      0x15c .\CortexM0\ARM_GCC_541\Debug\Design.a(isr_ONE_SECOND.o)
+                                0x396 (size before relaxing)
  .debug_str     0x00008c93      0x447 .\CortexM0\ARM_GCC_541\Debug\Design.a(TCPWM_LED.o)
-                                0x684 (size before relaxing)
+                                0x687 (size before relaxing)
  .debug_str     0x000090da       0x42 .\CortexM0\ARM_GCC_541\Debug\Design.a(Control_Reg_LED_1.o)
-                                0x1fe (size before relaxing)
+                                0x201 (size before relaxing)
  .debug_str     0x0000911c       0x42 .\CortexM0\ARM_GCC_541\Debug\Design.a(Control_Reg_LED_2.o)
-                                0x1fe (size before relaxing)
+                                0x201 (size before relaxing)
  .debug_str     0x0000915e       0x41 .\CortexM0\ARM_GCC_541\Debug\Design.a(Em_EEPROM.o)
-                                0x35c (size before relaxing)
+                                0x35f (size before relaxing)
  .debug_str     0x0000919f       0x50 .\CortexM0\ARM_GCC_541\Debug\Design.a(Bootloadable.o)
-                                0x26e (size before relaxing)
+                                0x271 (size before relaxing)
  .debug_str     0x000091ef       0x36 .\CortexM0\ARM_GCC_541\Debug\Design.a(Ctrl_MEM_SS.o)
-                                0x1ec (size before relaxing)
+                                0x1ef (size before relaxing)
  .debug_str     0x00009225      0x102 .\CortexM0\ARM_GCC_541\Debug\Design.a(trim_Int.o)
-                                0x33f (size before relaxing)
+                                0x342 (size before relaxing)
  .debug_str     0x00009327       0x99 .\CortexM0\ARM_GCC_541\Debug\Design.a(WIFI_RESET.o)
-                                0x284 (size before relaxing)
+                                0x287 (size before relaxing)
  .debug_str     0x000093c0       0x96 .\CortexM0\ARM_GCC_541\Debug\Design.a(RESERVED_OUT_3.o)
-                                0x2a0 (size before relaxing)
+                                0x2a3 (size before relaxing)
  .debug_str     0x00009456       0x4d .\CortexM0\ARM_GCC_541\Debug\Design.a(I2C_TC_I2C_INT.o)
-                                0x313 (size before relaxing)
+                                0x316 (size before relaxing)
  .debug_str     0x000094a3       0x3d .\CortexM0\ARM_GCC_541\Debug\Design.a(UART_SPI_UART_INT.o)
                                 0x2b4 (size before relaxing)
  .debug_str     0x000094e0       0x25 .\CortexM0\ARM_GCC_541\Debug\Design.a(USBUART_cls.o)
-                                0x2de (size before relaxing)
+                                0x2e1 (size before relaxing)
  .debug_str     0x00009505      0x104 .\CortexM0\ARM_GCC_541\Debug\Design.a(USBUART_descr.o)
-                                0x384 (size before relaxing)
+                                0x387 (size before relaxing)
  .debug_str     0x00009609       0x89 .\CortexM0\ARM_GCC_541\Debug\Design.a(CyFlash.o)
-                                0x2db (size before relaxing)
+                                0x2de (size before relaxing)
  .debug_str     0x00009692       0x47 .\CortexM0\ARM_GCC_541\Debug\Design.a(UART_WIFI_SPI_UART_INT.o)
-                                0x2e6 (size before relaxing)
+                                0x2e9 (size before relaxing)
 
 .debug_loc      0x00000000    0x11668
  *(.debug_loc)

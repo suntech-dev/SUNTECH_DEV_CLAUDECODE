@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccccfyUU.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
   28:Generated_Source\PSoC4/Ctrl_LCD_RS_PM.c **** ********************************************************************************
   29:Generated_Source\PSoC4/Ctrl_LCD_RS_PM.c **** *
   30:Generated_Source\PSoC4/Ctrl_LCD_RS_PM.c **** * Summary:
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccccfyUU.s 			page 2
 
 
   31:Generated_Source\PSoC4/Ctrl_LCD_RS_PM.c **** *  Saves the control register value.
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
   56:Generated_Source\PSoC4/Ctrl_LCD_RS_PM.c **** * Return:
   57:Generated_Source\PSoC4/Ctrl_LCD_RS_PM.c **** *  None
   58:Generated_Source\PSoC4/Ctrl_LCD_RS_PM.c **** *
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccccfyUU.s 			page 3
 
 
   59:Generated_Source\PSoC4/Ctrl_LCD_RS_PM.c **** *
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
   87              		.cfi_startproc
   88              		@ args = 0, pretend = 0, frame = 0
   89              		@ frame_needed = 0, uses_anonymous_args = 0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccccfyUU.s 			page 4
 
 
   90 0000 10B5     		push	{r4, lr}
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  122              		.loc 1 104 0
  123              		@ sp needed
  124 0006 10BD     		pop	{r4, pc}
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 5
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccccfyUU.s 			page 5
 
 
  125              		.cfi_endproc
@@ -262,17 +262,17 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  143 0006 00000000 		.4byte	.Ldebug_abbrev0
  144 000a 04       		.byte	0x4
  145 000b 01       		.uleb128 0x1
- 146 000c 07010000 		.4byte	.LASF19
+ 146 000c 77010000 		.4byte	.LASF19
  147 0010 0C       		.byte	0xc
  148 0011 00000000 		.4byte	.LASF20
- 149 0015 95010000 		.4byte	.LASF21
+ 149 0015 AF000000 		.4byte	.LASF21
  150 0019 00000000 		.4byte	.Ldebug_ranges0+0
  151 001d 00000000 		.4byte	0
  152 0021 00000000 		.4byte	.Ldebug_line0
  153 0025 02       		.uleb128 0x2
  154 0026 01       		.byte	0x1
  155 0027 06       		.byte	0x6
- 156 0028 48020000 		.4byte	.LASF0
+ 156 0028 4B020000 		.4byte	.LASF0
  157 002c 02       		.uleb128 0x2
  158 002d 01       		.byte	0x1
  159 002e 08       		.byte	0x8
@@ -280,7 +280,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  161 0033 02       		.uleb128 0x2
  162 0034 02       		.byte	0x2
  163 0035 05       		.byte	0x5
- 164 0036 15020000 		.4byte	.LASF2
+ 164 0036 18020000 		.4byte	.LASF2
  165 003a 02       		.uleb128 0x2
  166 003b 02       		.byte	0x2
  167 003c 07       		.byte	0x7
@@ -288,7 +288,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  169 0041 02       		.uleb128 0x2
  170 0042 04       		.byte	0x4
  171 0043 05       		.byte	0x5
- 172 0044 3F020000 		.4byte	.LASF4
+ 172 0044 42020000 		.4byte	.LASF4
  173 0048 02       		.uleb128 0x2
  174 0049 04       		.byte	0x4
  175 004a 07       		.byte	0x7
@@ -296,14 +296,14 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  177 004f 02       		.uleb128 0x2
  178 0050 08       		.byte	0x8
  179 0051 05       		.byte	0x5
- 180 0052 02020000 		.4byte	.LASF6
+ 180 0052 05020000 		.4byte	.LASF6
  181 0056 02       		.uleb128 0x2
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 6
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccccfyUU.s 			page 6
 
 
  182 0057 08       		.byte	0x8
  183 0058 07       		.byte	0x7
- 184 0059 D6000000 		.4byte	.LASF7
+ 184 0059 46010000 		.4byte	.LASF7
  185 005d 03       		.uleb128 0x3
  186 005e 04       		.byte	0x4
  187 005f 05       		.byte	0x5
@@ -311,9 +311,9 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  189 0064 02       		.uleb128 0x2
  190 0065 04       		.byte	0x4
  191 0066 07       		.byte	0x7
- 192 0067 B6000000 		.4byte	.LASF8
+ 192 0067 26010000 		.4byte	.LASF8
  193 006b 04       		.uleb128 0x4
- 194 006c 39020000 		.4byte	.LASF12
+ 194 006c 3C020000 		.4byte	.LASF12
  195 0070 02       		.byte	0x2
  196 0071 FC01     		.2byte	0x1fc
  197 0073 2C000000 		.4byte	0x2c
@@ -324,11 +324,11 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  202 007e 02       		.uleb128 0x2
  203 007f 08       		.byte	0x8
  204 0080 04       		.byte	0x4
- 205 0081 AF000000 		.4byte	.LASF10
+ 205 0081 1F010000 		.4byte	.LASF10
  206 0085 02       		.uleb128 0x2
  207 0086 01       		.byte	0x1
  208 0087 08       		.byte	0x8
- 209 0088 10020000 		.4byte	.LASF11
+ 209 0088 13020000 		.4byte	.LASF11
  210 008c 04       		.uleb128 0x4
  211 008d 4E000000 		.4byte	.LASF13
  212 0091 02       		.byte	0x2
@@ -349,7 +349,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  227 00b0 00       		.byte	0
  228 00b1 00       		.byte	0
  229 00b2 08       		.uleb128 0x8
- 230 00b3 ED000000 		.4byte	.LASF14
+ 230 00b3 5D010000 		.4byte	.LASF14
  231 00b7 03       		.byte	0x3
  232 00b8 28       		.byte	0x28
  233 00b9 9D000000 		.4byte	0x9d
@@ -358,14 +358,14 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  236 00c2 01       		.byte	0x1
  237 00c3 28       		.byte	0x28
  238 00c4 00000000 		.4byte	.LFB0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 7
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccccfyUU.s 			page 7
 
 
  239 00c8 14000000 		.4byte	.LFE0-.LFB0
  240 00cc 01       		.uleb128 0x1
  241 00cd 9C       		.byte	0x9c
  242 00ce 09       		.uleb128 0x9
- 243 00cf 1F020000 		.4byte	.LASF16
+ 243 00cf 22020000 		.4byte	.LASF16
  244 00d3 01       		.byte	0x1
  245 00d4 3D       		.byte	0x3d
  246 00d5 00000000 		.4byte	.LFB1
@@ -386,7 +386,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  261 00f9 BD000000 		.4byte	0xbd
  262 00fd 00       		.byte	0
  263 00fe 0A       		.uleb128 0xa
- 264 00ff C3000000 		.4byte	.LASF18
+ 264 00ff 33010000 		.4byte	.LASF18
  265 0103 01       		.byte	0x1
  266 0104 65       		.byte	0x65
  267 0105 00000000 		.4byte	.LFB3
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  293 0006 0B       		.uleb128 0xb
  294 0007 03       		.uleb128 0x3
  295 0008 0E       		.uleb128 0xe
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccccfyUU.s 			page 8
 
 
  296 0009 1B       		.uleb128 0x1b
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  350 003f 01       		.byte	0x1
  351 0040 0B       		.uleb128 0xb
  352 0041 0B       		.uleb128 0xb
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 9
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccccfyUU.s 			page 9
 
 
  353 0042 3A       		.uleb128 0x3a
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  407 0078 18       		.uleb128 0x18
  408 0079 9742     		.uleb128 0x2117
  409 007b 19       		.uleb128 0x19
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 10
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccccfyUU.s 			page 10
 
 
  410 007c 00       		.byte	0
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  464 0004 0200     		.2byte	0x2
  465 0006 00000000 		.4byte	.Ldebug_info0
  466 000a 04       		.byte	0x4
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 11
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccccfyUU.s 			page 11
 
 
  467 000b 00       		.byte	0
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  504      00
  505              	.LASF5:
  506 0053 6C6F6E67 		.ascii	"long unsigned int\000"
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 12
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccccfyUU.s 			page 12
 
 
  506      20756E73 
@@ -688,96 +688,96 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 1
  514      726F6C53 
  514      74617465 
  514      00
- 515              	.LASF10:
- 516 00af 646F7562 		.ascii	"double\000"
- 516      6C6500
- 517              	.LASF8:
- 518 00b6 756E7369 		.ascii	"unsigned int\000"
- 518      676E6564 
- 518      20696E74 
- 518      00
- 519              	.LASF18:
- 520 00c3 4374726C 		.ascii	"Ctrl_LCD_RS_Wakeup\000"
- 520      5F4C4344 
- 520      5F52535F 
- 520      57616B65 
- 520      757000
- 521              	.LASF7:
- 522 00d6 6C6F6E67 		.ascii	"long long unsigned int\000"
- 522      206C6F6E 
- 522      6720756E 
- 522      7369676E 
- 522      65642069 
- 523              	.LASF14:
- 524 00ed 4374726C 		.ascii	"Ctrl_LCD_RS_BACKUP_STRUCT\000"
+ 515              	.LASF21:
+ 516 00af 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_INTEGR"
+ 516      554E5445 
+ 516      43485F44 
+ 516      45565F43 
+ 516      4C415544 
+ 517 00df 41544544 		.ascii	"ATED\\280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S\\Projec"
+ 517      5C323830 
+ 517      4354505F 
+ 517      496F545F 
+ 517      494E5445 
+ 518 0110 745C4465 		.ascii	"t\\Design.cydsn\000"
+ 518      7369676E 
+ 518      2E637964 
+ 518      736E00
+ 519              	.LASF10:
+ 520 011f 646F7562 		.ascii	"double\000"
+ 520      6C6500
+ 521              	.LASF8:
+ 522 0126 756E7369 		.ascii	"unsigned int\000"
+ 522      676E6564 
+ 522      20696E74 
+ 522      00
+ 523              	.LASF18:
+ 524 0133 4374726C 		.ascii	"Ctrl_LCD_RS_Wakeup\000"
  524      5F4C4344 
  524      5F52535F 
- 524      4241434B 
- 524      55505F53 
- 525              	.LASF19:
- 526 0107 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
- 526      43313120 
- 526      352E342E 
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 13
+ 524      57616B65 
+ 524      757000
+ 525              	.LASF7:
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccccfyUU.s 			page 13
 
 
- 526      31203230 
- 526      31363036 
- 527 013a 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
- 527      20726576 
- 527      6973696F 
- 527      6E203233 
- 527      37373135 
- 528 016d 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
- 528      66756E63 
- 528      74696F6E 
- 528      2D736563 
- 528      74696F6E 
- 529              	.LASF21:
- 530 0195 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_INTEGR"
- 530      554E5445 
- 530      43485F44 
- 530      45565F43 
- 530      4C415544 
- 531 01c5 41544544 		.ascii	"ATED\\280CTP_IoT_INTEGRATED_V1_BLACK_CPU\\Project\\"
- 531      5C323830 
- 531      4354505F 
- 531      496F545F 
- 531      494E5445 
- 532 01f5 44657369 		.ascii	"Design.cydsn\000"
- 532      676E2E63 
- 532      7964736E 
- 532      00
+ 526 0146 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 526      206C6F6E 
+ 526      6720756E 
+ 526      7369676E 
+ 526      65642069 
+ 527              	.LASF14:
+ 528 015d 4374726C 		.ascii	"Ctrl_LCD_RS_BACKUP_STRUCT\000"
+ 528      5F4C4344 
+ 528      5F52535F 
+ 528      4241434B 
+ 528      55505F53 
+ 529              	.LASF19:
+ 530 0177 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 530      43313120 
+ 530      352E342E 
+ 530      31203230 
+ 530      31363036 
+ 531 01aa 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 531      20726576 
+ 531      6973696F 
+ 531      6E203233 
+ 531      37373135 
+ 532 01dd 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 532      66756E63 
+ 532      74696F6E 
+ 532      2D736563 
+ 532      74696F6E 
  533              	.LASF6:
- 534 0202 6C6F6E67 		.ascii	"long long int\000"
+ 534 0205 6C6F6E67 		.ascii	"long long int\000"
  534      206C6F6E 
  534      6720696E 
  534      7400
  535              	.LASF11:
- 536 0210 63686172 		.ascii	"char\000"
+ 536 0213 63686172 		.ascii	"char\000"
  536      00
  537              	.LASF2:
- 538 0215 73686F72 		.ascii	"short int\000"
+ 538 0218 73686F72 		.ascii	"short int\000"
  538      7420696E 
  538      7400
  539              	.LASF16:
- 540 021f 4374726C 		.ascii	"Ctrl_LCD_RS_RestoreConfig\000"
+ 540 0222 4374726C 		.ascii	"Ctrl_LCD_RS_RestoreConfig\000"
  540      5F4C4344 
  540      5F52535F 
  540      52657374 
  540      6F726543 
  541              	.LASF12:
- 542 0239 75696E74 		.ascii	"uint8\000"
+ 542 023c 75696E74 		.ascii	"uint8\000"
  542      3800
  543              	.LASF4:
- 544 023f 6C6F6E67 		.ascii	"long int\000"
+ 544 0242 6C6F6E67 		.ascii	"long int\000"
  544      20696E74 
  544      00
  545              	.LASF0:
- 546 0248 7369676E 		.ascii	"signed char\000"
+ 546 024b 7369676E 		.ascii	"signed char\000"
  546      65642063 
  546      68617200 
  547              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cc9sQfDo.s 			page 14
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccccfyUU.s 			page 14
 
 

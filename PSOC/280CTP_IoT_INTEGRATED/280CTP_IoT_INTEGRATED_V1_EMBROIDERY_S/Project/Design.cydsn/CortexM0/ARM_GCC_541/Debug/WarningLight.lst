@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
   18:WarningLight.c ****    g_warning.index_RED    = registerCounter_1ms(500);
   38              		.loc 1 18 0
   39 0002 FA25     		movs	r5, #250
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 2
 
 
   40 0004 6D00     		lsls	r5, r5, #1
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
   28:WarningLight.c ****     switch(index)
   85              		.loc 1 28 0
   86 0002 0128     		cmp	r0, #1
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 3
 
 
   87 0004 02D0     		beq	.L6
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  126 0032 1A72     		strb	r2, [r3, #8]
   44:WarningLight.c ****    // g_warning.uBlinkTimeBUZZER = BUZZER_ON_OFF_TIME_INTERVAL;
   45:WarningLight.c ****    // setCountMax_1ms(g_warning.index_BUZZER, g_warning.uBlinkTimeBUZZER);
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 4
 
 
   46:WarningLight.c **** #endif    
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
   57:WarningLight.c **** 
   58:WarningLight.c ****            if(g_warning.uBlinkTimeRED == 0) RESERVED_OUT_2_Write(TRUE);
  170              		.loc 1 58 0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 5
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 5
 
 
  171 001e 6388     		ldrh	r3, [r4, #2]
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  212              		.loc 1 71 0
  213 005e E388     		ldrh	r3, [r4, #6]
  214 0060 002B     		cmp	r3, #0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 6
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 6
 
 
  215 0062 03D1     		bne	.L16
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  255 009e 6389     		ldrh	r3, [r4, #10]
  256 00a0 002B     		cmp	r3, #0
  257 00a2 03D1     		bne	.L19
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 7
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 7
 
 
  258              		.loc 1 85 0 is_stmt 0 discriminator 1
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  301              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
  302              		.file 5 "main.h"
  303              		.file 6 "WarningLight.h"
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 8
 
 
  304              		.file 7 "Generated_Source\\PSoC4/RTC.h"
@@ -433,17 +433,17 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  313 0006 00000000 		.4byte	.Ldebug_abbrev0
  314 000a 04       		.byte	0x4
  315 000b 01       		.uleb128 0x1
- 316 000c D4010000 		.4byte	.LASF51
+ 316 000c 44020000 		.4byte	.LASF51
  317 0010 0C       		.byte	0xc
- 318 0011 64030000 		.4byte	.LASF52
- 319 0015 62020000 		.4byte	.LASF53
+ 318 0011 67030000 		.4byte	.LASF52
+ 319 0015 49010000 		.4byte	.LASF53
  320 0019 00000000 		.4byte	.Ldebug_ranges0+0
  321 001d 00000000 		.4byte	0
  322 0021 00000000 		.4byte	.Ldebug_line0
  323 0025 02       		.uleb128 0x2
  324 0026 01       		.byte	0x1
  325 0027 06       		.byte	0x6
- 326 0028 BA010000 		.4byte	.LASF0
+ 326 0028 2A020000 		.4byte	.LASF0
  327 002c 03       		.uleb128 0x3
  328 002d 0C000000 		.4byte	.LASF3
  329 0031 02       		.byte	0x2
@@ -477,14 +477,14 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  357 0065 02       		.uleb128 0x2
  358 0066 08       		.byte	0x8
  359 0067 05       		.byte	0x5
- 360 0068 08030000 		.4byte	.LASF8
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 9
+ 360 0068 0B030000 		.4byte	.LASF8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 9
 
 
  361 006c 02       		.uleb128 0x2
  362 006d 08       		.byte	0x8
  363 006e 07       		.byte	0x7
- 364 006f 8A010000 		.4byte	.LASF9
+ 364 006f FA010000 		.4byte	.LASF9
  365 0073 04       		.uleb128 0x4
  366 0074 04       		.byte	0x4
  367 0075 05       		.byte	0x5
@@ -492,14 +492,14 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  369 007a 02       		.uleb128 0x2
  370 007b 04       		.byte	0x4
  371 007c 07       		.byte	0x7
- 372 007d 6D010000 		.4byte	.LASF10
+ 372 007d DD010000 		.4byte	.LASF10
  373 0081 03       		.uleb128 0x3
- 374 0082 A1010000 		.4byte	.LASF11
+ 374 0082 11020000 		.4byte	.LASF11
  375 0086 03       		.byte	0x3
  376 0087 18       		.byte	0x18
  377 0088 2C000000 		.4byte	0x2c
  378 008c 03       		.uleb128 0x3
- 379 008d 5B030000 		.4byte	.LASF12
+ 379 008d 5E030000 		.4byte	.LASF12
  380 0091 03       		.byte	0x3
  381 0092 24       		.byte	0x24
  382 0093 45000000 		.4byte	0x45
@@ -509,7 +509,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  386 009d FC01     		.2byte	0x1fc
  387 009f 37000000 		.4byte	0x37
  388 00a3 05       		.uleb128 0x5
- 389 00a4 49010000 		.4byte	.LASF14
+ 389 00a4 B9010000 		.4byte	.LASF14
  390 00a8 04       		.byte	0x4
  391 00a9 FD01     		.2byte	0x1fd
  392 00ab 50000000 		.4byte	0x50
@@ -529,7 +529,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  406 00c9 02       		.uleb128 0x2
  407 00ca 01       		.byte	0x1
  408 00cb 08       		.byte	0x8
- 409 00cc 73030000 		.4byte	.LASF18
+ 409 00cc 76030000 		.4byte	.LASF18
  410 00d0 02       		.uleb128 0x2
  411 00d1 08       		.byte	0x8
  412 00d2 04       		.byte	0x4
@@ -537,8 +537,8 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  414 00d7 02       		.uleb128 0x2
  415 00d8 04       		.byte	0x4
  416 00d9 07       		.byte	0x7
- 417 00da EA020000 		.4byte	.LASF20
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 10
+ 417 00da ED020000 		.4byte	.LASF20
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 10
 
 
  418 00de 06       		.uleb128 0x6
@@ -572,19 +572,19 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  446 0112 10       		.byte	0x10
  447 0113 84010000 		.4byte	0x184
  448 0117 07       		.uleb128 0x7
- 449 0118 B5010000 		.4byte	.LASF24
+ 449 0118 25020000 		.4byte	.LASF24
  450 011c 06       		.byte	0x6
  451 011d 11       		.byte	0x11
  452 011e 81000000 		.4byte	0x81
  453 0122 00       		.byte	0
  454 0123 07       		.uleb128 0x7
- 455 0124 C6010000 		.4byte	.LASF25
+ 455 0124 36020000 		.4byte	.LASF25
  456 0128 06       		.byte	0x6
  457 0129 12       		.byte	0x12
  458 012a 8C000000 		.4byte	0x8c
  459 012e 02       		.byte	0x2
  460 012f 07       		.uleb128 0x7
- 461 0130 16030000 		.4byte	.LASF26
+ 461 0130 19030000 		.4byte	.LASF26
  462 0134 06       		.byte	0x6
  463 0135 14       		.byte	0x14
  464 0136 81000000 		.4byte	0x81
@@ -596,16 +596,16 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  470 0142 8C000000 		.4byte	0x8c
  471 0146 06       		.byte	0x6
  472 0147 07       		.uleb128 0x7
- 473 0148 23030000 		.4byte	.LASF28
+ 473 0148 26030000 		.4byte	.LASF28
  474 014c 06       		.byte	0x6
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 11
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 11
 
 
  475 014d 17       		.byte	0x17
  476 014e 81000000 		.4byte	0x81
  477 0152 08       		.byte	0x8
  478 0153 07       		.uleb128 0x7
- 479 0154 BB030000 		.4byte	.LASF29
+ 479 0154 BE030000 		.4byte	.LASF29
  480 0158 06       		.byte	0x6
  481 0159 18       		.byte	0x18
  482 015a 8C000000 		.4byte	0x8c
@@ -617,13 +617,13 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  488 0166 A3000000 		.4byte	0xa3
  489 016a 0C       		.byte	0xc
  490 016b 07       		.uleb128 0x7
- 491 016c A9010000 		.4byte	.LASF31
+ 491 016c 19020000 		.4byte	.LASF31
  492 0170 06       		.byte	0x6
  493 0171 1B       		.byte	0x1b
  494 0172 A3000000 		.4byte	0xa3
  495 0176 0E       		.byte	0xe
  496 0177 07       		.uleb128 0x7
- 497 0178 AE030000 		.4byte	.LASF32
+ 497 0178 B1030000 		.4byte	.LASF32
  498 017c 06       		.byte	0x6
  499 017d 1C       		.byte	0x1c
  500 017e A3000000 		.4byte	0xa3
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  529 01b9 16000000 		.4byte	.LVL1
  530 01bd 6A030000 		.4byte	0x36a
  531 01c1 CC010000 		.4byte	0x1cc
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 12
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 12
 
 
  532 01c5 0B       		.uleb128 0xb
@@ -680,7 +680,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  548 01db 00       		.byte	0
  549 01dc 00       		.byte	0
  550 01dd 0D       		.uleb128 0xd
- 551 01de 7A010000 		.4byte	.LASF55
+ 551 01de EA010000 		.4byte	.LASF55
  552 01e2 01       		.byte	0x1
  553 01e3 1A       		.byte	0x1a
  554 01e4 00000000 		.4byte	.LFB63
@@ -689,13 +689,13 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  557 01ed 9C       		.byte	0x9c
  558 01ee 32020000 		.4byte	0x232
  559 01f2 0E       		.uleb128 0xe
- 560 01f3 1D030000 		.4byte	.LASF34
+ 560 01f3 20030000 		.4byte	.LASF34
  561 01f7 01       		.byte	0x1
  562 01f8 1A       		.byte	0x1a
  563 01f9 AF000000 		.4byte	0xaf
  564 01fd 00000000 		.4byte	.LLST0
  565 0201 0E       		.uleb128 0xe
- 566 0202 50010000 		.4byte	.LASF35
+ 566 0202 C0010000 		.4byte	.LASF35
  567 0206 01       		.byte	0x1
  568 0207 1A       		.byte	0x1a
  569 0208 97000000 		.4byte	0x97
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  586 0237 01       		.byte	0x1
  587 0238 31       		.byte	0x31
  588 0239 00000000 		.4byte	.LFB64
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 13
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 13
 
 
  589 023d C8000000 		.4byte	.LFE64-.LFB64
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  643 02bb B7030000 		.4byte	0x3b7
  644 02bf 0F       		.uleb128 0xf
  645 02c0 7A000000 		.4byte	.LVL21
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 14
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 14
 
 
  646 02c4 AC030000 		.4byte	0x3ac
@@ -825,7 +825,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  687 0320 00       		.byte	0
  688 0321 00       		.byte	0
  689 0322 10       		.uleb128 0x10
- 690 0323 A4030000 		.4byte	.LASF56
+ 690 0323 A7030000 		.4byte	.LASF56
  691 0327 01       		.byte	0x1
  692 0328 05       		.byte	0x5
  693 0329 84010000 		.4byte	0x184
@@ -838,21 +838,21 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  700 033c 12       		.uleb128 0x12
  701 033d D7000000 		.4byte	0xd7
  702 0341 0B       		.byte	0xb
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 15
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 15
 
 
  703 0342 00       		.byte	0
  704 0343 13       		.uleb128 0x13
  705 0344 A3000000 		.4byte	0xa3
  706 0348 14       		.uleb128 0x14
- 707 0349 78030000 		.4byte	.LASF39
+ 707 0349 7B030000 		.4byte	.LASF39
  708 034d 07       		.byte	0x7
  709 034e E001     		.2byte	0x1e0
  710 0350 54030000 		.4byte	0x354
  711 0354 13       		.uleb128 0x13
  712 0355 33030000 		.4byte	0x333
  713 0359 15       		.uleb128 0x15
- 714 035a 56010000 		.4byte	.LASF40
+ 714 035a C6010000 		.4byte	.LASF40
  715 035e 05       		.byte	0x5
  716 035f 35       		.byte	0x35
  717 0360 DE000000 		.4byte	0xde
@@ -875,13 +875,13 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  734 0389 08       		.byte	0x8
  735 038a 17       		.byte	0x17
  736 038b 16       		.uleb128 0x16
- 737 038c 5C010000 		.4byte	.LASF44
- 738 0390 5C010000 		.4byte	.LASF44
+ 737 038c CC010000 		.4byte	.LASF44
+ 738 0390 CC010000 		.4byte	.LASF44
  739 0394 08       		.byte	0x8
  740 0395 20       		.byte	0x20
  741 0396 16       		.uleb128 0x16
- 742 0397 46030000 		.4byte	.LASF45
- 743 039b 46030000 		.4byte	.LASF45
+ 742 0397 49030000 		.4byte	.LASF45
+ 743 039b 49030000 		.4byte	.LASF45
  744 039f 09       		.byte	0x9
  745 03a0 33       		.byte	0x33
  746 03a1 16       		.uleb128 0x16
@@ -890,26 +890,26 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  749 03aa 09       		.byte	0x9
  750 03ab 34       		.byte	0x34
  751 03ac 16       		.uleb128 0x16
- 752 03ad F3020000 		.4byte	.LASF47
- 753 03b1 F3020000 		.4byte	.LASF47
+ 752 03ad F6020000 		.4byte	.LASF47
+ 753 03b1 F6020000 		.4byte	.LASF47
  754 03b5 0A       		.byte	0xa
  755 03b6 33       		.byte	0x33
  756 03b7 16       		.uleb128 0x16
- 757 03b8 2B030000 		.4byte	.LASF48
- 758 03bc 2B030000 		.4byte	.LASF48
+ 757 03b8 2E030000 		.4byte	.LASF48
+ 758 03bc 2E030000 		.4byte	.LASF48
  759 03c0 0A       		.byte	0xa
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 16
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 16
 
 
  760 03c1 34       		.byte	0x34
  761 03c2 16       		.uleb128 0x16
- 762 03c3 8F030000 		.4byte	.LASF49
- 763 03c7 8F030000 		.4byte	.LASF49
+ 762 03c3 92030000 		.4byte	.LASF49
+ 763 03c7 92030000 		.4byte	.LASF49
  764 03cb 0B       		.byte	0xb
  765 03cc 33       		.byte	0x33
  766 03cd 16       		.uleb128 0x16
- 767 03ce CF020000 		.4byte	.LASF50
- 768 03d2 CF020000 		.4byte	.LASF50
+ 767 03ce D2020000 		.4byte	.LASF50
+ 768 03d2 D2020000 		.4byte	.LASF50
  769 03d6 0B       		.byte	0xb
  770 03d7 34       		.byte	0x34
  771 03d8 00       		.byte	0
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  814 0028 13       		.uleb128 0x13
  815 0029 00       		.byte	0
  816 002a 00       		.byte	0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 17
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 17
 
 
  817 002b 04       		.uleb128 0x4
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  871 0061 08       		.uleb128 0x8
  872 0062 13       		.uleb128 0x13
  873 0063 01       		.byte	0x1
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 18
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 18
 
 
  874 0064 0B       		.uleb128 0xb
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  928 00a0 898201   		.uleb128 0x4109
  929 00a3 01       		.byte	0x1
  930 00a4 11       		.uleb128 0x11
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 19
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 19
 
 
  931 00a5 01       		.uleb128 0x1
@@ -1138,7 +1138,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  985 00de 10       		.uleb128 0x10
  986 00df 34       		.uleb128 0x34
  987 00e0 00       		.byte	0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 20
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 20
 
 
  988 00e1 03       		.uleb128 0x3
@@ -1198,7 +1198,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  1042 0117 15       		.uleb128 0x15
  1043 0118 34       		.uleb128 0x34
  1044 0119 00       		.byte	0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 21
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 21
 
 
  1045 011a 03       		.uleb128 0x3
@@ -1258,7 +1258,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  1099 002f 01       		.uleb128 0x1
  1100 0030 50       		.byte	0x50
  1101 0031 9F       		.byte	0x9f
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 22
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 22
 
 
  1102 0032 00000000 		.4byte	0
@@ -1318,7 +1318,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  1156 00ba 3C000000 		.4byte	.LFE63
  1157 00be 0400     		.2byte	0x4
  1158 00c0 F3       		.byte	0xf3
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 23
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 23
 
 
  1159 00c1 01       		.uleb128 0x1
@@ -1378,7 +1378,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  1201              	.LASF6:
  1202 002c 6C6F6E67 		.ascii	"long int\000"
  1202      20696E74 
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 24
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 24
 
 
  1202      00
@@ -1438,7 +1438,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  1226      616D6574 
  1226      657200
  1227              	.LASF5:
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 25
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 25
 
 
  1228 00da 73686F72 		.ascii	"short unsigned int\000"
@@ -1480,173 +1480,173 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 1
  1244 013f 73686F72 		.ascii	"short int\000"
  1244      7420696E 
  1244      7400
- 1245              	.LASF14:
- 1246 0149 75696E74 		.ascii	"uint16\000"
- 1246      313600
- 1247              	.LASF35:
- 1248 0150 4F6E4F66 		.ascii	"OnOff\000"
- 1248      6600
- 1249              	.LASF40:
- 1250 0156 50617261 		.ascii	"Param\000"
- 1250      6D00
- 1251              	.LASF44:
- 1252 015c 72657365 		.ascii	"resetCounter_1ms\000"
- 1252      74436F75 
- 1252      6E746572 
- 1252      5F316D73 
- 1252      00
- 1253              	.LASF10:
- 1254 016d 756E7369 		.ascii	"unsigned int\000"
- 1254      676E6564 
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 26
+ 1245              	.LASF53:
+ 1246 0149 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_INTEGR"
+ 1246      554E5445 
+ 1246      43485F44 
+ 1246      45565F43 
+ 1246      4C415544 
+ 1247 0179 41544544 		.ascii	"ATED\\280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S\\Projec"
+ 1247      5C323830 
+ 1247      4354505F 
+ 1247      496F545F 
+ 1247      494E5445 
+ 1248 01aa 745C4465 		.ascii	"t\\Design.cydsn\000"
+ 1248      7369676E 
+ 1248      2E637964 
+ 1248      736E00
+ 1249              	.LASF14:
+ 1250 01b9 75696E74 		.ascii	"uint16\000"
+ 1250      313600
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 26
 
 
- 1254      20696E74 
- 1254      00
- 1255              	.LASF55:
- 1256 017a 5761726E 		.ascii	"WarningLightSet\000"
- 1256      696E674C 
- 1256      69676874 
- 1256      53657400 
- 1257              	.LASF9:
- 1258 018a 6C6F6E67 		.ascii	"long long unsigned int\000"
- 1258      206C6F6E 
- 1258      6720756E 
- 1258      7369676E 
- 1258      65642069 
- 1259              	.LASF11:
- 1260 01a1 75696E74 		.ascii	"uint8_t\000"
- 1260      385F7400 
- 1261              	.LASF31:
- 1262 01a9 696E6465 		.ascii	"index_GREEN\000"
- 1262      785F4752 
- 1262      45454E00 
- 1263              	.LASF24:
- 1264 01b5 62524544 		.ascii	"bRED\000"
- 1264      00
- 1265              	.LASF0:
- 1266 01ba 7369676E 		.ascii	"signed char\000"
- 1266      65642063 
- 1266      68617200 
- 1267              	.LASF25:
- 1268 01c6 75426C69 		.ascii	"uBlinkTimeRED\000"
- 1268      6E6B5469 
- 1268      6D655245 
- 1268      4400
- 1269              	.LASF51:
- 1270 01d4 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
- 1270      43313120 
- 1270      352E342E 
- 1270      31203230 
- 1270      31363036 
- 1271 0207 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
- 1271      20726576 
- 1271      6973696F 
- 1271      6E203233 
- 1271      37373135 
- 1272 023a 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
- 1272      66756E63 
- 1272      74696F6E 
- 1272      2D736563 
- 1272      74696F6E 
- 1273              	.LASF53:
- 1274 0262 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_INTEGR"
- 1274      554E5445 
- 1274      43485F44 
- 1274      45565F43 
- 1274      4C415544 
- 1275 0292 41544544 		.ascii	"ATED\\280CTP_IoT_INTEGRATED_V1_BLACK_CPU\\Project\\"
- 1275      5C323830 
- 1275      4354505F 
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 27
+ 1251              	.LASF35:
+ 1252 01c0 4F6E4F66 		.ascii	"OnOff\000"
+ 1252      6600
+ 1253              	.LASF40:
+ 1254 01c6 50617261 		.ascii	"Param\000"
+ 1254      6D00
+ 1255              	.LASF44:
+ 1256 01cc 72657365 		.ascii	"resetCounter_1ms\000"
+ 1256      74436F75 
+ 1256      6E746572 
+ 1256      5F316D73 
+ 1256      00
+ 1257              	.LASF10:
+ 1258 01dd 756E7369 		.ascii	"unsigned int\000"
+ 1258      676E6564 
+ 1258      20696E74 
+ 1258      00
+ 1259              	.LASF55:
+ 1260 01ea 5761726E 		.ascii	"WarningLightSet\000"
+ 1260      696E674C 
+ 1260      69676874 
+ 1260      53657400 
+ 1261              	.LASF9:
+ 1262 01fa 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1262      206C6F6E 
+ 1262      6720756E 
+ 1262      7369676E 
+ 1262      65642069 
+ 1263              	.LASF11:
+ 1264 0211 75696E74 		.ascii	"uint8_t\000"
+ 1264      385F7400 
+ 1265              	.LASF31:
+ 1266 0219 696E6465 		.ascii	"index_GREEN\000"
+ 1266      785F4752 
+ 1266      45454E00 
+ 1267              	.LASF24:
+ 1268 0225 62524544 		.ascii	"bRED\000"
+ 1268      00
+ 1269              	.LASF0:
+ 1270 022a 7369676E 		.ascii	"signed char\000"
+ 1270      65642063 
+ 1270      68617200 
+ 1271              	.LASF25:
+ 1272 0236 75426C69 		.ascii	"uBlinkTimeRED\000"
+ 1272      6E6B5469 
+ 1272      6D655245 
+ 1272      4400
+ 1273              	.LASF51:
+ 1274 0244 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1274      43313120 
+ 1274      352E342E 
+ 1274      31203230 
+ 1274      31363036 
+ 1275 0277 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 1275      20726576 
+ 1275      6973696F 
+ 1275      6E203233 
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 27
 
 
- 1275      496F545F 
- 1275      494E5445 
- 1276 02c2 44657369 		.ascii	"Design.cydsn\000"
- 1276      676E2E63 
- 1276      7964736E 
- 1276      00
+ 1275      37373135 
+ 1276 02aa 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1276      66756E63 
+ 1276      74696F6E 
+ 1276      2D736563 
+ 1276      74696F6E 
  1277              	.LASF50:
- 1278 02cf 52455345 		.ascii	"RESERVED_OUT_3_ReadDataReg\000"
+ 1278 02d2 52455345 		.ascii	"RESERVED_OUT_3_ReadDataReg\000"
  1278      52564544 
  1278      5F4F5554 
  1278      5F335F52 
  1278      65616444 
  1279              	.LASF20:
- 1280 02ea 73697A65 		.ascii	"sizetype\000"
+ 1280 02ed 73697A65 		.ascii	"sizetype\000"
  1280      74797065 
  1280      00
  1281              	.LASF47:
- 1282 02f3 52455345 		.ascii	"RESERVED_OUT_1_Write\000"
+ 1282 02f6 52455345 		.ascii	"RESERVED_OUT_1_Write\000"
  1282      52564544 
  1282      5F4F5554 
  1282      5F315F57 
  1282      72697465 
  1283              	.LASF8:
- 1284 0308 6C6F6E67 		.ascii	"long long int\000"
+ 1284 030b 6C6F6E67 		.ascii	"long long int\000"
  1284      206C6F6E 
  1284      6720696E 
  1284      7400
  1285              	.LASF26:
- 1286 0316 62475245 		.ascii	"bGREEN\000"
+ 1286 0319 62475245 		.ascii	"bGREEN\000"
  1286      454E00
  1287              	.LASF34:
- 1288 031d 696E6465 		.ascii	"index\000"
+ 1288 0320 696E6465 		.ascii	"index\000"
  1288      7800
  1289              	.LASF28:
- 1290 0323 6242555A 		.ascii	"bBUZZER\000"
+ 1290 0326 6242555A 		.ascii	"bBUZZER\000"
  1290      5A455200 
  1291              	.LASF48:
- 1292 032b 52455345 		.ascii	"RESERVED_OUT_1_ReadDataReg\000"
+ 1292 032e 52455345 		.ascii	"RESERVED_OUT_1_ReadDataReg\000"
  1292      52564544 
  1292      5F4F5554 
  1292      5F315F52 
  1292      65616444 
  1293              	.LASF45:
- 1294 0346 52455345 		.ascii	"RESERVED_OUT_2_Write\000"
+ 1294 0349 52455345 		.ascii	"RESERVED_OUT_2_Write\000"
  1294      52564544 
  1294      5F4F5554 
  1294      5F325F57 
  1294      72697465 
  1295              	.LASF12:
- 1296 035b 75696E74 		.ascii	"uint16_t\000"
+ 1296 035e 75696E74 		.ascii	"uint16_t\000"
  1296      31365F74 
  1296      00
  1297              	.LASF52:
- 1298 0364 5761726E 		.ascii	"WarningLight.c\000"
+ 1298 0367 5761726E 		.ascii	"WarningLight.c\000"
  1298      696E674C 
  1298      69676874 
  1298      2E6300
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccSI4kEk.s 			page 28
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccp2ZiGj.s 			page 28
 
 
  1299              	.LASF18:
- 1300 0373 63686172 		.ascii	"char\000"
+ 1300 0376 63686172 		.ascii	"char\000"
  1300      00
  1301              	.LASF39:
- 1302 0378 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
+ 1302 037b 5254435F 		.ascii	"RTC_daysBeforeMonthTbl\000"
  1302      64617973 
  1302      4265666F 
  1302      72654D6F 
  1302      6E746854 
  1303              	.LASF49:
- 1304 038f 52455345 		.ascii	"RESERVED_OUT_3_Write\000"
+ 1304 0392 52455345 		.ascii	"RESERVED_OUT_3_Write\000"
  1304      52564544 
  1304      5F4F5554 
  1304      5F335F57 
  1304      72697465 
  1305              	.LASF56:
- 1306 03a4 675F7761 		.ascii	"g_warning\000"
+ 1306 03a7 675F7761 		.ascii	"g_warning\000"
  1306      726E696E 
  1306      6700
  1307              	.LASF32:
- 1308 03ae 696E6465 		.ascii	"index_BUZZER\000"
+ 1308 03b1 696E6465 		.ascii	"index_BUZZER\000"
  1308      785F4255 
  1308      5A5A4552 
  1308      00
  1309              	.LASF29:
- 1310 03bb 75426C69 		.ascii	"uBlinkTimeBUZZER\000"
+ 1310 03be 75426C69 		.ascii	"uBlinkTimeBUZZER\000"
  1310      6E6B5469 
  1310      6D654255 
  1310      5A5A4552 

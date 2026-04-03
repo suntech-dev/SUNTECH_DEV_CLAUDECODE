@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccwWsD8c.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 1
   28:Generated_Source\PSoC4/Control_Reg_LED_2.c **** *  Write a byte to the Control Register.
   29:Generated_Source\PSoC4/Control_Reg_LED_2.c **** *
   30:Generated_Source\PSoC4/Control_Reg_LED_2.c **** * Parameters:
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccwWsD8c.s 			page 2
 
 
   31:Generated_Source\PSoC4/Control_Reg_LED_2.c **** *  control:  The value to be assigned to the Control Register.
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 1
   58:Generated_Source\PSoC4/Control_Reg_LED_2.c **** {
   55              		.loc 1 58 0
   56              		.cfi_startproc
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccwWsD8c.s 			page 3
 
 
   57              		@ args = 0, pretend = 0, frame = 0
@@ -150,17 +150,17 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 1
   81 0006 00000000 		.4byte	.Ldebug_abbrev0
   82 000a 04       		.byte	0x4
   83 000b 01       		.uleb128 0x1
-  84 000c B4000000 		.4byte	.LASF14
+  84 000c 24010000 		.4byte	.LASF14
   85 0010 0C       		.byte	0xc
   86 0011 00000000 		.4byte	.LASF15
-  87 0015 42010000 		.4byte	.LASF16
+  87 0015 71000000 		.4byte	.LASF16
   88 0019 00000000 		.4byte	.Ldebug_ranges0+0
   89 001d 00000000 		.4byte	0
   90 0021 00000000 		.4byte	.Ldebug_line0
   91 0025 02       		.uleb128 0x2
   92 0026 01       		.byte	0x1
   93 0027 06       		.byte	0x6
-  94 0028 F2010000 		.4byte	.LASF0
+  94 0028 F5010000 		.4byte	.LASF0
   95 002c 02       		.uleb128 0x2
   96 002d 01       		.byte	0x1
   97 002e 08       		.byte	0x8
@@ -168,7 +168,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 1
   99 0033 02       		.uleb128 0x2
  100 0034 02       		.byte	0x2
  101 0035 05       		.byte	0x5
- 102 0036 D9010000 		.4byte	.LASF2
+ 102 0036 DC010000 		.4byte	.LASF2
  103 003a 02       		.uleb128 0x2
  104 003b 02       		.byte	0x2
  105 003c 07       		.byte	0x7
@@ -176,9 +176,9 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 1
  107 0041 02       		.uleb128 0x2
  108 0042 04       		.byte	0x4
  109 0043 05       		.byte	0x5
- 110 0044 E9010000 		.4byte	.LASF4
+ 110 0044 EC010000 		.4byte	.LASF4
  111 0048 02       		.uleb128 0x2
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccwWsD8c.s 			page 4
 
 
  112 0049 04       		.byte	0x4
@@ -187,11 +187,11 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 1
  115 004f 02       		.uleb128 0x2
  116 0050 08       		.byte	0x8
  117 0051 05       		.byte	0x5
- 118 0052 AF010000 		.4byte	.LASF6
+ 118 0052 B2010000 		.4byte	.LASF6
  119 0056 02       		.uleb128 0x2
  120 0057 08       		.byte	0x8
  121 0058 07       		.byte	0x7
- 122 0059 9D000000 		.4byte	.LASF7
+ 122 0059 0D010000 		.4byte	.LASF7
  123 005d 03       		.uleb128 0x3
  124 005e 04       		.byte	0x4
  125 005f 05       		.byte	0x5
@@ -199,9 +199,9 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 1
  127 0064 02       		.uleb128 0x2
  128 0065 04       		.byte	0x4
  129 0066 07       		.byte	0x7
- 130 0067 78000000 		.4byte	.LASF8
+ 130 0067 E8000000 		.4byte	.LASF8
  131 006b 04       		.uleb128 0x4
- 132 006c E3010000 		.4byte	.LASF12
+ 132 006c E6010000 		.4byte	.LASF12
  133 0070 02       		.byte	0x2
  134 0071 FC01     		.2byte	0x1fc
  135 0073 2C000000 		.4byte	0x2c
@@ -212,11 +212,11 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 1
  140 007e 02       		.uleb128 0x2
  141 007f 08       		.byte	0x8
  142 0080 04       		.byte	0x4
- 143 0081 71000000 		.4byte	.LASF10
+ 143 0081 E1000000 		.4byte	.LASF10
  144 0085 02       		.uleb128 0x2
  145 0086 01       		.byte	0x1
  146 0087 08       		.byte	0x8
- 147 0088 BD010000 		.4byte	.LASF11
+ 147 0088 C0010000 		.4byte	.LASF11
  148 008c 04       		.uleb128 0x4
  149 008d 3F000000 		.4byte	.LASF13
  150 0091 02       		.byte	0x2
@@ -225,7 +225,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 1
  153 0098 05       		.uleb128 0x5
  154 0099 6B000000 		.4byte	0x6b
  155 009d 06       		.uleb128 0x6
- 156 009e 85000000 		.4byte	.LASF17
+ 156 009e F5000000 		.4byte	.LASF17
  157 00a2 01       		.byte	0x1
  158 00a3 25       		.byte	0x25
  159 00a4 00000000 		.4byte	.LFB0
@@ -238,14 +238,14 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 1
  166 00b7 01       		.byte	0x1
  167 00b8 25       		.byte	0x25
  168 00b9 6B000000 		.4byte	0x6b
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 5
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccwWsD8c.s 			page 5
 
 
  169 00bd 01       		.uleb128 0x1
  170 00be 50       		.byte	0x50
  171 00bf 00       		.byte	0
  172 00c0 08       		.uleb128 0x8
- 173 00c1 C2010000 		.4byte	.LASF19
+ 173 00c1 C5010000 		.4byte	.LASF19
  174 00c5 01       		.byte	0x1
  175 00c6 39       		.byte	0x39
  176 00c7 6B000000 		.4byte	0x6b
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 1
  223 0027 00       		.byte	0
  224 0028 00       		.byte	0
  225 0029 04       		.uleb128 0x4
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 6
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccwWsD8c.s 			page 6
 
 
  226 002a 16       		.uleb128 0x16
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 1
  280 0061 13       		.uleb128 0x13
  281 0062 02       		.uleb128 0x2
  282 0063 18       		.uleb128 0x18
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 7
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccwWsD8c.s 			page 7
 
 
  283 0064 00       		.byte	0
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 1
  335      00000201 
  335      FB0E0D00 
  335      01010101 
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccwWsD8c.s 			page 8
 
 
  336              	.LASF15:
@@ -453,87 +453,87 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 1
  348              	.LASF18:
  349 0069 636F6E74 		.ascii	"control\000"
  349      726F6C00 
- 350              	.LASF10:
- 351 0071 646F7562 		.ascii	"double\000"
- 351      6C6500
- 352              	.LASF8:
- 353 0078 756E7369 		.ascii	"unsigned int\000"
- 353      676E6564 
- 353      20696E74 
- 353      00
- 354              	.LASF17:
- 355 0085 436F6E74 		.ascii	"Control_Reg_LED_2_Write\000"
- 355      726F6C5F 
- 355      5265675F 
- 355      4C45445F 
- 355      325F5772 
- 356              	.LASF7:
- 357 009d 6C6F6E67 		.ascii	"long long unsigned int\000"
- 357      206C6F6E 
- 357      6720756E 
- 357      7369676E 
- 357      65642069 
- 358              	.LASF14:
- 359 00b4 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
- 359      43313120 
- 359      352E342E 
- 359      31203230 
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccaSr9xL.s 			page 9
+ 350              	.LASF16:
+ 351 0071 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_INTEGR"
+ 351      554E5445 
+ 351      43485F44 
+ 351      45565F43 
+ 351      4C415544 
+ 352 00a1 41544544 		.ascii	"ATED\\280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S\\Projec"
+ 352      5C323830 
+ 352      4354505F 
+ 352      496F545F 
+ 352      494E5445 
+ 353 00d2 745C4465 		.ascii	"t\\Design.cydsn\000"
+ 353      7369676E 
+ 353      2E637964 
+ 353      736E00
+ 354              	.LASF10:
+ 355 00e1 646F7562 		.ascii	"double\000"
+ 355      6C6500
+ 356              	.LASF8:
+ 357 00e8 756E7369 		.ascii	"unsigned int\000"
+ 357      676E6564 
+ 357      20696E74 
+ 357      00
+ 358              	.LASF17:
+ 359 00f5 436F6E74 		.ascii	"Control_Reg_LED_2_Write\000"
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccwWsD8c.s 			page 9
 
 
- 359      31363036 
- 360 00e7 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
- 360      20726576 
- 360      6973696F 
- 360      6E203233 
- 360      37373135 
- 361 011a 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
- 361      66756E63 
- 361      74696F6E 
- 361      2D736563 
- 361      74696F6E 
- 362              	.LASF16:
- 363 0142 433A5C53 		.ascii	"C:\\SUNTECH_DEV_CLAUDECODE\\PSOC\\280CTP_IoT_INTEGR"
- 363      554E5445 
- 363      43485F44 
- 363      45565F43 
- 363      4C415544 
- 364 0172 41544544 		.ascii	"ATED\\280CTP_IoT_INTEGRATED_V1_BLACK_CPU\\Project\\"
- 364      5C323830 
- 364      4354505F 
- 364      496F545F 
- 364      494E5445 
- 365 01a2 44657369 		.ascii	"Design.cydsn\000"
- 365      676E2E63 
- 365      7964736E 
- 365      00
+ 359      726F6C5F 
+ 359      5265675F 
+ 359      4C45445F 
+ 359      325F5772 
+ 360              	.LASF7:
+ 361 010d 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 361      206C6F6E 
+ 361      6720756E 
+ 361      7369676E 
+ 361      65642069 
+ 362              	.LASF14:
+ 363 0124 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 363      43313120 
+ 363      352E342E 
+ 363      31203230 
+ 363      31363036 
+ 364 0157 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 364      20726576 
+ 364      6973696F 
+ 364      6E203233 
+ 364      37373135 
+ 365 018a 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 365      66756E63 
+ 365      74696F6E 
+ 365      2D736563 
+ 365      74696F6E 
  366              	.LASF6:
- 367 01af 6C6F6E67 		.ascii	"long long int\000"
+ 367 01b2 6C6F6E67 		.ascii	"long long int\000"
  367      206C6F6E 
  367      6720696E 
  367      7400
  368              	.LASF11:
- 369 01bd 63686172 		.ascii	"char\000"
+ 369 01c0 63686172 		.ascii	"char\000"
  369      00
  370              	.LASF19:
- 371 01c2 436F6E74 		.ascii	"Control_Reg_LED_2_Read\000"
+ 371 01c5 436F6E74 		.ascii	"Control_Reg_LED_2_Read\000"
  371      726F6C5F 
  371      5265675F 
  371      4C45445F 
  371      325F5265 
  372              	.LASF2:
- 373 01d9 73686F72 		.ascii	"short int\000"
+ 373 01dc 73686F72 		.ascii	"short int\000"
  373      7420696E 
  373      7400
  374              	.LASF12:
- 375 01e3 75696E74 		.ascii	"uint8\000"
+ 375 01e6 75696E74 		.ascii	"uint8\000"
  375      3800
  376              	.LASF4:
- 377 01e9 6C6F6E67 		.ascii	"long int\000"
+ 377 01ec 6C6F6E67 		.ascii	"long int\000"
  377      20696E74 
  377      00
  378              	.LASF0:
- 379 01f2 7369676E 		.ascii	"signed char\000"
+ 379 01f5 7369676E 		.ascii	"signed char\000"
  379      65642063 
  379      68617200 
  380              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

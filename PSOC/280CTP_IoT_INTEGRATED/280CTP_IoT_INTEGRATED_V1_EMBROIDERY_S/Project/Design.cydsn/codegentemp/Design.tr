@@ -43,8 +43,8 @@ Clock: I2C_TC_SCBCLK(FFB)     | N/A                    | Target: 1.60 MHz    |
 Clock: SPIM_FLASH_IntClock    | Frequency: 53.39 MHz   | Target: 8.00 MHz    | 
 Clock: SPIM_LCD_IntClock      | Frequency: 53.71 MHz   | Target: 16.00 MHz   | 
 Clock: SwClk                  | Frequency: 118.68 MHz  | Target: 0.00 MHz    | 
-Clock: UART_SCBCLK            | N/A                    | Target: 1.50 MHz    | 
-Clock: UART_SCBCLK(FFB)       | N/A                    | Target: 1.50 MHz    | 
+Clock: UART_SCBCLK            | N/A                    | Target: 0.12 MHz    | 
+Clock: UART_SCBCLK(FFB)       | N/A                    | Target: 0.12 MHz    | 
 Clock: UART_WIFI_SCBCLK       | N/A                    | Target: 1.37 MHz    | 
 Clock: UART_WIFI_SCBCLK(FFB)  | N/A                    | Target: 1.37 MHz    | 
 

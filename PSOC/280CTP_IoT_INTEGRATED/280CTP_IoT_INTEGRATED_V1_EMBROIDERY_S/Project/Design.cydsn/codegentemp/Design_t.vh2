@@ -1,5 +1,5 @@
 -- Project:   C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S\Project\Design.cydsn\Design.cyprj
--- Generated: 03/26/2026 09:55:42
+-- Generated: 04/03/2026 08:22:51
 -- PSoC Creator  4.4
 
 ENTITY Design IS
@@ -296,8 +296,8 @@ ARCHITECTURE __DEFAULT__ OF Design IS
     SIGNAL \SPIM_LCD:Net_276_digital\ : bit;
     ATTRIBUTE udbclken_assigned OF \SPIM_LCD:Net_276_digital\ : SIGNAL IS "True";
     ATTRIBUTE global_signal OF \SPIM_LCD:Net_276_digital\ : SIGNAL IS true;
-    SIGNAL \UART:Net_847_ff3\ : bit;
-    ATTRIBUTE global_signal OF \UART:Net_847_ff3\ : SIGNAL IS true;
+    SIGNAL \UART:Net_847_ff4\ : bit;
+    ATTRIBUTE global_signal OF \UART:Net_847_ff4\ : SIGNAL IS true;
     SIGNAL \UART:miso_s_wire\ : bit;
     SIGNAL \UART:mosi_m_wire\ : bit;
     SIGNAL \UART:rts_wire\ : bit;
@@ -310,8 +310,8 @@ ARCHITECTURE __DEFAULT__ OF Design IS
     SIGNAL \UART:select_m_wire_3\ : bit;
     SIGNAL \\\UART:tx(0)\\__PA\ : bit;
     SIGNAL \UART:tx_wire\ : bit;
-    SIGNAL \UART_WIFI:Net_847_ff4\ : bit;
-    ATTRIBUTE global_signal OF \UART_WIFI:Net_847_ff4\ : SIGNAL IS true;
+    SIGNAL \UART_WIFI:Net_847_ff3\ : bit;
+    ATTRIBUTE global_signal OF \UART_WIFI:Net_847_ff3\ : SIGNAL IS true;
     SIGNAL \UART_WIFI:miso_s_wire\ : bit;
     SIGNAL \UART_WIFI:mosi_m_wire\ : bit;
     SIGNAL \UART_WIFI:rts_wire\ : bit;
@@ -1029,11 +1029,11 @@ BEGIN
             udb_div_0 => open,
             udb_div_1 => dclk_to_genclk,
             ff_div_2 => \I2C_TC:Net_847_ff2\,
-            ff_div_3 => \UART_WIFI:Net_847_ff4\,
+            ff_div_3 => \UART_WIFI:Net_847_ff3\,
             ff_div_4 => open,
             ff_div_11 => Net_516_ff11,
             udb_div_2 => dclk_to_genclk_2,
-            ff_div_5 => \UART:Net_847_ff3\,
+            ff_div_5 => \UART:Net_847_ff4\,
             udb_div_3 => dclk_to_genclk_1);
 
     LCD_RES:logicalport
@@ -4563,7 +4563,7 @@ BEGIN
             cy_registers => "",
             scb_mode => 2)
         PORT MAP(
-            clock => \UART_WIFI:Net_847_ff4\,
+            clock => \UART_WIFI:Net_847_ff3\,
             interrupt => Net_631,
             uart_rx => \UART_WIFI:rx_wire\,
             uart_tx => \UART_WIFI:tx_wire\,
@@ -4693,7 +4693,7 @@ BEGIN
             cy_registers => "",
             scb_mode => 2)
         PORT MAP(
-            clock => \UART:Net_847_ff3\,
+            clock => \UART:Net_847_ff4\,
             interrupt => Net_653,
             uart_rx => \UART:rx_wire\,
             uart_tx => \UART:tx_wire\,
