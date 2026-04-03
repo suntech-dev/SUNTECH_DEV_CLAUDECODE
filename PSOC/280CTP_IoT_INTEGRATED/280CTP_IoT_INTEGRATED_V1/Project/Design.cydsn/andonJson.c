@@ -94,20 +94,21 @@ uint8 andonCurrentTimeParsing(char *jsonString, int16 sizeOfJson)
     {   
         if (jsoneq(jsonString, &t[i], "datetime") == 0)
         {
-            RTC_SetUnixTime(g_ptrMachineParameter->lastPowerOnDateTime);
-            
-            uint32 lastPowerOnDate = RTC_GetDate(), currentDate;
-   
+            /* AUTO RESET: Unix time을 하루(86400초) 단위로 나눠 날짜 번호 비교
+             * - RTC 조작(SetUnixTime 임시 세팅) 제거
+             * - RTC_GetDay() 대신 전체 날짜 비교 → 월 경계 동일 일수 오작동 방지 */
+            uint32 lastDay = g_ptrMachineParameter->lastPowerOnDateTime / 86400u;
+
             setCurrentTime(GetJSON_Token_String(&t[i + 1], jsonString));
-            
-            currentDate  = RTC_GetDate();
-               
-            if(RTC_GetDay(lastPowerOnDate) != RTC_GetDay(currentDate))
+
+            uint32 currentDay = (uint32)(RTC_GetUnixTime() / 86400u);
+
+            if(lastDay != currentDay)
             {
-                if(g_ptrMachineParameter->bAutoReset) ResetCount();             
+                if(g_ptrMachineParameter->bAutoReset) ResetCount();
             }
-            
-            g_ptrMachineParameter->lastPowerOnDateTime = RTC_GetUnixTime();
+
+            g_ptrMachineParameter->lastPowerOnDateTime = (uint32)RTC_GetUnixTime();
 
             break;
         }
