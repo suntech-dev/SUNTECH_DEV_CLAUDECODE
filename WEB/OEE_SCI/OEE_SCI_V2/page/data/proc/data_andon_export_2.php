@@ -1,34 +1,30 @@
 <?php
+
 /**
- * Andon Data Excel Export API
+ * ============================================================
+ * 파일명: data_andon_export_2.php
+ * 목  적: Andon(안돈) 데이터를 Excel(.xlsx) 파일로 내보내는 API
  *
- * Features:
- * - Excel export with filtering support (Factory → Line → Machine)
- * - Date range filtering
- * - Shift filtering
- * - PhpSpreadsheet-based Excel generation
+ * 주요 기능:
+ *  - 공장 → 라인 → 기계 3단계 필터링 지원
+ *  - 날짜 범위(start_date / end_date) 및 교대(shift) 필터링
+ *  - PhpSpreadsheet 라이브러리를 이용한 Excel 파일 생성
+ *  - SAP Fiori 스타일 헤더 색상(파란색) 및 교대 행 배경 적용
+ *
+ * GET 파라미터:
+ *  factory_filter  : 공장 idx
+ *  line_filter     : 라인 idx
+ *  machine_filter  : 기계 idx
+ *  shift_filter    : 교대 idx
+ *  start_date      : 조회 시작 날짜 (YYYY-MM-DD)
+ *  end_date        : 조회 종료 날짜 (YYYY-MM-DD)
+ * ============================================================
  */
 
-// Prevent HTML error output for Excel export
-ini_set('display_errors', 0);
-error_reporting(E_ALL);
+// 공통 초기화 및 필터 빌더 로드 (DB 연결 포함)
+require_once __DIR__ . '/export_common.php';
 
-// Error handler to catch errors
-set_error_handler(function($severity, $message, $file, $line) {
-    if (!(error_reporting() & $severity)) return;
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'PHP Error: ' . $message]);
-    exit;
-});
-
-
-// Load common libraries and configuration files
-require_once(__DIR__ . '/../../../lib/config.php');
-require_once(__DIR__ . '/../../../lib/db.php');
-
-// PhpSpreadsheet classes
-require_once __DIR__ . '/../../../lib/vendor/autoload.php';
-
+// PhpSpreadsheet 네임스페이스 import
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -37,61 +33,30 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 /**
- * Parse filter parameters from GET request
+ * Andon 데이터를 Excel로 내보내는 메인 함수
+ *
+ * @param PDO $pdo PDO 데이터베이스 연결 객체
  */
-function parseFilterParams() {
-  $params = [];
-  $where_clauses = [];
+function exportAndons(PDO $pdo)
+{
+    try {
+        /*
+         * 공통 필터 파라미터 빌더 호출:
+         *  - 테이블 alias: 'da' (data_andon)
+         *  - 날짜 컬럼: 'reg_date' (등록일시 기준)
+         *  - datetime 보정: true (00:00:00 ~ 23:59:59 범위)
+         *  - 기본 조건: 날짜 미지정 시 최근 2일 데이터
+         */
+        $query_conditions = buildExportFilterParams('da', 'reg_date', true, 'da.reg_date >= DATE_SUB(NOW(), INTERVAL 2 DAY)');
 
-  if (!empty($_GET['factory_filter'])) {
-    $where_clauses[] = 'da.factory_idx = ?';
-    $params[] = $_GET['factory_filter'];
-  }
-
-  if (!empty($_GET['line_filter'])) {
-    $where_clauses[] = 'da.line_idx = ?';
-    $params[] = $_GET['line_filter'];
-  }
-
-  if (!empty($_GET['machine_filter'])) {
-    $where_clauses[] = 'da.machine_idx = ?';
-    $params[] = $_GET['machine_filter'];
-  }
-
-  if (!empty($_GET['shift_filter'])) {
-    $where_clauses[] = 'da.shift_idx = ?';
-    $params[] = $_GET['shift_filter'];
-  }
-
-  if (!empty($_GET['start_date'])) {
-    $where_clauses[] = 'da.reg_date >= ?';
-    $params[] = $_GET['start_date'] . ' 00:00:00';
-  }
-
-  if (!empty($_GET['end_date'])) {
-    $where_clauses[] = 'da.reg_date <= ?';
-    $params[] = $_GET['end_date'] . ' 23:59:59';
-  }
-
-  // Default date range if not specified (last 2 days)
-  if (empty($_GET['start_date']) && empty($_GET['end_date'])) {
-    $where_clauses[] = 'da.reg_date >= DATE_SUB(NOW(), INTERVAL 2 DAY)';
-  }
-
-  $where_sql = count($where_clauses) > 0 ? ' WHERE ' . implode(' AND ', $where_clauses) : '';
-
-  return ['where_sql' => $where_sql, 'params' => $params];
-}
-
-/**
- * Export andon data to Excel
- */
-function exportAndons(PDO $pdo) {
-  try {
-    $query_conditions = parseFilterParams();
-
-    // Query andon data with all necessary fields
-    $sql = "
+        /*
+         * Andon 데이터 조회 SQL
+         * - data_andon(da): 안돈 발생 이력 테이블 (메인)
+         * - info_factory(f): 공장명 조인
+         * - info_line(l): 라인명 조인
+         * - duration 컬럼: Warning 상태는 현재까지 경과 시간, Completed는 발생~해결 시간
+         */
+        $sql = "
       SELECT
         da.idx,
         f.factory_name,
@@ -144,166 +109,198 @@ function exportAndons(PDO $pdo) {
       ORDER BY da.reg_date DESC, da.idx DESC
     ";
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($query_conditions['params']);
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // PDO Prepared Statement 실행 (SQL 인젝션 방지)
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($query_conditions['params']);
+        // 전체 결과를 연관 배열로 가져오기
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Create Excel spreadsheet
-    $spreadsheet = new Spreadsheet();
-    $sheet = $spreadsheet->getActiveSheet();
-    $sheet->setTitle('Andon Data');
+        // PhpSpreadsheet 객체 생성 — 새 Excel 워크북 초기화
+        $spreadsheet = new Spreadsheet();
+        // 첫 번째 시트(기본 활성 시트) 가져오기
+        $sheet = $spreadsheet->getActiveSheet();
+        // 시트 탭 이름 설정
+        $sheet->setTitle('Andon Data');
 
-    // Define headers (Detail 제외)
-    $headers = [
-      'NO',
-      'ID',
-      'Machine No',
-      'Factory/Line',
-      'Shift',
-      'Andon Type',
-      'Status',
-      'Occurrence Time',
-      'Resolution Time',
-      'Duration',
-      'Work Date'
-    ];
+        /*
+         * 헤더 컬럼 정의 (Detail 컬럼 제외)
+         * 순서: NO, ID, Machine No, Factory/Line, Shift, Andon Type,
+         *        Status, Occurrence Time, Resolution Time, Duration, Work Date
+         */
+        $headers = [
+            'NO',
+            'ID',
+            'Machine No',
+            'Factory/Line',
+            'Shift',
+            'Andon Type',
+            'Status',
+            'Occurrence Time',
+            'Resolution Time',
+            'Duration',
+            'Work Date'
+        ];
 
-    // Write headers
-    $sheet->fromArray($headers, NULL, 'A1');
+        // 헤더 배열을 A1 셀부터 시트에 기록
+        $sheet->fromArray($headers, NULL, 'A1');
 
-    // Apply header styling
-    $headerStyle = [
-      'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
-      'fill' => [
-        'fillType' => Fill::FILL_SOLID,
-        'startColor' => ['rgb' => '0070F2']  // SAP Fiori Blue
-      ],
-      'alignment' => [
-        'horizontal' => Alignment::HORIZONTAL_CENTER,
-        'vertical' => Alignment::VERTICAL_CENTER
-      ],
-      'borders' => [
-        'allBorders' => [
-          'borderStyle' => Border::BORDER_THIN,
-          'color' => ['rgb' => 'CCCCCC']
-        ]
-      ]
-    ];
-    $sheet->getStyle('A1:' . $sheet->getHighestColumn() . '1')->applyFromArray($headerStyle);
+        /*
+         * 헤더 스타일 정의:
+         *  - 폰트: 굵게, 흰색
+         *  - 배경: SAP Fiori Blue (#0070F2) 단색 채우기
+         *  - 정렬: 가로/세로 중앙
+         *  - 테두리: 연한 회색 얇은 테두리
+         */
+        $headerStyle = [
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => '0070F2']  // SAP Fiori Blue
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => 'CCCCCC']
+                ]
+            ]
+        ];
+        // A1부터 마지막 헤더 열까지 스타일 적용
+        $sheet->getStyle('A1:' . $sheet->getHighestColumn() . '1')->applyFromArray($headerStyle);
 
-    // Set header row height
-    $sheet->getRowDimension(1)->setRowHeight(25);
+        // 헤더 행 높이 25px로 설정 (가독성 향상)
+        $sheet->getRowDimension(1)->setRowHeight(25);
 
-    // Write data rows
-    $rowNum = 2;
-    foreach ($data as $index => $row) {
-      // Format shift display
-      $shiftDisplay = '-';
-      if (!empty($row['shift_idx'])) {
-        $shiftDisplay = 'Shift ' . $row['shift_idx'];
-      }
+        // 데이터 행 작성 시작 — 2행부터 시작 (1행은 헤더)
+        $rowNum = 2;
+        foreach ($data as $index => $row) {
+            // 교대(Shift) 표시 포맷: shift_idx가 없으면 '-', 있으면 'Shift N' 형식
+            $shiftDisplay = '-';
+            if (!empty($row['shift_idx'])) {
+                $shiftDisplay = 'Shift ' . $row['shift_idx'];
+            }
 
-      // Format status display
-      $statusDisplay = '-';
-      if ($row['status'] === 'Warning') {
-        $statusDisplay = '⚠️ Warning';
-      } elseif ($row['status'] === 'Completed') {
-        $statusDisplay = '✅ Completed';
-      } else {
-        $statusDisplay = $row['status'];
-      }
+            // 상태(Status) 표시 포맷: Warning/Completed 이모지 접두사 추가
+            $statusDisplay = '-';
+            if ($row['status'] === 'Warning') {
+                $statusDisplay = '⚠️ Warning';
+            } elseif ($row['status'] === 'Completed') {
+                $statusDisplay = '✅ Completed';
+            } else {
+                $statusDisplay = $row['status'];
+            }
 
-      // Format factory/line display
-      $factoryLineDisplay = ($row['factory_name'] ?? '-') . ' / ' . ($row['line_name'] ?? '-');
+            // 공장/라인 통합 표시 포맷: "공장명 / 라인명" (null이면 '-')
+            $factoryLineDisplay = ($row['factory_name'] ?? '-') . ' / ' . ($row['line_name'] ?? '-');
 
-      // Write row data
-      $sheet->fromArray([
-        $index + 1,
-        $row['idx'],
-        $row['machine_no'] ?? '-',
-        $factoryLineDisplay,
-        $shiftDisplay,
-        $row['andon_name'] ?? '-',
-        $statusDisplay,
-        $row['reg_date'] ?? '-',
-        $row['update_date'] ?? '-',
-        $row['duration'] ?? '-',
-        $row['work_date'] ?? '-'
-      ], NULL, 'A' . $rowNum);
+            /*
+             * 행 데이터 배열을 현재 rowNum 위치에 기록
+             * 순서: NO(순번), ID(DB idx), Machine No, Factory/Line, Shift,
+             *        Andon Type, Status, 발생시각, 해결시각, Duration, Work Date
+             */
+            $sheet->fromArray([
+                $index + 1,
+                $row['idx'],
+                $row['machine_no'] ?? '-',
+                $factoryLineDisplay,
+                $shiftDisplay,
+                $row['andon_name'] ?? '-',
+                $statusDisplay,
+                $row['reg_date'] ?? '-',
+                $row['update_date'] ?? '-',
+                $row['duration'] ?? '-',
+                $row['work_date'] ?? '-'
+            ], NULL, 'A' . $rowNum);
 
-      // Apply alternating row colors
-      if ($rowNum % 2 == 0) {
-        $sheet->getStyle('A' . $rowNum . ':' . $sheet->getHighestColumn() . $rowNum)
-          ->getFill()
-          ->setFillType(Fill::FILL_SOLID)
-          ->getStartColor()->setRGB('F9F9F9');
-      }
+            // 짝수 행에 연한 회색(#F9F9F9) 교대 배경색 적용 (가독성 향상)
+            if ($rowNum % 2 == 0) {
+                $sheet->getStyle('A' . $rowNum . ':' . $sheet->getHighestColumn() . $rowNum)
+                    ->getFill()
+                    ->setFillType(Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB('F9F9F9');
+            }
 
-      $rowNum++;
+            $rowNum++;
+        }
+
+        // 데이터 영역 전체에 테두리 및 세로 중앙 정렬 스타일 적용
+        if ($rowNum > 2) {
+            $dataStyle = [
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['rgb' => 'CCCCCC']
+                    ]
+                ],
+                'alignment' => [
+                    'vertical' => Alignment::VERTICAL_CENTER
+                ]
+            ];
+            // A2부터 마지막 데이터 행까지 스타일 적용
+            $sheet->getStyle('A2:' . $sheet->getHighestColumn() . ($rowNum - 1))->applyFromArray($dataStyle);
+        }
+
+        // 모든 컬럼 너비를 내용에 맞게 자동 조정
+        foreach ($sheet->getColumnIterator() as $column) {
+            $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+        }
+
+        /*
+         * 다운로드 파일명 생성:
+         *  - 기본: 'andon_data'
+         *  - 날짜 범위가 지정된 경우 start_date, end_date 추가
+         *  - 타임스탬프(YmdHis) 추가로 중복 방지
+         *  예) andon_data_2026-01-01_2026-01-31_20260101120000.xlsx
+         */
+        $filename_parts = ['andon_data'];
+        if (!empty($_GET['start_date'])) {
+            $filename_parts[] = $_GET['start_date'];
+        }
+        if (!empty($_GET['end_date'])) {
+            $filename_parts[] = $_GET['end_date'];
+        }
+        $filename = implode('_', $filename_parts) . '_' . date('YmdHis') . '.xlsx';
+
+        /*
+         * Excel 파일 다운로드를 위한 HTTP 응답 헤더 설정:
+         *  - Content-Type: OOXML Excel 형식
+         *  - Content-Disposition: attachment로 강제 다운로드
+         *  - Cache-Control: 캐시 비활성화
+         */
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        // php://output으로 직접 스트리밍 출력 (파일 저장 없이 브라우저로 전송)
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+    } catch (PDOException $e) {
+        // DB 오류: 500 에러 코드 반환 및 에러 로그 기록
+        http_response_code(500);
+        error_log("Excel export error: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    } catch (Exception $e) {
+        // 일반 오류: 500 에러 코드 반환 및 에러 로그 기록
+        http_response_code(500);
+        error_log("Excel export error: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Export error: ' . $e->getMessage()]);
     }
-
-    // Apply borders to data rows
-    if ($rowNum > 2) {
-      $dataStyle = [
-        'borders' => [
-          'allBorders' => [
-            'borderStyle' => Border::BORDER_THIN,
-            'color' => ['rgb' => 'CCCCCC']
-          ]
-        ],
-        'alignment' => [
-          'vertical' => Alignment::VERTICAL_CENTER
-        ]
-      ];
-      $sheet->getStyle('A2:' . $sheet->getHighestColumn() . ($rowNum - 1))->applyFromArray($dataStyle);
-    }
-
-    // Auto-size columns
-    foreach ($sheet->getColumnIterator() as $column) {
-      $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
-    }
-
-    // Generate filename with timestamp and filters
-    $filename_parts = ['andon_data'];
-    if (!empty($_GET['start_date'])) {
-      $filename_parts[] = $_GET['start_date'];
-    }
-    if (!empty($_GET['end_date'])) {
-      $filename_parts[] = $_GET['end_date'];
-    }
-    $filename = implode('_', $filename_parts) . '_' . date('YmdHis') . '.xlsx';
-
-    // Set headers for download
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="' . $filename . '"');
-    header('Cache-Control: max-age=0');
-
-    // Write to output
-    $writer = new Xlsx($spreadsheet);
-    $writer->save('php://output');
-
-  } catch (PDOException $e) {
-    http_response_code(500);
-    error_log("Excel export error: " . $e->getMessage());
-    echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
-  } catch (Exception $e) {
-    http_response_code(500);
-    error_log("Excel export error: " . $e->getMessage());
-    echo json_encode(['success' => false, 'message' => 'Export error: ' . $e->getMessage()]);
-  }
 }
 
-// Execute export
+// ── 메인 실행부 ──────────────────────────────────────────────────────────────
+// DB 연결 확인 후 exportAndons() 호출
 try {
-  if (!$pdo) {
-    throw new Exception("Database connection failed");
-  }
+    if (!$pdo) {
+        throw new Exception("Database connection failed");
+    }
 
-  exportAndons($pdo);
-
+    exportAndons($pdo);
 } catch (Exception $e) {
-  http_response_code(500);
-  error_log("Fatal error in andon export: " . $e->getMessage());
-  echo json_encode(['success' => false, 'message' => 'Server Error: ' . $e->getMessage()]);
+    // 치명적 오류: 500 에러 반환
+    http_response_code(500);
+    error_log("Fatal error in andon export: " . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => 'Server Error: ' . $e->getMessage()]);
 }
-?>

@@ -1,41 +1,43 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 /**
- * Defective Management API (RESTful)
- * Handles C.R.U.D operations and Excel export functionality.
+ * proc/defective.php — 불량 유형(Defective) 관리 REST API
+ * GET    : 목록/단건 조회, 이름/단축키 중복 체크, 경고 통계
+ * POST   : 불량 유형 추가
+ * PUT    : 불량 유형 수정 (_method 오버라이드 지원)
+ * DELETE : 불량 유형 삭제
+ *
+ * defective_shortcut: 현장 작업자가 빠르게 입력할 수 있는 단축 코드
+ * usage_rate: 전체 data_defective 건수 대비 해당 불량 유형 발생 비율(%)
  */
-
 require_once(__DIR__ . '/../../../lib/config.php');
 require_once(__DIR__ . '/../../../lib/db.php');
 
-
-
-// API 응답을 JSON 형식으로 설정
 header('Content-Type: application/json');
 
-// HTTP 요청 메서드를 확인
+// HTML Form의 PUT 불가 문제를 _method 필드로 우회
 $method = $_SERVER['REQUEST_METHOD'];
-
-// POST 요청에서 _method 필드가 있는 경우 해당 값으로 메서드를 재정의 (HTML 폼에서 PUT, DELETE 지원)
 if ($method === 'POST' && isset($_POST['_method'])) {
     $method = strtoupper($_POST['_method']);
 }
 
+// HTTP 메서드 및 'for' 파라미터에 따라 처리 함수 분기
 try {
-    // 요청 메서드에 따라 적절한 함수 호출
     switch ($method) {
         case 'GET':
             if (isset($_GET['for']) && $_GET['for'] === 'check-duplicate') {
+                // 불량명 중복 여부 확인
                 checkDuplicateDefective($pdo);
             } elseif (isset($_GET['for']) && $_GET['for'] === 'check-duplicate-shortcut') {
+                // 단축 코드 중복 여부 확인
                 checkDuplicateDefectiveShortcut($pdo);
             } elseif (isset($_GET['for']) && $_GET['for'] === 'warning-stats') {
+                // 불량 유형별 현재 경고 건수 반환
                 getWarningStats($pdo);
             } elseif (isset($_GET['id'])) {
+                // 특정 idx 불량 유형 단건 조회
                 getDefective($pdo);
             } else {
+                // 불량 유형 목록 조회 (발생 통계 포함)
                 getDefectives($pdo);
             }
             break;
@@ -49,225 +51,198 @@ try {
             deleteDefective($pdo);
             break;
         default:
-            http_response_code(405); // Method Not Allowed
+            http_response_code(405);
             echo json_encode(['success' => false, 'message' => 'Method Not Allowed']);
             break;
     }
 } catch (PDOException $e) {
-    // 데이터베이스 관련 예외 처리
-    http_response_code(500); // Internal Server Error
+    http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
 } catch (Exception $e) {
-    // 기타 예외 처리
-    http_response_code(500); // Internal Server Error
+    http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'An unexpected error occurred: ' . $e->getMessage()]);
 }
 
 
 /**
- * 목록 조회(페이지네이션)와 전체 조회(엑셀)에 사용될 쿼리 파라미터를 파싱하고 유효성을 검사합니다.
- * @return array 정렬 및 필터링 조건 배열
+ * GET 파라미터에서 목록 조회 조건을 파싱하여 반환
+ * - total_count, usage_rate: 집계 컬럼으로 DB ORDER BY 불가 → is_calc_sort 플래그로 PHP 정렬 처리
+ * - search: defective_name, defective_shortcut, remark 대상 LIKE 검색
  */
-function parse_defective_list_params() {
-    // 정렬 파라미터
+function parse_defective_list_params(): array {
     $sort_column = $_GET['sort'] ?? 'defective_name';
-    $sort_order = strtoupper($_GET['order'] ?? 'ASC');
+    $sort_order  = strtoupper($_GET['order'] ?? 'ASC');
 
-    // SQL Injection 방지를 위해 정렬 가능한 컬럼을 화이트리스트로 관리
-    $valid_columns = ['idx', 'defective_name', 'defective_shortcut', 'status', 'remark', 'total_count', 'usage_rate'];
-    if (!in_array($sort_column, $valid_columns)) {
-        $sort_column = 'defective_name'; // 기본값
-    }
-    if (!in_array($sort_order, ['ASC', 'DESC'])) {
-        $sort_order = 'ASC'; // 기본값
-    }
+    $valid_columns   = ['idx', 'defective_name', 'defective_shortcut', 'status', 'remark', 'total_count', 'usage_rate'];
+    // 집계 컬럼은 DB에서 ORDER BY할 경우 서브쿼리 별칭 충돌 위험 → PHP 정렬로 처리
+    $calc_columns    = ['total_count', 'usage_rate'];
 
-    // 필터링 파라미터
+    if (!in_array($sort_column, $valid_columns)) $sort_column = 'defective_name';
+    if (!in_array($sort_order, ['ASC', 'DESC']))  $sort_order  = 'ASC';
+
     $status_filter = $_GET['status_filter'] ?? '';
-    $search_query = trim($_GET['search'] ?? '');
+    $search_query  = trim($_GET['search']   ?? '');
 
-    // WHERE 절 구성
     $where_conditions = [];
-    $params = [];
+    $params           = [];
 
     if (!empty($status_filter)) {
         $where_conditions[] = 'status = ?';
-        $params[] = $status_filter;
+        $params[]           = $status_filter;
     }
-
-    // 검색 파라미터 추가 (defective_name, defective_shortcut, remark에서 검색)
     if (!empty($search_query)) {
         $where_conditions[] = '(defective_name LIKE ? OR defective_shortcut LIKE ? OR remark LIKE ?)';
-        $search_param = '%' . $search_query . '%';
-        $params[] = $search_param;
-        $params[] = $search_param;
-        $params[] = $search_param;
+        $p = '%' . $search_query . '%';
+        $params = array_merge($params, [$p, $p, $p]);
     }
 
-    $where_sql = '';
-    if (count($where_conditions) > 0) {
-        $where_sql = ' WHERE ' . implode(' AND ', $where_conditions);
-    }
+    $where_sql = $where_conditions ? ' WHERE ' . implode(' AND ', $where_conditions) : '';
 
     return [
-        'where_sql' => $where_sql,
-        'params' => $params,
+        'where_sql'   => $where_sql,
+        'params'      => $params,
         'sort_column' => $sort_column,
-        'sort_order' => $sort_order
+        'sort_order'  => $sort_order,
+        // 집계 컬럼 정렬 여부 (true이면 PHP usort 사용)
+        'is_calc_sort'=> in_array($sort_column, $calc_columns),
     ];
 }
 
 /**
- * 모든 defective 목록을 조회하여 JSON으로 반환합니다.
- * 정렬, 페이지네이션, 필터링 지원.
- * @param PDO $pdo PDO 객체
+ * 불량 유형 목록 조회 (페이징 + data_defective 발생 통계 포함)
+ *
+ * 통계 서브쿼리 설명:
+ * - data_defective에서 불량명별 발생 건수(total_count) 집계
+ * - CROSS JOIN으로 전체 발생 건수(total_all_count)와 함께 조회
+ * - usage_rate = 해당 불량 건수 / 전체 불량 건수 × 100
+ *
+ * 집계 컬럼(total_count, usage_rate) 정렬:
+ * - DB ORDER BY가 어렵기 때문에 전체 조회 후 PHP usort로 정렬 후 슬라이스
  */
-function getDefectives(PDO $pdo) {
-    $query_conditions = parse_defective_list_params();
-    $where_sql = $query_conditions['where_sql'];
-    $params = $query_conditions['params'];
-    $sort_column = $query_conditions['sort_column'];
-    $sort_order = $query_conditions['sort_order'];
+function getDefectives(PDO $pdo): void {
+    $cond        = parse_defective_list_params();
+    $where_sql   = $cond['where_sql'];
+    $params      = $cond['params'];
+    $sort_column = $cond['sort_column'];
+    $sort_order  = $cond['sort_order'];
+    $is_calc     = $cond['is_calc_sort'];
 
-    // 페이지네이션 파라미터
-    $page = (int)($_GET['page'] ?? 1);
-    $limit = (int)($_GET['limit'] ?? 10);
+    $page   = (int)($_GET['page']  ?? 1);
+    $limit  = (int)($_GET['limit'] ?? 10);
     $offset = ($page - 1) * $limit;
 
-    // 전체 레코드 수 계산 (필터링 적용)
-    $total_stmt = $pdo->prepare("SELECT COUNT(*) FROM info_defective" . $where_sql);
+    // 전체 레코드 수 카운트
+    $total_stmt = $pdo->prepare("SELECT COUNT(*) FROM info_defective{$where_sql}");
     $total_stmt->execute($params);
     $total_records = (int)$total_stmt->fetchColumn();
 
-    // 계산된 필드에 대한 정렬인지 확인
-    $calculated_fields = ['total_count', 'usage_rate'];
-    $is_calculated_sort = in_array($sort_column, $calculated_fields);
+    // 통계를 서브쿼리 JOIN으로 한 번에 가져오기
+    // CROSS JOIN으로 전체 발생 건수를 모든 행에 포함시켜 usage_rate 계산
+    $stats_subquery = "(
+        SELECT defective_name,
+               COUNT(*) AS total_count,
+               total_all.total_all_count
+        FROM data_defective
+        CROSS JOIN (SELECT COUNT(*) AS total_all_count FROM data_defective) total_all
+        GROUP BY defective_name, total_all.total_all_count
+    ) stats";
 
-    if ($is_calculated_sort) {
-        // 계산된 필드로 정렬하는 경우: 전체 데이터를 가져와서 정렬
-        $sql = "SELECT idx, defective_name, defective_shortcut, status, remark FROM info_defective {$where_sql} ORDER BY defective_name ASC";
+    if ($is_calc) {
+        // 집계 컬럼 정렬: 전체 조회 후 PHP usort → array_slice로 페이지 데이터 추출
+        $sql = "SELECT d.idx, d.defective_name, d.defective_shortcut, d.status, d.remark,
+                       COALESCE(stats.total_count, 0) AS total_count,
+                       CASE WHEN COALESCE(stats.total_all_count, 0) > 0
+                            THEN ROUND(COALESCE(stats.total_count, 0) / stats.total_all_count * 100, 1)
+                            ELSE 0 END AS usage_rate
+                FROM info_defective d
+                LEFT JOIN {$stats_subquery} ON d.defective_name = stats.defective_name
+                {$where_sql}
+                ORDER BY defective_name ASC";
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
-        $all_defectives = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // 통계 정보 추가
-        $all_defectives = addDefectiveStatistics($pdo, $all_defectives);
-        
-        // 계산된 필드로 정렬
-        usort($all_defectives, function($a, $b) use ($sort_column, $sort_order) {
-            $val_a = $a[$sort_column];
-            $val_b = $b[$sort_column];
-            
-            if ($sort_order === 'DESC') {
-                return $val_b <=> $val_a;
-            } else {
-                return $val_a <=> $val_b;
-            }
+        $all = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // PHP에서 집계 컬럼 기준 정렬 (우주선 연산자 <=>)
+        usort($all, function ($a, $b) use ($sort_column, $sort_order) {
+            return $sort_order === 'DESC'
+                ? $b[$sort_column] <=> $a[$sort_column]
+                : $a[$sort_column] <=> $b[$sort_column];
         });
-        
-        // 페이지네이션 적용
-        $defectives = array_slice($all_defectives, $offset, $limit);
+
+        // 정렬된 전체 결과에서 현재 페이지 데이터만 슬라이스
+        $defectives = array_slice($all, $offset, $limit);
     } else {
-        // 일반 필드로 정렬하는 경우: 기존 방식
-        $sql = "SELECT idx, defective_name, defective_shortcut, status, remark FROM info_defective {$where_sql} ORDER BY `{$sort_column}` {$sort_order} LIMIT {$limit} OFFSET {$offset}";
+        // 일반 컬럼 정렬: DB LIMIT/OFFSET 사용
+        $sql = "SELECT d.idx, d.defective_name, d.defective_shortcut, d.status, d.remark,
+                       COALESCE(stats.total_count, 0) AS total_count,
+                       CASE WHEN COALESCE(stats.total_all_count, 0) > 0
+                            THEN ROUND(COALESCE(stats.total_count, 0) / stats.total_all_count * 100, 1)
+                            ELSE 0 END AS usage_rate
+                FROM info_defective d
+                LEFT JOIN {$stats_subquery} ON d.defective_name = stats.defective_name
+                {$where_sql}
+                ORDER BY `{$sort_column}` {$sort_order}
+                LIMIT {$limit} OFFSET {$offset}";
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
         $defectives = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // 각 defective에 대한 통계 정보 추가
-        $defectives = addDefectiveStatistics($pdo, $defectives);
     }
 
-    // 최종 응답 데이터 구성
     echo json_encode([
-        'success' => true,
-        'data' => $defectives,
+        'success'    => true,
+        'data'       => $defectives,
         'pagination' => [
             'total_records' => $total_records,
-            'current_page' => $page,
-            'total_pages' => ceil($total_records / $limit)
-        ]
+            'current_page'  => $page,
+            'total_pages'   => ceil($total_records / $limit),
+        ],
     ]);
 }
 
 /**
- * 특정 defective 정보를 조회하여 JSON으로 반환합니다.
- * @param PDO $pdo PDO 객체
+ * 불량 유형 단건 조회 (수정 폼 데이터 로드용)
  */
-function getDefective(PDO $pdo) {
+function getDefective(PDO $pdo): void {
     $id = $_GET['id'] ?? 0;
     if (empty($id)) {
-        http_response_code(400); // Bad Request
+        http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'ID is required.']);
         return;
     }
     $stmt = $pdo->prepare("SELECT idx, defective_name, defective_shortcut, status, remark FROM info_defective WHERE idx = ?");
     $stmt->execute([$id]);
-    $defective = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($defective) {
-        echo json_encode(['success' => true, 'data' => $defective]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($row) {
+        echo json_encode(['success' => true, 'data' => $row]);
     } else {
-        http_response_code(404); // Not Found
+        http_response_code(404);
         echo json_encode(['success' => false, 'message' => 'Defective not found.']);
     }
 }
 
 /**
- * 신규 defective를 추가합니다.
- * @param PDO $pdo PDO 객체
+ * 신규 불량 유형 추가 (POST)
+ * - defective_name 필수, defective_shortcut 선택
  */
-function addDefective(PDO $pdo) {
-    $defective_name = trim($_POST['defective_name'] ?? '');
+function addDefective(PDO $pdo): void {
+    $defective_name     = trim($_POST['defective_name']     ?? '');
     $defective_shortcut = trim($_POST['defective_shortcut'] ?? '');
-    $status = $_POST['status'] ?? 'Y';
-    $remark = trim($_POST['remark'] ?? '');
+    $status             = $_POST['status'] ?? 'Y';
+    $remark             = trim($_POST['remark'] ?? '');
 
     if (empty($defective_name)) {
-        http_response_code(400); // Bad Request
+        http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Defective name is required.']);
         return;
     }
-
     try {
         $stmt = $pdo->prepare("INSERT INTO info_defective (defective_name, defective_shortcut, status, remark, reg_date, update_date) VALUES (?, ?, ?, ?, NOW(), NOW())");
         $stmt->execute([$defective_name, $defective_shortcut, $status, $remark]);
-        http_response_code(201); // Created
+        http_response_code(201);
         echo json_encode(['success' => true, 'message' => 'Defective added successfully.']);
     } catch (PDOException $e) {
         if ($e->getCode() == '23000') {
-            http_response_code(409); // Conflict
-            echo json_encode(['success' => false, 'message' => 'Defective name already exists.']);
-        } else {
-            throw $e; // 상위 핸들러에서 처리하도록 예외를 다시 던짐
-        }
-    }
-}
-
-/**
- * 기존 defective 정보를 수정합니다.
- * @param PDO $pdo PDO 객체
- */
-function updateDefective(PDO $pdo) {
-    // HTML form에서 _method로 PUT을 전송하므로, 데이터는 $_POST에 있습니다.
-    $id = $_POST['idx'] ?? 0;
-    $defective_name = trim($_POST['defective_name'] ?? '');
-    $defective_shortcut = trim($_POST['defective_shortcut'] ?? '');
-    $status = $_POST['status'] ?? 'Y';
-    $remark = trim($_POST['remark'] ?? '');
-
-    if (empty($id) || empty($defective_name)) {
-        http_response_code(400); // Bad Request
-        echo json_encode(['success' => false, 'message' => 'ID and Defective name are required.']);
-        return;
-    }
-
-    try {
-        $stmt = $pdo->prepare("UPDATE info_defective SET defective_name = ?, defective_shortcut = ?, status = ?, remark = ?, update_date = NOW() WHERE idx = ?");
-        $stmt->execute([$defective_name, $defective_shortcut, $status, $remark, $id]);
-        echo json_encode(['success' => true, 'message' => 'Defective updated successfully.']);
-    } catch (PDOException $e) {
-        if ($e->getCode() == '23000') {
-            http_response_code(409); // Conflict
+            http_response_code(409);
             echo json_encode(['success' => false, 'message' => 'Defective name already exists.']);
         } else {
             throw $e;
@@ -276,192 +251,137 @@ function updateDefective(PDO $pdo) {
 }
 
 /**
- * defective를 삭제합니다.
- * @param PDO $pdo PDO 객체
+ * 불량 유형 수정 (PUT)
  */
-function deleteDefective(PDO $pdo) {
-    $id = $_GET['id'] ?? 0;
+function updateDefective(PDO $pdo): void {
+    $id                 = $_POST['idx'] ?? 0;
+    $defective_name     = trim($_POST['defective_name']     ?? '');
+    $defective_shortcut = trim($_POST['defective_shortcut'] ?? '');
+    $status             = $_POST['status'] ?? 'Y';
+    $remark             = trim($_POST['remark'] ?? '');
 
+    if (empty($id) || empty($defective_name)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'ID and Defective name are required.']);
+        return;
+    }
+    try {
+        $stmt = $pdo->prepare("UPDATE info_defective SET defective_name = ?, defective_shortcut = ?, status = ?, remark = ?, update_date = NOW() WHERE idx = ?");
+        $stmt->execute([$defective_name, $defective_shortcut, $status, $remark, $id]);
+        echo json_encode(['success' => true, 'message' => 'Defective updated successfully.']);
+    } catch (PDOException $e) {
+        if ($e->getCode() == '23000') {
+            http_response_code(409);
+            echo json_encode(['success' => false, 'message' => 'Defective name already exists.']);
+        } else {
+            throw $e;
+        }
+    }
+}
+
+/**
+ * 불량 유형 삭제 (DELETE)
+ */
+function deleteDefective(PDO $pdo): void {
+    $id = $_GET['id'] ?? 0;
     if (empty($id)) {
-        http_response_code(400); // Bad Request
+        http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'ID is required.']);
         return;
     }
-
     $stmt = $pdo->prepare("DELETE FROM info_defective WHERE idx = ?");
     $stmt->execute([$id]);
-
     if ($stmt->rowCount() > 0) {
         echo json_encode(['success' => true, 'message' => 'Defective deleted successfully.']);
     } else {
-        http_response_code(404); // Not Found
+        http_response_code(404);
         echo json_encode(['success' => false, 'message' => 'Defective not found or already deleted.']);
     }
 }
 
 /**
- * 중복 defective 이름 확인
- * @param PDO $pdo PDO 객체
+ * 불량명 중복 여부 확인 (실시간 폼 검증용)
  */
-function checkDuplicateDefective(PDO $pdo) {
+function checkDuplicateDefective(PDO $pdo): void {
     $defective_name = trim($_GET['defective_name'] ?? '');
-    $current_idx = $_GET['current_idx'] ?? null; // 수정 모드에서 현재 레코드 제외
-    
+    $current_idx    = $_GET['current_idx'] ?? null;
+
     if (empty($defective_name)) {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Defective name is required.']);
         return;
     }
-    
-    // 중복 확인 쿼리
-    $sql = "SELECT COUNT(*) FROM info_defective WHERE defective_name = ?";
+    $sql    = "SELECT COUNT(*) FROM info_defective WHERE defective_name = ?";
     $params = [$defective_name];
-    
-    // 수정 모드에서 현재 레코드 제외
-    if ($current_idx) {
-        $sql .= " AND idx != ?";
-        $params[] = $current_idx;
-    }
-    
+    if ($current_idx) { $sql .= " AND idx != ?"; $params[] = $current_idx; }
+
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    $count = (int)$stmt->fetchColumn();
-    
-    if ($count > 0) {
-        echo json_encode(['success' => false, 'message' => 'This defective name already exists. Please enter a different name.']);
-    } else {
-        echo json_encode(['success' => true, 'message' => 'Defective name is available.']);
-    }
+    echo json_encode((int)$stmt->fetchColumn() > 0
+        ? ['success' => false, 'message' => 'This defective name already exists. Please enter a different name.']
+        : ['success' => true,  'message' => 'Defective name is available.']
+    );
 }
 
 /**
- * 중복 defective shortcut 확인
- * @param PDO $pdo PDO 객체
+ * 단축 코드(shortcut) 중복 여부 확인
+ * - defective_name과 별도로 shortcut도 UNIQUE 제약이 있으므로 따로 검사
+ * - current_idx가 있으면 자기 자신 제외 (수정 모드)
  */
-function checkDuplicateDefectiveShortcut(PDO $pdo) {
+function checkDuplicateDefectiveShortcut(PDO $pdo): void {
     $defective_shortcut = trim($_GET['defective_shortcut'] ?? '');
-    $current_idx = $_GET['current_idx'] ?? null; // 수정 모드에서 현재 레코드 제외
-    
+    $current_idx        = $_GET['current_idx'] ?? null;
+
     if (empty($defective_shortcut)) {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Defective shortcut is required.']);
         return;
     }
-    
-    // 중복 확인 쿼리
-    $sql = "SELECT COUNT(*) FROM info_defective WHERE defective_shortcut = ?";
+    $sql    = "SELECT COUNT(*) FROM info_defective WHERE defective_shortcut = ?";
     $params = [$defective_shortcut];
-    
-    // 수정 모드에서 현재 레코드 제외
-    if ($current_idx) {
-        $sql .= " AND idx != ?";
-        $params[] = $current_idx;
-    }
-    
+    if ($current_idx) { $sql .= " AND idx != ?"; $params[] = $current_idx; }
+
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    $count = (int)$stmt->fetchColumn();
-    
-    if ($count > 0) {
-        echo json_encode(['success' => false, 'message' => 'This shortcut code already exists. Please enter a different shortcut.']);
-    } else {
-        echo json_encode(['success' => true, 'message' => 'Shortcut code is available.']);
-    }
+    echo json_encode((int)$stmt->fetchColumn() > 0
+        ? ['success' => false, 'message' => 'This shortcut code already exists. Please enter a different shortcut.']
+        : ['success' => true,  'message' => 'Shortcut code is available.']
+    );
 }
 
 /**
- * defective 목록에 통계 정보를 추가하는 함수
- * @param PDO $pdo PDO 객체
- * @param array $defectives defective 목록 배열
- * @return array 통계 정보가 추가된 defective 목록 배열
+ * 불량 유형별 현재 경고(Warning) 건수 반환
+ * - data_defective와 info_defective INNER JOIN으로 유효한 불량명만 집계
+ * - status_filter가 있으면 활성 불량(info_defective.status = 'Y')만 대상
+ * - 결과: { defective_name: warning_count } 형태의 연관 배열
  */
-function addDefectiveStatistics(PDO $pdo, $defectives) {
-    // data_defective 테이블에서 전체 레코드 수 계산
-    $total_count_stmt = $pdo->prepare("SELECT COUNT(*) FROM data_defective");
-    $total_count_stmt->execute();
-    $total_all_records = (int)$total_count_stmt->fetchColumn();
-    
-    // defective_name별 수량 계산
-    $stats_stmt = $pdo->prepare("
-        SELECT defective_name, COUNT(*) as total_count 
-        FROM data_defective 
-        GROUP BY defective_name
-    ");
-    $stats_stmt->execute();
-    $defective_stats = $stats_stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    // 통계 정보를 연관 배열로 변환
-    $stats_map = [];
-    foreach ($defective_stats as $stat) {
-        $stats_map[$stat['defective_name']] = (int)$stat['total_count'];
-    }
-    
-    // 각 defective에 통계 정보 추가
-    foreach ($defectives as &$defective) {
-        $defective_name = $defective['defective_name'];
-        $total_count = $stats_map[$defective_name] ?? 0;
-        
-        // 비율 계산 (전체 레코드 대비 해당 defective의 비율)
-        $usage_rate = 0;
-        if ($total_all_records > 0) {
-            $usage_rate = round(($total_count / $total_all_records) * 100, 1);
-        }
-        
-        $defective['total_count'] = $total_count;
-        $defective['usage_rate'] = $usage_rate;
-    }
-    
-    return $defectives;
-}
-
-/**
- * Warning 통계 조회 함수
- * data_defective 테이블에서 defective_name별 Warning 수량을 반환
- * @param PDO $pdo PDO 객체
- */
-function getWarningStats(PDO $pdo) {
+function getWarningStats(PDO $pdo): void {
     $status_filter = $_GET['status_filter'] ?? '';
-    
-    // 기본 쿼리: data_defective 테이블에서 Warning 상태의 defective_name별 카운트
-    $sql = "
-        SELECT dd.defective_name, COUNT(*) as warning_count
-        FROM data_defective dd
-        INNER JOIN info_defective id ON dd.defective_name = id.defective_name
-        WHERE dd.status = 'Warning'
-    ";
-    
+
+    // data_defective에서 status='Warning'인 레코드를 불량명별로 집계
+    $sql    = "SELECT dd.defective_name, COUNT(*) AS warning_count
+               FROM data_defective dd
+               INNER JOIN info_defective id ON dd.defective_name = id.defective_name
+               WHERE dd.status = 'Warning'";
     $params = [];
-    
-    // 필터가 있는 경우 info_defective 테이블의 status로 필터링
+
     if (!empty($status_filter)) {
-        $sql .= " AND id.status = ?";
+        $sql    .= " AND id.status = ?";
         $params[] = $status_filter;
     }
-    
     $sql .= " GROUP BY dd.defective_name ORDER BY dd.defective_name";
-    
+
     try {
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // 결과를 연관 배열로 변환 (defective_name => warning_count)
+        // 불량명을 키로 하는 연관 배열로 변환
         $warning_counts = [];
-        foreach ($results as $row) {
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
             $warning_counts[$row['defective_name']] = (int)$row['warning_count'];
         }
-        
-        echo json_encode([
-            'success' => true,
-            'data' => $warning_counts
-        ]);
-        
+        echo json_encode(['success' => true, 'data' => $warning_counts]);
     } catch (PDOException $e) {
         http_response_code(500);
-        echo json_encode([
-            'success' => false, 
-            'message' => 'Database error while fetching warning statistics: ' . $e->getMessage()
-        ]);
+        echo json_encode(['success' => false, 'message' => 'Database error while fetching warning statistics: ' . $e->getMessage()]);
     }
 }
-

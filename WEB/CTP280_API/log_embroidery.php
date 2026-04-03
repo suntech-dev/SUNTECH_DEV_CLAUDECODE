@@ -610,7 +610,7 @@ $macList = $stmt->fetchAll(PDO::FETCH_COLUMN);
                 $('statActual').textContent = s.total_actual !== undefined ? s.total_actual : '-';
             }
 
-            function renderTable(rows) {
+            /* function renderTable(rows) {
                 const tbody = $('tableBody');
                 if (!rows || rows.length === 0) {
                     tbody.innerHTML = '<tr class="empty-row"><td colspan="9">No data found.</td></tr>';
@@ -629,6 +629,29 @@ $macList = $stmt->fetchAll(PDO::FETCH_COLUMN);
                 <td><span class="${tbClass}">${r.tb}</span></td>
                 <td>${r.mrt}</td>
                 <td class="num uart-raw">${r.actual_qty};${Math.round(r.ct*1000)};${r.tb};${Math.round(r.mrt*1000)};</td>
+                <td class="num">${r.created_at}</td>
+            </tr>`;
+                }).join('');
+            } */
+            function renderTable(rows) {
+                const tbody = $('tableBody');
+                if (!rows || rows.length === 0) {
+                    tbody.innerHTML = '<tr class="empty-row"><td colspan="9">No data found.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = rows.map(r => {
+                    const tbClass = r.tb > 0 ? 'badge badge-red' : 'badge badge-green';
+                    const aqClass = r.actual_qty > 0 ? 'badge badge-blue' : 'badge badge-warn';
+                    const mnLabel = r.machine_no ? r.machine_no : '<span style="color:var(--muted)">-</span>';
+                    return `<tr>
+                <td class="num">${r.idx}</td>
+                <td>${mnLabel}</td>
+                <td><span class="badge badge-blue">${r.mac}</span></td>
+                <td><span class="${aqClass}">${r.actual_qty}</span></td>
+                <td>${r.ct}</td>
+                <td><span class="${tbClass}">${r.tb}</span></td>
+                <td>${r.mrt}</td>
+                <td class="num uart-raw">${r.actual_qty};${Math.round(r.ct)};${r.tb};${Math.round(r.mrt)};</td>
                 <td class="num">${r.created_at}</td>
             </tr>`;
                 }).join('');

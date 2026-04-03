@@ -1,9 +1,5 @@
 <?php
-## CSG version (2023.03.09 Start. dev@suntech.asia)
-## Bootstrap 사용 안함. Factory, Zone, Line 적용.
-// $page_title = $page_title ?? 'Management';
-// require_once('./lib/session.php');
-require_once(__DIR__ . '/../lib/db.php');
+// require_once(__DIR__ . '/../lib/db.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,11 +10,11 @@ require_once(__DIR__ . '/../lib/db.php');
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>IOT SYSTEM</title>
 
-  <!-- favicons -->
-  <!-- <link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/favicons/suntech_blue.png"> -->
-  <!-- <link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/favicons/suntech_blue.png"> -->
-  <link href="../../assets/images/favicons/suntech_blue.png" rel="shortcut icon">
-  <!-- <link href="../../favicon.ico" rel="icon" type="image/x-icon"> -->
+    <!-- favicons -->
+    <!-- <link rel="icon" type="image/png" sizes="32x32" href="../../assets/images/favicons/suntech_blue.png"> -->
+    <!-- <link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/favicons/suntech_blue.png"> -->
+    <link href="../../assets/images/favicons/suntech_blue.png" rel="shortcut icon">
+    <!-- <link href="../../favicon.ico" rel="icon" type="image/x-icon"> -->
 
     <!-- <link href="../../assets/css/fonts.css" rel="stylesheet"> -->
     <link href="../../assets/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -39,9 +35,9 @@ require_once(__DIR__ . '/../lib/db.php');
     <!-- xe icon -->
     <!-- <link href="../assets/xeicon/xeicon.min.css" rel="stylesheet"> -->
 
-      <!-- JavaScript 라이브러리 -->
-  <!-- <script src="../assets/js/fiori-advanced-interactions.js"></script> -->
-  <!-- <script src="../assets/js/mobile-interactions.js"></script> -->
+    <!-- JavaScript 라이브러리 -->
+    <!-- <script src="../assets/js/fiori-advanced-interactions.js"></script> -->
+    <!-- <script src="../assets/js/mobile-interactions.js"></script> -->
 </head>
 
 <body>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * F12 — AI 실시간 스트리밍 분석 (SSE 엔드포인트)
  * 이상 감지, 신규 다운타임, 정비 위험 경고를 실시간으로 스트리밍
@@ -25,16 +26,27 @@ $line_filter    = isset($_GET['line_filter'])    ? trim($_GET['line_filter'])   
 $machine_filter = isset($_GET['machine_filter']) ? trim($_GET['machine_filter']) : '';
 
 // ── 공통 WHERE 빌더 ─────────────────────────────────────────────
-function buildWhere(array &$params, string $fac, string $ln, string $mc, string $alias): string {
+function buildWhere(array &$params, string $fac, string $ln, string $mc, string $alias): string
+{
     $w = [];
-    if ($fac !== '') { $w[] = "{$alias}.factory_idx = ?"; $params[] = $fac; }
-    if ($ln  !== '') { $w[] = "{$alias}.line_idx = ?";    $params[] = $ln; }
-    if ($mc  !== '') { $w[] = "{$alias}.machine_idx = ?"; $params[] = $mc; }
+    if ($fac !== '') {
+        $w[] = "{$alias}.factory_idx = ?";
+        $params[] = $fac;
+    }
+    if ($ln  !== '') {
+        $w[] = "{$alias}.line_idx = ?";
+        $params[] = $ln;
+    }
+    if ($mc  !== '') {
+        $w[] = "{$alias}.machine_idx = ?";
+        $params[] = $mc;
+    }
     return $w ? 'AND ' . implode(' AND ', $w) : '';
 }
 
 // ── SSE 이벤트 전송 ─────────────────────────────────────────────
-function sendEvent(string $type, array $data): void {
+function sendEvent(string $type, array $data): void
+{
     $json = json_encode($data, JSON_UNESCAPED_UNICODE);
     echo "event: {$type}\n";
     echo "data: {$json}\n\n";
@@ -44,8 +56,11 @@ function sendEvent(string $type, array $data): void {
 
 // ── 이상 감지 (최근 N분 OEE Z-Score) ───────────────────────────
 function detectRecentAnomalies(
-    PDO $pdo, int $minutes,
-    string $fac, string $ln, string $mc
+    PDO $pdo,
+    int $minutes,
+    string $fac,
+    string $ln,
+    string $mc
 ): array {
     // 30일 기준 통계
     $p1 = [];
@@ -148,7 +163,9 @@ function detectRecentAnomalies(
 // ── 신규 다운타임 감지 ───────────────────────────────────────────
 function detectActiveDowntimes(
     PDO $pdo,
-    string $fac, string $ln, string $mc
+    string $fac,
+    string $ln,
+    string $mc
 ): array {
     $p = [];
     $w = buildWhere($p, $fac, $ln, $mc, 'dd');
@@ -192,13 +209,24 @@ function detectActiveDowntimes(
 // ── 고위험 머신 감지 (risk_score >= 70) ─────────────────────────
 function detectHighRiskMachines(
     PDO $pdo,
-    string $fac, string $ln, string $mc
+    string $fac,
+    string $ln,
+    string $mc
 ): array {
     $p = [];
     $w_parts = [];
-    if ($fac !== '') { $w_parts[] = 'im.factory_idx = ?'; $p[] = $fac; }
-    if ($ln  !== '') { $w_parts[] = 'im.line_idx = ?';    $p[] = $ln; }
-    if ($mc  !== '') { $w_parts[] = 'im.idx = ?';         $p[] = $mc; }
+    if ($fac !== '') {
+        $w_parts[] = 'im.factory_idx = ?';
+        $p[] = $fac;
+    }
+    if ($ln  !== '') {
+        $w_parts[] = 'im.line_idx = ?';
+        $p[] = $ln;
+    }
+    if ($mc  !== '') {
+        $w_parts[] = 'im.idx = ?';
+        $p[] = $mc;
+    }
     $where_sql = $w_parts ? 'WHERE ' . implode(' AND ', $w_parts) : '';
 
     // 기계 목록
@@ -244,8 +272,8 @@ function detectHighRiskMachines(
         $hrs   = max(0, (int)($d['hrs_since'] ?? 9999));
         $score = (int)round(
             min(100, $curr * 8) * 0.40 +
-            max(0, $rate * 100) * 0.35 +
-            max(0, 100 - $hrs)  * 0.25
+                max(0, $rate * 100) * 0.35 +
+                max(0, 100 - $hrs)  * 0.25
         );
 
         if ($score >= 70) {

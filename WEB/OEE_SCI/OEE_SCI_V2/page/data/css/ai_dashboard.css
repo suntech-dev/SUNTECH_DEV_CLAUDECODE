@@ -1,23 +1,38 @@
 /**
+ * ============================================================
+ * 파일명  : ai_dashboard.css
+ * 목  적  : SAP Fiori 디자인 시스템 기반 AI Intelligence Dashboard 전용 스타일
+ *           - OEE 예측 / 이상 감지 / 예방정비 / 라인 건강지수 / 생산 최적화 등
+ *             AI 분석 결과를 시각화하는 카드·차트·리스트 컴포넌트를 정의
+ *           - ai_dashboard.php 에서 로드되며, 일반 dashboard.css 와 별도로 적용
+ * 작성기준: SAP Fiori Design Token (--sap-*) 변수 사용
+ * ============================================================
+ */
+
+/**
  * AI Dashboard CSS Styles
  * SAP Fiori Design System 기반 AI Intelligence Dashboard
  */
 
 /* ===== AI 상단 요약 카드 (4개) ===== */
+/* 페이지 최상단에 예측·이상·정비·건강지수 4가지 KPI를 가로 4열 그리드로 배치 */
 .ai-summary-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, 1fr); /* 기본 4열 균등 분할 */
   gap: var(--sap-spacing-lg);
   margin-bottom: var(--sap-spacing-3xl);
 }
 
+/* 반응형: 1200px 이하에서 2열로 변경 */
 @media (max-width: 1200px) {
   .ai-summary-grid { grid-template-columns: repeat(2, 1fr); }
 }
+/* 반응형: 640px 이하(모바일)에서 1열로 변경 */
 @media (max-width: 640px) {
   .ai-summary-grid { grid-template-columns: 1fr; }
 }
 
+/* AI 요약 카드 기본 스타일 — overflow:hidden 으로 좌측 컬러 스트라이프 클리핑 */
 .ai-summary-card {
   background-color: var(--sap-surface-1);
   border: 1px solid var(--sap-border-neutral);
@@ -26,43 +41,48 @@
   padding: var(--sap-spacing-lg);
   position: relative;
   overflow: hidden;
-  transition: box-shadow 0.2s ease;
+  transition: box-shadow 0.2s ease; /* hover 시 그림자 부드럽게 전환 */
 }
 
+/* hover 시 그림자를 한 단계 높여 카드가 떠 있는 느낌 연출 */
 .ai-summary-card:hover {
   box-shadow: var(--sap-shadow-2);
 }
 
-/* 좌측 컬러 스트라이프 */
+/* 좌측 컬러 스트라이프 — ::before 가상 요소로 4px 폭 세로 바 생성 */
 .ai-summary-card::before {
   content: '';
   position: absolute;
   top: 0; left: 0;
-  width: 4px;
+  width: 4px;  /* 카드 좌측에 붙는 색상 강조 바 너비 */
   height: 100%;
   border-radius: var(--sap-radius-lg) 0 0 var(--sap-radius-lg);
 }
 
-.ai-summary-card--prediction::before  { background: var(--sap-informative); }
-.ai-summary-card--anomaly::before     { background: var(--sap-negative); }
-.ai-summary-card--maintenance::before { background: var(--sap-caution); }
-.ai-summary-card--health::before      { background: var(--sap-positive); }
+/* 카드 종류별 좌측 스트라이프 색상 — 의미론적 색상 토큰 사용 */
+.ai-summary-card--prediction::before  { background: var(--sap-informative); }  /* 파랑: OEE 예측 */
+.ai-summary-card--anomaly::before     { background: var(--sap-negative); }     /* 빨강: 이상 감지 */
+.ai-summary-card--maintenance::before { background: var(--sap-caution); }      /* 노랑: 예방정비 */
+.ai-summary-card--health::before      { background: var(--sap-positive); }     /* 초록: 건강지수 */
 
+/* 카드 아이콘 (이모지 또는 SAP 아이콘) */
 .ai-summary-card__icon {
   font-size: 1.5rem;
   margin-bottom: var(--sap-spacing-sm);
   display: block;
 }
 
+/* 카드 레이블 — 대문자 소형 텍스트로 KPI 이름 표시 */
 .ai-summary-card__label {
   font-size: var(--sap-font-size-sm);
   color: var(--sap-text-secondary);
   margin-bottom: var(--sap-spacing-xs);
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  text-transform: uppercase;    /* 대문자 변환 */
+  letter-spacing: 0.05em;       /* 자간 넓혀 가독성 향상 */
 }
 
+/* 카드 주요 수치 — 굵고 큰 폰트로 핵심 지표 강조 */
 .ai-summary-card__value {
   font-size: 2rem;
   font-weight: 700;
@@ -71,12 +91,14 @@
   margin-bottom: var(--sap-spacing-xs);
 }
 
+/* 카드 보조 텍스트 — 단위·부가 설명 표시 */
 .ai-summary-card__sub {
   font-size: var(--sap-font-size-sm);
   color: var(--sap-text-secondary);
 }
 
-/* 트렌드 배지 */
+/* ===== 트렌드 배지 — 상승·하락·유지 방향성 표시 ===== */
+/* border-radius:9999px 로 pill 형태 뱃지 구현 */
 .ai-trend-badge {
   display: inline-flex;
   align-items: center;
@@ -84,31 +106,35 @@
   font-size: var(--sap-font-size-sm);
   font-weight: 600;
   padding: 2px 8px;
-  border-radius: 9999px;
+  border-radius: 9999px; /* pill 형태 — 완전한 반원 처리 */
 }
+/* 트렌드 배지 상태별 배경/글자색 (rgba로 반투명 배경) */
 .ai-trend-badge--up     { background: rgba(var(--sap-positive-rgb, 48,164,108), 0.15); color: var(--sap-positive); }
 .ai-trend-badge--down   { background: rgba(var(--sap-negative-rgb, 248,81,73),  0.15); color: var(--sap-negative); }
 .ai-trend-badge--stable { background: rgba(var(--sap-informative-rgb, 0,120,212), 0.15); color: var(--sap-informative); }
 
 /* ===== AI 메인 그리드 레이아웃 ===== */
+/* OEE 예측 차트(1fr)와 이상 감지 패널(380px 고정) 2열 배치 */
 .ai-main-grid {
   display: grid;
-  grid-template-columns: 1fr 380px;
+  grid-template-columns: 1fr 380px; /* 우측 패널 고정 너비 380px */
   gap: var(--sap-spacing-lg);
   margin-bottom: var(--sap-spacing-3xl);
 }
 
+/* 반응형: 1100px 이하에서 단일 열로 변경 */
 @media (max-width: 1100px) {
   .ai-main-grid { grid-template-columns: 1fr; }
 }
 
 /* ===== OEE 예측 차트 영역 ===== */
+/* Canvas 기반 Chart.js가 렌더링될 래퍼 — 고정 높이 300px */
 .ai-prediction-chart-wrap {
   position: relative;
-  height: 300px;
+  height: 300px; /* Chart.js 캔버스 높이 기준점 */
 }
 
-/* 예측 범례 */
+/* 예측 범례 — 실제값·예측값·신뢰구간 색상 안내 */
 .ai-chart-legend {
   display: flex;
   gap: var(--sap-spacing-lg);
@@ -117,53 +143,61 @@
   color: var(--sap-text-secondary);
 }
 
+/* 범례 항목 — 아이콘 + 텍스트 가로 정렬 */
 .ai-chart-legend__item {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
+/* 범례 색상 도트 — 가로선 형태 (3px 높이) */
 .ai-chart-legend__dot {
   width: 12px;
-  height: 3px;
+  height: 3px;  /* 선 형태로 범례 구분 */
   border-radius: 2px;
   flex-shrink: 0;
 }
 
+/* 범례 색상 정의: 실제값(파랑), 예측값(오렌지 점선), 신뢰구간(반투명 오렌지) */
 .ai-chart-legend__dot--actual   { background: #0070f3; }
 .ai-chart-legend__dot--forecast { background: #f5a623; border: 1px dashed #f5a623; }
 .ai-chart-legend__dot--ci       { background: rgba(245,166,35,0.3); }
 
 /* ===== 이상 감지 패널 ===== */
+/* 감지된 이상 항목을 세로로 나열, 최대 320px 까지 스크롤 허용 */
 .ai-anomaly-list {
   display: flex;
   flex-direction: column;
   gap: var(--sap-spacing-sm);
   max-height: 320px;
-  overflow-y: auto;
+  overflow-y: auto; /* 항목 초과 시 세로 스크롤 */
 }
 
+/* 이상 감지 개별 항목 — 3열 그리드: 심볼 / 설명 / OEE 수치 */
 .ai-anomaly-item {
   background: var(--sap-surface-2);
   border: 1px solid var(--sap-border-neutral);
   border-radius: var(--sap-radius-md);
   padding: var(--sap-spacing-sm) var(--sap-spacing-md);
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto; /* 좌: 아이콘, 중: 설명, 우: 수치 */
   align-items: center;
   gap: var(--sap-spacing-sm);
 }
 
+/* 심각 이상 항목 — 좌측 3px 빨간 테두리 + 빨간 반투명 배경 */
 .ai-anomaly-item--critical {
   border-left: 3px solid var(--sap-negative);
   background: rgba(248,81,73,0.05);
 }
 
+/* 경고 이상 항목 — 좌측 3px 주황 테두리 + 주황 반투명 배경 */
 .ai-anomaly-item--warning {
   border-left: 3px solid var(--sap-caution);
   background: rgba(210,153,34,0.05);
 }
 
+/* 이상 감지 항목 내부 요소들 */
 .ai-anomaly-item__machine {
   font-weight: 600;
   font-size: var(--sap-font-size-sm);
@@ -181,6 +215,7 @@
 }
 
 /* ===== 예방정비 패널 ===== */
+/* 정비 필요 항목 목록 — 최대 400px 스크롤 */
 .ai-maintenance-list {
   display: flex;
   flex-direction: column;
@@ -189,6 +224,7 @@
   overflow-y: auto;
 }
 
+/* 예방정비 개별 항목 카드 */
 .ai-maintenance-item {
   background: var(--sap-surface-2);
   border: 1px solid var(--sap-border-neutral);
@@ -196,6 +232,7 @@
   padding: var(--sap-spacing-sm) var(--sap-spacing-md);
 }
 
+/* 정비 항목 헤더 — 기계명(좌)과 위험도 배지(우) 배치 */
 .ai-maintenance-item__header {
   display: flex;
   justify-content: space-between;
@@ -203,6 +240,7 @@
   margin-bottom: var(--sap-spacing-xs);
 }
 
+/* 정비 항목 기계명·라인명 */
 .ai-maintenance-item__machine {
   font-weight: 600;
   font-size: var(--sap-font-size-sm);
@@ -214,49 +252,56 @@
   color: var(--sap-text-secondary);
 }
 
-/* 위험도 프로그레스 바 */
+/* ===== 위험도 프로그레스 바 ===== */
+/* 정비 위험도를 가로 막대로 표시 — transition 으로 너비 변화 애니메이션 */
 .ai-risk-bar-wrap {
   position: relative;
   height: 6px;
-  background: var(--sap-surface-3, #2c2c2c);
+  background: var(--sap-surface-3, #2c2c2c); /* 트랙 배경 */
   border-radius: 3px;
   overflow: hidden;
   margin-top: var(--sap-spacing-xs);
 }
 
+/* 위험도 채움 바 — JavaScript 에서 width 값 주입 */
 .ai-risk-bar {
   height: 100%;
   border-radius: 3px;
-  transition: width 0.6s ease;
+  transition: width 0.6s ease; /* 너비 변화 시 0.6초 애니메이션 */
 }
 
-.ai-risk-bar--danger  { background: var(--sap-negative); }
-.ai-risk-bar--warning { background: var(--sap-caution); }
-.ai-risk-bar--normal  { background: var(--sap-positive); }
+/* 위험도 단계별 색상 */
+.ai-risk-bar--danger  { background: var(--sap-negative); }  /* 위험: 빨강 */
+.ai-risk-bar--warning { background: var(--sap-caution); }   /* 경고: 주황 */
+.ai-risk-bar--normal  { background: var(--sap-positive); }  /* 정상: 초록 */
 
 /* ===== 라인 건강지수 패널 ===== */
+/* 라인별 건강 점수를 가로 막대 + 수치로 표시하는 목록 */
 .ai-health-list {
   display: flex;
   flex-direction: column;
   gap: var(--sap-spacing-md);
 }
 
+/* 라인 건강 항목 — 4열 그리드: 라인명 / 바 / 퍼센트 / 상태배지 */
 .ai-health-item {
   display: grid;
-  grid-template-columns: 80px 1fr 60px 70px;
+  grid-template-columns: 80px 1fr 60px 70px; /* 각 열 너비 고정 */
   align-items: center;
   gap: var(--sap-spacing-sm);
 }
 
+/* 라인명 — 긴 이름은 말줄임 처리 */
 .ai-health-item__line {
   font-size: var(--sap-font-size-sm);
   font-weight: 600;
   color: var(--sap-text-primary);
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis; /* 넘치는 텍스트 ... 처리 */
 }
 
+/* 건강지수 바 트랙 */
 .ai-health-bar-wrap {
   height: 8px;
   background: var(--sap-surface-3, #2c2c2c);
@@ -264,12 +309,14 @@
   overflow: hidden;
 }
 
+/* 건강지수 채움 바 — JavaScript 에서 width + 색상 주입 */
 .ai-health-bar {
   height: 100%;
   border-radius: 4px;
-  transition: width 0.6s ease;
+  transition: width 0.6s ease; /* 너비 변화 시 부드러운 전환 */
 }
 
+/* 건강지수 퍼센트 수치 — 우측 정렬 */
 .ai-health-item__pct {
   font-size: var(--sap-font-size-sm);
   font-weight: 700;
@@ -277,33 +324,37 @@
   text-align: right;
 }
 
-/* 상태 뱃지 */
+/* ===== 상태 뱃지 — 위험·경고·정상 구분 pill 형태 ===== */
 .ai-status-badge {
   font-size: 0.7rem;
   font-weight: 700;
   padding: 2px 8px;
-  border-radius: 9999px;
+  border-radius: 9999px; /* 완전한 pill 형태 */
   text-align: center;
   white-space: nowrap;
 }
 
+/* 상태 배지 색상 — 반투명 배경 + 텍스트 강조색 */
 .ai-status-badge--danger  { background: rgba(248,81,73,0.2);  color: var(--sap-negative); }
 .ai-status-badge--warning { background: rgba(210,153,34,0.2); color: var(--sap-caution);  }
 .ai-status-badge--normal  { background: rgba(48,164,108,0.2); color: var(--sap-positive); }
 
 /* ===== 하단 그리드: 라인건강지수 + 예방정비 ===== */
+/* 페이지 하단에 두 패널을 나란히 2열로 배치 */
 .ai-bottom-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr; /* 동등 2열 */
   gap: var(--sap-spacing-lg);
   margin-bottom: var(--sap-spacing-3xl);
 }
 
+/* 반응형: 900px 이하에서 단일 열로 변경 */
 @media (max-width: 900px) {
   .ai-bottom-grid { grid-template-columns: 1fr; }
 }
 
 /* ===== 빈 상태 메시지 ===== */
+/* 데이터가 없을 때 중앙 정렬로 안내 메시지 표시 */
 .ai-empty-state {
   display: flex;
   flex-direction: column;
@@ -315,17 +366,19 @@
   gap: var(--sap-spacing-sm);
 }
 
+/* 빈 상태 아이콘 — 반투명 처리로 시각적 경량감 */
 .ai-empty-state__icon {
   font-size: 2rem;
-  opacity: 0.5;
+  opacity: 0.5; /* 반투명 — 강조보다 보조 역할 */
 }
 
 /* ===== AI 배지 (페이지 제목 옆) ===== */
+/* 그라디언트 배경의 "AI" 레이블 pill 뱃지 */
 .ai-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(135deg, #0070f3, #7928ca);
+  background: linear-gradient(135deg, #0070f3, #7928ca); /* 파랑→보라 대각선 그라디언트 */
   color: #fff;
   font-size: 0.7rem;
   font-weight: 700;
@@ -337,28 +390,31 @@
 }
 
 /* ===== 스피너 (로딩 상태) ===== */
+/* 상단 border를 accent 색상으로 설정해 회전 시 로딩 원호 효과 */
 .ai-spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid var(--sap-border-neutral);
-  border-top-color: var(--sap-informative);
+  border: 2px solid var(--sap-border-neutral);   /* 기본 원 테두리 */
+  border-top-color: var(--sap-informative);        /* 상단만 accent 색 → 회전 시 원호처럼 보임 */
   border-radius: 50%;
-  animation: ai-spin 0.7s linear infinite;
+  animation: ai-spin 0.7s linear infinite; /* 0.7초 무한 선형 회전 */
   display: inline-block;
 }
 
+/* 360도 회전 키프레임 — linear 로 등속 회전 */
 @keyframes ai-spin {
   to { transform: rotate(360deg); }
 }
 
 /* ===== 스크롤바 커스텀 ===== */
+/* 이상 감지 / 예방정비 리스트의 얇은 스크롤바 (4px) */
 .ai-anomaly-list::-webkit-scrollbar,
 .ai-maintenance-list::-webkit-scrollbar {
-  width: 4px;
+  width: 4px; /* 스크롤바 너비를 얇게 */
 }
 .ai-anomaly-list::-webkit-scrollbar-track,
 .ai-maintenance-list::-webkit-scrollbar-track {
-  background: transparent;
+  background: transparent; /* 트랙 배경 투명 처리 */
 }
 .ai-anomaly-list::-webkit-scrollbar-thumb,
 .ai-maintenance-list::-webkit-scrollbar-thumb {
@@ -367,6 +423,7 @@
 }
 
 /* ===== 마지막 업데이트 시각 ===== */
+/* 데이터 갱신 시각 + 실시간 펄스 도트 인라인 표시 */
 .ai-last-update {
   font-size: var(--sap-font-size-xs);
   color: var(--sap-text-secondary);
@@ -375,35 +432,41 @@
   gap: 6px;
 }
 
+/* 실시간 펄스 도트 — scale + opacity 애니메이션으로 맥박 효과 */
 .ai-pulse-dot {
   width: 8px;
   height: 8px;
-  background: var(--sap-positive);
+  background: var(--sap-positive); /* 초록 = 정상 연결 상태 */
   border-radius: 50%;
-  animation: ai-pulse 2s ease-in-out infinite;
+  animation: ai-pulse 2s ease-in-out infinite; /* 2초 주기 맥박 */
   flex-shrink: 0;
 }
 
+/* 펄스 애니메이션 — 50% 지점에서 opacity·scale 축소 후 복원 */
 @keyframes ai-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50%       { opacity: 0.5; transform: scale(0.85); }
 }
 
 /* ===== 시간대 히트맵 그리드 ===== */
+/* 시간대별 이상·정비 빈도를 색상 셀로 표시하는 히트맵 */
 .ai-hourly-heatmap {
   width: 100%;
 }
 
+/* 히트맵 셀 그리드 — 기본 6열 */
 .ai-heatmap-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(6, 1fr); /* 기본 6열 */
   gap: 4px;
 }
 
+/* 반응형: 900px 이하에서 4열로 변경 */
 @media (max-width: 900px) {
   .ai-heatmap-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
+/* 히트맵 개별 셀 — JavaScript 에서 배경색 주입, hover 시 brightness 감소 */
 .ai-heatmap-cell {
   border-radius: var(--sap-radius-sm, 4px);
   padding: 6px 4px 4px;
@@ -412,15 +475,17 @@
   align-items: center;
   gap: 2px;
   cursor: default;
-  transition: filter 0.15s ease;
+  transition: filter 0.15s ease; /* hover 시 밝기 변화 부드럽게 */
   min-height: 48px;
   justify-content: center;
 }
 
+/* hover 시 밝기 15% 감소 — 클릭 가능성 암시 */
 .ai-heatmap-cell:hover {
   filter: brightness(0.85);
 }
 
+/* 히트맵 시간 레이블 */
 .ai-heatmap-label {
   font-size: 0.68rem;
   color: #333;
@@ -428,6 +493,7 @@
   line-height: 1;
 }
 
+/* 히트맵 건수 수치 */
 .ai-heatmap-count {
   font-size: 0.75rem;
   font-weight: 700;
@@ -436,6 +502,7 @@
 }
 
 /* ===== maintenance-item__name (Quality Sentinel 전용) ===== */
+/* Quality Sentinel 섹션에서 사용하는 이름·상세 셀렉터 */
 .ai-maintenance-item__name {
   font-weight: 600;
   font-size: var(--sap-font-size-sm);
@@ -449,18 +516,21 @@
 }
 
 /* ===== F12 — 실시간 AI 스트리밍 피드 ===== */
+/* SSE(Server-Sent Events) 기반 AI 분석 이벤트 실시간 표시 영역 */
 .ai-stream-feed {
   max-height: 360px;
-  overflow-y: auto;
+  overflow-y: auto; /* 항목 초과 시 스크롤 */
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
+/* 스트리밍 피드 스크롤바 커스텀 */
 .ai-stream-feed::-webkit-scrollbar { width: 4px; }
 .ai-stream-feed::-webkit-scrollbar-track { background: transparent; }
 .ai-stream-feed::-webkit-scrollbar-thumb { background: var(--sap-border-neutral); border-radius: 2px; }
 
+/* 스트리밍 피드 빈 상태 안내 */
 .ai-stream-empty {
   font-size: var(--sap-font-size-sm);
   color: var(--sap-text-secondary);
@@ -472,19 +542,22 @@
   gap: 8px;
 }
 
+/* 스트리밍 이벤트 카드 — 슬라이드 인 애니메이션으로 새 이벤트 강조 */
 .ai-stream-event {
   background: var(--sap-surface-1);
   border: 1px solid var(--sap-border-neutral);
   border-radius: var(--sap-radius-sm, 4px);
   padding: 8px 12px;
-  animation: ai-stream-slide-in 0.25s ease;
+  animation: ai-stream-slide-in 0.25s ease; /* 위에서 슬라이드 인 */
 }
 
+/* 슬라이드 인 키프레임 — translateY(-6px)→0 + opacity 0→1 */
 @keyframes ai-stream-slide-in {
-  from { opacity: 0; transform: translateY(-6px); }
+  from { opacity: 0; transform: translateY(-6px); } /* 위에서 약간 아래로 이동 */
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* 스트리밍 이벤트 헤더 — 아이콘 + 타입명 + 시각 인라인 배치 */
 .ai-stream-event__header {
   display: flex;
   align-items: center;
@@ -494,6 +567,7 @@
 
 .ai-stream-event__icon { font-size: 0.9rem; }
 
+/* 이벤트 타입명 — flex:1 로 남은 공간 차지, 시각은 우측 고정 */
 .ai-stream-event__type {
   font-size: 0.72rem;
   font-weight: 600;
@@ -512,6 +586,7 @@
   line-height: 1.4;
 }
 
+/* 이벤트 메타 정보 — 기계·라인 등 부가 정보 */
 .ai-stream-event__meta {
   font-size: 0.68rem;
   color: var(--sap-text-secondary);
@@ -519,21 +594,24 @@
 }
 
 /* ===== F13 — 생산 최적화 제안 ===== */
+/* AI 기반 OEE 개선 제안 카드 목록 */
 .ai-opt-summary-bar {
   display: flex;
   align-items: center;
   gap: 16px;
   font-size: var(--sap-font-size-sm);
   color: var(--sap-text-secondary);
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* 화면 좁아지면 줄 바꿈 */
 }
 
+/* 최적화 제안 목록 컨테이너 */
 .ai-opt-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
+/* 개별 최적화 카드 */
 .ai-opt-card {
   background: var(--sap-surface-1);
   border: 1px solid var(--sap-border-neutral);
@@ -542,6 +620,7 @@
   box-shadow: var(--sap-shadow-1);
 }
 
+/* 최적화 카드 헤더 — 제목(좌)과 현재/목표 OEE(우) 배치 */
 .ai-opt-card__header {
   display: flex;
   justify-content: space-between;
@@ -550,6 +629,7 @@
   gap: 12px;
 }
 
+/* 카드 타이틀 — 기계명 + 심각도 배지 인라인 */
 .ai-opt-card__title {
   display: flex;
   align-items: center;
@@ -558,6 +638,7 @@
   flex-wrap: wrap;
 }
 
+/* OEE 수치 표시 — 우측 정렬, 줄 바꿈 없음 */
 .ai-opt-card__oee {
   display: flex;
   flex-direction: column;
@@ -565,7 +646,7 @@
   white-space: nowrap;
 }
 
-/* OEE 바 */
+/* ===== OEE 바 — 현재값·잠재값·목표값 비교 표시 ===== */
 .ai-opt-bar-wrap {
   display: flex;
   flex-direction: column;
@@ -573,12 +654,14 @@
   margin-bottom: 10px;
 }
 
+/* OEE 바 행 — 레이블 + 트랙 + 수치 가로 배치 */
 .ai-opt-bar-row {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
+/* 바 레이블 (A/P/Q) — 우측 정렬 고정 너비 */
 .ai-opt-bar-label {
   font-size: 0.72rem;
   color: var(--sap-text-secondary);
@@ -587,35 +670,40 @@
   flex-shrink: 0;
 }
 
+/* 바 트랙 — overflow:visible 로 목표 마커가 트랙 밖으로 노출 가능 */
 .ai-opt-bar-track {
   flex: 1;
   height: 8px;
   background: var(--sap-border-neutral);
   border-radius: 4px;
   position: relative;
-  overflow: visible;
+  overflow: visible; /* 목표 마커(.ai-opt-bar-target)가 트랙 위로 튀어나옴 */
 }
 
+/* 채움 바 — JavaScript 에서 width 주입 */
 .ai-opt-bar-fill {
   height: 100%;
   border-radius: 4px;
-  transition: width 0.6s ease;
+  transition: width 0.6s ease; /* 너비 변화 애니메이션 */
 }
 
+/* 잠재적 OEE 달성 가능 범위 — 반투명 파랑 */
 .ai-opt-bar-fill--potential {
   background: var(--sap-informative, #0070f2);
   opacity: 0.65;
 }
 
+/* 목표 OEE 마커 — 바 트랙 위에 세로 선으로 목표 위치 표시 */
 .ai-opt-bar-target {
   position: absolute;
-  top: -3px;
+  top: -3px;      /* 트랙 위로 3px 돌출 */
   width: 2px;
-  height: 14px;
-  background: var(--sap-positive, #30914c);
+  height: 14px;   /* 트랙 높이(8px)보다 크게 — 상하 3px 씩 돌출 */
+  background: var(--sap-positive, #30914c); /* 초록 목표 마커 */
   border-radius: 1px;
 }
 
+/* 바 수치 텍스트 — 현재/목표 퍼센트 표시 */
 .ai-opt-bar-val {
   font-size: 0.75rem;
   color: var(--sap-text-primary);
@@ -623,7 +711,8 @@
   flex-shrink: 0;
 }
 
-/* 병목 표시 */
+/* ===== 병목 표시 ===== */
+/* 병목 원인 요약 문구 — 옅은 배경 박스 */
 .ai-opt-bottleneck {
   font-size: 0.78rem;
   color: var(--sap-text-secondary);
@@ -633,7 +722,8 @@
   margin-bottom: 8px;
 }
 
-/* 컴포넌트 3개 */
+/* ===== A/P/Q 세 컴포넌트 요약 ===== */
+/* 가용성·성능·품질 세 항목을 가로로 나열, 줄 바꿈 허용 */
 .ai-opt-components {
   display: flex;
   flex-wrap: wrap;
@@ -643,27 +733,31 @@
   margin-bottom: 8px;
 }
 
+/* 주의가 필요한 컴포넌트 강조 — 빨강 + 굵게 */
 .ai-opt-comp--highlight {
   color: var(--sap-negative, #da1e28);
   font-weight: 700;
 }
 
-/* 개선 제안 details */
+/* ===== 개선 제안 details/summary 토글 ===== */
+/* <details> 요소를 이용한 접기/펼치기 제안 목록 */
 .ai-opt-suggestions {
   font-size: 0.78rem;
   color: var(--sap-text-secondary);
 }
 
+/* 접기/펼치기 토글 버튼 스타일 */
 .ai-opt-suggestions summary {
   cursor: pointer;
-  color: var(--sap-informative, #0070f2);
+  color: var(--sap-informative, #0070f2); /* 파랑 — 클릭 가능 힌트 */
   font-weight: 600;
   padding: 4px 0;
-  user-select: none;
+  user-select: none; /* 텍스트 드래그 선택 방지 */
 }
 
+/* 제안 목록 — 들여쓰기 + 세로 간격 */
 .ai-opt-suggestions ul {
-  margin: 6px 0 0 16px;
+  margin: 6px 0 0 16px; /* 좌측 16px 들여쓰기 */
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -674,6 +768,7 @@
   line-height: 1.4;
 }
 
+/* 반응형: 640px 이하에서 최적화 카드 헤더 세로 정렬 */
 @media (max-width: 640px) {
   .ai-opt-card__header { flex-direction: column; }
   .ai-opt-card__oee    { align-items: flex-start; }

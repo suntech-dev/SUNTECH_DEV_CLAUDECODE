@@ -19,34 +19,13 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
     <span class="signage-header__title">OEE Hourly Data Log</span>
 
     <div class="signage-header__filters">
-        <select id="factoryFilterSelect" class="fiori-select">
-            <option value="">All Factory</option>
-        </select>
-        <select id="factoryLineFilterSelect" class="fiori-select" disabled>
-            <option value="">All Line</option>
-        </select>
-        <select id="factoryLineMachineFilterSelect" class="fiori-select" disabled>
-            <option value="">All Machine</option>
-        </select>
-        <select id="timeRangeSelect" class="fiori-select">
-            <option value="today" selected>Today</option>
-            <option value="yesterday">Yesterday</option>
-            <option value="1w">Last Week</option>
-            <option value="1m">Last Month</option>
-        </select>
-        <input type="text" id="dateRangePicker" class="fiori-input date-range-input" readonly placeholder="Select date range">
-        <select id="shiftSelect" class="fiori-select">
-            <option value="">All Shift</option>
-            <option value="1">Shift 1</option>
-            <option value="2">Shift 2</option>
-            <option value="3">Shift 3</option>
-        </select>
+        <?php include __DIR__ . '/inc/signage_filters.php'; ?>
         <div class="log-hourly-dropdown">
             <button id="columnToggleBtn" class="fiori-btn fiori-btn--secondary">Columns</button>
             <div id="columnToggleDropdown" class="log-hourly-dropdown__content"></div>
         </div>
         <button id="toggleStatsBtn" class="fiori-btn fiori-btn--secondary">Show Stats</button>
-        <button id="toggleDataBtn" class="fiori-btn fiori-btn--secondary">Hide Table</button>
+        <!-- <button id="toggleDataBtn" class="fiori-btn fiori-btn--secondary">Hide Table</button> -->
         <button id="excelDownloadBtn" class="fiori-btn fiori-btn--secondary">Export</button>
         <button id="refreshBtn" class="fiori-btn fiori-btn--tertiary">Refresh</button>
     </div>
@@ -58,30 +37,7 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
     <!-- Row A: Stats (기본 hidden) -->
     <div id="logHourlyStats" class="log-hourly-row log-hourly-row--stats hidden">
         <div class="oee-stats-grid">
-            <div class="stat-card stat-card--red">
-                <div class="stat-value" id="overallOee">-</div>
-                <div class="stat-label">Overall OEE</div>
-            </div>
-            <div class="stat-card stat-card--success">
-                <div class="stat-value" id="availability">-</div>
-                <div class="stat-label">Availability</div>
-            </div>
-            <div class="stat-card stat-card--info">
-                <div class="stat-value" id="performance">-</div>
-                <div class="stat-label">Performance</div>
-            </div>
-            <div class="stat-card stat-card--warning">
-                <div class="stat-value" id="quality">-</div>
-                <div class="stat-label">Quality</div>
-            </div>
-            <div class="stat-card stat-card--maroon">
-                <div class="stat-value" id="currentShiftOee">-</div>
-                <div class="stat-label">Current Shift OEE</div>
-            </div>
-            <div class="stat-card stat-card--rose">
-                <div class="stat-value" id="previousDayOee">-</div>
-                <div class="stat-label">Previous Day OEE</div>
-            </div>
+            <?php include __DIR__ . '/inc/oee_stats_grid.php'; ?>
         </div>
     </div>
 

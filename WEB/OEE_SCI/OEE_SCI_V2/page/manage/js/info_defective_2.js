@@ -1,10 +1,45 @@
 
+/**
+ * info_defective_2.js — 불량 유형(Defective) 관리 페이지 전용 모듈 (ES Module)
+ *
+ * 내보내기(export):
+ *   - defectiveConfig : ResourceManager 설정 객체
+ *   - initAdvancedFeatures, initRealTimeSearch, performSearch,
+ *     initQuickActions, applyQuickFilter, initModalSteps
+ *
+ * 불량 유형(Defective): 생산 중 발생하는 불량 종류 마스터 데이터
+ *
+ * 모달 스텝 (2단계):
+ *   Step 1: 불량명 + shortcut 입력 + 이중 중복 확인
+ *     - defective_name 중복 확인 (전체 고유)
+ *     - defective_shortcut 중복 확인 (입력한 경우에만, 선택 입력)
+ *   Step 2: 상태/비고 + 미리보기 (previewName, previewShortcut, previewStatus)
+ *
+ * shortcut: 장치에서 불량 입력 시 단축키로 사용되는 코드 (길이 > 10 시 long 클래스 추가)
+ */
+
+/**
+ * 고급 기능 초기화 진입점
+ */
 export function initAdvancedFeatures(resourceManager) {
     initRealTimeSearch(resourceManager);
     initQuickActions();
     initModalSteps();
 }
 
+/**
+ * 불량 유형 리소스 설정 객체
+ *
+ * 컬럼 설명:
+ *   no                 : 순번
+ *   idx                : DB PK (숨김)
+ *   defective_name     : 불량명 (.defective-name-badge 스타일 적용)
+ *   defective_shortcut : 단축키 (code 스타일 + 길이 > 10이면 long 클래스)
+ *   total_count        : 총 발생 건수
+ *   usage_rate         : 점유율 % (30% 초과=빨강, 15% 초과=주황, 이하=초록)
+ *   status             : 사용 여부 (.defective-status-used / .defective-status-unused)
+ *   remark             : 비고
+ */
 export const defectiveConfig = {
     resourceName: 'Defective',
     apiEndpoint: 'proc/defective.php',
@@ -34,6 +69,7 @@ export const defectiveConfig = {
             render: (item) => {
                 if (item.defective_shortcut && item.defective_shortcut.trim()) {
                     const s = item.defective_shortcut.trim();
+                    // 단축키 길이가 10자 초과하면 'long' 클래스 추가 (줄바꿈 스타일)
                     return `<code class="shortcut-badge${s.length > 10 ? ' long' : ''}">${s}</code>`;
                 }
                 return '<span style="color: var(--sap-text-secondary);">No shortcut</span>';
@@ -54,6 +90,7 @@ export const defectiveConfig = {
             sortKey: 'usage_rate',
             render: (item) => {
                 const rate = item.usage_rate || 0;
+                // 점유율 3단계 색상: >30% 빨강, >15% 주황, 이하 초록
                 const color = rate > 30 ? 'var(--sap-status-error)' :
                     rate > 15 ? 'var(--sap-status-warning)' : 'var(--sap-status-success)';
                 return `<span style="color: ${color}; font-weight: 500;">${rate}%</span>`;
@@ -90,6 +127,9 @@ export const defectiveConfig = {
 };
 
 
+/**
+ * 실시간 검색 초기화 (300ms 디바운스)
+ */
 export function initRealTimeSearch(resourceManager) {
     const searchInput = document.getElementById('realTimeSearch');
     const searchClear = document.getElementById('searchClear');
@@ -119,6 +159,9 @@ export function initRealTimeSearch(resourceManager) {
     });
 }
 
+/**
+ * 검색 실행
+ */
 export function performSearch(query, resourceManager) {
     if (resourceManager && resourceManager.state) {
         resourceManager.state.searchQuery = query;
@@ -130,6 +173,9 @@ export function performSearch(query, resourceManager) {
 }
 
 
+/**
+ * 빠른 필터 버튼 초기화
+ */
 export function initQuickActions() {
     const actionBtns = document.querySelectorAll('.quick-action-btn');
     actionBtns.forEach(btn => {
@@ -141,6 +187,9 @@ export function initQuickActions() {
     });
 }
 
+/**
+ * 빠른 필터 적용
+ */
 export function applyQuickFilter(filter) {
     const statusSelect = document.getElementById('statusFilterSelect');
     if (!statusSelect) return;
@@ -150,6 +199,16 @@ export function applyQuickFilter(filter) {
 }
 
 
+/**
+ * 모달 다단계 스텝 초기화 (2단계)
+ *
+ * Step 1 검증 순서:
+ * 1. defective_name 입력 확인 (필수)
+ * 2. defective_name 중복 확인 API (proc/defective.php?for=check-duplicate)
+ * 3. defective_shortcut이 입력된 경우에만 shortcut 중복 확인 API
+ *    (proc/defective.php?for=check-duplicate-shortcut)
+ *    → shortcut은 선택 입력이므로 비어있으면 중복 체크 생략
+ */
 export function initModalSteps() {
     const nextBtn       = document.getElementById('nextStep');
     const prevBtn       = document.getElementById('prevStep');
@@ -206,10 +265,17 @@ export function initModalSteps() {
         updatePreview();
     }
 
+    /**
+     * Step 1 이중 중복 확인:
+     * 1차: 불량명 중복 (필수)
+     * 2차: shortcut 중복 (shortcut 입력된 경우에만)
+     */
     async function validateCurrentStep(step) {
         if (step === 1) {
             const name = document.getElementById('defective_name').value.trim();
             if (!name) { alert('Please enter the defective name.'); return false; }
+
+            // 1차 중복 확인: 불량명
             try {
                 const idx = document.getElementById('resourceId').value || null;
                 const url = `proc/defective.php?for=check-duplicate&defective_name=${encodeURIComponent(name)}${idx ? `&current_idx=${idx}` : ''}`;
@@ -219,6 +285,8 @@ export function initModalSteps() {
                 alert('An error occurred while checking for duplicates.');
                 return false;
             }
+
+            // 2차 중복 확인: shortcut (입력된 경우에만)
             const shortcut = document.getElementById('defective_shortcut').value.trim();
             if (shortcut) {
                 try {
@@ -235,6 +303,7 @@ export function initModalSteps() {
         return true;
     }
 
+    /** Step 2 미리보기 업데이트 */
     function updatePreview() {
         const name     = document.getElementById('defective_name')?.value || '-';
         const shortcut = document.getElementById('defective_shortcut')?.value || '-';

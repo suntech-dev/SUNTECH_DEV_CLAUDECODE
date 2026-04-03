@@ -1,54 +1,55 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 /**
- * info_machine_model API (RESTful)
- * Handles C.R.U.D operations and Excel export functionality.
+ * proc/machine_model.php — 기계 모델(Machine Model) 관리 REST API
+ * GET    : 목록/단건 조회, 중복 체크, 통계
+ * POST   : 모델 추가
+ * PUT    : 모델 수정 (_method 오버라이드 지원)
+ * DELETE : 미지원 (405 반환)
  */
-
-// Load common libraries and configuration files
 require_once(__DIR__ . '/../../../lib/config.php');
 require_once(__DIR__ . '/../../../lib/db.php');
 
-
-// Set API response to JSON format
 header('Content-Type: application/json');
 
-// Check HTTP request method
+// HTML Form의 PUT 불가 문제를 _method 필드로 우회
 $method = $_SERVER['REQUEST_METHOD'];
-
-// Override method if _method field exists in POST request
 if ($method === 'POST' && isset($_POST['_method'])) {
     $method = strtoupper($_POST['_method']);
 }
 
+// HTTP 메서드 및 'for' 파라미터에 따라 처리 함수 분기
 try {
-    // Call appropriate function based on request method
     switch ($method) {
         case 'GET':
-            if (isset($_GET['for']) && $_GET['for'] === 'check-duplicate') {
+            $for = $_GET['for'] ?? '';
+            if ($for === 'check-duplicate') {
+                // 모델명 중복 여부 확인
                 checkDuplicateMachineModel($pdo);
-            } elseif (isset($_GET['for']) && $_GET['for'] === 'statistics') {
+            } elseif ($for === 'statistics') {
+                // 모델 통계 요약 반환
                 getMachineModelStatistics($pdo);
             } elseif (isset($_GET['id'])) {
+                // 특정 idx 모델 단건 조회
                 getMachineModel($pdo);
             } else {
+                // 모델 목록 조회 (페이징, 필터, 정렬)
                 getMachineModels($pdo);
             }
             break;
         case 'POST':
+            // 신규 모델 추가
             addMachineModel($pdo);
             break;
         case 'PUT':
+            // 기존 모델 수정
             updateMachineModel($pdo);
             break;
         case 'DELETE':
-            http_response_code(405); // Method Not Allowed
+            http_response_code(405);
             echo json_encode(['success' => false, 'message' => 'Delete operation not supported']);
             break;
         default:
-            http_response_code(405); // Method Not Allowed
+            http_response_code(405);
             echo json_encode(['success' => false, 'message' => 'Method Not Allowed']);
             break;
     }
@@ -62,166 +63,137 @@ try {
 
 
 /**
- * 목록 조회(페이지네이션)와 전체 조회(엑셀)에 사용될 쿼리 파라미터를 파싱하고 유효성을 검사합니다.
- * @return array 정렬 및 필터링 조건 배열
+ * GET 파라미터에서 목록 조회 조건을 파싱하여 반환
+ * - sort/order: 화이트리스트로 SQL 인젝션 방지
+ * - status_filter: 사용 여부(Y/N) 필터
+ * - search: machine_model_name, remark 대상 LIKE 검색
  */
-function parse_machine_model_list_params() {
-    // 정렬 파라미터
+function parse_machine_model_list_params(): array {
     $sort_column = $_GET['sort'] ?? 'machine_model_name';
-    $sort_order = strtoupper($_GET['order'] ?? 'ASC');
+    $sort_order  = strtoupper($_GET['order'] ?? 'ASC');
 
-    // Whitelist sortable columns to prevent SQL Injection
+    // 허용된 정렬 컬럼 화이트리스트 (machine_count는 집계 컬럼)
     $valid_columns = ['idx', 'machine_model_name', 'status', 'remark', 'machine_count', 'type'];
-    if (!in_array($sort_column, $valid_columns)) {
-        $sort_column = 'machine_model_name'; // 기본값
-    }
-    if (!in_array($sort_order, ['ASC', 'DESC'])) {
-        $sort_order = 'ASC'; // 기본값
-    }
+    if (!in_array($sort_column, $valid_columns)) $sort_column = 'machine_model_name';
+    if (!in_array($sort_order, ['ASC', 'DESC']))  $sort_order  = 'ASC';
 
-    // 필터링 파라미터
     $status_filter = $_GET['status_filter'] ?? '';
-    $search_query = trim($_GET['search'] ?? '');
+    $search_query  = trim($_GET['search']   ?? '');
 
-    // WHERE 절 구성
     $where_conditions = [];
-    $params = [];
+    $params           = [];
 
     if (!empty($status_filter)) {
         $where_conditions[] = 'mm.status = ?';
-        $params[] = $status_filter;
+        $params[]           = $status_filter;
     }
-
-    // 검색 파라미터 추가 (machine_model_name, remark에서 검색)
+    // 모델명 또는 비고(remark) 검색
     if (!empty($search_query)) {
         $where_conditions[] = '(mm.machine_model_name LIKE ? OR mm.remark LIKE ?)';
-        $search_param = '%' . $search_query . '%';
-        $params[] = $search_param;
-        $params[] = $search_param;
+        $p = '%' . $search_query . '%';
+        $params = array_merge($params, [$p, $p]);
     }
 
-    $where_sql = '';
-    if (count($where_conditions) > 0) {
-        $where_sql = ' WHERE ' . implode(' AND ', $where_conditions);
-    }
+    $where_sql = $where_conditions ? ' WHERE ' . implode(' AND ', $where_conditions) : '';
 
-    return [
-        'where_sql' => $where_sql,
-        'params' => $params,
-        'sort_column' => $sort_column,
-        'sort_order' => $sort_order
-    ];
+    return ['where_sql' => $where_sql, 'params' => $params, 'sort_column' => $sort_column, 'sort_order' => $sort_order];
 }
 
 /**
- * 모든 machine_model 목록을 조회하여 JSON으로 반환합니다.
- * 정렬, 페이지네이션, 필터링 지원.
- * @param PDO $pdo PDO 객체
+ * 기계 모델 목록 조회 (페이징 + 필터 + 정렬)
+ * - LEFT JOIN info_machine: 해당 모델에 등록된 기계 수(machine_count) 집계
+ * - GROUP BY로 모델별 기계 수 산출
+ * - COUNT(DISTINCT mm.idx): GROUP BY 사용 시 정확한 전체 건수 산출
  */
-function getMachineModels(PDO $pdo) {
-    $query_conditions = parse_machine_model_list_params();
-    $where_sql = $query_conditions['where_sql'];
-    $params = $query_conditions['params'];
-    $sort_column = $query_conditions['sort_column'];
-    $sort_order = $query_conditions['sort_order'];
+function getMachineModels(PDO $pdo): void {
+    $cond        = parse_machine_model_list_params();
+    $where_sql   = $cond['where_sql'];
+    $params      = $cond['params'];
+    $sort_column = $cond['sort_column'];
+    $sort_order  = $cond['sort_order'];
 
-    // 페이지네이션 파라미터
-    $page = (int)($_GET['page'] ?? 1);
-    $limit = (int)($_GET['limit'] ?? 10);
+    $page   = (int)($_GET['page']  ?? 1);
+    $limit  = (int)($_GET['limit'] ?? 10);
     $offset = ($page - 1) * $limit;
 
-    // 전체 레코드 수 계산 (필터링 적용)
-    $total_stmt = $pdo->prepare("SELECT COUNT(DISTINCT mm.idx) FROM info_machine_model mm" . $where_sql);
+    // GROUP BY 사용 시 COUNT(DISTINCT)로 정확한 전체 건수 산출
+    $total_stmt = $pdo->prepare("SELECT COUNT(DISTINCT mm.idx) FROM info_machine_model mm{$where_sql}");
     $total_stmt->execute($params);
     $total_records = (int)$total_stmt->fetchColumn();
 
-    // 현재 페이지에 해당하는 데이터 조회 (필터링, 정렬, 페이지네이션 적용)
-    // JOIN with info_machine to get machine count per model
-    $sql = "
-        SELECT 
-            mm.idx, 
-            mm.machine_model_name, 
-            mm.type, 
-            mm.status, 
-            mm.remark,
-            COUNT(m.idx) as machine_count
-        FROM info_machine_model mm
-        LEFT JOIN info_machine m ON mm.idx = m.machine_model_idx
-        {$where_sql}
-        GROUP BY mm.idx, mm.machine_model_name, mm.type, mm.status, mm.remark
-        ORDER BY mm.`{$sort_column}` {$sort_order} 
-        LIMIT {$limit} OFFSET {$offset}
-    ";
+    // 모델 정보 + 기계 수 함께 조회
+    $sql = "SELECT mm.idx, mm.machine_model_name, mm.type, mm.status, mm.remark,
+                   COUNT(m.idx) AS machine_count
+            FROM info_machine_model mm
+            LEFT JOIN info_machine m ON mm.idx = m.machine_model_idx
+            {$where_sql}
+            GROUP BY mm.idx, mm.machine_model_name, mm.type, mm.status, mm.remark
+            ORDER BY mm.`{$sort_column}` {$sort_order}
+            LIMIT {$limit} OFFSET {$offset}";
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    $machine_models = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    
-    // Build final response data
     echo json_encode([
-        'success' => true,
-        'data' => $machine_models,
+        'success'    => true,
+        'data'       => $stmt->fetchAll(PDO::FETCH_ASSOC),
         'pagination' => [
             'total_records' => $total_records,
-            'current_page' => $page,
-            'total_pages' => ceil($total_records / $limit)
-        ]
+            'current_page'  => $page,
+            'total_pages'   => ceil($total_records / $limit),
+        ],
     ]);
 }
 
 /**
- * Get specific machine_model information and return as JSON.
- * @param PDO $pdo PDO object
+ * 기계 모델 단건 조회
+ * - 수정 폼 데이터 로드 시 사용
+ * - 해당 모델에 등록된 기계 수(machine_count)도 함께 반환
  */
-function getMachineModel(PDO $pdo) {
+function getMachineModel(PDO $pdo): void {
     $id = $_GET['id'] ?? 0;
     if (empty($id)) {
-        http_response_code(400); // Bad Request
+        http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'ID is required.']);
         return;
     }
-    $stmt = $pdo->prepare("
-        SELECT 
-            mm.idx, 
-            mm.machine_model_name, 
-            mm.type, 
-            mm.status, 
-            mm.remark,
-            COUNT(m.idx) as machine_count
-        FROM info_machine_model mm
-        LEFT JOIN info_machine m ON mm.idx = m.machine_model_idx
-        WHERE mm.idx = ?
-        GROUP BY mm.idx, mm.machine_model_name, mm.type, mm.status, mm.remark
-    ");
+    $stmt = $pdo->prepare(
+        "SELECT mm.idx, mm.machine_model_name, mm.type, mm.status, mm.remark,
+                COUNT(m.idx) AS machine_count
+         FROM info_machine_model mm
+         LEFT JOIN info_machine m ON mm.idx = m.machine_model_idx
+         WHERE mm.idx = ?
+         GROUP BY mm.idx, mm.machine_model_name, mm.type, mm.status, mm.remark"
+    );
     $stmt->execute([$id]);
-    $machine_model = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($machine_model) {
-        echo json_encode(['success' => true, 'data' => $machine_model]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($row) {
+        echo json_encode(['success' => true, 'data' => $row]);
     } else {
-        http_response_code(404); // Not Found
+        http_response_code(404);
         echo json_encode(['success' => false, 'message' => 'Machine model not found.']);
     }
 }
 
 /**
- * Add new machine_model.
- * @param PDO $pdo PDO object
+ * 신규 기계 모델 추가 (POST)
+ * - machine_model_name 필수 검증
+ * - type: P=패턴재봉기(Computer Sewing Machine), E=자수기(Embroidery Machine)
+ * - UNIQUE 위반 시 409 반환
  */
-function addMachineModel(PDO $pdo) {
+function addMachineModel(PDO $pdo): void {
     $machine_model_name = trim($_POST['machine_model_name'] ?? '');
-    $status = $_POST['status'] ?? 'Y';
-    $remark = trim($_POST['remark'] ?? '');
+    $status             = $_POST['status'] ?? 'Y';
+    $remark             = trim($_POST['remark'] ?? '');
 
     if (empty($machine_model_name)) {
-        http_response_code(400); // Bad Request
+        http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Machine model name is required.']);
         return;
     }
-
     try {
         $stmt = $pdo->prepare("INSERT INTO info_machine_model (machine_model_name, type, status, remark, reg_date, update_date) VALUES (?, ?, ?, ?, NOW(), NOW())");
         $stmt->execute([$machine_model_name, $_POST['type'] ?? 'P', $status, $remark]);
-        http_response_code(201); // Created
+        http_response_code(201);
         echo json_encode(['success' => true, 'message' => 'Machine model added successfully.']);
     } catch (PDOException $e) {
         if ($e->getCode() == '23000') {
@@ -234,29 +206,28 @@ function addMachineModel(PDO $pdo) {
 }
 
 /**
- * Update existing machine_model information.
- * @param PDO $pdo PDO object
+ * 기계 모델 수정 (PUT)
+ * - idx, machine_model_name 필수 검증
+ * - type 변경 가능 (P ↔ E)
  */
-function updateMachineModel(PDO $pdo) {
-    // Data is in $_POST since HTML form sends PUT via _method
-    $id = $_POST['idx'] ?? 0;
+function updateMachineModel(PDO $pdo): void {
+    $id                 = $_POST['idx'] ?? 0;
     $machine_model_name = trim($_POST['machine_model_name'] ?? '');
-    $status = $_POST['status'] ?? 'Y';
-    $remark = trim($_POST['remark'] ?? '');
+    $status             = $_POST['status'] ?? 'Y';
+    $remark             = trim($_POST['remark'] ?? '');
 
     if (empty($id) || empty($machine_model_name)) {
-        http_response_code(400); // Bad Request
+        http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'ID and Machine model name are required.']);
         return;
     }
-
     try {
         $stmt = $pdo->prepare("UPDATE info_machine_model SET machine_model_name = ?, type = ?, status = ?, remark = ?, update_date = NOW() WHERE idx = ?");
         $stmt->execute([$machine_model_name, $_POST['type'] ?? 'P', $status, $remark, $id]);
         echo json_encode(['success' => true, 'message' => 'Machine model updated successfully.']);
     } catch (PDOException $e) {
         if ($e->getCode() == '23000') {
-            http_response_code(409); // Conflict
+            http_response_code(409);
             echo json_encode(['success' => false, 'message' => 'Machine model name already exists.']);
         } else {
             throw $e;
@@ -265,111 +236,67 @@ function updateMachineModel(PDO $pdo) {
 }
 
 /**
- * Get machine model statistics including machine counts per model
- * @param PDO $pdo PDO object
+ * 기계 모델 통계 조회
+ * - 전체 모델 수(total_models)
+ * - 모델별 기계 수(machine_count) 목록 반환
+ * - status_filter로 사용 중인 모델만 필터 가능
  */
-function getMachineModelStatistics(PDO $pdo) {
-    // Apply status filter if provided
-    $status_filter = $_GET['status_filter'] ?? '';
+function getMachineModelStatistics(PDO $pdo): void {
+    $status_filter    = $_GET['status_filter'] ?? '';
     $where_conditions = [];
-    $params = [];
-    
+    $params           = [];
+
     if (!empty($status_filter)) {
         $where_conditions[] = 'mm.status = ?';
-        $params[] = $status_filter;
+        $params[]           = $status_filter;
     }
-    
-    $where_sql = !empty($where_conditions) ? 'WHERE ' . implode(' AND ', $where_conditions) : '';
-    
-    // Get total machine models count
+    $where_sql = $where_conditions ? 'WHERE ' . implode(' AND ', $where_conditions) : '';
+
+    // 전체 모델 수 카운트
     $total_stmt = $pdo->prepare("SELECT COUNT(*) FROM info_machine_model mm {$where_sql}");
     $total_stmt->execute($params);
     $total_models = (int)$total_stmt->fetchColumn();
-    
-    // Get machine count per model with status filter
-    $sql = "
-        SELECT 
-            mm.machine_model_name,
-            mm.type,
-            mm.status,
-            COUNT(m.idx) as machine_count
-        FROM info_machine_model mm
-        LEFT JOIN info_machine m ON mm.idx = m.machine_model_idx
-        {$where_sql}
-        GROUP BY mm.idx, mm.machine_model_name, mm.type, mm.status
-        ORDER BY mm.machine_model_name
-    ";
-    
+
+    // 모델별 기계 수 집계 (통계 테이블 구성용)
+    $sql = "SELECT mm.machine_model_name, mm.type, mm.status, COUNT(m.idx) AS machine_count
+            FROM info_machine_model mm
+            LEFT JOIN info_machine m ON mm.idx = m.machine_model_idx
+            {$where_sql}
+            GROUP BY mm.idx, mm.machine_model_name, mm.type, mm.status
+            ORDER BY mm.machine_model_name";
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    $model_stats = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
     echo json_encode([
         'success' => true,
-        'data' => [
+        'data'    => [
             'total_models' => $total_models,
-            'model_stats' => $model_stats
-        ]
+            'model_stats'  => $stmt->fetchAll(PDO::FETCH_ASSOC),
+        ],
     ]);
 }
 
 /**
- * Check duplicate machine_model name
- * @param PDO $pdo PDO object
+ * 기계 모델명 중복 여부 확인 (실시간 폼 검증용)
+ * - current_idx가 있으면 자기 자신 제외 (수정 모드)
  */
-function checkDuplicateMachineModel(PDO $pdo) {
+function checkDuplicateMachineModel(PDO $pdo): void {
     $machine_model_name = trim($_GET['machine_model_name'] ?? '');
-    $current_idx = $_GET['current_idx'] ?? null; // Exclude current record in edit mode
-    
+    $current_idx        = $_GET['current_idx'] ?? null;
+
     if (empty($machine_model_name)) {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Machine model name is required.']);
         return;
     }
-    
-    // Duplicate check query
-    $sql = "SELECT COUNT(*) FROM info_machine_model WHERE machine_model_name = ?";
+    $sql    = "SELECT COUNT(*) FROM info_machine_model WHERE machine_model_name = ?";
     $params = [$machine_model_name];
-    
-    // Exclude current record in edit mode
-    if ($current_idx) {
-        $sql .= " AND idx != ?";
-        $params[] = $current_idx;
-    }
-    
+    if ($current_idx) { $sql .= " AND idx != ?"; $params[] = $current_idx; }
+
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    $count = (int)$stmt->fetchColumn();
-    
-    if ($count > 0) {
-        echo json_encode(['success' => false, 'message' => 'This machine model name already exists. Please enter a different name.']);
-    } else {
-        echo json_encode(['success' => true, 'message' => 'Machine model name is available.']);
-    }
+    echo json_encode((int)$stmt->fetchColumn() > 0
+        ? ['success' => false, 'message' => 'This machine model name already exists. Please enter a different name.']
+        : ['success' => true,  'message' => 'Machine model name is available.']
+    );
 }
-
-/**
- * Delete machine_model.
- * @param PDO $pdo PDO object
- */
-/* function deleteMachineModel(PDO $pdo) {
-    $id = $_GET['id'] ?? 0;
-
-    if (empty($id)) {
-        http_response_code(400); // Bad Request
-        echo json_encode(['success' => false, 'message' => 'ID is required.']);
-        return;
-    }
-
-    $stmt = $pdo->prepare("DELETE FROM info_machine_model WHERE idx = ?");
-    $stmt->execute([$id]);
-
-    if ($stmt->rowCount() > 0) {
-        echo json_encode(['success' => true, 'message' => 'Machine model deleted successfully.']);
-    } else {
-        http_response_code(404); // Not Found
-        echo json_encode(['success' => false, 'message' => 'Machine model not found or already deleted.']);
-    }
-} */
-
-?>

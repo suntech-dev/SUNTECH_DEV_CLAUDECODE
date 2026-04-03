@@ -1,4 +1,15 @@
 /**
+ * ============================================================
+ * 파일명  : ai_dashboard_2.css
+ * 목  적  : 1920×1080 전용 사이니지(대형 모니터) AI 대시보드 레이아웃
+ *           - ai_dashboard.css 를 기반으로 사이니지 환경에 맞게 재정의
+ *           - 전체 화면 고정(overflow:hidden), 4행 그리드로 화면 분할
+ *           - 햄버거 메뉴 드로어(nav-drawer), 실시간 헤더 포함
+ * 버전    : v5 (레이아웃 구조 변경 없음, 버그 수정은 JS/PHP 처리)
+ * ============================================================
+ */
+
+/**
  * ai_dashboard_5.css — 1920x1080 Signage Layout (v5)
  * ai_dashboard_4.css 기반
  * v5 변경사항:
@@ -7,50 +18,56 @@
  */
 
 /* ─── 전체 고정 ─────────────────────────────────────────── */
+/* 사이니지 모드: 스크롤 없이 뷰포트 전체를 채움 */
 html,
 body {
-  height: 100vh;
-  overflow: hidden;
+  height: 100vh;    /* 뷰포트 전체 높이 사용 */
+  overflow: hidden; /* 사이니지 — 외부 스크롤 완전 차단 */
   margin: 0;
   padding: 0;
 }
 
+/* fiori-container 기본 여백 제거 — 사이니지 전체 화면 활용 */
 .fiori-container {
   padding: 0;
   margin: 0;
 }
 
 /* ─── 사이니지 헤더 (nav 대체) ──────────────────────────── */
+/* 일반 Fiori nav bar 대신 사이니지 전용 고정 높이 헤더 사용 */
 .signage-header {
-  height: 52px;
+  height: 52px;  /* 헤더 높이 고정 — 메인 그리드 calc 기준점 */
   background: var(--sap-surface-1);
   border-bottom: 1px solid var(--sap-border-neutral);
   display: flex;
   align-items: center;
   padding: 0 12px;
   gap: 10px;
-  flex-shrink: 0;
+  flex-shrink: 0;    /* flex 자식: 헤더 높이 축소 방지 */
   box-sizing: border-box;
 }
 
+/* 헤더 타이틀 — 페이지명 + AI 배지 인라인 배치 */
 .signage-header__title {
   font-size: var(--sap-font-size-lg);
   font-weight: var(--sap-font-weight-semibold);
   color: var(--sap-text-primary);
-  white-space: nowrap;
+  white-space: nowrap; /* 줄 바꿈 방지 */
   margin-right: 8px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
+/* 헤더 필터 영역 — 공장/라인/기간 선택 드롭다운 영역 */
 .signage-header__filters {
   display: flex;
   align-items: center;
   gap: 6px;
-  flex: 1;
+  flex: 1; /* 남은 공간 모두 차지 */
 }
 
+/* 헤더 내 필터 select 크기 통일 */
 .signage-header__filters .fiori-select {
   height: 30px;
   font-size: var(--sap-font-size-sm);
@@ -58,27 +75,31 @@ body {
   width: 140px;
 }
 
+/* 날짜 범위 select — 좌측 구분선 포함 */
 .signage-header__filters .date-range-select {
   width: 120px;
-  border-left: 1px solid var(--sap-border-neutral);
+  border-left: 1px solid var(--sap-border-neutral); /* 시각적 구분선 */
   padding-left: 8px;
   margin-left: 2px;
 }
 
+/* 헤더 내 버튼 (조회 등) */
 .signage-header__filters .fiori-btn {
   height: 30px;
   padding: 0 10px;
   font-size: var(--sap-font-size-sm);
 }
 
+/* 실시간 시계 — tabular-nums 로 숫자 자리 고정(폭 변동 없음) */
 .signage-header__clock {
   font-size: var(--sap-font-size-sm);
   color: var(--sap-text-secondary);
   white-space: nowrap;
   margin-left: 8px;
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums; /* 숫자 너비 고정으로 시계 흔들림 방지 */
 }
 
+/* 연결 상태 표시 (Live·Offline 등) */
 .signage-header__status {
   display: flex;
   align-items: center;
@@ -89,31 +110,38 @@ body {
 }
 
 /* ─── 메인 4행 그리드 ────────────────────────────────────── */
+/* 헤더(52px) 제외한 나머지를 4행 비율로 분할
+   grid-template-rows: 15fr 29fr 28fr 28fr
+   → Row A(요약) 15% / Row B(예측+이상) 29% / Row C(건강+정비) 28% / Row D(스트림+최적화) 28%
+*/
 .ai-signage-main {
-  height: calc(100vh - 52px);
+  height: calc(100vh - 52px); /* 헤더 높이 52px 제외 */
   display: grid;
-  grid-template-rows: 15fr 29fr 28fr 28fr;
+  grid-template-rows: 15fr 29fr 28fr 28fr; /* 4행 비율 분할 */
   gap: 5px;
   padding: 5px;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: hidden; /* 내부 콘텐츠 넘침 방지 */
 }
 
 /* ─── Row A: AI Summary 카드 5개 ──────────────────────────── */
+/* 요약 행은 min-height:0 으로 flex/grid 내 높이 축소 허용 */
 .ai-signage-row-a {
-  min-height: 0;
+  min-height: 0; /* grid 아이템 최소 높이 0 — 비율대로 정확히 분할 */
 }
 
+/* Row A 내 summary grid — 기본 ai-summary-grid(4열)를 5열로 재정의 */
 .ai-signage-row-a .ai-summary-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, 1fr); /* 사이니지: 5개 카드 5열 배치 */
   gap: 5px;
   height: 100%;
-  margin-bottom: 0;
+  margin-bottom: 0; /* 기본 여백 제거 */
 }
 
+/* Row A 내 summary 카드 — 컴팩트하게 재정의 */
 .ai-signage-row-a .ai-summary-card {
-  padding: 8px 10px 8px 14px;
+  padding: 8px 10px 8px 14px; /* 좌측 14px — 컬러 스트라이프 공간 확보 */
   border-radius: var(--sap-radius-md);
   display: flex;
   flex-direction: column;
@@ -121,30 +149,19 @@ body {
   min-height: 0;
 }
 
-.ai-signage-row-a .ai-summary-card__label {
-  font-size: 10px;
-  margin-bottom: 2px;
-}
-
-.ai-signage-row-a .ai-summary-card__value {
-  font-size: 1.6rem;
-  margin-bottom: 2px;
-}
-
-.ai-signage-row-a .ai-summary-card__sub {
-  font-size: 11px;
-}
-
-.ai-signage-row-a .ai-trend-badge {
-  font-size: 10px;
-  padding: 1px 6px;
-}
+/* Row A 내부 텍스트 소형화 */
+.ai-signage-row-a .ai-summary-card__label { font-size: 10px; margin-bottom: 2px; }
+.ai-signage-row-a .ai-summary-card__value { font-size: 1.6rem; margin-bottom: 2px; }
+.ai-signage-row-a .ai-summary-card__sub   { font-size: 11px; }
+.ai-signage-row-a .ai-trend-badge         { font-size: 10px; padding: 1px 6px; }
 
 /* ─── Real-time OEE 카드 스트라이프 ────────────────────────── */
+/* 5번째 카드(실시간 OEE)의 좌측 스트라이프 — 시안색 */
 .ai-summary-card--realtime::before {
-  background: #06b6d4;
+  background: #06b6d4; /* 시안(cyan) — 실시간 강조색 */
 }
 
+/* "LIVE" 뱃지 — 시안 도트 + 텍스트 */
 .ai-realtime-live {
   display: inline-flex;
   align-items: center;
@@ -155,32 +172,37 @@ body {
   letter-spacing: 0.05em;
 }
 
+/* 실시간 도트 — 맥박 애니메이션으로 "Live" 상태 표현 */
 .ai-realtime-live__dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: #06b6d4;
-  animation: rtLivePulse 1.4s ease-in-out infinite;
+  animation: rtLivePulse 1.4s ease-in-out infinite; /* 1.4초 맥박 */
   flex-shrink: 0;
 }
 
+/* rtLivePulse: 50% 지점에서 opacity·scale 대폭 축소 → 빠른 맥박 효과 */
 @keyframes rtLivePulse {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.35; transform: scale(0.7); }
+  50%       { opacity: 0.35; transform: scale(0.7); } /* scale 0.7 — 빠른 수축 */
 }
 
-.ai-oee-good    { color: var(--sap-positive) !important; }
-.ai-oee-warning { color: var(--sap-caution) !important; }
-.ai-oee-danger  { color: var(--sap-negative) !important; }
+/* OEE 등급별 색상 클래스 — !important 로 다른 color 재정의 */
+.ai-oee-good    { color: var(--sap-positive) !important; }  /* 양호: 초록 */
+.ai-oee-warning { color: var(--sap-caution) !important; }   /* 주의: 주황 */
+.ai-oee-danger  { color: var(--sap-negative) !important; }  /* 위험: 빨강 */
 
 /* ─── Row B ────────────────────────────────────────────────── */
+/* OEE 예측 차트(2fr) + 이상 감지 패널(1fr) 2열 배치 */
 .ai-signage-row-b {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 2fr 1fr; /* 차트 넓게, 패널 좁게 */
   gap: 5px;
   min-height: 0;
 }
 
+/* Row B 내 예측 차트 — 높이를 flex:1 로 행 높이에 맞게 자동 조정 */
 .ai-signage-row-b .ai-prediction-chart-wrap {
   height: auto;
   flex: 1;
@@ -188,27 +210,31 @@ body {
   min-height: 0;
 }
 
+/* Row B 내 범례 — 컴팩트 */
 .ai-signage-row-b .ai-chart-legend {
   gap: 8px;
   margin-top: 4px;
   font-size: 11px;
-  flex-shrink: 0;
+  flex-shrink: 0; /* 범례 높이 축소 방지 */
 }
 
+/* Row B 내 이상 감지 리스트 — 최대 높이 해제, flex로 행에 꽉 채움 */
 .ai-signage-row-b .ai-anomaly-list {
-  max-height: none;
+  max-height: none; /* 기본 320px 제한 해제 */
   flex: 1;
   overflow-y: auto;
 }
 
 /* ─── Row C ────────────────────────────────────────────────── */
+/* 라인 건강지수(1fr) + 예방정비(1fr) 2열 배치 */
 .ai-signage-row-c {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr; /* 동등 2열 */
   gap: 5px;
   min-height: 0;
 }
 
+/* Row C 내 정비 목록 — 최대 높이 해제 */
 .ai-signage-row-c .ai-maintenance-list {
   max-height: none;
   flex: 1;
@@ -216,84 +242,89 @@ body {
 }
 
 /* ─── Row D ────────────────────────────────────────────────── */
+/* 실시간 스트림 피드(1fr) + 최적화 제안(2fr) 2열 배치 */
 .ai-signage-row-d {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 2fr; /* 스트림 좁게, 최적화 넓게 */
   gap: 5px;
   min-height: 0;
 }
 
+/* Row D 내 스트림 피드 — 최대 높이 해제 */
 .ai-signage-row-d .ai-stream-feed {
   max-height: none;
   flex: 1;
   overflow-y: auto;
 }
 
+/* Row D 내 최적화 리스트 — 스크롤 허용 */
 .ai-signage-row-d .ai-opt-list {
   overflow-y: auto;
   flex: 1;
 }
 
 /* ─── 카드 헤더 타이틀+서브타이틀 인라인화 ─────────────────── */
+/* 카드 제목과 서브타이틀을 한 줄에 배치하여 수직 공간 절약 */
 .card-title-row {
   display: flex;
-  align-items: baseline;
+  align-items: baseline; /* 텍스트 기준선 정렬 */
   gap: 8px;
-  min-width: 0;
+  min-width: 0; /* flex 아이템 넘침 방지 */
   flex: 1;
 }
 
+/* 카드 제목 — 줄 바꿈 없이 고정 너비 유지 */
 .card-title-row .fiori-card__title {
   white-space: nowrap;
   flex-shrink: 0;
 }
 
+/* 인라인 서브타이틀 — 넘치는 텍스트 말줄임 처리 */
 .card-subtitle-inline {
   font-size: var(--sap-font-size-xs);
   color: var(--sap-text-secondary);
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis; /* 공간 부족 시 ... 처리 */
   align-self: center;
 }
 
 /* Line Health 서브타이틀 동적 변경 대상 (v5) */
+/* JavaScript 에서 텍스트를 동적으로 업데이트하는 셀렉터 */
 .ai-health-subtitle {
   font-size: var(--sap-font-size-xs);
   color: var(--sap-text-secondary);
 }
 
 /* ─── 공통 카드 스타일 ──────────────────────────────────── */
+/* 사이니지 메인 내 모든 fiori-card — 행 높이에 꽉 맞도록 flex column */
 .ai-signage-main .fiori-card {
-  height: 100%;
+  height: 100%;       /* 부모 행 높이 100% */
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  margin-bottom: 0;
+  margin-bottom: 0;   /* 기본 카드 하단 여백 제거 */
   border-radius: var(--sap-radius-md);
   box-sizing: border-box;
 }
 
+/* 카드 헤더 — 컴팩트 패딩, 축소 방지 */
 .ai-signage-main .fiori-card__header {
-  flex-shrink: 0;
+  flex-shrink: 0; /* 헤더 높이 고정 */
   padding: 5px 10px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.ai-signage-main .fiori-card__title {
-  font-size: var(--sap-font-size-md);
-}
+/* 카드 제목·서브타이틀 폰트 크기 재정의 */
+.ai-signage-main .fiori-card__title    { font-size: var(--sap-font-size-md); }
+.ai-signage-main .fiori-card__subtitle { font-size: var(--sap-font-size-xs); margin: 0; }
 
-.ai-signage-main .fiori-card__subtitle {
-  font-size: var(--sap-font-size-xs);
-  margin: 0;
-}
-
+/* 카드 콘텐츠 — flex:1 로 나머지 높이 모두 차지, 내부 스크롤 제어 */
 .ai-signage-main .fiori-card__content {
   flex: 1;
-  min-height: 0;
+  min-height: 0; /* flex 아이템 높이 0 허용 — 내용 넘침 방지 */
   padding: 4px 8px;
   display: flex;
   flex-direction: column;
@@ -301,15 +332,18 @@ body {
 }
 
 /* ─── 리스트 아이템 소형화 ──────────────────────────────── */
+/* 사이니지 밀도 높게: 이상 감지 아이템 패딩 축소 */
 .ai-signage-main .ai-anomaly-item {
   padding: 5px 8px;
   gap: 6px;
 }
 
+/* 텍스트 소형화 — 11px/10px 로 더 많은 항목 표시 */
 .ai-signage-main .ai-anomaly-item__machine { font-size: 11px; }
 .ai-signage-main .ai-anomaly-item__line    { font-size: 10px; }
 .ai-signage-main .ai-anomaly-item__oee     { font-size: 0.9rem; }
 
+/* 정비 아이템 소형화 */
 .ai-signage-main .ai-maintenance-item {
   padding: 5px 8px;
   margin-bottom: 2px;
@@ -318,39 +352,46 @@ body {
 .ai-signage-main .ai-maintenance-item__machine { font-size: 11px; }
 .ai-signage-main .ai-maintenance-item__line    { font-size: 10px; }
 
+/* 라인 건강 아이템 열 너비 재정의 — 더 좁게 */
 .ai-signage-main .ai-health-item {
-  grid-template-columns: 70px 1fr 50px 60px;
+  grid-template-columns: 70px 1fr 50px 60px; /* 기본보다 각 열 10px 축소 */
   gap: 6px;
 }
 
 .ai-signage-main .ai-health-item__line { font-size: 11px; }
 
 /* ─── 스트리밍 이벤트 소형화 ────────────────────────────── */
+/* 사이니지: 더 많은 이벤트를 표시하기 위해 패딩·폰트 축소 */
 .ai-signage-main .ai-stream-event       { padding: 5px 8px; }
 .ai-signage-main .ai-stream-event__type { font-size: 11px; }
 .ai-signage-main .ai-stream-event__msg  { font-size: 11px; }
 .ai-signage-main .ai-stream-event__time { font-size: 10px; }
 
 /* ─── Optimization 카드 소형화 ──────────────────────────── */
+/* 최적화 카드도 패딩·폰트 축소로 더 많은 항목 표시 */
 .ai-signage-main .ai-opt-card          { padding: 6px 10px; }
 .ai-signage-main .ai-opt-card__header  { margin-bottom: 6px; }
 .ai-signage-main .ai-opt-bottleneck    { padding: 3px 6px; font-size: 11px; margin-bottom: 4px; }
 .ai-signage-main .ai-opt-components    { font-size: 11px; gap: 6px; margin-bottom: 4px; }
 
 /* ─── 스크롤바 ──────────────────────────────────────────── */
+/* 사이니지 전체 영역 얇은 스크롤바 (4px) */
 .ai-signage-main ::-webkit-scrollbar       { width: 4px; height: 4px; }
 .ai-signage-main ::-webkit-scrollbar-track { background: var(--sap-surface-3); }
 .ai-signage-main ::-webkit-scrollbar-thumb { background: var(--sap-border-neutral); border-radius: 2px; }
 
 /* ─── hover 효과 제거 ───────────────────────────────────── */
-.ai-signage-main .ai-summary-card:hover { box-shadow: var(--sap-shadow-1); }
-.ai-signage-main .ai-heatmap-cell:hover { filter: none; }
+/* 사이니지 = 터치·마우스 미사용 환경 → hover 전환 효과 비활성화 */
+.ai-signage-main .ai-summary-card:hover { box-shadow: var(--sap-shadow-1); } /* 기본 그림자 유지 */
+.ai-signage-main .ai-heatmap-cell:hover { filter: none; }                    /* brightness 효과 제거 */
 
 /* ─── last-update 표시 소형화 ───────────────────────────── */
+/* 헤더 공간 절약을 위해 소형 폰트 적용 */
 .ai-signage-main .ai-last-update { font-size: 10px; }
 .ai-signage-main .ai-badge       { font-size: 9px; padding: 2px 6px; }
 
 /* ─── 햄버거 버튼 ───────────────────────────────────────── */
+/* 좌측 메뉴 드로어를 여는 토글 버튼 */
 .nav-drawer-btn {
   width: 36px;
   height: 36px;
@@ -366,20 +407,24 @@ body {
   flex-shrink: 0;
 }
 
+/* hover 시 배경 강조 */
 .nav-drawer-btn:hover { background: var(--sap-surface-3); }
 
 /* ─── 드로어 오버레이 ───────────────────────────────────── */
+/* 드로어 열림 시 배경 반투명 오버레이 — 클릭으로 닫기 */
 .nav-drawer-overlay {
-  display: none;
+  display: none;           /* 기본 숨김 */
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.3);
+  inset: 0;                /* top/right/bottom/left 모두 0 — 전체 화면 덮기 */
+  background: rgba(0, 0, 0, 0.3); /* 30% 반투명 검정 */
   z-index: 900;
 }
 
+/* is-open 클래스 추가 시 오버레이 표시 */
 .nav-drawer-overlay.is-open { display: block; }
 
 /* ─── 드로어 패널 ───────────────────────────────────────── */
+/* 좌측에서 슬라이드 인 하는 사이드 메뉴 패널 */
 .nav-drawer {
   position: fixed;
   top: 0;
@@ -389,16 +434,18 @@ body {
   background: var(--sap-surface-1);
   border-right: 1px solid var(--sap-border-neutral);
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-  z-index: 901;
-  transform: translateX(-100%);
-  transition: transform 0.25s ease;
+  z-index: 901;                      /* 오버레이(900)보다 위 */
+  transform: translateX(-100%);      /* 기본: 왼쪽 화면 밖으로 숨김 */
+  transition: transform 0.25s ease;  /* 슬라이드 애니메이션 0.25초 */
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
+/* is-open 추가 시 translateX(0)으로 이동 — 패널이 화면 안으로 슬라이드 인 */
 .nav-drawer.is-open { transform: translateX(0); }
 
+/* 드로어 헤더 */
 .nav-drawer__header {
   padding: 14px 16px;
   font-size: var(--sap-font-size-md);
@@ -408,12 +455,14 @@ body {
   flex-shrink: 0;
 }
 
+/* 드로어 메뉴 스크롤 영역 */
 .nav-drawer__menu {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: auto; /* 메뉴 항목 많을 경우 스크롤 */
   padding: 8px 0;
 }
 
+/* 메뉴 그룹 제목 — 대문자 소형 텍스트 */
 .nav-drawer__group-title {
   padding: 6px 16px 2px;
   font-size: var(--sap-font-size-xs);
@@ -423,14 +472,16 @@ body {
   letter-spacing: 0.04em;
 }
 
+/* 메뉴 링크 — 들여쓰기 24px 적용 */
 .nav-drawer__link {
   display: block;
-  padding: 7px 16px 7px 24px;
+  padding: 7px 16px 7px 24px; /* 좌측 24px 들여쓰기 */
   font-size: var(--sap-font-size-sm);
   color: var(--sap-text-primary);
   text-decoration: none;
 }
 
+/* 링크 상태별 스타일 */
 .nav-drawer__link:hover          { background: var(--sap-surface-3); }
 .nav-drawer__link--active        { color: var(--sap-color-accent); font-weight: var(--sap-font-weight-semibold); }
 .nav-drawer__divider             { height: 1px; background: var(--sap-border-neutral); margin: 6px 0; }

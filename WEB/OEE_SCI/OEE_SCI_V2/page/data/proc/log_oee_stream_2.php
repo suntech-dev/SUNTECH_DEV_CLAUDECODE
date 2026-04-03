@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OEE Report Log Streaming API (Server-Sent Events)
  * Streams all columns from data_oee table with summary stats.
@@ -30,9 +31,10 @@ $apiHelper = new ApiHelper($pdo);
 
 // parseFilterParams(), sendSSEData() → stream_helper.lib.php
 
-function getOeeDataLog($pdo, $where_sql, $params, $limit = 500) {
-  try {
-    $sql = "
+function getOeeDataLog($pdo, $where_sql, $params, $limit = 500)
+{
+    try {
+        $sql = "
       SELECT
         do.idx,
         do.work_date,
@@ -74,27 +76,27 @@ function getOeeDataLog($pdo, $where_sql, $params, $limit = 500) {
       LIMIT " . (int)$limit . "
     ";
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach ($result as &$row) {
-      if (isset($row['shift_idx']) && $row['shift_idx'] !== null && $row['shift_idx'] !== '') {
-        $row['shift_idx'] = 'Shift ' . $row['shift_idx'];
-      }
+        foreach ($result as &$row) {
+            if (isset($row['shift_idx']) && $row['shift_idx'] !== null && $row['shift_idx'] !== '') {
+                $row['shift_idx'] = 'Shift ' . $row['shift_idx'];
+            }
+        }
+
+        return $result;
+    } catch (PDOException $e) {
+        error_log("OEE data log query error: " . $e->getMessage());
+        return [];
     }
-
-    return $result;
-
-  } catch (PDOException $e) {
-    error_log("OEE data log query error: " . $e->getMessage());
-    return [];
-  }
 }
 
-function getOeeStats($pdo, $where_sql, $params) {
-  try {
-    $sql = "
+function getOeeStats($pdo, $where_sql, $params)
+{
+    try {
+        $sql = "
       SELECT
         COUNT(*) as total_count,
         ROUND((AVG(do.availabilty_rate) * (SUM(do.actual_output) / NULLIF(SUM(do.theoritical_output), 0)) * AVG(do.quality_rate)) / 100, 2) as avg_overall_oee,
@@ -121,53 +123,74 @@ function getOeeStats($pdo, $where_sql, $params) {
       {$where_sql}
     ";
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-    $stats = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $stats = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Derived rates (PHP calculation avoids extra subqueries)
-    $stats['overall_performance_rate'] = $stats['total_theoretical_output'] > 0
-      ? round(($stats['total_actual_output'] / $stats['total_theoretical_output']) * 100, 2) : 0;
+        // Derived rates (PHP calculation avoids extra subqueries)
+        $stats['overall_performance_rate'] = $stats['total_theoretical_output'] > 0
+            ? round(($stats['total_actual_output'] / $stats['total_theoretical_output']) * 100, 2) : 0;
 
-    $stats['overall_quality_rate'] = $stats['total_actual_output'] > 0
-      ? round(($stats['total_good_products'] / $stats['total_actual_output']) * 100, 2) : 0;
+        $stats['overall_quality_rate'] = $stats['total_actual_output'] > 0
+            ? round(($stats['total_good_products'] / $stats['total_actual_output']) * 100, 2) : 0;
 
-    $stats['overall_availability_rate'] = $stats['total_planned_time'] > 0
-      ? round(($stats['total_runtime'] / $stats['total_planned_time']) * 100, 2) : 0;
+        $stats['overall_availability_rate'] = $stats['total_planned_time'] > 0
+            ? round(($stats['total_runtime'] / $stats['total_planned_time']) * 100, 2) : 0;
 
-    // Field aliases for stat-card
-    $stats['overall_oee']  = $stats['avg_overall_oee'];
-    $stats['availability'] = $stats['avg_availability'];
-    $stats['performance']  = $stats['avg_performance'];
-    $stats['quality']      = $stats['avg_quality'];
+        // Field aliases for stat-card
+        $stats['overall_oee']  = $stats['avg_overall_oee'];
+        $stats['availability'] = $stats['avg_availability'];
+        $stats['performance']  = $stats['avg_performance'];
+        $stats['quality']      = $stats['avg_quality'];
 
-    // Current shift OEE and previous day OEE (independent — failures return 0)
-    $selected_shift = $_GET['shift_filter'] ?? null;
-    $target_date    = $_GET['start_date'] ?? $_GET['end_date'] ?? null;
-    $stats['current_shift_oee']  = getCurrentShiftOeeAvg($pdo, $selected_shift, $target_date);
-    $stats['previous_day_oee']   = getPreviousDayOeeAvg($pdo, $where_sql, $params);
+        // Current shift OEE and previous day OEE (independent — failures return 0)
+        $selected_shift = $_GET['shift_filter'] ?? null;
+        $target_date    = $_GET['start_date'] ?? $_GET['end_date'] ?? null;
+        $stats['current_shift_oee']  = getCurrentShiftOeeAvg($pdo, $selected_shift, $target_date);
+        $stats['previous_day_oee']   = getPreviousDayOeeAvg($pdo, $where_sql, $params);
 
-    return $stats;
-
-  } catch (PDOException $e) {
-    error_log("OEE stats query error: " . $e->getMessage());
-    return [
-      'total_count' => 0, 'avg_overall_oee' => 0, 'avg_availability' => 0,
-      'avg_performance' => 0, 'avg_quality' => 0, 'max_oee' => 0, 'min_oee' => 0,
-      'active_machines' => 0, 'excellent_count' => 0, 'good_count' => 0,
-      'fair_count' => 0, 'poor_count' => 0, 'today_avg_oee' => 0, 'today_count' => 0,
-      'current_shift_oee' => 0, 'previous_day_oee' => 0, 'total_actual_output' => 0,
-      'total_theoretical_output' => 0, 'total_good_products' => 0, 'total_defective_count' => 0,
-      'total_planned_time' => 0, 'total_runtime' => 0, 'total_downtime' => 0,
-      'overall_performance_rate' => 0, 'overall_quality_rate' => 0, 'overall_availability_rate' => 0,
-      'overall_oee' => 0, 'availability' => 0, 'performance' => 0, 'quality' => 0
-    ];
-  }
+        return $stats;
+    } catch (PDOException $e) {
+        error_log("OEE stats query error: " . $e->getMessage());
+        return [
+            'total_count' => 0,
+            'avg_overall_oee' => 0,
+            'avg_availability' => 0,
+            'avg_performance' => 0,
+            'avg_quality' => 0,
+            'max_oee' => 0,
+            'min_oee' => 0,
+            'active_machines' => 0,
+            'excellent_count' => 0,
+            'good_count' => 0,
+            'fair_count' => 0,
+            'poor_count' => 0,
+            'today_avg_oee' => 0,
+            'today_count' => 0,
+            'current_shift_oee' => 0,
+            'previous_day_oee' => 0,
+            'total_actual_output' => 0,
+            'total_theoretical_output' => 0,
+            'total_good_products' => 0,
+            'total_defective_count' => 0,
+            'total_planned_time' => 0,
+            'total_runtime' => 0,
+            'total_downtime' => 0,
+            'overall_performance_rate' => 0,
+            'overall_quality_rate' => 0,
+            'overall_availability_rate' => 0,
+            'overall_oee' => 0,
+            'availability' => 0,
+            'performance' => 0,
+            'quality' => 0
+        ];
+    }
 }
 
-function getPreviousDayOeeAvg($pdo, $where_sql, $params) {
-  try {
-    $sql = "
+function getPreviousDayOeeAvg($pdo, $where_sql, $params)
+{
+    try {
+        $sql = "
       SELECT
         ROUND((AVG(do.availabilty_rate) * (SUM(do.actual_output) / NULLIF(SUM(do.theoritical_output), 0)) * AVG(do.quality_rate)) / 100, 2) as previous_day_oee,
         do.work_date
@@ -179,190 +202,196 @@ function getPreviousDayOeeAvg($pdo, $where_sql, $params) {
       LIMIT 1
     ";
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    return (float)($result['previous_day_oee'] ?? 0);
-
-  } catch (PDOException $e) {
-    error_log("Previous day OEE query error: " . $e->getMessage());
-    return 0;
-  }
+        return (float)($result['previous_day_oee'] ?? 0);
+    } catch (PDOException $e) {
+        error_log("Previous day OEE query error: " . $e->getMessage());
+        return 0;
+    }
 }
 
-function getCurrentShiftOeeAvg($pdo, $selected_shift_idx = null, $target_date = null) {
-  try {
-    $target_date = $target_date ?: date('Y-m-d');
-    $worktime    = new Worktime($pdo);
-    $factory_idx = '';
-    $line_idx    = '';
+function getCurrentShiftOeeAvg($pdo, $selected_shift_idx = null, $target_date = null)
+{
+    try {
+        $target_date = $target_date ?: date('Y-m-d');
+        $worktime    = new Worktime($pdo);
+        $factory_idx = '';
+        $line_idx    = '';
 
-    if (!empty($selected_shift_idx)) {
-      $day_shifts = $worktime->getDayShift($target_date, $factory_idx, $line_idx);
+        if (!empty($selected_shift_idx)) {
+            $day_shifts = $worktime->getDayShift($target_date, $factory_idx, $line_idx);
 
-      if (!$day_shifts || !isset($day_shifts['shift'][$selected_shift_idx])) {
-        return 0;
-      }
+            if (!$day_shifts || !isset($day_shifts['shift'][$selected_shift_idx])) {
+                return 0;
+            }
 
-      $shift          = $day_shifts['shift'][$selected_shift_idx];
-      $work_stime_str = $target_date . ' ' . $shift['available_stime'] . ':00';
-      $work_etime_str = $target_date . ' ' . $shift['available_etime'] . ':00';
+            $shift          = $day_shifts['shift'][$selected_shift_idx];
+            $work_stime_str = $target_date . ' ' . $shift['available_stime'] . ':00';
+            $work_etime_str = $target_date . ' ' . $shift['available_etime'] . ':00';
 
-      if ($shift['over_time']) {
-        $work_etime_str = date('Y-m-d H:i:s', strtotime($work_etime_str . ' +' . $shift['over_time'] . ' minutes'));
-      }
+            if ($shift['over_time']) {
+                $work_etime_str = date('Y-m-d H:i:s', strtotime($work_etime_str . ' +' . $shift['over_time'] . ' minutes'));
+            }
 
-      if ($work_etime_str <= $work_stime_str) {
-        $work_etime_str = date('Y-m-d H:i:s', strtotime($work_etime_str . ' +1 day'));
-      }
+            if ($work_etime_str <= $work_stime_str) {
+                $work_etime_str = date('Y-m-d H:i:s', strtotime($work_etime_str . ' +1 day'));
+            }
 
-      $shift_start = $work_stime_str;
+            $shift_start = $work_stime_str;
+        } else {
+            $current_shift_info = findCurrentShift($pdo, $worktime, $factory_idx, $line_idx, date('Y-m-d H:i:s'));
 
-    } else {
-      $current_shift_info = findCurrentShift($pdo, $worktime, $factory_idx, $line_idx, date('Y-m-d H:i:s'));
+            if (!$current_shift_info) return 0;
 
-      if (!$current_shift_info) return 0;
+            $shift_start = $current_shift_info['work_stime'];
+        }
 
-      $shift_start = $current_shift_info['work_stime'];
-    }
-
-    $sql = "
+        $sql = "
       SELECT ROUND((AVG(availabilty_rate) * (SUM(actual_output) / NULLIF(SUM(theoritical_output), 0)) * AVG(quality_rate)) / 100, 2) as shift_avg_oee
       FROM data_oee
       WHERE work_date = ? AND shift_idx = ?
     ";
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([date('Y-m-d', strtotime($shift_start)), $selected_shift_idx ?: 1]);
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([date('Y-m-d', strtotime($shift_start)), $selected_shift_idx ?: 1]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    return (float)($result['shift_avg_oee'] ?? 0);
-
-  } catch (Exception $e) {
-    error_log("Shift OEE average query error: " . $e->getMessage());
-    return 0;
-  }
-}
-
-function startStreaming($pdo) {
-  $lastDataHash = '';
-  $startTime    = time();
-  $maxRunTime   = 3600;
-
-  $filterConfig = parseFilterParams('do', 'work_date', true, '7 DAY');
-  $limit        = !empty($_GET['limit']) ? (int)$_GET['limit'] : 500;
-
-  sendSSEData('connected', [
-    'status'    => 'connected',
-    'message'   => 'OEE data log streaming started.',
-    'timestamp' => date('Y-m-d H:i:s'),
-    'filters'   => [
-      'factory_filter' => $_GET['factory_filter'] ?? null,
-      'line_filter'    => $_GET['line_filter'] ?? null,
-      'machine_filter' => $_GET['machine_filter'] ?? null,
-      'shift_filter'   => $_GET['shift_filter'] ?? null,
-      'start_date'     => $_GET['start_date'] ?? null,
-      'end_date'       => $_GET['end_date'] ?? null,
-      'limit'          => $limit
-    ]
-  ]);
-
-  while (true) {
-    if (time() - $startTime > $maxRunTime) {
-      sendSSEData('timeout', ['status' => 'timeout', 'message' => 'Maximum execution time reached. Please reconnect.']);
-      break;
-    }
-
-    if (connection_aborted()) break;
-
-    try {
-      $cycleStart     = microtime(true);
-      $performanceLog = [];
-
-      // 1. Main log data
-      $t1 = microtime(true);
-      $oeeDataLog = getOeeDataLog($pdo, $filterConfig['where_sql'], $filterConfig['params'], $limit);
-      $performanceLog['dataLog'] = round((microtime(true) - $t1) * 1000, 2) . 'ms';
-
-      // 2. Summary stats (independent — failure returns zero-filled array)
-      $t2 = microtime(true);
-      try {
-        $stats = getOeeStats($pdo, $filterConfig['where_sql'], $filterConfig['params']);
-      } catch (Exception $statsErr) {
-        error_log("Stats query error: " . $statsErr->getMessage());
-        $stats = ['total_count' => 0, 'avg_overall_oee' => 0, 'overall_oee' => 0,
-                  'availability' => 0, 'performance' => 0, 'quality' => 0,
-                  'active_machines' => 0, 'current_shift_oee' => 0, 'previous_day_oee' => 0];
-      }
-      $performanceLog['stats'] = round((microtime(true) - $t2) * 1000, 2) . 'ms';
-
-      $totalMs = round((microtime(true) - $cycleStart) * 1000, 2);
-      $performanceLog['total'] = $totalMs . 'ms';
-
-      if ($totalMs > 1000) {
-        error_log("[log_oee] Slow cycle detected ({$totalMs}ms): " . json_encode($performanceLog));
-      }
-
-      // Change detection hash
-      $hashData = [
-        'count'      => count($oeeDataLog),
-        'ids'        => array_column($oeeDataLog, 'idx'),
-        'oee_values' => array_map(fn($r) => $r['idx'] . '_' . ($r['oee'] ?? '0'), $oeeDataLog),
-        'stats_core' => [
-          'avg_overall_oee' => $stats['avg_overall_oee'] ?? 0,
-          'active_machines' => $stats['active_machines'] ?? 0,
-          'total_count'     => $stats['total_count'] ?? 0
-        ]
-      ];
-
-      $currentHash = md5(serialize($hashData));
-
-      // [FIX] Only send when data actually changed (removed buggy `|| count(...) > 0`)
-      if ($currentHash !== $lastDataHash) {
-        sendSSEData('oee_data', [
-          'timestamp'   => date('Y-m-d H:i:s'),
-          'stats'       => $stats,
-          'oee_data'    => $oeeDataLog,
-          'data_count'  => count($oeeDataLog),
-          'has_changes' => true,
-          'perf'        => $performanceLog
-        ]);
-        $lastDataHash = $currentHash;
-      } else {
-        sendSSEData('heartbeat', [
-          'timestamp'      => date('Y-m-d H:i:s'),
-          'status'         => 'no_changes',
-          'active_machines' => $stats['active_machines'] ?? 0
-        ]);
-      }
-
+        return (float)($result['shift_avg_oee'] ?? 0);
     } catch (Exception $e) {
-      error_log("Streaming error: " . $e->getMessage());
-      sendSSEData('error', [
-        'status'    => 'error',
-        'message'   => 'Data query error occurred.',
-        'timestamp' => date('Y-m-d H:i:s')
-      ]);
+        error_log("Shift OEE average query error: " . $e->getMessage());
+        return 0;
     }
-
-    sleep(5);
-  }
 }
 
-function handleStreamingError($error) {
-  $logDir  = __DIR__ . '/../../logs';
-  if (!is_dir($logDir)) mkdir($logDir, 0777, true);
-  error_log("[" . date("Y-m-d H:i:s") . "] " . $error . "\n", 3, $logDir . '/log_oee_stream_errors.log');
-  sendSSEData('error', ['status' => 'fatal_error', 'message' => 'Streaming service error occurred.', 'timestamp' => date('Y-m-d H:i:s')]);
+function startStreaming($pdo)
+{
+    $lastDataHash = '';
+    $startTime    = time();
+    $maxRunTime   = 3600;
+
+    $filterConfig = parseFilterParams('do', 'work_date', true, '7 DAY');
+    $limit        = !empty($_GET['limit']) ? (int)$_GET['limit'] : 500;
+
+    sendSSEData('connected', [
+        'status'    => 'connected',
+        'message'   => 'OEE data log streaming started.',
+        'timestamp' => date('Y-m-d H:i:s'),
+        'filters'   => [
+            'factory_filter' => $_GET['factory_filter'] ?? null,
+            'line_filter'    => $_GET['line_filter'] ?? null,
+            'machine_filter' => $_GET['machine_filter'] ?? null,
+            'shift_filter'   => $_GET['shift_filter'] ?? null,
+            'start_date'     => $_GET['start_date'] ?? null,
+            'end_date'       => $_GET['end_date'] ?? null,
+            'limit'          => $limit
+        ]
+    ]);
+
+    while (true) {
+        if (time() - $startTime > $maxRunTime) {
+            sendSSEData('timeout', ['status' => 'timeout', 'message' => 'Maximum execution time reached. Please reconnect.']);
+            break;
+        }
+
+        if (connection_aborted()) break;
+
+        try {
+            $cycleStart     = microtime(true);
+            $performanceLog = [];
+
+            // 1. Main log data
+            $t1 = microtime(true);
+            $oeeDataLog = getOeeDataLog($pdo, $filterConfig['where_sql'], $filterConfig['params'], $limit);
+            $performanceLog['dataLog'] = round((microtime(true) - $t1) * 1000, 2) . 'ms';
+
+            // 2. Summary stats (independent — failure returns zero-filled array)
+            $t2 = microtime(true);
+            try {
+                $stats = getOeeStats($pdo, $filterConfig['where_sql'], $filterConfig['params']);
+            } catch (Exception $statsErr) {
+                error_log("Stats query error: " . $statsErr->getMessage());
+                $stats = [
+                    'total_count' => 0,
+                    'avg_overall_oee' => 0,
+                    'overall_oee' => 0,
+                    'availability' => 0,
+                    'performance' => 0,
+                    'quality' => 0,
+                    'active_machines' => 0,
+                    'current_shift_oee' => 0,
+                    'previous_day_oee' => 0
+                ];
+            }
+            $performanceLog['stats'] = round((microtime(true) - $t2) * 1000, 2) . 'ms';
+
+            $totalMs = round((microtime(true) - $cycleStart) * 1000, 2);
+            $performanceLog['total'] = $totalMs . 'ms';
+
+            if ($totalMs > 1000) {
+                error_log("[log_oee] Slow cycle detected ({$totalMs}ms): " . json_encode($performanceLog));
+            }
+
+            // Change detection hash
+            $hashData = [
+                'count'      => count($oeeDataLog),
+                'ids'        => array_column($oeeDataLog, 'idx'),
+                'oee_values' => array_map(fn($r) => $r['idx'] . '_' . ($r['oee'] ?? '0'), $oeeDataLog),
+                'stats_core' => [
+                    'avg_overall_oee' => $stats['avg_overall_oee'] ?? 0,
+                    'active_machines' => $stats['active_machines'] ?? 0,
+                    'total_count'     => $stats['total_count'] ?? 0
+                ]
+            ];
+
+            $currentHash = md5(serialize($hashData));
+
+            // [FIX] Only send when data actually changed (removed buggy `|| count(...) > 0`)
+            if ($currentHash !== $lastDataHash) {
+                sendSSEData('oee_data', [
+                    'timestamp'   => date('Y-m-d H:i:s'),
+                    'stats'       => $stats,
+                    'oee_data'    => $oeeDataLog,
+                    'data_count'  => count($oeeDataLog),
+                    'has_changes' => true,
+                    'perf'        => $performanceLog
+                ]);
+                $lastDataHash = $currentHash;
+            } else {
+                sendSSEData('heartbeat', [
+                    'timestamp'      => date('Y-m-d H:i:s'),
+                    'status'         => 'no_changes',
+                    'active_machines' => $stats['active_machines'] ?? 0
+                ]);
+            }
+        } catch (Exception $e) {
+            error_log("Streaming error: " . $e->getMessage());
+            sendSSEData('error', [
+                'status'    => 'error',
+                'message'   => 'Data query error occurred.',
+                'timestamp' => date('Y-m-d H:i:s')
+            ]);
+        }
+
+        sleep(5);
+    }
+}
+
+function handleStreamingError($error)
+{
+    $logDir  = __DIR__ . '/../../logs';
+    if (!is_dir($logDir)) mkdir($logDir, 0777, true);
+    error_log("[" . date("Y-m-d H:i:s") . "] " . $error . "\n", 3, $logDir . '/log_oee_stream_errors.log');
+    sendSSEData('error', ['status' => 'fatal_error', 'message' => 'Streaming service error occurred.', 'timestamp' => date('Y-m-d H:i:s')]);
 }
 
 try {
-  if (!$pdo) throw new Exception("Database connection failed");
-  startStreaming($pdo);
+    if (!$pdo) throw new Exception("Database connection failed");
+    startStreaming($pdo);
 } catch (Exception $e) {
-  handleStreamingError($e->getMessage());
+    handleStreamingError($e->getMessage());
 } finally {
-  sendSSEData('disconnected', ['status' => 'disconnected', 'message' => 'OEE data log streaming ended.', 'timestamp' => date('Y-m-d H:i:s')]);
+    sendSSEData('disconnected', ['status' => 'disconnected', 'message' => 'OEE data log streaming ended.', 'timestamp' => date('Y-m-d H:i:s')]);
 }
-?>

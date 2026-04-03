@@ -19,75 +19,75 @@
 
 function findCurrentShift(PDO $pdo, Worktime $worktime, string $factory_idx, string $line_idx, string $current_datetime_str): ?array
 {
-  $current_date = substr($current_datetime_str, 0, 10);
-  $prev_date = date('Y-m-d', strtotime($current_date . ' -1 day'));
-  $current_millis = strtotime($current_datetime_str);
+    $current_date = substr($current_datetime_str, 0, 10);
+    $prev_date = date('Y-m-d', strtotime($current_date . ' -1 day'));
+    $current_millis = strtotime($current_datetime_str);
 
-  // 어제와 오늘 근무 데이터를 가져옵니다.
-  $shifts_data = [];
-  $prev_shifts = $worktime->getDayShift($prev_date, $factory_idx, $line_idx);
-  if ($prev_shifts) {
-    $shifts_data[$prev_date] = $prev_shifts['shift'];
-  }
-  $today_shifts = $worktime->getDayShift($current_date, $factory_idx, $line_idx);
-  if ($today_shifts) {
-    $shifts_data[$current_date] = $today_shifts['shift'];
-  }
-
-  $all_shifts = [];
-  // 가져온 근무 데이터를 순회하며 처리 가능한 형태로 정규화합니다.
-  foreach ($shifts_data as $date => $shifts) {
-    $first_shift_stime_str = '';
-    foreach ($shifts as $shift) {
-      if (empty($shift['available_stime']) || empty($shift['available_etime'])) {
-        continue;
-      }
-
-      // 첫 번째 근무조의 시작 시간을 기준으로 날짜 변경 여부를 판단합니다.
-      if ($first_shift_stime_str === '') {
-        $first_shift_stime_str = $date . ' ' . $shift['available_stime'] . ':00';
-      }
-
-      $work_stime_str = $date . ' ' . $shift['available_stime'] . ':00';
-      $work_etime_str = $date . ' ' . $shift['available_etime'] . ':00';
-
-      // 잔업(over_time)이 있으면 종료 시간에 추가합니다.
-      if ($shift['over_time']) {
-        $work_etime_str = date('Y-m-d H:i:s', strtotime($work_etime_str . ' +' . $shift['over_time'] . ' minutes'));
-      }
-      
-      // 시작 시간이 첫 근무조의 시작 시간보다 이전이면 다음 날로 처리합니다. (야간 근무)
-      if ($first_shift_stime_str > $work_stime_str) {
-        $work_stime_str = date('Y-m-d H:i:s', strtotime($work_stime_str . ' +1 day'));
-      }
-      // 종료 시간이 첫 근무조의 시작 시간보다 이전이거나, 시작 시간보다 종료 시간이 앞서는 경우 다음 날로 처리합니다.
-      if ($first_shift_stime_str > $work_etime_str || $work_stime_str >= $work_etime_str) {
-        $work_etime_str = date('Y-m-d H:i:s', strtotime($work_etime_str . ' +1 day'));
-      }
-
-      // 정규화된 근무 정보를 배열에 추가합니다.
-      $all_shifts[] = [
-        'shift_idx' => $shift['shift_idx'],
-        'shift_name' => 'SHIFT ' . $shift['shift_idx'],
-        'date' => $date,
-        'available_stime' => $shift['available_stime'],
-        'available_etime_orig' => $shift['available_etime'], // OT 미포함 종료시간
-        'available_etime' => substr($work_etime_str, 11, 5), // OT 포함 종료시간
-        'over_time' => $shift['over_time'],
-        'work_stime' => $work_stime_str,
-        'work_etime' => $work_etime_str,
-      ];
+    // 어제와 오늘 근무 데이터를 가져옵니다.
+    $shifts_data = [];
+    $prev_shifts = $worktime->getDayShift($prev_date, $factory_idx, $line_idx);
+    if ($prev_shifts) {
+        $shifts_data[$prev_date] = $prev_shifts['shift'];
     }
-  }
-
-  // 모든 근무조 중에서 현재 시간에 해당하는 근무조를 찾습니다.
-  foreach ($all_shifts as $shift) {
-    if (strtotime($shift['work_stime']) <= $current_millis && $current_millis < strtotime($shift['work_etime'])) {
-      return $shift;
+    $today_shifts = $worktime->getDayShift($current_date, $factory_idx, $line_idx);
+    if ($today_shifts) {
+        $shifts_data[$current_date] = $today_shifts['shift'];
     }
-  }
 
-  return null;
+    $all_shifts = [];
+    // 가져온 근무 데이터를 순회하며 처리 가능한 형태로 정규화합니다.
+    foreach ($shifts_data as $date => $shifts) {
+        $first_shift_stime_str = '';
+        foreach ($shifts as $shift) {
+            if (empty($shift['available_stime']) || empty($shift['available_etime'])) {
+                continue;
+            }
+
+            // 첫 번째 근무조의 시작 시간을 기준으로 날짜 변경 여부를 판단합니다.
+            if ($first_shift_stime_str === '') {
+                $first_shift_stime_str = $date . ' ' . $shift['available_stime'] . ':00';
+            }
+
+            $work_stime_str = $date . ' ' . $shift['available_stime'] . ':00';
+            $work_etime_str = $date . ' ' . $shift['available_etime'] . ':00';
+
+            // 잔업(over_time)이 있으면 종료 시간에 추가합니다.
+            if ($shift['over_time']) {
+                $work_etime_str = date('Y-m-d H:i:s', strtotime($work_etime_str . ' +' . $shift['over_time'] . ' minutes'));
+            }
+
+            // 시작 시간이 첫 근무조의 시작 시간보다 이전이면 다음 날로 처리합니다. (야간 근무)
+            if ($first_shift_stime_str > $work_stime_str) {
+                $work_stime_str = date('Y-m-d H:i:s', strtotime($work_stime_str . ' +1 day'));
+            }
+            // 종료 시간이 첫 근무조의 시작 시간보다 이전이거나, 시작 시간보다 종료 시간이 앞서는 경우 다음 날로 처리합니다.
+            if ($first_shift_stime_str > $work_etime_str || $work_stime_str >= $work_etime_str) {
+                $work_etime_str = date('Y-m-d H:i:s', strtotime($work_etime_str . ' +1 day'));
+            }
+
+            // 정규화된 근무 정보를 배열에 추가합니다.
+            $all_shifts[] = [
+                'shift_idx' => $shift['shift_idx'],
+                'shift_name' => 'SHIFT ' . $shift['shift_idx'],
+                'date' => $date,
+                'available_stime' => $shift['available_stime'],
+                'available_etime_orig' => $shift['available_etime'], // OT 미포함 종료시간
+                'available_etime' => substr($work_etime_str, 11, 5), // OT 포함 종료시간
+                'over_time' => $shift['over_time'],
+                'work_stime' => $work_stime_str,
+                'work_etime' => $work_etime_str,
+            ];
+        }
+    }
+
+    // 모든 근무조 중에서 현재 시간에 해당하는 근무조를 찾습니다.
+    foreach ($all_shifts as $shift) {
+        if (strtotime($shift['work_stime']) <= $current_millis && $current_millis < strtotime($shift['work_etime'])) {
+            return $shift;
+        }
+    }
+
+    return null;
 }
 
 /**
@@ -100,60 +100,60 @@ function findCurrentShift(PDO $pdo, Worktime $worktime, string $factory_idx, str
  */
 function calculateWorktimeMetrics(array $current_shift_info, array $all_shifts_on_date, string $current_datetime_str): array
 {
-  $metrics = [];
-  $current_millis = strtotime($current_datetime_str);
-  $shift_details = $all_shifts_on_date['shift'][$current_shift_info['shift_idx']];
+    $metrics = [];
+    $current_millis = strtotime($current_datetime_str);
+    $shift_details = $all_shifts_on_date['shift'][$current_shift_info['shift_idx']];
 
-  // --- 기본 정보 계산 ---
-  $metrics['planned_work_hours_str'] = $current_shift_info['available_stime'] . ' ~ ' . $current_shift_info['available_etime'];
-  $metrics['over_time_seconds'] = $current_shift_info['over_time'] * 60;
+    // --- 기본 정보 계산 ---
+    $metrics['planned_work_hours_str'] = $current_shift_info['available_stime'] . ' ~ ' . $current_shift_info['available_etime'];
+    $metrics['over_time_seconds'] = $current_shift_info['over_time'] * 60;
 
-  // --- 경과 시간 계산 ---
-  $passed_work_seconds = 0;
-  $work_start_millis = strtotime($current_shift_info['work_stime']);
-  if ($current_millis >= $work_start_millis) {
-    $passed_work_seconds = $current_millis - $work_start_millis;
-  }
-  $metrics['passed_work_seconds'] = $passed_work_seconds;
-
-  // --- 휴식 시간 계산 (경과 및 전체) ---
-  $total_passed_break_seconds = 0;
-  $total_break_seconds = 0;
-  $first_shift_stime_str = $current_shift_info['date'] . ' ' . $all_shifts_on_date['shift'][array_key_first($all_shifts_on_date['shift'])]['available_stime'] . ':00';
-
-  for ($i = 1; $i <= 5; $i++) {
-    $stime_key = 'planned' . $i . '_stime';
-    $etime_key = 'planned' . $i . '_etime';
-
-    if (!empty($shift_details[$stime_key]) && !empty($shift_details[$etime_key])) {
-      $break_s_str = $current_shift_info['date'] . ' ' . $shift_details[$stime_key] . ':00';
-      $break_e_str = $current_shift_info['date'] . ' ' . $shift_details[$etime_key] . ':00';
-
-      if ($first_shift_stime_str > $break_s_str) $break_s_str = date('Y-m-d H:i:s', strtotime($break_s_str . ' +1 day'));
-      if ($first_shift_stime_str > $break_e_str || $break_s_str >= $break_e_str) $break_e_str = date('Y-m-d H:i:s', strtotime($break_e_str . ' +1 day'));
-
-      $break_s_millis = strtotime($break_s_str);
-      $break_e_millis = strtotime($break_e_str);
-
-      $total_break_seconds += ($break_e_millis - $break_s_millis);
-
-      if ($current_millis >= $break_e_millis) {
-        $total_passed_break_seconds += ($break_e_millis - $break_s_millis);
-      } elseif ($current_millis > $break_s_millis && $current_millis < $break_e_millis) {
-        $total_passed_break_seconds += ($current_millis - $break_s_millis);
-      }
+    // --- 경과 시간 계산 ---
+    $passed_work_seconds = 0;
+    $work_start_millis = strtotime($current_shift_info['work_stime']);
+    if ($current_millis >= $work_start_millis) {
+        $passed_work_seconds = $current_millis - $work_start_millis;
     }
-  }
-  $metrics['passed_break_seconds'] = $total_passed_break_seconds;
+    $metrics['passed_work_seconds'] = $passed_work_seconds;
 
-  // --- 전체 시간 요약 계산 ---
-  $total_work_seconds = strtotime($current_shift_info['work_etime']) - $work_start_millis;
-  $metrics['total_work_minutes'] = round($total_work_seconds / 60);
-  $metrics['total_break_minutes'] = round($total_break_seconds / 60);
-  $metrics['net_work_minutes'] = $metrics['total_work_minutes'] - $metrics['total_break_minutes'];
-  $metrics['actual_passed_work_seconds'] = $passed_work_seconds - $total_passed_break_seconds;
+    // --- 휴식 시간 계산 (경과 및 전체) ---
+    $total_passed_break_seconds = 0;
+    $total_break_seconds = 0;
+    $first_shift_stime_str = $current_shift_info['date'] . ' ' . $all_shifts_on_date['shift'][array_key_first($all_shifts_on_date['shift'])]['available_stime'] . ':00';
 
-  return $metrics;
+    for ($i = 1; $i <= 5; $i++) {
+        $stime_key = 'planned' . $i . '_stime';
+        $etime_key = 'planned' . $i . '_etime';
+
+        if (!empty($shift_details[$stime_key]) && !empty($shift_details[$etime_key])) {
+            $break_s_str = $current_shift_info['date'] . ' ' . $shift_details[$stime_key] . ':00';
+            $break_e_str = $current_shift_info['date'] . ' ' . $shift_details[$etime_key] . ':00';
+
+            if ($first_shift_stime_str > $break_s_str) $break_s_str = date('Y-m-d H:i:s', strtotime($break_s_str . ' +1 day'));
+            if ($first_shift_stime_str > $break_e_str || $break_s_str >= $break_e_str) $break_e_str = date('Y-m-d H:i:s', strtotime($break_e_str . ' +1 day'));
+
+            $break_s_millis = strtotime($break_s_str);
+            $break_e_millis = strtotime($break_e_str);
+
+            $total_break_seconds += ($break_e_millis - $break_s_millis);
+
+            if ($current_millis >= $break_e_millis) {
+                $total_passed_break_seconds += ($break_e_millis - $break_s_millis);
+            } elseif ($current_millis > $break_s_millis && $current_millis < $break_e_millis) {
+                $total_passed_break_seconds += ($current_millis - $break_s_millis);
+            }
+        }
+    }
+    $metrics['passed_break_seconds'] = $total_passed_break_seconds;
+
+    // --- 전체 시간 요약 계산 ---
+    $total_work_seconds = strtotime($current_shift_info['work_etime']) - $work_start_millis;
+    $metrics['total_work_minutes'] = round($total_work_seconds / 60);
+    $metrics['total_break_minutes'] = round($total_break_seconds / 60);
+    $metrics['net_work_minutes'] = $metrics['total_work_minutes'] - $metrics['total_break_minutes'];
+    $metrics['actual_passed_work_seconds'] = $passed_work_seconds - $total_passed_break_seconds;
+
+    return $metrics;
 }
 
 /**
@@ -164,88 +164,8 @@ function calculateWorktimeMetrics(array $current_shift_info, array $all_shifts_o
  */
 function secondsToHis(int $seconds): string
 {
-  $h = floor($seconds / 3600);
-  $m = floor(($seconds % 3600) / 60);
-  $s = $seconds % 60;
-  return sprintf('%dh %dm %ds', $h, $m, $s);
+    $h = floor($seconds / 3600);
+    $m = floor(($seconds % 3600) / 60);
+    $s = $seconds % 60;
+    return sprintf('%dh %dm %ds', $h, $m, $s);
 }
-/* 
-// --- 스크립트 실행 시작 ---
-
-$today = date('Y-m-d H:i:s');
-// $factory_idx = '101'; // 테스트용 공장 ID
-$factory_idx = ''; // 테스트용 공장 ID
-$line_idx = '101';  // 테스트용 라인 ID
-
-$worktime = new Worktime($pdo);
-
-// 현재 시간에 해당하는 근무조 정보를 찾습니다.
-$current_shift_info = findCurrentShift($pdo, $worktime, $factory_idx, $line_idx, $today);
-
-if ($current_shift_info) {
-  // 근무조를 찾았으면, 해당 근무조가 속한 날짜의 모든 근무 정보를 가져옵니다.
-  $all_shifts_on_date = $worktime->getDayShift($current_shift_info['date'], $factory_idx, $line_idx);
-  
-  // 근무 시간 관련 지표들을 계산합니다.
-  $metrics = calculateWorktimeMetrics($current_shift_info, $all_shifts_on_date, $today);
-
-  // --- 결과 출력부 ---
-  echo '결과';
-  echo '<br />';
-
-  echo '조회 시간 : ' . $today;
-  echo '<br />';
-
-  echo '조회 기준 shift date : ' . $current_shift_info['date'];
-  echo '<br />';
-
-  echo '조회 기준 shift idx : ' . $current_shift_info['shift_idx'];
-  echo '<br />';
-
-  echo '조회 기준 계획한 근무시간(not include over_time) : ' . $current_shift_info['available_stime'] . ' ~ ' . $current_shift_info['available_etime_orig'];
-  echo '<br />';
-
-  echo '조회 기준 계획한 over_time : ' . $metrics['over_time_seconds'] . ' sec';
-  echo '<br />';
-
-  echo '조회 기준 계획한 근무시간(include over_time) : ' . $metrics['planned_work_hours_str'];
-  echo '<br />';
-
-  echo '조회 기준 경과한 근무시간(sec) : ' . $metrics['passed_work_seconds'];
-  echo '<br />';
-
-  echo '조회 기준 경과한 근무시간(h:i:s) : ' . secondsToHis($metrics['passed_work_seconds']);  // 예) 1h 23m 6s
-  echo '<br />';
-
-  echo '조회 기준 경과한 휴식시간(sec) : ' . $metrics['passed_break_seconds'];
-  echo '<br />';
-
-  echo '<br />';
-  echo '--- 추가 정보 ---';
-  echo '<br />';
-
-  echo '총 계획한 근무 시간 (분) : ' . $metrics['total_work_minutes'];
-  echo '<br />';
-
-  echo '총 계획한 휴식 시간 (분) : ' . $metrics['total_break_minutes'];
-  echo '<br />';
-
-  echo '순수 근무 시간 (분) : ' . $metrics['net_work_minutes'];
-  echo '<br />';
-
-  echo '조회 기준 경과한 실제 근무 시간(sec) : ' . $metrics['actual_passed_work_seconds'];
-  echo '<br />';
-
-  echo '조회 기준 경과한 실제 근무 시간(h:i:s) : ' . secondsToHis($metrics['actual_passed_work_seconds']);  // 예) 1h 23m 6s
-  echo '<br />';
-} else {
-  // 현재 진행중인 근무조를 찾지 못한 경우
-  echo '<br />';
-  echo '결과';
-  echo '<br />';
-  echo '조회 시점 시간 : ' . $today;
-  echo '<br />';
-  echo '현재 조회된 factory_idx, line_idx에 해당하는 근무시간 정보가 없습니다. 또는 현재 진행중인 shift를 찾을 수 없습니다.';
-  echo '<br />';
-}
- */

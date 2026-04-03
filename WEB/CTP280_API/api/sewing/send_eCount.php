@@ -13,8 +13,10 @@ $mac = $apiHelper->validateAndProcessMac($_REQUEST['mac'] ?? '');
 // 파라미터 수신
 $actual_qty = (int)   trim($_REQUEST['actual_qty'] ?? 0);
 $ct         = (float) trim($_REQUEST['ct']         ?? 0);
+$ct         = $ct * 1000;
 $tb         = (int)   trim($_REQUEST['tb']         ?? 0);
 $mrt        = (float) trim($_REQUEST['mrt']        ?? 0);
+$mrt        = $mrt * 1000;
 
 // 범위 유효성 검사
 if ($actual_qty < 0 || $actual_qty > 10000) {
@@ -23,10 +25,16 @@ if ($actual_qty < 0 || $actual_qty > 10000) {
 if ($tb < 0 || $tb > 1000) {
     jsonReturn(['code' => '99', 'msg' => 'tb out of range']);
 }
-if ($ct < 0 || $ct > 3600) {
+/* if ($ct < 0 || $ct > 3600) {
+    jsonReturn(['code' => '99', 'msg' => 'ct out of range']);
+} */
+if ($ct < 0 || $ct > 3600000) {
     jsonReturn(['code' => '99', 'msg' => 'ct out of range']);
 }
-if ($mrt < 0 || $mrt > 3600) {
+/* if ($mrt < 0 || $mrt > 3600) {
+    jsonReturn(['code' => '99', 'msg' => 'mrt out of range']);
+} */
+if ($mrt < 0 || $mrt > 3600000) {
     jsonReturn(['code' => '99', 'msg' => 'mrt out of range']);
 }
 

@@ -1,8 +1,17 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 
-// 파일 업로드를 위한 PHP 설정 조정
+/**
+ * proc/design_process.php — 디자인 공정(Design Process) 관리 REST API
+ * GET    : 목록/단건 조회, 공장·라인 셀렉트 옵션, 중복 체크
+ * POST   : 공정 추가 (SOP 파일 업로드 포함)
+ * PUT    : 공정 수정 (SOP 파일 교체 포함)
+ * DELETE : 공정 삭제 (SOP 파일 함께 삭제)
+ *
+ * SOP(Standard Operating Procedure) 파일:
+ * - JPG/JPEG/PNG 형식, 최대 10MB
+ * - upload/sop/ 디렉토리에 저장
+ * - 파일명: 원본명_YYYYMMDDHHIISS.확장자
+ */
 ini_set('upload_max_filesize', '10M');
 ini_set('post_max_size', '20M');
 ini_set('max_execution_time', '300');
@@ -13,148 +22,108 @@ ini_set('memory_limit', '128M');
  * Handles C.R.U.D operations, file upload and Excel export functionality.
  */
 
-// 공통 라이브러리 및 설정 파일 로드
 require_once(__DIR__ . '/../../../lib/config.php');
 require_once(__DIR__ . '/../../../lib/db.php');
 
-
+// SOP 파일 업로드 경로 상수 정의
+define('UPLOAD_SOP_DIR', __DIR__ . '/../../../upload/sop/');
 
 /**
  * 이미지 파일 업로드 처리 함수
- * JPG, JPEG, PNG 파일만 허용하며, 업로드된 파일을 new/upload/sop 폴더에 저장합니다.
+ * JPG, JPEG, PNG 파일만 허용하며, 업로드된 파일을 upload/sop 폴더에 저장합니다.
  *
- * @param array $file $_FILES 배열의 파일 정보
- * @return array 업로드 결과 (success: boolean, filename: string|null, message: string)
+ * 검증 순서:
+ * 1) 파일 없음 → 빈 파일로 간주, 성공 반환 (선택 필드이므로)
+ * 2) 업로드 에러 코드 확인 (서버 설정, 부분 업로드 등)
+ * 3) 파일 크기 제한 (10MB)
+ * 4) MIME 타입 검사 (finfo 사용, 확장자 위조 방지)
+ * 5) 파일 확장자 검사 (이중 체크)
+ * 6) 업로드 디렉토리 존재 여부 및 쓰기 권한 확인
+ * 7) 파일명: 원본명_타임스탬프.확장자 형식으로 저장
+ *
+ * @param array $file $_FILES['file_upload'] 배열
+ * @return array ['success' => bool, 'filename' => string|null, 'message' => string]
  */
-function handleFileUpload($file) {
-  // 디버깅 로그 추가
-  error_log("=== File Upload Debug Info ===");
-  error_log("File info: " . print_r($file, true));
-  error_log("POST size: " . strlen(serialize($_POST)) . " bytes");
-  error_log("FILES size: " . (isset($_FILES) ? strlen(serialize($_FILES)) : 0) . " bytes");
-  error_log("php.ini settings - upload_max_filesize: " . ini_get('upload_max_filesize'));
-  error_log("php.ini settings - post_max_size: " . ini_get('post_max_size'));
-
-  // 파일이 업로드되지 않은 경우
-  if (empty($file) || $file['error'] === UPLOAD_ERR_NO_FILE) {
-    error_log("No file uploaded");
-    return ['success' => true, 'filename' => null, 'message' => 'No file uploaded'];
-  }
-
-  // 업로드 오류 확인
-  if ($file['error'] !== UPLOAD_ERR_OK) {
-    $errorMessages = [
-      UPLOAD_ERR_INI_SIZE => '파일이 서버 설정 최대 크기(' . ini_get('upload_max_filesize') . ')를 초과했습니다.',
-      UPLOAD_ERR_FORM_SIZE => '파일이 폼에서 지정한 최대 크기를 초과했습니다.',
-      UPLOAD_ERR_PARTIAL => '파일이 부분적으로만 업로드되었습니다.',
-      UPLOAD_ERR_NO_TMP_DIR => '임시 폴더가 없습니다.',
-      UPLOAD_ERR_CANT_WRITE => '디스크에 파일을 쓸 수 없습니다.',
-      UPLOAD_ERR_EXTENSION => 'PHP 확장에 의해 파일 업로드가 중단되었습니다.'
-    ];
-    $message = $errorMessages[$file['error']] ?? '알 수 없는 업로드 오류가 발생했습니다. (Error code: ' . $file['error'] . ')';
-    error_log("Upload error: " . $message);
-    return ['success' => false, 'filename' => null, 'message' => $message];
-  }
-
-  // 파일 크기 검증 (10MB = 10 * 1024 * 1024 bytes)
-  $maxSize = 10 * 1024 * 1024;
-  error_log("File size: " . $file['size'] . " bytes, Max allowed: " . $maxSize . " bytes");
-  if ($file['size'] > $maxSize) {
-    return ['success' => false, 'filename' => null, 'message' => '파일 크기가 10MB를 초과합니다. (현재: ' . round($file['size'] / 1024 / 1024, 2) . 'MB)'];
-  }
-
-  // 파일 MIME 타입 검증
-  $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-  $finfo = finfo_open(FILEINFO_MIME_TYPE);
-  $mimeType = finfo_file($finfo, $file['tmp_name']);
-  finfo_close($finfo);
-
-  error_log("MIME Type: " . $mimeType);
-  if (!in_array($mimeType, $allowedTypes)) {
-    return ['success' => false, 'filename' => null, 'message' => 'JPG, JPEG, PNG 파일만 업로드 가능합니다. (현재: ' . $mimeType . ')'];
-  }
-
-  // 파일 확장자 검증
-  $allowedExtensions = ['jpg', 'jpeg', 'png'];
-  $fileExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-  error_log("File extension: " . $fileExtension);
-  if (!in_array($fileExtension, $allowedExtensions)) {
-    return ['success' => false, 'filename' => null, 'message' => '잘못된 파일 확장자입니다. (현재: ' . $fileExtension . ')'];
-  }
-
-  // 업로드 폴더 경로 설정
-  $uploadDir = __DIR__ . '/../../../upload/sop/';
-  error_log("Upload directory: " . $uploadDir);
-
-  // 업로드 폴더가 없으면 생성
-  if (!file_exists($uploadDir)) {
-    error_log("Creating upload directory...");
-    if (!mkdir($uploadDir, 0755, true)) {
-      error_log("Failed to create upload directory");
-      return ['success' => false, 'filename' => null, 'message' => '업로드 폴더를 생성할 수 없습니다.'];
+function handleFileUpload(array $file): array
+{
+    if (empty($file) || $file['error'] === UPLOAD_ERR_NO_FILE) {
+        return ['success' => true, 'filename' => null, 'message' => 'No file uploaded'];
     }
-    error_log("Upload directory created successfully");
-  }
 
-  // 폴더 쓰기 권한 확인
-  if (!is_writable($uploadDir)) {
-    error_log("Upload directory is not writable");
-    return ['success' => false, 'filename' => null, 'message' => '업로드 폴더에 쓰기 권한이 없습니다.'];
-  }
+    // PHP 표준 업로드 에러 코드별 한국어 메시지 매핑
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        $errorMessages = [
+            UPLOAD_ERR_INI_SIZE   => '파일이 서버 설정 최대 크기(' . ini_get('upload_max_filesize') . ')를 초과했습니다.',
+            UPLOAD_ERR_FORM_SIZE  => '파일이 폼에서 지정한 최대 크기를 초과했습니다.',
+            UPLOAD_ERR_PARTIAL    => '파일이 부분적으로만 업로드되었습니다.',
+            UPLOAD_ERR_NO_TMP_DIR => '임시 폴더가 없습니다.',
+            UPLOAD_ERR_CANT_WRITE => '디스크에 파일을 쓸 수 없습니다.',
+            UPLOAD_ERR_EXTENSION  => 'PHP 확장에 의해 파일 업로드가 중단되었습니다.',
+        ];
+        $message = $errorMessages[$file['error']] ?? '알 수 없는 업로드 오류가 발생했습니다. (Error code: ' . $file['error'] . ')';
+        return ['success' => false, 'filename' => null, 'message' => $message];
+    }
 
-  // 중복 파일명 방지를 위해 타임스탬프 추가
-  $originalName = pathinfo($file['name'], PATHINFO_FILENAME);
-  $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-  $timestamp = date('YmdHis');
-  $newFileName = $originalName . '_' . $timestamp . '.' . $extension;
-  $uploadPath = $uploadDir . $newFileName;
+    // 10MB 크기 제한 확인
+    if ($file['size'] > 10 * 1024 * 1024) {
+        return ['success' => false, 'filename' => null, 'message' => '파일 크기가 10MB를 초과합니다. (현재: ' . round($file['size'] / 1024 / 1024, 2) . 'MB)'];
+    }
 
-  error_log("Final upload path: " . $uploadPath);
-  error_log("Temp file path: " . $file['tmp_name']);
-  error_log("Temp file exists: " . (file_exists($file['tmp_name']) ? 'yes' : 'no'));
+    // MIME 타입 검사 (실제 파일 내용 기반, 확장자 위조 방지)
+    $finfo    = finfo_open(FILEINFO_MIME_TYPE);
+    $mimeType = finfo_file($finfo, $file['tmp_name']);
+    finfo_close($finfo);
 
-  // 파일을 최종 경로로 이동
-  if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-    error_log("File uploaded successfully: " . $newFileName);
-    return ['success' => true, 'filename' => $newFileName, 'message' => '파일 업로드 성공'];
-  } else {
-    error_log("Failed to move uploaded file");
-    return ['success' => false, 'filename' => null, 'message' => '파일 업로드에 실패했습니다. 서버 로그를 확인해주세요.'];
-  }
+    $allowedTypes      = ['image/jpeg', 'image/jpg', 'image/png'];
+    $allowedExtensions = ['jpg', 'jpeg', 'png'];
+    $fileExtension     = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+    if (!in_array($mimeType, $allowedTypes)) {
+        return ['success' => false, 'filename' => null, 'message' => 'Only JPG, JPEG, and PNG files can be uploaded. (Current: ' . $mimeType . ')'];
+    }
+    if (!in_array($fileExtension, $allowedExtensions)) {
+        return ['success' => false, 'filename' => null, 'message' => 'Invalid file extension. (Current: ' . $fileExtension . ')'];
+    }
+
+    // 업로드 디렉토리 생성 및 쓰기 권한 확인
+    if (!file_exists(UPLOAD_SOP_DIR) && !mkdir(UPLOAD_SOP_DIR, 0755, true)) {
+        return ['success' => false, 'filename' => null, 'message' => 'Unable to create upload folder.'];
+    }
+    if (!is_writable(UPLOAD_SOP_DIR)) {
+        return ['success' => false, 'filename' => null, 'message' => 'You do not have write permission for the upload folder.'];
+    }
+
+    // 타임스탬프 접미어로 파일명 충돌 방지
+    $originalName = pathinfo($file['name'], PATHINFO_FILENAME);
+    $newFileName  = $originalName . '_' . date('YmdHis') . '.' . $fileExtension;
+    $uploadPath   = UPLOAD_SOP_DIR . $newFileName;
+
+    if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+        return ['success' => true, 'filename' => $newFileName, 'message' => 'File upload successful'];
+    }
+    return ['success' => false, 'filename' => null, 'message' => 'The file upload failed. Please check the server logs.'];
 }
 
-
-// API 응답을 JSON 형식으로 설정
 header('Content-Type: application/json');
 
-// 디버깅: 요청 정보 로깅
-error_log("=== Request Debug Info ===");
-error_log("Request Method: " . $_SERVER['REQUEST_METHOD']);
-error_log("Content Length: " . ($_SERVER['CONTENT_LENGTH'] ?? 'Not set'));
-error_log("Content Type: " . ($_SERVER['CONTENT_TYPE'] ?? 'Not set'));
-error_log("POST data count: " . count($_POST));
-error_log("FILES data count: " . count($_FILES));
-error_log("POST empty: " . (empty($_POST) ? 'yes' : 'no'));
-error_log("FILES empty: " . (empty($_FILES) ? 'yes' : 'no'));
-
-// HTTP 요청 메서드를 확인
+// HTML Form의 PUT 불가 문제를 _method 필드로 우회
 $method = $_SERVER['REQUEST_METHOD'];
-
-// POST 요청에서 _method 필드가 있는 경우 해당 값으로 메서드를 재정의 (HTML 폼에서 PUT, DELETE 지원)
 if ($method === 'POST' && isset($_POST['_method'])) {
     $method = strtoupper($_POST['_method']);
-    error_log("Method overridden to: " . $method);
 }
 
+// HTTP 메서드 및 'for' 파라미터에 따라 처리 함수 분기
 try {
-    // 요청 메서드에 따라 적절한 함수 호출
     switch ($method) {
         case 'GET':
             if (isset($_GET['for']) && $_GET['for'] === 'check-duplicate') {
+                // 공장+라인 조합 내 공정명 중복 여부 확인
                 checkDuplicateDesignProcess($pdo);
             } elseif (isset($_GET['id'])) {
+                // 특정 idx 공정 단건 조회
                 getDesignProcess($pdo);
             } else {
+                // 공정 목록 조회 (공장/라인 셀렉트 옵션 포함)
                 getDesignProcesses($pdo);
             }
             break;
@@ -168,102 +137,87 @@ try {
             deleteDesignProcess($pdo);
             break;
         default:
-            http_response_code(405); // Method Not Allowed
+            http_response_code(405);
             echo json_encode(['success' => false, 'message' => 'Method Not Allowed']);
             break;
     }
 } catch (PDOException $e) {
-    // 데이터베이스 관련 예외 처리
-    http_response_code(500); // Internal Server Error
+    http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
 } catch (Exception $e) {
-    // 기타 예외 처리
-    http_response_code(500); // Internal Server Error
+    http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'An unexpected error occurred: ' . $e->getMessage()]);
 }
 
 
 /**
- * 목록 조회(페이지네이션)와 전체 조회(엑셀)에 사용될 쿼리 파라미터를 파싱하고 유효성을 검사합니다.
- * @return array 정렬 및 필터링 조건 배열
+ * GET 파라미터에서 목록 조회 조건을 파싱하여 반환
+ * - factory_filter, line_filter: 공장/라인별 필터
+ * - search: design_process, model_name, factory_name, line_name 대상 LIKE 검색
  */
-function parse_design_process_list_params() {
-    // 정렬 파라미터
+function parse_design_process_list_params(): array
+{
     $sort_column = $_GET['sort'] ?? 'dp.design_process';
-    $sort_order = strtoupper($_GET['order'] ?? 'ASC');
+    $sort_order  = strtoupper($_GET['order'] ?? 'ASC');
 
-    // SQL Injection 방지를 위해 정렬 가능한 컬럼을 화이트리스트로 관리
     $valid_columns = ['dp.idx', 'dp.design_process', 'dp.model_name', 'dp.std_mc_needed', 'dp.fname', 'dp.status', 'dp.remark', 'f.factory_name', 'l.line_name'];
-    if (!in_array($sort_column, $valid_columns)) {
-        $sort_column = 'dp.design_process'; // 기본값
-    }
-    if (!in_array($sort_order, ['ASC', 'DESC'])) {
-        $sort_order = 'ASC'; // 기본값
-    }
+    if (!in_array($sort_column, $valid_columns)) $sort_column = 'dp.design_process';
+    if (!in_array($sort_order, ['ASC', 'DESC']))  $sort_order  = 'ASC';
 
-    // 필터링 파라미터
-    $status_filter = $_GET['status_filter'] ?? '';
+    $status_filter  = $_GET['status_filter']  ?? '';
     $factory_filter = $_GET['factory_filter'] ?? '';
-    $line_filter = $_GET['line_filter'] ?? '';
-    $search_query = trim($_GET['search'] ?? '');
+    $line_filter    = $_GET['line_filter']    ?? '';
+    $search_query   = trim($_GET['search']    ?? '');
 
-    // WHERE 절 구성
     $where_conditions = [];
-    $params = [];
+    $params           = [];
 
     if (!empty($status_filter)) {
         $where_conditions[] = 'dp.status = ?';
         $params[] = $status_filter;
     }
-
     if (!empty($factory_filter)) {
         $where_conditions[] = 'dp.factory_idx = ?';
         $params[] = $factory_filter;
     }
-
     if (!empty($line_filter)) {
         $where_conditions[] = 'dp.line_idx = ?';
         $params[] = $line_filter;
     }
 
-    // 검색 파라미터 추가 (design_process, model_name, factory_name, line_name에서 검색)
+    // 공정명, 모델명, 공장명, 라인명 중 하나라도 일치하면 검색 결과에 포함
     if (!empty($search_query)) {
         $where_conditions[] = '(dp.design_process LIKE ? OR dp.model_name LIKE ? OR f.factory_name LIKE ? OR l.line_name LIKE ?)';
-        $search_param = '%' . $search_query . '%';
-        $params[] = $search_param;
-        $params[] = $search_param;
-        $params[] = $search_param;
-        $params[] = $search_param;
+        $p = '%' . $search_query . '%';
+        $params = array_merge($params, [$p, $p, $p, $p]);
     }
 
-    $where_sql = '';
-    if (count($where_conditions) > 0) {
-        $where_sql = ' WHERE ' . implode(' AND ', $where_conditions);
-    }
+    $where_sql = $where_conditions ? ' WHERE ' . implode(' AND ', $where_conditions) : '';
 
-    return [
-        'where_sql' => $where_sql,
-        'params' => $params,
-        'sort_column' => $sort_column,
-        'sort_order' => $sort_order
-    ];
+    return ['where_sql' => $where_sql, 'params' => $params, 'sort_column' => $sort_column, 'sort_order' => $sort_order];
 }
 
 /**
- * 모든 design_process 목록을 조회하여 JSON으로 반환합니다.
- * 정렬, 페이지네이션, 필터링 지원.
- * @param PDO $pdo PDO 객체
+ * 공정 목록 조회 또는 셀렉트 옵션 반환
+ *
+ * 'for' 파라미터에 따른 분기:
+ * - 'factories': 활성 공장 목록 반환 (드롭다운용)
+ * - 'lines': 활성 라인 목록 반환 (factory_id 필터 지원)
+ * - 없음: 공정 목록 조회 (페이징, 필터, 정렬, 공장/라인명 포함)
  */
-function getDesignProcesses(PDO $pdo) {
-    // Factory/Line 목록 조회인 경우
+function getDesignProcesses(PDO $pdo): void
+{
     if (isset($_GET['for'])) {
         $for = $_GET['for'];
+        // 공장 셀렉트 옵션 반환 (활성 공장만)
         if ($for === 'factories') {
             $stmt = $pdo->prepare("SELECT idx, factory_name FROM info_factory WHERE status = 'Y' ORDER BY factory_name ASC");
             $stmt->execute();
             echo json_encode(['success' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
             return;
-        } elseif ($for === 'lines') {
+        }
+        // 라인 셀렉트 옵션 반환 (factory_id가 있으면 해당 공장의 라인만)
+        if ($for === 'lines') {
             $factory_id = $_GET['factory_id'] ?? '';
             if ($factory_id) {
                 $stmt = $pdo->prepare("SELECT idx, line_name FROM info_line WHERE factory_idx = ? AND status = 'Y' ORDER BY line_name ASC");
@@ -277,142 +231,113 @@ function getDesignProcesses(PDO $pdo) {
         }
     }
 
-    $query_conditions = parse_design_process_list_params();
-    $where_sql = $query_conditions['where_sql'];
-    $params = $query_conditions['params'];
-    $sort_column = $query_conditions['sort_column'];
-    $sort_order = $query_conditions['sort_order'];
+    // 공정 목록 조회: FROM 절을 공유하여 COUNT와 SELECT를 일관성 있게 처리
+    $cond       = parse_design_process_list_params();
+    $where_sql  = $cond['where_sql'];
+    $params     = $cond['params'];
+    $sort_col   = $cond['sort_column'];
+    $sort_order = $cond['sort_order'];
 
-    // 페이지네이션 파라미터
-    $page = (int)($_GET['page'] ?? 1);
-    $limit = (int)($_GET['limit'] ?? 10);
+    $page   = (int)($_GET['page']  ?? 1);
+    $limit  = (int)($_GET['limit'] ?? 10);
     $offset = ($page - 1) * $limit;
 
-    // 전체 레코드 수 계산 (필터링 적용)
-    $total_stmt = $pdo->prepare("
-        SELECT COUNT(*)
-        FROM info_design_process dp
+    // FROM/JOIN/WHERE를 공유하여 COUNT와 SELECT 일관성 유지
+    $base_from = "FROM info_design_process dp
         LEFT JOIN info_factory f ON dp.factory_idx = f.idx
-        LEFT JOIN info_line l ON dp.line_idx = l.idx
-        {$where_sql}
-    ");
+        LEFT JOIN info_line    l ON dp.line_idx    = l.idx
+        {$where_sql}";
+
+    $total_stmt = $pdo->prepare("SELECT COUNT(*) {$base_from}");
     $total_stmt->execute($params);
     $total_records = (int)$total_stmt->fetchColumn();
 
-    // 현재 페이지에 해당하는 데이터 조회 (필터링, 정렬, 페이지네이션 적용)
-    $sql = "
-        SELECT
-            dp.idx,
-            dp.design_process,
-            dp.model_name,
-            dp.std_mc_needed,
-            dp.fname,
-            dp.status,
-            dp.remark,
-            dp.factory_idx,
-            dp.line_idx,
-            f.factory_name,
-            l.line_name
-        FROM info_design_process dp
-        LEFT JOIN info_factory f ON dp.factory_idx = f.idx
-        LEFT JOIN info_line l ON dp.line_idx = l.idx
-        {$where_sql}
-        ORDER BY {$sort_column} {$sort_order}
-        LIMIT {$limit} OFFSET {$offset}
-    ";
+    // 공정 정보 + 공장명 + 라인명 함께 조회
+    $sql = "SELECT dp.idx, dp.design_process, dp.model_name, dp.std_mc_needed, dp.fname,
+                   dp.status, dp.remark, dp.factory_idx, dp.line_idx,
+                   f.factory_name, l.line_name
+            {$base_from}
+            ORDER BY {$sort_col} {$sort_order}
+            LIMIT {$limit} OFFSET {$offset}";
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    $design_processes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // 최종 응답 데이터 구성
     echo json_encode([
         'success' => true,
-        'data' => $design_processes,
+        'data'    => $stmt->fetchAll(PDO::FETCH_ASSOC),
         'pagination' => [
             'total_records' => $total_records,
-            'current_page' => $page,
-            'total_pages' => ceil($total_records / $limit)
-        ]
+            'current_page'  => $page,
+            'total_pages'   => ceil($total_records / $limit),
+        ],
     ]);
 }
 
 /**
- * 특정 design_process 정보를 조회하여 JSON으로 반환합니다.
- * @param PDO $pdo PDO 객체
+ * 공정 단건 조회 (수정 폼 데이터 로드용)
+ * - 공장명, 라인명도 JOIN하여 함께 반환
  */
-function getDesignProcess(PDO $pdo) {
+function getDesignProcess(PDO $pdo): void
+{
     $id = $_GET['id'] ?? 0;
     if (empty($id)) {
-        http_response_code(400); // Bad Request
+        http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'ID is required.']);
         return;
     }
-    $stmt = $pdo->prepare("
-        SELECT
-            dp.idx,
-            dp.design_process,
-            dp.model_name,
-            dp.std_mc_needed,
-            dp.fname,
-            dp.status,
-            dp.remark,
-            dp.factory_idx,
-            dp.line_idx,
-            f.factory_name,
-            l.line_name
-        FROM info_design_process dp
-        LEFT JOIN info_factory f ON dp.factory_idx = f.idx
-        LEFT JOIN info_line l ON dp.line_idx = l.idx
-        WHERE dp.idx = ?
-    ");
+    $stmt = $pdo->prepare(
+        "SELECT dp.idx, dp.design_process, dp.model_name, dp.std_mc_needed, dp.fname,
+                dp.status, dp.remark, dp.factory_idx, dp.line_idx,
+                f.factory_name, l.line_name
+         FROM info_design_process dp
+         LEFT JOIN info_factory f ON dp.factory_idx = f.idx
+         LEFT JOIN info_line    l ON dp.line_idx    = l.idx
+         WHERE dp.idx = ?"
+    );
     $stmt->execute([$id]);
-    $design_process = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($design_process) {
-        echo json_encode(['success' => true, 'data' => $design_process]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($row) {
+        echo json_encode(['success' => true, 'data' => $row]);
     } else {
-        http_response_code(404); // Not Found
+        http_response_code(404);
         echo json_encode(['success' => false, 'message' => 'Design Process not found.']);
     }
 }
 
 /**
- * 중복 design_process 이름 확인
- * 같은 factory_idx와 line_idx 내에서 design_process 이름 중복을 체크합니다.
- * @param PDO $pdo PDO 객체
+ * 공정명 중복 여부 확인 (같은 공장+라인 조합 내에서만 검사)
+ * - design_process + factory_idx + line_idx 조합으로 유일성 확인
+ * - current_idx가 있으면 자기 자신 제외 (수정 모드)
  */
-function checkDuplicateDesignProcess(PDO $pdo) {
+function checkDuplicateDesignProcess(PDO $pdo): void
+{
     $design_process = trim($_GET['design_process'] ?? '');
-    $factory_idx = $_GET['factory_idx'] ?? null;
-    $line_idx = $_GET['line_idx'] ?? null;
-    $current_idx = $_GET['current_idx'] ?? null; // 수정 모드에서 현재 레코드 제외
+    $factory_idx    = $_GET['factory_idx']    ?? null;
+    $line_idx       = $_GET['line_idx']       ?? null;
+    $current_idx    = $_GET['current_idx']    ?? null;
 
     if (empty($design_process)) {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Design Process name is required.']);
         return;
     }
-
     if (empty($factory_idx) || empty($line_idx)) {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Factory and Line are required.']);
         return;
     }
 
-    // 중복 확인 쿼리 - 같은 factory_idx와 line_idx 내에서만 확인
-    $sql = "SELECT COUNT(*) FROM info_design_process WHERE design_process = ? AND factory_idx = ? AND line_idx = ?";
+    // 같은 공장+라인 내에서 동일 공정명 존재 여부 확인
+    $sql    = "SELECT COUNT(*) FROM info_design_process WHERE design_process = ? AND factory_idx = ? AND line_idx = ?";
     $params = [$design_process, $factory_idx, $line_idx];
-
-    // 수정 모드에서 현재 레코드 제외
     if ($current_idx) {
-        $sql .= " AND idx != ?";
+        $sql    .= " AND idx != ?";
         $params[] = $current_idx;
     }
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    $count = (int)$stmt->fetchColumn();
-
-    if ($count > 0) {
+    if ((int)$stmt->fetchColumn() > 0) {
         echo json_encode(['success' => false, 'message' => 'This design process name already exists in the selected Factory/Line. Please enter a different name.']);
     } else {
         echo json_encode(['success' => true, 'message' => 'Design process name is available.']);
@@ -420,190 +345,126 @@ function checkDuplicateDesignProcess(PDO $pdo) {
 }
 
 /**
- * 신규 design_process를 추가합니다.
- * 파일 업로드 처리도 포함합니다.
- * @param PDO $pdo PDO 객체
+ * POST/PUT 요청의 공정 입력값 검증
+ * - $_POST와 $_FILES 모두 비어있으면 요청 데이터 없음 (서버 사이즈 제한 초과 가능성)
+ * - design_process, factory_idx, line_idx 필수 검증
+ * - std_mc_needed: 0 이상의 정수
+ *
+ * @return array|null 검증 통과 시 데이터 배열, 실패 시 null (이미 에러 응답 전송됨)
  */
-function addDesignProcess(PDO $pdo) {
-    // POST 데이터가 비어있는지 확인 (post_max_size 초과 시 발생)
+function validateDesignProcessInput(): ?array
+{
+    // 요청 데이터가 완전히 비어있으면 서버 크기 제한 초과 가능성 안내
     if (empty($_POST) && empty($_FILES)) {
         http_response_code(400);
         echo json_encode([
             'success' => false,
-            'message' => 'No data received. The request may be too large. Please check if the file size exceeds the server limit (post_max_size: ' . ini_get('post_max_size') . ', upload_max_filesize: ' . ini_get('upload_max_filesize') . ').'
+            'message' => 'No data received. The request may be too large. Please check if the file size exceeds the server limit (post_max_size: ' . ini_get('post_max_size') . ', upload_max_filesize: ' . ini_get('upload_max_filesize') . ').',
         ]);
-        return;
+        return null;
     }
 
     $design_process = trim($_POST['design_process'] ?? '');
-    $factory_idx = (int)($_POST['factory_idx'] ?? 0);
-    $line_idx = (int)($_POST['line_idx'] ?? 0);
-    $model_name = trim($_POST['model_name'] ?? '');
-    $std_mc_needed = (int)($_POST['std_mc_needed'] ?? 1);
-    $fname = trim($_POST['fname'] ?? '');
-    $status = $_POST['status'] ?? 'Y';
-    $remark = trim($_POST['remark'] ?? '');
+    $factory_idx    = (int)($_POST['factory_idx']   ?? 0);
+    $line_idx       = (int)($_POST['line_idx']      ?? 0);
+    $std_mc_needed  = (int)($_POST['std_mc_needed'] ?? 1);
 
     if (empty($design_process)) {
-        http_response_code(400); // Bad Request
+        http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Design Process name is required.']);
-        return;
+        return null;
     }
-
     if ($factory_idx <= 0 || $line_idx <= 0) {
-        http_response_code(400); // Bad Request
+        http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Factory and Line are required.']);
-        return;
+        return null;
     }
-
     if ($std_mc_needed < 0) {
-        http_response_code(400); // Bad Request
+        http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Standard MC Needed must be a non-negative integer.']);
-        return;
+        return null;
     }
 
-    // 파일 업로드 처리
-    $uploadResult = ['success' => true, 'filename' => null, 'message' => 'No file'];
-    if (isset($_FILES['file_upload']) && $_FILES['file_upload']['error'] !== UPLOAD_ERR_NO_FILE) {
-        $uploadResult = handleFileUpload($_FILES['file_upload']);
-        if (!$uploadResult['success']) {
-            http_response_code(400); // Bad Request
-            echo json_encode(['success' => false, 'message' => '파일 업로드 실패: ' . $uploadResult['message']]);
-            return;
-        }
-        // 업로드된 파일이 있으면 fname을 업로드된 파일명으로 업데이트
-        if ($uploadResult['filename']) {
-            $fname = $uploadResult['filename'];
-        }
-    }
-
-    try {
-        $stmt = $pdo->prepare("INSERT INTO info_design_process (design_process, factory_idx, line_idx, model_name, std_mc_needed, fname, status, remark, reg_date, update_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-        $stmt->execute([$design_process, $factory_idx, $line_idx, $model_name, $std_mc_needed, $fname, $status, $remark]);
-        http_response_code(201); // Created
-        $message = 'Design Process added successfully.';
-        if ($uploadResult['filename']) {
-            $message .= ' 파일 업로드 완료: ' . $uploadResult['filename'];
-        }
-        echo json_encode(['success' => true, 'message' => $message]);
-    } catch (PDOException $e) {
-        // 데이터베이스 에러 발생 시 업로드된 파일 삭제
-        if ($uploadResult['filename']) {
-            $uploadPath = __DIR__ . '/../../upload/sop/' . $uploadResult['filename'];
-            if (file_exists($uploadPath)) {
-                unlink($uploadPath);
-            }
-        }
-
-        if ($e->getCode() == '23000') {
-            http_response_code(409); // Conflict
-            echo json_encode(['success' => false, 'message' => 'Design Process name already exists in the selected Factory/Line.']);
-        } else {
-            throw $e; // 상위 핸들러에서 처리하도록 예외를 다시 던짐
-        }
-    }
+    return [
+        'design_process' => $design_process,
+        'factory_idx'    => $factory_idx,
+        'line_idx'       => $line_idx,
+        'model_name'     => trim($_POST['model_name'] ?? ''),
+        'std_mc_needed'  => $std_mc_needed,
+        'fname'          => trim($_POST['fname'] ?? ''),
+        'status'         => $_POST['status'] ?? 'Y',
+        'remark'         => trim($_POST['remark'] ?? ''),
+    ];
 }
 
 /**
- * 기존 design_process 정보를 수정합니다.
- * 파일 업로드 처리도 포함합니다.
- * @param PDO $pdo PDO 객체
+ * 파일 업로드 처리 (handleFileUpload 래퍼)
+ * - 파일이 없으면 그냥 성공 반환 (파일은 선택 필드)
+ * - 업로드 성공 시 $data['fname']과 $data['new_filename']을 갱신
+ * - 실패 시 에러 응답 전송 후 false 반환 → 호출자가 즉시 종료
+ *
+ * @param array $data 공정 데이터 배열 (참조 전달로 fname 갱신)
+ * @return bool 업로드 성공(또는 파일 없음) 시 true, 실패 시 false
  */
-function updateDesignProcess(PDO $pdo) {
-    // POST 데이터가 비어있는지 확인 (post_max_size 초과 시 발생)
-    if (empty($_POST) && empty($_FILES)) {
+function processFileUpload(array &$data): bool
+{
+    if (!isset($_FILES['file_upload']) || $_FILES['file_upload']['error'] === UPLOAD_ERR_NO_FILE) {
+        return true;
+    }
+    $result = handleFileUpload($_FILES['file_upload']);
+    if (!$result['success']) {
         http_response_code(400);
-        echo json_encode([
-            'success' => false,
-            'message' => 'No data received. The request may be too large. Please check if the file size exceeds the server limit (post_max_size: ' . ini_get('post_max_size') . ', upload_max_filesize: ' . ini_get('upload_max_filesize') . ').'
-        ]);
-        return;
+        echo json_encode(['success' => false, 'message' => '파일 업로드 실패: ' . $result['message']]);
+        return false;
     }
-
-    // HTML form에서 _method로 PUT을 전송하므로, 데이터는 $_POST에 있습니다.
-    $id = $_POST['idx'] ?? 0;
-    $design_process = trim($_POST['design_process'] ?? '');
-    $factory_idx = (int)($_POST['factory_idx'] ?? 0);
-    $line_idx = (int)($_POST['line_idx'] ?? 0);
-    $model_name = trim($_POST['model_name'] ?? '');
-    $std_mc_needed = (int)($_POST['std_mc_needed'] ?? 1);
-    $fname = trim($_POST['fname'] ?? '');
-    $status = $_POST['status'] ?? 'Y';
-    $remark = trim($_POST['remark'] ?? '');
-
-    if (empty($id) || empty($design_process)) {
-        http_response_code(400); // Bad Request
-        echo json_encode(['success' => false, 'message' => 'ID and Design Process name are required.']);
-        return;
+    if ($result['filename']) {
+        // 새 파일명을 데이터 배열에 반영
+        $data['new_filename'] = $result['filename'];
+        $data['fname']        = $result['filename'];
     }
+    return true;
+}
 
-    if ($factory_idx <= 0 || $line_idx <= 0) {
-        http_response_code(400); // Bad Request
-        echo json_encode(['success' => false, 'message' => 'Factory and Line are required.']);
-        return;
-    }
+/**
+ * 신규 공정 추가 (POST + 파일 업로드)
+ * - DB INSERT 실패 시 업로드한 파일 롤백(@unlink로 파일 삭제)
+ * - UNIQUE(design_process, factory_idx, line_idx) 위반 시 409 반환
+ */
+function addDesignProcess(PDO $pdo): void
+{
+    $data = validateDesignProcessInput();
+    if ($data === null) return;
 
-    if ($std_mc_needed < 0) {
-        http_response_code(400); // Bad Request
-        echo json_encode(['success' => false, 'message' => 'Standard MC Needed must be a non-negative integer.']);
-        return;
-    }
-
-    // 기존 파일 정보 조회 (새 파일 업로드 시 기존 파일 삭제를 위해)
-    $existing_stmt = $pdo->prepare("SELECT fname FROM info_design_process WHERE idx = ?");
-    $existing_stmt->execute([$id]);
-    $existing_data = $existing_stmt->fetch(PDO::FETCH_ASSOC);
-    $existing_filename = $existing_data['fname'] ?? '';
-
-    // 파일 업로드 처리
-    $uploadResult = ['success' => true, 'filename' => null, 'message' => 'No file'];
-    $oldFileToDelete = null;
-
-    if (isset($_FILES['file_upload']) && $_FILES['file_upload']['error'] !== UPLOAD_ERR_NO_FILE) {
-        $uploadResult = handleFileUpload($_FILES['file_upload']);
-        if (!$uploadResult['success']) {
-            http_response_code(400); // Bad Request
-            echo json_encode(['success' => false, 'message' => '파일 업로드 실패: ' . $uploadResult['message']]);
-            return;
-        }
-        // 업로드된 파일이 있으면 fname을 업로드된 파일명으로 업데이트
-        if ($uploadResult['filename']) {
-            $fname = $uploadResult['filename'];
-            // 기존 파일이 있고 새 파일과 다르면 나중에 삭제하기 위해 저장
-            if (!empty($existing_filename) && $existing_filename !== $uploadResult['filename']) {
-                $oldFileToDelete = $existing_filename;
-            }
-        }
-    }
+    // 파일 업로드 처리 (실패 시 함수 종료)
+    if (!processFileUpload($data)) return;
 
     try {
-        $stmt = $pdo->prepare("UPDATE info_design_process SET design_process = ?, factory_idx = ?, line_idx = ?, model_name = ?, std_mc_needed = ?, fname = ?, status = ?, remark = ?, update_date = NOW() WHERE idx = ?");
-        $stmt->execute([$design_process, $factory_idx, $line_idx, $model_name, $std_mc_needed, $fname, $status, $remark, $id]);
-
-        // 데이터베이스 업데이트 성공 시 기존 파일 삭제
-        if ($oldFileToDelete) {
-            $oldFilePath = __DIR__ . '/../../upload/sop/' . $oldFileToDelete;
-            if (file_exists($oldFilePath)) {
-                unlink($oldFilePath);
-            }
-        }
-
-        $message = 'Design Process updated successfully.';
-        if ($uploadResult['filename']) {
-            $message .= ' 파일 업로드 완료: ' . $uploadResult['filename'];
-        }
+        $stmt = $pdo->prepare(
+            "INSERT INTO info_design_process
+                (design_process, factory_idx, line_idx, model_name, std_mc_needed, fname, status, remark, reg_date, update_date)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())"
+        );
+        $stmt->execute([
+            $data['design_process'],
+            $data['factory_idx'],
+            $data['line_idx'],
+            $data['model_name'],
+            $data['std_mc_needed'],
+            $data['fname'],
+            $data['status'],
+            $data['remark'],
+        ]);
+        http_response_code(201);
+        $message = 'Design Process added successfully.';
+        if (!empty($data['new_filename'])) $message .= ' File upload complete: ' . $data['new_filename'];
         echo json_encode(['success' => true, 'message' => $message]);
     } catch (PDOException $e) {
-        // 데이터베이스 에러 발생 시 새로 업로드된 파일 삭제
-        if ($uploadResult['filename']) {
-            $newFilePath = __DIR__ . '/../../upload/sop/' . $uploadResult['filename'];
-            if (file_exists($newFilePath)) {
-                unlink($newFilePath);
-            }
+        // DB 실패 시 업로드된 파일 롤백
+        if (!empty($data['new_filename'])) {
+            @unlink(UPLOAD_SOP_DIR . $data['new_filename']);
         }
-
         if ($e->getCode() == '23000') {
-            http_response_code(409); // Conflict
+            http_response_code(409);
             echo json_encode(['success' => false, 'message' => 'Design Process name already exists in the selected Factory/Line.']);
         } else {
             throw $e;
@@ -612,39 +473,106 @@ function updateDesignProcess(PDO $pdo) {
 }
 
 /**
- * design process를 삭제합니다.
- * 연관된 파일도 함께 삭제합니다.
- * @param PDO $pdo PDO 객체
+ * 공정 수정 (PUT + 파일 교체)
+ * - 새 파일이 업로드되면 기존 파일 삭제 (@unlink)
+ * - DB 실패 시 새로 업로드된 파일 롤백
  */
-function deleteDesignProcess(PDO $pdo) {
-    $id = $_GET['id'] ?? 0;
+function updateDesignProcess(PDO $pdo): void
+{
+    $data = validateDesignProcessInput();
+    if ($data === null) return;
 
+    $id = $_POST['idx'] ?? 0;
     if (empty($id)) {
-        http_response_code(400); // Bad Request
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'ID and Design Process name are required.']);
+        return;
+    }
+
+    // 기존 파일명 조회 (새 파일로 교체 시 삭제 대상 파악용)
+    $existing_stmt = $pdo->prepare("SELECT fname FROM info_design_process WHERE idx = ?");
+    $existing_stmt->execute([$id]);
+    $existing_filename = ($existing_stmt->fetch(PDO::FETCH_ASSOC))['fname'] ?? '';
+
+    if (!processFileUpload($data)) return;
+
+    // 새 파일이 업로드되었고 기존 파일이 있으면 기존 파일 삭제 예정
+    $old_file_to_delete = null;
+    if (!empty($data['new_filename']) && !empty($existing_filename) && $existing_filename !== $data['new_filename']) {
+        $old_file_to_delete = $existing_filename;
+    }
+
+    try {
+        $stmt = $pdo->prepare(
+            "UPDATE info_design_process
+             SET design_process = ?, factory_idx = ?, line_idx = ?, model_name = ?,
+                 std_mc_needed = ?, fname = ?, status = ?, remark = ?, update_date = NOW()
+             WHERE idx = ?"
+        );
+        $stmt->execute([
+            $data['design_process'],
+            $data['factory_idx'],
+            $data['line_idx'],
+            $data['model_name'],
+            $data['std_mc_needed'],
+            $data['fname'],
+            $data['status'],
+            $data['remark'],
+            $id,
+        ]);
+
+        // DB 업데이트 성공 후 기존 파일 삭제 (에러 무시)
+        if ($old_file_to_delete) {
+            @unlink(UPLOAD_SOP_DIR . $old_file_to_delete);
+        }
+
+        $message = 'Design Process updated successfully.';
+        if (!empty($data['new_filename'])) $message .= ' File upload complete: ' . $data['new_filename'];
+        echo json_encode(['success' => true, 'message' => $message]);
+    } catch (PDOException $e) {
+        // DB 실패 시 새로 업로드된 파일 롤백
+        if (!empty($data['new_filename'])) {
+            @unlink(UPLOAD_SOP_DIR . $data['new_filename']);
+        }
+        if ($e->getCode() == '23000') {
+            http_response_code(409);
+            echo json_encode(['success' => false, 'message' => 'Design Process name already exists in the selected Factory/Line.']);
+        } else {
+            throw $e;
+        }
+    }
+}
+
+/**
+ * 공정 삭제 (DELETE)
+ * - 삭제 전 fname 조회하여 파일도 함께 삭제
+ * - DB 삭제 성공 후 파일 삭제 (파일 삭제 실패는 무시)
+ */
+function deleteDesignProcess(PDO $pdo): void
+{
+    $id = $_GET['id'] ?? 0;
+    if (empty($id)) {
+        http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'ID is required.']);
         return;
     }
 
-    // 삭제 전에 파일 정보 조회
+    // 삭제 전 파일명 조회
     $file_stmt = $pdo->prepare("SELECT fname FROM info_design_process WHERE idx = ?");
     $file_stmt->execute([$id]);
-    $design_process = $file_stmt->fetch(PDO::FETCH_ASSOC);
+    $row = $file_stmt->fetch(PDO::FETCH_ASSOC);
 
     $stmt = $pdo->prepare("DELETE FROM info_design_process WHERE idx = ?");
     $stmt->execute([$id]);
 
     if ($stmt->rowCount() > 0) {
-        // 데이터베이스에서 삭제가 성공했으면 연관된 파일도 삭제
-        if ($design_process && !empty($design_process['fname'])) {
-            $filePath = __DIR__ . '/../../upload/sop/' . $design_process['fname'];
-            if (file_exists($filePath)) {
-                unlink($filePath);
-            }
+        // DB 삭제 성공 후 SOP 파일도 삭제 (@로 에러 무시)
+        if ($row && !empty($row['fname'])) {
+            @unlink(UPLOAD_SOP_DIR . $row['fname']);
         }
         echo json_encode(['success' => true, 'message' => 'Design Process deleted successfully.']);
     } else {
-        http_response_code(404); // Not Found
+        http_response_code(404);
         echo json_encode(['success' => false, 'message' => 'Design Process not found or already deleted.']);
     }
 }
-
