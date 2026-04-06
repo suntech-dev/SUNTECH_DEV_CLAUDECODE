@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OEE_SCI V2 — AI 도입 전략 & 리디자인 통합 보고서 (한국어)</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --surface2: #21262d;
+            --surface3: #2d333b;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --accent2: #3fb950;
+            --warn: #d29922;
+            --danger: #f85149;
+            --purple: #bc8cff;
+            --sidebar-w: 240px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            line-height: 1.7;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ── Sidebar ── */
+        .doc-sidebar {
+            width: var(--sidebar-w);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo {
+            padding: 20px 20px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-logo__title {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-logo__sub {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .sidebar-lang {
+            display: flex;
+            gap: 6px;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-lang a {
+            flex: 1;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 0;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background .15s;
+        }
+
+        .sidebar-lang a.active {
+            background: rgba(88, 166, 255, .18);
+            color: var(--accent);
+            border: 1px solid rgba(88, 166, 255, .3);
+        }
+
+        .sidebar-lang a:not(.active) {
+            background: var(--surface2);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .sidebar-lang a:not(.active):hover {
+            color: var(--text);
+            border-color: var(--accent2);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-nav__group {
+            margin-bottom: 18px;
+        }
+
+        .sidebar-nav__label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            padding: 0 16px 5px;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: 6px 16px;
+            font-size: 12.5px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-left: 2px solid transparent;
+            transition: color .15s, border-color .15s, background .15s;
+        }
+
+        .sidebar-nav a:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, .04);
+        }
+
+        .sidebar-nav a.active {
+            color: var(--accent);
+            border-left-color: var(--accent);
+            background: rgba(88, 166, 255, .07);
+        }
+
+        .sidebar-back {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 12px;
+            padding: 10px 16px;
+            border-top: 1px solid var(--border);
+            transition: color .15s;
+        }
+
+        .sidebar-back:hover {
+            color: var(--accent);
+        }
+
+        .sidebar-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ── Main ── */
+        .doc-main {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            min-width: 0;
+        }
+
+        .page-wrap {
+            /* max-width: 1060px; */
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 0 40px 80px;
+        }
+
+        /* ── Hero ── */
+        .hero {
+            padding: 60px 0 48px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(63, 185, 80, .12);
+            border: 1px solid rgba(63, 185, 80, .3);
+            border-radius: 20px;
+            padding: 5px 18px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent2);
+            letter-spacing: .06em;
+            margin-bottom: 22px;
+        }
+
+        .hero h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #e6edf3 0%, #58a6ff 55%, #bc8cff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .hero-sub {
+            color: var(--text-muted);
+            font-size: 14.5px;
+            margin-bottom: 10px;
+        }
+
+        .hero-meta {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            font-size: 12px;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+
+        /* ── Section ── */
+        section {
+            margin-bottom: 64px;
+            scroll-margin-top: 24px;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .1em;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .section-title {
+            font-size: 1.45rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .section-desc {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 24px;
+            max-width: 720px;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin: 48px 0;
+        }
+
+        /* ── Metrics row ── */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .metric-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .metric-card .val {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .metric-card .val.green {
+            color: var(--accent2);
+        }
+
+        .metric-card .val.yellow {
+            color: var(--warn);
+        }
+
+        .metric-card .val.purple {
+            color: var(--purple);
+        }
+
+        .metric-card .lbl {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* ── Card grid ── */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            padding: 20px;
+            transition: border-color .2s, transform .15s;
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.65;
+        }
+
+        /* ── Compare table ── */
+        .tbl-wrap {
+            overflow-x: auto;
+            margin: 16px 0;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+        }
+
+        thead tr {
+            background: var(--surface2);
+        }
+
+        th {
+            padding: 11px 14px;
+            text-align: left;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 11.5px;
+            letter-spacing: .04em;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 11px 14px;
+            border-bottom: 1px solid rgba(48, 54, 61, .6);
+            vertical-align: top;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover td {
+            background: rgba(33, 38, 45, .5);
+        }
+
+        .col-area {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .col-v1 {
+            color: var(--text-muted);
+        }
+
+        .tag-new {
+            display: inline-block;
+            background: rgba(63, 185, 80, .15);
+            color: var(--accent2);
+            border: 1px solid rgba(63, 185, 80, .3);
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        .tag-imp {
+            display: inline-block;
+            background: rgba(88, 166, 255, .12);
+            color: var(--accent);
+            border: 1px solid rgba(88, 166, 255, .25);
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        /* ── Feature grid ── */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 22px;
+            transition: border-color .2s, transform .15s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .feature-card__icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            margin-bottom: 13px;
+        }
+
+        .ic-blue {
+            background: rgba(88, 166, 255, .15);
+        }
+
+        .ic-green {
+            background: rgba(63, 185, 80, .15);
+        }
+
+        .ic-yellow {
+            background: rgba(210, 153, 34, .15);
+        }
+
+        .ic-red {
+            background: rgba(248, 81, 73, .15);
+        }
+
+        .ic-purple {
+            background: rgba(188, 140, 255, .15);
+        }
+
+        .ic-teal {
+            background: rgba(56, 211, 183, .15);
+        }
+
+        .ic-orange {
+            background: rgba(255, 140, 0, .15);
+        }
+
+        .feature-card h3 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .feature-card p {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.65;
+        }
+
+        .algo-tag {
+            display: inline-block;
+            margin-top: 9px;
+            font-size: 11px;
+            color: var(--text-muted);
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 7px;
+            font-family: 'SFMono-Regular', Consolas, monospace;
+        }
+
+        /* ── Feature block ── */
+        .feature-block {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+
+        .feature-block__header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .fb-badge-new {
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 20px;
+            letter-spacing: .04em;
+            background: rgba(63, 185, 80, .15);
+            color: var(--accent2);
+            border: 1px solid rgba(63, 185, 80, .3);
+        }
+
+        .fb-badge-imp {
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 20px;
+            letter-spacing: .04em;
+            background: rgba(88, 166, 255, .12);
+            color: var(--accent);
+            border: 1px solid rgba(88, 166, 255, .25);
+        }
+
+        .feature-block__title {
+            font-size: 14.5px;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .feature-block__body {
+            padding: 18px 22px;
+        }
+
+        .feature-block__desc {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            line-height: 1.7;
+        }
+
+        .fb-points {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-bottom: 14px;
+        }
+
+        .fb-points li {
+            font-size: 13px;
+            color: var(--text);
+            display: flex;
+            gap: 9px;
+        }
+
+        .fb-points li::before {
+            content: '✓';
+            color: var(--accent2);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* ── Screenshot ── */
+        .screenshot-wrap {
+            margin: 18px 0;
+        }
+
+        .screenshot-label {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: .04em;
+            margin-bottom: 7px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .screenshot-label::before {
+            content: '';
+            display: inline-block;
+            width: 3px;
+            height: 11px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .screenshot-img {
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            display: block;
+        }
+
+        .screenshot-placeholder {
+            width: 100%;
+            background: var(--surface2);
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            color: var(--text-muted);
+            font-size: 13px;
+            min-height: 200px;
+            transition: border-color .2s;
+        }
+
+        .screenshot-placeholder:hover {
+            border-color: var(--accent);
+        }
+
+        .screenshot-placeholder .ph-icon {
+            font-size: 26px;
+            opacity: .5;
+        }
+
+        .screenshot-placeholder .ph-label {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 13.5px;
+        }
+
+        .screenshot-placeholder .ph-desc {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .screenshot-placeholder img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+        }
+
+        /* ── Perf bars ── */
+        .perf-row {
+            margin-bottom: 14px;
+        }
+
+        .perf-row__label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .perf-row__label .name {
+            font-weight: 600;
+        }
+
+        .perf-row__label .diff {
+            color: var(--accent2);
+            font-weight: 700;
+        }
+
+        .perf-bar-track {
+            background: var(--surface2);
+            border-radius: 4px;
+            height: 7px;
+            overflow: hidden;
+            margin-bottom: 3px;
+        }
+
+        .perf-bar-track .bar {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--accent), #4891d9);
+        }
+
+        .perf-bar-track .bar.green {
+            background: linear-gradient(90deg, var(--accent2), #2ea043);
+        }
+
+        .perf-row__sub {
+            font-size: 11.5px;
+            color: var(--text-muted);
+        }
+
+        /* ── Tech stack ── */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .tech-tag {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-family: 'SFMono-Regular', Consolas, monospace;
+            color: var(--text-muted);
+        }
+
+        .tech-tag.new {
+            border-color: rgba(63, 185, 80, .4);
+            color: var(--accent2);
+            background: rgba(63, 185, 80, .07);
+        }
+
+        .tech-tag.hl {
+            border-color: rgba(88, 166, 255, .4);
+            color: var(--accent);
+            background: rgba(88, 166, 255, .07);
+        }
+
+        /* ── Timeline ── */
+        .timeline {
+            position: relative;
+            padding-left: 26px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 6px;
+            bottom: 6px;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 22px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -21px;
+            top: 6px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 2px solid var(--bg);
+        }
+
+        .timeline-item h4 {
+            font-size: 13.5px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .timeline-item p {
+            font-size: 12.5px;
+            color: var(--text-muted);
+        }
+
+        /* ── File list ── */
+        .file-list-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .file-list-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .file-list-card__label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 11px;
+        }
+
+        .file-list-card ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .file-list-card li {
+            font-size: 12px;
+            color: var(--text);
+            font-family: 'SFMono-Regular', Consolas, monospace;
+            display: flex;
+            gap: 7px;
+            align-items: center;
+        }
+
+        .file-list-card li .dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent2);
+            flex-shrink: 0;
+        }
+
+        /* ── Tags ── */
+        .tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: 20px;
+            letter-spacing: .03em;
+        }
+
+        .tag.ok {
+            background: rgba(63, 185, 80, .15);
+            color: var(--accent2);
+            border: 1px solid rgba(63, 185, 80, .3);
+        }
+
+        .tag.done {
+            background: rgba(63, 185, 80, .2);
+            color: var(--accent2);
+            border: 1px solid rgba(63, 185, 80, .4);
+            font-weight: 800;
+        }
+
+        .tag.warn {
+            background: rgba(210, 153, 34, .15);
+            color: var(--warn);
+            border: 1px solid rgba(210, 153, 34, .3);
+        }
+
+        .tag.err {
+            background: rgba(248, 81, 73, .15);
+            color: var(--danger);
+            border: 1px solid rgba(248, 81, 73, .3);
+        }
+
+        .tag.info {
+            background: rgba(88, 166, 255, .15);
+            color: var(--accent);
+            border: 1px solid rgba(88, 166, 255, .3);
+        }
+
+        /* ── Doc footer ── */
+        .doc-footer {
+            text-align: center;
+            padding: 32px 24px;
+            border-top: 1px solid var(--border);
+            font-size: 11.5px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 800px) {
+            .doc-sidebar {
+                display: none;
+            }
+
+            .doc-main {
+                margin-left: 0;
+            }
+
+            .page-wrap {
+                padding: 0 16px 60px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ── Sidebar ── -->
+    <aside class="doc-sidebar">
+        <div class="sidebar-logo">
+            <span class="sidebar-logo__title">OEE_SCI V2</span>
+            <span class="sidebar-logo__sub">AI 도입 전략 &amp; 리디자인 통합 보고서</span>
+        </div>
+        <div class="sidebar-lang">
+            <a href="OEE_SCI_V2_REDESIGN_REPORT_2.html" class="active">KOR</a>
+            <a href="OEE_SCI_V2_REDESIGN_REPORT_ENG_2.html">ENG</a>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-nav__group">
+                <div class="sidebar-nav__label">배경 및 전략</div>
+                <a href="#background">도입 배경</a>
+                <a href="#v1-analysis">V1 시스템 분석</a>
+                <a href="#ai-strategy">AI 도입 방향</a>
+            </div>
+            <div class="sidebar-nav__group">
+                <div class="sidebar-nav__label">구현 결과</div>
+                <a href="#overview">핵심 요약</a>
+                <a href="#comparison">V1→V2 비교</a>
+                <a href="#ai-features">AI 기능 상세</a>
+                <a href="#redesign">UI 리디자인</a>
+                <a href="#performance">성능 최적화</a>
+            </div>
+            <div class="sidebar-nav__group">
+                <div class="sidebar-nav__label">기술 정보</div>
+                <a href="#techstack">기술 스택</a>
+                <a href="#firmware">IoT 펌웨어</a>
+                <a href="#filelist">구현 파일 목록</a>
+            </div>
+        </nav>
+        <a class="sidebar-back" href="OEE_SCI_V2_REDESIGN_INDEX_2.html">← 인덱스로 돌아가기</a>
+        <div class="sidebar-footer">SUNTECH · 2026-04-03 · 구현 현황 · 검토 요청</div>
+    </aside>
+
+    <!-- ── Main ── -->
+    <div class="doc-main">
+        <div class="page-wrap">
+
+            <!-- Hero -->
+            <div class="hero">
+                <div class="hero-badge">🔄 구현 현황 · AWAITING REVIEW</div>
+                <h1>OEE_SCI V2<br>AI 도입 전략 &amp; 리디자인 통합 보고서</h1>
+                <p class="hero-sub">AI 도입 계획 수립부터 구현까지의 전 과정을 담은 통합 보고서입니다.</p>
+                <div class="hero-meta">
+                    <span>📅 최초 작성 2026-03-06</span>
+                    <span>🔄 구현 2026-03-25 · 검토 요청</span>
+                    <span>🏭 대상: SCI 봉제 공장 OEE 시스템</span>
+                    <span>📌 SUNTECH</span>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- ── 1. 도입 배경 ── -->
+            <section id="background">
+                <div class="section-label">Background</div>
+                <div class="section-title">AI 도입 배경</div>
+                <p class="section-desc">OEE_SCI V1은 안정적인 실시간 모니터링을 제공했지만, 이름만 "AI OEE Dashboard"였을 뿐 실질적인 AI 기능이 전혀
+                    없었습니다. 사전 대응이 불가능한 수동 분석 구조의 한계를 극복하기 위해 V2를 기획하였습니다.</p>
+
+                <div class="card-grid">
+                    <div class="card">
+                        <h4>⚠️ V1의 한계 — 반응적 모니터링</h4>
+                        <p>문제가 발생한 후에야 확인 가능. OEE 저하 원인 분석이 수동. 이상 발생 시 즉각 대응 불가.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🏭 대상 환경</h4>
+                        <p>인도네시아 SCI 봉제 공장. 컴퓨터 패턴재봉기 다수 운영. SSE 기반 실시간 데이터 수신 구조 기존 유지.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🎯 V2 핵심 목표</h4>
+                        <p>실제 동작하는 AI 기능을 탑재하여, 문제 발생 전 예측·감지·최적화가 가능한 시스템으로 진화.</p>
+                    </div>
+                    <div class="card">
+                        <h4>💡 설계 원칙</h4>
+                        <p>V1 기능 완전 유지. 외부 AI API 없이 자체 통계 엔진으로 구현. 1920×1080 사이니지 최적화.</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- ── 2. V1 시스템 분석 ── -->
+            <section id="v1-analysis">
+                <div class="section-label">V1 Analysis</div>
+                <div class="section-title">현재 시스템 구조 (V1 분석)</div>
+                <p class="section-desc">V2 설계의 기준이 된 V1 시스템의 구성 요소와 기술 스택입니다.</p>
+
+                <div class="card-grid">
+                    <div class="card">
+                        <h4>대상 장비</h4>
+                        <p>인도네시아 SCI의 컴퓨터 패턴재봉기의 실시간 OEE 수신 및 모니터링</p>
+                    </div>
+                    <div class="card">
+                        <h4>실시간 통신</h4>
+                        <p>Server-Sent Events (SSE) 기반 5초 폴링. 장비 → REST API → MySQL 실시간 데이터 수신</p>
+                    </div>
+                    <div class="card">
+                        <h4>OEE 계산</h4>
+                        <p>가용성 × 성능 × 품질 자동 계산. 시간대별 / 교대조별 집계 및 이력 보관</p>
+                    </div>
+                    <div class="card">
+                        <h4>알림 체계</h4>
+                        <p>Andon · Downtime · Defective 3종 이벤트 발생/완료 처리 및 대시보드 실시간 표시</p>
+                    </div>
+                </div>
+
+                <div class="tbl-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>항목</th>
+                                <th>V1 내용</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>기술 스택</td>
+                                <td>PHP 7.4+ · MySQL 5.7+ · jQuery 3.6.1 · Chart.js · Server-Sent Events</td>
+                            </tr>
+                            <tr>
+                                <td>UI 프레임워크</td>
+                                <td>SAP Fiori Horizon Light (상단 Nav Bar 포함)</td>
+                            </tr>
+                            <tr>
+                                <td>핵심 데이터 테이블</td>
+                                <td>data_oee · data_oee_rows_hourly · Downtime · Defective · Andon</td>
+                            </tr>
+                            <tr>
+                                <td>계층 구조</td>
+                                <td>Factory → Line → Machine</td>
+                            </tr>
+                            <tr>
+                                <td>SSE 쿼리 수</td>
+                                <td>사이클당 최대 7회 (중복 집계 포함)</td>
+                            </tr>
+                            <tr>
+                                <td>V1 AI 기능</td>
+                                <td><span class="tag err">없음</span> — 이름만 "AI OEE CS Dashboard"</td>
+                            </tr>
+                            <tr>
+                                <td>페이지 레이아웃</td>
+                                <td>스크롤 기반, Footer 포함, 사이니지 비최적화</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- ── 3. AI 도입 방향 ── -->
+            <section id="ai-strategy">
+                <div class="section-label">AI Strategy</div>
+                <div class="section-title">AI 도입 핵심 방향</div>
+                <p class="section-desc">외부 AI API 없이 자체 통계 엔진으로 구현한 5가지 AI 방향성입니다.</p>
+
+                <div class="card-grid">
+                    <div class="card" style="border-color:rgba(63,185,80,.3)">
+                        <h4>📈 예측 (Predictive)</h4>
+                        <p>과거 30일 시간대별 OEE 패턴을 학습하여 다음 4~8시간 OEE를 예측. 사전 대응 가능.</p>
+                        <div class="tag done" style="margin-top:12px">✓ 구현됨</div>
+                    </div>
+                    <div class="card" style="border-color:rgba(88,166,255,.3)">
+                        <h4>🚨 감지 (Detection)</h4>
+                        <p>Z-Score 기반 실시간 이상 감지. 평균 ±2σ 이탈 또는 연쇄 이상 발생 시 즉시 감지.</p>
+                        <div class="tag done" style="margin-top:12px">✓ 구현됨</div>
+                    </div>
+                    <div class="card" style="border-color:rgba(188,140,255,.3)">
+                        <h4>📝 생성 (Generative)</h4>
+                        <p>규칙 기반 AI 자동 보고서 생성. 경영진용 OEE 요약 · 이상감지 · 정비위험 · 최적화 내용을 자연어로 자동 작성.</p>
+                        <div class="tag done" style="margin-top:12px">✓ 구현됨</div>
+                    </div>
+                    <div class="card" style="border-color:rgba(63,185,80,.3)">
+                        <h4>⚡ 스트리밍 AI (Streaming)</h4>
+                        <p>SSE 기반 실시간 AI 분석 스트림. 데이터 입수와 동시에 AI 인사이트를 슬라이드인 카드 피드로 표시.</p>
+                        <div class="tag done" style="margin-top:12px">✓ 구현됨</div>
+                    </div>
+                    <div class="card" style="border-color:rgba(88,166,255,.3)">
+                        <h4>🎯 최적화 (Optimization)</h4>
+                        <p>라인별 Availability · Performance · Quality 병목을 식별하고 P1/P2/P3 개선 제안 자동 산출.</p>
+                        <div class="tag done" style="margin-top:12px">✓ 구현됨</div>
+                    </div>
+                    <div class="card" style="border-color:rgba(57,213,182,.3)">
+                        <h4>📺 Signage Dashboard</h4>
+                        <p>1920×1080 전광판 전용 AI 대시보드. 60초 자동 새로고침, 공장→라인→기계 필터 연계.</p>
+                        <div class="tag done" style="margin-top:12px">✓ 구현됨</div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- ── 4. 핵심 요약 ── -->
+            <section id="overview">
+                <div class="section-label">Overview</div>
+                <div class="section-title">V2 업그레이드 핵심 요약</div>
+                <p class="section-desc">V1의 안정적인 OEE 모니터링 기능을 완전히 유지하면서 AI 분석 엔진과 풀스크린 사이니지 UI를 전면 추가했습니다.</p>
+
+                <div class="metrics-row">
+                    <div class="metric-card">
+                        <div class="val">9<span style="font-size:1rem">+</span></div>
+                        <div class="lbl">신규 AI 기능</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val green">7</div>
+                        <div class="lbl">리디자인<br>(data 영역)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val yellow">10</div>
+                        <div class="lbl">리디자인<br>(manage 영역)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val purple">43%</div>
+                        <div class="lbl">SSE 쿼리 감소<br>(7개→4개)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val">350</div>
+                        <div class="lbl">제거된 중복<br>코드(줄)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val green">~13<span style="font-size:1rem">ms</span></div>
+                        <div class="lbl">SSE 응답시간</div>
+                    </div>
+                </div>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <h4>Phase 1 — AI 통계 엔진 구축 (2026-03-06)</h4>
+                        <p>지수평활법, Z-Score, 선형회귀 등 통계 알고리즘 기반 AI 분석 엔진 구현. OEE 예측·이상감지·예방정비 위험도 API 구현.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Phase 2 — 기존 페이지 AI 강화 (2026-03-06)</h4>
+                        <p>기존 OEE/다운타임/불량 페이지에 AI 예측선, AI Risk 열, 품질 파수꾼 섹션 추가. 기존 화면 흐름 유지한 채 AI 인사이트 삽입.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Phase 3 — 고도화 (2026-03-06)</h4>
+                        <p>SSE 실시간 AI 스트리밍 피드 + 생산 최적화 제안(P1/P2/P3 병목 우선순위) 구현. 사이니지 전용 AI Dashboard
+                            (ai_dashboard_2.php) 구현.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>성능 최적화 (2026-03-07)</h4>
+                        <p>SSE 스트림 N+1 쿼리 제거, 공통 라이브러리 통합(~350줄 중복 제거), 타임존 중앙화(27개→1곳), 해시 버그 수정.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>AI Dashboard v5 버그 수정 (2026-03-19)</h4>
+                        <p>Playwright 자동화 검증으로 발견한 5개 버그(OEE 111% 이상값, CI 범위 오류, date_range 무시, 신뢰구간 역전, AI 피드 중복) 전체 수정.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>풀스크린 UI 리디자인 (2026-03-24~25)</h4>
+                        <p>1920×1080 사이니지 최적화 레이아웃으로 전 페이지 리디자인. 햄버거 드로어 네비게이션, JS translateX 컬럼 고정 테이블 구현.</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- ── 5. V1 vs V2 비교 ── -->
+            <section id="comparison">
+                <div class="section-label">Before &amp; After</div>
+                <div class="section-title">V1 → V2 주요 변경 비교</div>
+                <p class="section-desc">V1의 모든 기능은 V2에서 그대로 유지되며, 아래 항목들이 신규·개선되었습니다.</p>
+
+                <div class="tbl-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:17%">영역</th>
+                                <th style="width:36%">V1 (기존)</th>
+                                <th style="width:47%">V2 (업그레이드)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="col-area">AI 분석</td>
+                                <td class="col-v1">없음 (이름만 "AI CS Dashboard")</td>
+                                <td>OEE 예측·이상감지·예방정비·품질파수꾼·생산최적화<span class="tag-new">NEW</span></td>
+                            </tr>
+                            <tr>
+                                <td class="col-area">AI Dashboard</td>
+                                <td class="col-v1">없음</td>
+                                <td>AI Intelligence Dashboard (ai_dashboard_2.php)<span
+                                        class="tag-new">NEW</span><br><span
+                                        style="font-size:11.5px;color:var(--text-muted)">예측차트·이상감지·정비위험·건강지수·최적화 통합, 60초
+                                        자동갱신</span></td>
+                            </tr>
+                            <tr>
+                                <td class="col-area">사이니지 대시보드</td>
+                                <td class="col-v1">일반 웹 레이아웃 (nav bar 포함)</td>
+                                <td>1920×1080 풀스크린 사이니지 전용<span class="tag-new">NEW</span></td>
+                            </tr>
+                            <tr>
+                                <td class="col-area">네비게이션</td>
+                                <td class="col-v1">상단 SAP Fiori 네비게이션 바</td>
+                                <td>햄버거 슬라이드 드로어 (좌측 240px 오버레이)<span class="tag-new">NEW</span><br><span
+                                        style="font-size:11.5px;color:var(--text-muted)">nav-drawer-manage.php 공통
+                                        include로 일괄 관리</span></td>
+                            </tr>
+                            <tr>
+                                <td class="col-area">OEE 모니터링</td>
+                                <td class="col-v1">실시간 SSE 스트리밍 테이블·차트</td>
+                                <td>기존 기능 유지 + AI 예측선 오버레이<span class="tag-imp">IMPROVED</span><br><span
+                                        style="font-size:11.5px;color:var(--text-muted)">"AI POWERED" 뱃지, 점선=AI 예측 구간,
+                                        신뢰구간 음영</span></td>
+                            </tr>
+                            <tr>
+                                <td class="col-area">다운타임</td>
+                                <td class="col-v1">테이블 + 상태 관리</td>
+                                <td>AI Risk 열 추가<span class="tag-imp">IMPROVED</span><br><span
+                                        style="font-size:11.5px;color:var(--text-muted)">DANGER / CAUTION / NORMAL 위험도
+                                        뱃지, MutationObserver 실시간 업데이트</span></td>
+                            </tr>
+                            <tr>
+                                <td class="col-area">불량 관리</td>
+                                <td class="col-v1">발생 현황 테이블</td>
+                                <td>AI 품질 파수꾼 섹션 추가<span class="tag-imp">IMPROVED</span><br><span
+                                        style="font-size:11.5px;color:var(--text-muted)">파레토 분석, 24시간 히트맵, 머신 위험 랭킹,
+                                        Pearson 상관계수</span></td>
+                            </tr>
+                            <tr>
+                                <td class="col-area">실시간 알림</td>
+                                <td class="col-v1">없음</td>
+                                <td>AI 실시간 스트리밍 피드<span class="tag-new">NEW</span><br><span
+                                        style="font-size:11.5px;color:var(--text-muted)">SSE 기반, 슬라이드인 카드, 15초 자동갱신, 최대
+                                        15건 피드</span></td>
+                            </tr>
+                            <tr>
+                                <td class="col-area">보고서</td>
+                                <td class="col-v1">엑셀 내보내기</td>
+                                <td>AI 자동 리포트 엔진<span class="tag-new">NEW</span><br><span
+                                        style="font-size:11.5px;color:var(--text-muted)">자연어 인사이트 6종 자동 생성, HTML Export
+                                        → PDF 변환 가능</span></td>
+                            </tr>
+                            <tr>
+                                <td class="col-area">페이지 레이아웃</td>
+                                <td class="col-v1">스크롤 레이아웃 (Footer 포함)</td>
+                                <td>1920×1080 풀스크린 CSS Grid<span class="tag-imp">IMPROVED</span><br><span
+                                        style="font-size:11.5px;color:var(--text-muted)">Stats/차트/테이블 행 토글,
+                                        ResizeObserver 자동 재계산</span></td>
+                            </tr>
+                            <tr>
+                                <td class="col-area">컬럼 고정</td>
+                                <td class="col-v1">없음</td>
+                                <td>JS translateX 기반 컬럼 고정<span class="tag-new">NEW</span><br><span
+                                        style="font-size:11.5px;color:var(--text-muted)">Chromium sticky 버그 → JS 방식으로 완전
+                                        해결. Playwright 검증 완료</span></td>
+                            </tr>
+                            <tr>
+                                <td class="col-area">SSE 성능</td>
+                                <td class="col-v1">사이클당 최대 7회 쿼리</td>
+                                <td>4회로 통합<span class="tag-imp">IMPROVED</span><br><span
+                                        style="font-size:11.5px;color:var(--text-muted)">중복 집계 쿼리 병합, 해시 버그 수정으로 불필요한 전송
+                                        제거</span></td>
+                            </tr>
+                            <tr>
+                                <td class="col-area">코드 구조</td>
+                                <td class="col-v1">stream 파일마다 공통 함수 복사</td>
+                                <td>stream_helper.lib.php 공통 라이브러리<span class="tag-imp">IMPROVED</span><br><span
+                                        style="font-size:11.5px;color:var(--text-muted)">중복 코드 약 350줄 제거,
+                                        statistics.lib.php AI 통계 함수 분리</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- ── 6. AI 기능 상세 ── -->
+            <section id="ai-features">
+                <div class="section-label">AI Intelligence</div>
+                <div class="section-title">신규 AI 기능 상세</div>
+                <p class="section-desc">자체 구현한 통계 엔진(지수평활법, Z-Score, 선형회귀, Pearson 상관)으로 실시간 AI 분석을 제공합니다. 외부 AI API를
+                    사용하지 않습니다.</p>
+
+                <!-- AI Dashboard 스크린샷 -->
+                <div class="feature-block">
+                    <div class="feature-block__header">
+                        <span class="fb-badge-new">NEW</span>
+                        <span class="feature-block__title">AI Intelligence Dashboard — 통합 AI 대시보드
+                            (ai_dashboard_2.php)</span>
+                    </div>
+                    <div class="feature-block__body">
+                        <p class="feature-block__desc">5개 AI 분석 섹션을 하나의 화면에 통합한 전용 대시보드입니다. 60초마다 자동 갱신되며, 공장→라인→기계 연계
+                            필터와 날짜 범위 선택을 지원합니다. 1920×1080 사이니지 최적화 레이아웃입니다.</p>
+                        <ul class="fb-points">
+                            <li>OEE 예측 요약 카드 (다음 4시간 예측값, 트렌드 방향 뱃지 ↑↓→)</li>
+                            <li>위험 기계 수, 활성 이상 감지 건수 실시간 표시</li>
+                            <li>라인별 AI 건강지수 (퍼센트 바 + 정상/주의/위험 등급)</li>
+                            <li>예방정비 권고 목록 (위험도 순 정렬)</li>
+                            <li>실시간 AI 이벤트 스트리밍 피드 (슬라이드인 애니메이션)</li>
+                            <li>생산 최적화 제안 카드 (P1/P2/P3 우선순위)</li>
+                        </ul>
+                        <div class="screenshot-wrap">
+                            <div class="screenshot-label">AI Intelligence Dashboard 실제 화면</div>
+                            <img class="screenshot-img" src="images/ai_dashboard.png" alt="AI Intelligence Dashboard">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6개 AI 기능 카드 -->
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-card__icon ic-blue">📈</div>
+                        <h3>OEE 예측 (Predictive OEE)</h3>
+                        <p>과거 30일 시간대별 OEE 패턴을 학습하여 다음 4~8시간 OEE를 예측합니다. 90% 신뢰구간(상한/하한)과 트렌드 방향 뱃지를 함께 표시합니다.</p>
+                        <span class="algo-tag">지수평활법 + 요일×시간 계절성</span>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon ic-red">🚨</div>
+                        <h3>이상 감지 (Anomaly Detection)</h3>
+                        <p>머신별 OEE·가용성·품질 지표를 실시간 모니터링합니다. 평균 ±2σ를 벗어나거나 동일 라인에서 연쇄 이상이 발생하면 즉시 감지합니다.</p>
+                        <span class="algo-tag">Z-Score + 연쇄 이상 감지</span>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon ic-yellow">🔧</div>
+                        <h3>예방정비 위험도</h3>
+                        <p>런타임(40%) + 다운타임 빈도 증가율(35%) + OEE 불안정도(25%)를 가중 합산해 정비 위험 스코어(0~100)를 계산합니다.</p>
+                        <span class="algo-tag">가중 스코어링 (3요소 합산)</span>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon ic-green">📊</div>
+                        <h3>AI 품질 파수꾼</h3>
+                        <p>불량 유형 파레토 분석(80% 룰), 24시간 발생 히트맵, 머신별 위험 랭킹, OEE 피어슨 상관계수를 자동 산출합니다.</p>
+                        <span class="algo-tag">파레토 + 히트맵 + Pearson</span>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon ic-purple">⚡</div>
+                        <h3>실시간 AI 스트리밍</h3>
+                        <p>SSE 기반으로 OEE 이상·신규 다운타임·정비 위험 이벤트를 15초 주기로 스트리밍합니다. 최대 15건 슬라이드인 카드 피드로 표시됩니다.</p>
+                        <span class="algo-tag">SSE + 5분 세션 + 자동 재연결</span>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon ic-teal">🎯</div>
+                        <h3>생산 최적화 제안</h3>
+                        <p>라인별 Availability·Performance·Quality 병목 컴포넌트를 식별하고, 잠재 OEE 향상 추정치와 P1/P2/P3 개선 제안 4건을 자동
+                            생성합니다.</p>
+                        <span class="algo-tag">병목 분석 + 잠재 OEE 추정</span>
+                    </div>
+                </div>
+
+                <!-- OEE 예측선 오버레이 -->
+                <div class="feature-block">
+                    <div class="feature-block__header">
+                        <span class="fb-badge-imp">IMPROVED</span>
+                        <span class="feature-block__title">OEE 트렌드 차트 AI 예측선 오버레이 (data_oee_2.php)</span>
+                    </div>
+                    <div class="feature-block__body">
+                        <p class="feature-block__desc">기존 data_oee.php의 OEE 트렌드 차트 상단에 AI 예측선과 신뢰구간을 오버레이합니다. 화면 구조 변경
+                            없이 "AI POWERED" 뱃지와 점선 예측 구간이 삽입됩니다.</p>
+                        <ul class="fb-points">
+                            <li>실선 = 실제 OEE, 점선 = AI 예측 구간</li>
+                            <li>신뢰구간(CI Upper/Lower) 음영 표시</li>
+                            <li>트렌드 방향 뱃지 (↑상승 / ↓하락 / →유지) 자동 계산</li>
+                        </ul>
+                        <div class="screenshot-wrap">
+                            <div class="screenshot-label">OEE 트렌드 차트 + AI 예측선 (data_oee.php)</div>
+                            <img class="screenshot-img" src="images/data_oee_2.jpeg" alt="OEE AI Overlay">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 다운타임 AI Risk -->
+                <div class="feature-block">
+                    <div class="feature-block__header">
+                        <span class="fb-badge-imp">IMPROVED</span>
+                        <span class="feature-block__title">다운타임 테이블 AI Risk 열 (data_downtime_2.php)</span>
+                    </div>
+                    <div class="feature-block__body">
+                        <p class="feature-block__desc">기존 다운타임 목록 테이블에 "AI Risk" 열이 자동 추가됩니다. MutationObserver로 테이블 데이터
+                            변화를 감지하여 위험도 뱃지를 실시간으로 업데이트합니다.</p>
+                        <ul class="fb-points">
+                            <li><strong style="color:var(--danger)">DANGER</strong> — 위험도 80점 이상 (빨간색 뱃지)</li>
+                            <li><strong style="color:var(--warn)">CAUTION</strong> — 위험도 50~79점 (노란색 뱃지)</li>
+                            <li><strong style="color:var(--accent2)">NORMAL</strong> — 위험도 49점 이하 (초록색 뱃지)</li>
+                        </ul>
+                        <div class="screenshot-wrap">
+                            <div class="screenshot-label">다운타임 AI Risk 열 (data_downtime.php)</div>
+                            <img class="screenshot-img" src="images/data_downtime_2.jpeg" alt="AI Risk">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI 자동 리포트 -->
+                <div class="feature-block">
+                    <div class="feature-block__header">
+                        <span class="fb-badge-new">NEW</span>
+                        <span class="feature-block__title">AI 자동 리포트 엔진 (ai_report_engine_2.php)</span>
+                    </div>
+                    <div class="feature-block__body">
+                        <p class="feature-block__desc">규칙 기반으로 경영자용 분석 리포트를 자동 생성합니다. 선택한 날짜 범위의 OEE 요약·이상감지·정비위험·최적화
+                            내용을 자연어 인사이트 6종으로 정리하고, HTML 파일로 다운로드할 수 있습니다.</p>
+                        <ul class="fb-points">
+                            <li>KPI 게이지 (Doughnut 차트 180°), 추세 차트 포함</li>
+                            <li>이상감지 Top 5, 정비위험 Top 5 자동 선별</li>
+                            <li>7일 예측 OEE 포함 (지수평활법)</li>
+                            <li>독립형 HTML Export → Ctrl+P 로 PDF 변환 가능</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- ── 7. UI 리디자인 ── -->
+            <section id="redesign">
+                <div class="section-label">UI Redesign</div>
+                <div class="section-title">1920×1080 사이니지 전용 리디자인</div>
+                <p class="section-desc">공장 현장 대형 모니터(사이니지)에 최적화된 풀스크린 레이아웃으로 전 페이지를 리디자인했습니다. 기존 V1 페이지는 그대로 유지됩니다.</p>
+
+                <!-- 사이니지 대시보드 -->
+                <div class="feature-block">
+                    <div class="feature-block__header">
+                        <span class="fb-badge-new">NEW</span>
+                        <span class="feature-block__title">사이니지 전용 대시보드 (dashboard_2.php)</span>
+                    </div>
+                    <div class="feature-block__body">
+                        <p class="feature-block__desc">1920×1080 해상도에 꽉 맞는 4행 CSS Grid 레이아웃. 상단 nav 바를 제거하고 52px 슬림 헤더만
+                            남겨 콘텐츠 영역을 최대화했습니다.</p>
+                        <ul class="fb-points">
+                            <li>Row A: OEE 4개 지표 카드 (Availability · Performance · Quality · OEE) 전체 너비</li>
+                            <li>Row B: Currently Active Andon 실시간 현황</li>
+                            <li>Row C/D: 차트 영역 (생산추세·라인별·기계별 OEE)</li>
+                            <li>햄버거 슬라이드 드로어 — 좌측 240px 오버레이, 전체 메뉴 접근</li>
+                        </ul>
+                        <div class="screenshot-wrap">
+                            <div class="screenshot-label">사이니지 대시보드 전체 화면 (dashboard_2.php)</div>
+                            <img class="screenshot-img" src="images/dashboard_2.jpeg" alt="Signage Dashboard">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 데이터 페이지 -->
+                <div class="feature-block">
+                    <div class="feature-block__header">
+                        <span class="fb-badge-new">NEW</span>
+                        <span class="feature-block__title">데이터 모니터링 페이지 리디자인 (_2 버전, 총 7종)</span>
+                    </div>
+                    <div class="feature-block__body">
+                        <p class="feature-block__desc">OEE·안돈·다운타임·불량·OEE 로그 페이지를 동일한 Row Grid 구조로 리디자인했습니다.
+                            Stats·차트·테이블 행을 토글 버튼으로 숨기거나 표시할 수 있으며, 레이아웃이 자동으로 재계산됩니다.</p>
+                        <div
+                            style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:7px;margin-bottom:14px">
+                            <div
+                                style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px">
+                                <div style="font-size:15px;margin-bottom:3px">📈</div>data_oee_2
+                            </div>
+                            <div
+                                style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px">
+                                <div style="font-size:15px;margin-bottom:3px">🚨</div>data_andon_2
+                            </div>
+                            <div
+                                style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px">
+                                <div style="font-size:15px;margin-bottom:3px">🔧</div>data_downtime_2
+                            </div>
+                            <div
+                                style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px">
+                                <div style="font-size:15px;margin-bottom:3px">📊</div>data_defective_2
+                            </div>
+                            <div
+                                style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px">
+                                <div style="font-size:15px;margin-bottom:3px">📋</div>log_oee_2
+                            </div>
+                            <div
+                                style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px">
+                                <div style="font-size:15px;margin-bottom:3px">📋</div>log_oee_hourly_2
+                            </div>
+                            <div
+                                style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px">
+                                <div style="font-size:15px;margin-bottom:3px">📋</div>log_oee_row_2
+                            </div>
+                        </div>
+                        <ul class="fb-points">
+                            <li>화면 높이 100% 고정, 스크롤 없음</li>
+                            <li>Stats / 차트 / 테이블 행 토글 (6가지 조합 자동 재계산)</li>
+                            <li>차트 5개 각각 ResizeObserver 적용 (행 크기 변동 즉시 반응)</li>
+                            <li>테이블 행 높이 50px 고정 (tbody 내부 스크롤)</li>
+                        </ul>
+                        <div class="screenshot-wrap">
+                            <div class="screenshot-label">data_oee_2.php — 차트 + 테이블 화면</div>
+                            <img class="screenshot-img" src="images/data_oee_2.jpeg" alt="data_oee_2">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 관리 페이지 -->
+                <div class="feature-block">
+                    <div class="feature-block__header">
+                        <span class="fb-badge-new">NEW</span>
+                        <span class="feature-block__title">마스터 데이터 관리 페이지 리디자인 (_2 버전, 총 10종)</span>
+                    </div>
+                    <div class="feature-block__body">
+                        <p class="feature-block__desc">공장·라인·기계·모델·공정·안돈·다운타임·불량·색상·근무시간 등 전체 마스터 관리 페이지를 풀스크린 구조로
+                            리디자인했습니다.</p>
+                        <ul class="fb-points">
+                            <li>52px 슬림 헤더에 검색·필터·추가 버튼 통합</li>
+                            <li>통계 카드 제거 → 테이블이 전체 영역 사용</li>
+                            <li>공통 드로어 include (nav-drawer-manage.php) 단일 관리</li>
+                            <li>Excel Export 경로 버그 수정 (PhpSpreadsheet 3단계 경로)</li>
+                        </ul>
+                        <div class="screenshot-wrap">
+                            <div class="screenshot-label">마스터 데이터 관리 화면 (info_design_process_2.php)</div>
+                            <img class="screenshot-img" src="images/info_design_process_2.jpeg" alt="data_oee_2">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 컬럼 고정 -->
+                <div class="feature-block">
+                    <div class="feature-block__header">
+                        <span class="fb-badge-new">NEW</span>
+                        <span class="feature-block__title">테이블 가로 스크롤 컬럼 고정 (MACHINE_NO 기준)</span>
+                    </div>
+                    <div class="feature-block__body">
+                        <p class="feature-block__desc">컬럼이 많은 테이블(log_oee_row_2 등)에서 MACHINE_NO 열을 가로 스크롤 중에도 고정합니다. CSS
+                            position:sticky가 Chromium에서 동작하지 않는 문제를 JS translateX 방식으로 완전 해결했습니다.</p>
+                        <ul class="fb-points">
+                            <li>requestAnimationFrame 기반 고성능 스크롤 리스너</li>
+                            <li>페이지 전환(SSE 업데이트) 후 offset 자동 재측정</li>
+                            <li>Playwright 검증: scrollLeft=400 시 diff=0 (완벽 고정) 확인</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- ── 8. 성능 최적화 ── -->
+            <section id="performance">
+                <div class="section-label">Performance</div>
+                <div class="section-title">성능 최적화 결과</div>
+                <p class="section-desc">코드 레벨 최적화로 SSE 실시간 스트리밍 응답 속도와 서버 부하를 대폭 개선했습니다.</p>
+
+                <div class="feature-block">
+                    <div class="feature-block__header">
+                        <span class="fb-badge-imp">IMPROVED</span>
+                        <span class="feature-block__title">SSE 스트리밍 쿼리 최적화 (7회→4회)</span>
+                    </div>
+                    <div class="feature-block__body">
+                        <div class="perf-row">
+                            <div class="perf-row__label"><span class="name">SSE 사이클당 쿼리 수</span><span
+                                    class="diff">-43%</span></div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px">
+                                <div>
+                                    <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">V1 (최적화 전)
+                                    </div>
+                                    <div class="perf-bar-track">
+                                        <div class="bar" style="width:100%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="font-size:11px;color:var(--accent2);margin-bottom:3px">V2 (최적화 후)</div>
+                                    <div class="perf-bar-track">
+                                        <div class="bar green" style="width:57%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="perf-row__sub">7회 → 4회 (stats+details+component → 1개 통합 쿼리)</div>
+                        </div>
+                        <div class="perf-row">
+                            <div class="perf-row__label"><span class="name">실측 SSE 총 응답시간</span><span
+                                    class="diff">~12.8ms</span></div>
+                            <div class="perf-bar-track">
+                                <div class="bar green" style="width:18%"></div>
+                            </div>
+                            <div class="perf-row__sub">oeeData:1.81ms + aggregated:3.84ms + trends:4.77ms +
+                                machineOee:2.39ms</div>
+                        </div>
+                        <div class="perf-row">
+                            <div class="perf-row__label"><span class="name">불필요한 SSE 전송</span><span
+                                    class="diff">제거</span></div>
+                            <div class="perf-bar-track">
+                                <div class="bar green" style="width:5%"></div>
+                            </div>
+                            <div class="perf-row__sub">해시 버그 수정: 데이터 변화 없을 때 매 5초마다 1000건 전송하던 버그 제거</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-card__icon ic-green">🏭</div>
+                        <h3>N+1 쿼리 제거</h3>
+                        <p>다운타임·안돈·불량 type stats 조회를 2쿼리+PHP 병합 → 단일 LEFT JOIN 쿼리로 통합했습니다.</p>
+                        <span class="algo-tag">info_* LEFT JOIN data_*</span>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon ic-blue">📚</div>
+                        <h3>공통 라이브러리 추출</h3>
+                        <p>9개 stream 파일의 공통 함수를 stream_helper.lib.php로 통합해 약 350줄 중복 제거했습니다.</p>
+                        <span class="algo-tag">stream_helper.lib.php</span>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon ic-yellow">🌍</div>
+                        <h3>타임존 중앙화</h3>
+                        <p>27개 파일에 중복 선언됐던 타임존 설정을 lib/db.php 단 1곳으로 통합했습니다.</p>
+                        <span class="algo-tag">lib/db.php 1곳 관리</span>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon ic-purple">💻</div>
+                        <h3>mod_fcgid 버퍼 해결</h3>
+                        <p>64KB 버퍼로 인한 SSE HTTP 500 오류를 FcgidOutputBufferSize 0 설정으로 근본 해결했습니다.</p>
+                        <span class="algo-tag">FcgidOutputBufferSize 0</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- ── 9. 기술 스택 ── -->
+            <section id="techstack">
+                <div class="section-label">Technology Stack</div>
+                <div class="section-title">기술 스택</div>
+                <p class="section-desc">V1의 기술 스택을 유지하면서 AI 관련 항목이 추가되었습니다.</p>
+                <div class="feature-block">
+                    <div class="feature-block__body" style="padding-top:22px">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+                            <div>
+                                <div
+                                    style="font-size:11.5px;font-weight:700;color:var(--text-muted);letter-spacing:.04em;margin-bottom:11px">
+                                    V1 · V2 공통</div>
+                                <div class="tech-stack">
+                                    <span class="tech-tag">PHP 7.4+</span>
+                                    <span class="tech-tag">MySQL 5.7+</span>
+                                    <span class="tech-tag">SAP Fiori Horizon</span>
+                                    <span class="tech-tag">Chart.js</span>
+                                    <span class="tech-tag">PhpSpreadsheet</span>
+                                    <span class="tech-tag">Server-Sent Events</span>
+                                    <span class="tech-tag">jQuery 3.6.1</span>
+                                    <span class="tech-tag">Apache / mod_fcgid</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div
+                                    style="font-size:11.5px;font-weight:700;color:var(--accent2);letter-spacing:.04em;margin-bottom:11px">
+                                    V2 신규 추가</div>
+                                <div class="tech-stack">
+                                    <span class="tech-tag new">지수평활법 (α=0.3)</span>
+                                    <span class="tech-tag new">Z-Score 이상감지</span>
+                                    <span class="tech-tag new">선형회귀 예측</span>
+                                    <span class="tech-tag new">Pearson 상관계수</span>
+                                    <span class="tech-tag new">CSS Grid fr 레이아웃</span>
+                                    <span class="tech-tag new">MutationObserver</span>
+                                    <span class="tech-tag new">ResizeObserver</span>
+                                    <span class="tech-tag new">translateX 컬럼 고정</span>
+                                    <span class="tech-tag new">Playwright E2E 검증</span>
+                                    <span class="tech-tag hl">statistics.lib.php</span>
+                                    <span class="tech-tag hl">stream_helper.lib.php</span>
+                                    <span class="tech-tag hl">nav-drawer-manage.php</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- ── 10. IoT 펌웨어 ── -->
+            <section id="firmware">
+                <div class="section-label">IoT Firmware</div>
+                <div class="section-title">IoT 디바이스 펌웨어 업그레이드</div>
+                <p class="section-desc">OEE_SCI V2 구현과 함께 현장 IoT 디바이스 펌웨어도 업그레이드되었습니다. PSoC 4 (Cortex-M0) 기반 CTP280 보드에서 재봉기·자수기 생산 데이터를 수집하여 REST API로 전송합니다.</p>
+
+                <!-- 데이터 흐름 -->
+                <div class="feature-block" style="margin-bottom:18px">
+                    <div class="feature-block__body">
+                        <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:8px 0">
+                            <div style="text-align:center">
+                                <div style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);border-radius:10px;padding:12px 16px;font-size:13px;font-weight:700;color:var(--accent)">⚙️ 재봉기 / 자수기</div>
+                                <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">UART 신호 출력</div>
+                            </div>
+                            <div style="color:var(--text-muted);font-size:20px;font-weight:300">→</div>
+                            <div style="text-align:center">
+                                <div style="background:rgba(210,153,34,.12);border:1px solid rgba(210,153,34,.3);border-radius:10px;padding:12px 16px;font-size:13px;font-weight:700;color:var(--warn)">📟 CTP280 PSoC4</div>
+                                <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">BLACK_CPU / EMBROIDERY_S</div>
+                            </div>
+                            <div style="color:var(--text-muted);font-size:20px;font-weight:300">→</div>
+                            <div style="text-align:center">
+                                <div style="background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.3);border-radius:10px;padding:12px 16px;font-size:13px;font-weight:700;color:var(--accent2)">🌐 WiFi REST API</div>
+                                <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">send_pCount / send_eCount</div>
+                            </div>
+                            <div style="color:var(--text-muted);font-size:20px;font-weight:300">→</div>
+                            <div style="text-align:center">
+                                <div style="background:rgba(188,140,255,.12);border:1px solid rgba(188,140,255,.3);border-radius:10px;padding:12px 16px;font-size:13px;font-weight:700;color:var(--purple)">🗄️ MySQL DB</div>
+                                <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">data_oee / data_embroidery</div>
+                            </div>
+                            <div style="color:var(--text-muted);font-size:20px;font-weight:300">→</div>
+                            <div style="text-align:center">
+                                <div style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);border-radius:10px;padding:12px 16px;font-size:13px;font-weight:700;color:var(--accent)">📊 OEE_SCI V2</div>
+                                <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">SSE 실시간 대시보드</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 메모리 수치 -->
+                <div class="metrics-row" style="margin-bottom:18px">
+                    <div class="metric-card">
+                        <div class="val yellow" style="font-size:1.3rem">PSoC 4</div>
+                        <div class="lbl">MCU</div>
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">CY8C42xx · Cortex-M0<br>ARM GCC 5.4.1</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val">45.3<span style="font-size:1rem">%</span></div>
+                        <div class="lbl">Flash (BLACK_CPU)</div>
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">118,804 / 262,144 bytes<br>V1 대비 -5% 절감</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val green">68.9<span style="font-size:1rem">%</span></div>
+                        <div class="lbl">SRAM (BLACK_CPU)</div>
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">22,580 / 32,768 bytes</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val purple">2</div>
+                        <div class="lbl">펌웨어 버전</div>
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">BLACK_CPU V1<br>EMBROIDERY_S V1</div>
+                    </div>
+                </div>
+
+                <!-- BLACK_CPU V1 -->
+                <div class="feature-block">
+                    <div class="feature-block__header">
+                        <span class="fb-badge-new">NEW</span>
+                        <span class="feature-block__title">280CTP_IoT_INTEGRATED_V1_BLACK_CPU — PATTERN_MACHINE 전용 (2026-03-17)</span>
+                    </div>
+                    <div class="feature-block__body">
+                        <p class="feature-block__desc">V1 통합 펌웨어에서 PATTERN_MACHINE 전용으로 분리한 BLACK CPU 보드 버전입니다. SEWING_MACHINE(TrimPin ISR)과 전류센서(ADC_SAR_Seq)를 완전 제거하여 코드를 단순화하고, Flash 사용량을 V1 대비 약 5% 절감했습니다.</p>
+                        <ul class="fb-points">
+                            <li>PATTERN_MACHINE 고정 — machineType 설정 UI 제거, CountFunc → PatternCountLoop 고정</li>
+                            <li>SEWING_MACHINE 완전 제거 — TrimPin ISR, SewingCountLoop(), makeAndonSewingCount2() 제거</li>
+                            <li>전류센서 완전 제거 — ADC_SAR_Seq TopDesign 제거, currentSensor.c 프로젝트 소스 제거</li>
+                            <li>UART JSON 수신 유지 — {"cmd":"count","value":1,...} 형식 → patternActualH/L 누산</li>
+                            <li>Flash 레이아웃 호환 — COUNT / MACHINE_PARAMETER 구조체 필드 보존 (기존 설정 데이터 유지)</li>
+                        </ul>
+                        <div class="tbl-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width:30%">항목</th>
+                                        <th style="width:35%">V1 통합</th>
+                                        <th style="width:35%">BLACK_CPU V1</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>PATTERN_MACHINE</td>
+                                        <td>지원</td>
+                                        <td><strong style="color:var(--accent2)">고정 (유일 타입)</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>SEWING_MACHINE (TrimPin ISR)</td>
+                                        <td>지원</td>
+                                        <td><span class="tag err">제거</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>전류센서 (ADC_SAR_Seq)</td>
+                                        <td>지원 (옵션)</td>
+                                        <td><span class="tag err">제거</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Firmware Version</td>
+                                        <td>Integrated REV 9.8.3</td>
+                                        <td><span class="tag ok">BLACK_CPU V1</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Flash 사용</td>
+                                        <td>~131,800 bytes (50.3%)</td>
+                                        <td>118,804 bytes (45.3%) ↓</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EMBROIDERY_S V1 -->
+                <div class="feature-block">
+                    <div class="feature-block__header">
+                        <span class="fb-badge-new">NEW</span>
+                        <span class="feature-block__title">280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S — 컴퓨터자수기 전용 (2026-03-26)</span>
+                    </div>
+                    <div class="feature-block__body">
+                        <p class="feature-block__desc">BLACK_CPU V1 기반으로 컴퓨터자수기(Computer Embroidery Machine) 전용으로 분리한 버전입니다. UART 프로토콜을 JSON에서 세미콜론 구분 텍스트 방식으로 전면 교체하고, 실끊김(Thread Breakage) 추적과 자수기 전용 서버 API를 추가했습니다.</p>
+                        <ul class="fb-points">
+                            <li>세미콜론 파서 신규 구현 — actual_qty;cycle_time_ms;thread_breakage_qty;motor_runtime_ms; 포맷, 4번째 ';' 감지로 파싱 시작</li>
+                            <li>실끊김 추적 — embThreadBreakageQty/SumH/SumL 필드 추가, LCD Page 1에 tb 항목 표시</li>
+                            <li>자수기 전용 WebAPI — send_eCount.php → data_embroidery 테이블, ms→초(소수점 1자리) 변환 전송</li>
+                            <li>UART TEST 뷰어 — 수신 패킷 마지막 5줄 LCD 미러 표시 (uartTestMenu.c 신규)</li>
+                            <li>echo 루프백 버그 수정 — index=0 시 숫자 외 바이트 무시, DBG printf 제거 (2026-03-27)</li>
+                        </ul>
+                        <div class="tbl-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width:30%">항목</th>
+                                        <th style="width:35%">BLACK_CPU V1</th>
+                                        <th style="width:35%">EMBROIDERY_S V1</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>UART 프로토콜</td>
+                                        <td>JSON {"cmd":"count",...}</td>
+                                        <td><strong style="color:var(--accent2)">세미콜론 구분 텍스트</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>파서</td>
+                                        <td>jsmn 라이브러리</td>
+                                        <td>직접 구현 (uartJson.c 전면 교체) <span class="tag-new">NEW</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>실끊김 추적</td>
+                                        <td>없음</td>
+                                        <td>embThreadBreakageQty/SumH/SumL <span class="tag-new">NEW</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>WebAPI</td>
+                                        <td>send_pCount</td>
+                                        <td>send_eCount → data_embroidery <span class="tag-new">NEW</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Firmware Version</td>
+                                        <td>BLACK_CPU V1</td>
+                                        <td><span class="tag ok">EMBROIDERY_S V1</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="divider"></div>
+
+            <!-- ── 11. 구현 파일 목록 ── -->
+            <section id="filelist">
+                <div class="section-label">File Inventory</div>
+                <div class="section-title">구현 파일 목록</div>
+                <p class="section-desc">V2에서 신규 구현된 파일 전체 목록입니다. 기존 V1 파일은 변경 없이 유지됩니다.</p>
+
+                <!-- 카테고리별 수량 요약 -->
+                <div class="metrics-row" style="margin-bottom:28px">
+                    <div class="metric-card">
+                        <div class="val green">8</div>
+                        <div class="lbl">Data Pages</div>
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">dashboard, oee, andon,<br>downtime, defective, log×3</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val">1</div>
+                        <div class="lbl">AI Dashboard</div>
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">ai_dashboard_2.php<br>(사이니지 최적화)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val purple">7</div>
+                        <div class="lbl">AI Engines</div>
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">prediction, anomaly,<br>maintenance, optimization,<br>stream, report×2</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val yellow">9</div>
+                        <div class="lbl">Stream APIs</div>
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">SSE 스트림 엔드포인트<br>각 페이지별 전용 스트림</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val">10</div>
+                        <div class="lbl">Manage Pages</div>
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">factory, line, machine,<br>model, process, andon,<br>downtime, defective×3</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val green">2</div>
+                        <div class="lbl">HTML Manuals</div>
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">ai_dashboard_manual<br>(KOR · ENG)</div>
+                    </div>
+                </div>
+
+                <div class="file-list-grid">
+                    <div class="file-list-card">
+                        <div class="file-list-card__label">Data Pages (7)</div>
+                        <ul>
+                            <li><span class="dot"></span>dashboard_2.php</li>
+                            <li><span class="dot"></span>ai_dashboard_2.php</li>
+                            <li><span class="dot"></span>data_oee_2.php</li>
+                            <li><span class="dot"></span>data_andon_2.php</li>
+                            <li><span class="dot"></span>data_downtime_2.php</li>
+                            <li><span class="dot"></span>data_defective_2.php</li>
+                            <li><span class="dot"></span>log_oee_2.php</li>
+                            <li><span class="dot"></span>log_oee_hourly_2.php</li>
+                            <li><span class="dot"></span>log_oee_row_2.php</li>
+                        </ul>
+                    </div>
+                    <div class="file-list-card">
+                        <div class="file-list-card__label">AI Engine APIs (7)</div>
+                        <ul>
+                            <li><span class="dot"></span>ai_oee_prediction_2.php</li>
+                            <li><span class="dot"></span>ai_oee_prediction_dash_2.php</li>
+                            <li><span class="dot"></span>ai_anomaly_2.php</li>
+                            <li><span class="dot"></span>ai_maintenance_2.php</li>
+                            <li><span class="dot"></span>ai_maintenance_dash_2.php</li>
+                            <li><span class="dot"></span>ai_optimization_2.php</li>
+                            <li><span class="dot"></span>ai_stream_analysis_2.php</li>
+                            <li><span class="dot"></span>ai_report_engine_2.php</li>
+                            <li><span class="dot"></span>ai_report_export_2.php</li>
+                        </ul>
+                    </div>
+                    <div class="file-list-card">
+                        <div class="file-list-card__label">Stream APIs (9)</div>
+                        <ul>
+                            <li><span class="dot"></span>dashboard_stream_2.php</li>
+                            <li><span class="dot"></span>data_oee_stream_2.php</li>
+                            <li><span class="dot"></span>data_andon_stream_2.php</li>
+                            <li><span class="dot"></span>data_downtime_stream_2.php</li>
+                            <li><span class="dot"></span>data_defective_stream_2.php</li>
+                            <li><span class="dot"></span>log_oee_stream_2.php</li>
+                            <li><span class="dot"></span>log_oee_hourly_stream_2.php</li>
+                            <li><span class="dot"></span>log_oee_row_stream_2.php</li>
+                        </ul>
+                    </div>
+                    <div class="file-list-card">
+                        <div class="file-list-card__label">Manage Pages (10)</div>
+                        <ul>
+                            <li><span class="dot"></span>info_factory_2.php</li>
+                            <li><span class="dot"></span>info_line_2.php</li>
+                            <li><span class="dot"></span>info_machine_2.php</li>
+                            <li><span class="dot"></span>info_machine_model_2.php</li>
+                            <li><span class="dot"></span>info_design_process_2.php</li>
+                            <li><span class="dot"></span>info_andon_2.php</li>
+                            <li><span class="dot"></span>info_downtime_2.php</li>
+                            <li><span class="dot"></span>info_defective_2.php</li>
+                            <li><span class="dot"></span>info_rate_color_2.php</li>
+                            <li><span class="dot"></span>info_worktime_2.php</li>
+                        </ul>
+                    </div>
+                    <div class="file-list-card">
+                        <div class="file-list-card__label">Libraries &amp; Includes</div>
+                        <ul>
+                            <li><span class="dot"></span>statistics.lib.php</li>
+                            <li><span class="dot"></span>stream_helper.lib.php</li>
+                            <li><span class="dot"></span>export_common.php</li>
+                            <li><span class="dot"></span>nav-drawer-manage.php</li>
+                            <li><span class="dot"></span>signage_filters.php</li>
+                            <li><span class="dot"></span>oee_stats_grid.php</li>
+                        </ul>
+                    </div>
+                    <div class="file-list-card">
+                        <div class="file-list-card__label">HTML Manuals (2)</div>
+                        <ul>
+                            <li><span class="dot"></span>ai_dashboard_manual_kor.html</li>
+                            <li><span class="dot"></span>ai_dashboard_manual.html</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </div><!-- /page-wrap -->
+
+        <div class="doc-footer">
+            <strong style="color:var(--accent)">OEE_SCI V2</strong> &nbsp;·&nbsp; SUNTECH &nbsp;·&nbsp; 2026-04-03
+            &nbsp;·&nbsp; AI 도입 전략 &amp; 리디자인 통합 보고서
+        </div>
+    </div><!-- /doc-main -->
+
+    <script>
+        // IntersectionObserver TOC 활성화
+        const navLinks = document.querySelectorAll('.sidebar-nav a[href^="#"]');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(a => a.classList.remove('active'));
+                    const active = document.querySelector(`.sidebar-nav a[href="#${entry.target.id}"]`);
+                    if (active) active.classList.add('active');
+                }
+            });
+        }, { rootMargin: '-20% 0px -70% 0px' });
+        document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+    </script>
+</body>
+
+</html>

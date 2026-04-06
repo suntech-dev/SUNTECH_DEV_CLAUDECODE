@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OEE_SCI V2 — AI Strategy & Redesign Integrated Report (English)</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --surface2: #21262d;
+            --surface3: #2d333b;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --accent2: #3fb950;
+            --warn: #d29922;
+            --danger: #f85149;
+            --purple: #bc8cff;
+            --sidebar-w: 240px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.7;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ── Sidebar ── */
+        .doc-sidebar {
+            width: var(--sidebar-w);
+            position: fixed; top: 0; left: 0;
+            height: 100vh; overflow-y: auto;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            z-index: 100; flex-shrink: 0;
+        }
+        .sidebar-logo { padding: 20px 20px 14px; border-bottom: 1px solid var(--border); }
+        .sidebar-logo__title { font-size: 13px; font-weight: 800; color: var(--accent); display: block; margin-bottom: 4px; }
+        .sidebar-logo__sub { font-size: 11px; color: var(--text-muted); }
+        .sidebar-lang {
+            display: flex; gap: 6px;
+            padding: 10px 16px; border-bottom: 1px solid var(--border);
+        }
+        .sidebar-lang a {
+            flex: 1; text-align: center;
+            font-size: 11px; font-weight: 700;
+            padding: 5px 0; border-radius: 6px;
+            text-decoration: none; transition: background .15s;
+        }
+        .sidebar-lang a.active {
+            background: rgba(63,185,80,.18); color: var(--accent2);
+            border: 1px solid rgba(63,185,80,.3);
+        }
+        .sidebar-lang a:not(.active) {
+            background: var(--surface2); color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+        .sidebar-lang a:not(.active):hover { color: var(--text); border-color: var(--accent); }
+        .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+        .sidebar-nav__group { margin-bottom: 18px; }
+        .sidebar-nav__label {
+            font-size: 10px; font-weight: 700; letter-spacing: .08em;
+            color: var(--text-muted); text-transform: uppercase; padding: 0 16px 5px;
+        }
+        .sidebar-nav a {
+            display: block; padding: 6px 16px;
+            font-size: 12.5px; color: var(--text-muted);
+            text-decoration: none; border-left: 2px solid transparent;
+            transition: color .15s, border-color .15s, background .15s;
+        }
+        .sidebar-nav a:hover { color: var(--text); background: rgba(255,255,255,.04); }
+        .sidebar-nav a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(88,166,255,.07); }
+        .sidebar-back {
+            display: flex; align-items: center; gap: 6px;
+            color: var(--text-muted); text-decoration: none;
+            font-size: 12px; padding: 10px 16px;
+            border-top: 1px solid var(--border); transition: color .15s;
+        }
+        .sidebar-back:hover { color: var(--accent); }
+        .sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-muted); }
+
+        /* ── Main ── */
+        .doc-main { margin-left: var(--sidebar-w); flex: 1; min-width: 0; }
+        .page-wrap { max-width: 1060px; margin: 0 auto; padding: 0 40px 80px; }
+
+        /* ── Hero ── */
+        .hero { padding: 60px 0 48px; text-align: center; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(63,185,80,.12); border: 1px solid rgba(63,185,80,.3);
+            border-radius: 20px; padding: 5px 18px;
+            font-size: 12px; font-weight: 700; color: var(--accent2);
+            letter-spacing: .06em; margin-bottom: 22px;
+        }
+        .hero h1 {
+            font-size: 2.4rem; font-weight: 800; line-height: 1.2;
+            background: linear-gradient(135deg, #e6edf3 0%, #58a6ff 55%, #bc8cff 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; margin-bottom: 12px;
+        }
+        .hero-sub { color: var(--text-muted); font-size: 14.5px; margin-bottom: 10px; }
+        .hero-meta { display: flex; justify-content: center; gap: 24px; font-size: 12px; color: var(--text-muted); flex-wrap: wrap; }
+
+        /* ── Section ── */
+        section { margin-bottom: 64px; scroll-margin-top: 24px; }
+        .section-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; color: var(--accent); text-transform: uppercase; margin-bottom: 6px; }
+        .section-title { font-size: 1.45rem; font-weight: 800; margin-bottom: 8px; }
+        .section-desc { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; max-width: 720px; }
+        .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 48px 0; }
+
+        /* ── Metrics ── */
+        .metrics-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-bottom: 28px; }
+        .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; text-align: center; }
+        .metric-card .val { font-size: 2rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 5px; }
+        .metric-card .val.green { color: var(--accent2); }
+        .metric-card .val.yellow { color: var(--warn); }
+        .metric-card .val.purple { color: var(--purple); }
+        .metric-card .lbl { font-size: 11.5px; color: var(--text-muted); font-weight: 600; }
+
+        /* ── Card grid ── */
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-bottom: 20px; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 11px; padding: 20px; transition: border-color .2s, transform .15s; }
+        .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .card h4 { font-size: 14px; font-weight: 700; margin-bottom: 7px; }
+        .card p { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+
+        /* ── Table ── */
+        .tbl-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+        thead tr { background: var(--surface2); }
+        th { padding: 11px 14px; text-align: left; color: var(--text-muted); font-weight: 700; font-size: 11.5px; letter-spacing: .04em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        td { padding: 11px 14px; border-bottom: 1px solid rgba(48,54,61,.6); vertical-align: top; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover td { background: rgba(33,38,45,.5); }
+        .col-area { font-weight: 600; color: var(--text-muted); font-size: 12px; }
+        .col-v1 { color: var(--text-muted); }
+        .tag-new { display: inline-block; background: rgba(63,185,80,.15); color: var(--accent2); border: 1px solid rgba(63,185,80,.3); border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 700; margin-left: 5px; vertical-align: middle; }
+        .tag-imp { display: inline-block; background: rgba(88,166,255,.12); color: var(--accent); border: 1px solid rgba(88,166,255,.25); border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 700; margin-left: 5px; vertical-align: middle; }
+
+        /* ── Feature grid ── */
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-bottom: 16px; }
+        .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px; transition: border-color .2s, transform .15s; }
+        .feature-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .feature-card__icon { width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 17px; margin-bottom: 13px; }
+        .ic-blue { background: rgba(88,166,255,.15); }
+        .ic-green { background: rgba(63,185,80,.15); }
+        .ic-yellow { background: rgba(210,153,34,.15); }
+        .ic-red { background: rgba(248,81,73,.15); }
+        .ic-purple { background: rgba(188,140,255,.15); }
+        .ic-teal { background: rgba(56,211,183,.15); }
+        .feature-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 7px; }
+        .feature-card p { font-size: 12.5px; color: var(--text-muted); line-height: 1.65; }
+        .algo-tag { display: inline-block; margin-top: 9px; font-size: 11px; color: var(--text-muted); background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px; font-family: 'SFMono-Regular', Consolas, monospace; }
+
+        /* ── Feature block ── */
+        .feature-block { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 18px; }
+        .feature-block__header { display: flex; align-items: center; gap: 12px; padding: 18px 22px; border-bottom: 1px solid var(--border); }
+        .fb-badge-new { font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 20px; background: rgba(63,185,80,.15); color: var(--accent2); border: 1px solid rgba(63,185,80,.3); }
+        .fb-badge-imp { font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 20px; background: rgba(88,166,255,.12); color: var(--accent); border: 1px solid rgba(88,166,255,.25); }
+        .feature-block__title { font-size: 14.5px; font-weight: 700; flex: 1; }
+        .feature-block__body { padding: 18px 22px; }
+        .feature-block__desc { font-size: 13.5px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.7; }
+        .fb-points { list-style: none; display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+        .fb-points li { font-size: 13px; color: var(--text); display: flex; gap: 9px; }
+        .fb-points li::before { content: '✓'; color: var(--accent2); font-weight: 700; flex-shrink: 0; }
+
+        /* ── Screenshot ── */
+        .screenshot-wrap { margin: 18px 0; }
+        .screenshot-label { font-size: 11.5px; font-weight: 700; color: var(--text-muted); letter-spacing: .04em; margin-bottom: 7px; display: flex; align-items: center; gap: 7px; }
+        .screenshot-label::before { content: ''; display: inline-block; width: 3px; height: 11px; background: var(--accent); border-radius: 2px; }
+        .screenshot-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); display: block; }
+
+        /* ── Perf bars ── */
+        .perf-row { margin-bottom: 14px; }
+        .perf-row__label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
+        .perf-row__label .name { font-weight: 600; }
+        .perf-row__label .diff { color: var(--accent2); font-weight: 700; }
+        .perf-bar-track { background: var(--surface2); border-radius: 4px; height: 7px; overflow: hidden; margin-bottom: 3px; }
+        .perf-bar-track .bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), #4891d9); }
+        .perf-bar-track .bar.green { background: linear-gradient(90deg, var(--accent2), #2ea043); }
+        .perf-row__sub { font-size: 11.5px; color: var(--text-muted); }
+
+        /* ── Tech stack ── */
+        .tech-stack { display: flex; flex-wrap: wrap; gap: 7px; }
+        .tech-tag { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 4px 10px; font-size: 12px; font-family: 'SFMono-Regular', Consolas, monospace; color: var(--text-muted); }
+        .tech-tag.new { border-color: rgba(63,185,80,.4); color: var(--accent2); background: rgba(63,185,80,.07); }
+        .tech-tag.hl { border-color: rgba(88,166,255,.4); color: var(--accent); background: rgba(88,166,255,.07); }
+
+        /* ── Timeline ── */
+        .timeline { position: relative; padding-left: 26px; }
+        .timeline::before { content: ''; position: absolute; left: 6px; top: 6px; bottom: 6px; width: 2px; background: var(--border); }
+        .timeline-item { position: relative; margin-bottom: 22px; }
+        .timeline-item::before { content: ''; position: absolute; left: -21px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+        .timeline-item h4 { font-size: 13.5px; font-weight: 700; margin-bottom: 3px; }
+        .timeline-item p { font-size: 12.5px; color: var(--text-muted); }
+
+        /* ── File list ── */
+        .file-list-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 16px; }
+        .file-list-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+        .file-list-card__label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 11px; }
+        .file-list-card ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+        .file-list-card li { font-size: 12px; color: var(--text); font-family: 'SFMono-Regular', Consolas, monospace; display: flex; gap: 7px; align-items: center; }
+        .file-list-card li .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent2); flex-shrink: 0; }
+
+        /* ── Tags ── */
+        .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; letter-spacing: .03em; }
+        .tag.done { background: rgba(63,185,80,.2); color: var(--accent2); border: 1px solid rgba(63,185,80,.4); font-weight: 800; }
+        .tag.err { background: rgba(248,81,73,.15); color: var(--danger); border: 1px solid rgba(248,81,73,.3); }
+
+        /* ── Footer ── */
+        .doc-footer { text-align: center; padding: 32px 24px; border-top: 1px solid var(--border); font-size: 11.5px; color: var(--text-muted); }
+
+        @media (max-width: 800px) {
+            .doc-sidebar { display: none; }
+            .doc-main { margin-left: 0; }
+            .page-wrap { padding: 0 16px 60px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<aside class="doc-sidebar">
+    <div class="sidebar-logo">
+        <span class="sidebar-logo__title">OEE_SCI V2</span>
+        <span class="sidebar-logo__sub">AI Strategy &amp; Redesign Report</span>
+    </div>
+    <div class="sidebar-lang">
+        <a href="OEE_SCI_V2_REDESIGN_REPORT_2.html">KOR</a>
+        <a href="OEE_SCI_V2_REDESIGN_REPORT_ENG_2.html" class="active">ENG</a>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="sidebar-nav__group">
+            <div class="sidebar-nav__label">Background</div>
+            <a href="#background">Introduction</a>
+            <a href="#v1-analysis">V1 Analysis</a>
+            <a href="#ai-strategy">AI Strategy</a>
+        </div>
+        <div class="sidebar-nav__group">
+            <div class="sidebar-nav__label">Implementation</div>
+            <a href="#overview">Summary</a>
+            <a href="#comparison">V1→V2 Comparison</a>
+            <a href="#ai-features">AI Features</a>
+            <a href="#redesign">UI Redesign</a>
+            <a href="#performance">Performance</a>
+        </div>
+        <div class="sidebar-nav__group">
+            <div class="sidebar-nav__label">Technical</div>
+            <a href="#techstack">Tech Stack</a>
+            <a href="#filelist">File Inventory</a>
+        </div>
+    </nav>
+    <a class="sidebar-back" href="OEE_SCI_V2_REDESIGN_INDEX_2.html">← Back to Index</a>
+    <div class="sidebar-footer">SUNTECH · 2026-04-03 · Completed</div>
+</aside>
+
+<!-- ── Main ── -->
+<div class="doc-main">
+<div class="page-wrap">
+
+    <!-- Hero -->
+    <div class="hero">
+        <div class="hero-badge">✅ Project Completed · March 2026</div>
+        <h1>OEE_SCI V2<br>AI Strategy &amp; Redesign Integrated Report</h1>
+        <p class="hero-sub">A comprehensive report covering the full lifecycle — from AI strategy planning to completed implementation.</p>
+        <div class="hero-meta">
+            <span>📅 Initial Draft: 2026-03-06</span>
+            <span>✅ Implementation Complete: 2026-03-25</span>
+            <span>🏭 Target: SCI Garment Factory OEE System</span>
+            <span>📌 SUNTECH</span>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ── 1. Background ── -->
+    <section id="background">
+        <div class="section-label">Background</div>
+        <div class="section-title">Introduction &amp; Motivation</div>
+        <p class="section-desc">OEE_SCI V1 provided stable real-time monitoring, but had no actual AI capabilities despite being named "AI OEE Dashboard." V2 was designed to overcome the limitations of purely reactive monitoring.</p>
+
+        <div class="card-grid">
+            <div class="card">
+                <h4>⚠️ V1 Limitation — Reactive Only</h4>
+                <p>Issues detectable only after they occur. Manual root-cause analysis for OEE drops. No proactive intervention capability.</p>
+            </div>
+            <div class="card">
+                <h4>🏭 Target Environment</h4>
+                <p>SCI garment factory in Indonesia. Multiple computer pattern sewing machines. Existing SSE-based real-time data pipeline retained as-is.</p>
+            </div>
+            <div class="card">
+                <h4>🎯 V2 Core Objective</h4>
+                <p>Deploy real AI capabilities — prediction, anomaly detection, and optimization — so problems are addressed before they occur.</p>
+            </div>
+            <div class="card">
+                <h4>💡 Design Principles</h4>
+                <p>Full backward compatibility with V1. Self-contained statistical engine (no external AI APIs). Optimized for 1920×1080 signage displays.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 2. V1 Analysis ── -->
+    <section id="v1-analysis">
+        <div class="section-label">V1 Analysis</div>
+        <div class="section-title">Existing System Architecture (V1)</div>
+        <p class="section-desc">The V1 system's components and technology stack, which served as the baseline for V2 design.</p>
+
+        <div class="card-grid">
+            <div class="card">
+                <h4>Target Equipment</h4>
+                <p>Real-time OEE monitoring for computer pattern sewing machines at SCI Indonesia factory.</p>
+            </div>
+            <div class="card">
+                <h4>Real-time Communication</h4>
+                <p>Server-Sent Events (SSE) with 5-second polling. Equipment → REST API → MySQL real-time data ingestion.</p>
+            </div>
+            <div class="card">
+                <h4>OEE Calculation</h4>
+                <p>Automatic calculation of Availability × Performance × Quality. Hourly and shift-based aggregation with history retention.</p>
+            </div>
+            <div class="card">
+                <h4>Alert System</h4>
+                <p>3 event types: Andon · Downtime · Defective. Event start/end processing with real-time dashboard display.</p>
+            </div>
+        </div>
+
+        <div class="tbl-wrap">
+            <table>
+                <thead><tr><th>Item</th><th>V1 Details</th></tr></thead>
+                <tbody>
+                    <tr><td>Tech Stack</td><td>PHP 7.4+ · MySQL 5.7+ · jQuery 3.6.1 · Chart.js · Server-Sent Events</td></tr>
+                    <tr><td>UI Framework</td><td>SAP Fiori Horizon Light (with top navigation bar)</td></tr>
+                    <tr><td>Core Data Tables</td><td>data_oee · data_oee_rows_hourly · Downtime · Defective · Andon</td></tr>
+                    <tr><td>Hierarchy</td><td>Factory → Line → Machine</td></tr>
+                    <tr><td>SSE Queries per Cycle</td><td>Up to 7 queries (including duplicate aggregations)</td></tr>
+                    <tr><td>V1 AI Capability</td><td><span class="tag err">None</span> — Name only: "AI OEE CS Dashboard"</td></tr>
+                    <tr><td>Page Layout</td><td>Scroll-based, includes footer, not optimized for signage</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 3. AI Strategy ── -->
+    <section id="ai-strategy">
+        <div class="section-label">AI Strategy</div>
+        <div class="section-title">AI Integration Direction</div>
+        <p class="section-desc">Five AI capabilities implemented using a self-built statistical engine — no external AI APIs required. All fully implemented.</p>
+
+        <div class="card-grid">
+            <div class="card" style="border-color:rgba(63,185,80,.3)">
+                <h4>📈 Predictive</h4>
+                <p>Learn 30-day hourly OEE patterns to predict OEE for the next 4–8 hours. Enables proactive response.</p>
+                <div class="tag done" style="margin-top:12px">✓ Implemented</div>
+            </div>
+            <div class="card" style="border-color:rgba(88,166,255,.3)">
+                <h4>🚨 Detection</h4>
+                <p>Z-Score based real-time anomaly detection. Instant alert when values deviate beyond ±2σ or cascading anomalies occur.</p>
+                <div class="tag done" style="margin-top:12px">✓ Implemented</div>
+            </div>
+            <div class="card" style="border-color:rgba(188,140,255,.3)">
+                <h4>📝 Generative</h4>
+                <p>Rule-based AI report generation. Auto-creates executive-level summaries covering OEE, anomalies, maintenance risk, and optimization recommendations.</p>
+                <div class="tag done" style="margin-top:12px">✓ Implemented</div>
+            </div>
+            <div class="card" style="border-color:rgba(63,185,80,.3)">
+                <h4>⚡ Streaming AI</h4>
+                <p>SSE-based real-time AI analysis stream. AI insights generated simultaneously with incoming data, displayed as slide-in card feed.</p>
+                <div class="tag done" style="margin-top:12px">✓ Implemented</div>
+            </div>
+            <div class="card" style="border-color:rgba(88,166,255,.3)">
+                <h4>🎯 Optimization</h4>
+                <p>Identifies bottleneck components (Availability/Performance/Quality) per line and auto-generates P1/P2/P3 improvement recommendations.</p>
+                <div class="tag done" style="margin-top:12px">✓ Implemented</div>
+            </div>
+            <div class="card" style="border-color:rgba(57,213,182,.3)">
+                <h4>📺 Signage Dashboard</h4>
+                <p>AI dashboard optimized for 1920×1080 signage monitors. 60-second auto-refresh with Factory→Line→Machine filter cascade.</p>
+                <div class="tag done" style="margin-top:12px">✓ Implemented</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 4. Summary ── -->
+    <section id="overview">
+        <div class="section-label">Overview</div>
+        <div class="section-title">V2 Upgrade Summary</div>
+        <p class="section-desc">All V1 monitoring capabilities are preserved while adding a complete AI analytics engine and full-screen signage UI.</p>
+
+        <div class="metrics-row">
+            <div class="metric-card"><div class="val">9<span style="font-size:1rem">+</span></div><div class="lbl">New AI Features</div></div>
+            <div class="metric-card"><div class="val green">7</div><div class="lbl">Redesigned Pages<br>(data area)</div></div>
+            <div class="metric-card"><div class="val yellow">10</div><div class="lbl">Redesigned Pages<br>(manage area)</div></div>
+            <div class="metric-card"><div class="val purple">43%</div><div class="lbl">SSE Query<br>Reduction</div></div>
+            <div class="metric-card"><div class="val">350</div><div class="lbl">Duplicate Lines<br>Removed</div></div>
+            <div class="metric-card"><div class="val green">~13<span style="font-size:1rem">ms</span></div><div class="lbl">SSE Response<br>Time</div></div>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <h4>Phase 1 — AI Statistical Engine (2026-03-06)</h4>
+                <p>Implemented AI analysis engine using exponential smoothing, Z-Score, and linear regression. Completed OEE prediction, anomaly detection, and maintenance risk scoring APIs.</p>
+            </div>
+            <div class="timeline-item">
+                <h4>Phase 2 — AI Enhancement of Existing Pages (2026-03-06)</h4>
+                <p>Added AI prediction overlays, AI Risk columns, and Quality Guardian sections to existing OEE/Downtime/Defective pages — without changing existing screen flow.</p>
+            </div>
+            <div class="timeline-item">
+                <h4>Phase 3 — Advanced Features (2026-03-06)</h4>
+                <p>Completed SSE real-time AI streaming feed and production optimization recommendations (P1/P2/P3 bottleneck prioritization). Deployed signage-optimized AI Dashboard (ai_dashboard_2.php).</p>
+            </div>
+            <div class="timeline-item">
+                <h4>Performance Optimization (2026-03-07)</h4>
+                <p>Eliminated SSE N+1 queries (7→4 queries), merged common functions into stream_helper.lib.php (~350 duplicate lines removed), centralized timezone config (27 files→1), fixed hash comparison bug.</p>
+            </div>
+            <div class="timeline-item">
+                <h4>AI Dashboard Bug Fixes (2026-03-19)</h4>
+                <p>Fixed 5 bugs discovered via Playwright automation: OEE exceeding 111%, CI range errors, date_range ignored, confidence interval inversion, duplicate AI feed entries.</p>
+            </div>
+            <div class="timeline-item">
+                <h4>Full-Screen UI Redesign (2026-03-24~25)</h4>
+                <p>Redesigned all pages to 1920×1080 signage-optimized CSS Grid layout. Implemented hamburger slide drawer navigation and JS-based translateX column pinning.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 5. Comparison ── -->
+    <section id="comparison">
+        <div class="section-label">Before &amp; After</div>
+        <div class="section-title">V1 → V2 Key Changes</div>
+        <p class="section-desc">All V1 features are retained in V2. The following items are new or improved.</p>
+
+        <div class="tbl-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:17%">Area</th>
+                        <th style="width:36%">V1 (Before)</th>
+                        <th style="width:47%">V2 (After)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="col-area">AI Analysis</td>
+                        <td class="col-v1">None (name only: "AI CS Dashboard")</td>
+                        <td>OEE prediction · anomaly detection · maintenance risk · quality guardian · production optimization<span class="tag-new">NEW</span></td>
+                    </tr>
+                    <tr>
+                        <td class="col-area">AI Dashboard</td>
+                        <td class="col-v1">None</td>
+                        <td>AI Intelligence Dashboard (ai_dashboard_2.php)<span class="tag-new">NEW</span><br><span style="font-size:11.5px;color:var(--text-muted)">Prediction chart · anomaly detection · maintenance risk · health index · optimization — all integrated, 60s auto-refresh</span></td>
+                    </tr>
+                    <tr>
+                        <td class="col-area">Signage Dashboard</td>
+                        <td class="col-v1">Standard web layout (with nav bar)</td>
+                        <td>1920×1080 full-screen signage-exclusive<span class="tag-new">NEW</span></td>
+                    </tr>
+                    <tr>
+                        <td class="col-area">Navigation</td>
+                        <td class="col-v1">Top SAP Fiori navigation bar</td>
+                        <td>Hamburger slide drawer (240px left overlay)<span class="tag-new">NEW</span><br><span style="font-size:11.5px;color:var(--text-muted)">Managed via single shared nav-drawer-manage.php include</span></td>
+                    </tr>
+                    <tr>
+                        <td class="col-area">OEE Monitoring</td>
+                        <td class="col-v1">Real-time SSE streaming table &amp; chart</td>
+                        <td>Existing features + AI prediction overlay<span class="tag-imp">IMPROVED</span><br><span style="font-size:11.5px;color:var(--text-muted)">"AI POWERED" badge, dashed = AI forecast range, confidence interval shading</span></td>
+                    </tr>
+                    <tr>
+                        <td class="col-area">Downtime</td>
+                        <td class="col-v1">Table + status management</td>
+                        <td>AI Risk column added<span class="tag-imp">IMPROVED</span><br><span style="font-size:11.5px;color:var(--text-muted)">DANGER / CAUTION / NORMAL risk badges, MutationObserver real-time updates</span></td>
+                    </tr>
+                    <tr>
+                        <td class="col-area">Defect Management</td>
+                        <td class="col-v1">Occurrence table</td>
+                        <td>AI Quality Guardian section added<span class="tag-imp">IMPROVED</span><br><span style="font-size:11.5px;color:var(--text-muted)">Pareto analysis, 24-hour heatmap, machine risk ranking, Pearson correlation</span></td>
+                    </tr>
+                    <tr>
+                        <td class="col-area">Real-time Alerts</td>
+                        <td class="col-v1">None</td>
+                        <td>AI real-time streaming feed<span class="tag-new">NEW</span><br><span style="font-size:11.5px;color:var(--text-muted)">SSE-based, slide-in cards, 15s auto-refresh, up to 15 feed items</span></td>
+                    </tr>
+                    <tr>
+                        <td class="col-area">Reports</td>
+                        <td class="col-v1">Excel export</td>
+                        <td>AI auto-report engine<span class="tag-new">NEW</span><br><span style="font-size:11.5px;color:var(--text-muted)">6 natural-language insights auto-generated, HTML Export → PDF printable</span></td>
+                    </tr>
+                    <tr>
+                        <td class="col-area">Page Layout</td>
+                        <td class="col-v1">Scroll layout with footer</td>
+                        <td>1920×1080 full-screen CSS Grid<span class="tag-imp">IMPROVED</span><br><span style="font-size:11.5px;color:var(--text-muted)">Stats/chart/table row toggle, ResizeObserver auto-recalculation</span></td>
+                    </tr>
+                    <tr>
+                        <td class="col-area">Column Pinning</td>
+                        <td class="col-v1">None</td>
+                        <td>JS translateX column pinning<span class="tag-new">NEW</span><br><span style="font-size:11.5px;color:var(--text-muted)">Chromium CSS sticky bug → fully resolved via JS approach, Playwright-verified</span></td>
+                    </tr>
+                    <tr>
+                        <td class="col-area">SSE Performance</td>
+                        <td class="col-v1">Up to 7 queries per cycle</td>
+                        <td>Consolidated to 4 queries<span class="tag-imp">IMPROVED</span><br><span style="font-size:11.5px;color:var(--text-muted)">Merged duplicate aggregation queries, fixed hash comparison bug</span></td>
+                    </tr>
+                    <tr>
+                        <td class="col-area">Code Architecture</td>
+                        <td class="col-v1">Common functions duplicated across stream files</td>
+                        <td>stream_helper.lib.php shared library<span class="tag-imp">IMPROVED</span><br><span style="font-size:11.5px;color:var(--text-muted)">~350 duplicate lines removed; AI functions isolated in statistics.lib.php</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 6. AI Features ── -->
+    <section id="ai-features">
+        <div class="section-label">AI Intelligence</div>
+        <div class="section-title">New AI Features — Detail</div>
+        <p class="section-desc">Real-time AI analysis powered by a self-built statistical engine (exponential smoothing, Z-Score, linear regression, Pearson correlation). No external AI APIs used.</p>
+
+        <!-- AI Dashboard -->
+        <div class="feature-block">
+            <div class="feature-block__header">
+                <span class="fb-badge-new">NEW</span>
+                <span class="feature-block__title">AI Intelligence Dashboard — Unified AI Hub (ai_dashboard_2.php)</span>
+            </div>
+            <div class="feature-block__body">
+                <p class="feature-block__desc">A dedicated dashboard integrating 5 AI analysis sections in a single view. Auto-refreshes every 60 seconds with Factory→Line→Machine cascade filters and date range selection. Signage-optimized at 1920×1080.</p>
+                <ul class="fb-points">
+                    <li>OEE forecast summary card (next 4h prediction, trend direction badge ↑↓→)</li>
+                    <li>At-risk machine count and active anomaly count in real time</li>
+                    <li>Per-line AI Health Index (percentage bar + Normal/Caution/Danger grade)</li>
+                    <li>Predictive maintenance recommendation list (sorted by risk score)</li>
+                    <li>Real-time AI event streaming feed (slide-in animation)</li>
+                    <li>Production optimization suggestion cards (P1/P2/P3 priority)</li>
+                </ul>
+                <div class="screenshot-wrap">
+                    <div class="screenshot-label">AI Intelligence Dashboard — Live Screen</div>
+                    <img class="screenshot-img" src="images/ai_dashboard.png" alt="AI Intelligence Dashboard">
+                </div>
+            </div>
+        </div>
+
+        <!-- 6 AI feature cards -->
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-card__icon ic-blue">📈</div>
+                <h3>OEE Prediction (Predictive OEE)</h3>
+                <p>Learns 30-day hourly OEE patterns to forecast OEE for the next 4–8 hours, with 90% confidence intervals (upper/lower bounds) and trend direction badges.</p>
+                <span class="algo-tag">Exponential Smoothing + Day×Hour Seasonality</span>
+            </div>
+            <div class="feature-card">
+                <div class="feature-card__icon ic-red">🚨</div>
+                <h3>Anomaly Detection</h3>
+                <p>Monitors per-machine OEE, Availability, and Quality metrics in real time. Instantly detects deviations beyond ±2σ mean or cascading anomalies within the same line.</p>
+                <span class="algo-tag">Z-Score + Cascade Anomaly Detection</span>
+            </div>
+            <div class="feature-card">
+                <div class="feature-card__icon ic-yellow">🔧</div>
+                <h3>Predictive Maintenance Risk</h3>
+                <p>Calculates a maintenance risk score (0–100) by weighting: runtime (40%) + downtime frequency increase rate (35%) + OEE instability (25%).</p>
+                <span class="algo-tag">Weighted Scoring (3-Factor Composite)</span>
+            </div>
+            <div class="feature-card">
+                <div class="feature-card__icon ic-green">📊</div>
+                <h3>AI Quality Guardian</h3>
+                <p>Auto-calculates defect type Pareto analysis (80% rule), 24-hour occurrence heatmap, per-machine risk ranking, and OEE Pearson correlation coefficient.</p>
+                <span class="algo-tag">Pareto + Heatmap + Pearson Correlation</span>
+            </div>
+            <div class="feature-card">
+                <div class="feature-card__icon ic-purple">⚡</div>
+                <h3>Real-time AI Streaming</h3>
+                <p>SSE-based streaming of OEE anomalies, new downtime events, and maintenance risk alerts on 15-second cycles. Up to 15 slide-in card feed items displayed.</p>
+                <span class="algo-tag">SSE + 5-min Session + Auto-reconnect</span>
+            </div>
+            <div class="feature-card">
+                <div class="feature-card__icon ic-teal">🎯</div>
+                <h3>Production Optimization</h3>
+                <p>Identifies bottleneck components (Availability/Performance/Quality) per line, estimates potential OEE improvement, and auto-generates 4 P1/P2/P3 improvement suggestions.</p>
+                <span class="algo-tag">Bottleneck Analysis + Potential OEE Estimation</span>
+            </div>
+        </div>
+
+        <!-- OEE Overlay -->
+        <div class="feature-block">
+            <div class="feature-block__header">
+                <span class="fb-badge-imp">IMPROVED</span>
+                <span class="feature-block__title">OEE Trend Chart AI Prediction Overlay (data_oee_2.php)</span>
+            </div>
+            <div class="feature-block__body">
+                <p class="feature-block__desc">AI forecast lines and confidence intervals are overlaid on the existing OEE trend chart in data_oee.php — without changing the screen structure. An "AI POWERED" badge and dashed forecast range are inserted automatically.</p>
+                <ul class="fb-points">
+                    <li>Solid line = actual OEE, dashed line = AI forecast range</li>
+                    <li>Confidence interval (CI Upper/Lower) shading displayed</li>
+                    <li>Trend direction badge (↑Rising / ↓Falling / →Stable) auto-calculated</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Downtime AI Risk -->
+        <div class="feature-block">
+            <div class="feature-block__header">
+                <span class="fb-badge-imp">IMPROVED</span>
+                <span class="feature-block__title">Downtime Table AI Risk Column (data_downtime_2.php)</span>
+            </div>
+            <div class="feature-block__body">
+                <p class="feature-block__desc">An "AI Risk" column is automatically added to the existing downtime table. MutationObserver detects table data changes and updates risk badges in real time.</p>
+                <ul class="fb-points">
+                    <li><strong style="color:var(--danger)">DANGER</strong> — Risk score ≥ 80 (red badge)</li>
+                    <li><strong style="color:var(--warn)">CAUTION</strong> — Risk score 50–79 (yellow badge)</li>
+                    <li><strong style="color:var(--accent2)">NORMAL</strong> — Risk score ≤ 49 (green badge)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- AI Report -->
+        <div class="feature-block">
+            <div class="feature-block__header">
+                <span class="fb-badge-new">NEW</span>
+                <span class="feature-block__title">AI Auto-Report Engine (ai_report_engine_2.php)</span>
+            </div>
+            <div class="feature-block__body">
+                <p class="feature-block__desc">Rule-based engine that auto-generates executive-level analysis reports. Organizes selected date range's OEE summary, anomaly detection, maintenance risk, and optimization content into 6 natural-language insights, downloadable as HTML.</p>
+                <ul class="fb-points">
+                    <li>KPI gauge (180° Doughnut chart) and trend chart included</li>
+                    <li>Top 5 anomalies and Top 5 maintenance risks auto-selected</li>
+                    <li>7-day OEE forecast included (exponential smoothing)</li>
+                    <li>Standalone HTML export → printable to PDF via Ctrl+P</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 7. UI Redesign ── -->
+    <section id="redesign">
+        <div class="section-label">UI Redesign</div>
+        <div class="section-title">1920×1080 Signage-Exclusive Redesign</div>
+        <p class="section-desc">All pages redesigned with full-screen layouts optimized for large factory floor monitors. V1 pages remain intact alongside V2 versions.</p>
+
+        <div class="feature-block">
+            <div class="feature-block__header">
+                <span class="fb-badge-new">NEW</span>
+                <span class="feature-block__title">Signage Dashboard (dashboard_2.php)</span>
+            </div>
+            <div class="feature-block__body">
+                <p class="feature-block__desc">4-row CSS Grid layout that fills 1920×1080 exactly. Top nav bar removed; only a 52px slim header remains to maximize content area.</p>
+                <ul class="fb-points">
+                    <li>Row A: 4 OEE metric cards (Availability · Performance · Quality · OEE) — full width</li>
+                    <li>Row B: Currently Active Andon real-time status</li>
+                    <li>Row C/D: Chart area (production trend · per-line · per-machine OEE)</li>
+                    <li>Hamburger slide drawer — 240px left overlay with full menu access</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="feature-block">
+            <div class="feature-block__header">
+                <span class="fb-badge-new">NEW</span>
+                <span class="feature-block__title">Data Monitoring Pages Redesigned (_2 versions, 7 total)</span>
+            </div>
+            <div class="feature-block__body">
+                <p class="feature-block__desc">OEE, Andon, Downtime, Defective, and OEE Log pages redesigned with a unified Row Grid structure. Stats, chart, and table rows can be toggled — layout recalculates automatically.</p>
+                <ul class="fb-points">
+                    <li>Fixed 100% viewport height — no scrolling</li>
+                    <li>Stats / Chart / Table row toggle (6 layout combinations auto-calculated)</li>
+                    <li>Each of 5 charts uses ResizeObserver (responds immediately to row size changes)</li>
+                    <li>Table row height fixed at 50px (internal tbody scroll)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="feature-block">
+            <div class="feature-block__header">
+                <span class="fb-badge-new">NEW</span>
+                <span class="feature-block__title">Master Data Management Pages Redesigned (_2 versions, 10 total)</span>
+            </div>
+            <div class="feature-block__body">
+                <p class="feature-block__desc">All master management pages (factory, line, machine, model, process, andon, downtime, defective, color, work schedule) redesigned in full-screen layout.</p>
+                <ul class="fb-points">
+                    <li>52px slim header integrating search, filter, and add buttons</li>
+                    <li>Stats cards removed → table uses entire area</li>
+                    <li>Single shared drawer include (nav-drawer-manage.php)</li>
+                    <li>Excel Export path bug fixed (PhpSpreadsheet 3-level path resolution)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="feature-block">
+            <div class="feature-block__header">
+                <span class="fb-badge-new">NEW</span>
+                <span class="feature-block__title">Horizontal Scroll Column Pinning (MACHINE_NO anchor)</span>
+            </div>
+            <div class="feature-block__body">
+                <p class="feature-block__desc">Pins the MACHINE_NO column during horizontal scrolling in wide tables (log_oee_row_2, etc.). CSS position:sticky fails in Chromium — fully resolved using JS translateX approach.</p>
+                <ul class="fb-points">
+                    <li>High-performance scroll listener using requestAnimationFrame</li>
+                    <li>Offset auto-remeasured after page transitions (SSE updates)</li>
+                    <li>Playwright verification: scrollLeft=400 → diff=0 (perfect pinning confirmed)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 8. Performance ── -->
+    <section id="performance">
+        <div class="section-label">Performance</div>
+        <div class="section-title">Performance Optimization Results</div>
+        <p class="section-desc">Code-level optimizations significantly reduced SSE streaming response time and server load.</p>
+
+        <div class="feature-block">
+            <div class="feature-block__header">
+                <span class="fb-badge-imp">IMPROVED</span>
+                <span class="feature-block__title">SSE Streaming Query Optimization (7→4 queries)</span>
+            </div>
+            <div class="feature-block__body">
+                <div class="perf-row">
+                    <div class="perf-row__label"><span class="name">SSE queries per cycle</span><span class="diff">-43%</span></div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px">
+                        <div>
+                            <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">V1 (before)</div>
+                            <div class="perf-bar-track"><div class="bar" style="width:100%"></div></div>
+                        </div>
+                        <div>
+                            <div style="font-size:11px;color:var(--accent2);margin-bottom:3px">V2 (after)</div>
+                            <div class="perf-bar-track"><div class="bar green" style="width:57%"></div></div>
+                        </div>
+                    </div>
+                    <div class="perf-row__sub">7 queries → 4 queries (stats+details+component → 1 unified query)</div>
+                </div>
+                <div class="perf-row">
+                    <div class="perf-row__label"><span class="name">Measured total SSE response time</span><span class="diff">~12.8ms</span></div>
+                    <div class="perf-bar-track"><div class="bar green" style="width:18%"></div></div>
+                    <div class="perf-row__sub">oeeData:1.81ms + aggregated:3.84ms + trends:4.77ms + machineOee:2.39ms</div>
+                </div>
+                <div class="perf-row">
+                    <div class="perf-row__label"><span class="name">Unnecessary SSE transmissions</span><span class="diff">Eliminated</span></div>
+                    <div class="perf-bar-track"><div class="bar green" style="width:5%"></div></div>
+                    <div class="perf-row__sub">Hash comparison bug fix: eliminated bug sending 1000 records every 5s with no data changes</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-card__icon ic-green">🏭</div>
+                <h3>N+1 Query Elimination</h3>
+                <p>Consolidated downtime, andon, and defective type stats from 2 queries + PHP merge → single LEFT JOIN query.</p>
+                <span class="algo-tag">info_* LEFT JOIN data_*</span>
+            </div>
+            <div class="feature-card">
+                <div class="feature-card__icon ic-blue">📚</div>
+                <h3>Shared Library Extraction</h3>
+                <p>Common functions from 9 stream files consolidated into stream_helper.lib.php, removing ~350 duplicate lines.</p>
+                <span class="algo-tag">stream_helper.lib.php</span>
+            </div>
+            <div class="feature-card">
+                <div class="feature-card__icon ic-yellow">🌍</div>
+                <h3>Timezone Centralization</h3>
+                <p>Timezone declarations duplicated across 27 files consolidated into a single location in lib/db.php.</p>
+                <span class="algo-tag">lib/db.php — single source</span>
+            </div>
+            <div class="feature-card">
+                <div class="feature-card__icon ic-purple">💻</div>
+                <h3>mod_fcgid Buffer Fix</h3>
+                <p>Root-cause fix for SSE HTTP 500 errors caused by 64KB buffer limitation via FcgidOutputBufferSize 0 setting.</p>
+                <span class="algo-tag">FcgidOutputBufferSize 0</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 9. Tech Stack ── -->
+    <section id="techstack">
+        <div class="section-label">Technology Stack</div>
+        <div class="section-title">Technology Stack</div>
+        <p class="section-desc">V1 technology stack is fully preserved with AI-related additions in V2.</p>
+        <div class="feature-block">
+            <div class="feature-block__body" style="padding-top:22px">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+                    <div>
+                        <div style="font-size:11.5px;font-weight:700;color:var(--text-muted);letter-spacing:.04em;margin-bottom:11px">V1 · V2 Shared</div>
+                        <div class="tech-stack">
+                            <span class="tech-tag">PHP 7.4+</span>
+                            <span class="tech-tag">MySQL 5.7+</span>
+                            <span class="tech-tag">SAP Fiori Horizon</span>
+                            <span class="tech-tag">Chart.js</span>
+                            <span class="tech-tag">PhpSpreadsheet</span>
+                            <span class="tech-tag">Server-Sent Events</span>
+                            <span class="tech-tag">jQuery 3.6.1</span>
+                            <span class="tech-tag">Apache / mod_fcgid</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size:11.5px;font-weight:700;color:var(--accent2);letter-spacing:.04em;margin-bottom:11px">V2 New Additions</div>
+                        <div class="tech-stack">
+                            <span class="tech-tag new">Exponential Smoothing (α=0.3)</span>
+                            <span class="tech-tag new">Z-Score Anomaly Detection</span>
+                            <span class="tech-tag new">Linear Regression</span>
+                            <span class="tech-tag new">Pearson Correlation</span>
+                            <span class="tech-tag new">CSS Grid fr Layout</span>
+                            <span class="tech-tag new">MutationObserver</span>
+                            <span class="tech-tag new">ResizeObserver</span>
+                            <span class="tech-tag new">translateX Column Pinning</span>
+                            <span class="tech-tag new">Playwright E2E Testing</span>
+                            <span class="tech-tag hl">statistics.lib.php</span>
+                            <span class="tech-tag hl">stream_helper.lib.php</span>
+                            <span class="tech-tag hl">nav-drawer-manage.php</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 10. File Inventory ── -->
+    <section id="filelist">
+        <div class="section-label">File Inventory</div>
+        <div class="section-title">Implemented File List</div>
+        <p class="section-desc">Complete list of all newly implemented files in V2. All V1 files remain unchanged.</p>
+
+        <div class="file-list-grid">
+            <div class="file-list-card">
+                <div class="file-list-card__label">Data Pages (9)</div>
+                <ul>
+                    <li><span class="dot"></span>dashboard_2.php</li>
+                    <li><span class="dot"></span>ai_dashboard_2.php</li>
+                    <li><span class="dot"></span>data_oee_2.php</li>
+                    <li><span class="dot"></span>data_andon_2.php</li>
+                    <li><span class="dot"></span>data_downtime_2.php</li>
+                    <li><span class="dot"></span>data_defective_2.php</li>
+                    <li><span class="dot"></span>log_oee_2.php</li>
+                    <li><span class="dot"></span>log_oee_hourly_2.php</li>
+                    <li><span class="dot"></span>log_oee_row_2.php</li>
+                </ul>
+            </div>
+            <div class="file-list-card">
+                <div class="file-list-card__label">AI Engine APIs (9)</div>
+                <ul>
+                    <li><span class="dot"></span>ai_oee_prediction_2.php</li>
+                    <li><span class="dot"></span>ai_oee_prediction_dash_2.php</li>
+                    <li><span class="dot"></span>ai_anomaly_2.php</li>
+                    <li><span class="dot"></span>ai_maintenance_2.php</li>
+                    <li><span class="dot"></span>ai_maintenance_dash_2.php</li>
+                    <li><span class="dot"></span>ai_optimization_2.php</li>
+                    <li><span class="dot"></span>ai_stream_analysis_2.php</li>
+                    <li><span class="dot"></span>ai_report_engine_2.php</li>
+                    <li><span class="dot"></span>ai_report_export_2.php</li>
+                </ul>
+            </div>
+            <div class="file-list-card">
+                <div class="file-list-card__label">Stream APIs (8)</div>
+                <ul>
+                    <li><span class="dot"></span>dashboard_stream_2.php</li>
+                    <li><span class="dot"></span>data_oee_stream_2.php</li>
+                    <li><span class="dot"></span>data_andon_stream_2.php</li>
+                    <li><span class="dot"></span>data_downtime_stream_2.php</li>
+                    <li><span class="dot"></span>data_defective_stream_2.php</li>
+                    <li><span class="dot"></span>log_oee_stream_2.php</li>
+                    <li><span class="dot"></span>log_oee_hourly_stream_2.php</li>
+                    <li><span class="dot"></span>log_oee_row_stream_2.php</li>
+                </ul>
+            </div>
+            <div class="file-list-card">
+                <div class="file-list-card__label">Manage Pages (10)</div>
+                <ul>
+                    <li><span class="dot"></span>info_factory_2.php</li>
+                    <li><span class="dot"></span>info_line_2.php</li>
+                    <li><span class="dot"></span>info_machine_2.php</li>
+                    <li><span class="dot"></span>info_machine_model_2.php</li>
+                    <li><span class="dot"></span>info_design_process_2.php</li>
+                    <li><span class="dot"></span>info_andon_2.php</li>
+                    <li><span class="dot"></span>info_downtime_2.php</li>
+                    <li><span class="dot"></span>info_defective_2.php</li>
+                    <li><span class="dot"></span>info_rate_color_2.php</li>
+                    <li><span class="dot"></span>info_worktime_2.php</li>
+                </ul>
+            </div>
+            <div class="file-list-card">
+                <div class="file-list-card__label">Libraries &amp; Includes</div>
+                <ul>
+                    <li><span class="dot"></span>statistics.lib.php</li>
+                    <li><span class="dot"></span>stream_helper.lib.php</li>
+                    <li><span class="dot"></span>export_common.php</li>
+                    <li><span class="dot"></span>nav-drawer-manage.php</li>
+                    <li><span class="dot"></span>signage_filters.php</li>
+                    <li><span class="dot"></span>oee_stats_grid.php</li>
+                </ul>
+            </div>
+            <div class="file-list-card">
+                <div class="file-list-card__label">HTML Manuals (2)</div>
+                <ul>
+                    <li><span class="dot"></span>ai_dashboard_manual_kor.html</li>
+                    <li><span class="dot"></span>ai_dashboard_manual.html</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+</div><!-- /page-wrap -->
+
+<div class="doc-footer">
+    <strong style="color:var(--accent)">OEE_SCI V2</strong> &nbsp;·&nbsp; SUNTECH &nbsp;·&nbsp; 2026-04-03 &nbsp;·&nbsp; AI Strategy &amp; Redesign Integrated Report
+</div>
+</div><!-- /doc-main -->
+
+<script>
+// IntersectionObserver TOC activation
+const navLinks = document.querySelectorAll('.sidebar-nav a[href^="#"]');
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            navLinks.forEach(a => a.classList.remove('active'));
+            const active = document.querySelector(`.sidebar-nav a[href="#${entry.target.id}"]`);
+            if (active) active.classList.add('active');
+        }
+    });
+}, { rootMargin: '-20% 0px -70% 0px' });
+document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
