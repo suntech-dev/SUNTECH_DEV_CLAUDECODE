@@ -457,4 +457,18 @@ export function initModalSteps() {
             $('#colorPreviewBox').css('background-color', '#0070f2');
         }
     });
+
+    // 수정 모달 열릴 때 Step 1로 자동 리셋
+    const resourceModal = document.getElementById('resourceModal');
+    if (resourceModal) {
+        new MutationObserver((mutations) => {
+            mutations.forEach((m) => {
+                if (m.type === 'attributes' && m.attributeName === 'class'
+                    && resourceModal.classList.contains('show')) {
+                    currentStep = 1;
+                    showStep(1);
+                }
+            });
+        }).observe(resourceModal, { attributes: true });
+    }
 }
