@@ -88,7 +88,7 @@
 
         /* ── Main ── */
         .doc-main { margin-left: var(--sidebar-w); flex: 1; min-width: 0; }
-        .page-wrap { max-width: 1060px; margin: 0 auto; padding: 0 40px 80px; }
+        .page-wrap { max-width: 1160px; margin: 0 auto; padding: 0 40px 80px; }
 
         /* ── Hero ── */
         .hero { padding: 60px 0 48px; text-align: center; }
@@ -254,11 +254,12 @@
         <div class="sidebar-nav__group">
             <div class="sidebar-nav__label">Technical</div>
             <a href="#techstack">Tech Stack</a>
+            <a href="#firmware">IoT Firmware</a>
             <a href="#filelist">File Inventory</a>
         </div>
     </nav>
     <a class="sidebar-back" href="OEE_SCI_V2_REDESIGN_INDEX_2.html">← Back to Index</a>
-    <div class="sidebar-footer">SUNTECH · 2026-04-03 · Completed</div>
+    <div class="sidebar-footer">SUNTECH · 2026-04-03 · Implementation Status · Awaiting Review</div>
 </aside>
 
 <!-- ── Main ── -->
@@ -267,13 +268,13 @@
 
     <!-- Hero -->
     <div class="hero">
-        <div class="hero-badge">✅ Project Completed · March 2026</div>
-        <h1>OEE_SCI V2<br>AI Strategy &amp; Redesign Integrated Report</h1>
+        <div class="hero-badge">🔄 Implementation Status · AWAITING REVIEW</div>
+        <h1>OEE SCI V2<br>AI Strategy &amp; Redesign Integrated Report</h1>
         <p class="hero-sub">A comprehensive report covering the full lifecycle — from AI strategy planning to completed implementation.</p>
         <div class="hero-meta">
             <span>📅 Initial Draft: 2026-03-06</span>
-            <span>✅ Implementation Complete: 2026-03-25</span>
-            <span>🏭 Target: SCI Garment Factory OEE System</span>
+            <span>🔄 Implementation: 2026-03-25 · Awaiting Review</span>
+            <span>🏭 Target: SCI OEE System</span>
             <span>📌 SUNTECH</span>
         </div>
     </div>
@@ -297,7 +298,7 @@
             </div>
             <div class="card">
                 <h4>🎯 V2 Core Objective</h4>
-                <p>Deploy real AI capabilities — prediction, anomaly detection, and optimization — so problems are addressed before they occur.</p>
+                <p>Deploy real AI capabilities — prediction, anomaly detection, and optimization — so problems are addressed before they occur. Computer Embroidery Machine expansion.</p>
             </div>
             <div class="card">
                 <h4>💡 Design Principles</h4>
@@ -550,7 +551,7 @@
                 </ul>
                 <div class="screenshot-wrap">
                     <div class="screenshot-label">AI Intelligence Dashboard — Live Screen</div>
-                    <img class="screenshot-img" src="images/ai_dashboard.png" alt="AI Intelligence Dashboard">
+                    <img class="screenshot-img" src="../../images/ai_dashboard.png" alt="AI Intelligence Dashboard">
                 </div>
             </div>
         </div>
@@ -608,6 +609,10 @@
                     <li>Confidence interval (CI Upper/Lower) shading displayed</li>
                     <li>Trend direction badge (↑Rising / ↓Falling / →Stable) auto-calculated</li>
                 </ul>
+                <div class="screenshot-wrap">
+                    <div class="screenshot-label">OEE Trend Chart + AI Prediction Overlay (data_oee.php)</div>
+                    <img class="screenshot-img" src="../../images/data_oee_2.jpeg" alt="OEE AI Overlay">
+                </div>
             </div>
         </div>
 
@@ -624,6 +629,10 @@
                     <li><strong style="color:var(--warn)">CAUTION</strong> — Risk score 50–79 (yellow badge)</li>
                     <li><strong style="color:var(--accent2)">NORMAL</strong> — Risk score ≤ 49 (green badge)</li>
                 </ul>
+                <div class="screenshot-wrap">
+                    <div class="screenshot-label">Downtime AI Risk Column (data_downtime.php)</div>
+                    <img class="screenshot-img" src="../../images/data_downtime_2.jpeg" alt="AI Risk">
+                </div>
             </div>
         </div>
 
@@ -666,6 +675,10 @@
                     <li>Row C/D: Chart area (production trend · per-line · per-machine OEE)</li>
                     <li>Hamburger slide drawer — 240px left overlay with full menu access</li>
                 </ul>
+                <div class="screenshot-wrap">
+                    <div class="screenshot-label">Signage Dashboard Full Screen (dashboard_2.php)</div>
+                    <img class="screenshot-img" src="../../images/dashboard_2.jpeg" alt="Signage Dashboard">
+                </div>
             </div>
         </div>
 
@@ -676,12 +689,25 @@
             </div>
             <div class="feature-block__body">
                 <p class="feature-block__desc">OEE, Andon, Downtime, Defective, and OEE Log pages redesigned with a unified Row Grid structure. Stats, chart, and table rows can be toggled — layout recalculates automatically.</p>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:7px;margin-bottom:14px">
+                    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px"><div style="font-size:15px;margin-bottom:3px">📈</div>data_oee_2</div>
+                    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px"><div style="font-size:15px;margin-bottom:3px">🚨</div>data_andon_2</div>
+                    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px"><div style="font-size:15px;margin-bottom:3px">🔧</div>data_downtime_2</div>
+                    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px"><div style="font-size:15px;margin-bottom:3px">📊</div>data_defective_2</div>
+                    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px"><div style="font-size:15px;margin-bottom:3px">📋</div>log_oee_2</div>
+                    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px"><div style="font-size:15px;margin-bottom:3px">📋</div>log_oee_hourly_2</div>
+                    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px"><div style="font-size:15px;margin-bottom:3px">📋</div>log_oee_row_2</div>
+                </div>
                 <ul class="fb-points">
                     <li>Fixed 100% viewport height — no scrolling</li>
                     <li>Stats / Chart / Table row toggle (6 layout combinations auto-calculated)</li>
                     <li>Each of 5 charts uses ResizeObserver (responds immediately to row size changes)</li>
                     <li>Table row height fixed at 50px (internal tbody scroll)</li>
                 </ul>
+                <div class="screenshot-wrap">
+                    <div class="screenshot-label">data_oee_2.php — Chart + Table View</div>
+                    <img class="screenshot-img" src="../../images/data_oee_2.jpeg" alt="data_oee_2">
+                </div>
             </div>
         </div>
 
@@ -698,6 +724,10 @@
                     <li>Single shared drawer include (nav-drawer-manage.php)</li>
                     <li>Excel Export path bug fixed (PhpSpreadsheet 3-level path resolution)</li>
                 </ul>
+                <div class="screenshot-wrap">
+                    <div class="screenshot-label">Master Data Management Screen (info_design_process_2.php)</div>
+                    <img class="screenshot-img" src="../../images/info_design_process_2.jpeg" alt="Master Data Management">
+                </div>
             </div>
         </div>
 
@@ -833,11 +863,222 @@
 
     <div class="divider"></div>
 
-    <!-- ── 10. File Inventory ── -->
+    <!-- ── 10. IoT Firmware ── -->
+    <section id="firmware">
+        <div class="section-label">IoT Firmware</div>
+        <div class="section-title">IoT Device Firmware Upgrade</div>
+        <p class="section-desc">IoT device firmware was also upgraded alongside OEE SCI V2. The CTP280 board based on PSoC 4 (Cortex-M0) collects production data from sewing and embroidery machines and transmits it via REST API.</p>
+
+        <!-- Data Flow -->
+        <div class="feature-block" style="margin-bottom:18px">
+            <div class="feature-block__body">
+                <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:8px 0">
+                    <div style="text-align:center">
+                        <div style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);border-radius:10px;padding:12px 16px;font-size:13px;font-weight:700;color:var(--accent)">⚙️ Sewing / Embroidery Machine</div>
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">UART Signal Output</div>
+                    </div>
+                    <div style="color:var(--text-muted);font-size:20px;font-weight:300">→</div>
+                    <div style="text-align:center">
+                        <div style="background:rgba(210,153,34,.12);border:1px solid rgba(210,153,34,.3);border-radius:10px;padding:12px 16px;font-size:13px;font-weight:700;color:var(--warn)">📟 CTP280 PSoC4</div>
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">BLACK_CPU / EMBROIDERY_S</div>
+                    </div>
+                    <div style="color:var(--text-muted);font-size:20px;font-weight:300">→</div>
+                    <div style="text-align:center">
+                        <div style="background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.3);border-radius:10px;padding:12px 16px;font-size:13px;font-weight:700;color:var(--accent2)">🌐 WiFi REST API</div>
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">send_pCount / send_eCount</div>
+                    </div>
+                    <div style="color:var(--text-muted);font-size:20px;font-weight:300">→</div>
+                    <div style="text-align:center">
+                        <div style="background:rgba(188,140,255,.12);border:1px solid rgba(188,140,255,.3);border-radius:10px;padding:12px 16px;font-size:13px;font-weight:700;color:var(--purple)">🗄️ MySQL DB</div>
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">data_oee / data_embroidery</div>
+                    </div>
+                    <div style="color:var(--text-muted);font-size:20px;font-weight:300">→</div>
+                    <div style="text-align:center">
+                        <div style="background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);border-radius:10px;padding:12px 16px;font-size:13px;font-weight:700;color:var(--accent)">📊 OEE SCI V2</div>
+                        <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">SSE Real-time Dashboard</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Memory Metrics -->
+        <div class="metrics-row" style="margin-bottom:18px">
+            <div class="metric-card">
+                <div class="val yellow" style="font-size:1.3rem">PSoC 4</div>
+                <div class="lbl">MCU</div>
+                <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">CY8C42xx · Cortex-M0<br>ARM GCC 5.4.1</div>
+            </div>
+            <div class="metric-card">
+                <div class="val">45.3<span style="font-size:1rem">%</span></div>
+                <div class="lbl">Flash (BLACK_CPU)</div>
+                <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">118,804 / 262,144 bytes<br>-5% reduction vs V1</div>
+            </div>
+            <div class="metric-card">
+                <div class="val green">68.9<span style="font-size:1rem">%</span></div>
+                <div class="lbl">SRAM (BLACK_CPU)</div>
+                <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">22,580 / 32,768 bytes</div>
+            </div>
+            <div class="metric-card">
+                <div class="val purple">2</div>
+                <div class="lbl">Firmware Versions</div>
+                <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">BLACK_CPU V1<br>EMBROIDERY_S V1</div>
+            </div>
+        </div>
+
+        <!-- BLACK_CPU V1 -->
+        <div class="feature-block">
+            <div class="feature-block__header">
+                <span class="fb-badge-new">NEW</span>
+                <span class="feature-block__title">280CTP_IoT_INTEGRATED_V1_BLACK_CPU — PATTERN_MACHINE Dedicated (2026-03-17)</span>
+            </div>
+            <div class="feature-block__body">
+                <p class="feature-block__desc">Separated from the V1 integrated firmware, this BLACK CPU board version is dedicated to PATTERN_MACHINE. SEWING_MACHINE (TrimPin ISR) and current sensor (ADC_SAR_Seq) are fully removed to simplify code and reduce Flash usage by ~5% compared to V1.</p>
+                <ul class="fb-points">
+                    <li>PATTERN_MACHINE fixed — machineType setting UI removed, CountFunc → PatternCountLoop fixed</li>
+                    <li>SEWING_MACHINE fully removed — TrimPin ISR, SewingCountLoop(), makeAndonSewingCount2() removed</li>
+                    <li>Current sensor fully removed — ADC_SAR_Seq TopDesign removed, currentSensor.c project source removed</li>
+                    <li>UART JSON reception retained — {"cmd":"count","value":1,...} format → patternActualH/L accumulation</li>
+                    <li>Flash layout compatible — COUNT / MACHINE_PARAMETER struct fields preserved (existing config data retained)</li>
+                </ul>
+                <div class="tbl-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:30%">Item</th>
+                                <th style="width:35%">V1 Integrated</th>
+                                <th style="width:35%">BLACK_CPU V1</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PATTERN_MACHINE</td>
+                                <td>Supported</td>
+                                <td><strong style="color:var(--accent2)">Fixed (sole type)</strong></td>
+                            </tr>
+                            <tr>
+                                <td>SEWING_MACHINE (TrimPin ISR)</td>
+                                <td>Supported</td>
+                                <td><span class="tag err">Removed</span></td>
+                            </tr>
+                            <tr>
+                                <td>Current Sensor (ADC_SAR_Seq)</td>
+                                <td>Supported (optional)</td>
+                                <td><span class="tag err">Removed</span></td>
+                            </tr>
+                            <tr>
+                                <td>Firmware Version</td>
+                                <td>Integrated REV 9.8.3</td>
+                                <td><span class="tag done">BLACK_CPU V1</span></td>
+                            </tr>
+                            <tr>
+                                <td>Flash Usage</td>
+                                <td>~131,800 bytes (50.3%)</td>
+                                <td>118,804 bytes (45.3%) ↓</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- EMBROIDERY_S V1 -->
+        <div class="feature-block">
+            <div class="feature-block__header">
+                <span class="fb-badge-new">NEW</span>
+                <span class="feature-block__title">280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S — Computer Embroidery Machine Dedicated (2026-03-26)</span>
+            </div>
+            <div class="feature-block__body">
+                <p class="feature-block__desc">Based on BLACK_CPU V1, this version is dedicated to Computer Embroidery Machine. The UART protocol is completely replaced from JSON to semicolon-delimited text format, with thread breakage tracking and embroidery-specific server API added.</p>
+                <ul class="fb-points">
+                    <li>Semicolon parser newly implemented — actual_qty;cycle_time_ms;thread_breakage_qty;motor_runtime_ms; format, parsing starts on 4th ';' detection</li>
+                    <li>Thread breakage tracking — embThreadBreakageQty/SumH/SumL fields added, tb item displayed on LCD Page 1</li>
+                    <li>Embroidery-specific WebAPI — send_eCount.php → data_embroidery table, ms→seconds (1 decimal) conversion</li>
+                    <li>UART TEST viewer — last 5 received packets mirrored on LCD (uartTestMenu.c newly created)</li>
+                    <li>Echo loopback bug fix — non-numeric bytes ignored at index=0, DBG printf removed (2026-03-27)</li>
+                </ul>
+                <div class="tbl-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:30%">Item</th>
+                                <th style="width:35%">BLACK_CPU V1</th>
+                                <th style="width:35%">EMBROIDERY_S V1</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>UART Protocol</td>
+                                <td>JSON {"cmd":"count",...}</td>
+                                <td><strong style="color:var(--accent2)">Semicolon-delimited text</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Parser</td>
+                                <td>jsmn library</td>
+                                <td>Custom implementation (uartJson.c fully replaced) <span class="tag-new">NEW</span></td>
+                            </tr>
+                            <tr>
+                                <td>Thread Breakage Tracking</td>
+                                <td>None</td>
+                                <td>embThreadBreakageQty/SumH/SumL <span class="tag-new">NEW</span></td>
+                            </tr>
+                            <tr>
+                                <td>WebAPI</td>
+                                <td>send_pCount</td>
+                                <td>send_eCount → data_embroidery <span class="tag-new">NEW</span></td>
+                            </tr>
+                            <tr>
+                                <td>Firmware Version</td>
+                                <td>BLACK_CPU V1</td>
+                                <td><span class="tag done">EMBROIDERY_S V1</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 11. File Inventory ── -->
     <section id="filelist">
         <div class="section-label">File Inventory</div>
         <div class="section-title">Implemented File List</div>
         <p class="section-desc">Complete list of all newly implemented files in V2. All V1 files remain unchanged.</p>
+
+        <!-- Category Summary Metrics -->
+        <div class="metrics-row" style="margin-bottom:28px">
+            <div class="metric-card">
+                <div class="val green">8</div>
+                <div class="lbl">Data Pages</div>
+                <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">dashboard, oee,<br>andon, downtime, defective, log×3</div>
+            </div>
+            <div class="metric-card">
+                <div class="val">1</div>
+                <div class="lbl">AI Dashboard</div>
+                <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">ai_dashboard_2.php<br>(signage optimized)</div>
+            </div>
+            <div class="metric-card">
+                <div class="val purple">7</div>
+                <div class="lbl">AI Engines</div>
+                <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">prediction, anomaly,<br>maintenance, optimization,<br>stream, report×2</div>
+            </div>
+            <div class="metric-card">
+                <div class="val yellow">8</div>
+                <div class="lbl">Stream APIs</div>
+                <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">SSE stream endpoints<br>dedicated per page</div>
+            </div>
+            <div class="metric-card">
+                <div class="val">10</div>
+                <div class="lbl">Manage Pages</div>
+                <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">factory, line, machine,<br>model, process, andon,<br>downtime, defective×3</div>
+            </div>
+            <div class="metric-card">
+                <div class="val green">2</div>
+                <div class="lbl">HTML Manuals</div>
+                <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">ai_dashboard_manual<br>(KOR · ENG)</div>
+            </div>
+        </div>
 
         <div class="file-list-grid">
             <div class="file-list-card">
@@ -920,7 +1161,7 @@
 </div><!-- /page-wrap -->
 
 <div class="doc-footer">
-    <strong style="color:var(--accent)">OEE_SCI V2</strong> &nbsp;·&nbsp; SUNTECH &nbsp;·&nbsp; 2026-04-03 &nbsp;·&nbsp; AI Strategy &amp; Redesign Integrated Report
+    <strong style="color:var(--accent)">OEE SCI V2</strong> &nbsp;·&nbsp; SUNTECH &nbsp;·&nbsp; 2026-04-03 &nbsp;·&nbsp; AI Strategy &amp; Redesign Integrated Report
 </div>
 </div><!-- /doc-main -->
 
