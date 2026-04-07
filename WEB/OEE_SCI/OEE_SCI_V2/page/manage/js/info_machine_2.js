@@ -106,13 +106,13 @@ export const machineConfig = {
         },
         {
             key: 'factory_name',
-            label: 'Factory Name',
+            label: 'Factory',
             sortable: true,
             sortKey: 'f.factory_name'
         },
         {
             key: 'line_name',
-            label: 'Line Name',
+            label: 'Line',
             sortable: true,
             sortKey: 'l.line_name'
         },
@@ -154,8 +154,8 @@ export const machineConfig = {
             sortable: true,
             sortKey: 'm.type',
             render: (item) => {
-                if (item.type === 'P') return '<span style="color: var(--sap-brand-primary); font-weight: 600;">Computer Sewing Machine</span>';
-                if (item.type === 'E') return '<span style="color: var(--sap-status-warning); font-weight: 600;">Embroidery Machine</span>';
+                if (item.type === 'P') return '<span style="color: var(--sap-brand-primary); font-weight: 600;">CS</span>';
+                if (item.type === 'E') return '<span style="color: var(--sap-status-warning); font-weight: 600;">EMB</span>';
                 return '<span style="color: var(--sap-text-secondary);">Unknown</span>';
             }
         },
@@ -179,20 +179,20 @@ export const machineConfig = {
         },
         {
             key: 'app_ver',
-            label: 'APP VERSION',
+            label: 'IoT Version',
             sortable: true,
             sortKey: 'm.app_ver'
         }
     ],
 
     filterConfig: [
-        { elementId: 'statusFilterSelect',              paramName: 'status_filter',  stateKey: 'statusFilter' },
-        { elementId: 'typeFilterSelect',                paramName: 'type_filter',    stateKey: 'typeFilter' },
+        { elementId: 'statusFilterSelect', paramName: 'status_filter', stateKey: 'statusFilter' },
+        { elementId: 'typeFilterSelect', paramName: 'type_filter', stateKey: 'typeFilter' },
         // resets: 공장 변경 시 라인/기계 필터 상태 초기화
-        { elementId: 'factoryFilterSelect',             paramName: 'factory_filter', stateKey: 'factoryFilter',  resets: ['lineFilter', 'machineFilter'] },
+        { elementId: 'factoryFilterSelect', paramName: 'factory_filter', stateKey: 'factoryFilter', resets: ['lineFilter', 'machineFilter'] },
         // resets: 라인 변경 시 기계 필터 상태 초기화
-        { elementId: 'factoryLineFilterSelect',         paramName: 'line_filter',    stateKey: 'lineFilter',     resets: ['machineFilter'] },
-        { elementId: 'factoryLineMachineFilterSelect',  paramName: 'machine_filter', stateKey: 'machineFilter' }
+        { elementId: 'factoryLineFilterSelect', paramName: 'line_filter', stateKey: 'lineFilter', resets: ['machineFilter'] },
+        { elementId: 'factoryLineMachineFilterSelect', paramName: 'machine_filter', stateKey: 'machineFilter' }
     ]
 };
 
@@ -285,9 +285,9 @@ export function applyQuickFilter(filter) {
  *   - target: 목표 생산량 (숫자 형식 검증)
  */
 export function initModalSteps() {
-    const nextBtn       = document.getElementById('nextStep');
-    const prevBtn       = document.getElementById('prevStep');
-    const submitBtn     = document.getElementById('submitBtn');
+    const nextBtn = document.getElementById('nextStep');
+    const prevBtn = document.getElementById('prevStep');
+    const submitBtn = document.getElementById('submitBtn');
     const stepIndicator = document.getElementById('stepIndicator');
 
     if (!nextBtn || !prevBtn || !submitBtn || !stepIndicator) return;
@@ -331,8 +331,8 @@ export function initModalSteps() {
         document.querySelectorAll('.form-section').forEach(s => {
             s.style.display = s.dataset.section == step ? 'block' : 'none';
         });
-        prevBtn.style.display   = step > 1            ? 'inline-block' : 'none';
-        nextBtn.style.display   = step < totalSteps   ? 'inline-block' : 'none';
+        prevBtn.style.display = step > 1 ? 'inline-block' : 'none';
+        nextBtn.style.display = step < totalSteps ? 'inline-block' : 'none';
         submitBtn.style.display = step === totalSteps ? 'inline-block' : 'none';
         stepIndicator.textContent = `Step ${step} of ${totalSteps}`;
         document.querySelectorAll('.form-step').forEach(s => {
@@ -350,8 +350,8 @@ export function initModalSteps() {
     async function validateCurrentStep(step) {
         if (step === 1) {
             const factorySelect = document.getElementById('factory_idx');
-            const lineSelect    = document.getElementById('line_idx');
-            const machineNo     = document.getElementById('machine_no');
+            const lineSelect = document.getElementById('line_idx');
+            const machineNo = document.getElementById('machine_no');
 
             if (factorySelect && !factorySelect.value) {
                 alert('Please select a factory.');
@@ -380,7 +380,7 @@ export function initModalSteps() {
             }
         }
         if (step === 2) {
-            const typeSelect  = document.getElementById('type');
+            const typeSelect = document.getElementById('type');
             const modelSelect = document.getElementById('machine_model_idx');
 
             if (typeSelect && !typeSelect.value) {
@@ -432,7 +432,7 @@ async function loadFactoryOptions(api) {
         const response = await api.getAll({ for: 'factories' });
         if (!response.success || !response.data) return;
 
-        const factorySelect      = document.getElementById('factoryFilterSelect');
+        const factorySelect = document.getElementById('factoryFilterSelect');
         const modalFactorySelect = document.getElementById('factory_idx');
 
         // 목록 필터 공장 드롭다운
@@ -457,10 +457,11 @@ async function loadFactoryOptions(api) {
             modalFactorySelect.addEventListener('change', (e) => {
                 const lineSelect = document.getElementById('line_idx');
                 if (lineSelect) {
-                    lineSelect.value    = '';
+                    lineSelect.value = '';
                     lineSelect.disabled = !e.target.value;  // 공장 선택 전까지 비활성
                 }
-                updateLineOptions(api, e.target.value, 'line_idx', 'Please select a line');
+                // e.preserveLineValue: 에디트 모달 오픈 시 resource-manager가 주입한 복원값
+                updateLineOptions(api, e.target.value, 'line_idx', 'Please select a line', e.preserveLineValue || null);
             });
         }
 
@@ -595,7 +596,7 @@ async function updateMachineOptions(api, factoryId, lineId, machineElementId, in
     try {
         const params = {};
         if (factoryId) params.factory_filter = factoryId;
-        if (lineId)    params.line_filter    = lineId;
+        if (lineId) params.line_filter = lineId;
 
         const res = await api.getAll(params);
         machineSelect.innerHTML = `<option value="">${initialText}</option>`;
