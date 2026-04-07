@@ -618,6 +618,125 @@
             opacity: .85;
         }
 
+        /* ── AI Features Modal ── */
+        .ai-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .75);
+            z-index: 5000;
+            align-items: center;
+            justify-content: center;
+            animation: lb-fade .18s ease;
+        }
+
+        .ai-modal-overlay.open {
+            display: flex;
+        }
+
+        .ai-modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px 32px 24px;
+            max-width: 620px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, .6);
+            animation: lb-scale .18s ease;
+        }
+
+        .ai-modal__close {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 18px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .ai-modal__close:hover {
+            color: var(--text);
+        }
+
+        .ai-modal__title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 18px;
+            padding-right: 24px;
+        }
+
+        .ai-modal__group {
+            margin-bottom: 18px;
+        }
+
+        .ai-modal__group:last-child {
+            margin-bottom: 0;
+        }
+
+        .ai-modal__group-title {
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .ai-modal__list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .ai-modal__list li {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .ai-modal__num {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 11.5px;
+            min-width: 20px;
+            flex-shrink: 0;
+        }
+
+        .ai-modal__name {
+            color: var(--text);
+            flex: 1;
+        }
+
+        .ai-modal__file {
+            color: var(--text-muted);
+            font-size: 11px;
+            font-family: 'Consolas', 'SFMono-Regular', monospace;
+            flex-shrink: 0;
+        }
+
+        #ai-features-trigger,
+        #redesign-data-trigger,
+        #redesign-manage-trigger {
+            cursor: pointer;
+        }
+
+        #ai-features-trigger:hover .val,
+        #redesign-data-trigger:hover .val,
+        #redesign-manage-trigger:hover .val {
+            color: var(--accent);
+        }
+
         /* ── Lightbox ── */
         .lightbox {
             display: none;
@@ -947,8 +1066,8 @@
                 <p class="hero-sub">A comprehensive report covering the full lifecycle — from AI strategy planning to
                     completed implementation.</p>
                 <div class="hero-meta">
-                    <span>📅 Initial Draft: 2026-03-06</span>
-                    <span>🔄 Implementation: 2026-03-25 · Awaiting Review</span>
+                    <!-- <span>📅 Initial Draft: 2026-03-06</span> -->
+                    <span>🔄 Implementation: 2026-04-07 · Awaiting Review</span>
                     <span>🏭 Target: SCI OEE System</span>
                     <span>📌 SUNTECH</span>
                 </div>
@@ -1121,15 +1240,15 @@
                     analytics engine and full-screen signage UI.</p>
 
                 <div class="metrics-row">
-                    <div class="metric-card">
+                    <div class="metric-card" id="ai-features-trigger" title="Click to view full feature list">
                         <div class="val">9<span style="font-size:1rem">+</span></div>
                         <div class="lbl">New AI Features</div>
                     </div>
-                    <div class="metric-card">
+                    <div class="metric-card" id="redesign-data-trigger" title="Click to view full page list">
                         <div class="val green">7</div>
                         <div class="lbl">Redesigned Pages<br>(data area)</div>
                     </div>
-                    <div class="metric-card">
+                    <div class="metric-card" id="redesign-manage-trigger" title="Click to view full page list">
                         <div class="val yellow">10</div>
                         <div class="lbl">Redesigned Pages<br>(manage area)</div>
                     </div>
@@ -1172,7 +1291,7 @@
                     </div>
                     <div class="timeline-item">
                         <h4>AI Dashboard Bug Fixes (2026-04-03)</h4>
-                        <p>Fixed 5 bugs discovered via Playwright automation: OEE exceeding 111%, CI range errors,
+                        <p>Fixed 5 bugs discovered via : OEE exceeding 111%, CI range errors,
                             date_range ignored, confidence interval inversion, duplicate AI feed entries.</p>
                     </div>
                     <div class="timeline-item">
@@ -1301,7 +1420,7 @@
                                 <td class="col-v1">None</td>
                                 <td>JS translateX column pinning<span class="tag-new">NEW</span><br><span
                                         style="font-size:11.5px;color:var(--text-muted)">Chromium CSS sticky bug → fully
-                                        resolved via JS approach, Playwright-verified</span></td>
+                                        resolved via JS approach.</span></td>
                             </tr>
                             <tr>
                                 <td class="col-area">SSE Performance</td>
@@ -1590,7 +1709,7 @@
                         <ul class="fb-points">
                             <li>High-performance scroll listener using requestAnimationFrame</li>
                             <li>Offset auto-remeasured after page transitions (SSE updates)</li>
-                            <li>Playwright verification: scrollLeft=400 → diff=0 (perfect pinning confirmed)</li>
+                            <!-- <li>Playwright verification: scrollLeft=400 → diff=0 (perfect pinning confirmed)</li> -->
                         </ul>
                     </div>
                 </div>
@@ -1723,7 +1842,7 @@
                                     <span class="tech-tag new">MutationObserver</span>
                                     <span class="tech-tag new">ResizeObserver</span>
                                     <span class="tech-tag new">translateX Column Pinning</span>
-                                    <span class="tech-tag new">Playwright E2E Testing</span>
+                                    <!-- <span class="tech-tag new">Playwright E2E Testing</span> -->
                                     <span class="tech-tag hl">statistics.lib.php</span>
                                     <span class="tech-tag hl">stream_helper.lib.php</span>
                                     <span class="tech-tag hl">nav-drawer-manage.php</span>
@@ -2087,6 +2206,110 @@
         </div>
     </div><!-- /doc-main -->
 
+    <!-- AI Features Modal -->
+    <div class="ai-modal-overlay" id="aiModal" role="dialog" aria-modal="true">
+        <div class="ai-modal">
+            <button class="ai-modal__close" id="aiModalClose" aria-label="Close">✕</button>
+            <div class="ai-modal__title">New AI Features — Total 13</div>
+            <div class="ai-modal__group">
+                <div class="ai-modal__group-title">AI Engine APIs (10)</div>
+                <ul class="ai-modal__list">
+                    <li><span class="ai-modal__num">①</span><span class="ai-modal__name">AI Intelligence
+                            Dashboard</span><span class="ai-modal__file">ai_dashboard_2.php</span></li>
+                    <li><span class="ai-modal__num">②</span><span class="ai-modal__name">OEE Prediction</span><span
+                            class="ai-modal__file">ai_oee_prediction_2.php</span></li>
+                    <li><span class="ai-modal__num">③</span><span class="ai-modal__name">OEE Prediction
+                            (Dashboard)</span><span class="ai-modal__file">ai_oee_prediction_dash_2.php</span></li>
+                    <li><span class="ai-modal__num">④</span><span class="ai-modal__name">Anomaly Detection</span><span
+                            class="ai-modal__file">ai_anomaly_2.php</span></li>
+                    <li><span class="ai-modal__num">⑤</span><span class="ai-modal__name">Maintenance Risk
+                            Score</span><span class="ai-modal__file">ai_maintenance_2.php</span></li>
+                    <li><span class="ai-modal__num">⑥</span><span class="ai-modal__name">Maintenance Risk
+                            (Dashboard)</span><span class="ai-modal__file">ai_maintenance_dash_2.php</span></li>
+                    <li><span class="ai-modal__num">⑦</span><span class="ai-modal__name">Production
+                            Optimization</span><span class="ai-modal__file">ai_optimization_2.php</span></li>
+                    <li><span class="ai-modal__num">⑧</span><span class="ai-modal__name">Real-time AI
+                            Streaming</span><span class="ai-modal__file">ai_stream_analysis_2.php</span></li>
+                    <li><span class="ai-modal__num">⑨</span><span class="ai-modal__name">AI Auto Report
+                            Engine</span><span class="ai-modal__file">ai_report_engine_2.php</span></li>
+                    <li><span class="ai-modal__num">⑩</span><span class="ai-modal__name">AI Report Export</span><span
+                            class="ai-modal__file">ai_report_export_2.php</span></li>
+                </ul>
+            </div>
+            <div class="ai-modal__group">
+                <div class="ai-modal__group-title">Page-Embedded AI Features (+3)</div>
+                <ul class="ai-modal__list">
+                    <li><span class="ai-modal__num">⑪</span><span class="ai-modal__name">OEE Prediction
+                            Overlay</span><span class="ai-modal__file">data_oee_2.php</span></li>
+                    <li><span class="ai-modal__num">⑫</span><span class="ai-modal__name">Downtime AI Risk
+                            Badge</span><span class="ai-modal__file">data_downtime_2.php</span></li>
+                    <li><span class="ai-modal__num">⑬</span><span class="ai-modal__name">AI Quality Guardian</span><span
+                            class="ai-modal__file">data_defective_2.php</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Redesign Data Modal -->
+    <div class="ai-modal-overlay" id="redesignDataModal" role="dialog" aria-modal="true">
+        <div class="ai-modal">
+            <button class="ai-modal__close" id="redesignDataClose" aria-label="Close">✕</button>
+            <div class="ai-modal__title">Redesigned Pages — Data Area (7)</div>
+            <div class="ai-modal__group">
+                <div class="ai-modal__group-title">Data Monitoring Pages — Signage Fullscreen Redesign</div>
+                <ul class="ai-modal__list">
+                    <li><span class="ai-modal__num">①</span><span class="ai-modal__name">OEE Data</span><span
+                            class="ai-modal__file">data_oee_2.php</span></li>
+                    <li><span class="ai-modal__num">②</span><span class="ai-modal__name">Andon Status</span><span
+                            class="ai-modal__file">data_andon_2.php</span></li>
+                    <li><span class="ai-modal__num">③</span><span class="ai-modal__name">Downtime</span><span
+                            class="ai-modal__file">data_downtime_2.php</span></li>
+                    <li><span class="ai-modal__num">④</span><span class="ai-modal__name">Defective</span><span
+                            class="ai-modal__file">data_defective_2.php</span></li>
+                    <li><span class="ai-modal__num">⑤</span><span class="ai-modal__name">OEE Log</span><span
+                            class="ai-modal__file">log_oee_2.php</span></li>
+                    <li><span class="ai-modal__num">⑥</span><span class="ai-modal__name">OEE Hourly Log</span><span
+                            class="ai-modal__file">log_oee_hourly_2.php</span></li>
+                    <li><span class="ai-modal__num">⑦</span><span class="ai-modal__name">OEE Row Log</span><span
+                            class="ai-modal__file">log_oee_row_2.php</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Redesign Manage Modal -->
+    <div class="ai-modal-overlay" id="redesignManageModal" role="dialog" aria-modal="true">
+        <div class="ai-modal">
+            <button class="ai-modal__close" id="redesignManageClose" aria-label="Close">✕</button>
+            <div class="ai-modal__title">Redesigned Pages — Manage Area (10)</div>
+            <div class="ai-modal__group">
+                <div class="ai-modal__group-title">Master Data Management Pages — Fullscreen Redesign</div>
+                <ul class="ai-modal__list">
+                    <li><span class="ai-modal__num">①</span><span class="ai-modal__name">Factory Management</span><span
+                            class="ai-modal__file">info_factory_2.php</span></li>
+                    <li><span class="ai-modal__num">②</span><span class="ai-modal__name">Line Management</span><span
+                            class="ai-modal__file">info_line_2.php</span></li>
+                    <li><span class="ai-modal__num">③</span><span class="ai-modal__name">Machine Management</span><span
+                            class="ai-modal__file">info_machine_2.php</span></li>
+                    <li><span class="ai-modal__num">④</span><span class="ai-modal__name">Machine Model
+                            Management</span><span class="ai-modal__file">info_machine_model_2.php</span></li>
+                    <li><span class="ai-modal__num">⑤</span><span class="ai-modal__name">Design Process
+                            Management</span><span class="ai-modal__file">info_design_process_2.php</span></li>
+                    <li><span class="ai-modal__num">⑥</span><span class="ai-modal__name">Andon Code
+                            Management</span><span class="ai-modal__file">info_andon_2.php</span></li>
+                    <li><span class="ai-modal__num">⑦</span><span class="ai-modal__name">Downtime Code
+                            Management</span><span class="ai-modal__file">info_downtime_2.php</span></li>
+                    <li><span class="ai-modal__num">⑧</span><span class="ai-modal__name">Defective Code
+                            Management</span><span class="ai-modal__file">info_defective_2.php</span></li>
+                    <li><span class="ai-modal__num">⑨</span><span class="ai-modal__name">Rate Color
+                            Management</span><span class="ai-modal__file">info_rate_color_2.php</span></li>
+                    <li><span class="ai-modal__num">⑩</span><span class="ai-modal__name">Work Time
+                            Management</span><span class="ai-modal__file">info_worktime_2.php</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <!-- Lightbox -->
     <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
         <button class="lightbox__close" id="lbClose" aria-label="Close">✕</button>
@@ -2122,6 +2345,22 @@
         lbClose.addEventListener('click', closeLb);
         lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
+
+        // Modals (AI Features / Redesign Data / Redesign Manage)
+        function initModal(triggerId, modalId, closeId) {
+            const modal = document.getElementById(modalId);
+            document.getElementById(triggerId).addEventListener('click', () => modal.classList.add('open'));
+            document.getElementById(closeId).addEventListener('click', () => modal.classList.remove('open'));
+            modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+        }
+        initModal('ai-features-trigger', 'aiModal', 'aiModalClose');
+        initModal('redesign-data-trigger', 'redesignDataModal', 'redesignDataClose');
+        initModal('redesign-manage-trigger', 'redesignManageModal', 'redesignManageClose');
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.ai-modal-overlay.open').forEach(m => m.classList.remove('open'));
+            }
+        });
     </script>
 </body>
 

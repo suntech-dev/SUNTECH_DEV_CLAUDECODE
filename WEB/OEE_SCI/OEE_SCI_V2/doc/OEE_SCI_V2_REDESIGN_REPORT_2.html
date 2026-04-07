@@ -625,6 +625,125 @@
             opacity: .85;
         }
 
+        /* ── AI Features Modal ── */
+        .ai-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .75);
+            z-index: 5000;
+            align-items: center;
+            justify-content: center;
+            animation: lb-fade .18s ease;
+        }
+
+        .ai-modal-overlay.open {
+            display: flex;
+        }
+
+        .ai-modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px 32px 24px;
+            max-width: 620px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, .6);
+            animation: lb-scale .18s ease;
+        }
+
+        .ai-modal__close {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 18px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .ai-modal__close:hover {
+            color: var(--text);
+        }
+
+        .ai-modal__title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 18px;
+            padding-right: 24px;
+        }
+
+        .ai-modal__group {
+            margin-bottom: 18px;
+        }
+
+        .ai-modal__group:last-child {
+            margin-bottom: 0;
+        }
+
+        .ai-modal__group-title {
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .ai-modal__list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .ai-modal__list li {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .ai-modal__num {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 11.5px;
+            min-width: 20px;
+            flex-shrink: 0;
+        }
+
+        .ai-modal__name {
+            color: var(--text);
+            flex: 1;
+        }
+
+        .ai-modal__file {
+            color: var(--text-muted);
+            font-size: 11px;
+            font-family: 'Consolas', 'SFMono-Regular', monospace;
+            flex-shrink: 0;
+        }
+
+        #ai-features-trigger,
+        #redesign-data-trigger,
+        #redesign-manage-trigger {
+            cursor: pointer;
+        }
+
+        #ai-features-trigger:hover .val,
+        #redesign-data-trigger:hover .val,
+        #redesign-manage-trigger:hover .val {
+            color: var(--accent);
+        }
+
         /* ── Lightbox ── */
         .lightbox {
             display: none;
@@ -1015,8 +1134,8 @@
                 <h1>OEE SCI V2<br>AI 도입 전략 &amp; 리디자인 통합 보고서</h1>
                 <p class="hero-sub">AI 도입 계획 수립부터 구현까지의 전 과정을 담은 통합 보고서입니다.</p>
                 <div class="hero-meta">
-                    <span>📅 최초 작성 2026-03-06</span>
-                    <span>🔄 구현 2026-03-25 · 검토 요청</span>
+                    <!-- <span>📅 최초 작성 2026-03-06</span> -->
+                    <span>🔄 구현 2026-04-07 · 검토 요청</span>
                     <span>🏭 대상: SCI OEE 시스템</span>
                     <span>📌 SUNTECH</span>
                 </div>
@@ -1172,15 +1291,15 @@
                 <p class="section-desc">V1의 안정적인 OEE 모니터링 기능을 완전히 유지하면서 AI 분석 엔진과 풀스크린 사이니지 UI를 전면 추가했습니다.</p>
 
                 <div class="metrics-row">
-                    <div class="metric-card">
+                    <div class="metric-card" id="ai-features-trigger" title="클릭하면 상세 목록을 볼 수 있습니다">
                         <div class="val">9<span style="font-size:1rem">+</span></div>
                         <div class="lbl">신규 AI 기능</div>
                     </div>
-                    <div class="metric-card">
+                    <div class="metric-card" id="redesign-data-trigger" title="클릭하면 상세 목록을 볼 수 있습니다">
                         <div class="val green">7</div>
                         <div class="lbl">리디자인<br>(data 영역)</div>
                     </div>
-                    <div class="metric-card">
+                    <div class="metric-card" id="redesign-manage-trigger" title="클릭하면 상세 목록을 볼 수 있습니다">
                         <div class="val yellow">10</div>
                         <div class="lbl">리디자인<br>(manage 영역)</div>
                     </div>
@@ -1218,7 +1337,8 @@
                     </div>
                     <div class="timeline-item">
                         <h4>AI Dashboard 버그 수정 (2026-04-03)</h4>
-                        <p>Playwright 자동화 검증으로 발견한 5개 버그(OEE 111% 이상값, CI 범위 오류, date_range 무시, 신뢰구간 역전, AI 피드 중복) 전체
+                        <p><!--Playwright 자동화 검증으로 발견한 -->5개 버그(OEE 111% 이상값, CI 범위 오류, date_range 무시, 신뢰구간 역전, AI 피드
+                            중복) 전체
                             수정.</p>
                     </div>
                     <div class="timeline-item">
@@ -1340,7 +1460,7 @@
                                 <td class="col-v1">없음</td>
                                 <td>JS translateX 기반 컬럼 고정<span class="tag-new">NEW</span><br><span
                                         style="font-size:11.5px;color:var(--text-muted)">Chromium sticky 버그 → JS 방식으로 완전
-                                        해결. Playwright 검증 완료</span></td>
+                                        해결. <!--Playwright 검증 완료--></span></td>
                             </tr>
                             <tr>
                                 <td class="col-area">SSE 성능</td>
@@ -1614,7 +1734,7 @@
                         <ul class="fb-points">
                             <li>requestAnimationFrame 기반 고성능 스크롤 리스너</li>
                             <li>페이지 전환(SSE 업데이트) 후 offset 자동 재측정</li>
-                            <li>Playwright 검증: scrollLeft=400 시 diff=0 (완벽 고정) 확인</li>
+                            <!-- <li>Playwright 검증: scrollLeft=400 시 diff=0 (완벽 고정) 확인</li> -->
                         </ul>
                     </div>
                 </div>
@@ -1740,7 +1860,7 @@
                                     <span class="tech-tag new">MutationObserver</span>
                                     <span class="tech-tag new">ResizeObserver</span>
                                     <span class="tech-tag new">translateX 컬럼 고정</span>
-                                    <span class="tech-tag new">Playwright E2E 검증</span>
+                                    <!-- <span class="tech-tag new">Playwright E2E 검증</span> -->
                                     <span class="tech-tag hl">statistics.lib.php</span>
                                     <span class="tech-tag hl">stream_helper.lib.php</span>
                                     <span class="tech-tag hl">nav-drawer-manage.php</span>
@@ -1982,7 +2102,7 @@
                             anomaly,<br>maintenance, optimization,<br>stream, report×2</div>
                     </div>
                     <div class="metric-card">
-                        <div class="val yellow">9</div>
+                        <div class="val yellow">8</div>
                         <div class="lbl">Stream APIs</div>
                         <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">SSE 스트림 엔드포인트<br>각 페이지별 전용
                             스트림</div>
@@ -2003,7 +2123,7 @@
 
                 <div class="file-list-grid">
                     <div class="file-list-card">
-                        <div class="file-list-card__label">Data Pages (7)</div>
+                        <div class="file-list-card__label">Data Pages (9)</div>
                         <ul>
                             <li><span class="dot"></span>dashboard_2.php</li>
                             <li><span class="dot"></span>ai_dashboard_2.php</li>
@@ -2017,7 +2137,7 @@
                         </ul>
                     </div>
                     <div class="file-list-card">
-                        <div class="file-list-card__label">AI Engine APIs (7)</div>
+                        <div class="file-list-card__label">AI Engine APIs (9)</div>
                         <ul>
                             <li><span class="dot"></span>ai_oee_prediction_2.php</li>
                             <li><span class="dot"></span>ai_oee_prediction_dash_2.php</li>
@@ -2031,7 +2151,7 @@
                         </ul>
                     </div>
                     <div class="file-list-card">
-                        <div class="file-list-card__label">Stream APIs (9)</div>
+                        <div class="file-list-card__label">Stream APIs (8)</div>
                         <ul>
                             <li><span class="dot"></span>dashboard_stream_2.php</li>
                             <li><span class="dot"></span>data_oee_stream_2.php</li>
@@ -2087,6 +2207,110 @@
         </div>
     </div><!-- /doc-main -->
 
+    <!-- AI Features Modal -->
+    <div class="ai-modal-overlay" id="aiModal" role="dialog" aria-modal="true">
+        <div class="ai-modal">
+            <button class="ai-modal__close" id="aiModalClose" aria-label="닫기">✕</button>
+            <div class="ai-modal__title">신규 AI 기능 목록 — 총 13개</div>
+            <div class="ai-modal__group">
+                <div class="ai-modal__group-title">AI Engine APIs (10)</div>
+                <ul class="ai-modal__list">
+                    <li><span class="ai-modal__num">①</span><span class="ai-modal__name">AI Intelligence
+                            Dashboard</span><span class="ai-modal__file">ai_dashboard_2.php</span></li>
+                    <li><span class="ai-modal__num">②</span><span class="ai-modal__name">OEE 예측</span><span
+                            class="ai-modal__file">ai_oee_prediction_2.php</span></li>
+                    <li><span class="ai-modal__num">③</span><span class="ai-modal__name">OEE 예측 (대시보드 전용)</span><span
+                            class="ai-modal__file">ai_oee_prediction_dash_2.php</span></li>
+                    <li><span class="ai-modal__num">④</span><span class="ai-modal__name">이상 감지</span><span
+                            class="ai-modal__file">ai_anomaly_2.php</span></li>
+                    <li><span class="ai-modal__num">⑤</span><span class="ai-modal__name">예방정비 위험도</span><span
+                            class="ai-modal__file">ai_maintenance_2.php</span></li>
+                    <li><span class="ai-modal__num">⑥</span><span class="ai-modal__name">예방정비 (대시보드 전용)</span><span
+                            class="ai-modal__file">ai_maintenance_dash_2.php</span></li>
+                    <li><span class="ai-modal__num">⑦</span><span class="ai-modal__name">생산 최적화 제안</span><span
+                            class="ai-modal__file">ai_optimization_2.php</span></li>
+                    <li><span class="ai-modal__num">⑧</span><span class="ai-modal__name">실시간 AI 스트리밍</span><span
+                            class="ai-modal__file">ai_stream_analysis_2.php</span></li>
+                    <li><span class="ai-modal__num">⑨</span><span class="ai-modal__name">AI 자동 리포트 엔진</span><span
+                            class="ai-modal__file">ai_report_engine_2.php</span></li>
+                    <li><span class="ai-modal__num">⑩</span><span class="ai-modal__name">AI 리포트 Export</span><span
+                            class="ai-modal__file">ai_report_export_2.php</span></li>
+                </ul>
+            </div>
+            <div class="ai-modal__group">
+                <div class="ai-modal__group-title">페이지 임베드 AI 기능 (+3)</div>
+                <ul class="ai-modal__list">
+                    <li><span class="ai-modal__num">⑪</span><span class="ai-modal__name">OEE 예측선 오버레이</span><span
+                            class="ai-modal__file">data_oee_2.php</span></li>
+                    <li><span class="ai-modal__num">⑫</span><span class="ai-modal__name">다운타임 AI Risk 뱃지</span><span
+                            class="ai-modal__file">data_downtime_2.php</span></li>
+                    <li><span class="ai-modal__num">⑬</span><span class="ai-modal__name">AI 품질 파수꾼</span><span
+                            class="ai-modal__file">data_defective_2.php</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Redesign Data Modal -->
+    <div class="ai-modal-overlay" id="redesignDataModal" role="dialog" aria-modal="true">
+        <div class="ai-modal">
+            <button class="ai-modal__close" id="redesignDataClose" aria-label="닫기">✕</button>
+            <div class="ai-modal__title">리디자인 — Data 영역 (7종)</div>
+            <div class="ai-modal__group">
+                <div class="ai-modal__group-title">데이터 모니터링 페이지 — 사이니지 풀스크린 리디자인</div>
+                <ul class="ai-modal__list">
+                    <li><span class="ai-modal__num">①</span><span class="ai-modal__name">OEE 데이터</span><span
+                            class="ai-modal__file">data_oee_2.php</span></li>
+                    <li><span class="ai-modal__num">②</span><span class="ai-modal__name">안돈 현황</span><span
+                            class="ai-modal__file">data_andon_2.php</span></li>
+                    <li><span class="ai-modal__num">③</span><span class="ai-modal__name">다운타임</span><span
+                            class="ai-modal__file">data_downtime_2.php</span></li>
+                    <li><span class="ai-modal__num">④</span><span class="ai-modal__name">불량</span><span
+                            class="ai-modal__file">data_defective_2.php</span></li>
+                    <li><span class="ai-modal__num">⑤</span><span class="ai-modal__name">OEE 로그</span><span
+                            class="ai-modal__file">log_oee_2.php</span></li>
+                    <li><span class="ai-modal__num">⑥</span><span class="ai-modal__name">OEE 시간별 로그</span><span
+                            class="ai-modal__file">log_oee_hourly_2.php</span></li>
+                    <li><span class="ai-modal__num">⑦</span><span class="ai-modal__name">OEE 행 로그</span><span
+                            class="ai-modal__file">log_oee_row_2.php</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Redesign Manage Modal -->
+    <div class="ai-modal-overlay" id="redesignManageModal" role="dialog" aria-modal="true">
+        <div class="ai-modal">
+            <button class="ai-modal__close" id="redesignManageClose" aria-label="닫기">✕</button>
+            <div class="ai-modal__title">리디자인 — Manage 영역 (10종)</div>
+            <div class="ai-modal__group">
+                <div class="ai-modal__group-title">마스터 데이터 관리 페이지 — 풀스크린 리디자인</div>
+                <ul class="ai-modal__list">
+                    <li><span class="ai-modal__num">①</span><span class="ai-modal__name">공장 관리</span><span
+                            class="ai-modal__file">info_factory_2.php</span></li>
+                    <li><span class="ai-modal__num">②</span><span class="ai-modal__name">라인 관리</span><span
+                            class="ai-modal__file">info_line_2.php</span></li>
+                    <li><span class="ai-modal__num">③</span><span class="ai-modal__name">기계 관리</span><span
+                            class="ai-modal__file">info_machine_2.php</span></li>
+                    <li><span class="ai-modal__num">④</span><span class="ai-modal__name">기계 모델 관리</span><span
+                            class="ai-modal__file">info_machine_model_2.php</span></li>
+                    <li><span class="ai-modal__num">⑤</span><span class="ai-modal__name">설계 공정 관리</span><span
+                            class="ai-modal__file">info_design_process_2.php</span></li>
+                    <li><span class="ai-modal__num">⑥</span><span class="ai-modal__name">안돈 코드 관리</span><span
+                            class="ai-modal__file">info_andon_2.php</span></li>
+                    <li><span class="ai-modal__num">⑦</span><span class="ai-modal__name">다운타임 코드 관리</span><span
+                            class="ai-modal__file">info_downtime_2.php</span></li>
+                    <li><span class="ai-modal__num">⑧</span><span class="ai-modal__name">불량 코드 관리</span><span
+                            class="ai-modal__file">info_defective_2.php</span></li>
+                    <li><span class="ai-modal__num">⑨</span><span class="ai-modal__name">등급 색상 관리</span><span
+                            class="ai-modal__file">info_rate_color_2.php</span></li>
+                    <li><span class="ai-modal__num">⑩</span><span class="ai-modal__name">근무시간 관리</span><span
+                            class="ai-modal__file">info_worktime_2.php</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <!-- Lightbox -->
     <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
         <button class="lightbox__close" id="lbClose" aria-label="닫기">✕</button>
@@ -2122,6 +2346,22 @@
         lbClose.addEventListener('click', closeLb);
         lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
+
+        // Modals (AI Features / Redesign Data / Redesign Manage)
+        function initModal(triggerId, modalId, closeId) {
+            const modal = document.getElementById(modalId);
+            document.getElementById(triggerId).addEventListener('click', () => modal.classList.add('open'));
+            document.getElementById(closeId).addEventListener('click', () => modal.classList.remove('open'));
+            modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+        }
+        initModal('ai-features-trigger', 'aiModal', 'aiModalClose');
+        initModal('redesign-data-trigger', 'redesignDataModal', 'redesignDataClose');
+        initModal('redesign-manage-trigger', 'redesignManageModal', 'redesignManageClose');
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.ai-modal-overlay.open').forEach(m => m.classList.remove('open'));
+            }
+        });
     </script>
 </body>
 
