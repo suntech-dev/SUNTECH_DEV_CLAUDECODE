@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Intelligence Dashboard — 기능 설명서</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #21262d;
+      --surface3: #2d333b;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent2: #3fb950;
+      --warn: #d29922;
+      --danger: #f85149;
+      --purple: #bc8cff;
+      --orange: #f5a623;
+      --sidebar-w: 270px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+      font-size: 15px;
+      line-height: 1.75;
+      display: flex;
+    }
+
+    /* ── 사이드바 ── */
+    #sidebar {
+      position: fixed; top: 0; left: 0;
+      width: var(--sidebar-w); height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 24px 0 40px;
+      z-index: 100;
+    }
+    #sidebar .logo {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    #sidebar .logo .badge {
+      display: inline-block;
+      font-size: 10px; font-weight: 700;
+      background: var(--accent); color: #0d1117;
+      border-radius: 4px; padding: 2px 7px;
+      letter-spacing: .05em; margin-bottom: 6px;
+    }
+    #sidebar .logo strong {
+      display: block; font-size: 14px;
+      color: var(--text); font-weight: 700;
+    }
+    #sidebar .logo span {
+      display: block; font-size: 12px;
+      color: var(--text-muted); margin-top: 3px;
+    }
+    #toc { padding: 0 12px; }
+    #toc .toc-section-label {
+      font-size: 10px; font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: .08em;
+      padding: 12px 8px 6px;
+    }
+    #toc a {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px; border-radius: 6px;
+      color: var(--text-muted); text-decoration: none;
+      font-size: 13px; transition: all .15s;
+    }
+    #toc a:hover, #toc a.active {
+      background: var(--surface2); color: var(--text);
+    }
+    #toc a .toc-icon {
+      width: 20px; height: 20px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+    }
+
+    /* ── 본문 ── */
+    #main {
+      margin-left: var(--sidebar-w);
+      flex: 1; padding: 48px 56px;
+      max-width: 1100px;
+    }
+
+    /* ── 페이지 헤더 ── */
+    .page-hero {
+      background: linear-gradient(135deg, #161b22 0%, #1c2333 50%, #161b22 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 40px 48px;
+      margin-bottom: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(88,166,255,.12) 0%, transparent 70%);
+    }
+    .page-hero .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(88,166,255,.15);
+      border: 1px solid rgba(88,166,255,.3);
+      border-radius: 20px; padding: 4px 14px;
+      font-size: 12px; font-weight: 600;
+      color: var(--accent); margin-bottom: 16px;
+    }
+    .page-hero .hero-badge::before {
+      content: ''; width: 6px; height: 6px;
+      background: var(--accent); border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .5; transform: scale(1.4); }
+    }
+    .page-hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 10px; }
+    .page-hero p { color: var(--text-muted); font-size: 15px; max-width: 560px; }
+
+    /* ── 섹션 ── */
+    .feature-section {
+      margin-bottom: 64px;
+      scroll-margin-top: 24px;
+    }
+    .section-header {
+      display: flex; align-items: flex-start; gap: 16px;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-icon {
+      width: 48px; height: 48px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .section-header .section-meta {}
+    .section-header .section-num {
+      font-size: 11px; font-weight: 700;
+      color: var(--text-muted); letter-spacing: .1em;
+      text-transform: uppercase; margin-bottom: 4px;
+    }
+    .section-header h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .section-header .section-sub { color: var(--text-muted); font-size: 13px; }
+
+    /* ── 카드 그리드 ── */
+    .card-grid { display: grid; gap: 16px; margin-bottom: 24px; }
+    .card-grid-2 { grid-template-columns: 1fr 1fr; }
+    .card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px 22px;
+    }
+    .info-card .card-label {
+      font-size: 11px; font-weight: 700;
+      color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: .08em; margin-bottom: 8px;
+    }
+    .info-card p { font-size: 14px; color: var(--text); line-height: 1.65; }
+    .info-card .card-value {
+      font-size: 24px; font-weight: 700;
+      color: var(--accent); margin: 6px 0 2px;
+    }
+
+    /* ── 설명 본문 ── */
+    .desc-block { margin-bottom: 24px; }
+    .desc-block p { color: var(--text); line-height: 1.8; margin-bottom: 12px; }
+    .desc-block strong { color: var(--accent); }
+
+    /* ── 알고리즘 박스 ── */
+    .algo-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px; padding: 20px 24px;
+      margin: 20px 0;
+    }
+    .algo-box .algo-title {
+      font-size: 12px; font-weight: 700;
+      color: var(--accent); text-transform: uppercase;
+      letter-spacing: .08em; margin-bottom: 12px;
+    }
+    .algo-box ul { padding-left: 18px; }
+    .algo-box li {
+      color: var(--text-muted); font-size: 14px;
+      margin-bottom: 6px; line-height: 1.6;
+    }
+    .algo-box li strong { color: var(--text); }
+
+    /* ── 스텝 박스 ── */
+    .steps { margin: 20px 0; }
+    .step {
+      display: flex; gap: 16px;
+      margin-bottom: 16px; align-items: flex-start;
+    }
+    .step-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--accent); color: #0d1117;
+      font-size: 12px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .step-content .step-title {
+      font-size: 14px; font-weight: 700; margin-bottom: 4px;
+    }
+    .step-content p { font-size: 13.5px; color: var(--text-muted); line-height: 1.65; }
+
+    /* ── 지표 바 ── */
+    .metric-bar {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px 20px;
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .metric-bar .metric-label {
+      font-size: 13px; font-weight: 600; width: 180px; flex-shrink: 0;
+    }
+    .metric-bar .metric-bar-track {
+      flex: 1; height: 8px; background: var(--surface3);
+      border-radius: 4px; overflow: hidden;
+    }
+    .metric-bar .metric-bar-fill {
+      height: 100%; border-radius: 4px;
+    }
+    .metric-bar .metric-pct {
+      font-size: 13px; font-weight: 700; width: 48px;
+      text-align: right; flex-shrink: 0;
+    }
+
+    /* ── 배지 ── */
+    .badge {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      border-radius: 4px; padding: 2px 8px;
+    }
+    .badge-blue { background: rgba(88,166,255,.2); color: var(--accent); border: 1px solid rgba(88,166,255,.35); }
+    .badge-green { background: rgba(63,185,80,.2); color: var(--accent2); border: 1px solid rgba(63,185,80,.35); }
+    .badge-warn { background: rgba(210,153,34,.2); color: var(--warn); border: 1px solid rgba(210,153,34,.35); }
+    .badge-danger { background: rgba(248,81,73,.2); color: var(--danger); border: 1px solid rgba(248,81,73,.35); }
+    .badge-purple { background: rgba(188,140,255,.2); color: var(--purple); border: 1px solid rgba(188,140,255,.35); }
+    .badge-orange { background: rgba(245,166,35,.2); color: var(--orange); border: 1px solid rgba(245,166,35,.35); }
+
+    /* ── FAQ / Q&A ── */
+    .qa-list { margin-top: 24px; }
+    .qa-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px; margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .qa-item summary {
+      padding: 14px 18px; cursor: pointer;
+      font-size: 14px; font-weight: 600;
+      list-style: none; display: flex;
+      align-items: center; gap: 10px;
+      user-select: none;
+    }
+    .qa-item summary::-webkit-details-marker { display: none; }
+    .qa-item summary::before {
+      content: 'Q'; width: 22px; height: 22px;
+      background: rgba(88,166,255,.2); color: var(--accent);
+      border-radius: 4px; font-size: 11px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .qa-item[open] summary { border-bottom: 1px solid var(--border); }
+    .qa-answer {
+      padding: 14px 18px 16px 50px;
+      font-size: 13.5px; color: var(--text-muted); line-height: 1.75;
+    }
+
+    /* ── 테이블 ── */
+    .data-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 13.5px; margin: 16px 0;
+    }
+    .data-table th {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 10px 14px; text-align: left;
+      font-size: 12px; font-weight: 700;
+      color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .data-table td {
+      border: 1px solid var(--border);
+      padding: 10px 14px; line-height: 1.55;
+      vertical-align: top;
+    }
+    .data-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+    /* ── 주의사항 박스 ── */
+    .note-box {
+      display: flex; gap: 12px; align-items: flex-start;
+      background: rgba(210,153,34,.08);
+      border: 1px solid rgba(210,153,34,.3);
+      border-radius: 8px; padding: 14px 18px;
+      margin: 16px 0;
+    }
+    .note-box .note-icon { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+    .note-box p { font-size: 13.5px; color: var(--text-muted); line-height: 1.65; }
+    .note-box p strong { color: var(--warn); }
+
+    /* ── 구분선 ── */
+    hr.divider { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+    /* ── 푸터 ── */
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 64px; padding-top: 28px;
+      color: var(--text-muted); font-size: 13px;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 사이드바 목차 -->
+<nav id="sidebar">
+  <div class="logo">
+    <span class="badge">AI POWERED</span>
+    <strong>AI Intelligence Dashboard</strong>
+    <span>기능 설명서 v2.0</span>
+  </div>
+  <div id="toc">
+    <div class="toc-section-label">개요</div>
+    <a href="#overview">
+      <span class="toc-icon" style="background:rgba(88,166,255,.2);color:var(--accent)">◈</span>
+      대시보드 소개
+    </a>
+
+    <div class="toc-section-label">6대 AI 기능</div>
+    <a href="#feature1">
+      <span class="toc-icon" style="background:rgba(88,166,255,.15);color:var(--accent)">1</span>
+      OEE Trend &amp; AI Forecast
+    </a>
+    <a href="#feature2">
+      <span class="toc-icon" style="background:rgba(248,81,73,.15);color:var(--danger)">2</span>
+      Anomaly Detection
+    </a>
+    <a href="#feature3">
+      <span class="toc-icon" style="background:rgba(63,185,80,.15);color:var(--accent2)">3</span>
+      Line Health Index
+    </a>
+    <a href="#feature4">
+      <span class="toc-icon" style="background:rgba(210,153,34,.15);color:var(--warn)">4</span>
+      Predictive Maintenance
+    </a>
+    <a href="#feature5">
+      <span class="toc-icon" style="background:rgba(188,140,255,.15);color:var(--purple)">5</span>
+      Real-time AI Streaming
+    </a>
+    <a href="#feature6">
+      <span class="toc-icon" style="background:rgba(245,166,35,.15);color:var(--orange)">6</span>
+      Production Optimization
+    </a>
+
+    <div class="toc-section-label">참고</div>
+    <a href="#comparison">
+      <span class="toc-icon" style="background:rgba(255,255,255,.06);color:var(--text-muted)">≡</span>
+      기능 비교표
+    </a>
+    <a href="#faq">
+      <span class="toc-icon" style="background:rgba(255,255,255,.06);color:var(--text-muted)">?</span>
+      고객 FAQ
+    </a>
+  </div>
+</nav>
+
+<!-- 본문 -->
+<main id="main">
+
+  <!-- 페이지 히어로 -->
+  <div class="page-hero" id="overview">
+    <div class="hero-badge">AI POWERED</div>
+    <h1>AI Intelligence Dashboard<br>6대 핵심 기능 설명서</h1>
+    <p>
+      제조 현장의 <strong style="color:var(--accent)">OEE(설비 종합 효율)</strong>를 AI로 분석·예측·최적화하는
+      사이니지형 대시보드입니다. 1920×1080 화면에 실시간으로 6가지 AI 기능을 동시에 표시하며,
+      공장·라인·기계 단위 드릴다운 필터를 지원합니다.
+    </p>
+    <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+      <span class="badge badge-blue">실시간 60초 자동 갱신</span>
+      <span class="badge badge-green">공장 / 라인 / 기계 필터</span>
+      <span class="badge badge-purple">Today / 7일 / 30일 기간 선택</span>
+      <span class="badge badge-orange">Export 리포트 지원</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- Feature 1: OEE Trend & AI Forecast -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="feature1">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(88,166,255,.15);">📈</div>
+      <div class="section-meta">
+        <div class="section-num">Feature 01</div>
+        <h2>OEE Trend &amp; AI Forecast</h2>
+        <div class="section-sub">실제 OEE 추이 + AI 기반 향후 4시간 예측 차트</div>
+      </div>
+    </div>
+
+    <div class="desc-block">
+      <p>
+        <strong>OEE(Overall Equipment Effectiveness)</strong>는 설비 가용성 × 성능률 × 양품률로 계산되는
+        제조 현장의 핵심 KPI입니다. 이 차트는 오늘의 <strong>실제 OEE 이력(실선)</strong>과
+        AI가 계산한 <strong>향후 4시간 예측값(점선)</strong>을 한 화면에 표시합니다.
+      </p>
+      <p>
+        예측 라인 주변의 반투명 영역은 <strong>90% 신뢰구간(CI)</strong>으로,
+        AI가 예측한 OEE 값이 이 범위 안에 들어올 확률이 90%라는 의미입니다.
+        신뢰구간이 넓으면 불확실성이 크고, 좁으면 예측 신뢰도가 높습니다.
+      </p>
+    </div>
+
+    <div class="card-grid card-grid-3">
+      <div class="info-card">
+        <div class="card-label">Actual OEE (실선)</div>
+        <p>오늘 시간대별 실제 OEE 값. 항상 당일(오늘) 기준으로 표시됩니다.</p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">AI Forecast (점선)</div>
+        <p>현재 시각 이후 최대 4시간의 예측 OEE. 지수평활법 + 계절성 패턴 적용.</p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">신뢰구간 (90% CI)</div>
+        <p>예측 범위의 불확실성 표시. 구간이 좁을수록 예측 정밀도가 높습니다.</p>
+      </div>
+    </div>
+
+    <div class="algo-box">
+      <div class="algo-title">⚙ AI 예측 알고리즘 — 지수평활법 + 계절성 패턴</div>
+      <ul>
+        <li><strong>STEP 1 — 계절성 학습:</strong> 최근 7일 또는 30일의 시간대×요일별 OEE 통계를 학습하여 계절성 매트릭스(요일 × 시간대)를 구성합니다.</li>
+        <li><strong>STEP 2 — 오늘 실적 수집:</strong> 당일 시간대별 실제 OEE를 조회합니다 (필터 선택에 상관없이 항상 오늘 날짜 기준).</li>
+        <li><strong>STEP 3 — 예측 계산:</strong> 지수평활법(Exponential Smoothing)과 계절성 가중 평균을 결합하여 향후 4시간(시간대별) OEE를 예측합니다.</li>
+        <li><strong>STEP 4 — 신뢰구간 산출:</strong> 표준편차 기반 90% CI 계산 (seasonal_std 최대 15% 제한으로 극단적 구간 방지).</li>
+        <li><strong>STEP 5 — 트렌드 판단:</strong> 선형회귀로 예측값의 기울기를 분석하여 Trending Up / Down / Stable 뱃지로 표시합니다.</li>
+      </ul>
+    </div>
+
+    <!-- 상단 요약 카드 설명 -->
+    <h3 style="font-size:15px;margin:24px 0 12px;">상단 요약 카드 설명</h3>
+    <div class="card-grid card-grid-2">
+      <div class="info-card">
+        <div class="card-label">🔴 Real-time OEE (LIVE)</div>
+        <p>
+          현재 시각 기준 최신 시간대의 실제 OEE 값입니다.<br>
+          날짜 필터(7일/30일)를 선택해도 이 값은 <strong>항상 오늘</strong> 기준입니다.<br><br>
+          상태 뱃지:
+          <span class="badge badge-green">GOOD</span>&nbsp;
+          <span class="badge badge-warn">WARNING</span>&nbsp;
+          <span class="badge badge-danger">CRITICAL</span>
+        </p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">🔮 Next 4H AI Forecast</div>
+        <p>
+          향후 4시간 평균 예측 OEE와 신뢰구간(CI) 범위를 표시합니다.<br>
+          예시: "78.3% · CI: 72.0% ~ 84.6%"<br><br>
+          추세 뱃지:
+          <span class="badge badge-blue">Trending Up ↑</span>&nbsp;
+          <span class="badge badge-danger">Trending Down ↓</span>&nbsp;
+          <span class="badge badge-green">Stable →</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="qa-list">
+      <details class="qa-item">
+        <summary>예측 기간(날짜 범위)을 변경하면 예측값도 달라지나요?</summary>
+        <div class="qa-answer">
+          네, 달라집니다. 날짜 범위 필터는 AI가 <strong>패턴을 학습하는 기간</strong>에 영향을 줍니다.
+          예를 들어 '7일'을 선택하면 최근 7일간의 시간대별 OEE 패턴으로 예측하고,
+          '30일'을 선택하면 보다 긴 30일 데이터를 학습에 활용합니다.
+          단, 현재 OEE(Real-time)와 오늘의 실제 OEE 라인은 항상 오늘 날짜 기준으로 고정됩니다.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>신뢰구간(CI)이 너무 넓게 표시될 때는 어떤 의미인가요?</summary>
+        <div class="qa-answer">
+          신뢰구간이 넓다는 것은 해당 시간대의 OEE 변동성이 크다는 뜻입니다.
+          예측값은 참고용이며, 실제 값은 그 범위 안 어딘가에 있을 가능성이 높습니다.
+          단, 시스템은 신뢰구간이 비정상적으로 넓어지는 것을 막기 위해 표준편차 상한을 15%로 제한하고 있습니다.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- Feature 2: Anomaly Detection -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="feature2">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(248,81,73,.15);">🚨</div>
+      <div class="section-meta">
+        <div class="section-num">Feature 02</div>
+        <h2>Anomaly Detection</h2>
+        <div class="section-sub">Z-Score 기반 실시간 이상 감지</div>
+      </div>
+    </div>
+
+    <div class="desc-block">
+      <p>
+        <strong>이상 감지(Anomaly Detection)</strong>는 현재의 OEE 값이 과거 패턴과 얼마나 다른지를
+        통계적으로 계산하여, 비정상적인 설비 상태를 자동으로 탐지하는 기능입니다.
+      </p>
+      <p>
+        통계 기법인 <strong>Z-Score(표준 점수)</strong>를 사용합니다. Z-Score는 현재 값이 평균에서
+        표준편차의 몇 배나 떨어져 있는지를 나타내는 수치입니다.
+        Z-Score가 클수록 현재 값이 정상 범위에서 많이 벗어난 이상 상태임을 의미합니다.
+      </p>
+    </div>
+
+    <div class="algo-box">
+      <div class="algo-title">⚙ Z-Score 이상 감지 원리</div>
+      <ul>
+        <li><strong>Z = (현재값 − 평균) / 표준편차</strong></li>
+        <li>현재 시간대의 OEE와 과거 동일 시간대(요일·시간 기준)의 통계를 비교합니다.</li>
+        <li>Z-Score가 기준값을 초과하면 이상으로 판정하여 목록에 표시합니다.</li>
+        <li>심각도(Critical / Warning)에 따라 다른 색상과 뱃지로 구분됩니다.</li>
+      </ul>
+    </div>
+
+    <h3 style="font-size:15px;margin:24px 0 12px;">이상 감지 심각도 기준</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>심각도</th>
+          <th>조건</th>
+          <th>의미</th>
+          <th>표시 색상</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-danger">Critical</span></td>
+          <td>Z-Score 매우 높음 (심각한 이탈)</td>
+          <td>즉각적인 확인 및 조치가 필요한 수준</td>
+          <td style="color:var(--danger)">빨간색</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-warn">Warning</span></td>
+          <td>Z-Score 높음 (주의 수준 이탈)</td>
+          <td>추이 모니터링 및 원인 파악 권장</td>
+          <td style="color:var(--warn)">노란색</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green">Normal</span></td>
+          <td>Z-Score 낮음 (정상 범위)</td>
+          <td>정상 운영 상태</td>
+          <td style="color:var(--accent2)">초록색</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card-grid card-grid-2" style="margin-top:20px;">
+      <div class="info-card">
+        <div class="card-label">🔴 상단 카드 — Anomaly Detection</div>
+        <p>
+          현재 감지된 <strong>전체 이상 건수</strong>를 숫자로 표시합니다.<br>
+          이상이 없으면 "0 anomalies"로 표시됩니다.<br>
+          Critical 이상이 있을 경우 빨간 점멸 뱃지가 나타납니다.
+        </p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">📋 이상 감지 목록 카드</div>
+        <p>
+          이상이 감지된 <strong>기계명, 라인명, 이상 시간대, Z-Score</strong>가
+          목록 형태로 표시됩니다.<br>
+          이상이 없으면 "No anomalies detected" 메시지가 표시됩니다.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa-list">
+      <details class="qa-item">
+        <summary>이상 감지는 어떤 데이터를 기준으로 하나요?</summary>
+        <div class="qa-answer">
+          선택된 날짜 범위(Today / 7일 / 30일)에 해당하는 시간대별 OEE 데이터를 기준으로
+          과거 동일 요일·시간대의 평균과 표준편차를 계산합니다.
+          현재 OEE와 이 기준값을 비교하여 Z-Score를 산출합니다.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>이상 감지가 0건이면 완전히 정상인가요?</summary>
+        <div class="qa-answer">
+          Z-Score 기준 이상 범위를 벗어난 데이터가 없다는 의미로, 통계적으로 정상 범위 내에서
+          운영 중임을 뜻합니다. 단, OEE 절대값이 낮더라도 변동 패턴이 일정하면 이상으로
+          감지되지 않을 수 있으므로, OEE Trend 차트와 함께 확인하시기 바랍니다.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- Feature 3: Line Health Index -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="feature3">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(63,185,80,.15);">💚</div>
+      <div class="section-meta">
+        <div class="section-num">Feature 03</div>
+        <h2>Line Health Index</h2>
+        <div class="section-sub">라인별 OEE 평균 기반 설비 건강도 지수</div>
+      </div>
+    </div>
+
+    <div class="desc-block">
+      <p>
+        <strong>라인 건강도 지수(Line Health Index)</strong>는 각 생산 라인의 전반적인 설비 상태를
+        0~100% 척도로 수치화한 지표입니다. OEE 평균을 기반으로 산출되며,
+        값이 높을수록 해당 라인이 건강하게 운영되고 있음을 의미합니다.
+      </p>
+      <p>
+        선택된 날짜 범위(기간)에 따라 분석 기간이 달라집니다.
+        예를 들어 "Last 7 Days"를 선택하면 최근 7일간의 라인별 OEE 평균으로 건강도를 계산합니다.
+        헤더의 서브타이틀도 선택 기간에 맞게 자동으로 변경됩니다.
+      </p>
+    </div>
+
+    <h3 style="font-size:15px;margin:0 0 12px;">건강도 등급 기준</h3>
+
+    <div class="metric-bar">
+      <div class="metric-label"><span class="badge badge-green">Healthy ✓</span></div>
+      <div class="metric-bar-track">
+        <div class="metric-bar-fill" style="width:85%;background:var(--accent2);"></div>
+      </div>
+      <div class="metric-pct" style="color:var(--accent2);">≥ 85%</div>
+    </div>
+    <div style="margin:-4px 0 8px 200px;font-size:12.5px;color:var(--text-muted);">
+      목표치(85%) 이상 달성 — 라인이 안정적으로 운영되고 있습니다.
+    </div>
+
+    <div class="metric-bar">
+      <div class="metric-label"><span class="badge badge-warn">Warning ⚠</span></div>
+      <div class="metric-bar-track">
+        <div class="metric-bar-fill" style="width:65%;background:var(--warn);"></div>
+      </div>
+      <div class="metric-pct" style="color:var(--warn);">65~85%</div>
+    </div>
+    <div style="margin:-4px 0 8px 200px;font-size:12.5px;color:var(--text-muted);">
+      목표치 미달 — 원인 분석 및 개선 조치를 권장합니다.
+    </div>
+
+    <div class="metric-bar">
+      <div class="metric-label"><span class="badge badge-danger">Critical ✕</span></div>
+      <div class="metric-bar-track">
+        <div class="metric-bar-fill" style="width:40%;background:var(--danger);"></div>
+      </div>
+      <div class="metric-pct" style="color:var(--danger);">< 65%</div>
+    </div>
+    <div style="margin:-4px 0 16px 200px;font-size:12.5px;color:var(--text-muted);">
+      심각한 저하 — 즉각적인 점검 및 조치가 필요합니다.
+    </div>
+
+    <div class="card-grid card-grid-2" style="margin-top:8px;">
+      <div class="info-card">
+        <div class="card-label">📊 상단 카드 — Line Health Index (Avg)</div>
+        <p>
+          전체 라인의 건강도 <strong>평균값</strong>을 대형 숫자로 표시합니다.<br>
+          전반적인 공장 건강 상태를 한눈에 파악할 수 있습니다.
+        </p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">📋 라인별 건강도 목록</div>
+        <p>
+          각 라인의 이름, 건강도 수치, 상태 등급이 목록으로 표시됩니다.<br>
+          건강도가 낮은 라인이 상단에 위치하여 즉각 확인이 가능합니다.
+        </p>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <div class="note-icon">💡</div>
+      <p>
+        <strong>참고:</strong> Line Health Index는 OEE 수치 자체를 건강도 점수로 활용합니다.
+        OEE 목표치(85%)와 비교하여 얼마나 달성하고 있는지를 시각적으로 보여주는 지표입니다.
+        Production Optimization 기능과 함께 활용하면 개선 우선순위 결정에 도움이 됩니다.
+      </p>
+    </div>
+
+    <div class="qa-list">
+      <details class="qa-item">
+        <summary>날짜 필터를 'Today'로 설정하면 오늘만의 데이터로 계산되나요?</summary>
+        <div class="qa-answer">
+          'Today'를 선택하면 통계 안정성을 위해 내부적으로 최근 7일 기간을 사용하여 건강도를 계산합니다.
+          하루치 데이터만으로는 신뢰성 있는 평균을 구하기 어렵기 때문입니다.
+          '7일' 또는 '30일' 선택 시 해당 기간의 실제 라인별 OEE 평균이 사용됩니다.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>라인 건강도가 낮게 나올 때 어떻게 대응해야 하나요?</summary>
+        <div class="qa-answer">
+          건강도가 낮은 라인은 <strong>Production Optimization</strong> 기능에서도
+          개선 기회 대상으로 선정됩니다.
+          어떤 요소(가용성/성능/품질) 때문에 낮은지는 생산 최적화 기능의 병목 분석을 통해 확인하시고,
+          Predictive Maintenance를 통해 해당 라인의 고위험 기계도 함께 점검하시기 바랍니다.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- Feature 4: Predictive Maintenance -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="feature4">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(210,153,34,.15);">🔧</div>
+      <div class="section-meta">
+        <div class="section-num">Feature 04</div>
+        <h2>Predictive Maintenance</h2>
+        <div class="section-sub">위험도 점수 기반 기계별 고장 예측 및 정비 우선순위</div>
+      </div>
+    </div>
+
+    <div class="desc-block">
+      <p>
+        <strong>예측 정비(Predictive Maintenance)</strong>는 과거 다운타임 이력과 OEE 안정성 데이터를
+        분석하여 각 기계의 <strong>고장 위험도 점수(0~100)</strong>를 산출하는 기능입니다.
+      </p>
+      <p>
+        위험도가 높은 기계를 사전에 파악하여 계획 정비를 실시함으로써,
+        예기치 않은 고장으로 인한 생산 손실을 사전에 예방할 수 있습니다.
+      </p>
+    </div>
+
+    <h3 style="font-size:15px;margin:0 0 16px;">위험도 점수 산출 방식 (3가지 지표 가중 합산)</h3>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">A</div>
+        <div class="step-content">
+          <div class="step-title">런타임 위험도 — 가중치 40%</div>
+          <p>
+            마지막 다운타임 발생 이후 경과한 시간과 과거 평균 고장 간격을 비교합니다.
+            경과 시간이 평균 고장 간격에 가까워질수록 위험도가 높아집니다.<br>
+            <strong>공식:</strong> 경과 시간(h) ÷ 평균 고장 간격(h)
+          </p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">B</div>
+        <div class="step-content">
+          <div class="step-title">다운타임 빈도 증가율 — 가중치 35%</div>
+          <p>
+            최근 30일의 다운타임 건수와 그 이전 30일(31~60일 전)의 건수를 비교합니다.
+            최근 다운타임 빈도가 급증한 기계는 고장 징후로 판단합니다.<br>
+            <strong>공식:</strong> (최근 30일 건수 − 이전 30일 건수) ÷ 이전 30일 건수
+          </p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">C</div>
+        <div class="step-content">
+          <div class="step-title">OEE 불안정도 — 가중치 25%</div>
+          <p>
+            분석 기간 내 기계별 OEE 평균과 변동성(표준편차)을 분석합니다.
+            OEE가 낮고 변동성이 클수록 설비 상태가 불안정하다고 판단합니다.<br>
+            <strong>참고:</strong> OEE 값은 100% 초과 비정상 값이 있어도 0~100%로 클램핑하여 오판정을 방지합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:15px;margin:24px 0 12px;">위험 등급 기준</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>위험 등급</th>
+          <th>점수 범위</th>
+          <th>의미</th>
+          <th>권장 조치</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-danger">Danger 🔴</span></td>
+          <td>80점 이상</td>
+          <td>고장 가능성이 매우 높음</td>
+          <td>즉시 점검 및 정비 실시</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-warn">Warning 🟡</span></td>
+          <td>50~79점</td>
+          <td>고장 징후 감지, 주의 필요</td>
+          <td>조기 점검 계획 수립</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green">Normal 🟢</span></td>
+          <td>0~49점</td>
+          <td>정상 운영 상태</td>
+          <td>정기 모니터링 유지</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card-grid card-grid-2" style="margin-top:16px;">
+      <div class="info-card">
+        <div class="card-label">🔴 상단 카드 — High-Risk Machines</div>
+        <p>
+          Danger 등급(80점 이상) 기계의 수를 표시합니다.<br>
+          경고(Warning) 등급 기계 수도 뱃지로 함께 표시됩니다.
+        </p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">📋 예측 정비 목록</div>
+        <p>
+          기계별 위험도 점수가 <strong>높은 순서</strong>로 정렬됩니다.<br>
+          기계명, 라인명, 위험 점수, 위험 등급이 함께 표시됩니다.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa-list">
+      <details class="qa-item">
+        <summary>위험도 점수는 얼마나 자주 업데이트되나요?</summary>
+        <div class="qa-answer">
+          대시보드의 자동 새로고침 주기인 <strong>60초마다</strong> 위험도 점수가 재산출됩니다.
+          수동으로 즉시 업데이트하려면 상단의 'Refresh' 버튼을 클릭하세요.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>다운타임 데이터가 없는 신규 기계는 어떻게 처리되나요?</summary>
+        <div class="qa-answer">
+          다운타임 이력이 없는 기계는 런타임 위험도(A)와 빈도 증가율(B) 점수가 0으로 처리됩니다.
+          OEE 불안정도(C) 항목만 유효하게 계산됩니다.
+          데이터 축적 후 90일이 지나면 보다 정확한 위험도 예측이 가능합니다.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>실제 정비 일정을 이 시스템과 연동할 수 있나요?</summary>
+        <div class="qa-answer">
+          현재 버전은 위험도 스코어 제공 및 알림 기능에 초점을 맞추고 있습니다.
+          정비 일정 관리 시스템(ERP/CMMS)과의 연동은 별도 맞춤 개발로 지원 가능합니다.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- Feature 5: Real-time AI Streaming -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="feature5">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(188,140,255,.15);">⚡</div>
+      <div class="section-meta">
+        <div class="section-num">Feature 05</div>
+        <h2>Real-time AI Streaming</h2>
+        <div class="section-sub">이상·다운타임·정비 위험 이벤트 실시간 스트리밍 피드</div>
+      </div>
+    </div>
+
+    <div class="desc-block">
+      <p>
+        <strong>실시간 AI 스트리밍</strong>은 대시보드의 모든 AI 분석 결과를
+        <strong>이벤트 피드 형태</strong>로 실시간으로 표시하는 기능입니다.
+        이상 감지, 다운타임 발생, 정비 위험 이벤트가 발생하는 즉시 화면 하단 피드에 추가됩니다.
+      </p>
+      <p>
+        <strong>SSE(Server-Sent Events)</strong> 기술을 사용하여 서버와 지속적으로 연결을 유지하고,
+        새로운 이벤트가 발생하면 실시간으로 피드에 표시됩니다.
+        연결 상태는 상단의 점멸 도트로 확인할 수 있습니다.
+      </p>
+    </div>
+
+    <h3 style="font-size:15px;margin:0 0 12px;">스트리밍 이벤트 유형</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>이벤트 유형</th>
+          <th>색상</th>
+          <th>설명</th>
+          <th>예시</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-danger">Anomaly</span></td>
+          <td style="color:var(--danger);">빨간색</td>
+          <td>Z-Score 기반 OEE 이상 감지 이벤트</td>
+          <td>라인 A-1 / 기계 M-03 이상 감지 (Z-Score: 3.2)</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-warn">Downtime</span></td>
+          <td style="color:var(--warn);">노란색</td>
+          <td>설비 다운타임 발생 이벤트</td>
+          <td>라인 B-2 / 기계 M-07 다운타임 발생 (12분)</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-orange">Maintenance</span></td>
+          <td style="color:var(--orange);">주황색</td>
+          <td>예측 정비 위험도 상승 이벤트</td>
+          <td>기계 M-11 위험도 85점 — 즉시 점검 권고</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card-grid card-grid-3" style="margin-top:20px;">
+      <div class="info-card">
+        <div class="card-label">연결 상태 표시</div>
+        <p>
+          <strong style="color:var(--accent2);">초록 점멸</strong> = 정상 연결<br>
+          <strong style="color:var(--warn);">주황 점멸</strong> = 연결 중<br>
+          <strong style="color:var(--danger);">빨간 점멸</strong> = 연결 끊김
+        </p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">이벤트 카운터</div>
+        <p>
+          현재 세션에서 수신된 <strong>총 이벤트 수</strong>가 실시간으로 표시됩니다.<br>
+          예: "47 events"
+        </p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">피드 표시 방식</div>
+        <p>
+          최신 이벤트가 <strong>상단에 추가</strong>되며,
+          일정 건수를 초과하면 오래된 이벤트는 자동으로 제거됩니다.
+        </p>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <div class="note-icon">💡</div>
+      <p>
+        <strong>활용 팁:</strong> Real-time AI Streaming 피드는 이상 감지 및 예측 정비 카드의
+        원본 이벤트 소스 역할을 합니다. 상단 카드에서 숫자가 증가할 때, 이 피드에서
+        어떤 기계/라인에서 이벤트가 발생했는지 즉시 확인할 수 있습니다.
+      </p>
+    </div>
+
+    <div class="qa-list">
+      <details class="qa-item">
+        <summary>연결이 끊기면 이벤트가 유실되나요?</summary>
+        <div class="qa-answer">
+          SSE 연결이 끊길 경우 자동으로 재연결을 시도합니다.
+          재연결 시 누락된 이벤트가 일부 유실될 수 있으나,
+          대시보드의 메인 데이터(이상 목록, 정비 점수 등)는 60초 주기 폴링으로
+          별도 갱신되므로 전체적인 상태 파악에는 문제가 없습니다.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>스트리밍 데이터는 얼마나 오래 보관되나요?</summary>
+        <div class="qa-answer">
+          Real-time AI Streaming 피드는 현재 화면 세션(브라우저 연결 기간) 동안만 유지됩니다.
+          화면을 새로고침하면 피드가 초기화됩니다.
+          과거 이벤트 이력 조회는 별도의 데이터 조회 페이지를 이용하시기 바랍니다.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- Feature 6: Production Optimization -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="feature6">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(245,166,35,.15);">🎯</div>
+      <div class="section-meta">
+        <div class="section-num">Feature 06</div>
+        <h2>Production Optimization</h2>
+        <div class="section-sub">OEE 병목 분석 및 AI 기반 생산 최적화 제안</div>
+      </div>
+    </div>
+
+    <div class="desc-block">
+      <p>
+        <strong>생산 최적화(Production Optimization)</strong>는 OEE 목표치(85%)에 미달하는 라인을
+        자동으로 선별하여, <strong>가용성·성능·품질</strong> 세 가지 요소 중 어떤 부분이
+        병목(가장 큰 손실 요인)인지 AI가 분석하고, 구체적인 개선 제안을 제시하는 기능입니다.
+      </p>
+      <p>
+        단순히 OEE가 낮다고 알려주는 것을 넘어,
+        <strong>"어디를 먼저 개선해야 가장 효과적인가"</strong>를 데이터로 알려줍니다.
+      </p>
+    </div>
+
+    <div class="algo-box">
+      <div class="algo-title">⚙ 생산 최적화 분석 프로세스</div>
+      <ul>
+        <li><strong>STEP 1:</strong> 선택 기간(7일/14일/30일)의 라인별 OEE·가용성·성능·품질 평균 산출</li>
+        <li><strong>STEP 2:</strong> OEE 목표치(85%) 미달 라인만 분석 대상으로 선별</li>
+        <li><strong>STEP 3:</strong> 가용성 갭(90% 목표 기준), 성능 갭(90% 목표), 품질 갭(99% 목표) 계산</li>
+        <li><strong>STEP 4:</strong> 세 가지 갭 중 가장 큰 항목 = <strong>병목 요인</strong>으로 선정</li>
+        <li><strong>STEP 5:</strong> 병목 요인별 개선 제안(Suggestions) 자동 생성</li>
+        <li><strong>STEP 6:</strong> 기간 전반기 vs 후반기 OEE 비교로 트렌드(개선/악화/유지) 판단</li>
+      </ul>
+    </div>
+
+    <h3 style="font-size:15px;margin:24px 0 12px;">OEE 목표치 및 갭 분석 기준</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>지표</th>
+          <th>목표치</th>
+          <th>갭이 클 때 의미</th>
+          <th>주요 개선 제안 방향</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>OEE</strong></td>
+          <td><span class="badge badge-blue">85%</span></td>
+          <td>전체 설비 효율 저하</td>
+          <td>가용성·성능·품질 중 병목 항목 집중 개선</td>
+        </tr>
+        <tr>
+          <td><strong>가용성 (Availability)</strong></td>
+          <td><span class="badge badge-blue">90%</span></td>
+          <td>다운타임·셋업 시간 과다</td>
+          <td>예방 정비 강화, 셋업 시간 단축, SMED 적용</td>
+        </tr>
+        <tr>
+          <td><strong>성능 (Performance)</strong></td>
+          <td><span class="badge badge-blue">90%</span></td>
+          <td>설비 속도 저하·정지 빈발</td>
+          <td>소정지 원인 분석, 설비 속도 최적화</td>
+        </tr>
+        <tr>
+          <td><strong>품질 (Quality)</strong></td>
+          <td><span class="badge badge-blue">99%</span></td>
+          <td>불량품·재작업 발생</td>
+          <td>공정 파라미터 점검, 원자재 품질 확인</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:15px;margin:24px 0 12px;">개선 우선순위(Priority) 분류</h3>
+    <div class="card-grid card-grid-3">
+      <div class="info-card">
+        <div class="card-label"><span class="badge badge-danger">P1 — 긴급</span></div>
+        <p>OEE 갭이 <strong>20%p 이상</strong><br>즉각적인 개선 조치 필요</p>
+      </div>
+      <div class="info-card">
+        <div class="card-label"><span class="badge badge-warn">P2 — 중요</span></div>
+        <p>OEE 갭이 <strong>10~20%p</strong><br>단기 개선 계획 수립 권장</p>
+      </div>
+      <div class="info-card">
+        <div class="card-label"><span class="badge badge-green">P3 — 관찰</span></div>
+        <p>OEE 갭이 <strong>10%p 미만</strong><br>지속 모니터링 및 소폭 개선</p>
+      </div>
+    </div>
+
+    <div class="card-grid card-grid-2" style="margin-top:16px;">
+      <div class="info-card">
+        <div class="card-label">📊 최적화 요약 바</div>
+        <p>
+          전체 라인 수, 목표 미달 라인 수, 전체 평균 OEE,
+          최고 OEE 라인 등 <strong>핵심 요약 지표</strong>가 카드 헤더에 표시됩니다.
+        </p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">📋 최적화 기회 목록</div>
+        <p>
+          목표 미달 라인이 <strong>OEE 낮은 순서</strong>로 나열되며,
+          병목 요인, 갭, 개선 제안이 라인별로 상세 표시됩니다.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa-list">
+      <details class="qa-item">
+        <summary>모든 라인이 85% 이상이면 어떻게 표시되나요?</summary>
+        <div class="qa-answer">
+          모든 라인이 목표치(OEE 85%)를 달성하고 있으면,
+          "All lines are meeting the target OEE" 메시지와 함께
+          현재 평균 OEE 및 최고 OEE 값이 표시됩니다. 목표 초과 달성 상태입니다.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>트렌드(Improving/Declining/Stable)는 어떻게 계산되나요?</summary>
+        <div class="qa-answer">
+          분석 기간을 전반기와 후반기로 나누어 각 절반의 OEE 평균을 비교합니다.
+          예를 들어 14일 분석 시 최근 7일 평균과 그 이전 7일 평균을 비교합니다.
+          최근 절반이 더 높으면 <span class="badge badge-green">Improving</span>,
+          낮으면 <span class="badge badge-danger">Declining</span>,
+          큰 차이가 없으면 <span class="badge badge-blue">Stable</span>로 표시됩니다.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>개선 제안(Suggestions)은 어떤 근거로 생성되나요?</summary>
+        <div class="qa-answer">
+          병목 요인(가용성/성능/품질)에 따라 사전에 정의된 제조 베스트 프랙티스 기반의
+          개선 제안 문구가 자동으로 선택됩니다.
+          예를 들어 가용성이 병목이면 "예방 정비 주기 최적화", "셋업 시간 단축 검토" 등이 제안됩니다.
+          현재 버전의 제안은 규칙 기반(rule-based)이며, 향후 생성형 AI와의 연동으로 더욱
+          상세하고 맞춤화된 제안이 가능합니다.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 기능 비교표 -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="comparison">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,255,255,.06);">≡</div>
+      <div class="section-meta">
+        <div class="section-num">Summary</div>
+        <h2>6대 기능 비교표</h2>
+        <div class="section-sub">기능별 특성, 업데이트 주기, 활용 목적 한눈에 보기</div>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>기능명</th>
+          <th>핵심 알고리즘</th>
+          <th>분석 대상</th>
+          <th>주요 출력</th>
+          <th>업데이트</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>OEE Trend &amp; AI Forecast</strong></td>
+          <td>지수평활법 + 계절성 패턴</td>
+          <td>시간대별 OEE</td>
+          <td>4시간 예측, 90% CI, 트렌드</td>
+          <td>60초</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Anomaly Detection</strong></td>
+          <td>Z-Score 통계 분석</td>
+          <td>OEE 이탈 패턴</td>
+          <td>이상 건수, Critical/Warning 목록</td>
+          <td>60초</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Line Health Index</strong></td>
+          <td>OEE 평균 기반 지수화</td>
+          <td>라인별 OEE</td>
+          <td>0~100% 건강도, 등급, 평균</td>
+          <td>60초</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>Predictive Maintenance</strong></td>
+          <td>다중 지표 가중 합산</td>
+          <td>기계별 다운타임 + OEE</td>
+          <td>위험도 점수(0~100), 정비 우선순위</td>
+          <td>60초</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>Real-time AI Streaming</strong></td>
+          <td>SSE 실시간 이벤트</td>
+          <td>이상·다운타임·정비 이벤트</td>
+          <td>실시간 이벤트 피드</td>
+          <td>실시간</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>Production Optimization</strong></td>
+          <td>갭 분석 + 병목 선정</td>
+          <td>라인별 OEE·가용성·성능·품질</td>
+          <td>병목 요인, 개선 제안, 우선순위</td>
+          <td>60초</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 고객 FAQ -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="faq">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,255,255,.06);">?</div>
+      <div class="section-meta">
+        <div class="section-num">FAQ</div>
+        <h2>자주 묻는 질문</h2>
+        <div class="section-sub">대시보드 전반에 관한 주요 질의응답</div>
+      </div>
+    </div>
+
+    <div class="qa-list">
+      <!-- <details class="qa-item">
+        <summary>AI 기능을 사용하려면 별도의 AI 서버가 필요한가요?</summary>
+        <div class="qa-answer">
+          아닙니다. 모든 AI 분석(예측, 이상 감지, 위험도 산출, 최적화 분석)은
+          기존 웹 서버의 PHP 엔진에서 통계 알고리즘으로 처리됩니다.
+          별도의 AI/ML 서버, GPU, 외부 API 없이 설치된 서버만으로 동작합니다.
+        </div>
+      </details> -->
+      <details class="qa-item">
+        <summary>데이터가 적을 때도 AI 기능이 동작하나요?</summary>
+        <div class="qa-answer">
+          동작하지만 정확도가 낮을 수 있습니다.
+          OEE 예측은 최소 수 일치의 시간대별 데이터가 필요하고,
+          예측 정비 위험도는 90일치 다운타임 이력이 축적될수록 정확해집니다.
+          시스템 도입 초기에는 참고 지표로 활용하시고, 1~3개월 운영 후 신뢰도가 향상됩니다.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>공장·라인·기계 필터를 선택하면 모든 AI 기능에 반영되나요?</summary>
+        <div class="qa-answer">
+          네, 상단의 공장/라인/기계 필터를 변경하면 6가지 AI 기능 전체에 필터가 적용됩니다.
+          단, Real-time OEE 카드와 오늘의 OEE Trend 라인은 항상 당일(오늘) 기준으로 고정됩니다.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>Export 버튼은 어떤 기능인가요?</summary>
+        <div class="qa-answer">
+          현재 대시보드 화면의 주요 지표와 분석 결과를 PDF 또는 이미지 형태로 내보낼 수 있는 기능입니다.
+          Export 버튼 클릭 시 내보내기 모달이 표시되며, 언어(한국어/영어) 선택 후 파일을 생성합니다.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>대시보드는 몇 분마다 자동으로 갱신되나요?</summary>
+        <div class="qa-answer">
+          모든 AI 분석 데이터는 <strong>60초(1분)마다</strong> 자동으로 갱신됩니다.
+          수동으로 즉시 갱신하려면 상단의 'Refresh' 버튼을 클릭하세요.
+          Real-time AI Streaming은 이와 별개로 SSE로 실시간 수신됩니다.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>사이니지(TV 모니터)에서도 잘 보이나요?</summary>
+        <div class="qa-answer">
+          이 대시보드는 <strong>1920×1080 사이니지 전용</strong>으로 설계되었습니다.
+          4K/FHD TV에 브라우저 전체화면(F11)으로 표시하는 것을 권장합니다.
+          다크 테마로 제작되어 어두운 공장 현장의 대형 모니터에서도 가독성이 높습니다.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <footer>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;">
+      <div>
+        <strong style="color:var(--text);">OEE_SCI V2 — AI Intelligence Dashboard</strong><br>
+        기능 설명서 v2.0 · 문의: SUNTECH Development Team
+      </div>
+      <div style="text-align:right;">
+        <span class="badge badge-blue">AI POWERED</span>&nbsp;
+        <span class="badge badge-green">OEE_SCI V2</span>
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  // 사이드바 TOC 활성 항목 하이라이트 (IntersectionObserver)
+  const sections = document.querySelectorAll('.feature-section, #overview');
+  const tocLinks = document.querySelectorAll('#toc a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        tocLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
