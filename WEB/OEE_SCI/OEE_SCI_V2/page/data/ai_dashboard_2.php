@@ -548,7 +548,14 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
 <!-- 리포트 내보내기 팝업 모달: 기간 프리셋 선택 또는 커스텀 날짜 범위 지정 -->
 <div id="exportModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;">
     <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:24px 28px;min-width:340px;box-shadow:0 8px 32px #000a;">
-        <div style="font-size:1rem;font-weight:600;color:#58a6ff;margin-bottom:16px;">Export Report — Select Period</div>
+        <div style="font-size:1rem;font-weight:600;color:#58a6ff;margin-bottom:12px;">Export Report — Select Period</div>
+
+        <!-- 언어 선택 -->
+        <div style="display:flex;gap:6px;margin-bottom:16px;align-items:center;">
+            <span style="font-size:.8rem;color:#8b949e;margin-right:4px;">Language:</span>
+            <button class="export-lang fiori-btn fiori-btn--emphasized" data-lang="en" style="font-size:.8rem;padding:3px 12px;">ENG</button>
+            <button class="export-lang fiori-btn fiori-btn--tertiary"   data-lang="ko" style="font-size:.8rem;padding:3px 12px;">한글</button>
+        </div>
 
         <!-- 기간 프리셋 버튼 목록 (Today / Yesterday / Last 7 Days / Last 30 Days) -->
         <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
@@ -637,6 +644,18 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
             });
         }
 
+        // 언어 버튼 토글
+        document.querySelectorAll('.export-lang').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.export-lang').forEach(function(b) {
+                    b.classList.remove('fiori-btn--emphasized');
+                    b.classList.add('fiori-btn--tertiary');
+                });
+                this.classList.remove('fiori-btn--tertiary');
+                this.classList.add('fiori-btn--emphasized');
+            });
+        });
+
         // "Export" 버튼 클릭 시 모달 열기 (기본 프리셋: today)
         document.getElementById('exportReportBtn').addEventListener('click', function() {
             setPreset('today');
@@ -674,7 +693,10 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
             p.range = 'custom';
             p.date_from = from;
             p.date_to = to;
-            // 새 탭에서 ai_report_export_2.php 호출 (CSV/Excel 다운로드 처리)
+            // 선택된 언어 파라미터 추가
+            var activeLang = document.querySelector('.export-lang.fiori-btn--emphasized');
+            p.lang = activeLang ? activeLang.dataset.lang : 'en';
+            // 새 탭에서 ai_report_export_2.php 호출 (HTML 리포트 다운로드 처리)
             window.open('proc/ai_report_export_2.php?' + new URLSearchParams(p), '_blank');
             modal.style.display = 'none';
         });

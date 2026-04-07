@@ -26,6 +26,7 @@ $machine = isset($_GET['machine_filter']) ? trim($_GET['machine_filter']) : '';
 $range   = isset($_GET['range'])          ? trim($_GET['range'])          : 'today';
 $d_from  = isset($_GET['date_from'])      ? trim($_GET['date_from'])      : '';
 $d_to    = isset($_GET['date_to'])        ? trim($_GET['date_to'])        : '';
+$lang    = in_array($_GET['lang'] ?? 'en', ['ko', 'en']) ? $_GET['lang'] : 'en';
 
 // ── 날짜 범위 계산 ─────────────────────────────────────
 $today = date('Y-m-d');
@@ -337,7 +338,7 @@ try {
     }
 
     // ── 7. 규칙 기반 인사이트 생성 ───────────────────────
-    $insights = buildInsights($summary, $anomalies, $maintenance, $optimization, $prediction);
+    $insights = buildInsights($summary, $anomalies, $maintenance, $optimization, $prediction, $lang);
 
     echo json_encode([
         'code'         => '00',
@@ -355,19 +356,26 @@ try {
 }
 
 // ── 규칙 기반 인사이트 생성 함수 ─────────────────────
-function buildInsights(array $s, array $anomalies, array $maint, array $opt, array $pred): array
+function buildInsights(array $s, array $anomalies, array $maint, array $opt, array $pred, string $lang = 'en'): array
 {
+    $ko = ($lang === 'ko');
     $out = [];
 
     // OEE 상태
     $oee = (float)$s['avg_oee'];
     $gap = round(85 - $oee, 1);
     if ($gap <= 0) {
-        $out[] = ['level' => 'success', 'text' => "OEE {$oee}% — Target (85%) achieved. Maintain current performance."];
+        $out[] = ['level' => 'success', 'text' => $ko
+            ? "OEE {$oee}% — 목표(85%) 달성. 현재 성능을 유지하세요."
+            : "OEE {$oee}% — Target (85%) achieved. Maintain current performance."];
     } elseif ($gap <= 5) {
-        $out[] = ['level' => 'warning', 'text' => "OEE {$oee}% — {$gap}%p below target (85%). Minor improvements needed."];
+        $out[] = ['level' => 'warning', 'text' => $ko
+            ? "OEE {$oee}% — 목표(85%) 대비 {$gap}%p 미달. 소폭 개선이 필요합니다."
+            : "OEE {$oee}% — {$gap}%p below target (85%). Minor improvements needed."];
     } else {
-        $out[] = ['level' => 'error',   'text' => "OEE {$oee}% — {$gap}%p below target (85%). Immediate action required."];
+        $out[] = ['level' => 'error', 'text' => $ko
+            ? "OEE {$oee}% — 목표(85%) 대비 {$gap}%p 미달. 즉각적인 조치가 필요합니다."
+            : "OEE {$oee}% — {$gap}%p below target (85%). Immediate action required."];
     }
 
     // 병목 컴포넌트
@@ -376,11 +384,17 @@ function buildInsights(array $s, array $anomalies, array $maint, array $opt, arr
     $qual  = (float)$s['avg_quality'];
     $min_v = min($avail, $perf, $qual);
     if ($min_v === $avail) {
-        $out[] = ['level' => 'warning', 'text' => "Primary bottleneck: Availability ({$avail}%). Reducing unplanned downtime will yield the highest OEE gain."];
+        $out[] = ['level' => 'warning', 'text' => $ko
+            ? "주요 병목: 가동률({$avail}%). 비계획 다운타임 감소가 OEE 향상에 가장 효과적입니다."
+            : "Primary bottleneck: Availability ({$avail}%). Reducing unplanned downtime will yield the highest OEE gain."];
     } elseif ($min_v === $perf) {
-        $out[] = ['level' => 'warning', 'text' => "Primary bottleneck: Performance ({$perf}%). Increasing throughput toward theoretical maximum is recommended."];
+        $out[] = ['level' => 'warning', 'text' => $ko
+            ? "주요 병목: 성능률({$perf}%). 이론적 최대 생산량 대비 처리량 향상을 권장합니다."
+            : "Primary bottleneck: Performance ({$perf}%). Increasing throughput toward theoretical maximum is recommended."];
     } else {
-        $out[] = ['level' => 'warning', 'text' => "Primary bottleneck: Quality ({$qual}%). Defect reduction should be the priority focus."];
+        $out[] = ['level' => 'warning', 'text' => $ko
+            ? "주요 병목: 품질률({$qual}%). 불량 감소를 최우선 과제로 삼아야 합니다."
+            : "Primary bottleneck: Quality ({$qual}%). Defect reduction should be the priority focus."];
     }
 
     // OEE 추세
@@ -388,22 +402,35 @@ function buildInsights(array $s, array $anomalies, array $maint, array $opt, arr
         $slope = $pred['slope'];
         $f7    = $pred['7d'];
         if ($pred['trend'] === 'improving') {
-            $out[] = ['level' => 'success', 'text' => "OEE trend: Improving (+{$slope}%/day). 7-day forecast: {$f7}%."];
+            $out[] = ['level' => 'success', 'text' => $ko
+                ? "OEE 추세: 개선 중(+{$slope}%/일). 7일 예측: {$f7}%."
+                : "OEE trend: Improving (+{$slope}%/day). 7-day forecast: {$f7}%."];
         } elseif ($pred['trend'] === 'declining') {
-            $out[] = ['level' => 'error',   'text' => "OEE trend: Declining ({$slope}%/day). Investigate root cause. 7-day forecast: {$f7}%."];
+            $out[] = ['level' => 'error', 'text' => $ko
+                ? "OEE 추세: 하락 중({$slope}%/일). 원인 조사가 필요합니다. 7일 예측: {$f7}%."
+                : "OEE trend: Declining ({$slope}%/day). Investigate root cause. 7-day forecast: {$f7}%."];
         } else {
-            $out[] = ['level' => 'info',    'text' => "OEE trend: Stable. 7-day forecast: {$f7}%."];
+            $out[] = ['level' => 'info', 'text' => $ko
+                ? "OEE 추세: 안정적. 7일 예측: {$f7}%."
+                : "OEE trend: Stable. 7-day forecast: {$f7}%."];
         }
     }
 
     // 이상 감지
     $acnt = count($anomalies);
     if ($acnt === 0) {
-        $out[] = ['level' => 'success', 'text' => "Anomaly detection: No Z-Score anomalies detected."];
+        $out[] = ['level' => 'success', 'text' => $ko
+            ? "이상 감지: Z-Score 이상 없음."
+            : "Anomaly detection: No Z-Score anomalies detected."];
     } else {
         $critical = count(array_filter($anomalies, fn($a) => $a['severity'] === 'critical'));
-        $msg = "Anomaly detection: {$acnt} anomaly(ies) found.";
-        if ($critical > 0) $msg .= " {$critical} critical — immediate inspection required.";
+        if ($ko) {
+            $msg = "이상 감지: {$acnt}건의 이상이 발견되었습니다.";
+            if ($critical > 0) $msg .= " {$critical}건 위험 — 즉각적인 점검이 필요합니다.";
+        } else {
+            $msg = "Anomaly detection: {$acnt} anomaly(ies) found.";
+            if ($critical > 0) $msg .= " {$critical} critical — immediate inspection required.";
+        }
         $out[] = ['level' => 'error', 'text' => $msg];
     }
 
@@ -412,14 +439,20 @@ function buildInsights(array $s, array $anomalies, array $maint, array $opt, arr
     if (!empty($danger_list)) {
         $names = implode(', ', array_column(array_values($danger_list), 'machine'));
         $cnt   = count($danger_list);
-        $out[] = ['level' => 'error', 'text' => "Maintenance alert: {$cnt} high-risk machine(s) — {$names}. Schedule inspection immediately."];
+        $out[] = ['level' => 'error', 'text' => $ko
+            ? "정비 경보: 고위험 기계 {$cnt}대 — {$names}. 즉시 점검 일정을 수립하세요."
+            : "Maintenance alert: {$cnt} high-risk machine(s) — {$names}. Schedule inspection immediately."];
     }
 
     // 최적화 기회
     if (!empty($opt) && $opt[0]['potential_gain'] >= 2.0) {
         $top   = $opt[0];
-        $label = ['availability' => 'Availability', 'performance' => 'Performance', 'quality' => 'Quality'][$top['bottleneck']];
-        $out[] = ['level' => 'info', 'text' => "Top opportunity: {$top['line']} — improving {$label} ({$top['bottleneck_val']}%) could yield +{$top['potential_gain']}%p OEE gain."];
+        $label = $ko
+            ? ['availability' => '가동률', 'performance' => '성능률', 'quality' => '품질률'][$top['bottleneck']]
+            : ['availability' => 'Availability', 'performance' => 'Performance', 'quality' => 'Quality'][$top['bottleneck']];
+        $out[] = ['level' => 'info', 'text' => $ko
+            ? "최우선 기회: {$top['line']} — {$label}({$top['bottleneck_val']}%) 개선 시 OEE +{$top['potential_gain']}%p 향상 예상."
+            : "Top opportunity: {$top['line']} — improving {$label} ({$top['bottleneck_val']}%) could yield +{$top['potential_gain']}%p OEE gain."];
     }
 
     return $out;
