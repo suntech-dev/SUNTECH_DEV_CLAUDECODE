@@ -69,8 +69,8 @@ export const defectiveConfig = {
             render: (item) => {
                 if (item.defective_shortcut && item.defective_shortcut.trim()) {
                     const s = item.defective_shortcut.trim();
-                    // 단축키 길이가 10자 초과하면 'long' 클래스 추가 (줄바꿈 스타일)
-                    return `<code class="shortcut-badge${s.length > 10 ? ' long' : ''}">${s}</code>`;
+                    // 단축키 길이가 11자 초과하면 'long' 클래스 추가 (LCD 최대 11자 기준)
+                    return `<code class="shortcut-badge${s.length > 11 ? ' long' : ''}">${s}</code>`;
                 }
                 return '<span style="color: var(--sap-text-secondary);">No shortcut</span>';
             }

@@ -8,7 +8,7 @@
  * 비가동 시간은 OEE 가용성(Availability) 계산에 직접 영향을 줍니다.
  *
  * 필수 파라미터: mac (재봉기 MAC 주소)
- * 응답 필드: downtime_idx, downtime_shortcut, not_completed_qty
+ * 응답 필드: downtime_idx, downtime_name(shortcut값), not_completed_qty
  */
 
 // ─────────────────────────────────────────────────────────────────────
@@ -77,27 +77,27 @@ http://49.247.26.228/OEE_SCI/OEE_SCI_V2/api/sewing.php?code=get_downtimeList&mac
   "items": [
     {
       "downtime_idx": "1",
-      "downtime_shortcut": "6S",
+      "downtime_name": "6S",
       "not_completed_qty": "0"
     },
     {
       "downtime_idx": "2",
-      "downtime_shortcut": "SETUP",
+      "downtime_name": "SETUP",
       "not_completed_qty": "0"
     },
     {
       "downtime_idx": "3",
-      "downtime_shortcut": "CHANGEOVER",
+      "downtime_name": "CHANGEOVER",
       "not_completed_qty": "0"
     },
     {
       "downtime_idx": "4",
-      "downtime_shortcut": "MEETING",
+      "downtime_name": "MEETING",
       "not_completed_qty": "0"
     },
     {
       "downtime_idx": "5",
-      "downtime_shortcut": "MATERIAL",
+      "downtime_name": "MATERIAL",
       "not_completed_qty": "0"
     }
   ]

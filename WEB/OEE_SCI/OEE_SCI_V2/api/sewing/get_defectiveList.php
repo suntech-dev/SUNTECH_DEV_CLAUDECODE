@@ -7,7 +7,7 @@
  * 불량 항목: NEEDLE(바늘), THREAD(실), BOBBIN(보빈), MATERIAL(소재), TENSION(장력) 등
  *
  * 필수 파라미터: mac (재봉기 MAC 주소)
- * 응답 필드: defective_idx, defective_shortcut, not_completed_qty
+ * 응답 필드: defective_idx, defective_name(shortcut값), not_completed_qty
  */
 
 // ─────────────────────────────────────────────────────────────────────
@@ -77,27 +77,27 @@ http://49.247.26.228/OEE_SCI/OEE_SCI_V2/api/sewing.php?code=get_defectiveList&ma
   "items": [
     {
       "defective_idx": "1",
-      "defective_shortcut": "NEEDLE",
+      "defective_name": "NEEDLE",
       "not_completed_qty": "0"
     },
     {
       "defective_idx": "2",
-      "defective_shortcut": "THREAD",
+      "defective_name": "THREAD",
       "not_completed_qty": "0"
     },
     {
       "defective_idx": "3",
-      "defective_shortcut": "BOBBIN",
+      "defective_name": "BOBBIN",
       "not_completed_qty": "0"
     },
     {
       "defective_idx": "4",
-      "defective_shortcut": "MATERIAL",
+      "defective_name": "MATERIAL",
       "not_completed_qty": "0"
     },
     {
       "defective_idx": "5",
-      "defective_shortcut": "TENSION",
+      "defective_name": "TENSION",
       "not_completed_qty": "0"
     }
   ]

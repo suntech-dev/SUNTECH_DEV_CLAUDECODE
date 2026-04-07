@@ -212,6 +212,21 @@ body {
 .nav-drawer__link--active     { color: var(--sap-color-accent); font-weight: var(--sap-font-weight-semibold); }
 .nav-drawer__divider          { height: 1px; background: var(--sap-border-neutral); margin: 6px 0; }
 
+/* ─── Downtime 전용 스타일 ──────────────────────────────── */
+.shortcut-badge {
+  background: var(--sap-surface-3);
+  color: var(--sap-text-primary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: monospace;
+}
+
+.shortcut-badge.long {
+  background: var(--sap-status-warning);
+  color: white;
+}
+
 /* ─── 스크롤바 ──────────────────────────────────────────── */
 ::-webkit-scrollbar       { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: var(--sap-surface-3); }

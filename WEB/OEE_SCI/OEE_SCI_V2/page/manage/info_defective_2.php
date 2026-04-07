@@ -9,7 +9,7 @@
  *   - info_defective_2.js  : defectiveConfig(컬럼/필터 설정) + 검색/필터/모달 스텝 기능
  *
  * 모달 구조 (2단계):
- *   Step 1: defective_name(필수 + 중복확인) + defective_shortcut(선택, maxlength=10)
+ *   Step 1: defective_name(필수 + 중복확인) + defective_shortcut(선택, maxlength=11)
  *   Step 2: status + remark(비고) + 확인 미리보기 (previewName, previewShortcut, previewStatus)
  *
  * CSS 로드 순서:
@@ -157,10 +157,10 @@ $nav_active = 'defective'; require_once(__DIR__ . '/../../inc/nav-drawer-manage.
                         <div class="fiori-form__group">
                             <label for="defective_shortcut" class="fiori-form__label">Shortcut Code</label>
                             <!-- 선택 입력: 값이 있을 때만 validateCurrentStep에서 2차 중복 확인 API 호출 -->
-                            <!-- maxlength="10": 단축 코드 최대 10자 제한 -->
+                            <!-- maxlength="11": 단축 코드 최대 11자 제한 (LCD 세로 화면 건수 표시 포함 기준) -->
                             <input type="text" id="defective_shortcut" name="defective_shortcut" class="fiori-input"
-                                   placeholder="Enter shortcut code (optional)" maxlength="10">
-                            <div class="fiori-form__help">Optional shortcut code for quick defective selection (max 10 characters)</div>
+                                   placeholder="Enter shortcut code (optional)" maxlength="11">
+                            <div class="fiori-form__help">Optional shortcut code for quick defective selection (max 11 characters)</div>
                         </div>
                     </div>
 

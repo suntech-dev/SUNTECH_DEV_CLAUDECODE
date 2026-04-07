@@ -70,11 +70,11 @@ export const downtimeConfig = {
             sortKey: 'downtime_shortcut',
             render: (item) => {
                 if (item.downtime_shortcut && item.downtime_shortcut.trim()) {
-                    // shortcut이 있으면 code 스타일(배경색+패딩)로 강조 표시
-                    return `<code style="background: var(--sap-surface-2); padding: 2px 6px; border-radius: var(--sap-radius-sm); font-size: var(--sap-font-size-sm);">${item.downtime_shortcut.trim()}</code>`;
+                    const s = item.downtime_shortcut.trim();
+                    // 단축키 길이가 13자 초과하면 'long' 클래스 추가 (LCD 최대 13자 기준)
+                    return `<code class="shortcut-badge${s.length > 13 ? ' long' : ''}">${s}</code>`;
                 }
-                // shortcut이 없으면 '-' 표시 (secondary 색상으로 흐리게)
-                return `<span style="color: var(--sap-text-secondary);">-</span>`;
+                return '<span style="color: var(--sap-text-secondary);">-</span>';
             }
         },
         {
