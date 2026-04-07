@@ -160,7 +160,7 @@ try {
         echo json_encode([
             'code' => '00',
             'opportunities' => [],
-            'summary' => ['msg' => 'Data shortage (' . $interval_days . '일 내 ' . $min_data_cnt . '건 이상 필요)'],
+            'summary' => ['msg' => 'Data shortage (requires ' . $min_data_cnt . ' or more records within ' . $interval_days . ' days)'],
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }
