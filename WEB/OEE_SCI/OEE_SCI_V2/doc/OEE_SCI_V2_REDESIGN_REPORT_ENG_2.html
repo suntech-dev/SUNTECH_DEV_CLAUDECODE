@@ -613,30 +613,56 @@
             cursor: zoom-in;
             transition: opacity .15s;
         }
-        .screenshot-img:hover { opacity: .85; }
+
+        .screenshot-img:hover {
+            opacity: .85;
+        }
 
         /* ── Lightbox ── */
         .lightbox {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,.88);
+            background: rgba(0, 0, 0, .88);
             z-index: 9999;
             align-items: center;
             justify-content: center;
             animation: lb-fade .18s ease;
         }
-        .lightbox.open { display: flex; }
-        @keyframes lb-fade { from { opacity: 0; } to { opacity: 1; } }
+
+        .lightbox.open {
+            display: flex;
+        }
+
+        @keyframes lb-fade {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
         .lightbox__img {
             max-width: 90vw;
             max-height: 90vh;
             border-radius: 10px;
             border: 1px solid var(--border);
-            box-shadow: 0 8px 40px rgba(0,0,0,.6);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, .6);
             animation: lb-scale .18s ease;
         }
-        @keyframes lb-scale { from { transform: scale(.92); } to { transform: scale(1); } }
+
+        @keyframes lb-scale {
+            from {
+                transform: scale(.92);
+            }
+
+            to {
+                transform: scale(1);
+            }
+        }
+
         .lightbox__close {
             position: fixed;
             top: 18px;
@@ -654,7 +680,10 @@
             align-items: center;
             justify-content: center;
         }
-        .lightbox__close:hover { background: var(--surface3); }
+
+        .lightbox__close:hover {
+            background: var(--surface3);
+        }
 
         /* ── Perf bars ── */
         .perf-row {
@@ -1151,6 +1180,31 @@
                         <p>Redesigned all pages to 1920×1080 signage-optimized CSS Grid layout. Implemented hamburger
                             slide drawer navigation and JS-based translateX column pinning.</p>
                     </div>
+                    <div class="timeline-item" style="border-left-color:var(--warn)">
+                        <h4 style="color:var(--warn)">Upcoming — (2026-04-09) Meeting with Director Kim Hyun-woo</h4>
+                        <p>① Development progress report &nbsp;② Embroidery machine IoT plan briefing &nbsp;③ Discussion
+                            on IoT data monitoring methods (dashboard, as_dashboard, etc.)<br>
+                            <span style="color:var(--danger);font-size:13px">※ Request: Allow external access to SCI
+                                server</span>
+                        </p>
+                    </div>
+                    <div class="timeline-item" style="border-left-color:var(--warn)">
+                        <h4 style="color:var(--warn)">Upcoming — (2026-04-09 ~ 10) IoT Device Setup</h4>
+                        <p>① Upgrade IoT device firmware (BLACK_CPU version) &nbsp;② Upload and configure server program
+                        </p>
+                    </div>
+                    <div class="timeline-item" style="border-left-color:var(--warn)">
+                        <h4 style="color:var(--warn)">Upcoming — (2026-04-14 ~ 17) V2 Testing</h4>
+                        <p>On-site functional testing of OEE SCI V2</p>
+                    </div>
+                    <div class="timeline-item" style="border-left-color:var(--warn)">
+                        <h4 style="color:var(--warn)">Upcoming — (2026-04-20 ~ 24) Embroidery Machine IoT Testing</h4>
+                        <p>On-site integration testing of embroidery machine IoT devices</p>
+                    </div>
+                    <div class="timeline-item" style="border-left-color:var(--purple)">
+                        <h4 style="color:var(--purple)">Upcoming — (2026-04-27) NIKE Demo</h4>
+                        <p>Official OEE SCI V2 demonstration for NIKE</p>
+                    </div>
                 </div>
             </section>
 
@@ -1298,8 +1352,7 @@
                         </ul>
                         <div class="screenshot-wrap">
                             <div class="screenshot-label">AI Intelligence Dashboard — Live Screen</div>
-                            <img class="screenshot-img" src="images/ai_dashboard.png"
-                                alt="AI Intelligence Dashboard">
+                            <img class="screenshot-img" src="images/ai_dashboard.png" alt="AI Intelligence Dashboard">
                         </div>
                     </div>
                 </div>

@@ -620,30 +620,56 @@
             cursor: zoom-in;
             transition: opacity .15s;
         }
-        .screenshot-img:hover { opacity: .85; }
+
+        .screenshot-img:hover {
+            opacity: .85;
+        }
 
         /* ── Lightbox ── */
         .lightbox {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,.88);
+            background: rgba(0, 0, 0, .88);
             z-index: 9999;
             align-items: center;
             justify-content: center;
             animation: lb-fade .18s ease;
         }
-        .lightbox.open { display: flex; }
-        @keyframes lb-fade { from { opacity: 0; } to { opacity: 1; } }
+
+        .lightbox.open {
+            display: flex;
+        }
+
+        @keyframes lb-fade {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
         .lightbox__img {
             max-width: 90vw;
             max-height: 90vh;
             border-radius: 10px;
             border: 1px solid var(--border);
-            box-shadow: 0 8px 40px rgba(0,0,0,.6);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, .6);
             animation: lb-scale .18s ease;
         }
-        @keyframes lb-scale { from { transform: scale(.92); } to { transform: scale(1); } }
+
+        @keyframes lb-scale {
+            from {
+                transform: scale(.92);
+            }
+
+            to {
+                transform: scale(1);
+            }
+        }
+
         .lightbox__close {
             position: fixed;
             top: 18px;
@@ -661,7 +687,10 @@
             align-items: center;
             justify-content: center;
         }
-        .lightbox__close:hover { background: var(--surface3); }
+
+        .lightbox__close:hover {
+            background: var(--surface3);
+        }
 
         .screenshot-placeholder {
             width: 100%;
@@ -1196,6 +1225,28 @@
                         <h4>풀스크린 UI 리디자인 (2026-04-07)</h4>
                         <p>1920×1080 사이니지 최적화 레이아웃으로 전 페이지 리디자인. 햄버거 드로어 네비게이션, JS translateX 컬럼 고정 테이블 구현.</p>
                     </div>
+                    <div class="timeline-item" style="border-left-color:var(--warn)">
+                        <h4 style="color:var(--warn)">향후 — (2026-04-09) 김현우 이사님 미팅</h4>
+                        <p>① 개발내용 보고 &nbsp;② 자수기 IoT 계획 보고 &nbsp;③ 자수기 IoT 데이터 모니터링 방법(dashboard, as_dashboard 등) 협의<br>
+                            <span style="color:var(--danger);font-size:13px">※ 요청사항: SCI 서버 외부접속 허용</span>
+                        </p>
+                    </div>
+                    <div class="timeline-item" style="border-left-color:var(--warn)">
+                        <h4 style="color:var(--warn)">향후 — (2026-04-09 ~ 10) IoT 디바이스 세팅</h4>
+                        <p>① IoT 디바이스 펌웨어(BLACK_CPU 버전) 업그레이드 &nbsp;② 서버 프로그램 업로드 및 세팅</p>
+                    </div>
+                    <div class="timeline-item" style="border-left-color:var(--warn)">
+                        <h4 style="color:var(--warn)">향후 — (2026-04-14 ~ 17) V2 테스트</h4>
+                        <p>OEE SCI V2 전체 기능 현장 테스트</p>
+                    </div>
+                    <div class="timeline-item" style="border-left-color:var(--warn)">
+                        <h4 style="color:var(--warn)">향후 — (2026-04-20 ~ 24) 자수기 IoT 테스트</h4>
+                        <p>자수기 IoT 디바이스 현장 연동 테스트</p>
+                    </div>
+                    <div class="timeline-item" style="border-left-color:var(--purple)">
+                        <h4 style="color:var(--purple)">향후 — (2026-04-27) NIKE 시연</h4>
+                        <p>NIKE 대상 OEE SCI V2 공식 시연</p>
+                    </div>
                 </div>
             </section>
 
@@ -1339,8 +1390,7 @@
                         </ul>
                         <div class="screenshot-wrap">
                             <div class="screenshot-label">AI Intelligence Dashboard 실제 화면</div>
-                            <img class="screenshot-img" src="images/ai_dashboard.png"
-                                alt="AI Intelligence Dashboard">
+                            <img class="screenshot-img" src="images/ai_dashboard.png" alt="AI Intelligence Dashboard">
                         </div>
                     </div>
                 </div>
