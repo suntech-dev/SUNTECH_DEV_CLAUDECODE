@@ -610,7 +610,51 @@
             border-radius: 10px;
             border: 1px solid var(--border);
             display: block;
+            cursor: zoom-in;
+            transition: opacity .15s;
         }
+        .screenshot-img:hover { opacity: .85; }
+
+        /* ── Lightbox ── */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.88);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            animation: lb-fade .18s ease;
+        }
+        .lightbox.open { display: flex; }
+        @keyframes lb-fade { from { opacity: 0; } to { opacity: 1; } }
+        .lightbox__img {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 40px rgba(0,0,0,.6);
+            animation: lb-scale .18s ease;
+        }
+        @keyframes lb-scale { from { transform: scale(.92); } to { transform: scale(1); } }
+        .lightbox__close {
+            position: fixed;
+            top: 18px;
+            right: 22px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-size: 22px;
+            line-height: 1;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .lightbox__close:hover { background: var(--surface3); }
 
         /* ── Perf bars ── */
         .perf-row {
@@ -1076,34 +1120,34 @@
 
                 <div class="timeline">
                     <div class="timeline-item">
-                        <h4>Phase 1 — AI Statistical Engine (2026-03-06)</h4>
+                        <h4>Phase 1 — AI Statistical Engine (2026-03-13)</h4>
                         <p>Implemented AI analysis engine using exponential smoothing, Z-Score, and linear regression.
                             Completed OEE prediction, anomaly detection, and maintenance risk scoring APIs.</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>Phase 2 — AI Enhancement of Existing Pages (2026-03-06)</h4>
+                        <h4>Phase 2 — AI Enhancement of Existing Pages (2026-03-17)</h4>
                         <p>Added AI prediction overlays, AI Risk columns, and Quality Guardian sections to existing
                             OEE/Downtime/Defective pages — without changing existing screen flow.</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>Phase 3 — Advanced Features (2026-03-06)</h4>
+                        <h4>Phase 3 — Advanced Features (2026-03-20)</h4>
                         <p>Completed SSE real-time AI streaming feed and production optimization recommendations
                             (P1/P2/P3 bottleneck prioritization). Deployed signage-optimized AI Dashboard
                             (ai_dashboard_2.php).</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>Performance Optimization (2026-03-07)</h4>
+                        <h4>Performance Optimization (2026-03-27)</h4>
                         <p>Eliminated SSE N+1 queries (7→4 queries), merged common functions into stream_helper.lib.php
                             (~350 duplicate lines removed), centralized timezone config (27 files→1), fixed hash
                             comparison bug.</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>AI Dashboard Bug Fixes (2026-03-19)</h4>
+                        <h4>AI Dashboard Bug Fixes (2026-04-03)</h4>
                         <p>Fixed 5 bugs discovered via Playwright automation: OEE exceeding 111%, CI range errors,
                             date_range ignored, confidence interval inversion, duplicate AI feed entries.</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>Full-Screen UI Redesign (2026-03-24~25)</h4>
+                        <h4>Full-Screen UI Redesign (2026-04-07)</h4>
                         <p>Redesigned all pages to 1920×1080 signage-optimized CSS Grid layout. Implemented hamburger
                             slide drawer navigation and JS-based translateX column pinning.</p>
                     </div>
@@ -1254,7 +1298,7 @@
                         </ul>
                         <div class="screenshot-wrap">
                             <div class="screenshot-label">AI Intelligence Dashboard — Live Screen</div>
-                            <img class="screenshot-img" src="../../images/ai_dashboard.png"
+                            <img class="screenshot-img" src="images/ai_dashboard.png"
                                 alt="AI Intelligence Dashboard">
                         </div>
                     </div>
@@ -1323,7 +1367,7 @@
                         </ul>
                         <div class="screenshot-wrap">
                             <div class="screenshot-label">OEE Trend Chart + AI Prediction Overlay (data_oee.php)</div>
-                            <img class="screenshot-img" src="../../images/data_oee_2.jpeg" alt="OEE AI Overlay">
+                            <img class="screenshot-img" src="images/data_oee_2.jpeg" alt="OEE AI Overlay">
                         </div>
                     </div>
                 </div>
@@ -1347,7 +1391,7 @@
                         </ul>
                         <div class="screenshot-wrap">
                             <div class="screenshot-label">Downtime AI Risk Column (data_downtime.php)</div>
-                            <img class="screenshot-img" src="../../images/data_downtime_2.jpeg" alt="AI Risk">
+                            <img class="screenshot-img" src="images/data_downtime_2.jpeg" alt="AI Risk">
                         </div>
                     </div>
                 </div>
@@ -1397,7 +1441,7 @@
                         </ul>
                         <div class="screenshot-wrap">
                             <div class="screenshot-label">Signage Dashboard Full Screen (dashboard_2.php)</div>
-                            <img class="screenshot-img" src="../../images/dashboard_2.jpeg" alt="Signage Dashboard">
+                            <img class="screenshot-img" src="images/dashboard_2.jpeg" alt="Signage Dashboard">
                         </div>
                     </div>
                 </div>
@@ -1451,7 +1495,7 @@
                         </ul>
                         <div class="screenshot-wrap">
                             <div class="screenshot-label">data_oee_2.php — Chart + Table View</div>
-                            <img class="screenshot-img" src="../../images/data_oee_2.jpeg" alt="data_oee_2">
+                            <img class="screenshot-img" src="images/data_oee_2.jpeg" alt="data_oee_2">
                         </div>
                     </div>
                 </div>
@@ -1475,7 +1519,7 @@
                         <div class="screenshot-wrap">
                             <div class="screenshot-label">Master Data Management Screen (info_design_process_2.php)
                             </div>
-                            <img class="screenshot-img" src="../../images/info_design_process_2.jpeg"
+                            <img class="screenshot-img" src="images/info_design_process_2.jpeg"
                                 alt="Master Data Management">
                         </div>
                     </div>
@@ -1990,6 +2034,12 @@
         </div>
     </div><!-- /doc-main -->
 
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+        <button class="lightbox__close" id="lbClose" aria-label="Close">✕</button>
+        <img class="lightbox__img" id="lbImg" src="" alt="">
+    </div>
+
     <script>
         // IntersectionObserver TOC activation
         const navLinks = document.querySelectorAll('.sidebar-nav a[href^="#"]');
@@ -2003,6 +2053,22 @@
             });
         }, { rootMargin: '-20% 0px -70% 0px' });
         document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+
+        // Lightbox
+        const lb = document.getElementById('lightbox');
+        const lbImg = document.getElementById('lbImg');
+        const lbClose = document.getElementById('lbClose');
+        document.querySelectorAll('.screenshot-img').forEach(img => {
+            img.addEventListener('click', () => {
+                lbImg.src = img.src;
+                lbImg.alt = img.alt;
+                lb.classList.add('open');
+            });
+        });
+        const closeLb = () => lb.classList.remove('open');
+        lbClose.addEventListener('click', closeLb);
+        lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
     </script>
 </body>
 

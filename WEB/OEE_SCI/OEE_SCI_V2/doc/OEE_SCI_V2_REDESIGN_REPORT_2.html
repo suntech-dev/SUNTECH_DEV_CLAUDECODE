@@ -617,7 +617,51 @@
             border-radius: 10px;
             border: 1px solid var(--border);
             display: block;
+            cursor: zoom-in;
+            transition: opacity .15s;
         }
+        .screenshot-img:hover { opacity: .85; }
+
+        /* ── Lightbox ── */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.88);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            animation: lb-fade .18s ease;
+        }
+        .lightbox.open { display: flex; }
+        @keyframes lb-fade { from { opacity: 0; } to { opacity: 1; } }
+        .lightbox__img {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 40px rgba(0,0,0,.6);
+            animation: lb-scale .18s ease;
+        }
+        @keyframes lb-scale { from { transform: scale(.92); } to { transform: scale(1); } }
+        .lightbox__close {
+            position: fixed;
+            top: 18px;
+            right: 22px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-size: 22px;
+            line-height: 1;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .lightbox__close:hover { background: var(--surface3); }
 
         .screenshot-placeholder {
             width: 100%;
@@ -1127,29 +1171,29 @@
 
                 <div class="timeline">
                     <div class="timeline-item">
-                        <h4>Phase 1 — AI 통계 엔진 구축 (2026-03-06)</h4>
+                        <h4>Phase 1 — AI 통계 엔진 구축 (2026-03-13)</h4>
                         <p>지수평활법, Z-Score, 선형회귀 등 통계 알고리즘 기반 AI 분석 엔진 구현. OEE 예측·이상감지·예방정비 위험도 API 구현.</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>Phase 2 — 기존 페이지 AI 강화 (2026-03-06)</h4>
+                        <h4>Phase 2 — 기존 페이지 AI 강화 (2026-03-17)</h4>
                         <p>기존 OEE/다운타임/불량 페이지에 AI 예측선, AI Risk 열, 품질 파수꾼 섹션 추가. 기존 화면 흐름 유지한 채 AI 인사이트 삽입.</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>Phase 3 — 고도화 (2026-03-06)</h4>
+                        <h4>Phase 3 — 고도화 (2026-03-20)</h4>
                         <p>SSE 실시간 AI 스트리밍 피드 + 생산 최적화 제안(P1/P2/P3 병목 우선순위) 구현. 사이니지 전용 AI Dashboard
                             (ai_dashboard_2.php) 구현.</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>성능 최적화 (2026-03-07)</h4>
+                        <h4>성능 최적화 (2026-03-27)</h4>
                         <p>SSE 스트림 N+1 쿼리 제거, 공통 라이브러리 통합(~350줄 중복 제거), 타임존 중앙화(27개→1곳), 해시 버그 수정.</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>AI Dashboard v5 버그 수정 (2026-03-19)</h4>
+                        <h4>AI Dashboard 버그 수정 (2026-04-03)</h4>
                         <p>Playwright 자동화 검증으로 발견한 5개 버그(OEE 111% 이상값, CI 범위 오류, date_range 무시, 신뢰구간 역전, AI 피드 중복) 전체
                             수정.</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>풀스크린 UI 리디자인 (2026-03-24~25)</h4>
+                        <h4>풀스크린 UI 리디자인 (2026-04-07)</h4>
                         <p>1920×1080 사이니지 최적화 레이아웃으로 전 페이지 리디자인. 햄버거 드로어 네비게이션, JS translateX 컬럼 고정 테이블 구현.</p>
                     </div>
                 </div>
@@ -1295,7 +1339,7 @@
                         </ul>
                         <div class="screenshot-wrap">
                             <div class="screenshot-label">AI Intelligence Dashboard 실제 화면</div>
-                            <img class="screenshot-img" src="../../images/ai_dashboard.png"
+                            <img class="screenshot-img" src="images/ai_dashboard.png"
                                 alt="AI Intelligence Dashboard">
                         </div>
                     </div>
@@ -1358,7 +1402,7 @@
                         </ul>
                         <div class="screenshot-wrap">
                             <div class="screenshot-label">OEE 트렌드 차트 + AI 예측선 (data_oee.php)</div>
-                            <img class="screenshot-img" src="../../images/data_oee_2.jpeg" alt="OEE AI Overlay">
+                            <img class="screenshot-img" src="images/data_oee_2.jpeg" alt="OEE AI Overlay">
                         </div>
                     </div>
                 </div>
@@ -1379,7 +1423,7 @@
                         </ul>
                         <div class="screenshot-wrap">
                             <div class="screenshot-label">다운타임 AI Risk 열 (data_downtime.php)</div>
-                            <img class="screenshot-img" src="../../images/data_downtime_2.jpeg" alt="AI Risk">
+                            <img class="screenshot-img" src="images/data_downtime_2.jpeg" alt="AI Risk">
                         </div>
                     </div>
                 </div>
@@ -1428,7 +1472,7 @@
                         </ul>
                         <div class="screenshot-wrap">
                             <div class="screenshot-label">사이니지 대시보드 전체 화면 (dashboard_2.php)</div>
-                            <img class="screenshot-img" src="../../images/dashboard_2.jpeg" alt="Signage Dashboard">
+                            <img class="screenshot-img" src="images/dashboard_2.jpeg" alt="Signage Dashboard">
                         </div>
                     </div>
                 </div>
@@ -1481,7 +1525,7 @@
                         </ul>
                         <div class="screenshot-wrap">
                             <div class="screenshot-label">data_oee_2.php — 차트 + 테이블 화면</div>
-                            <img class="screenshot-img" src="../../images/data_oee_2.jpeg" alt="data_oee_2">
+                            <img class="screenshot-img" src="images/data_oee_2.jpeg" alt="data_oee_2">
                         </div>
                     </div>
                 </div>
@@ -1503,7 +1547,7 @@
                         </ul>
                         <div class="screenshot-wrap">
                             <div class="screenshot-label">마스터 데이터 관리 화면 (info_design_process_2.php)</div>
-                            <img class="screenshot-img" src="../../images/info_design_process_2.jpeg" alt="data_oee_2">
+                            <img class="screenshot-img" src="images/info_design_process_2.jpeg" alt="data_oee_2">
                         </div>
                     </div>
                 </div>
@@ -1993,6 +2037,12 @@
         </div>
     </div><!-- /doc-main -->
 
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+        <button class="lightbox__close" id="lbClose" aria-label="닫기">✕</button>
+        <img class="lightbox__img" id="lbImg" src="" alt="">
+    </div>
+
     <script>
         // IntersectionObserver TOC 활성화
         const navLinks = document.querySelectorAll('.sidebar-nav a[href^="#"]');
@@ -2006,6 +2056,22 @@
             });
         }, { rootMargin: '-20% 0px -70% 0px' });
         document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+
+        // Lightbox
+        const lb = document.getElementById('lightbox');
+        const lbImg = document.getElementById('lbImg');
+        const lbClose = document.getElementById('lbClose');
+        document.querySelectorAll('.screenshot-img').forEach(img => {
+            img.addEventListener('click', () => {
+                lbImg.src = img.src;
+                lbImg.alt = img.alt;
+                lb.classList.add('open');
+            });
+        });
+        const closeLb = () => lb.classList.remove('open');
+        lbClose.addEventListener('click', closeLb);
+        lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
     </script>
 </body>
 
