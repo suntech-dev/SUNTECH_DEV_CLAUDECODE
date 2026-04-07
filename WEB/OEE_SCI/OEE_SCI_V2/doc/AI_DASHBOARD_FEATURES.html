@@ -144,7 +144,7 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 22px; flex-shrink: 0;
     }
-    .section-header .section-meta {}
+    /* .section-header .section-meta {} */
     .section-header .section-num {
       font-size: 11px; font-weight: 700;
       color: var(--text-muted); letter-spacing: .1em;
@@ -1010,6 +1010,17 @@
     </div>
 
     <h3 style="font-size:15px;margin:24px 0 12px;">OEE 목표치 및 갭 분석 기준</h3>
+    <div class="note-box" style="margin-bottom:14px;">
+      <div class="note-icon">📖</div>
+      <p>
+        <strong>85% 기준 출처 — TPM World-Class OEE (나카지마 세이이치, 1988)</strong><br>
+        OEE 목표치 85%는 TPM(Total Productive Maintenance) 창시자 나카지마 세이이치(中嶋清一)가 제시한
+        <strong>세계 수준(World-Class) 기준</strong>입니다.
+        가용성 90% × 성능 95% × 품질 99.9% ≈ <strong>85.4%</strong> 에서 도출된 값으로,
+        ISO 22400 및 SMRP(Society for Maintenance &amp; Reliability Professionals) 등 국제 표준에서도 준용합니다.
+        본 시스템은 이 기준을 적용하되, 성능 목표를 90%로 완화하여 실제 제조 현장의 현실적 조건을 반영합니다.
+      </p>
+    </div>
     <table class="data-table">
       <thead>
         <tr>
@@ -1261,7 +1272,7 @@
     <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;">
       <div>
         <strong style="color:var(--text);">OEE_SCI V2 — AI Intelligence Dashboard</strong><br>
-        기능 설명서 v2.0 · 문의: SUNTECH Development Team
+        기능 설명서 v2.0 · 문의: SUNTECH
       </div>
       <div style="text-align:right;">
         <span class="badge badge-blue">AI POWERED</span>&nbsp;
