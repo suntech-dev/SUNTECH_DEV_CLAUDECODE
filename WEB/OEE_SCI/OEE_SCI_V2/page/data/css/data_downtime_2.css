@@ -509,6 +509,30 @@ body {
     background: var(--sap-surface-3);
 }
 
+/* ─── AI 배지 ───────────────────────────────────────────── */
+/* 그라디언트 pill 뱃지: 파랑→보라 */
+.ai-badge {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, #0070f3, #7928ca);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    letter-spacing: 0.08em;
+    vertical-align: middle;
+    margin-left: var(--sap-spacing-sm, 4px);
+    white-space: nowrap;
+}
+
+/* 테이블 헤더용 소형 변형 */
+.ai-badge--sm {
+    font-size: 0.6rem;
+    padding: 1px 6px;
+    margin-left: 4px;
+}
+
 ::-webkit-scrollbar-thumb {
     background: var(--sap-border-neutral);
     border-radius: 2px;

@@ -304,7 +304,7 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
                                 <th>Duration</th>
                                 <th>Work Date</th>
                                 <!-- AI 위험도 컬럼: ai_downtime_risk_2.js에서 위험 점수를 표시 -->
-                                <th>AI Risk <span class="ai-badge" style="font-size:0.6rem;padding:1px 6px;">AI</span></th>
+                                <th>AI Risk <span class="ai-badge ai-badge--sm">AI</span></th>
                                 <th>DETAIL</th>
                             </tr>
                         </thead>
