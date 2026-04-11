@@ -90,29 +90,90 @@ uint8 andonCurrentTimeParsing(char *jsonString, int16 sizeOfJson)
         return FALSE;
     }
 
+    /* [BUG FIX] AUTO RESET — 교대 기반 비교
+     *
+     * 문제: 기존 코드는 Unix time / 86400(자정 기준)으로 날짜를 구분.
+     *       2교대(21:00~06:00)처럼 자정을 넘는 교대에서 자정 이후 전원 ON 시
+     *       잘못된 리셋이 발생하고, 1교대 전환 시 리셋이 누락됨.
+     *
+     * 해결: 서버가 work_date + shift_idx 를 함께 반환하면
+     *       "work_date_YYYYMMDD * 10 + shift_idx" 조합으로 비교.
+     *       구조체 필드 추가 없이 lastPowerOnDateTime 재활용 (EEPROM CRC 호환).
+     *
+     * Fallback: 서버가 구버전이어서 work_date/shift_idx 미포함 시
+     *           기존 달력 날짜(/ 86400) 비교로 동작. */
+
+    /* Pass 1: 모든 관련 토큰 인덱스 수집 */
+    int datetime_tok  = -1;
+    int work_date_tok = -1;
+    int shift_idx_tok = -1;
+
     for (i = 1; i < r; i++)
-    {   
-        if (jsoneq(jsonString, &t[i], "datetime") == 0)
-        {
-            /* AUTO RESET: Unix time을 하루(86400초) 단위로 나눠 날짜 번호 비교
-             * - RTC 조작(SetUnixTime 임시 세팅) 제거
-             * - RTC_GetDay() 대신 전체 날짜 비교 → 월 경계 동일 일수 오작동 방지 */
-            uint32 lastDay = g_ptrMachineParameter->lastPowerOnDateTime / 86400u;
-
-            setCurrentTime(GetJSON_Token_String(&t[i + 1], jsonString));
-
-            uint32 currentDay = (uint32)(RTC_GetUnixTime() / 86400u);
-
-            if(lastDay != currentDay)
-            {
-                if(g_ptrMachineParameter->bAutoReset) ResetCount();
-            }
-
-            g_ptrMachineParameter->lastPowerOnDateTime = (uint32)RTC_GetUnixTime();
-
-            break;
-        }
+    {
+        if      (jsoneq(jsonString, &t[i], "datetime")  == 0) { datetime_tok  = ++i; }
+        else if (jsoneq(jsonString, &t[i], "work_date") == 0) { work_date_tok = ++i; }
+        else if (jsoneq(jsonString, &t[i], "shift_idx") == 0) { shift_idx_tok = ++i; }
     }
+
+    if (datetime_tok < 0)
+    {
+        if(isInTopMenu()) reflashMenu();
+        SaveExternalFlashConfig();
+        return FALSE;
+    }
+
+    /* Pass 2: work_date, shift_idx 파싱 */
+    uint32 newWorkDate = 0u;  /* YYYYMMDD */
+    uint8  newShiftIdx = 0u;
+
+    if (work_date_tok >= 0)
+    {
+        /* "YYYY-MM-DD" (10자) → YYYYMMDD uint32 */
+        char *wd = GetJSON_Token_String(&t[work_date_tok], jsonString);
+        uint32 yr = ((uint32)(wd[0]-'0'))*1000u + ((uint32)(wd[1]-'0'))*100u
+                  + ((uint32)(wd[2]-'0'))*10u   +  (uint32)(wd[3]-'0');
+        uint32 mo = ((uint32)(wd[5]-'0'))*10u + (uint32)(wd[6]-'0');
+        uint32 dy = ((uint32)(wd[8]-'0'))*10u + (uint32)(wd[9]-'0');
+        newWorkDate = yr * 10000u + mo * 100u + dy;
+    }
+
+    if (shift_idx_tok >= 0)
+    {
+        char *si = GetJSON_Token_String(&t[shift_idx_tok], jsonString);
+        newShiftIdx = (uint8)atoi(si);
+    }
+
+    /* Pass 3: AUTO RESET 판단 후 시간 동기화 */
+    if (newWorkDate != 0u && newShiftIdx != 0u)
+    {
+        /* 신규: 교대 기반 비교 — work_date_YYYYMMDD * 10 + shift_idx */
+        uint32 lastKey    = g_ptrMachineParameter->lastPowerOnDateTime;
+        uint32 currentKey = newWorkDate * 10u + (uint32)newShiftIdx;
+
+        setCurrentTime(GetJSON_Token_String(&t[datetime_tok], jsonString));
+
+        if (lastKey != currentKey)
+        {
+            if (g_ptrMachineParameter->bAutoReset) ResetCount();
+        }
+        g_ptrMachineParameter->lastPowerOnDateTime = currentKey;
+    }
+    else
+    {
+        /* Fallback: 서버 구버전 — 기존 달력 날짜(자정 기준) 비교 */
+        uint32 lastDay = g_ptrMachineParameter->lastPowerOnDateTime / 86400u;
+
+        setCurrentTime(GetJSON_Token_String(&t[datetime_tok], jsonString));
+
+        uint32 currentDay = (uint32)(RTC_GetUnixTime() / 86400u);
+
+        if (lastDay != currentDay)
+        {
+            if (g_ptrMachineParameter->bAutoReset) ResetCount();
+        }
+        g_ptrMachineParameter->lastPowerOnDateTime = (uint32)RTC_GetUnixTime();
+    }
+
     if(isInTopMenu()) reflashMenu();
     //g_TopMenuNode->func(NULL,REFLASH);
     SaveExternalFlashConfig();

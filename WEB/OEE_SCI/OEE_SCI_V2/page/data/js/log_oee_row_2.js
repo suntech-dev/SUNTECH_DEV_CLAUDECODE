@@ -330,7 +330,7 @@ async function updateLineOptions(factoryId) {
 // 공장+라인 선택 변경 시 해당 조건의 기계만 필터링하여 셀렉트박스 갱신
 async function updateMachineOptions(factoryId, lineId) {
     const sel = document.getElementById('factoryLineMachineFilterSelect');
-    sel.disabled = true;  // 로딩 중 비활성화
+    sel.disabled = true;
     try {
         const params = new URLSearchParams();
         if (factoryId) params.append('factory_filter', factoryId);

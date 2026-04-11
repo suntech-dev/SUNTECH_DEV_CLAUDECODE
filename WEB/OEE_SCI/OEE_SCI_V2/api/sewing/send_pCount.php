@@ -43,12 +43,16 @@ require_once(__DIR__ . '/../../lib/api_helper.lib.php');
 function calculateOeeMetrics(PDO $pdo, string $mac, string $work_date, int $shift_idx, int $runtime_sec, float $planned_work_time_hour, int $std_mc_needed, int $target, int $actual_output): array
 {
     // 해당 기계·날짜·시프트의 비가동 누적 시간과 불량 건수를 한 번에 조회
+    // PDO HY093 방지: 동일 named placeholder를 한 쿼리에서 2회 사용 불가 → 서브쿼리별 별도 파라미터명 사용
     $stmt = $pdo->prepare(
         "SELECT
       (SELECT SUM(duration_sec) FROM data_downtime WHERE mac = :mac AND work_date = :work_date AND shift_idx = :shift_idx) as downtime_duration_sum,
-      (SELECT COUNT(*) FROM data_defective WHERE mac = :mac AND work_date = :work_date AND shift_idx = :shift_idx) as defective_count"
+      (SELECT COUNT(*) FROM data_defective WHERE mac = :mac2 AND work_date = :work_date2 AND shift_idx = :shift_idx2) as defective_count"
     );
-    $stmt->execute([':mac' => $mac, ':work_date' => $work_date, ':shift_idx' => $shift_idx]);
+    $stmt->execute([
+        ':mac'        => $mac,        ':work_date'        => $work_date,        ':shift_idx'        => $shift_idx,
+        ':mac2'       => $mac,        ':work_date2'       => $work_date,        ':shift_idx2'       => $shift_idx,
+    ]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
     $m = [];
@@ -221,6 +225,13 @@ function upsertOeeRecord(PDO $pdo, string $table, ?array $existing, bool $is_res
     $tbl = "`{$table}`";
 
     if ($existing) {
+        // UPDATE SQL에 없는 파라미터 제거 — 서버 PHP7 구버전은 extra named params → HY093 발생
+        $update_base = array_intersect_key($base_params, array_flip([
+            ':time_update', ':planned_work_time', ':work_hour', ':pair_info', ':pair_count',
+            ':target_line_per_day', ':target_line_per_hour', ':target_mc_per_day', ':target_mc_per_hour',
+            ':cycletime', ':update_date',
+        ]));
+
         if ($is_reset) {
             // ── 리셋 감지: 모든 컬럼을 현재 절댓값으로 덮어쓰기 ──────────────
             // 기기가 카운터를 리셋했으므로 누적값을 버리고 현재값으로 교체
@@ -238,7 +249,7 @@ function upsertOeeRecord(PDO $pdo, string $table, ?array $existing, bool $is_res
           update_date = :update_date, work_hour = :work_hour
         WHERE idx = :idx"
             );
-            $stmt->execute($base_params + [
+            $stmt->execute($update_base + [
                 ':runtime'            => $runtime_sec,
                 ':productive_runtime' => $oee_metrics['productive_runtime'],
                 ':downtime'           => $oee_metrics['downtime'],
@@ -274,7 +285,7 @@ function upsertOeeRecord(PDO $pdo, string $table, ?array $existing, bool $is_res
           update_date = :update_date, work_hour = :work_hour
         WHERE idx = :idx"
             );
-            $stmt->execute($base_params + [
+            $stmt->execute($update_base + [
                 ':runtime'            => $delta['runtime'],
                 ':productive_runtime' => $delta['productive_runtime'],
                 ':downtime'           => $delta['downtime'],
@@ -488,7 +499,7 @@ $base_params = buildOeeBaseParams($base_ctx, $time_update, $planned_work_time, $
 // ── data_oee UPSERT ──────────────────────────────────────────────────
 $stmt = $pdo->prepare("SELECT * FROM data_oee WHERE mac = ? AND work_date = ? AND shift_idx = ? AND process_name = ? ORDER BY idx ASC LIMIT 1");
 $stmt->execute([$mac, $work_date, $shift_idx, $process_name]);
-$oee_data = $stmt->fetch(PDO::FETCH_ASSOC);
+$oee_data = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
 
 if (!$oee_data) {
     // 이전 공정 데이터 조회 (INSERT 시 델타 계산용)
@@ -565,7 +576,7 @@ $stmt->execute($rows_params);
 // ── data_oee_rows_hourly UPSERT ──────────────────────────────────────
 $stmt = $pdo->prepare("SELECT * FROM `data_oee_rows_hourly` WHERE work_date = ? AND shift_idx = ? AND mac = ? AND process_name = ? AND work_hour = ?");
 $stmt->execute([$work_date, $shift_idx, $mac, $process_name, $work_hour]);
-$hourly_data = $stmt->fetch(PDO::FETCH_ASSOC);
+$hourly_data = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
 
 if (!$hourly_data) {
     // 이전 시간 데이터 조회 (INSERT 시 델타 계산용)

@@ -77,7 +77,8 @@ void andonResponse(char *ptrText, int16 sizeOfText)
 
 void makeAndonCurrentTimeRequest()
 {
-    enQueueANDON_printf(ANDON_CURRENT_TIME,"get_dateTime");
+    /* [BUG FIX] mac 포함 → 서버가 work_date + shift_idx 반환 (교대 기반 AUTO RESET) */
+    enQueueANDON_printf(ANDON_CURRENT_TIME,"get_dateTime&mac=%s", g_network.MAC);
 }
 
 void makeAndonStart()

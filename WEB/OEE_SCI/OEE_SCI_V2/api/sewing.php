@@ -125,7 +125,7 @@ try {
     // 핸들러에서 설정한 $response 를 JSON 으로 반환
     jsonReturn($response);
 
-} catch (Exception $e) {
+} catch (\Throwable $e) {
     // 예외 상세 내용은 서버 로그에만 기록 (클라이언트에는 노출 금지)
     error_log("[ERROR] API 실행 중 오류 발생: " . $e->getMessage());
 

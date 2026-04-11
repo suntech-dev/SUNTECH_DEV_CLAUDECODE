@@ -32,6 +32,44 @@ $stmt->execute([$value]);
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 ```
 
+#### PDO Named Placeholder 규칙 (HY093 방지)
+
+**SQLSTATE[HY093]: Invalid parameter number** 오류는 두 가지 원인으로 발생한다.
+서버 PHP 구버전(7.0~7.3)은 로컬 PHP 7.4+보다 엄격하게 파라미터 개수를 체크한다.
+
+**원인 1 — 동일 named placeholder 중복 사용 (서브쿼리 등)**
+```php
+// 잘못된 예: :mac이 SQL에 2번 등장 → 토큰 6개, 바인딩 3개 → HY093
+$stmt = $pdo->prepare("
+    SELECT (SELECT ... WHERE mac = :mac AND shift_idx = :shift_idx) as a,
+           (SELECT ... WHERE mac = :mac AND shift_idx = :shift_idx) as b
+");
+$stmt->execute([':mac' => $mac, ':shift_idx' => $shift_idx]); // HY093!
+
+// 올바른 예: 두 번째 서브쿼리에 별도 파라미터명 사용
+$stmt = $pdo->prepare("
+    SELECT (SELECT ... WHERE mac = :mac  AND shift_idx = :shift_idx ) as a,
+           (SELECT ... WHERE mac = :mac2 AND shift_idx = :shift_idx2) as b
+");
+$stmt->execute([':mac' => $mac, ':shift_idx' => $shift_idx,
+                ':mac2' => $mac, ':shift_idx2' => $shift_idx]);
+```
+
+**원인 2 — execute()에 SQL에 없는 extra 파라미터 전달**
+```php
+// 잘못된 예: $base_params(22개) + 추가(12개) = 34개인데 UPDATE SQL 토큰은 23개 → HY093
+$stmt->execute($base_params + [':runtime' => $val, ':idx' => $id]);
+
+// 올바른 예: UPDATE SQL에 실제로 있는 파라미터만 추출해서 전달
+$update_params = array_intersect_key($base_params, array_flip([
+    ':time_update', ':planned_work_time', ':work_hour', // SQL에 있는 것만 열거
+]));
+$stmt->execute($update_params + [':runtime' => $val, ':idx' => $id]);
+```
+
+> **주의**: 로컬 PHP 7.4는 extra params를 묵시적으로 무시하여 에러가 안 나도,
+> 서버 PHP 7.0~7.3은 엄격하게 체크하여 HY093 발생. 항상 정확히 일치시킬 것.
+
 ### Security
 
 - **모든 쿼리는 PDO prepared statement 사용 필수**
