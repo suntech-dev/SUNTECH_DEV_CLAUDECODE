@@ -343,7 +343,7 @@ body {
 .nav-drawer__link--active     { color: var(--sap-color-accent); font-weight: var(--sap-font-weight-semibold); }
 .nav-drawer__divider          { height: 1px; background: var(--sap-border-neutral); margin: 6px 0; }
 
-/* ─── 스크롤바 ──────────────────────────────────────────── */
-::-webkit-scrollbar       { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: var(--sap-surface-3); }
-::-webkit-scrollbar-thumb { background: var(--sap-border-neutral); border-radius: 2px; }
+/* ─── 스크롤바 (내부 허용 영역만) ──────────────────────── */
+.manage-main ::-webkit-scrollbar       { width: 4px; height: 4px; }
+.manage-main ::-webkit-scrollbar-track { background: var(--sap-surface-3); }
+.manage-main ::-webkit-scrollbar-thumb { background: var(--sap-border-neutral); border-radius: 2px; }

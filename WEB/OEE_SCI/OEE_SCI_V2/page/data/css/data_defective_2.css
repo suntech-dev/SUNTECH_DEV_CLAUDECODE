@@ -37,20 +37,26 @@ body {
     flex: 1;
 }
 
-.signage-header .fiori-select {
+.signage-header__filters .fiori-select,
+.signage-header__filters .fiori-input {
     height: 30px;
     font-size: var(--sap-font-size-sm);
     padding: 0 6px;
-    width: 130px;
-    flex-shrink: 0;
 }
 
-.signage-header .date-range-input {
-    height: 30px;
-    font-size: var(--sap-font-size-sm);
-    padding: 0 6px;
-    width: 175px;
-    flex-shrink: 0;
+.signage-header__filters #factoryFilterSelect,
+.signage-header__filters #factoryLineFilterSelect,
+.signage-header__filters #factoryLineMachineFilterSelect {
+    width: 140px;
+}
+
+.signage-header__filters #timeRangeSelect,
+.signage-header__filters #shiftSelect {
+    width: 110px;
+}
+
+.signage-header__filters #dateRangePicker {
+    width: 190px;
 }
 
 .signage-header .fiori-btn {
@@ -501,17 +507,17 @@ body {
     box-sizing: border-box;
 }
 
-/* ─── 스크롤바 ──────────────────────────────────────────── */
-::-webkit-scrollbar {
+/* ─── 스크롤바 (내부 허용 영역만) ──────────────────────── */
+.defective-signage-main ::-webkit-scrollbar {
     width: 4px;
     height: 4px;
 }
 
-::-webkit-scrollbar-track {
+.defective-signage-main ::-webkit-scrollbar-track {
     background: var(--sap-surface-3);
 }
 
-::-webkit-scrollbar-thumb {
+.defective-signage-main ::-webkit-scrollbar-thumb {
     background: var(--sap-border-neutral);
     border-radius: 2px;
 }

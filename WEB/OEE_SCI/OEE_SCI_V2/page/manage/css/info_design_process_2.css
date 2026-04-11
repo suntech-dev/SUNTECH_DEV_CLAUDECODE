@@ -577,17 +577,17 @@ body {
     vertical-align: middle;
 }
 
-/* ─── 스크롤바 ──────────────────────────────────────────── */
-::-webkit-scrollbar {
+/* ─── 스크롤바 (내부 허용 영역만) ──────────────────────── */
+.manage-main ::-webkit-scrollbar {
     width: 4px;
     height: 4px;
 }
 
-::-webkit-scrollbar-track {
+.manage-main ::-webkit-scrollbar-track {
     background: var(--sap-surface-3);
 }
 
-::-webkit-scrollbar-thumb {
+.manage-main ::-webkit-scrollbar-thumb {
     background: var(--sap-border-neutral);
     border-radius: 2px;
 }
