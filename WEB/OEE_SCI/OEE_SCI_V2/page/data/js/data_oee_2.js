@@ -38,6 +38,10 @@ let currentPage = 1;             // 현재 페이지 번호
 let itemsPerPage = 10;           // 페이지당 표시 건수
 let totalItems = 0;              // 전체 데이터 건수
 
+/* ── 테이블 정렬 상태 ───────────────────────────────────── */
+let sortColumn = null;           // 현재 정렬 컬럼 키 (null = 정렬 없음)
+let sortOrder = 'asc';           // 정렬 방향: 'asc' | 'desc'
+
 /* ── Chart.js 전역 기본 스타일 설정 ────────────────────── */
 Chart.defaults.color = '#1a1a1a';
 Chart.defaults.borderColor = '#e8eaed';
@@ -331,6 +335,22 @@ function setupEventListeners() {
     // 교대(shift) 필터 변경 시 실시간 모니터링 재시작
     el = document.getElementById('shiftSelect');
     if (el) el.addEventListener('change', function () { restartRealTimeMonitoring(); });
+
+    // 테이블 헤더 정렬 클릭 이벤트
+    document.querySelectorAll('#oeeDataTable th.sortable').forEach(function (th) {
+        th.addEventListener('click', function () {
+            var key = th.dataset.sort;
+            if (sortColumn === key) {
+                sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = key;
+                sortOrder = 'asc';
+            }
+            currentPage = 1;
+            updateTableFromAPI(getSortedData());
+            updateSortIndicators();
+        });
+    });
 }
 
 // ─── 초기 데이터 ──────────────────────────────────────────
@@ -562,7 +582,8 @@ function setupSSEEventListeners() {
         // UI 각 영역 순서대로 갱신
         updateStatCardsFromAPI(stats);
         updateOeeDetailsFromAPI(data.oee_details);
-        updateTableFromAPI(oeeData);
+        updateTableFromAPI(getSortedData());
+        updateSortIndicators();
         updateChartsFromAPI(data);
         // 마지막 업데이트 시각 표시
         var el = document.getElementById('lastUpdateTime');
@@ -670,6 +691,26 @@ function updateOeeDetailsFromAPI(d) {
     });
 }
 
+// 현재 정렬 상태를 적용한 oeeData 복사본 반환
+function getSortedData() {
+    if (!sortColumn) return oeeData;
+    return [...oeeData].sort(function (a, b) {
+        var va = parseFloat(a[sortColumn]) || 0;
+        var vb = parseFloat(b[sortColumn]) || 0;
+        return sortOrder === 'asc' ? va - vb : vb - va;
+    });
+}
+
+// 테이블 헤더 정렬 방향 아이콘(⇅/↑/↓) 업데이트
+function updateSortIndicators() {
+    document.querySelectorAll('#oeeDataTable th.sortable').forEach(function (th) {
+        th.classList.remove('asc', 'desc');
+        if (th.dataset.sort === sortColumn) {
+            th.classList.add(sortOrder);
+        }
+    });
+}
+
 // 페이지네이션을 적용하여 OEE 데이터 테이블을 렌더링
 function updateTableFromAPI(list) {
     var tbody = document.getElementById('oeeDataBody');
@@ -766,7 +807,7 @@ function changePage(p) {
     var total = Math.ceil(totalItems / itemsPerPage);
     if (p < 1 || p > total || p === currentPage) return;
     currentPage = p;
-    updateTableFromAPI(oeeData);
+    updateTableFromAPI(getSortedData());
 }
 
 // ─── 차트 업데이트 ────────────────────────────────────────

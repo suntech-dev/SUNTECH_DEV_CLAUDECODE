@@ -280,9 +280,9 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
                                 <th>Machine No</th>
                                 <th>Factory/Line</th>
                                 <th>Shift</th>
-                                <th>Overall OEE</th>
+                                <th class="sortable" data-sort="overall_oee">Overall OEE</th>
                                 <th>Availability</th>
-                                <th>Performance</th>
+                                <th class="sortable" data-sort="performance">Performance</th>
                                 <th>Quality</th>
                                 <th>Work Date</th>
                                 <th>Update Time</th>
