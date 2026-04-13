@@ -291,8 +291,9 @@ async function loadFactoryOptions() {
         if (!res.success || !res.data) return;
         const sel = document.getElementById('factoryFilterSelect');
         sel.innerHTML = '<option value="">All Factory</option>';
+        const factories = res.data.filter(f => Number(f.idx) !== 99);
         // 각 공장을 option으로 추가
-        res.data.forEach(f => {
+        factories.forEach(f => {
             sel.innerHTML += `<option value="${f.idx}">${f.factory_name}</option>`;
         });
         // 공장 선택 변경 이벤트 리스너
@@ -303,6 +304,10 @@ async function loadFactoryOptions() {
             await updateLineOptions(e.target.value); // 라인 목록 연계 갱신
             await restartRealTimeMonitoring();        // SSE 재시작
         });
+        if (factories.length === 1) {
+            sel.value = factories[0].idx;
+            sel.dispatchEvent(new Event('change'));
+        }
     } catch (e) { console.error('Factory options error:', e); }
 }
 

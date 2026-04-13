@@ -144,17 +144,17 @@ class DashboardManager {
 
     async initFilterSystem() {
         try {
-            await this.loadFactoryOptions();
-            await this.loadLineOptions();
-            await this.loadMachineOptions();
-            this.setupFilterEventListeners();
+            this.setupFilterEventListeners(); // 이벤트 리스너 먼저 등록 (auto-select 시 change 이벤트 수신 보장)
+            await this.loadFactoryOptions();  // factory 로드 후 auto-select → updateLineOptions/updateMachineOptions 연쇄 처리
+            // loadLineOptions/loadMachineOptions 제거: factory 선택 시 updateLineOptions가 처리하므로 불필요
+            // 전체 로드 시 factory_idx=99(INVENTORY) 포함 문제 방지
         } catch (error) {
         }
     }
 
     async loadFactoryOptions() {
         try {
-            const response = await fetch('../manage/proc/factory.php');
+            const response = await fetch('../manage/proc/factory.php?status_filter=Y');
             const res = await response.json();
 
             if (res.success && res.data) {
@@ -162,9 +162,14 @@ class DashboardManager {
 
                 if (factorySelect) {
                     factorySelect.innerHTML = '<option value="">All Factory</option>';
-                    res.data.forEach(factory => {
+                    const factories = res.data.filter(f => Number(f.idx) !== 99);
+                    factories.forEach(factory => {
                         factorySelect.innerHTML += `<option value="${factory.idx}">${factory.factory_name}</option>`;
                     });
+                    if (factories.length === 1) {
+                        factorySelect.value = factories[0].idx;
+                        factorySelect.dispatchEvent(new Event('change'));
+                    }
                 }
             } else {
             }

@@ -262,7 +262,8 @@ async function loadFactoryOptions() {
         if (!res.success || !res.data) return;
         const sel = document.getElementById('factoryFilterSelect');
         sel.innerHTML = '<option value="">All Factory</option>';
-        res.data.forEach(f => {
+        const factories = res.data.filter(f => Number(f.idx) !== 99);
+        factories.forEach(f => {
             sel.innerHTML += `<option value="${f.idx}">${f.factory_name}</option>`;
         });
         // 공장 변경 시 기계 셀렉트 초기화 후 라인 목록 재로드
@@ -272,6 +273,10 @@ async function loadFactoryOptions() {
             await updateLineOptions(e.target.value);
             await restartRealTimeMonitoring();
         });
+        if (factories.length === 1) {
+            sel.value = factories[0].idx;
+            sel.dispatchEvent(new Event('change'));
+        }
     } catch (e) { console.error('Factory options error:', e); }
 }
 

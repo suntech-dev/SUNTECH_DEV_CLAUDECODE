@@ -236,8 +236,9 @@ async function loadFactoryOptions() {
         if (!res.success || !res.data) return;
         var sel = document.getElementById('factoryFilterSelect');
         sel.innerHTML = '<option value="">All Factory</option>';
+        var factories = res.data.filter(function (f) { return Number(f.idx) !== 99; });
         // 각 공장을 옵션으로 추가
-        res.data.forEach(function (f) {
+        factories.forEach(function (f) {
             sel.innerHTML += '<option value="' + f.idx + '">' + f.factory_name + '</option>';
         });
         // 공장 선택 변경 시: 기계 초기화 → 라인 재로드 → SSE 재시작
@@ -247,6 +248,10 @@ async function loadFactoryOptions() {
             await updateLineOptions(e.target.value);
             await restartRealTimeMonitoring();
         });
+        if (factories.length === 1) {
+            sel.value = factories[0].idx;
+            sel.dispatchEvent(new Event('change'));
+        }
     } catch (e) { console.error('Factory options error:', e); }
 }
 

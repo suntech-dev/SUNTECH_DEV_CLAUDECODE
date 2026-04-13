@@ -287,7 +287,8 @@ async function loadFactoryOptions() {
         if (!res.success || !res.data) return;
         const sel = document.getElementById('factoryFilterSelect');
         sel.innerHTML = '<option value="">All Factory</option>';
-        res.data.forEach(f => {
+        const factories = res.data.filter(f => Number(f.idx) !== 99);
+        factories.forEach(f => {
             sel.innerHTML += `<option value="${f.idx}">${f.factory_name}</option>`;
         });
         // 공장 선택 변경 이벤트 리스너
@@ -297,6 +298,10 @@ async function loadFactoryOptions() {
             await updateLineOptions(e.target.value);
             await restartRealTimeMonitoring();
         });
+        if (factories.length === 1) {
+            sel.value = factories[0].idx;
+            sel.dispatchEvent(new Event('change'));
+        }
     } catch (e) { console.error('Factory options error:', e); }
 }
 

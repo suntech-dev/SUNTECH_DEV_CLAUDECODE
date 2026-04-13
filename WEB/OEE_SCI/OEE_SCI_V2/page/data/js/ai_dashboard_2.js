@@ -54,13 +54,17 @@ let aiState = {
  */
 function initFilterSystem() {
     // 공장 목록 AJAX 조회 후 select에 옵션 추가
-    $.getJSON('../manage/proc/factory.php', function (res) {
+    $.getJSON('../manage/proc/factory.php?status_filter=Y', function (res) {
         if (!res.success || !res.data) return;
-        res.data.forEach(function (item) {
+        var factories = res.data.filter(function (item) { return Number(item.idx) !== 99; });
+        factories.forEach(function (item) {
             $('#factoryFilterSelect').append(
                 $('<option>').val(item.idx).text(item.factory_name)
             );
         });
+        if (factories.length === 1) {
+            $('#factoryFilterSelect').val(factories[0].idx).trigger('change');
+        }
     });
 
     // 공장 선택 변경 이벤트 리스너
@@ -74,7 +78,7 @@ function initFilterSystem() {
         $('#factoryLineFilterSelect').html('<option value="">All Line</option>').prop('disabled', true);
         $('#factoryLineMachineFilterSelect').html('<option value="">All Machine</option>').prop('disabled', true);
 
-        // 공장이 선택된 경우 해당 공장의 라인 목록 조회
+        // 공장이 선택된 경우 해당 공장의 라인/기계 목록 조회
         if (aiState.factory) {
             $.getJSON('../manage/proc/line.php', { factory_filter: aiState.factory }, function (res) {
                 if (!res.success || !res.data) return;
@@ -85,6 +89,17 @@ function initFilterSystem() {
                         $('<option>').val(item.idx).text(item.line_name)
                     );
                 });
+            });
+            // 공장 선택 시 기계 드롭다운도 해당 공장 기준으로 활성화
+            $.getJSON('../manage/proc/machine.php', { factory_filter: aiState.factory }, function (res) {
+                if (!res.success || !res.data) return;
+                $('#factoryLineMachineFilterSelect').html('<option value="">All Machine</option>');
+                res.data.forEach(function (item) {
+                    $('#factoryLineMachineFilterSelect').append(
+                        $('<option>').val(item.idx).text(item.machine_no)
+                    );
+                });
+                $('#factoryLineMachineFilterSelect').prop('disabled', false);
             });
         }
         // 필터 변경 후 전체 데이터 갱신
