@@ -19,7 +19,7 @@
 <input type="text" id="dateRangePicker" class="fiori-input date-range-input" readonly placeholder="Select date range">
 <select id="shiftSelect" class="fiori-select">
     <option value="">All Shift</option>
-    <option value="1">Shift 1</option>
+    <option value="1" selected>Shift 1</option>
     <option value="2">Shift 2</option>
     <option value="3">Shift 3</option>
 </select>

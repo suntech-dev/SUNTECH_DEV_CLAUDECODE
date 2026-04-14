@@ -85,24 +85,24 @@ function getPreviousOEEData($pdo, $filter)
         $where_clauses = [];
         $params = [];
 
-        // 공장/라인/기계 필터는 동일하게 유지
+        // 공장/라인/기계 필터는 동일하게 유지 (data_oee do + info_machine m JOIN 시 ambiguous 방지용 do. prefix)
         if (!empty($_GET['factory_filter'])) {
-            $where_clauses[] = 'factory_idx = ?';
+            $where_clauses[] = 'do.factory_idx = ?';
             $params[] = $_GET['factory_filter'];
         }
 
         if (!empty($_GET['line_filter'])) {
-            $where_clauses[] = 'line_idx = ?';
+            $where_clauses[] = 'do.line_idx = ?';
             $params[] = $_GET['line_filter'];
         }
 
         if (!empty($_GET['machine_filter'])) {
-            $where_clauses[] = 'machine_idx = ?';
+            $where_clauses[] = 'do.machine_idx = ?';
             $params[] = $_GET['machine_filter'];
         }
 
         if (!empty($_GET['shift_filter'])) {
-            $where_clauses[] = 'shift_idx = ?';
+            $where_clauses[] = 'do.shift_idx = ?';
             $params[] = $_GET['shift_filter'];
         }
 
@@ -124,12 +124,12 @@ function getPreviousOEEData($pdo, $filter)
             $prev_end = date('Y-m-d', strtotime($start . ' -1 day'));
             $prev_start = date('Y-m-d', strtotime($prev_end . " -{$days} days"));
 
-            $where_clauses[] = 'work_date BETWEEN ? AND ?';
+            $where_clauses[] = 'do.work_date BETWEEN ? AND ?';
             $params[] = $prev_start;
             $params[] = $prev_end;
         } else {
             // 기본값: 어제 데이터
-            $where_clauses[] = 'work_date = ?';
+            $where_clauses[] = 'do.work_date = ?';
             $params[] = $yesterday;
         }
 
@@ -970,32 +970,32 @@ function getProductionData($pdo, $filter)
         // 날짜 필터
         if ($isTimelineHourlyView) {
             // 1일 이하: 특정 날짜만
-            $timeline_where_clauses[] = 'work_date = ?';
+            $timeline_where_clauses[] = 'doh.work_date = ?';
             $timeline_params[] = $timeline_date;
         } else {
             // 1일 초과: 날짜 범위
             if (!empty($startDate) && !empty($endDate)) {
-                $timeline_where_clauses[] = 'work_date BETWEEN ? AND ?';
+                $timeline_where_clauses[] = 'doh.work_date BETWEEN ? AND ?';
                 $timeline_params[] = $startDate;
                 $timeline_params[] = $endDate;
             }
         }
 
-        // 기존 필터 조건 추가 (factory, line, machine, shift)
+        // 기존 필터 조건 추가 (factory, line, machine, shift) - data_oee_rows_hourly doh + info_machine m JOIN 시 ambiguous 방지용 doh. prefix
         if (!empty($_GET['factory_filter'])) {
-            $timeline_where_clauses[] = 'factory_idx = ?';
+            $timeline_where_clauses[] = 'doh.factory_idx = ?';
             $timeline_params[] = $_GET['factory_filter'];
         }
         if (!empty($_GET['line_filter'])) {
-            $timeline_where_clauses[] = 'line_idx = ?';
+            $timeline_where_clauses[] = 'doh.line_idx = ?';
             $timeline_params[] = $_GET['line_filter'];
         }
         if (!empty($_GET['machine_filter'])) {
-            $timeline_where_clauses[] = 'machine_idx = ?';
+            $timeline_where_clauses[] = 'doh.machine_idx = ?';
             $timeline_params[] = $_GET['machine_filter'];
         }
         if (!empty($_GET['shift_filter'])) {
-            $timeline_where_clauses[] = 'shift_idx = ?';
+            $timeline_where_clauses[] = 'doh.shift_idx = ?';
             $timeline_params[] = $_GET['shift_filter'];
         }
 
@@ -1211,11 +1211,11 @@ function getProductionData($pdo, $filter)
 function sendDashboardData($pdo)
 {
     // 각 테이블에 맞는 alias로 필터 생성
-    $oeeFilter = parseDashboardFilterParams(); // data_oee는 alias 없이 사용
+    $oeeFilter = parseDashboardFilterParams('do'); // data_oee는 'do' alias 사용 (info_machine m JOIN 시 factory_idx ambiguous 방지)
     $andonFilter = parseDashboardFilterParams('da'); // data_andon은 'da' alias 사용
     $downtimeFilter = parseDashboardFilterParams('dd'); // data_downtime은 'dd' alias 사용
     $defectiveFilter = parseDashboardFilterParams('dd'); // data_defective는 'dd' alias 사용
-    $productionFilter = parseDashboardFilterParams(); // data_oee는 alias 없이 사용
+    $productionFilter = parseDashboardFilterParams('doh'); // data_oee_rows_hourly는 'doh' alias 사용 (info_machine m JOIN 시 ambiguous 방지)
 
     $dashboard_data = [
         'timestamp' => time(),
