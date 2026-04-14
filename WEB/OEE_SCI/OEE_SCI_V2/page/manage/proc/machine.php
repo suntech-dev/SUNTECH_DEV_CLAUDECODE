@@ -242,6 +242,8 @@ function addMachine(PDO $pdo): void
  * - mac, ip, app_ver는 장비 자체에서 업데이트하는 경우가 많아 수정 폼에서 제외
  * - pos_x, pos_y: 라인 배치도 드래그&드롭 이동 시에도 이 API를 사용
  * - rowCount() > 0 검사: 값 변경이 없는 경우(동일값 재저장)와 not found를 구분
+ * - design_process_idx: factory 또는 line이 변경된 경우에만 0으로 초기화
+ *   (공장/라인이 바뀌면 기존 공정 배정이 무효화되므로 자동 해제)
  */
 function updateMachine(PDO $pdo): void
 {
@@ -256,7 +258,28 @@ function updateMachine(PDO $pdo): void
             return;
         }
 
-        $stmt = $pdo->prepare("UPDATE info_machine SET factory_idx=?, line_idx=?, machine_model_idx=?, machine_no=?, type=?, status=?, remark=?, target=?, pos_x=?, pos_y=?, update_date=NOW() WHERE idx = ?");
+        // 현재 DB의 factory_idx, line_idx 조회 → 변경 여부 판단
+        $curStmt = $pdo->prepare("SELECT factory_idx, line_idx FROM info_machine WHERE idx = ?");
+        $curStmt->execute([$id]);
+        $current = $curStmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$current) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Machine not found.']);
+            return;
+        }
+
+        // factory 또는 line이 변경된 경우 design_process_idx를 0으로 초기화
+        $locationChanged = ((string)$current['factory_idx'] !== (string)$data['factory_idx'])
+                        || ((string)$current['line_idx']    !== (string)$data['line_idx']);
+
+        if ($locationChanged) {
+            $sql = "UPDATE info_machine SET factory_idx=?, line_idx=?, machine_model_idx=?, machine_no=?, type=?, status=?, remark=?, target=?, pos_x=?, pos_y=?, design_process_idx=0, update_date=NOW() WHERE idx = ?";
+        } else {
+            $sql = "UPDATE info_machine SET factory_idx=?, line_idx=?, machine_model_idx=?, machine_no=?, type=?, status=?, remark=?, target=?, pos_x=?, pos_y=?, update_date=NOW() WHERE idx = ?";
+        }
+
+        $stmt = $pdo->prepare($sql);
         $stmt->execute([
             $data['factory_idx'],
             $data['line_idx'],
