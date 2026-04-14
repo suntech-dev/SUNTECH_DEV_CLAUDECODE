@@ -10,8 +10,8 @@
  * ========================================
  *
  * EMBROIDERY_S 전용 UART 파서
- * 프로토콜: "actual_qty;cycle_time_ms;thread_breakage_qty;motor_runtime_ms;\r\n"
- * 예시:     "1;300000;2;250000;\r\n"
+ * 프로토콜: "actual_qty;cycle_time_s;thread_breakage_qty;motor_runtime_s;\r\n"
+ * 예시:     "1;300;2;250;\r\n"
  *
 */
 #include "uartJson.h"
@@ -33,10 +33,11 @@ static char uartEmbParsor(COUNT *ptrCount);
 /* ================================================================
  * uartJsonLoop — 메인 루프에서 CountFunc() 를 통해 호출
  *
- * 프로토콜: "actual_qty;cycle_time_ms;thread_breakage_qty;motor_runtime_ms;\r\n"
+ * 프로토콜: "actual_qty;cycle_time_s;thread_breakage_qty;motor_runtime_s;\r\n"
  * 종료 조건: 4번째 ';' 수신
- * '\r', '\n' 은 버퍼에 저장하지 않고 무시
+ * '\r', '\n' 은 버퍼 리셋 후 무시 (MCSTATUS hex 잔류 바이트 제거)
  * index=0 에서 숫자가 아닌 바이트는 무시 (echo 루프백 쓰레기 방어)
+ * index>0 에서 숫자·';' 외 바이트는 즉시 버퍼 리셋 (MCSTATUS "0x??" 오염 방지)
  * ================================================================ */
 uint8 uartJsonLoop()
 {
@@ -46,11 +47,32 @@ uint8 uartJsonLoop()
     {
         char c = UART_UartGetChar();
 
-        if (c == '\0' || c == '\r' || c == '\n') continue;
+        /* '\r' / '\n' : 줄 끝 → 누적 중인 불완전 버퍼 리셋.
+         * MCSTATUS 줄 끝의 hex 숫자 잔류("34" 등)가 다음 줄과 합쳐지는 것을 방지.
+         * 유효 패킷은 4번째 ';' 수신 시 이미 파싱·리셋 완료되므로 영향 없음. */
+        if (c == '\r' || c == '\n' || c == '\0')
+        {
+            if (g_UART_buff_index > 0)
+            {
+                g_UART_buff_index = 0;
+                memset(g_UART_buff, 0, UART_BUFFER_SIZE);
+            }
+            continue;
+        }
 
         /* 패킷 시작 바이트는 반드시 숫자(actual_qty 첫 자리)여야 함.
          * printf echo 루프백에 의해 쌓인 쓰레기 바이트를 여기서 차단. */
         if (g_UART_buff_index == 0 && (c < '0' || c > '9')) continue;
+
+        /* 패킷 누적 중 유효하지 않은 문자(숫자·세미콜론 외) 수신 시 즉시 버퍼 리셋.
+         * "MCSTATUS ... 0x41,0xff" 에서 '0' 이 버퍼를 시작한 뒤
+         * 'x', ',', 알파벳 등에서 즉시 리셋하여 쓰레기 누적 방지. */
+        if (g_UART_buff_index > 0 && (c < '0' || c > '9') && c != ';')
+        {
+            g_UART_buff_index = 0;
+            memset(g_UART_buff, 0, UART_BUFFER_SIZE);
+            continue;
+        }
 
         if (g_UART_buff_index >= UART_BUFFER_SIZE - 1)
         {
@@ -113,7 +135,7 @@ uint8 uartJsonLoop()
 /* ================================================================
  * uartEmbParsor — 세미콜론 구분 파서
  *
- * 형식: "actual_qty;cycle_time_ms;thread_breakage_qty;motor_runtime_ms;"
+ * 형식: "actual_qty;cycle_time_s;thread_breakage_qty;motor_runtime_s;"
  * 반환: TRUE=파싱 성공, FALSE=실패
  * ================================================================ */
 static char uartEmbParsor(COUNT *ptrCount)
@@ -124,9 +146,9 @@ static char uartEmbParsor(COUNT *ptrCount)
     uint8   fieldIdx = 0;
 
     uint16 actual_qty          = 0;
-    uint32 cycle_time_ms       = 0;
+    uint32 cycle_time_s        = 0;
     uint16 thread_breakage_qty = 0;
-    uint32 motor_runtime_ms    = 0;
+    uint32 motor_runtime_s     = 0;
 
     snprintf(tempBuf, sizeof(tempBuf), "%s", g_UART_buff);
 
@@ -150,9 +172,9 @@ static char uartEmbParsor(COUNT *ptrCount)
                 if (*ptr < '0' || *ptr > '9') return FALSE;
                 actual_qty = (uint16) atoi(ptr);
                 break;
-            case 1: cycle_time_ms       = (uint32) atol(ptr); break;
+            case 1: cycle_time_s        = (uint32) atol(ptr); break;
             case 2: thread_breakage_qty = (uint16) atoi(ptr); break;
-            case 3: motor_runtime_ms    = (uint32) atol(ptr); break;
+            case 3: motor_runtime_s     = (uint32) atol(ptr); break;
         }
         ptr = sep + 1;
         fieldIdx++;
@@ -161,22 +183,19 @@ static char uartEmbParsor(COUNT *ptrCount)
     if (fieldIdx < 4) return FALSE;
 
     /* 범위 유효성 검사 */
-    if (actual_qty          == 0u)      return FALSE;  /* 0수량 패킷 무시 */
-    if (actual_qty          > 10000u)   return FALSE;
-    if (cycle_time_ms       > 3600000u) return FALSE;
-    if (thread_breakage_qty > 1000u)    return FALSE;
-    if (motor_runtime_ms    > 3600000u) return FALSE;
-
-    printf("PARSE: actual_qty=%u ct=%lu tb=%u mrt=%lu\r\n",
-           actual_qty, cycle_time_ms, thread_breakage_qty, motor_runtime_ms);
+    if (actual_qty          == 0u)    return FALSE;  /* 0수량 패킷 무시 */
+    if (actual_qty          > 10000u) return FALSE;
+    if (cycle_time_s        > 10800u) return FALSE;  /* 최대 3시간 */
+    if (thread_breakage_qty > 1000u)  return FALSE;
+    if (motor_runtime_s     > 10800u) return FALSE;  /* 최대 3시간 */
 
     /* ── COUNT 구조체에 할당 ── */
 
     /* actual_qty: 증분값 누산 */
     ptrCount->patternCount += actual_qty;
 
-    /* cycle_time: ms → 0.1초 단위 변환 (÷100), 최대 36000 → uint16 안전 */
-    ptrCount->patternCycleTime = (uint16)(cycle_time_ms / 100u);
+    /* cycle_time: 초 단위 그대로 저장 */
+    ptrCount->patternCycleTime = (uint16)(cycle_time_s);
     ADD_CONVERT_TO_4BYTE(ptrCount->patternCycleTimeSumH, ptrCount->patternCycleTimeSumL,
                          ptrCount->patternCycleTime);
 
@@ -185,8 +204,8 @@ static char uartEmbParsor(COUNT *ptrCount)
     ADD_CONVERT_TO_4BYTE(ptrCount->embThreadBreakageQtySumH, ptrCount->embThreadBreakageQtySumL,
                          ptrCount->embThreadBreakageQty);
 
-    /* motor_runtime: ms → 0.1초 단위 변환 (÷100), 최대 36000 → uint16 안전 */
-    ptrCount->patternMotorRunTime = (uint16)(motor_runtime_ms / 100u);
+    /* motor_runtime: 초 단위 그대로 저장 */
+    ptrCount->patternMotorRunTime = (uint16)(motor_runtime_s);
     ADD_CONVERT_TO_4BYTE(ptrCount->patternMotorRunTimeSumH, ptrCount->patternMotorRunTimeSumL,
                          ptrCount->patternMotorRunTime);
 

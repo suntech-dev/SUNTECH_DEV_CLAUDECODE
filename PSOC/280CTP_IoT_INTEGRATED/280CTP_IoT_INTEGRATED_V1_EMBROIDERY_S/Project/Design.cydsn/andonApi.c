@@ -77,7 +77,8 @@ void andonResponse(char *ptrText, int16 sizeOfText)
 
 void makeAndonCurrentTimeRequest()
 {
-    enQueueANDON_printf(ANDON_CURRENT_TIME,"get_dateTime");
+    /* [BUG FIX] mac 포함 → 서버가 work_date + shift_idx 반환 (교대 기반 AUTO RESET) */
+    enQueueANDON_printf(ANDON_CURRENT_TIME,"get_dateTime&mac=%s", g_network.MAC);
 }
 
 void makeAndonStart()
@@ -121,12 +122,12 @@ void makeAndonPatternCount()
     COUNT *ptrCount = getCount();
 
     enQueueANDON_printf(ANDON_SEND_PATTERN_COUNT,
-        "send_eCount&mac=%s&actual_qty=%u&ct=%0.1f&tb=%u&mrt=%0.1f\r\n",
+        "send_eCount&mac=%s&actual_qty=%u&ct=%u&tb=%u&mrt=%u\r\n",
         g_network.MAC,
-        ptrCount->patternCount,             // actual_qty : 이번 패킷 완료 수량
-        ptrCount->patternCycleTime / 10.,   // ct  : 싸이클타임 (0.1s 단위 → 소수점 1자리 초)
-        ptrCount->embThreadBreakageQty,     // tb  : 실끊김 수량
-        ptrCount->patternMotorRunTime / 10. // mrt : 모터동작시간 (0.1s 단위 → 소수점 1자리 초)
+        ptrCount->patternCount,              // actual_qty : 이번 패킷 완료 수량
+        ptrCount->patternCycleTime,          // ct  : 싸이클타임 (초)
+        ptrCount->embThreadBreakageQty,      // tb  : 실끊김 수량
+        ptrCount->patternMotorRunTime        // mrt : 모터동작시간 (초)
     );
 }
 

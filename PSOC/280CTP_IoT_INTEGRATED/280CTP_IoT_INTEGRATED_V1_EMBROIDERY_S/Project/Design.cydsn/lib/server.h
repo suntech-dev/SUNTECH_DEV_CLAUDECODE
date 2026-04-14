@@ -16,8 +16,8 @@
 #define DEFAULT_SSID         "SUNTECH-CORING"                /* 비워두면 외부 플래시(USB 설정 도구) 사용 */
 #define DEFAULT_PASSWORD     "12345678"                /* 비워두면 외부 플래시(USB 설정 도구) 사용 */
 
-/* API 엔드포인트 — andonApi.h에서 이동하여 한 곳에서 관리 */
-#define DEFAULT_API_ENDPOINT "/api/sewing.php"
+/* API 엔드포인트 — 자수기 전용 라우터 */
+#define DEFAULT_API_ENDPOINT "/api/embroidery.php"
 
 typedef struct {
     char        host[50];       /* IP/도메인 + 경로 (예: "192.168.38.72/2025/sci/new") */

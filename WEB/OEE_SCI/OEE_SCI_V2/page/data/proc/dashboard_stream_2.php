@@ -170,7 +170,7 @@ function getPreviousOEEData($pdo, $filter)
 /**
  * OEE 데이터 조회
  */
-function getOEEData($pdo, $filter)
+function getOEEData($pdo, $filter, $defectiveFilter = null)
 {
     try {
         $sql = "
@@ -183,9 +183,7 @@ function getOEEData($pdo, $filter)
         SUM(do.planned_work_time) as total_planned_time,
         SUM(do.downtime) as total_downtime,
         SUM(do.actual_output) as total_actual_output,
-        SUM(do.theoritical_output) as total_theoretical_output,
-        SUM(do.actual_a_grade) as total_good_products,
-        SUM(do.defective) as total_defective_products
+        SUM(do.theoritical_output) as total_theoretical_output
       FROM data_oee do
       LEFT JOIN info_machine m ON do.machine_idx = m.idx
       {$filter['where']}" . (strpos($filter['where'], 'WHERE') !== false ? ' AND' : ' WHERE') . " m.status = 'Y'
@@ -194,6 +192,17 @@ function getOEEData($pdo, $filter)
         $stmt = $pdo->prepare($sql);
         $stmt->execute($filter['params']);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // data_defective 직접 COUNT (data_oee.defective 누적 오차 방지)
+        if ($defectiveFilter) {
+            $def_sql = "SELECT COUNT(*) as total_defective FROM data_defective dd {$defectiveFilter['where']}";
+            $def_stmt = $pdo->prepare($def_sql);
+            $def_stmt->execute($defectiveFilter['params']);
+            $def_result = $def_stmt->fetch(PDO::FETCH_ASSOC);
+            $result['total_defective_products'] = (int)($def_result['total_defective'] ?? 0);
+        } else {
+            $result['total_defective_products'] = 0;
+        }
 
         if (!$result || $result['avg_availability'] === null) {
             return [
@@ -252,7 +261,8 @@ function getOEEData($pdo, $filter)
             ],
             'quality' => [
                 'value' => $quality,
-                'good_products' => round($result['total_good_products'] ?? 0, 0),
+                // good_products: actual_output - defective 파생값 (actual_a_grade SUM 누적 불일치 방지)
+                'good_products' => max(0, (int)round($result['total_actual_output'] ?? 0, 0) - (int)round($result['total_defective_products'] ?? 0, 0)),
                 'defective_products' => round($result['total_defective_products'] ?? 0, 0),
                 'trend' => $quality_change > 0 ? '↗️' : ($quality_change < 0 ? '↘️' : '→'),
                 'change' => $quality_change
@@ -1219,7 +1229,7 @@ function sendDashboardData($pdo)
 
     $dashboard_data = [
         'timestamp' => time(),
-        'oee' => getOEEData($pdo, $oeeFilter),
+        'oee' => getOEEData($pdo, $oeeFilter, $defectiveFilter),
         'andon' => getAndonData($pdo, $andonFilter),
         'downtime' => getDowntimeData($pdo, $downtimeFilter),
         'defective' => getDefectiveData($pdo, $defectiveFilter),
