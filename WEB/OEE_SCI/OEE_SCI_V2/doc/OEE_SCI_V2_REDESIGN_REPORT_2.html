@@ -1296,7 +1296,7 @@
                         <div class="lbl">신규 AI 기능</div>
                     </div>
                     <div class="metric-card" id="redesign-data-trigger" title="클릭하면 상세 목록을 볼 수 있습니다">
-                        <div class="val green">7</div>
+                        <div class="val green">8</div>
                         <div class="lbl">리디자인<br>(data 영역)</div>
                     </div>
                     <div class="metric-card" id="redesign-manage-trigger" title="클릭하면 상세 목록을 볼 수 있습니다">
@@ -1440,6 +1440,12 @@
                                 <td>AI 실시간 스트리밍 피드<span class="tag-new">NEW</span><br><span
                                         style="font-size:11.5px;color:var(--text-muted)">SSE 기반, 슬라이드인 카드, 15초 자동갱신, 최대
                                         15건 피드</span></td>
+                            </tr>
+                            <tr>
+                                <td class="col-area">미수신 머신 진단</td>
+                                <td class="col-v1">없음</td>
+                                <td>Offline Monitor (data_offline_2.php)<span class="tag-new">NEW</span><br><span
+                                        style="font-size:11.5px;color:var(--text-muted)">전원 OFF / UART 단선 원인 자동 분류, 마지막 수신 시간·경과시간 표시, 기준 날짜 소급 조회</span></td>
                             </tr>
                             <tr>
                                 <td class="col-area">보고서</td>
@@ -1651,7 +1657,7 @@
                 <div class="feature-block">
                     <div class="feature-block__header">
                         <span class="fb-badge-new">NEW</span>
-                        <span class="feature-block__title">데이터 모니터링 페이지 리디자인 (_2 버전, 총 7종)</span>
+                        <span class="feature-block__title">데이터 모니터링 페이지 리디자인 (_2 버전, 총 8종)</span>
                     </div>
                     <div class="feature-block__body">
                         <p class="feature-block__desc">OEE·안돈·다운타임·불량·OEE 로그 페이지를 동일한 Row Grid 구조로 리디자인했습니다.
@@ -1686,6 +1692,11 @@
                                 style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px">
                                 <div style="font-size:15px;margin-bottom:3px">📋</div>log_oee_row_2
                             </div>
+                            <div
+                                style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px;border-color:var(--accent2)">
+                                <div style="font-size:15px;margin-bottom:3px">🔴</div>data_offline_2
+                                <span class="tag-new" style="display:block;margin:4px auto 0;width:fit-content">NEW</span>
+                            </div>
                         </div>
                         <ul class="fb-points">
                             <li>화면 높이 100% 고정, 스크롤 없음</li>
@@ -1697,6 +1708,26 @@
                             <div class="screenshot-label">data_oee_2.php — 차트 + 테이블 화면</div>
                             <img class="screenshot-img" src="images/data_oee_2.jpeg" alt="data_oee_2">
                         </div>
+                    </div>
+                </div>
+
+                <!-- 미수신 머신 모니터 — 신규 -->
+                <div class="feature-block">
+                    <div class="feature-block__header">
+                        <span class="fb-badge-new">NEW</span>
+                        <span class="feature-block__title">미수신(오프라인) 머신 모니터 — data_offline_2.php</span>
+                    </div>
+                    <div class="feature-block__body">
+                        <p class="feature-block__desc">지정된 날짜에 OEE 데이터를 전송하지 않은 머신을 실시간으로 탐지하고 원인을 자동 분류합니다.
+                            <code>info_machine</code> 전체 목록과 <code>data_oee</code>를 LEFT JOIN하여
+                            데이터 누락 머신만 추출합니다.</p>
+                        <ul class="fb-points">
+                            <li>원인 자동 분류 4단계 — ⚪신규/미연결 / 🔵금일 미수신 / 🟠UART 케이블 점검 / 🔴전원 OFF 의심</li>
+                            <li>요약 통계 카드 4개 — 전체 활성 / 금일 데이터 있음 / 미수신 / 미연결</li>
+                            <li>기준 날짜 선택 — 오늘 기본값, 과거 날짜 소급 조회 가능</li>
+                            <li>SSE 30초 간격 자동 갱신 (진단 목적, 서버 부하 최소화)</li>
+                            <li>공장·라인 필터 + 마지막 데이터 수신 시간 표시</li>
+                        </ul>
                     </div>
                 </div>
 
@@ -2084,10 +2115,10 @@
                 <!-- 카테고리별 수량 요약 -->
                 <div class="metrics-row" style="margin-bottom:28px">
                     <div class="metric-card">
-                        <div class="val green">8</div>
+                        <div class="val green">9</div>
                         <div class="lbl">Data Pages</div>
                         <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">dashboard, oee,
-                            andon,<br>downtime, defective, log×3</div>
+                            andon,<br>downtime, defective, log×3,<br>offline_monitor</div>
                     </div>
                     <div class="metric-card">
                         <div class="val">1</div>
@@ -2102,7 +2133,7 @@
                             anomaly,<br>maintenance, optimization,<br>stream, report×2</div>
                     </div>
                     <div class="metric-card">
-                        <div class="val yellow">8</div>
+                        <div class="val yellow">9</div>
                         <div class="lbl">Stream APIs</div>
                         <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">SSE 스트림 엔드포인트<br>각 페이지별 전용
                             스트림</div>
@@ -2123,7 +2154,7 @@
 
                 <div class="file-list-grid">
                     <div class="file-list-card">
-                        <div class="file-list-card__label">Data Pages (9)</div>
+                        <div class="file-list-card__label">Data Pages (10)</div>
                         <ul>
                             <li><span class="dot"></span>dashboard_2.php</li>
                             <li><span class="dot"></span>ai_dashboard_2.php</li>
@@ -2134,6 +2165,7 @@
                             <li><span class="dot"></span>log_oee_2.php</li>
                             <li><span class="dot"></span>log_oee_hourly_2.php</li>
                             <li><span class="dot"></span>log_oee_row_2.php</li>
+                            <li><span class="dot" style="background:var(--accent2)"></span><strong style="color:var(--accent2)">data_offline_2.php</strong> <span class="tag-new">NEW</span></li>
                         </ul>
                     </div>
                     <div class="file-list-card">
@@ -2151,7 +2183,7 @@
                         </ul>
                     </div>
                     <div class="file-list-card">
-                        <div class="file-list-card__label">Stream APIs (8)</div>
+                        <div class="file-list-card__label">Stream APIs (9)</div>
                         <ul>
                             <li><span class="dot"></span>dashboard_stream_2.php</li>
                             <li><span class="dot"></span>data_oee_stream_2.php</li>
@@ -2161,6 +2193,7 @@
                             <li><span class="dot"></span>log_oee_stream_2.php</li>
                             <li><span class="dot"></span>log_oee_hourly_stream_2.php</li>
                             <li><span class="dot"></span>log_oee_row_stream_2.php</li>
+                            <li><span class="dot" style="background:var(--accent2)"></span><strong style="color:var(--accent2)">data_offline_stream_2.php</strong> <span class="tag-new">NEW</span></li>
                         </ul>
                     </div>
                     <div class="file-list-card">
@@ -2202,7 +2235,7 @@
         </div><!-- /page-wrap -->
 
         <div class="doc-footer">
-            <strong style="color:var(--accent)">OEE SCI V2</strong> &nbsp;·&nbsp; SUNTECH &nbsp;·&nbsp; 2026-04-03
+            <strong style="color:var(--accent)">OEE SCI V2</strong> &nbsp;·&nbsp; SUNTECH &nbsp;·&nbsp; 2026-04-14
             &nbsp;·&nbsp; AI 도입 전략 &amp; 리디자인 통합 보고서
         </div>
     </div><!-- /doc-main -->
@@ -2255,7 +2288,7 @@
     <div class="ai-modal-overlay" id="redesignDataModal" role="dialog" aria-modal="true">
         <div class="ai-modal">
             <button class="ai-modal__close" id="redesignDataClose" aria-label="닫기">✕</button>
-            <div class="ai-modal__title">리디자인 — Data 영역 (7종)</div>
+            <div class="ai-modal__title">리디자인 — Data 영역 (8종)</div>
             <div class="ai-modal__group">
                 <div class="ai-modal__group-title">데이터 모니터링 페이지 — 사이니지 풀스크린 리디자인</div>
                 <ul class="ai-modal__list">
@@ -2273,6 +2306,8 @@
                             class="ai-modal__file">log_oee_hourly_2.php</span></li>
                     <li><span class="ai-modal__num">⑦</span><span class="ai-modal__name">OEE 행 로그</span><span
                             class="ai-modal__file">log_oee_row_2.php</span></li>
+                    <li><span class="ai-modal__num">⑧</span><span class="ai-modal__name" style="color:var(--accent2)">미수신 머신 모니터 🔴</span><span
+                            class="ai-modal__file">data_offline_2.php</span></li>
                 </ul>
             </div>
         </div>

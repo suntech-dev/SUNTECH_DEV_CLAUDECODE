@@ -42,7 +42,8 @@ function _nav_cls(string $key, string $active): string
             <a href="<?= $_d ?>data_oee_2.php" class="<?= _nav_cls('oee',      $_nav) ?>">OEE Monitoring</a>
             <a href="<?= $_d ?>data_andon_2.php" class="<?= _nav_cls('andon_m',  $_nav) ?>">Andon Monitoring</a>
             <a href="<?= $_d ?>data_downtime_2.php" class="<?= _nav_cls('downtime_m', $_nav) ?>">Downtime Monitoring</a>
-            <a href="<?= $_d ?>data_defective_2.php" class="<?= _nav_cls('defective_m', $_nav) ?>">Defective Monitoring</a>
+            <a href="<?= $_d ?>data_defective_2.php" class="<?= _nav_cls('defective_m',    $_nav) ?>">Defective Monitoring</a>
+            <a href="<?= $_d ?>data_offline_2.php"  class="<?= _nav_cls('offline_monitor', $_nav) ?>">Offline Monitor</a>
         </div>
         <div class="nav-drawer__divider"></div>
         <div class="nav-drawer__group">

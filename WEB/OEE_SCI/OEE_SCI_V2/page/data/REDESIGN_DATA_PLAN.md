@@ -377,6 +377,7 @@ document.querySelector('.oee-table-wrap')?._refreshStickyColumns?.();
 | log_oee_hourly | [x] | [x] | [x] | [x]  |
 | log_oee_row    | [x] | [x] | [x] | [x]  |
 | dashboard      | [x] | [x] | [x] | [x]  |
+| data_offline   | [x] | [x] | [x] | [x]  |
 
 ---
 
@@ -395,3 +396,4 @@ document.querySelector('.oee-table-wrap')?._refreshStickyColumns?.();
 | 2026-03-25 | log_oee_2 구현 완료. log_oee_row_2 구조 그대로 적용. 네임스페이스 logRow→logOee로 변경. 컬럼 33개(work_hour 제거, update_date 추가, idx visible:false). SSE proc/log_oee_stream.php 재사용. Playwright 6단계 검증 PASS (모든 토글 상태 1080px 초과 없음). |
 | 2026-03-25 | 테이블 컬럼 고정(sticky column) 구현 완료. CSS `position: sticky` 미작동(overflow:hidden 부모 체인 원인) → JS scroll 리스너 + `transform: translateX` 방식으로 해결. log_oee_row_2, log_oee_hourly_2, log_oee_2 3개 페이지 모두 적용. Playwright 검증: scrollLeft=400 에서 tdLeft=wrapLeft(diff=0) 확인. |
 | 2026-03-30 | dashboard_2 (사이니지 전용 대시보드) 기능 점검 및 버그 3건 수정. `proc/dashboard_stream_2.php` 수정. Playwright로 2026-03-06 데이터 검증 완료. ▶ 상세는 PERFORMANCE_OPTIMIZATION.md `5-4` 참조. |
+| 2026-04-14 | data_offline_2 신규 구현. 미수신 머신 진단 페이지. SSE 30초 인터벌. 원인 자동 분류 4단계(never_connected / today_no_data / uart_suspect / power_off_suspect). LEFT JOIN NOT EXISTS 패턴으로 기준일 미수신 머신 조회. nav-drawer Offline Monitor 링크 추가. |

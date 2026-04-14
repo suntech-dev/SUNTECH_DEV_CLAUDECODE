@@ -1,0 +1,417 @@
+/* data_offline_2.css — 미수신 머신 모니터링 페이지 전용 스타일 */
+
+/* ─── 전체 고정 ─────────────────────────────────────────── */
+html,
+body {
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+/* ─── Signage Header ─────────────────────────────────────── */
+.signage-header {
+    height: 52px;
+    background: var(--sap-surface-1);
+    border-bottom: 1px solid var(--sap-border-neutral);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.signage-header__title {
+    font-size: var(--sap-font-size-lg);
+    font-weight: var(--sap-font-weight-semibold);
+    color: var(--sap-text-primary);
+    white-space: nowrap;
+    margin-right: 4px;
+}
+
+.signage-header__filters {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+}
+
+.signage-header__filters .fiori-select,
+.signage-header__filters .fiori-input {
+    height: 30px;
+    font-size: var(--sap-font-size-sm);
+    padding: 0 6px;
+}
+
+.signage-header__filters #offlineFactoryFilter,
+.signage-header__filters #offlineLineFilter {
+    width: 140px;
+}
+
+.signage-header__filters #offlineRefDate {
+    width: 140px;
+    height: 30px;
+    font-size: var(--sap-font-size-sm);
+    padding: 0 6px;
+}
+
+.signage-header .fiori-btn {
+    height: 30px;
+    padding: 0 10px;
+    font-size: var(--sap-font-size-sm);
+    white-space: nowrap;
+}
+
+/* ─── 햄버거 버튼 ───────────────────────────────────────── */
+.nav-drawer-btn {
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--sap-text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--sap-radius-sm);
+    flex-shrink: 0;
+}
+
+.nav-drawer-btn:hover {
+    background: var(--sap-surface-3);
+}
+
+/* ─── 드로어 오버레이 ───────────────────────────────────── */
+.nav-drawer-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .3);
+    z-index: 900;
+}
+
+.nav-drawer-overlay.is-open {
+    display: block;
+}
+
+/* ─── 드로어 패널 ───────────────────────────────────────── */
+.nav-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--sap-surface-1);
+    border-right: 1px solid var(--sap-border-neutral);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, .15);
+    z-index: 901;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.nav-drawer.is-open {
+    transform: translateX(0);
+}
+
+.nav-drawer__header {
+    padding: 14px 16px;
+    font-size: var(--sap-font-size-md);
+    font-weight: var(--sap-font-weight-semibold);
+    color: var(--sap-text-primary);
+    border-bottom: 1px solid var(--sap-border-neutral);
+    flex-shrink: 0;
+}
+
+.nav-drawer__menu {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+}
+
+.nav-drawer__group-title {
+    padding: 6px 16px 2px;
+    font-size: var(--sap-font-size-xs);
+    color: var(--sap-text-secondary);
+    font-weight: var(--sap-font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.nav-drawer__link {
+    display: block;
+    padding: 7px 16px 7px 24px;
+    font-size: var(--sap-font-size-sm);
+    color: var(--sap-text-primary);
+    text-decoration: none;
+}
+
+.nav-drawer__link:hover {
+    background: var(--sap-surface-3);
+}
+
+.nav-drawer__link--active {
+    color: var(--sap-color-accent);
+    font-weight: var(--sap-font-weight-semibold);
+}
+
+.nav-drawer__divider {
+    height: 1px;
+    background: var(--sap-border-neutral);
+    margin: 6px 0;
+}
+
+/* ─── 메인 그리드 ─────────────────────────────────────── */
+.offline-main {
+    height: calc(100vh - 52px);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 5px;
+    padding: 5px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* ─── Row A: 통계 카드 행 ────────────────────────────── */
+.offline-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+}
+
+/* ─── 통계 카드 ─────────────────────────────────────── */
+.offline-stat-card {
+    background: var(--sap-surface-2);
+    border: 1px solid var(--sap-border-subtle);
+    border-radius: var(--sap-radius-md);
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-left: 3px solid var(--sap-border-neutral);
+    min-height: 0;
+}
+
+.offline-stat-card--total   { border-left-color: var(--sap-status-info); }
+.offline-stat-card--active  { border-left-color: var(--sap-status-success); }
+.offline-stat-card--offline { border-left-color: var(--sap-status-error); }
+.offline-stat-card--never   { border-left-color: var(--sap-text-secondary); }
+
+.offline-stat-value {
+    font-size: 1.6rem;
+    font-weight: var(--sap-font-weight-bold);
+    color: var(--sap-text-primary);
+    line-height: 1.2;
+}
+
+.offline-stat-label {
+    font-size: var(--sap-font-size-xs);
+    color: var(--sap-text-secondary);
+    margin-top: 3px;
+}
+
+/* ─── Row B: 테이블 영역 ─────────────────────────────── */
+.offline-table-row {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+/* ─── 카드 공통 ──────────────────────────────────────── */
+.offline-main .fiori-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+.offline-main .fiori-card__header {
+    flex-shrink: 0;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.offline-main .fiori-card__title {
+    font-size: var(--sap-font-size-md);
+}
+
+.offline-main .fiori-card__content {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0;
+}
+
+/* ─── 테이블 래퍼 ────────────────────────────────────── */
+.offline-table-wrap {
+    overflow: auto;
+    height: 100%;
+}
+
+.offline-table-wrap .fiori-table th,
+.offline-table-wrap .fiori-table td {
+    height: 44px;
+    padding-top: 0;
+    padding-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+}
+
+/* ─── 원인 배지 ──────────────────────────────────────── */
+.cause-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: var(--sap-font-size-xs);
+    font-weight: var(--sap-font-weight-semibold);
+    white-space: nowrap;
+}
+
+.cause-badge--never {
+    background: rgba(130, 130, 130, .15);
+    color: var(--sap-text-secondary);
+}
+
+.cause-badge--today {
+    background: rgba(0, 112, 242, .12);
+    color: #0070f2;
+}
+
+.cause-badge--uart {
+    background: rgba(226, 107, 10, .15);
+    color: #e26b0a;
+}
+
+.cause-badge--power {
+    background: rgba(218, 30, 40, .12);
+    color: var(--sap-status-error);
+}
+
+/* ─── 머신 타입 배지 ─────────────────────────────────── */
+.type-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: var(--sap-font-size-xs);
+    font-weight: var(--sap-font-weight-semibold);
+}
+
+.type-badge--P {
+    background: rgba(0, 112, 242, .12);
+    color: #0070f2;
+}
+
+.type-badge--E {
+    background: rgba(124, 58, 237, .12);
+    color: #7c3aed;
+}
+
+/* ─── 상태 표시 ──────────────────────────────────────── */
+.offline-status-bar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--sap-font-size-xs);
+    color: var(--sap-status-success);
+}
+
+.offline-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--sap-status-success);
+    animation: pulse 2s infinite;
+    flex-shrink: 0;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+}
+
+/* ─── 기준 날짜 표시 뱃지 ────────────────────────────── */
+.ref-date-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    background: var(--sap-surface-3);
+    border-radius: 10px;
+    font-size: var(--sap-font-size-xs);
+    color: var(--sap-text-secondary);
+    border: 1px solid var(--sap-border-subtle);
+    white-space: nowrap;
+}
+
+/* ─── Row C: 페이지네이션 ─────────────────────────────── */
+.offline-pagination-row {
+    flex-shrink: 0;
+}
+
+/* ─── 스크롤바 ───────────────────────────────────────── */
+.offline-main ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.offline-main ::-webkit-scrollbar-track {
+    background: var(--sap-surface-3);
+}
+
+.offline-main ::-webkit-scrollbar-thumb {
+    background: var(--sap-border-neutral);
+    border-radius: 2px;
+}
+
+/* ─── 빈 상태 ────────────────────────────────────────── */
+.offline-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--sap-spacing-xl);
+    color: var(--sap-text-secondary);
+    gap: 8px;
+}
+
+.offline-empty__icon {
+    font-size: 2.5rem;
+    opacity: .5;
+}
+
+.offline-empty__text {
+    font-size: var(--sap-font-size-md);
+    font-weight: var(--sap-font-weight-semibold);
+}
+
+.offline-empty__sub {
+    font-size: var(--sap-font-size-sm);
+}
+
+/* ─── 경과 시간 표시 ─────────────────────────────────── */
+.time-ago {
+    font-size: var(--sap-font-size-xs);
+    color: var(--sap-text-secondary);
+}
+
+.time-ago--critical {
+    color: var(--sap-status-error);
+    font-weight: var(--sap-font-weight-semibold);
+}
+
+.time-ago--warning {
+    color: #e26b0a;
+    font-weight: var(--sap-font-weight-semibold);
+}

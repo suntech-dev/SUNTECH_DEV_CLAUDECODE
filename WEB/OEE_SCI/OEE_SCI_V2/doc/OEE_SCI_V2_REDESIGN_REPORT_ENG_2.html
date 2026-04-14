@@ -1245,7 +1245,7 @@
                         <div class="lbl">New AI Features</div>
                     </div>
                     <div class="metric-card" id="redesign-data-trigger" title="Click to view full page list">
-                        <div class="val green">7</div>
+                        <div class="val green">9</div>
                         <div class="lbl">Redesigned Pages<br>(data area)</div>
                     </div>
                     <div class="metric-card" id="redesign-manage-trigger" title="Click to view full page list">
@@ -1400,6 +1400,12 @@
                                 <td>AI real-time streaming feed<span class="tag-new">NEW</span><br><span
                                         style="font-size:11.5px;color:var(--text-muted)">SSE-based, slide-in cards, 15s
                                         auto-refresh, up to 15 feed items</span></td>
+                            </tr>
+                            <tr>
+                                <td class="col-area">Offline Machine Diagnostics</td>
+                                <td class="col-v1">None</td>
+                                <td>Offline Monitor (data_offline_2.php)<span class="tag-new">NEW</span><br><span
+                                        style="font-size:11.5px;color:var(--text-muted)">Auto-classifies Power OFF / UART disconnect causes, shows last received time &amp; elapsed duration, retroactive date queries supported</span></td>
                             </tr>
                             <tr>
                                 <td class="col-area">Reports</td>
@@ -1621,7 +1627,7 @@
                 <div class="feature-block">
                     <div class="feature-block__header">
                         <span class="fb-badge-new">NEW</span>
-                        <span class="feature-block__title">Data Monitoring Pages Redesigned (_2 versions, 7
+                        <span class="feature-block__title">Data Monitoring Pages Redesigned (_2 versions, 8
                             total)</span>
                     </div>
                     <div class="feature-block__body">
@@ -1658,6 +1664,11 @@
                                 style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px">
                                 <div style="font-size:15px;margin-bottom:3px">📋</div>log_oee_row_2
                             </div>
+                            <div
+                                style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;font-size:12px;border-color:var(--accent2)">
+                                <div style="font-size:15px;margin-bottom:3px">🔴</div>data_offline_2
+                                <span class="tag-new" style="display:block;margin:4px auto 0;width:fit-content">NEW</span>
+                            </div>
                         </div>
                         <ul class="fb-points">
                             <li>Fixed 100% viewport height — no scrolling</li>
@@ -1669,6 +1680,26 @@
                             <div class="screenshot-label">data_oee_2.php — Chart + Table View</div>
                             <img class="screenshot-img" src="images/data_oee_2.jpeg" alt="data_oee_2">
                         </div>
+                    </div>
+                </div>
+
+                <!-- Offline Machine Monitor — NEW -->
+                <div class="feature-block">
+                    <div class="feature-block__header">
+                        <span class="fb-badge-new">NEW</span>
+                        <span class="feature-block__title">Offline Machine Monitor — data_offline_2.php</span>
+                    </div>
+                    <div class="feature-block__body">
+                        <p class="feature-block__desc">Detects machines that have not transmitted OEE data on a given
+                            date and automatically classifies the probable cause. Uses LEFT JOIN between all
+                            <code>info_machine</code> records and <code>data_oee</code> to isolate silent machines.</p>
+                        <ul class="fb-points">
+                            <li>4-level auto cause classification — ⚪ Never Connected / 🔵 Today No Data / 🟠 UART Cable Check / 🔴 Power OFF Suspected</li>
+                            <li>4 summary stat cards — Total Active / With Data Today / Offline / Never Connected</li>
+                            <li>Reference date selector — defaults to today; supports retroactive past-date queries</li>
+                            <li>SSE 30-second auto-refresh (diagnostic purpose, minimal server load)</li>
+                            <li>Factory/line filter + last data received time + elapsed time display</li>
+                        </ul>
                     </div>
                 </div>
 
@@ -2083,10 +2114,10 @@
                 <!-- Category Summary Metrics -->
                 <div class="metrics-row" style="margin-bottom:28px">
                     <div class="metric-card">
-                        <div class="val green">8</div>
+                        <div class="val green">9</div>
                         <div class="lbl">Data Pages</div>
                         <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">dashboard, oee,<br>andon,
-                            downtime, defective, log×3</div>
+                            downtime, defective, log×3,<br>offline_monitor</div>
                     </div>
                     <div class="metric-card">
                         <div class="val">1</div>
@@ -2101,7 +2132,7 @@
                             anomaly,<br>maintenance, optimization,<br>stream, report×2</div>
                     </div>
                     <div class="metric-card">
-                        <div class="val yellow">8</div>
+                        <div class="val yellow">9</div>
                         <div class="lbl">Stream APIs</div>
                         <div style="font-size:10.5px;color:var(--text-muted);margin-top:4px">SSE stream
                             endpoints<br>dedicated per page</div>
@@ -2122,7 +2153,7 @@
 
                 <div class="file-list-grid">
                     <div class="file-list-card">
-                        <div class="file-list-card__label">Data Pages (9)</div>
+                        <div class="file-list-card__label">Data Pages (10)</div>
                         <ul>
                             <li><span class="dot"></span>dashboard_2.php</li>
                             <li><span class="dot"></span>ai_dashboard_2.php</li>
@@ -2130,6 +2161,7 @@
                             <li><span class="dot"></span>data_andon_2.php</li>
                             <li><span class="dot"></span>data_downtime_2.php</li>
                             <li><span class="dot"></span>data_defective_2.php</li>
+                            <li><span class="dot"></span>data_offline_2.php</li>
                             <li><span class="dot"></span>log_oee_2.php</li>
                             <li><span class="dot"></span>log_oee_hourly_2.php</li>
                             <li><span class="dot"></span>log_oee_row_2.php</li>
@@ -2150,13 +2182,14 @@
                         </ul>
                     </div>
                     <div class="file-list-card">
-                        <div class="file-list-card__label">Stream APIs (8)</div>
+                        <div class="file-list-card__label">Stream APIs (9)</div>
                         <ul>
                             <li><span class="dot"></span>dashboard_stream_2.php</li>
                             <li><span class="dot"></span>data_oee_stream_2.php</li>
                             <li><span class="dot"></span>data_andon_stream_2.php</li>
                             <li><span class="dot"></span>data_downtime_stream_2.php</li>
                             <li><span class="dot"></span>data_defective_stream_2.php</li>
+                            <li><span class="dot"></span>data_offline_stream_2.php</li>
                             <li><span class="dot"></span>log_oee_stream_2.php</li>
                             <li><span class="dot"></span>log_oee_hourly_stream_2.php</li>
                             <li><span class="dot"></span>log_oee_row_stream_2.php</li>
@@ -2201,7 +2234,7 @@
         </div><!-- /page-wrap -->
 
         <div class="doc-footer">
-            <strong style="color:var(--accent)">OEE SCI V2</strong> &nbsp;·&nbsp; SUNTECH &nbsp;·&nbsp; 2026-04-03
+            <strong style="color:var(--accent)">OEE SCI V2</strong> &nbsp;·&nbsp; SUNTECH &nbsp;·&nbsp; 2026-04-14
             &nbsp;·&nbsp; AI Strategy &amp; Redesign Integrated Report
         </div>
     </div><!-- /doc-main -->
@@ -2254,7 +2287,7 @@
     <div class="ai-modal-overlay" id="redesignDataModal" role="dialog" aria-modal="true">
         <div class="ai-modal">
             <button class="ai-modal__close" id="redesignDataClose" aria-label="Close">✕</button>
-            <div class="ai-modal__title">Redesigned Pages — Data Area (7)</div>
+            <div class="ai-modal__title">Redesigned Pages — Data Area (8)</div>
             <div class="ai-modal__group">
                 <div class="ai-modal__group-title">Data Monitoring Pages — Signage Fullscreen Redesign</div>
                 <ul class="ai-modal__list">
@@ -2272,6 +2305,8 @@
                             class="ai-modal__file">log_oee_hourly_2.php</span></li>
                     <li><span class="ai-modal__num">⑦</span><span class="ai-modal__name">OEE Row Log</span><span
                             class="ai-modal__file">log_oee_row_2.php</span></li>
+                    <li><span class="ai-modal__num">⑧</span><span class="ai-modal__name">Offline Machine Monitor</span><span
+                            class="ai-modal__file">data_offline_2.php</span></li>
                 </ul>
             </div>
         </div>
