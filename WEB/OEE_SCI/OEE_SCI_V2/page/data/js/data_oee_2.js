@@ -54,8 +54,8 @@ const chartColors = {
     quality:      '#e26b0a',   // 품질 (주황)
     target:       '#da1e28',   // 목표선 (빨강)
     production:   '#7c3aed',   // 생산량 (보라)
-    excellent:    '#30914c',   // 우수 등급 ≥85% (초록)
-    good:         '#0070f2',   // 양호 등급 70~84% (파랑)
+    excellent:    '#30914c',   // 우수 등급 ≥85% (초록) ==> ≥81% 로 조정함
+    good:         '#0070f2',   // 양호 등급 70~84% (파랑) ==> 70~80% 로 조정함
     fair:         '#e26b0a',   // 보통 등급 50~69% (주황)
     poor:         '#da1e28'    // 불량 등급 <50% (빨강)
 };
@@ -366,10 +366,19 @@ async function loadInitialData() {
 
 // 통계 카드와 테이블에 로딩 중 기본값('-') 표시
 function displayEmptyState() {
-    // OEE 주요 지표 카드 요소들을 '-'로 초기화
-    ['overallOee', 'availability', 'performance', 'quality', 'currentShiftOee', 'previousDayOee'].forEach(function (id) {
+    // OEE 주요 지표 카드 요소들을 '-'로 초기화하고 배경색도 기본값으로 복원
+    ['overallOee', 'availability', 'performance', 'quality', 'currentShiftOee'].forEach(function (id) {
         var el = document.getElementById(id);
-        if (el) el.textContent = '-';
+        if (!el) return;
+        el.textContent = '-';
+        var card = el.closest('.stat-card');
+        if (!card) return;
+        card.style.background = '';
+        card.style.border     = '';
+        var valueEl = card.querySelector('.stat-value');
+        var labelEl = card.querySelector('.stat-label');
+        if (valueEl) valueEl.style.color = '';
+        if (labelEl) labelEl.style.color = '';
     });
     // OEE 상세 수치 요소들도 '-'로 초기화
     ['runtime', 'plannedTime', 'availabilityDetail', 'actualOutput', 'theoreticalOutput',
@@ -508,7 +517,9 @@ function createOeeGradeChart() {
         type: 'doughnut',
         data: {
             // OEE 등급: ≥85% 우수, 70~84% 양호, 50~69% 보통, <50% 불량
-            labels: [' >=85%', ' 70-84%', ' 50-69%', ' <50%'],
+            // OEE 등급 조정: ≥81% 우수, 70~80% 양호, 50~69% 보통, <50% 불량
+            // labels: [' >=85%', ' 70-84%', ' 50-69%', ' <50%'],
+            labels: [' >=81%', ' 70-80%', ' 50-69%', ' <50%'],
             datasets: [{
                 label: 'OEE Grade',
                 data: [0, 0, 0, 0],
@@ -647,6 +658,15 @@ function formatPercentage(value) {
     return (n % 1 === 0 ? Math.floor(n) : n) + '%';
 }
 
+// OEE % 값에 따라 Grade Distribution 컬러를 반환 (≥81% 초록 / 70~80% 파랑 / 50~69% 주황 / <50% 빨강)
+function getOeeGradeColor(value) {
+    var v = parseFloat(value) || 0;
+    if (v >= 81) return chartColors.excellent;  // #30914c
+    if (v >= 70) return chartColors.good;        // #0070f2
+    if (v >= 50) return chartColors.fair;        // #e26b0a
+    return chartColors.poor;                     // #da1e28
+}
+
 // 숫자값을 지정 소수 자릿수로 포맷 (기본 2자리)
 function formatDecimal(value, decimals) {
     var n = parseFloat(value);
@@ -656,19 +676,28 @@ function formatDecimal(value, decimals) {
 // SSE로 수신된 통계 데이터로 상단 OEE 통계 카드를 갱신
 function updateStatCardsFromAPI(s) {
     if (!s) return;
-    // DOM 요소 ID와 포맷된 표시 값의 매핑
-    var map = {
-        overallOee:      formatPercentage(s.overall_oee || 0),        // 종합 OEE
-        availability:    formatPercentage(s.availability || 0),        // 가용성
-        performance:     formatPercentage(s.performance || 0),         // 성능
-        quality:         formatPercentage(s.quality || 0),             // 품질
-        currentShiftOee: formatPercentage(s.current_shift_oee || 0),  // 현재 교대 OEE
-        previousDayOee:  formatPercentage(s.previous_day_oee || 0)    // 전일 OEE
+    // DOM 요소 ID와 원시 수치값의 매핑 (배경색 계산에 원시값 필요)
+    var values = {
+        overallOee:      parseFloat(s.overall_oee)      || 0,   // 종합 OEE
+        availability:    parseFloat(s.availability)     || 0,   // 가용성
+        performance:     parseFloat(s.performance)      || 0,   // 성능
+        quality:         parseFloat(s.quality)          || 0,   // 품질
+        currentShiftOee: parseFloat(s.current_shift_oee) || 0  // 현재 교대 OEE
     };
-    // 각 DOM 요소의 텍스트를 매핑된 값으로 일괄 업데이트
-    Object.keys(map).forEach(function (id) {
+    // 각 카드: 텍스트 업데이트 + OEE Grade 배경색 + 흰색 텍스트 적용
+    Object.keys(values).forEach(function (id) {
         var el = document.getElementById(id);
-        if (el) el.textContent = map[id];
+        if (!el) return;
+        el.textContent = formatPercentage(values[id]);
+        var card = el.closest('.stat-card');
+        if (!card) return;
+        var color = getOeeGradeColor(values[id]);
+        card.style.background = color;
+        card.style.border     = 'none';
+        var valueEl = card.querySelector('.stat-value');
+        var labelEl = card.querySelector('.stat-label');
+        if (valueEl) valueEl.style.color = '#ffffff';
+        if (labelEl) labelEl.style.color = 'rgba(255,255,255,0.85)';
     });
 }
 
@@ -737,8 +766,10 @@ function updateTableFromAPI(list) {
     // 각 행 렌더링: OEE 수치별 등급 배지 색상 적용
     paged.forEach(function (oee) {
         // OEE 등급 배지: ≥85% 성공(초록), ≥70% 경고(주황), 미만 오류(빨강)
+        // OEE 등급 배지 조정: ≥81% 성공(초록), ≥70% 경고(주황), 미만 오류(빨강)
         var cls = 'fiori-badge';
-        if (parseFloat(oee.overall_oee) >= 85) cls += ' fiori-badge--success';
+        // if (parseFloat(oee.overall_oee) >= 85) cls += ' fiori-badge--success';
+        if (parseFloat(oee.overall_oee) >= 81) cls += ' fiori-badge--success';
         else if (parseFloat(oee.overall_oee) >= 70) cls += ' fiori-badge--warning';
         else cls += ' fiori-badge--error';
 
@@ -748,13 +779,10 @@ function updateTableFromAPI(list) {
             '<td>' + (oee.machine_no || '-') + '</td>' +
             '<td>' + (oee.factory_name || '') + ' / ' + (oee.line_name || '') + '</td>' +
             '<td>' + shift + '</td>' +
-            '<td><span class="' + cls + '">' + (oee.overall_oee || 0) + '%</span></td>' +
-            // 가용성: 항상 success(초록) 배지
-            '<td><span class="fiori-badge fiori-badge--success">' + (oee.availability || 0) + '%</span></td>' +
-            // 성능: info(파랑) 배지
-            '<td><span class="fiori-badge fiori-badge--info">' + (oee.performance || 0) + '%</span></td>' +
-            // 품질: warning(주황) 배지
-            '<td><span class="fiori-badge fiori-badge--warning">' + (oee.quality || 0) + '%</span></td>' +
+            '<td>' + (oee.overall_oee || 0) + '%</td>' +
+            '<td>' + (oee.availability || 0) + '%</td>' +
+            '<td>' + (oee.performance || 0) + '%</td>' +
+            '<td>' + (oee.quality || 0) + '%</td>' +
             '<td>' + (oee.work_date || '-') + '</td>' +
             '<td>' + (oee.update_date || '-') + '</td>' +
             '<td><button class="fiori-btn fiori-btn--tertiary oee-details-btn" style="padding:.25rem .5rem;font-size:.75rem;" data-oee-data=\'' + JSON.stringify(oee).replace(/'/g, "&#39;") + '\'>Details</button></td>';
@@ -971,8 +999,8 @@ function updateMachineOeeChart(stat) {
 function updateOeeGradeChart(s) {
     if (!charts.oeeGrade || !s) return;
     charts.oeeGrade.data.datasets[0].data = [
-        parseInt(s.excellent_count) || 0,  // ≥85%
-        parseInt(s.good_count)      || 0,  // 70~84%
+        parseInt(s.excellent_count) || 0,  // ≥85% ==> ≥81% 로 조정함
+        parseInt(s.good_count)      || 0,  // 70~84% ==> 70~80% 로 조정함
         parseInt(s.fair_count)      || 0,  // 50~69%
         parseInt(s.poor_count)      || 0   // <50%
     ];

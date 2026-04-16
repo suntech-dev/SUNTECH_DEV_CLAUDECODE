@@ -29,10 +29,10 @@ let allListData  = [];
 
 /* ── 원인 분류 상수 ─────────────────────────────────────── */
 const CAUSE = {
-    never_connected : { label: '신규/미연결',          badgeClass: 'cause-badge--never', icon: '⚪' },
-    today_no_data   : { label: '금일 미수신',           badgeClass: 'cause-badge--today', icon: '🔵' },
-    uart_suspect    : { label: 'UART 케이블 점검 필요', badgeClass: 'cause-badge--uart',  icon: '🟠' },
-    power_off_suspect: { label: '전원 OFF 의심',        badgeClass: 'cause-badge--power', icon: '🔴' },
+    never_connected : { label: 'New/Unconnected',          badgeClass: 'cause-badge--never', icon: '⚪' },
+    today_no_data   : { label: 'Not received today',           badgeClass: 'cause-badge--today', icon: '🔵' },
+    uart_suspect    : { label: 'UART cable needs checking', badgeClass: 'cause-badge--uart',  icon: '🟠' },
+    power_off_suspect: { label: 'Suspected power off',        badgeClass: 'cause-badge--power', icon: '🔴' },
 };
 
 /* ── 머신 타입 라벨 ─────────────────────────────────────── */
@@ -281,9 +281,9 @@ function setText(id, val) {
 function formatMinutesAgo(minutes) {
     if (minutes === null || minutes === undefined) return '-';
     const m = Number(minutes);
-    if (m < 60)   return m + '분 전';
-    if (m < 1440) return Math.floor(m / 60) + '시간 ' + (m % 60) + '분 전';
-    return Math.floor(m / 1440) + '일 전';
+    if (m < 60)   return m + 'minutes ago';
+    if (m < 1440) return Math.floor(m / 60) + 'hour ' + (m % 60) + 'minutes ago';
+    return Math.floor(m / 1440) + 'days ago';
 }
 
 function getTimeClass(minutes) {
@@ -318,8 +318,8 @@ function renderTable() {
                 <td colspan="7">
                     <div class="offline-empty">
                         <div class="offline-empty__icon">✅</div>
-                        <div class="offline-empty__text">미수신 머신 없음</div>
-                        <div class="offline-empty__sub">모든 활성 머신이 해당 날짜에 데이터를 전송했습니다.</div>
+                        <div class="offline-empty__text">No receiving machine</div>
+                        <div class="offline-empty__sub">All active machines transmitted data on that date..</div>
                     </div>
                 </td>
             </tr>`;

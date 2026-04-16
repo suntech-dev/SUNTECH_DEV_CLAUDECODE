@@ -94,8 +94,9 @@ if ($machine_filter !== '') {
     $params[] = $machine_filter;
 }
 
-// WHERE 절 조립 (있으면 'WHERE ...', 없으면 빈 문자열)
-$where_sql = $where_parts ? 'WHERE ' . implode(' AND ', $where_parts) : '';
+// WHERE 절 조립: Inventory(line_idx=99)는 항상 제외 후 나머지 필터 조합
+$where_parts[] = 'il.idx != 99';  // Inventory 라인 제외
+$where_sql = 'WHERE ' . implode(' AND ', $where_parts);
 
 try {
     // ════════════════════════════════════════════════════════

@@ -33,9 +33,10 @@ static char uartEmbParsor(COUNT *ptrCount);
 /* ================================================================
  * uartJsonLoop — 메인 루프에서 CountFunc() 를 통해 호출
  *
- * 프로토콜: "actual_qty;cycle_time_s;thread_breakage_qty;motor_runtime_s;\r\n"
- * 종료 조건: 4번째 ';' 수신
- * '\r', '\n' 은 버퍼 리셋 후 무시 (MCSTATUS hex 잔류 바이트 제거)
+ * 프로토콜 (후행 ';' 있는 경우): "actual_qty;cycle_time_s;thread_breakage_qty;motor_runtime_s;\r\n"
+ * 프로토콜 (후행 ';' 없는 경우): "actual_qty;cycle_time_s;thread_breakage_qty;motor_runtime_s\r\n"
+ *   → 실제 자수기 장비는 후행 ';' 없이 전송 — \r\n 도달 시 sc==3 보완 처리
+ * '\r', '\n' 은 sc==3 이면 파싱 시도, 그 외 버퍼 리셋
  * index=0 에서 숫자가 아닌 바이트는 무시 (echo 루프백 쓰레기 방어)
  * index>0 에서 숫자·';' 외 바이트는 즉시 버퍼 리셋 (MCSTATUS "0x??" 오염 방지)
  * ================================================================ */
@@ -47,13 +48,58 @@ uint8 uartJsonLoop()
     {
         char c = UART_UartGetChar();
 
-        /* '\r' / '\n' : 줄 끝 → 누적 중인 불완전 버퍼 리셋.
-         * MCSTATUS 줄 끝의 hex 숫자 잔류("34" 등)가 다음 줄과 합쳐지는 것을 방지.
-         * 유효 패킷은 4번째 ';' 수신 시 이미 파싱·리셋 완료되므로 영향 없음. */
+        /* '\r' / '\n' : 줄 끝 처리.
+         * 자수기는 후행 ';' 없이 "2;82;0;75\r\n" 형태로 전송한다.
+         * → 세미콜론이 3개인 경우: 후행 ';' 를 보완하여 파싱 시도.
+         * → 그 외(MCSTATUS hex 잔류 등): 버퍼 리셋.
+         * 후행 ';' 가 있는 경우("2;82;0;75;\r\n")는 4번째 ';' 수신 시 이미
+         * 파싱·리셋 완료 → \r\n 도달 시 index=0 → 이 블록 미실행. */
         if (c == '\r' || c == '\n' || c == '\0')
         {
             if (g_UART_buff_index > 0)
             {
+                /* 세미콜론 개수 확인 */
+                uint8 sc = 0;
+                int   si;
+                for (si = 0; si < g_UART_buff_index; si++)
+                {
+                    if (g_UART_buff[si] == ';') sc++;
+                }
+
+                if (sc == 3 && g_UART_buff_index < UART_BUFFER_SIZE - 2)
+                {
+                    /* 후행 ';' 보완 후 파싱 시도 */
+                    g_UART_buff[g_UART_buff_index++] = ';';
+                    g_UART_buff[g_UART_buff_index]   = '\0';
+
+                    if (uartEmbParsor(ptrCount))
+                    {
+                        if (g_bUartTestMode)
+                        {
+                            uartTestAddLine(g_UART_buff);
+                        }
+                        g_updateCountMenu = TRUE;
+                        makeAndonPatternCount();
+                        ADD_CONVERT_TO_4BYTE(ptrCount->patternActualH, ptrCount->patternActualL,
+                                             ptrCount->patternCount * 10u);
+                        ptrCount->patternCount = 0;
+                        ForcefullyMarkDowntimeAsComplete();
+
+                        g_UART_buff_index = 0;
+                        memset(g_UART_buff, 0, UART_BUFFER_SIZE);
+                        return TRUE;
+                    }
+                    /* sc==3 이지만 파싱 실패 → UART TEST 진단 표시 */
+                    if (g_bUartTestMode) { uartTestAddLine(g_UART_buff); }
+                }
+                else if (g_bUartTestMode && sc >= 1)
+                {
+                    /* sc가 3 아닌 세미콜론 포함 라인 → UART TEST 진단 표시
+                     * 자수기 실제 포맷 확인용: 후행 ; 여부, 필드 개수 등 육안 점검 */
+                    g_UART_buff[g_UART_buff_index] = '\0';
+                    uartTestAddLine(g_UART_buff);
+                }
+
                 g_UART_buff_index = 0;
                 memset(g_UART_buff, 0, UART_BUFFER_SIZE);
             }
@@ -124,6 +170,8 @@ uint8 uartJsonLoop()
                     return TRUE;
                 }
 
+                /* 파싱 실패 → UART TEST 진단 표시 */
+                if (g_bUartTestMode) { uartTestAddLine(g_UART_buff); }
                 g_UART_buff_index = 0;
                 memset(g_UART_buff, 0, UART_BUFFER_SIZE);
             }

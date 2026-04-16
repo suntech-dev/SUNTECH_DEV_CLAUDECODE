@@ -662,7 +662,8 @@ function updateTableFromAPI(list) {
                 } else if (col.key === 'quality_rate') {
                     badgeClass += ' fiori-badge--warning';
                 }
-                td.innerHTML = `<span class="${badgeClass}">${value}%</span>`;
+                // td.innerHTML = `<span class="${badgeClass}">${value}%</span>`;
+                td.innerHTML = `${value}%`;
             } else {
                 td.textContent = value;
             }

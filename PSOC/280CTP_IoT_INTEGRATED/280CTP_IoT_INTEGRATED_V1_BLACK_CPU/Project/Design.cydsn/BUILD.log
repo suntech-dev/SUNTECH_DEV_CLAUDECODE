@@ -1,4 +1,4 @@
---------------- Build Started: 03/30/2026 14:08:14 Project: Design, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
+--------------- Build Started: 04/14/2026 12:21:16 Project: Design, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
 The code generation step is up to date.
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/ST7789V.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\ST7789V.c -o .\CortexM0\ARM_GCC_541\Debug\ST7789V.o
 In file included from lib\ST7789V.h:42:0,
@@ -188,7 +188,6 @@ lib\fonts.h:990:243: warning: multi-line comment [-Wcomment]
 lib\fonts.h:1093:243: warning: multi-line comment [-Wcomment]
  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xC0,0x00,0xC0,0x00,0xF0,0x00,0xFC,0x00,0xFC,0x00,0x3F,0x00,0x0F,0xC0,0x0F,0xC0,0x03,0xF0,0x00,0xFC,0x00,0xFC,0x00,0x3C,0x00,0x0C,0x00,0x0C,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,  // \
                                                                                                                                                                                                                                                    ^
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/server.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\server.c -o .\CortexM0\ARM_GCC_541\Debug\server.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/main.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c main.c -o .\CortexM0\ARM_GCC_541\Debug\main.o
 In file included from lib/UI.h:16:0,
                  from menuDesign.h:16,
@@ -255,11 +254,6 @@ USBJsonConfig.c: In function 'USB_CommandProcess':
 USBJsonConfig.c:48:9: warning: unused variable 'nLoop' [-Wunused-variable]
      int nLoop=0;
          ^
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/andonApi.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c andonApi.c -o .\CortexM0\ARM_GCC_541\Debug\andonApi.o
-andonApi.c: In function 'makeAndonPatternCount':
-andonApi.c:122:12: warning: unused variable 'pts' [-Wunused-variable]
-     uint32 pts =   GetWorkingTimeCount();
-            ^
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/andonJson.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c andonJson.c -o .\CortexM0\ARM_GCC_541\Debug\andonJson.o
 In file included from lib/UI.h:16:0,
                  from lib/widget.h:16,
@@ -277,18 +271,18 @@ lib/fonts.h:1093:243: warning: multi-line comment [-Wcomment]
  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xC0,0x00,0xC0,0x00,0xF0,0x00,0xFC,0x00,0xFC,0x00,0x3F,0x00,0x0F,0xC0,0x0F,0xC0,0x03,0xF0,0x00,0xFC,0x00,0xFC,0x00,0x3C,0x00,0x0C,0x00,0x0C,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,  // \
                                                                                                                                                                                                                                                    ^
 andonJson.c: In function 'andonRequestItem':
-andonJson.c:322:10: warning: unused variable 'buff' [-Wunused-variable]
+andonJson.c:384:10: warning: unused variable 'buff' [-Wunused-variable]
      char buff[20];
           ^
 andonJson.c: In function 'andonMenuParsing':
-andonJson.c:357:37: warning: unused variable 'status' [-Wunused-variable]
+andonJson.c:419:37: warning: unused variable 'status' [-Wunused-variable]
      char tmpBuff[20], textBuff[20], status[10];    
                                      ^
 andonJson.c: In function 'andonTextListParsing':
-andonJson.c:503:9: warning: variable 'r' set but not used [-Wunused-but-set-variable]
+andonJson.c:565:9: warning: variable 'r' set but not used [-Wunused-but-set-variable]
      int r;
          ^
-andonJson.c:502:9: warning: unused variable 'i' [-Wunused-variable]
+andonJson.c:564:9: warning: unused variable 'i' [-Wunused-variable]
      int i;
          ^
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/menuDesign.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c menuDesign.c -o .\CortexM0\ARM_GCC_541\Debug\menuDesign.o
@@ -522,6 +516,6 @@ No ELF section .cychecksum found, creating one
 Application checksum calculated and stored in ELF section .cychecksum
 Checksum calculated and stored in ELF section .cymeta
 cyelftool.exe -S C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_BLACK_CPU\Project\Design.cydsn\CortexM0\ARM_GCC_541\Debug\Design.elf
-Flash used: 118804 of 262144 bytes (45.3%). Bootloader: 13568 bytes. Application: 104980 bytes. Metadata: 256 bytes.
+Flash used: 119036 of 262144 bytes (45.4%). Bootloader: 13568 bytes. Application: 105212 bytes. Metadata: 256 bytes.
 SRAM used: 22580 of 32768 bytes (68.9%). Stack: 2048 bytes. Heap: 1024 bytes.
---------------- Build Succeeded: 03/30/2026 14:08:23 ---------------
+--------------- Build Succeeded: 04/14/2026 12:21:26 ---------------

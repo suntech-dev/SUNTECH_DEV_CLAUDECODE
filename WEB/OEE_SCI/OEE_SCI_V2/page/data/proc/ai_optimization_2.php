@@ -302,46 +302,46 @@ function generateSuggestions(string $bottleneck, float $current, float $target):
     // ── 가용성 병목 개선 제안 ──────────────────────────────────
     if ($bottleneck === 'availability') {
         if ($gap >= 20) return [
-            '비계획 다운타임 상위 3건 원인 집중 분석 필요',
-            '예방정비 주기 단축 검토 (현재 고장 빈도 이상)',
-            '교대 전·후 점검 루틴 강화 및 표준화',
-            '소모품/부품 재고 및 교체 이력 점검',
+            'Intensive root cause analysis required for top 3 unplanned downtime incidents',
+            'Review preventive maintenance interval reduction (current failure frequency is abnormal)',
+            'Strengthen and standardize pre/post-shift inspection routines',
+            'Review consumable/part inventory and replacement history',
         ];
         if ($gap >= 10) return [
-            '주요 비계획 다운타임 유형 파레토 분석',
-            '설비 청소·윤활 주기 재검토',
-            '빠른 복구를 위한 대기 부품 재고 확보',
+            'Pareto analysis of major unplanned downtime types',
+            'Re-examine equipment cleaning and lubrication intervals',
+            'Secure standby parts inventory for faster recovery',
         ];
-        return ['다운타임 기록 정확도 향상 (계획 vs 비계획 구분)', '단기 고장 재발 패턴 모니터링'];
+        return ['Improve downtime recording accuracy (distinguish planned vs. unplanned)', 'Monitor short-term recurring failure patterns'];
     }
 
-    // ── 성능 병목 개선 제안 ────────────────────────────────────
+    // ── Performance bottleneck improvement suggestions ────────────────────────────────────
     if ($bottleneck === 'performance') {
         if ($gap >= 20) return [
-            '사이클 타임 목표 대비 실제 편차 시간대별 분석',
-            '작업자 표준 작업 절차(SOP) 재정립 및 교육',
-            '원자재·부품 공급 지연에 따른 미세 정지 집계',
-            '설비 속도 제한 요인 파악 (재료 공급, 품질 체크 등)',
+            'Time-slot analysis of actual cycle time deviation vs. target',
+            'Re-establish and train operators on Standard Operating Procedures (SOP)',
+            'Aggregate micro-stops caused by raw material/parts supply delays',
+            'Identify equipment speed-limiting factors (material feed, quality checks, etc.)',
         ];
         if ($gap >= 10) return [
-            '마이크로 정지 발생 시간대 집중 분석',
-            '설비 속도 저하 구간 원인 조사',
-            '오퍼레이터 작업 동선 최적화 검토',
+            'Focused analysis of micro-stop occurrence time slots',
+            'Investigate causes of equipment speed-reduction intervals',
+            'Review optimization of operator workflow paths',
         ];
-        return ['속도 저하 패턴 주간 리포트 작성', '오퍼레이터 작업 피드백 수집 및 개선'];
+        return ['Prepare weekly report on speed degradation patterns', 'Collect and improve operator work feedback'];
     }
 
-    // ── 품질 병목 개선 제안 (availability·performance 외 나머지) ─
+    // ── Quality bottleneck improvement suggestions (other than availability/performance) ─
     if ($gap >= 5) return [
-        '주요 불량 유형 파레토 분석 (80% 차지 유형 파악)',
-        '불량 다발 시간대·교대·머신 교차 분석',
-        '공정 파라미터 (온도/장력/속도) 최적값 재설정',
-        '원자재 수입검사 기준 강화',
+        'Pareto analysis of major defect types (identify types accounting for 80%)',
+        'Cross-analysis of defect-prone time slots, shifts, and machines',
+        'Reset optimal process parameters (temperature/tension/speed)',
+        'Strengthen incoming inspection standards for raw materials',
     ];
     if ($gap >= 2) return [
-        '불량 다발 시간대 집중 모니터링',
-        '작업자별 불량률 편차 확인',
-        '원자재·소모품 품질 수입검사 강화',
+        'Intensive monitoring of defect-prone time slots',
+        'Check defect rate variance by operator',
+        'Strengthen incoming quality inspection of raw materials and consumables',
     ];
-    return ['불량 데이터 입력 정확성 검증', '불량 감소 Best Practice 라인 간 수평 전개'];
+    return ['Verify accuracy of defect data entry', 'Horizontally deploy defect reduction best practices across lines'];
 }

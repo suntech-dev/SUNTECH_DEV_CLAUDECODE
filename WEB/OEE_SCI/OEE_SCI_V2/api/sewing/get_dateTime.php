@@ -67,7 +67,7 @@ get_dateTime.php
 http://49.247.26.228/OEE_SCI/OEE_SCI_V2/api/sewing.php?code=get_dateTime
 
 ## API 예시 (mac 포함 — shift 정보 반환)
-http://49.247.26.228/OEE_SCI/OEE_SCI_V2/api/sewing.php?code=get_dateTime&mac=84:72:07:50:37:73
+http://49.247.26.228/OEE_SCI/OEE_SCI_V2/api/sewing.php?code=get_dateTime&mac=84:72:07:50:3A:DB
 
 ## 응답결과 예시 (근무 중)
 {

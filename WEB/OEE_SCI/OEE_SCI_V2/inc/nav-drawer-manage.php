@@ -19,6 +19,47 @@ function _nav_cls(string $key, string $active): string
     return 'nav-drawer__link' . ($key === $active ? ' nav-drawer__link--active' : '');
 }
 ?>
+
+<style> 
+/* ─── AI 배지 ───────────────────────────────────────────── */
+/* 그라디언트 pill 뱃지: 파랑→보라 */
+.ai-badge {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, #0070f3, #7928ca);
+    color: #fff;
+    /* font-size: 0.7rem; */
+    font-size: 9px;
+    font-weight: 700;
+    /* padding: 3px 10px; */
+    padding: 2px 6px;
+    border-radius: 9999px;
+    letter-spacing: 0.08em;
+    vertical-align: middle;
+    margin-left: var(--sap-spacing-sm, 4px);
+    white-space: nowrap;
+}
+
+/* ─── INA 배지 ───────────────────────────────────────────── */
+/* 그라디언트 pill 뱃지: 파랑→보라 */
+.ina-badge {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, #00f351, #4e5adb);
+    color: #fff;
+    /* font-size: 0.7rem; */
+    font-size: 9px;
+    font-weight: 700;
+    /* padding: 3px 10px; */
+    padding: 2px 6px;
+    border-radius: 9999px;
+    letter-spacing: 0.08em;
+    vertical-align: middle;
+    margin-left: var(--sap-spacing-sm, 4px);
+    white-space: nowrap;
+}
+</style>
+
 <div id="navDrawerOverlay" class="nav-drawer-overlay"></div>
 <div id="navDrawer" class="nav-drawer">
     <div class="nav-drawer__header">OEE SYSTEM</div>
@@ -56,8 +97,8 @@ function _nav_cls(string $key, string $active): string
         <div class="nav-drawer__group">
             <div class="nav-drawer__group-title">Dashboard</div>
             <a href="<?= $_d ?>dashboard_2.php" class="<?= _nav_cls('oee_dashboard', $_nav) ?>">OEE Dashboard</a>
-            <!-- <a href="<?= $_d ?>ai_dashboard_2.php" class="nav-drawer__link">AI Dashboard</a> -->
-            <a href="<?= $_d ?>ai_dashboard_2.php" class="<?= _nav_cls('ai_dashboard', $_nav) ?>">AI Dashboard</a>
+            <a href="<?= $_d ?>ai_dashboard_2.php" class="<?= _nav_cls('ai_dashboard', $_nav) ?>">AI Dashboard<span class="ai-badge">AI</span></a>
+            <a href="<?= $_d ?>ai_dashboard_2_ina.php" class="<?= _nav_cls('ai_dashboard_ina', $_nav) ?>">AI Dashboard<span class="ai-badge">AI</span><span class="ina-badge">INA</span></a>
         </div>
     </nav>
 </div>

@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node shot_machine_filter.js)",
+      "Bash(node -e ':*)",
+      "Bash(node shot_unified_verify.js)",
+      "Bash(mysql -u root -e \"USE oee_sci_v2; SHOW TABLES;\")",
+      "Bash(mysql -u root --password= -e \"USE oee_sci_v2; SHOW TABLES;\")",
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root -e \"USE oee_sci_v2; SHOW TABLES;\")",
+      "Bash(/c/laragon/bin/mysql/mysql-5.7.44-winx64/bin/mysql.exe -u root -e 'USE oee_sci_v2; SHOW TABLES;')",
+      "Bash(/c/laragon/bin/mysql/mysql-5.7.44-winx64/bin/mysql.exe -u root -e 'USE oee_sci_v2; DESCRIBE info_machine;')",
+      "Bash(/c/laragon/bin/mysql/mysql-5.7.44-winx64/bin/mysql.exe -u root -e 'USE oee_sci_v2; DESCRIBE data_oee;')",
+      "Bash(/c/laragon/bin/mysql/mysql-5.7.44-winx64/bin/mysql.exe -u root -e 'USE oee_sci_v2; DESCRIBE data_oee_rows;')",
+      "Bash(/c/laragon/bin/mysql/mysql-5.7.44-winx64/bin/mysql.exe -u root -e 'USE oee_sci_v2; DESCRIBE data_oee_rows_hourly;')",
+      "Bash(/c/laragon/bin/mysql/mysql-5.7.44-winx64/bin/mysql.exe -u root -e 'USE oee_sci_v2; DESCRIBE logs_api_start;')",
+      "Bash(/c/laragon/bin/mysql/mysql-5.7.44-winx64/bin/mysql.exe -u root -e 'USE oee_sci_v2; SHOW CREATE TABLE info_machine\\\\G')",
+      "Bash(/c/laragon/bin/mysql/mysql-5.7.44-winx64/bin/mysql.exe -u root oee_sci_v2)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(/c/laragon/bin/mysql/mysql-5.7.44-winx64/bin/mysql.exe -u root -e 'USE oee_sci_v2; SHOW COLUMNS FROM data_oee LIKE '\\\\''thread%'\\\\''; SHOW COLUMNS FROM data_oee LIKE '\\\\''motor%'\\\\''; SHOW TABLES LIKE '\\\\''logs_api_send_ecount'\\\\'';')",
+      "Bash(curl -s --max-time 5 \"http://192.168.38.72/OEE_SCI/OEE_SCI_V2/page/data/proc/dashboard_stream_2.php?factory_filter=104&line_filter=&machine_filter=&shift_filter=1&start_date=2026-04-13&end_date=2026-04-13\")",
+      "Bash(python3 -c \"import sys,json; raw=sys.stdin.read\\(\\); data=json.loads\\(raw.replace\\('data: ','',1\\).strip\\(\\)\\); print\\('OEE:', json.dumps\\(data.get\\('oee',{}\\).get\\('overall'\\) or data.get\\('oee',{}\\).get\\('error','OK'\\), ensure_ascii=False\\)\\); print\\('Production error:', data.get\\('production',{}\\).get\\('error','없음'\\)\\); print\\('Availability:', data.get\\('oee',{}\\).get\\('availability',{}\\).get\\('value','?'\\)\\)\")",
+      "Bash(taskkill /F /IM httpd.exe)",
+      "Bash(\"C:/laragon/bin/apache/httpd-2.4.66-260107-Win64-VS18/bin/httpd.exe\" -k start)",
+      "Bash(curl -s --max-time 6 \"http://192.168.38.72/OEE_SCI/OEE_SCI_V2/page/data/proc/dashboard_stream_2.php?factory_filter=104&line_filter=&machine_filter=&shift_filter=1&start_date=2026-04-13&end_date=2026-04-13\")",
+      "WebFetch(domain:192.168.38.72)",
+      "Bash(node shot_dashboard2.js)",
+      "Bash(node shot_oee_stats.js)",
+      "Bash(node ai_dashboard_check.js)",
+      "Bash(python3 -c ' *)"
+    ],
+    "additionalDirectories": [
+      "C:\\laragon\\www\\dev\\OEE_SCI\\OEE_SCI_V2\\api\\sewing",
+      "C:\\SUNTECH_DEV_CLAUDECODE\\WEB\\OEE_SCI\\OEE_SCI_V2\\api\\sewing",
+      "C:\\laragon\\www\\dev\\OEE_SCI\\OEE_SCI_V2\\api",
+      "C:\\SUNTECH_DEV_CLAUDECODE\\WEB\\OEE_SCI\\OEE_SCI_V2\\api"
+    ]
+  }
+}

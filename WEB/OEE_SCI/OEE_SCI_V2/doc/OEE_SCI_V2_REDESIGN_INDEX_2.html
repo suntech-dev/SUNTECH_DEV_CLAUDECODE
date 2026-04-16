@@ -234,7 +234,7 @@
         /* ── Language Cards ── */
         .lang-cards {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 24px;
             margin-bottom: 64px;
         }
@@ -272,6 +272,10 @@
             background: radial-gradient(circle, rgba(63, 185, 80, .15) 0%, transparent 70%);
         }
 
+        .lang-card.ina::after {
+            background: radial-gradient(circle, rgba(188, 140, 255, .15) 0%, transparent 70%);
+        }
+
         .lang-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
@@ -283,6 +287,10 @@
 
         .lang-card.eng:hover {
             border-color: var(--accent2);
+        }
+
+        .lang-card.ina:hover {
+            border-color: var(--purple);
         }
 
         .lang-card:hover::after {
@@ -309,6 +317,12 @@
             background: rgba(63, 185, 80, .15);
             color: var(--accent2);
             border: 1px solid rgba(63, 185, 80, .3);
+        }
+
+        .ina .lang-badge {
+            background: rgba(188, 140, 255, .15);
+            color: var(--purple);
+            border: 1px solid rgba(188, 140, 255, .3);
         }
 
         .lang-icon {
@@ -360,6 +374,10 @@
 
         .eng .card-arrow {
             color: var(--accent2);
+        }
+
+        .ina .card-arrow {
+            color: var(--purple);
         }
 
         .arrow {
@@ -529,6 +547,12 @@
             color: var(--accent);
         }
 
+        @media (max-width: 900px) {
+            .lang-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
         @media (max-width: 600px) {
             .hero h1 {
                 font-size: 1.8rem;
@@ -653,6 +677,22 @@
                         <span>Implemented File List</span>
                     </div>
                     <div class="card-arrow">Open Report <span class="arrow">→</span></div>
+                </a>
+                <a class="lang-card ina" href="OEE_SCI_V2_REDESIGN_REPORT_INA_2.html" target="_blank" rel="noopener">
+                    <span class="lang-icon">B</span>
+                    <span class="lang-badge">INDONESIA · Bahasa</span>
+                    <h2>Laporan Terpadu Indonesia</h2>
+                    <p>Latar belakang strategi AI · Analisis V1 · Perbandingan V1→V2 · Detail fitur AI · Desain ulang UI · Peningkatan performa · Inventaris file.</p>
+                    <div class="lang-card-sections">
+                        <span>Pendahuluan &amp; Strategi AI</span>
+                        <span>Perbandingan V1 → V2</span>
+                        <span>Fitur AI (9 jenis)</span>
+                        <span>Desain Ulang UI Signage</span>
+                        <span>Metrik Performa</span>
+                        <span>Firmware IoT (BLACK_CPU · EMBROIDERY_S)</span>
+                        <span>Daftar File yang Diimplementasikan</span>
+                    </div>
+                    <div class="card-arrow">Buka Laporan <span class="arrow">→</span></div>
                 </a>
             </div>
         </section>

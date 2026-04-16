@@ -133,43 +133,70 @@ try {
     }
 
     // ════════════════════════════════════════════════════════
-    // STEP 2. 오늘 실제 OEE 조회 (항상 CURDATE() 고정 — date_range 영향 없음)
-    //   - LEAST(100, GREATEST(0, doh.oee)) : 클램핑 적용
-    //   - today_data: 차트 Actual 라인용 시간대별 OEE 배열 (v5 신규)
-    //   - today_oees: 지수평활법 입력용 숫자 배열
+    // STEP 2a. 오늘 실제 OEE 조회 (항상 CURDATE() 고정)
+    //   - LIVE Real-time OEE 카드 및 예측 알고리즘 기반 데이터
+    //   - date_range 영향 없음 — 항상 오늘 기준
     // ════════════════════════════════════════════════════════
-    $sql_today = "
+    $sql_today_live = "
     SELECT
       doh.work_hour AS hour,
       AVG(LEAST(100, GREATEST(0, doh.oee))) AS avg_oee  -- 클램핑된 시간대별 평균 OEE
     FROM data_oee_rows_hourly doh
-    WHERE doh.work_date = CURDATE()        -- 항상 오늘 날짜 고정
+    WHERE doh.work_date = CURDATE()        -- LIVE 카드·예측 기반: 항상 오늘 고정
       AND doh.oee IS NOT NULL
       $where_sql
     GROUP BY doh.work_hour
     ORDER BY doh.work_hour
   ";
-    $stmt2 = $pdo->prepare($sql_today);
-    $stmt2->execute($params); // history_days 없이 필터 파라미터만 사용
-    $today_rows = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+    $stmt2 = $pdo->prepare($sql_today_live);
+    $stmt2->execute($params);
+    $today_rows_live = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
-    // 오늘 시간대별 데이터 구성 (3가지 형태로 분리)
-    $today_data  = []; // API 응답용 구조체 배열 [{hour, label, oee}]
+    // LIVE 카드 및 예측 기반용 배열
     $today_hours = []; // 시간(0~23) 정수 배열
     $today_oees  = []; // OEE 값 배열 (지수평활 입력용)
-    foreach ($today_rows as $row) {
-        $hour = (int)$row['hour'];
-        $oee  = round((float)$row['avg_oee'], 1);
-        $today_hours[] = $hour;
-        $today_oees[]  = $oee;
-        // v5 신규: 차트 Actual 라인용 응답 배열 구성
-        $today_data[]  = ['hour' => $hour, 'label' => sprintf('%02d:00', $hour), 'oee' => $oee];
+    foreach ($today_rows_live as $row) {
+        $today_hours[] = (int)$row['hour'];
+        $today_oees[]  = round((float)$row['avg_oee'], 1);
     }
 
     // current_oee: 오늘 가장 최근 시간대 값, 클램핑 적용 (0~100 범위 강제)
     $current_oee  = !empty($today_oees) ? min(100.0, max(0.0, round(end($today_oees), 1))) : null;
     // current_hour: 최신 집계 시간(없으면 시스템 현재 시각 사용)
     $current_hour = !empty($today_hours) ? end($today_hours) : (int)date('G');
+
+    // ════════════════════════════════════════════════════════
+    // STEP 2b. 차트 Actual 라인용 OEE 조회 (date_range에 따라 날짜 결정)
+    //   - today / 7d / 30d → CURDATE() (오늘)
+    //   - yesterday         → DATE_SUB(CURDATE(), INTERVAL 1 DAY) (어제)
+    //   - today_data: 차트 Actual 라인 응답 배열 [{hour, label, oee}]
+    // ════════════════════════════════════════════════════════
+    $chart_date_sql = ($date_range === 'yesterday')
+        ? "DATE_SUB(CURDATE(), INTERVAL 1 DAY)"
+        : "CURDATE()";
+
+    $sql_today_chart = "
+    SELECT
+      doh.work_hour AS hour,
+      AVG(LEAST(100, GREATEST(0, doh.oee))) AS avg_oee  -- 클램핑된 시간대별 평균 OEE
+    FROM data_oee_rows_hourly doh
+    WHERE doh.work_date = {$chart_date_sql}  -- date_range 반영: today=오늘, yesterday=어제
+      AND doh.oee IS NOT NULL
+      $where_sql
+    GROUP BY doh.work_hour
+    ORDER BY doh.work_hour
+  ";
+    $stmt_chart = $pdo->prepare($sql_today_chart);
+    $stmt_chart->execute($params);
+    $today_rows_chart = $stmt_chart->fetchAll(PDO::FETCH_ASSOC);
+
+    // today_data: API 응답용 차트 Actual 라인 배열
+    $today_data = [];
+    foreach ($today_rows_chart as $row) {
+        $hour = (int)$row['hour'];
+        $oee  = round((float)$row['avg_oee'], 1);
+        $today_data[] = ['hour' => $hour, 'label' => sprintf('%02d:00', $hour), 'oee' => $oee];
+    }
 
     // ════════════════════════════════════════════════════════
     // STEP 3. 예측 시간대 계산

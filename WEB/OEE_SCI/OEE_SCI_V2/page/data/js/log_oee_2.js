@@ -749,7 +749,8 @@ function updateTableFromAPI(list) {
                 } else if (col.key === 'quality_rate') {
                     badgeClass += ' fiori-badge--warning'; // 품질률: 경고 색상
                 }
-                td.innerHTML = `<span class="${badgeClass}">${value}%</span>`;
+                // td.innerHTML = `<span class="${badgeClass}">${value}%</span>`;
+                td.innerHTML = `${value}%`;
             } else {
                 td.textContent = value; // 일반 컬럼: 텍스트로 표시
             }

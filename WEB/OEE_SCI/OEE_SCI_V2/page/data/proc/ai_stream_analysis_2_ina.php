@@ -1,12 +1,14 @@
 <?php
 
 /**
- * F12 — AI 실시간 스트리밍 분석 (SSE 엔드포인트)
- * 이상 감지, 신규 다운타임, 정비 위험 경고를 실시간으로 스트리밍
+ * F12 — Analisis Streaming AI Real-time (Endpoint SSE) - Versi Indonesia
+ * Streaming deteksi anomali, downtime baru, peringatan risiko perawatan secara real-time
  *
  * Method: GET (EventSource)
  * Params: factory_filter, line_filter, machine_filter
  * Events: connected | anomaly | downtime_new | maintenance_risk | heartbeat | disconnected
+ *
+ * 원본: ai_stream_analysis_2.php
  */
 
 
@@ -25,7 +27,7 @@ $factory_filter = isset($_GET['factory_filter']) ? trim($_GET['factory_filter'])
 $line_filter    = isset($_GET['line_filter'])    ? trim($_GET['line_filter'])    : '';
 $machine_filter = isset($_GET['machine_filter']) ? trim($_GET['machine_filter']) : '';
 
-// ── 공통 WHERE 빌더 ─────────────────────────────────────────────
+// ── Pembangun WHERE Umum ──────────────────────────────────────────
 function buildWhere(array &$params, string $fac, string $ln, string $mc, string $alias): string
 {
     $w = [];
@@ -44,7 +46,7 @@ function buildWhere(array &$params, string $fac, string $ln, string $mc, string 
     return $w ? 'AND ' . implode(' AND ', $w) : '';
 }
 
-// ── SSE 이벤트 전송 ─────────────────────────────────────────────
+// ── Kirim Event SSE ───────────────────────────────────────────────
 function sendEvent(string $type, array $data): void
 {
     $json = json_encode($data, JSON_UNESCAPED_UNICODE);
@@ -54,7 +56,7 @@ function sendEvent(string $type, array $data): void
     flush();
 }
 
-// ── 이상 감지 (최근 N분 OEE Z-Score) ───────────────────────────
+// ── Deteksi Anomali Terbaru (OEE Z-Score N menit terakhir) ────────
 function detectRecentAnomalies(
     PDO $pdo,
     int $minutes,
@@ -62,7 +64,7 @@ function detectRecentAnomalies(
     string $ln,
     string $mc
 ): array {
-    // 30일 기준 통계
+    // Statistik baseline 30 hari
     $p1 = [];
     $w1 = buildWhere($p1, $fac, $ln, $mc, 'do');
     $sql_base = "
@@ -89,7 +91,7 @@ function detectRecentAnomalies(
     $bmap = [];
     foreach ($baselines as $b) $bmap[$b['machine_idx']] = $b;
 
-    // 최근 N분 데이터 (work_date = 오늘, 최근 레코드)
+    // Data N menit terakhir (work_date = hari ini, data terbaru)
     $p2 = [];
     $w2 = buildWhere($p2, $fac, $ln, $mc, 'do');
     $p2[] = $minutes;
@@ -106,7 +108,6 @@ function detectRecentAnomalies(
         ORDER BY do.machine_idx, do.shift_idx DESC
         LIMIT 100
     ";
-    // N분 필터는 work_date=CURDATE()로 대체 (시간별 SSE 환경)
     unset($p2[count($p2) - 1]);
     $stmt2 = $pdo->prepare(str_replace('AND do.oee IS NOT NULL', 'AND do.oee IS NOT NULL', $sql_recent));
     $stmt2->execute($p2);
@@ -116,7 +117,7 @@ function detectRecentAnomalies(
     $seen   = [];
     foreach ($recents as $r) {
         $mid = $r['machine_idx'];
-        if (isset($seen[$mid])) continue;  // 머신당 1건
+        if (isset($seen[$mid])) continue;  // 1 kejadian per mesin
         $seen[$mid] = true;
         $b = $bmap[$mid] ?? null;
         if (!$b) continue;
@@ -133,7 +134,7 @@ function detectRecentAnomalies(
                     'mean'       => round((float)$b['mean_oee'], 1),
                     'z_score'    => round($z, 2),
                     'severity'   => $sev,
-                    'message'    => "{$r['machine_no']} OEE " . round((float)$r['oee'], 1) . "% — vs baseline(" . round((float)$b['mean_oee'], 1) . "%) anomaly detected (Z=" . round($z, 2) . ")",
+                    'message'    => "{$r['machine_no']} OEE " . round((float)$r['oee'], 1) . "% — vs baseline(" . round((float)$b['mean_oee'], 1) . "%) anomali terdeteksi (Z=" . round($z, 2) . ")",
                     'timestamp'  => date('H:i:s'),
                 ];
             }
@@ -145,12 +146,12 @@ function detectRecentAnomalies(
                 $events[] = [
                     'machine_no' => $r['machine_no'],
                     'line_name'  => $r['line_name'],
-                    'metric'     => 'Quality',
+                    'metric'     => 'Kualitas',
                     'value'      => round((float)$r['quality_rate'], 1),
                     'mean'       => round((float)$b['mean_quality'], 1),
                     'z_score'    => round($zq, 2),
                     'severity'   => $zq >= 3.0 ? 'danger' : 'warning',
-                    'message'    => "{$r['machine_no']} Quality Rate " . round((float)$r['quality_rate'], 1) . "% — vs baseline(" . round((float)$b['mean_quality'], 1) . "%) quality warning (Z=" . round($zq, 2) . ")",
+                    'message'    => "{$r['machine_no']} Tingkat Kualitas " . round((float)$r['quality_rate'], 1) . "% — vs baseline(" . round((float)$b['mean_quality'], 1) . "%) peringatan kualitas (Z=" . round($zq, 2) . ")",
                     'timestamp'  => date('H:i:s'),
                 ];
             }
@@ -160,7 +161,7 @@ function detectRecentAnomalies(
     return $events;
 }
 
-// ── 신규 다운타임 감지 ───────────────────────────────────────────
+// ── Deteksi Downtime Aktif ────────────────────────────────────────
 function detectActiveDowntimes(
     PDO $pdo,
     string $fac,
@@ -173,7 +174,7 @@ function detectActiveDowntimes(
         SELECT
             dd.machine_no, il.line_name, ift.factory_name,
             dd.reg_date,
-            COALESCE(ddt.downtime_name, 'Unclassified') AS downtime_name,
+            COALESCE(ddt.downtime_name, 'Tidak Terklasifikasi') AS downtime_name,
             TIMESTAMPDIFF(MINUTE, dd.reg_date, NOW()) AS elapsed_min
         FROM data_downtime dd
         JOIN info_line    il  ON dd.line_idx = il.idx
@@ -199,14 +200,14 @@ function detectActiveDowntimes(
             'downtime_name' => $r['downtime_name'],
             'elapsed_min'   => $elapsed,
             'severity'      => $elapsed > 30 ? 'danger' : 'warning',
-            'message'       => "Active downtime: {$r['machine_no']} — {$r['downtime_name']} ({$elapsed} min elapsed)",
+            'message'       => "Downtime aktif: {$r['machine_no']} — {$r['downtime_name']} ({$elapsed} menit berlalu)",
             'timestamp'     => date('H:i:s', strtotime($r['reg_date'])),
         ];
     }
     return $events;
 }
 
-// ── 고위험 머신 감지 (risk_score >= 70) ─────────────────────────
+// ── Deteksi Mesin Berisiko Tinggi (risk_score >= 70) ─────────────
 function detectHighRiskMachines(
     PDO $pdo,
     string $fac,
@@ -229,7 +230,7 @@ function detectHighRiskMachines(
     }
     $where_sql = $w_parts ? 'WHERE ' . implode(' AND ', $w_parts) : '';
 
-    // 기계 목록
+    // Daftar mesin
     $stmt = $pdo->prepare("
         SELECT im.idx, im.machine_no, il.line_name
         FROM info_machine im
@@ -244,7 +245,7 @@ function detectHighRiskMachines(
     $ids = array_column($machines, 'idx');
     $ph  = implode(',', array_fill(0, count($ids), '?'));
 
-    // 다운타임 집계 (최근 14일)
+    // Rekapitulasi downtime (14 hari terakhir)
     $stmt2 = $pdo->prepare("
         SELECT
             dd.machine_idx,
@@ -283,7 +284,7 @@ function detectHighRiskMachines(
                 'risk_score'  => $score,
                 'dt_count_7d' => $curr,
                 'severity'    => $score >= 85 ? 'danger' : 'warning',
-                'message'     => "Maintenance risk: {$m['machine_no']} — risk score {$score}% (downtime {$curr}x in 7 days)",
+                'message'     => "Risiko perawatan: {$m['machine_no']} — skor risiko {$score}% (downtime {$curr}x dalam 7 hari)",
                 'timestamp'   => date('H:i:s'),
             ];
         }
@@ -294,16 +295,16 @@ function detectHighRiskMachines(
 }
 
 // ════════════════════════════════════════════════════════════════
-// 메인 스트림
+// Aliran Utama
 // ════════════════════════════════════════════════════════════════
 
-// 연결 이벤트
+// Event terhubung
 sendEvent('connected', [
-    'message'   => 'AI stream analysis connected',
+    'message'   => 'Analisis aliran AI terhubung',
     'timestamp' => date('H:i:s'),
 ]);
 
-// 초기 이벤트 전송 (오늘 현황)
+// Kirim event awal (kondisi hari ini)
 $init_anomalies = detectRecentAnomalies($pdo, 60, $factory_filter, $line_filter, $machine_filter);
 foreach ($init_anomalies as $a) sendEvent('anomaly', $a);
 
@@ -316,12 +317,12 @@ foreach ($init_risks as $r) sendEvent('maintenance_risk', $r);
 $total_init = count($init_anomalies) + count($init_downtimes) + count($init_risks);
 if ($total_init === 0) {
     sendEvent('status', [
-        'message'   => 'No anomalies detected. Monitoring in real-time...',
+        'message'   => 'Tidak ada anomali terdeteksi saat ini. Memantau secara real-time...',
         'timestamp' => date('H:i:s'),
     ]);
 }
 
-// 스트림 루프 (최대 5분, 15초 간격)
+// Loop aliran (maks 5 menit, interval 15 detik)
 $start          = time();
 $maxRuntime     = 300;
 $pollInterval   = 15;
@@ -332,11 +333,11 @@ while (!connection_aborted() && (time() - $start) < $maxRuntime) {
     sleep($pollInterval);
     if (connection_aborted()) break;
 
-    // 신규 활성 다운타임 폴링
+    // Polling downtime aktif baru
     $new_dt = detectActiveDowntimes($pdo, $factory_filter, $line_filter, $machine_filter);
     foreach ($new_dt as $d) sendEvent('downtime_new', $d);
 
-    // 하트비트
+    // Heartbeat
     if ((time() - $lastHeartbeat) >= $heartbeatEvery) {
         sendEvent('heartbeat', ['timestamp' => date('H:i:s'), 'status' => 'ok']);
         $lastHeartbeat = time();
@@ -344,6 +345,6 @@ while (!connection_aborted() && (time() - $start) < $maxRuntime) {
 }
 
 sendEvent('disconnected', [
-    'message'   => 'Stream analysis session ended — awaiting reconnection',
+    'message'   => 'Sesi analisis aliran berakhir — menunggu sambungan ulang',
     'timestamp' => date('H:i:s'),
 ]);

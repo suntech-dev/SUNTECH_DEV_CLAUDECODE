@@ -498,15 +498,32 @@ function getCurrentShiftOeeAvg($pdo, $selected_shift_idx = null, $target_date = 
             $selected_shift_idx = 1;
         }
 
+        // Build extra filter from GET params (factory/line/machine) to match the current page filter context
+        $extra_conds      = [];
+        $extra_params_arr = [];
+        if (!empty($_GET['factory_filter'])) {
+            $extra_conds[]      = 'do.factory_idx = ?';
+            $extra_params_arr[] = $_GET['factory_filter'];
+        }
+        if (!empty($_GET['line_filter'])) {
+            $extra_conds[]      = 'do.line_idx = ?';
+            $extra_params_arr[] = $_GET['line_filter'];
+        }
+        if (!empty($_GET['machine_filter'])) {
+            $extra_conds[]      = 'do.machine_idx = ?';
+            $extra_params_arr[] = $_GET['machine_filter'];
+        }
+        $extra_sql = !empty($extra_conds) ? ' AND ' . implode(' AND ', $extra_conds) : '';
+
         $sql = "
       SELECT ROUND((AVG(do.availabilty_rate) * (SUM(do.actual_output) / NULLIF(SUM(do.theoritical_output), 0)) * AVG(do.quality_rate)) / 100, 2) as shift_avg_oee
       FROM data_oee do
       LEFT JOIN info_machine m ON do.machine_idx = m.idx
-      WHERE do.work_date = ? AND do.shift_idx = ? AND m.status = 'Y'
+      WHERE do.work_date = ? AND do.shift_idx = ? AND m.status = 'Y'{$extra_sql}
     ";
 
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$shift_date, $selected_shift_idx]);
+        $stmt->execute(array_merge([$shift_date, $selected_shift_idx], $extra_params_arr));
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return (float)($result['shift_avg_oee'] ?? 0);
     } catch (Exception $e) {

@@ -193,7 +193,7 @@ body {
 /* ─── Row A: Stats ────────────────────────────────────── */
 .oee-stats-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 5px;
     height: 100%;
 }
@@ -502,4 +502,8 @@ body {
 .oee-signage-main ::-webkit-scrollbar-thumb {
     background: var(--sap-border-neutral);
     border-radius: 2px;
+}
+/* ─── Previous Day OEE 카드 숨김 (data_oee_2 전용) ──────── */
+.stat-card:has(#previousDayOee) {
+    display: none;
 }

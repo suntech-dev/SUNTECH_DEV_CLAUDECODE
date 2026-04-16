@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dasbor Kecerdasan AI — Panduan Fitur</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #21262d;
+      --surface3: #2d333b;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent2: #3fb950;
+      --warn: #d29922;
+      --danger: #f85149;
+      --purple: #bc8cff;
+      --orange: #f5a623;
+      --sidebar-w: 270px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      line-height: 1.75;
+      display: flex;
+    }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      position: fixed; top: 0; left: 0;
+      width: var(--sidebar-w); height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 24px 0 40px;
+      z-index: 100;
+    }
+    #sidebar .logo {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    #sidebar .logo .badge {
+      display: inline-block;
+      font-size: 10px; font-weight: 700;
+      background: var(--accent); color: #0d1117;
+      border-radius: 4px; padding: 2px 7px;
+      letter-spacing: .05em; margin-bottom: 6px;
+    }
+    #sidebar .logo strong {
+      display: block; font-size: 14px;
+      color: var(--text); font-weight: 700;
+    }
+    #sidebar .logo span {
+      display: block; font-size: 12px;
+      color: var(--text-muted); margin-top: 3px;
+    }
+    #toc { padding: 0 12px; }
+    #toc .toc-section-label {
+      font-size: 10px; font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: .08em;
+      padding: 12px 8px 6px;
+    }
+    #toc a {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px; border-radius: 6px;
+      color: var(--text-muted); text-decoration: none;
+      font-size: 13px; transition: all .15s;
+    }
+    #toc a:hover, #toc a.active {
+      background: var(--surface2); color: var(--text);
+    }
+    #toc a .toc-icon {
+      width: 20px; height: 20px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+    }
+
+    /* ── Main content ── */
+    #main {
+      margin-left: var(--sidebar-w);
+      flex: 1; padding: 48px 56px;
+      max-width: 1100px;
+    }
+
+    /* ── Page hero ── */
+    .page-hero {
+      background: linear-gradient(135deg, #161b22 0%, #1c2333 50%, #161b22 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 40px 48px;
+      margin-bottom: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(88,166,255,.12) 0%, transparent 70%);
+    }
+    .page-hero .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(88,166,255,.15);
+      border: 1px solid rgba(88,166,255,.3);
+      border-radius: 20px; padding: 4px 14px;
+      font-size: 12px; font-weight: 600;
+      color: var(--accent); margin-bottom: 16px;
+    }
+    .page-hero .hero-badge::before {
+      content: ''; width: 6px; height: 6px;
+      background: var(--accent); border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .5; transform: scale(1.4); }
+    }
+    .page-hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 10px; }
+    .page-hero p { color: var(--text-muted); font-size: 15px; max-width: 560px; }
+
+    /* ── Section ── */
+    .feature-section {
+      margin-bottom: 64px;
+      scroll-margin-top: 24px;
+    }
+    .section-header {
+      display: flex; align-items: flex-start; gap: 16px;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-icon {
+      width: 48px; height: 48px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .section-header .section-num {
+      font-size: 11px; font-weight: 700;
+      color: var(--text-muted); letter-spacing: .1em;
+      text-transform: uppercase; margin-bottom: 4px;
+    }
+    .section-header h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .section-header .section-sub { color: var(--text-muted); font-size: 13px; }
+
+    /* ── Card grid ── */
+    .card-grid { display: grid; gap: 16px; margin-bottom: 24px; }
+    .card-grid-2 { grid-template-columns: 1fr 1fr; }
+    .card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px 22px;
+    }
+    .info-card .card-label {
+      font-size: 11px; font-weight: 700;
+      color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: .08em; margin-bottom: 8px;
+    }
+    .info-card p { font-size: 14px; color: var(--text); line-height: 1.65; }
+    .info-card .card-value {
+      font-size: 24px; font-weight: 700;
+      color: var(--accent); margin: 6px 0 2px;
+    }
+
+    /* ── Description block ── */
+    .desc-block { margin-bottom: 24px; }
+    .desc-block p { color: var(--text); line-height: 1.8; margin-bottom: 12px; }
+    .desc-block strong { color: var(--accent); }
+
+    /* ── Algorithm box ── */
+    .algo-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px; padding: 20px 24px;
+      margin: 20px 0;
+    }
+    .algo-box .algo-title {
+      font-size: 12px; font-weight: 700;
+      color: var(--accent); text-transform: uppercase;
+      letter-spacing: .08em; margin-bottom: 12px;
+    }
+    .algo-box ul { padding-left: 18px; }
+    .algo-box li {
+      color: var(--text-muted); font-size: 14px;
+      margin-bottom: 6px; line-height: 1.6;
+    }
+    .algo-box li strong { color: var(--text); }
+
+    /* ── Step box ── */
+    .steps { margin: 20px 0; }
+    .step {
+      display: flex; gap: 16px;
+      margin-bottom: 16px; align-items: flex-start;
+    }
+    .step-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--accent); color: #0d1117;
+      font-size: 12px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .step-content .step-title {
+      font-size: 14px; font-weight: 700; margin-bottom: 4px;
+    }
+    .step-content p { font-size: 13.5px; color: var(--text-muted); line-height: 1.65; }
+
+    /* ── Metric bar ── */
+    .metric-bar {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px 20px;
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .metric-bar .metric-label {
+      font-size: 13px; font-weight: 600; width: 180px; flex-shrink: 0;
+    }
+    .metric-bar .metric-bar-track {
+      flex: 1; height: 8px; background: var(--surface3);
+      border-radius: 4px; overflow: hidden;
+    }
+    .metric-bar .metric-bar-fill {
+      height: 100%; border-radius: 4px;
+    }
+    .metric-bar .metric-pct {
+      font-size: 13px; font-weight: 700; width: 48px;
+      text-align: right; flex-shrink: 0;
+    }
+
+    /* ── Badge ── */
+    .badge {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      border-radius: 4px; padding: 2px 8px;
+    }
+    .badge-blue { background: rgba(88,166,255,.2); color: var(--accent); border: 1px solid rgba(88,166,255,.35); }
+    .badge-green { background: rgba(63,185,80,.2); color: var(--accent2); border: 1px solid rgba(63,185,80,.35); }
+    .badge-warn { background: rgba(210,153,34,.2); color: var(--warn); border: 1px solid rgba(210,153,34,.35); }
+    .badge-danger { background: rgba(248,81,73,.2); color: var(--danger); border: 1px solid rgba(248,81,73,.35); }
+    .badge-purple { background: rgba(188,140,255,.2); color: var(--purple); border: 1px solid rgba(188,140,255,.35); }
+    .badge-orange { background: rgba(245,166,35,.2); color: var(--orange); border: 1px solid rgba(245,166,35,.35); }
+
+    /* ── FAQ / Q&A ── */
+    .qa-list { margin-top: 24px; }
+    .qa-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px; margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .qa-item summary {
+      padding: 14px 18px; cursor: pointer;
+      font-size: 14px; font-weight: 600;
+      list-style: none; display: flex;
+      align-items: center; gap: 10px;
+      user-select: none;
+    }
+    .qa-item summary::-webkit-details-marker { display: none; }
+    .qa-item summary::before {
+      content: 'T'; width: 22px; height: 22px;
+      background: rgba(88,166,255,.2); color: var(--accent);
+      border-radius: 4px; font-size: 11px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .qa-item[open] summary { border-bottom: 1px solid var(--border); }
+    .qa-answer {
+      padding: 14px 18px 16px 50px;
+      font-size: 13.5px; color: var(--text-muted); line-height: 1.75;
+    }
+
+    /* ── Table ── */
+    .data-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 13.5px; margin: 16px 0;
+    }
+    .data-table th {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 10px 14px; text-align: left;
+      font-size: 12px; font-weight: 700;
+      color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .data-table td {
+      border: 1px solid var(--border);
+      padding: 10px 14px; line-height: 1.55;
+      vertical-align: top;
+    }
+    .data-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+    /* ── Note box ── */
+    .note-box {
+      display: flex; gap: 12px; align-items: flex-start;
+      background: rgba(210,153,34,.08);
+      border: 1px solid rgba(210,153,34,.3);
+      border-radius: 8px; padding: 14px 18px;
+      margin: 16px 0;
+    }
+    .note-box .note-icon { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+    .note-box p { font-size: 13.5px; color: var(--text-muted); line-height: 1.65; }
+    .note-box p strong { color: var(--warn); }
+
+    /* ── Divider ── */
+    hr.divider { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 64px; padding-top: 28px;
+      color: var(--text-muted); font-size: 13px;
+      line-height: 1.7;
+    }
+
+    /* ── Language switch ── */
+    .lang-switch {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        float: right;
+        margin-bottom: 32px;
+    }
+
+    .lang-switch a {
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+    }
+
+    .lang-switch a.active,
+    .lang-switch a:hover {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+    }
+
+    /* ── Back link ── */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--accent);
+        text-decoration: none;
+        font-size: 0.88rem;
+        margin-bottom: 32px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar TOC -->
+<nav id="sidebar">
+  <div class="logo">
+    <span class="badge">BERBASIS AI</span>
+    <strong>Dasbor Kecerdasan AI</strong>
+    <span>Panduan Fitur v2.0</span>
+  </div>
+  <div id="toc">
+    <div class="toc-section-label" style="color:var(--text)">Gambaran Umum</div>
+    <a href="#overview">
+      <span class="toc-icon" style="background:rgba(88,166,255,.2);color:var(--accent)">◈</span>
+      Pengenalan Dasbor
+    </a>
+
+    <div class="toc-section-label" style="color:var(--text)">6 Fitur AI</div>
+    <a href="#feature1">
+      <span class="toc-icon" style="background:rgba(88,166,255,.15);color:var(--accent)">1</span>
+      Tren OEE &amp; Perkiraan AI
+    </a>
+    <a href="#feature2">
+      <span class="toc-icon" style="background:rgba(248,81,73,.15);color:var(--danger)">2</span>
+      Deteksi Anomali
+    </a>
+    <a href="#feature3">
+      <span class="toc-icon" style="background:rgba(63,185,80,.15);color:var(--accent2)">3</span>
+      Indeks Kesehatan Lini
+    </a>
+    <a href="#feature4">
+      <span class="toc-icon" style="background:rgba(210,153,34,.15);color:var(--warn)">4</span>
+      Pemeliharaan Prediktif
+    </a>
+    <a href="#feature5">
+      <span class="toc-icon" style="background:rgba(188,140,255,.15);color:var(--purple)">5</span>
+      Streaming AI Real-time
+    </a>
+    <a href="#feature6">
+      <span class="toc-icon" style="background:rgba(245,166,35,.15);color:var(--orange)">6</span>
+      Optimasi Produksi
+    </a>
+
+    <div class="toc-section-label" style="color:var(--text)">Referensi</div>
+    <a href="#comparison">
+      <span class="toc-icon" style="background:rgba(255,255,255,.06);color:var(--text-muted)">≡</span>
+      Perbandingan Fitur
+    </a>
+    <a href="#faq">
+      <span class="toc-icon" style="background:rgba(255,255,255,.06);color:var(--text-muted)">?</span>
+      FAQ Pelanggan
+    </a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main id="main">
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
+        <a href="./../page/data/ai_dashboard_manual_ina.html" class="back-link" style="margin-bottom:0;">&#8592; Kembali ke Panduan</a>
+        <div class="lang-switch">
+            <a href="AI_DASHBOARD_FEATURES_ENG.html">EN</a>
+            <a href="AI_DASHBOARD_FEATURES.html">KOR</a>
+            <a href="AI_DASHBOARD_FEATURES_INA.html" class="active">INA</a>
+        </div>
+    </div>
+
+  <!-- Page Hero -->
+  <div class="page-hero" id="overview">
+    <div class="hero-badge">BERBASIS AI</div>
+    <h1>Dasbor Kecerdasan AI<br>Panduan 6 Fitur AI Inti</h1>
+    <p>
+      Dasbor bergaya signage yang menggunakan AI untuk menganalisis, memprediksi, dan mengoptimalkan
+      <strong style="color:var(--accent)">OEE (Overall Equipment Effectiveness)</strong> di lantai produksi.
+      Menampilkan 6 fitur AI secara bersamaan di layar 1920×1080 secara real-time,
+      dengan filter drill-down di tingkat pabrik, lini, dan mesin.
+    </p>
+    <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+      <span class="badge badge-blue">Auto-refresh setiap 60 detik</span>
+      <span class="badge badge-green">Filter Pabrik / Lini / Mesin</span>
+      <span class="badge badge-purple">Periode Hari Ini / 7 Hari / 30 Hari</span>
+      <span class="badge badge-orange">Ekspor Laporan Didukung</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- Fitur 1: Tren OEE & Perkiraan AI -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="feature1">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(88,166,255,.15);">📈</div>
+      <div class="section-meta">
+        <div class="section-num">Fitur 01</div>
+        <h2>Tren OEE &amp; Perkiraan AI</h2>
+        <div class="section-sub">Tren OEE aktual + grafik perkiraan 4 jam berbasis AI</div>
+      </div>
+    </div>
+
+    <div class="desc-block">
+      <p>
+        <strong>OEE (Overall Equipment Effectiveness)</strong> adalah KPI manufaktur inti yang dihitung
+        sebagai Ketersediaan × Kinerja × Kualitas. Grafik ini menampilkan
+        <strong>riwayat OEE aktual hari ini (garis solid)</strong> dan
+        <strong>perkiraan 4 jam yang dihitung AI (garis putus-putus)</strong> dalam satu layar.
+      </p>
+      <p>
+        Pita semi-transparan di sekitar garis perkiraan adalah <strong>Interval Kepercayaan 90% (CI)</strong>,
+        artinya ada probabilitas 90% bahwa OEE aktual akan jatuh dalam rentang ini.
+        CI yang lebih lebar menunjukkan ketidakpastian lebih tinggi; CI yang lebih sempit menunjukkan keandalan perkiraan lebih tinggi.
+      </p>
+    </div>
+
+    <div class="card-grid card-grid-3">
+      <div class="info-card">
+        <div class="card-label">OEE Aktual (Garis Solid)</div>
+        <p>Nilai OEE aktual per jam untuk hari ini. Selalu ditampilkan berdasarkan tanggal saat ini.</p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">Perkiraan AI (Garis Putus-putus)</div>
+        <p>OEE yang diprediksi hingga 4 jam dari sekarang. Menggunakan Exponential Smoothing + pola musiman.</p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">Interval Kepercayaan (90% CI)</div>
+        <p>Menunjukkan ketidakpastian dalam rentang perkiraan. Interval yang lebih sempit berarti akurasi prediksi lebih tinggi.</p>
+      </div>
+    </div>
+
+    <div class="algo-box">
+      <div class="algo-title">⚙ Algoritma Perkiraan AI — Exponential Smoothing + Pola Musiman</div>
+      <ul>
+        <li><strong>LANGKAH 1 — Pembelajaran Musiman:</strong> Mempelajari statistik OEE per jam dan hari-dalam-minggu selama 7 atau 30 hari terakhir, membangun matriks musiman (hari-dalam-minggu × jam).</li>
+        <li><strong>LANGKAH 2 — Pengumpulan Aktual Hari Ini:</strong> Mengambil OEE aktual per jam untuk hari ini (selalu berdasarkan tanggal hari ini terlepas dari filter yang dipilih).</li>
+        <li><strong>LANGKAH 3 — Perhitungan Perkiraan:</strong> Menggabungkan Exponential Smoothing dengan rata-rata berbobot musiman untuk memprediksi OEE per jam 4 jam ke depan.</li>
+        <li><strong>LANGKAH 4 — Komputasi Interval Kepercayaan:</strong> Menghitung 90% CI berdasarkan deviasi standar (seasonal_std dibatasi pada 15% untuk mencegah interval ekstrem).</li>
+        <li><strong>LANGKAH 5 — Penilaian Tren:</strong> Menganalisis kemiringan nilai perkiraan menggunakan regresi linier dan menampilkan lencana Tren Naik / Turun / Stabil.</li>
+      </ul>
+    </div>
+
+    <h3 style="font-size:15px;margin:24px 0 12px;">Kartu Ringkasan Atas</h3>
+    <div class="card-grid card-grid-2">
+      <div class="info-card">
+        <div class="card-label">🔴 OEE Real-time (LANGSUNG)</div>
+        <p>
+          Nilai OEE aktual untuk jam terbaru saat ini.<br>
+          Meskipun filter tanggal diatur ke 7 atau 30 hari, nilai ini
+          <strong>selalu berdasarkan hari ini</strong>.<br><br>
+          Lencana status:
+          <span class="badge badge-green">BAIK</span>&nbsp;
+          <span class="badge badge-warn">PERINGATAN</span>&nbsp;
+          <span class="badge badge-danger">KRITIS</span>
+        </p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">🔮 Perkiraan AI 4 Jam ke Depan</div>
+        <p>
+          Menampilkan rata-rata OEE yang diprediksi untuk 4 jam ke depan dan rentang CI.<br>
+          Contoh: "78,3% · CI: 72,0% ~ 84,6%"<br><br>
+          Lencana tren:
+          <span class="badge badge-blue">Tren Naik ↑</span>&nbsp;
+          <span class="badge badge-danger">Tren Turun ↓</span>&nbsp;
+          <span class="badge badge-green">Stabil →</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="qa-list">
+      <details class="qa-item">
+        <summary>Apakah mengubah rentang tanggal memengaruhi nilai perkiraan?</summary>
+        <div class="qa-answer">
+          Ya, berpengaruh. Filter rentang tanggal memengaruhi <strong>periode yang digunakan untuk pembelajaran pola</strong>.
+          Misalnya, memilih '7 Hari' membuat perkiraan berdasarkan pola OEE dari 7 hari terakhir per jam,
+          sementara '30 Hari' menggunakan dataset 30 hari yang lebih panjang untuk pembelajaran.
+          Namun, OEE saat ini (Real-time) dan garis OEE aktual hari ini selalu terkunci pada tanggal hari ini.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>Apa artinya jika interval kepercayaan (CI) sangat lebar?</summary>
+        <div class="qa-answer">
+          CI yang lebar berarti variabilitas OEE selama periode waktu tersebut tinggi.
+          Perkiraan hanya untuk referensi, dan nilai aktual kemungkinan berada di suatu tempat dalam rentang tersebut.
+          Sistem membatasi batas deviasi standar pada 15% untuk mencegah CI menjadi terlalu lebar secara tidak normal.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- Fitur 2: Deteksi Anomali -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="feature2">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(248,81,73,.15);">🚨</div>
+      <div class="section-meta">
+        <div class="section-num">Fitur 02</div>
+        <h2>Deteksi Anomali</h2>
+        <div class="section-sub">Deteksi anomali real-time berbasis Z-Score</div>
+      </div>
+    </div>
+
+    <div class="desc-block">
+      <p>
+        <strong>Deteksi Anomali</strong> secara statistik mengukur seberapa jauh OEE saat ini menyimpang
+        dari pola historis dan secara otomatis mengidentifikasi kondisi peralatan yang tidak normal.
+      </p>
+      <p>
+        Menggunakan metode statistik yang dikenal sebagai <strong>Z-Score (skor standar)</strong>, yang
+        mewakili berapa banyak deviasi standar nilai saat ini dari rata-rata.
+        Z-Score yang lebih tinggi berarti nilai saat ini telah menyimpang secara signifikan dari rentang normal,
+        mengindikasikan kondisi anomali.
+      </p>
+    </div>
+
+    <div class="algo-box">
+      <div class="algo-title">⚙ Prinsip Deteksi Anomali Z-Score</div>
+      <ul>
+        <li><strong>Z = (Nilai Saat Ini − Rata-rata) / Deviasi Standar</strong></li>
+        <li>Membandingkan OEE jam saat ini dengan statistik historis untuk slot waktu yang sama (hari-dalam-minggu dan jam).</li>
+        <li>Jika Z-Score melebihi ambang batas, peristiwa ditandai sebagai anomali dan ditambahkan ke daftar.</li>
+        <li>Tingkat keparahan (Kritis / Peringatan) dibedakan dengan warna dan lencana.</li>
+      </ul>
+    </div>
+
+    <h3 style="font-size:15px;margin:24px 0 12px;">Kriteria Tingkat Keparahan Anomali</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Tingkat Keparahan</th>
+          <th>Kondisi</th>
+          <th>Arti</th>
+          <th>Warna Tampilan</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-danger">Kritis</span></td>
+          <td>Z-Score sangat tinggi (penyimpangan parah)</td>
+          <td>Memerlukan inspeksi dan tindakan segera</td>
+          <td style="color:var(--danger)">Merah</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-warn">Peringatan</span></td>
+          <td>Z-Score tinggi (penyimpangan level waspada)</td>
+          <td>Pemantauan tren dan analisis akar penyebab disarankan</td>
+          <td style="color:var(--warn)">Kuning</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green">Normal</span></td>
+          <td>Z-Score rendah (dalam rentang normal)</td>
+          <td>Status operasi normal</td>
+          <td style="color:var(--accent2)">Hijau</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card-grid card-grid-2" style="margin-top:20px;">
+      <div class="info-card">
+        <div class="card-label">🔴 Kartu Atas — Deteksi Anomali</div>
+        <p>
+          Menampilkan <strong>jumlah total anomali</strong> yang saat ini terdeteksi sebagai angka.<br>
+          Menampilkan "0 anomali" ketika tidak ada anomali.<br>
+          Lencana merah berkedip muncul saat anomali Kritis terdeteksi.
+        </p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">📋 Kartu Daftar Deteksi Anomali</div>
+        <p>
+          Mencantumkan <strong>nama mesin, nama lini, cap waktu anomali, dan Z-Score</strong>
+          untuk setiap anomali yang terdeteksi.<br>
+          Menampilkan "Tidak ada anomali terdeteksi" ketika tidak ada.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa-list">
+      <details class="qa-item">
+        <summary>Data apa yang digunakan sebagai baseline untuk deteksi anomali?</summary>
+        <div class="qa-answer">
+          Sistem menghitung rata-rata dan deviasi standar OEE per jam untuk hari-dalam-minggu dan slot waktu yang sama,
+          berdasarkan rentang tanggal yang dipilih (Hari Ini / 7 Hari / 30 Hari).
+          Z-Score kemudian dihitung dengan membandingkan OEE saat ini dengan nilai baseline ini.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>Apakah 0 anomali berarti semuanya sepenuhnya normal?</summary>
+        <div class="qa-answer">
+          Ini berarti tidak ada data yang melebihi ambang batas anomali Z-Score — secara statistik dalam rentang normal.
+          Namun, meskipun nilai OEE absolut rendah, mungkin tidak ditandai sebagai anomali jika
+          pola variasi konsisten. Selalu periksa grafik Tren OEE bersama indikator ini.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- Fitur 3: Indeks Kesehatan Lini -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="feature3">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(63,185,80,.15);">💚</div>
+      <div class="section-meta">
+        <div class="section-num">Fitur 03</div>
+        <h2>Indeks Kesehatan Lini</h2>
+        <div class="section-sub">Skor kesehatan peralatan per lini berdasarkan rata-rata OEE</div>
+      </div>
+    </div>
+
+    <div class="desc-block">
+      <p>
+        <strong>Indeks Kesehatan Lini</strong> mengkuantifikasi kondisi peralatan keseluruhan setiap
+        lini produksi dalam skala 0–100%. Diturunkan dari rata-rata OEE, di mana nilai yang lebih tinggi
+        mengindikasikan operasi lini yang lebih sehat.
+      </p>
+      <p>
+        Periode analisis berubah berdasarkan rentang tanggal yang dipilih.
+        Misalnya, memilih "7 Hari Terakhir" menghitung skor kesehatan menggunakan rata-rata OEE
+        per lini selama 7 hari terakhir. Subjudul kartu diperbarui otomatis untuk mencerminkan periode yang dipilih.
+      </p>
+    </div>
+
+    <h3 style="font-size:15px;margin:0 0 12px;">Kriteria Grade Kesehatan</h3>
+
+    <div class="metric-bar">
+      <div class="metric-label"><span class="badge badge-green">Sehat ✓</span></div>
+      <div class="metric-bar-track">
+        <div class="metric-bar-fill" style="width:85%;background:var(--accent2);"></div>
+      </div>
+      <div class="metric-pct" style="color:var(--accent2);">≥ 85%</div>
+    </div>
+    <div style="margin:-4px 0 8px 200px;font-size:12.5px;color:var(--text-muted);">
+      Memenuhi atau melampaui target (85%) — lini beroperasi stabil.
+    </div>
+
+    <div class="metric-bar">
+      <div class="metric-label"><span class="badge badge-warn">Peringatan ⚠</span></div>
+      <div class="metric-bar-track">
+        <div class="metric-bar-fill" style="width:65%;background:var(--warn);"></div>
+      </div>
+      <div class="metric-pct" style="color:var(--warn);">65~85%</div>
+    </div>
+    <div style="margin:-4px 0 8px 200px;font-size:12.5px;color:var(--text-muted);">
+      Di bawah target — analisis akar penyebab dan tindakan korektif disarankan.
+    </div>
+
+    <div class="metric-bar">
+      <div class="metric-label"><span class="badge badge-danger">Kritis ✕</span></div>
+      <div class="metric-bar-track">
+        <div class="metric-bar-fill" style="width:40%;background:var(--danger);"></div>
+      </div>
+      <div class="metric-pct" style="color:var(--danger);">< 65%</div>
+    </div>
+    <div style="margin:-4px 0 16px 200px;font-size:12.5px;color:var(--text-muted);">
+      Degradasi parah — inspeksi dan tindakan segera diperlukan.
+    </div>
+
+    <div class="card-grid card-grid-2" style="margin-top:8px;">
+      <div class="info-card">
+        <div class="card-label">📊 Kartu Atas — Indeks Kesehatan Lini (Rata-rata)</div>
+        <p>
+          Menampilkan <strong>skor kesehatan rata-rata</strong> di semua lini sebagai angka besar.<br>
+          Memberikan gambaran sekilas tentang status kesehatan pabrik secara keseluruhan.
+        </p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">📋 Daftar Kesehatan Per Lini</div>
+        <p>
+          Menampilkan nama lini, skor kesehatan, dan grade setiap lini dalam daftar.<br>
+          Lini dengan skor kesehatan lebih rendah muncul di atas untuk perhatian segera.
+        </p>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <div class="note-icon">💡</div>
+      <p>
+        <strong>Catatan:</strong> Indeks Kesehatan Lini menggunakan nilai OEE langsung sebagai skor kesehatan.
+        Secara visual menunjukkan seberapa dekat setiap lini mencapai target OEE (85%).
+        Gunakan bersama fitur Optimasi Produksi untuk memprioritaskan upaya perbaikan.
+      </p>
+    </div>
+
+    <div class="qa-list">
+      <details class="qa-item">
+        <summary>Jika filter tanggal diatur ke 'Hari Ini', apakah hanya data hari ini yang digunakan?</summary>
+        <div class="qa-answer">
+          Saat 'Hari Ini' dipilih, sistem secara internal menggunakan 7 hari terakhir untuk stabilitas statistik.
+          Data satu hari tidak cukup untuk menghitung rata-rata yang andal.
+          Saat '7 Hari' atau '30 Hari' dipilih, rata-rata OEE aktual per lini untuk periode tersebut digunakan.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>Apa yang harus dilakukan ketika skor kesehatan lini rendah?</summary>
+        <div class="qa-answer">
+          Lini dengan skor kesehatan rendah juga menjadi target sebagai peluang perbaikan dalam fitur
+          <strong>Optimasi Produksi</strong>.
+          Untuk mengidentifikasi komponen mana (Ketersediaan / Kinerja / Kualitas) yang menyebabkan skor rendah,
+          gunakan analisis hambatan di Optimasi Produksi,
+          dan periksa mesin berisiko tinggi pada lini tersebut menggunakan Pemeliharaan Prediktif.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- Fitur 4: Pemeliharaan Prediktif -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="feature4">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(210,153,34,.15);">🔧</div>
+      <div class="section-meta">
+        <div class="section-num">Fitur 04</div>
+        <h2>Pemeliharaan Prediktif</h2>
+        <div class="section-sub">Prediksi kegagalan tingkat mesin dan prioritas pemeliharaan melalui skor risiko</div>
+      </div>
+    </div>
+
+    <div class="desc-block">
+      <p>
+        <strong>Pemeliharaan Prediktif</strong> menganalisis catatan downtime historis dan data stabilitas OEE
+        untuk menghitung <strong>skor risiko kegagalan (0–100)</strong> untuk setiap mesin.
+      </p>
+      <p>
+        Dengan mengidentifikasi mesin berisiko tinggi terlebih dahulu dan menjadwalkan pemeliharaan terencana,
+        kerugian produksi dari kegagalan tak terduga dapat dicegah secara proaktif.
+      </p>
+    </div>
+
+    <h3 style="font-size:15px;margin:0 0 16px;">Perhitungan Skor Risiko (Jumlah Berbobot dari 3 Indikator)</h3>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">A</div>
+        <div class="step-content">
+          <div class="step-title">Risiko Runtime — Bobot 40%</div>
+          <p>
+            Membandingkan waktu yang telah berlalu sejak downtime terakhir dengan interval kegagalan rata-rata historis.
+            Semakin dekat waktu yang berlalu dengan interval rata-rata, semakin tinggi skor risiko.<br>
+            <strong>Rumus:</strong> Waktu yang Berlalu (j) ÷ Rata-rata Interval Kegagalan (j)
+          </p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">B</div>
+        <div class="step-content">
+          <div class="step-title">Tingkat Peningkatan Frekuensi Downtime — Bobot 35%</div>
+          <p>
+            Membandingkan kejadian downtime dalam 30 hari terbaru dengan 30 hari sebelumnya (31–60 hari lalu).
+            Mesin dengan peningkatan tajam dalam frekuensi downtime terbaru ditandai sebagai indikator kegagalan.<br>
+            <strong>Rumus:</strong> (Jumlah 30 hari terbaru − Jumlah 30 hari sebelumnya) ÷ Jumlah 30 hari sebelumnya
+          </p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">C</div>
+        <div class="step-content">
+          <div class="step-title">Ketidakstabilan OEE — Bobot 25%</div>
+          <p>
+            Menganalisis rata-rata dan variabilitas (deviasi standar) OEE per mesin selama periode analisis.
+            OEE rendah dengan variabilitas tinggi dianggap kondisi peralatan tidak stabil.<br>
+            <strong>Catatan:</strong> Nilai OEE yang melebihi 100% dibatasi ke 0–100% untuk mencegah positif palsu.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:15px;margin:24px 0 12px;">Kriteria Grade Risiko</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Grade Risiko</th>
+          <th>Rentang Skor</th>
+          <th>Arti</th>
+          <th>Tindakan yang Disarankan</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-danger">Bahaya 🔴</span></td>
+          <td>80 ke atas</td>
+          <td>Probabilitas kegagalan sangat tinggi</td>
+          <td>Inspeksi dan pemeliharaan segera</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-warn">Peringatan 🟡</span></td>
+          <td>50–79</td>
+          <td>Gejala kegagalan terdeteksi, perlu waspada</td>
+          <td>Rencanakan inspeksi awal</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green">Normal 🟢</span></td>
+          <td>0–49</td>
+          <td>Status operasi normal</td>
+          <td>Pertahankan pemantauan rutin</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card-grid card-grid-2" style="margin-top:16px;">
+      <div class="info-card">
+        <div class="card-label">🔴 Kartu Atas — Mesin Berisiko Tinggi</div>
+        <p>
+          Menampilkan jumlah mesin dalam grade Bahaya (skor ≥ 80).<br>
+          Jumlah mesin grade Peringatan juga ditampilkan dengan lencana.
+        </p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">📋 Daftar Pemeliharaan Prediktif</div>
+        <p>
+          Mesin diurutkan berdasarkan skor risiko dalam <strong>urutan menurun</strong>.<br>
+          Nama mesin, nama lini, skor risiko, dan grade risiko semuanya ditampilkan.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa-list">
+      <details class="qa-item">
+        <summary>Seberapa sering skor risiko diperbarui?</summary>
+        <div class="qa-answer">
+          Skor risiko dihitung ulang setiap <strong>60 detik</strong>, sinkron dengan
+          siklus auto-refresh dasbor.
+          Untuk memperbarui segera, klik tombol 'Refresh' di bagian atas.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>Bagaimana mesin baru tanpa riwayat downtime ditangani?</summary>
+        <div class="qa-answer">
+          Mesin tanpa riwayat downtime mendapat skor 0 untuk Risiko Runtime (A) dan Tingkat Peningkatan Frekuensi (B).
+          Hanya komponen Ketidakstabilan OEE (C) yang dihitung.
+          Setelah akumulasi data 90 hari, prediksi risiko yang lebih akurat menjadi mungkin.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>Bisakah jadwal pemeliharaan aktual diintegrasikan dengan sistem ini?</summary>
+        <div class="qa-answer">
+          Versi saat ini berfokus pada pengiriman skor risiko dan fungsionalitas peringatan.
+          Integrasi dengan sistem penjadwalan pemeliharaan (ERP / CMMS) tersedia sebagai opsi pengembangan kustom.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- Fitur 5: Streaming AI Real-time -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="feature5">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(188,140,255,.15);">⚡</div>
+      <div class="section-meta">
+        <div class="section-num">Fitur 05</div>
+        <h2>Streaming AI Real-time</h2>
+        <div class="section-sub">Feed streaming langsung untuk peristiwa anomali, downtime, dan risiko pemeliharaan</div>
+      </div>
+    </div>
+
+    <div class="desc-block">
+      <p>
+        <strong>Streaming AI Real-time</strong> menampilkan semua hasil analisis AI dari dasbor
+        sebagai <strong>feed peristiwa secara real-time</strong>.
+        Deteksi anomali, kejadian downtime, dan peristiwa risiko pemeliharaan muncul di feed bawah
+        segera setelah terjadi.
+      </p>
+      <p>
+        Menggunakan teknologi <strong>SSE (Server-Sent Events)</strong> untuk mempertahankan koneksi persisten
+        dengan server dan mendorong peristiwa baru ke feed secara real-time.
+        Status koneksi dapat dipantau melalui titik berkedip di bagian atas.
+      </p>
+    </div>
+
+    <h3 style="font-size:15px;margin:0 0 12px;">Jenis Peristiwa Streaming</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Jenis Peristiwa</th>
+          <th>Warna</th>
+          <th>Deskripsi</th>
+          <th>Contoh</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-danger">Anomali</span></td>
+          <td style="color:var(--danger);">Merah</td>
+          <td>Peristiwa deteksi anomali OEE berbasis Z-Score</td>
+          <td>Lini A-1 / Mesin M-03 anomali terdeteksi (Z-Score: 3,2)</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-warn">Downtime</span></td>
+          <td style="color:var(--warn);">Kuning</td>
+          <td>Peristiwa kejadian downtime peralatan</td>
+          <td>Lini B-2 / Mesin M-07 downtime (12 menit)</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-orange">Pemeliharaan</span></td>
+          <td style="color:var(--orange);">Oranye</td>
+          <td>Peristiwa eskalasi risiko pemeliharaan prediktif</td>
+          <td>Mesin M-11 skor risiko 85 — inspeksi segera disarankan</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card-grid card-grid-3" style="margin-top:20px;">
+      <div class="info-card">
+        <div class="card-label">Status Koneksi</div>
+        <p>
+          <strong style="color:var(--accent2);">Kedip hijau</strong> = Terhubung<br>
+          <strong style="color:var(--warn);">Kedip oranye</strong> = Menghubungkan<br>
+          <strong style="color:var(--danger);">Kedip merah</strong> = Terputus
+        </p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">Penghitung Peristiwa</div>
+        <p>
+          <strong>Jumlah total peristiwa</strong> yang diterima dalam sesi saat ini
+          ditampilkan secara real-time.<br>
+          Contoh: "47 peristiwa"
+        </p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">Mode Tampilan Feed</div>
+        <p>
+          Peristiwa terbaru <strong>ditambahkan ke atas</strong>,
+          dan peristiwa lama dihapus otomatis setelah jumlah melebihi batas.
+        </p>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <div class="note-icon">💡</div>
+      <p>
+        <strong>Tips Penggunaan:</strong> Feed Streaming AI Real-time bertindak sebagai aliran peristiwa sumber
+        untuk kartu Deteksi Anomali dan Pemeliharaan Prediktif.
+        Saat angka pada kartu atas meningkat, Anda dapat segera mengidentifikasi mesin atau
+        lini mana yang memicu peristiwa dalam feed ini.
+      </p>
+    </div>
+
+    <div class="qa-list">
+      <details class="qa-item">
+        <summary>Apakah peristiwa hilang ketika koneksi terputus?</summary>
+        <div class="qa-answer">
+          Jika koneksi SSE terputus, sistem secara otomatis mencoba untuk terhubung kembali.
+          Beberapa peristiwa mungkin terlewat selama penghubungan kembali, tetapi data dasbor utama
+          (daftar anomali, skor pemeliharaan, dll.) diperbarui melalui siklus polling 60 detik terpisah,
+          sehingga visibilitas status keseluruhan tidak terpengaruh.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>Berapa lama data streaming disimpan?</summary>
+        <div class="qa-answer">
+          Feed Streaming AI Real-time hanya dipertahankan untuk sesi layar saat ini
+          (durasi koneksi browser).
+          Me-refresh halaman mengatur ulang feed.
+          Untuk pencarian peristiwa historis, gunakan halaman kueri data terpisah.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- Fitur 6: Optimasi Produksi -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="feature6">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(245,166,35,.15);">🎯</div>
+      <div class="section-meta">
+        <div class="section-num">Fitur 06</div>
+        <h2>Optimasi Produksi</h2>
+        <div class="section-sub">Analisis hambatan OEE dan saran perbaikan produksi berbasis AI</div>
+      </div>
+    </div>
+
+    <div class="desc-block">
+      <p>
+        <strong>Optimasi Produksi</strong> secara otomatis mengidentifikasi lini yang jatuh di bawah target OEE
+        (85%), kemudian menggunakan AI untuk menganalisis komponen mana dari tiga komponen —
+        <strong>Ketersediaan, Kinerja, atau Kualitas</strong> — yang merupakan hambatan terbesar (faktor kerugian),
+        dan memberikan saran perbaikan spesifik.
+      </p>
+      <p>
+        Daripada sekadar melaporkan OEE rendah, ini menjawab pertanyaan:
+        <strong>"Di mana harus meningkatkan pertama untuk efek terbesar?"</strong> — didukung data.
+      </p>
+    </div>
+
+    <div class="algo-box">
+      <div class="algo-title">⚙ Proses Analisis Optimasi Produksi</div>
+      <ul>
+        <li><strong>LANGKAH 1:</strong> Hitung rata-rata OEE, Ketersediaan, Kinerja, dan Kualitas per lini untuk periode yang dipilih (7 / 14 / 30 hari)</li>
+        <li><strong>LANGKAH 2:</strong> Filter hanya lini yang jatuh di bawah target OEE (85%) untuk analisis</li>
+        <li><strong>LANGKAH 3:</strong> Hitung kesenjangan — Kesenjangan Ketersediaan (target 90%), Kesenjangan Kinerja (target 90%), Kesenjangan Kualitas (target 99%)</li>
+        <li><strong>LANGKAH 4:</strong> Kesenjangan terbesar di antara tiga menjadi <strong>faktor hambatan</strong></li>
+        <li><strong>LANGKAH 5:</strong> Secara otomatis hasilkan saran perbaikan (Suggestions) berdasarkan faktor hambatan</li>
+        <li><strong>LANGKAH 6:</strong> Bandingkan OEE antara paruh pertama dan paruh kedua periode untuk menentukan tren (Meningkat / Menurun / Stabil)</li>
+      </ul>
+    </div>
+
+    <h3 style="font-size:15px;margin:24px 0 12px;">Target OEE dan Kriteria Analisis Kesenjangan</h3>
+    <div class="note-box" style="margin-bottom:14px;">
+      <div class="note-icon">📖</div>
+      <p>
+        <strong>Sumber Tolok Ukur 85% — OEE Berkelas Dunia TPM (Seiichi Nakajima, 1988)</strong><br>
+        Target OEE 85% didasarkan pada standar <strong>OEE Berkelas Dunia</strong> yang ditetapkan oleh
+        Seiichi Nakajima, pencipta TPM (Total Productive Maintenance).
+        Diturunkan dari: Ketersediaan 90% × Kinerja 95% × Kualitas 99,9% ≈ <strong>85,4%</strong>.
+        Tolok ukur ini juga dirujuk oleh standar internasional termasuk ISO 22400 dan
+        SMRP (Society for Maintenance &amp; Reliability Professionals).
+        Sistem ini menerapkan kriteria ini sambil melonggarkan target Kinerja ke 90%
+        untuk lebih mencerminkan kondisi realistis di lantai produksi.
+      </p>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Metrik</th>
+          <th>Target</th>
+          <th>Arti Kesenjangan Besar</th>
+          <th>Arah Perbaikan Utama</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>OEE</strong></td>
+          <td><span class="badge badge-blue">85%</span></td>
+          <td>Penurunan efisiensi peralatan keseluruhan</td>
+          <td>Fokus pada hambatan di antara Ketersediaan, Kinerja, dan Kualitas</td>
+        </tr>
+        <tr>
+          <td><strong>Ketersediaan</strong></td>
+          <td><span class="badge badge-blue">90%</span></td>
+          <td>Downtime atau waktu setup berlebihan</td>
+          <td>Perkuat pemeliharaan preventif, kurangi waktu setup, terapkan SMED</td>
+        </tr>
+        <tr>
+          <td><strong>Kinerja</strong></td>
+          <td><span class="badge badge-blue">90%</span></td>
+          <td>Kerugian kecepatan peralatan atau penghentian kecil yang sering</td>
+          <td>Analisis penyebab penghentian kecil, optimalkan kecepatan peralatan</td>
+        </tr>
+        <tr>
+          <td><strong>Kualitas</strong></td>
+          <td><span class="badge badge-blue">99%</span></td>
+          <td>Produk cacat atau pengerjaan ulang terjadi</td>
+          <td>Tinjau parameter proses, periksa kualitas bahan baku</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:15px;margin:24px 0 12px;">Klasifikasi Prioritas Perbaikan</h3>
+    <div class="card-grid card-grid-3">
+      <div class="info-card">
+        <div class="card-label"><span class="badge badge-danger">P1 — Mendesak</span></div>
+        <p>Kesenjangan OEE <strong>20%p atau lebih</strong><br>Tindakan korektif segera diperlukan</p>
+      </div>
+      <div class="info-card">
+        <div class="card-label"><span class="badge badge-warn">P2 — Penting</span></div>
+        <p>Kesenjangan OEE <strong>10–20%p</strong><br>Rencana perbaikan jangka pendek disarankan</p>
+      </div>
+      <div class="info-card">
+        <div class="card-label"><span class="badge badge-green">P3 — Pantau</span></div>
+        <p>Kesenjangan OEE <strong>kurang dari 10%p</strong><br>Pemantauan berkelanjutan dan perbaikan bertahap</p>
+      </div>
+    </div>
+
+    <div class="card-grid card-grid-2" style="margin-top:16px;">
+      <div class="info-card">
+        <div class="card-label">📊 Bilah Ringkasan Optimasi</div>
+        <p>
+          Menampilkan <strong>metrik ringkasan utama</strong> di header kartu: total lini, lini di bawah target,
+          rata-rata OEE keseluruhan, dan lini berkinerja terbaik.
+        </p>
+      </div>
+      <div class="info-card">
+        <div class="card-label">📋 Daftar Peluang Optimasi</div>
+        <p>
+          Lini berkinerja buruk dicantumkan dalam <strong>urutan OEE menaik</strong>,
+          dengan faktor hambatan, kesenjangan, dan saran perbaikan ditampilkan per lini.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa-list">
+      <details class="qa-item">
+        <summary>Apa yang ditampilkan ketika semua lini memenuhi target 85%?</summary>
+        <div class="qa-answer">
+          Ketika semua lini memenuhi target OEE (85%),
+          pesan "Semua lini memenuhi target OEE" ditampilkan bersama
+          rata-rata OEE saat ini dan nilai OEE tertinggi. Ini mengindikasikan kondisi target terlampaui.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>Bagaimana tren (Meningkat / Menurun / Stabil) dihitung?</summary>
+        <div class="qa-answer">
+          Periode analisis dibagi menjadi dua paruh, dan rata-rata OEE setiap paruh dibandingkan.
+          Misalnya, dengan analisis 14 hari, rata-rata OEE dari 7 hari terbaru dibandingkan
+          dengan 7 hari sebelumnya.
+          Jika paruh terbaru lebih tinggi: <span class="badge badge-green">Meningkat</span>,
+          jika lebih rendah: <span class="badge badge-danger">Menurun</span>,
+          dan jika perbedaannya minimal: <span class="badge badge-blue">Stabil</span>.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>Apa dasar untuk saran perbaikan?</summary>
+        <div class="qa-answer">
+          Berdasarkan faktor hambatan (Ketersediaan / Kinerja / Kualitas),
+          teks saran perbaikan yang telah ditentukan sebelumnya yang diturunkan dari praktik terbaik manufaktur
+          dipilih secara otomatis.
+          Misalnya, jika Ketersediaan adalah hambatan, saran seperti
+          "Optimalkan interval pemeliharaan preventif" atau "Tinjau pengurangan waktu setup" direkomendasikan.
+          Versi saat ini menggunakan saran berbasis aturan; integrasi AI generatif di masa depan akan
+          memungkinkan rekomendasi yang lebih terperinci dan disesuaikan.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- Tabel Perbandingan Fitur -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="comparison">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,255,255,.06);">≡</div>
+      <div class="section-meta">
+        <div class="section-num">Ringkasan</div>
+        <h2>Perbandingan 6 Fitur AI</h2>
+        <div class="section-sub">Karakteristik fitur, frekuensi pembaruan, dan tujuan dalam sekali pandang</div>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Fitur</th>
+          <th>Algoritma Inti</th>
+          <th>Target Analisis</th>
+          <th>Output Utama</th>
+          <th>Pembaruan</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Tren OEE &amp; Perkiraan AI</strong></td>
+          <td>Exponential Smoothing + Pola Musiman</td>
+          <td>OEE per jam</td>
+          <td>Perkiraan 4 jam, 90% CI, tren</td>
+          <td>60 detik</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Deteksi Anomali</strong></td>
+          <td>Analisis Statistik Z-Score</td>
+          <td>Pola penyimpangan OEE</td>
+          <td>Jumlah anomali, daftar Kritis/Peringatan</td>
+          <td>60 detik</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Indeks Kesehatan Lini</strong></td>
+          <td>Pengindeksan Berbasis Rata-rata OEE</td>
+          <td>OEE per lini</td>
+          <td>Skor kesehatan 0–100%, grade, rata-rata</td>
+          <td>60 detik</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>Pemeliharaan Prediktif</strong></td>
+          <td>Jumlah Berbobot Multi-indikator</td>
+          <td>Downtime + OEE per mesin</td>
+          <td>Skor risiko (0–100), prioritas pemeliharaan</td>
+          <td>60 detik</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>Streaming AI Real-time</strong></td>
+          <td>Peristiwa Real-time SSE</td>
+          <td>Peristiwa Anomali / Downtime / Pemeliharaan</td>
+          <td>Feed peristiwa langsung</td>
+          <td>Real-time</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>Optimasi Produksi</strong></td>
+          <td>Analisis Kesenjangan + Pemilihan Hambatan</td>
+          <td>OEE / Ketersediaan / Kinerja / Kualitas per lini</td>
+          <td>Faktor hambatan, saran, prioritas</td>
+          <td>60 detik</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- FAQ Pelanggan -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <section class="feature-section" id="faq">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,255,255,.06);">?</div>
+      <div class="section-meta">
+        <div class="section-num">FAQ</div>
+        <h2>Pertanyaan yang Sering Diajukan</h2>
+        <div class="section-sub">Tanya jawab utama yang mencakup dasbor secara keseluruhan</div>
+      </div>
+    </div>
+
+    <div class="qa-list">
+      <details class="qa-item">
+        <summary>Apakah AI bekerja dengan data yang terbatas?</summary>
+        <div class="qa-answer">
+          Berfungsi, tetapi akurasi mungkin lebih rendah.
+          Perkiraan OEE memerlukan setidaknya beberapa hari data per jam,
+          dan risiko pemeliharaan prediktif menjadi lebih akurat setelah riwayat downtime 90 hari terakumulasi.
+          Selama penerapan awal, perlakukan output sebagai indikator referensi;
+          keandalan meningkat setelah 1–3 bulan operasi.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>Apakah filter pabrik / lini / mesin berlaku untuk semua 6 fitur AI?</summary>
+        <div class="qa-answer">
+          Ya, mengubah filter pabrik / lini / mesin di bagian atas menerapkan filter di semua 6 fitur AI.
+          Namun, kartu OEE Real-time dan garis Tren OEE hari ini selalu terkunci pada tanggal saat ini.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>Apa fungsi tombol Ekspor?</summary>
+        <div class="qa-answer">
+          Mengekspor metrik utama dan hasil analisis dasbor saat ini sebagai file PDF atau gambar.
+          Mengklik tombol Ekspor membuka modal ekspor di mana Anda dapat memilih bahasa
+          (Korea / Inggris) sebelum membuat file.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>Seberapa sering dasbor melakukan auto-refresh?</summary>
+        <div class="qa-answer">
+          Semua data analisis AI di-refresh otomatis setiap <strong>60 detik (1 menit)</strong>.
+          Untuk me-refresh segera, klik tombol 'Refresh' di bagian atas.
+          Streaming AI Real-time menerima peristiwa secara terpisah melalui SSE secara independen dari siklus ini.
+        </div>
+      </details>
+      <details class="qa-item">
+        <summary>Apakah cocok untuk tampilan signage (monitor TV)?</summary>
+        <div class="qa-answer">
+          Dasbor ini dirancang khusus untuk <strong>signage 1920×1080</strong>.
+          Disarankan untuk menampilkannya di TV 4K / FHD menggunakan mode layar penuh (F11).
+          Tema gelap memastikan keterbacaan tinggi di monitor besar di lingkungan pabrik yang redup.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <footer>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;">
+      <div>
+        <strong style="color:var(--text);">OEE_SCI V2 — Dasbor Kecerdasan AI</strong><br>
+        Panduan Fitur v2.0 · Kontak: SUNTECH
+      </div>
+      <div style="text-align:right;">
+        <span class="badge badge-blue">BERBASIS AI</span>&nbsp;
+        <span class="badge badge-green">OEE_SCI V2</span>
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  // Sidebar TOC active item highlight (IntersectionObserver)
+  const sections = document.querySelectorAll('.feature-section, #overview');
+  const tocLinks = document.querySelectorAll('#toc a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        tocLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
