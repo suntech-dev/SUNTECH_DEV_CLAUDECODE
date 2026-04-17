@@ -111,7 +111,7 @@ function initFilterSystem() {
         aiState.line = '';
         aiState.machine = '';
         // 라인/기계 드롭다운 초기화 및 비활성화
-        $('#factoryLineFilterSelect').html('<option value="">Semua Lini</option>').prop('disabled', true);
+        $('#factoryLineFilterSelect').html('<option value="">Semua Line</option>').prop('disabled', true);
         $('#factoryLineMachineFilterSelect').html('<option value="">Semua Mesin</option>').prop('disabled', true);
 
         // 공장이 선택된 경우 해당 공장의 라인/기계 목록 조회
@@ -232,13 +232,13 @@ function updateLineHealthSubtitle() {
     const sel = document.getElementById('dateRangeSelect');
     // 날짜 범위 값에 따른 서브타이틀 레이블 매핑
     const rangeMap = {
-        today: 'rata-rata OEE 7 hari per lini',
-        yesterday: 'rata-rata OEE 7 hari per lini',
-        '7d': 'rata-rata OEE 7 hari per lini',
-        '30d': 'rata-rata OEE 30 hari per lini',
+        today: 'rata-rata OEE 7 hari per line',
+        yesterday: 'rata-rata OEE 7 hari per line',
+        '7d': 'rata-rata OEE 7 hari per line',
+        '30d': 'rata-rata OEE 30 hari per line',
     };
     // 현재 선택값에 맞는 레이블 결정 (없으면 기본값 사용)
-    const label = sel ? (rangeMap[sel.value] || 'rata-rata OEE 7 hari per lini') : 'rata-rata OEE 7 hari per lini';
+    const label = sel ? (rangeMap[sel.value] || 'rata-rata OEE 7 hari per line') : 'rata-rata OEE 7 hari per line';
     // ai-health-subtitle 요소에 텍스트 설정
     const el = document.querySelector('.ai-health-subtitle');
     if (el) el.textContent = 'Berdasarkan ' + label;
@@ -563,7 +563,7 @@ function renderAnomalyEmpty(msg) {
 }
 
 // ============================================================
-// 3. Risiko Perawatan Prediktif
+// 3. Risiko Predictive Maintenance
 // ============================================================
 function loadMaintenanceRisk() {
     $.getJSON('proc/ai_maintenance_dash_2.php', getFilterParams(), function (data) {
@@ -646,7 +646,7 @@ function renderMaintenanceEmpty(msg) {
 }
 
 // ============================================================
-// 4. Indeks Kesehatan Lini
+// 4. Indeks Kesehatan Line
 // ============================================================
 function loadLineHealth() {
     $.getJSON('proc/ai_maintenance_dash_2.php', Object.assign({}, getFilterParams(), { limit: 50 }), function (data) {
@@ -666,7 +666,7 @@ function loadLineHealth() {
             a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
         );
         if (lines.length === 0) {
-            $('#aiHealthList').html('<div class="ai-empty-state"><div>Tidak ada data lini</div></div>');
+            $('#aiHealthList').html('<div class="ai-empty-state"><div>Tidak ada data line</div></div>');
             $('#aiHealthAvg').text('--');
             return;
         }
@@ -707,7 +707,7 @@ function loadLineHealth() {
 
         const avgHealth = healthCount > 0 ? (totalHealth / healthCount).toFixed(1) : '--';
         $('#aiHealthAvg').text(avgHealth !== '--' ? avgHealth + '%' : '--');
-        $('#aiHealthSub').text(lines.length + ' lini dipantau');
+        $('#aiHealthSub').text(lines.length + ' line dipantau');
 
         const avgVal = parseFloat(avgHealth);
         if (!isNaN(avgVal)) {

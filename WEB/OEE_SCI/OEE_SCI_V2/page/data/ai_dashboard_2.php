@@ -554,7 +554,7 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
         <div style="display:flex;gap:6px;margin-bottom:16px;align-items:center;">
             <span style="font-size:.8rem;color:#8b949e;margin-right:4px;">Language:</span>
             <button class="export-lang fiori-btn fiori-btn--emphasized" data-lang="en" style="font-size:.8rem;padding:3px 12px;">ENG</button>
-            <button class="export-lang fiori-btn fiori-btn--tertiary"   data-lang="ko" style="font-size:.8rem;padding:3px 12px;">한글</button>
+            <button class="export-lang fiori-btn fiori-btn--tertiary"   data-lang="ko" style="font-size:.8rem;padding:3px 12px;">KOR</button>
         </div>
 
         <!-- 기간 프리셋 버튼 목록 (Today / Yesterday / Last 7 Days / Last 30 Days) -->

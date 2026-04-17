@@ -53,7 +53,7 @@
 
         const dayLabel = s.analysis_days ? s.analysis_days + 'h' : '14h'; // eslint-disable-line no-unused-vars
         el.innerHTML = `
-      <span>Total Lini: <strong>${s.total_lines}</strong></span>
+      <span>Total Line: <strong>${s.total_lines}</strong></span>
       <span>Di Bawah Target:
         <strong style="color:var(--sap-negative);">${s.lines_below_target}</strong>
       </span>
@@ -70,7 +70,7 @@
         if (!container) return;
 
         if (!opps?.length) {
-            container.innerHTML = '<div class="ai-empty-state">Semua lini memenuhi target OEE (85%).</div>';
+            container.innerHTML = '<div class="ai-empty-state">Semua line memenuhi target OEE (85%).</div>';
             return;
         }
 
@@ -142,7 +142,7 @@
             <span class="${botHighlight('performance')}">&#9654; Kinerja ${op.avg_perf}%</span>
             <span class="${botHighlight('quality')}">&#128300; Kualitas ${op.avg_quality}%</span>
             <span style="color:var(--sap-text-secondary); font-size:0.75rem;">
-              &#127942; vs. lini terbaik -${op.vs_best}%p
+              &#127942; vs. line terbaik -${op.vs_best}%p
             </span>
           </div>
 

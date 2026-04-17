@@ -227,7 +227,8 @@ class ApiHelper
                 'logs_api_send_downtime_warning',
                 'logs_api_send_downtime_completed',
                 'logs_api_send_defective_warning',
-                'logs_api_send_pCount'
+                'logs_api_send_pCount',
+                'logs_api_send_ecount'
             ];
 
             if (!in_array($table_name, $allowed_tables)) {

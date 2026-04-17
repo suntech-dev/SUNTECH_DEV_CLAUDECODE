@@ -53,7 +53,7 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
             <option value="">Semua Pabrik</option>
         </select>
         <select id="factoryLineFilterSelect" class="fiori-select" disabled>
-            <option value="">Semua Lini</option>
+            <option value="">Semua Line</option>
         </select>
         <select id="factoryLineMachineFilterSelect" class="fiori-select" disabled>
             <option value="">Semua Mesin</option>
@@ -138,9 +138,9 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
                 </div>
             </div>
 
-            <!-- Indeks Kesehatan Lini -->
+            <!-- Indeks Kesehatan Line -->
             <div class="ai-summary-card ai-summary-card--health">
-                <span class="ai-summary-card__label">Indeks Kesehatan Lini (Rata-rata)</span>
+                <span class="ai-summary-card__label">Indeks Kesehatan Line (Rata-rata)</span>
                 <div class="ai-summary-card__value" id="aiHealthAvg">--</div>
                 <div class="ai-summary-card__sub" id="aiHealthSub">
                     <span class="ai-spinner"></span>
@@ -212,12 +212,12 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
     <!-- Row C: Line Health (1fr) + Predictive Maintenance (1fr) -->
     <div class="ai-signage-row-c">
 
-        <!-- Indeks Kesehatan Lini -->
+        <!-- Indeks Kesehatan Line -->
         <div class="fiori-card">
             <div class="fiori-card__header">
                 <div class="card-title-row">
-                    <h3 class="fiori-card__title fiori-text-primary">Indeks Kesehatan Lini</h3>
-                    <span class="card-subtitle-inline ai-health-subtitle">Berdasarkan rata-rata OEE 7 hari per lini</span>
+                    <h3 class="fiori-card__title fiori-text-primary">Indeks Kesehatan Line</h3>
+                    <span class="card-subtitle-inline ai-health-subtitle">Berdasarkan rata-rata OEE 7 hari terakhir</span>
                 </div>
             </div>
             <div class="fiori-card__content">
@@ -230,12 +230,12 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
             </div>
         </div>
 
-        <!-- Perawatan Prediktif -->
+        <!-- Predictive Maintenance -->
         <div class="fiori-card">
             <div class="fiori-card__header">
                 <div class="card-title-row">
-                    <h3 class="fiori-card__title fiori-text-primary">Perawatan Prediktif</h3>
-                    <span class="card-subtitle-inline fiori-text-secondary">Mesin diurutkan berdasarkan skor risiko (tinggi ke rendah)</span>
+                    <h3 class="fiori-card__title fiori-text-primary">Predictive Maintenance</h3>
+                    <span class="card-subtitle-inline fiori-text-secondary">Urutan mesin berdasarkan tingkat risiko kerusakan</span>
                 </div>
             </div>
             <div class="fiori-card__content">
@@ -436,7 +436,7 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
         <div style="display:flex;gap:6px;margin-bottom:16px;align-items:center;">
             <span style="font-size:.8rem;color:#8b949e;margin-right:4px;">Bahasa:</span>
             <button class="export-lang fiori-btn fiori-btn--emphasized" data-lang="en" style="font-size:.8rem;padding:3px 12px;">ENG</button>
-            <button class="export-lang fiori-btn fiori-btn--tertiary"   data-lang="ko" style="font-size:.8rem;padding:3px 12px;">한글</button>
+            <button class="export-lang fiori-btn fiori-btn--tertiary"   data-lang="ko" style="font-size:.8rem;padding:3px 12px;">KOR</button>
         </div>
 
         <!-- Pilihan Periode -->

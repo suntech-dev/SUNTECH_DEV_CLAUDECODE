@@ -479,7 +479,7 @@
             <a href="#summary-cards">Kartu Ringkasan</a>
             <a href="#oee-forecast">Tren OEE &amp; Perkiraan</a>
             <a href="#anomaly">Deteksi Anomali</a>
-            <a href="#health">Indeks Kesehatan Lini</a>
+            <a href="#health">Indeks Kesehatan line</a>
             <a href="#maintenance">Pemeliharaan Prediktif</a>
             <a href="#streaming">Streaming Real-time</a>
             <a href="#optimization">Optimasi Produksi</a>
@@ -524,7 +524,7 @@
 
             <div class="callout ok" style="margin-top: 20px;">
                 <strong>Apa itu OEE?</strong><br>
-                OEE mengukur seberapa efektif lini produksi Anda berjalan.<br>
+                OEE mengukur seberapa efektif line produksi Anda berjalan.<br>
                 <strong>OEE = Ketersediaan × Kinerja × Kualitas</strong><br>
                 Skor 85% atau lebih dianggap berkelas dunia.
             </div>
@@ -540,44 +540,44 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Kartu Ringkasan</td>
-                            <td>Gambaran singkat indikator AI utama</td>
+                            <td>Ringkasan Utama<br>(Summary Cards)</td>
+                            <td>Tampilan cepat indikator utama AI</td>
                             <td>Setiap 60 detik</td>
                         </tr>
                         <tr>
-                            <td>Tren OEE &amp; Perkiraan</td>
-                            <td>Riwayat OEE + prediksi AI 4 jam ke depan</td>
+                            <td>Tren OEE &amp; Prediksi AI</td>
+                            <td>Data OEE historis + prediksi AI untuk 4 jam ke depan</td>
                             <td>Setiap 60 detik</td>
                         </tr>
                         <tr>
                             <td>Deteksi Anomali</td>
-                            <td>Lini dengan OEE tidak normal secara statistik hari ini</td>
+                            <td>Menampilkan line dengan performa OEE yang tidak normal hari ini</td>
                             <td>Setiap 60 detik</td>
                         </tr>
                         <tr>
-                            <td>Indeks Kesehatan Lini</td>
-                            <td>Skor kesehatan OEE 7 hari per lini produksi</td>
+                            <td>Indeks Kesehatan line</td>
+                            <td>Skor kesehatan line produksi berdasarkan OEE 7 hari terakhir</td>
                             <td>Setiap 60 detik</td>
                         </tr>
                         <tr>
-                            <td>Pemeliharaan Prediktif</td>
-                            <td>Mesin diurutkan berdasarkan skor risiko kegagalan</td>
+                            <td>Predictive Maintenance</td>
+                            <td>Urutan mesin berdasarkan tingkat risiko kerusakan</td>
                             <td>Setiap 60 detik</td>
                         </tr>
                         <tr>
                             <td>Streaming Real-time</td>
-                            <td>Feed peristiwa langsung — anomali, downtime, peringatan risiko</td>
-                            <td>Real-time (SSE)</td>
+                            <td>Update langsung: anomali, downtime, dan alert risiko</td>
+                            <td>Real-time (langsung)</td>
                         </tr>
                         <tr>
                             <td>Optimasi Produksi</td>
-                            <td>Analisis hambatan &amp; saran perbaikan</td>
-                            <td>Setiap ~2 detik saat muat</td>
+                            <td>Analisa bottleneck + rekomendasi perbaikan</td>
+                            <td>Saat dibuka (~2 detik)</td>
                         </tr>
                         <tr>
-                            <td>Menu Hamburger / Ekspor</td>
-                            <td>Tampilkan/sembunyikan panel · ekspor data dasbor ke CSV atau PDF</td>
-                            <td>Sesuai permintaan</td>
+                            <td>Menu &amp; Export Data</td>
+                            <td>Buka/tutup sidebar · download data ke CSV atau PDF</td>
+                            <td>Sesuai kebutuhan</td>
                         </tr>
                     </tbody>
                 </table>
@@ -588,16 +588,16 @@
         <section id="filters">
             <div class="section-title">
                 <span class="num">2</span>
-                <h2>Menggunakan Filter</h2>
+                <h2>Penggunaan Filter</h2>
             </div>
 
-            <p>Tiga filter di bagian atas dasbor memungkinkan Anda mempersempit data ke cakupan tertentu. Semua bagian diperbarui secara bersamaan saat Anda mengubah filter.</p>
+            <p>Tiga filter di bagian atas dashboard membantu anda menyaring data sesuai kebutuhan.<br>Semua bagian dashboard akan otomatis diperbarui secara bersamaan setiap kali filter diubah.</p>
 
             <ol class="steps">
-                <li><strong>Semua Pabrik</strong> — Menampilkan data di semua pabrik. Pilih pabrik tertentu untuk memperdalam analisis.</li>
-                <li><strong>Semua Lini</strong> — Tersedia setelah memilih pabrik. Filter ke satu lini produksi.</li>
-                <li><strong>Semua Mesin</strong> — Tersedia setelah memilih lini. Filter ke mesin tertentu.</li>
-                <li><strong>Rentang Tanggal</strong> — Pilih rentang tanggal kustom untuk menganalisis data historis (hingga 30 hari).</li>
+                <li><strong>Semua Factory</strong> — Menampilkan data dari seluruh Factory/gedung. Pilih Factory tertentu untuk melihat data lebih detail.</li>
+                <li><strong>Semua Line</strong> — Muncul setelah Factory dipilih. Digunakan untuk fokus ke satu line produksi.</li>
+                <li><strong>Semua Mesin</strong> — Muncul setelah line dipilih. Digunakan untuk melihat data mesin tertentu.</li>
+                <li><strong>Rentang Tanggal</strong> — Pilih periode waktu untuk analisis data historis (maksimal 30 hari).</li>
             </ol>
 
             <div class="tbl-wrap" style="margin-top: 20px;">
@@ -606,79 +606,79 @@
                         <tr>
                             <th>Opsi Rentang Tanggal</th>
                             <th>Periode</th>
-                            <th>Kasus penggunaan</th>
+                            <th>Kegunaan</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>Hari Ini</td>
                             <td>Hari berjalan</td>
-                            <td>Pemantauan real-time kinerja hari ini</td>
+                            <td>Memantau performa hari ini secara real-time</td>
                         </tr>
                         <tr>
                             <td>Kemarin</td>
                             <td>Hari sebelumnya</td>
-                            <td>Tinjauan hasil shift sebelumnya</td>
+                            <td>Mengevaluasi hasil produksi / shift sebelumnya</td>
                         </tr>
                         <tr>
                             <td>7 Hari Terakhir</td>
-                            <td>7 hari ke belakang</td>
-                            <td>Analisis tren mingguan</td>
+                            <td>7 Hari Terakhir</td>
+                            <td>Melihat tren mingguan</td>
                         </tr>
                         <tr>
                             <td>30 Hari Terakhir</td>
-                            <td>30 hari ke belakang</td>
-                            <td>Tinjauan kinerja bulanan</td>
+                            <td>30 hari Terakhir</td>
+                            <td>Review performa bulanan</td>
                         </tr>
                         <tr>
                             <td>Rentang Kustom</td>
-                            <td>Ditentukan pengguna</td>
-                            <td>Analisis terfokus pada periode tertentu</td>
+                            <td>Sesuai pilihan pengguna</td>
+                            <td>Analisis fokus pada periode tertentu</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <h3 style="font-size: 1rem; margin: 24px 0 12px; color: var(--text-muted);">Menu Hamburger (&thinsp;&#9776;&thinsp;)</h3>
-            <p style="margin-bottom: 12px;">Klik ikon hamburger (&#9776;) di sudut kanan atas dasbor untuk membuka panel samping. Dari sini Anda dapat:</p>
+            <p style="margin-bottom: 12px;">Klik ikon hamburger (&#9776;) di pojok kanan atas dashboard untuk membuka panel samping. Dari sini anda bisa:</p>
             <ul style="margin: 0 0 16px 20px; font-size: 0.9rem; line-height: 2;">
-                <li>Navigasi antar halaman dasbor</li>
-                <li>Sesuaikan pengaturan tampilan</li>
-                <li>Akses fungsi Ekspor</li>
+                <li>Berpindah antar halaman dashboard</li>
+                <li>Mengatur tampilan (display settings)</li>
+                <li>Mengakses fitur Export</li>
             </ul>
 
-            <h3 style="font-size: 1rem; margin: 24px 0 12px; color: var(--text-muted);">Ekspor</h3>
-            <p style="margin-bottom: 12px;">Gunakan tombol Ekspor untuk mengunduh data dasbor saat ini.</p>
+            <h3 style="font-size: 1rem; margin: 24px 0 12px; color: var(--text-muted);">Export Data</h3>
+            <p style="margin-bottom: 12px;">Gunakan tombol Export untuk mengunduh data dashboard yang sedang ditampilkan.</p>
             <div class="tbl-wrap">
                 <table>
                     <thead>
                         <tr>
                             <th>Format</th>
-                            <th>Konten</th>
-                            <th>Kasus penggunaan</th>
+                            <th>Isi</th>
+                            <th>Kegunaan</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><span class="tag info">CSV</span></td>
                             <td>Tabel data mentah</td>
-                            <td>Analisis lanjutan di Excel atau alat BI</td>
+                            <td>Analisis lanjutan di Excel atau tools BI</td>
                         </tr>
                         <tr>
                             <td><span class="tag warn">PDF</span></td>
-                            <td>Snapshot dasbor</td>
-                            <td>Berbagi laporan dengan pemangku kepentingan</td>
+                            <td>Tampilan dashboard (snapshot)</td>
+                            <td>Dibagikan sebagai laporan ke stakeholder</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="callout">
-                <strong>Tips:</strong> Klik tombol <strong>Refresh</strong> untuk memuat ulang semua bagian secara manual tanpa mengubah filter. Berguna saat Anda ingin data terbaru segera.
+                <strong>Tips:</strong> Klik tombol <strong>Refresh</strong> untuk memperbarui semua data secara manual tanpa mengubah filter. Cocok digunakan saat anda ingin mendapatkan data terbaru secara langsung. Berguna saat Anda ingin data terbaru segera.
             </div>
 
             <div class="callout warn" style="margin-top: 16px;">
-                <strong>Catatan:</strong> Feed Streaming Real-time (Bagian 8) akan terhubung kembali secara otomatis setiap kali Anda mengubah filter. Anda mungkin melihat status "Menghubungkan..." sebentar — ini normal.
+                <strong>Catatan:</strong> Fitur Real-time Streaming (Bagian 8) akan otomatis terhubung ulang setiap kali filter diubah. Kamu mungkin akan melihat status "Connecting..." sebentar — ini normal.
             </div>
         </section>
 
@@ -698,15 +698,15 @@
                 </div>
                 <div class="card">
                     <h4>Deteksi Anomali</h4>
-                    <p>Jumlah total lini produksi yang menunjukkan OEE tidak normal secara statistik hari ini. Lencana merah "KRITIS" muncul saat ada anomali dengan tingkat keparahan tinggi.</p>
+                    <p>Jumlah total line produksi yang menunjukkan OEE tidak normal secara statistik hari ini. Lencana merah "KRITIS" muncul saat ada anomali dengan tingkat keparahan tinggi.</p>
                 </div>
                 <div class="card">
                     <h4>Mesin Berisiko Tinggi</h4>
                     <p>Jumlah total mesin pada level <span class="tag error">BAHAYA</span> (risiko &ge; 70) atau <span class="tag warn">WASPADA</span> (risiko 40–69). Warna lencana menunjukkan tingkat keparahan aktif tertinggi: merah untuk BAHAYA, oranye untuk WASPADA.</p>
                 </div>
                 <div class="card">
-                    <h4>Indeks Kesehatan Lini (Rata-rata)</h4>
-                    <p>Skor kesehatan rata-rata di semua lini (0–100), berdasarkan rata-rata OEE 7 hari. Skor di bawah 70 mengindikasikan lini perlu perhatian.</p>
+                    <h4>Indeks Kesehatan Line (Rata-rata)</h4>
+                    <p>Skor kesehatan rata-rata di semua line (0–100), berdasarkan rata-rata OEE 7 hari. Skor di bawah 70 mengindikasikan line perlu perhatian.</p>
                 </div>
             </div>
 
@@ -786,10 +786,10 @@
                 <h2>Deteksi Anomali</h2>
             </div>
 
-            <p>Panel ini menampilkan lini produksi di mana OEE hari ini <em>tidak biasa secara statistik</em> dibandingkan dengan baseline historis mereka sendiri (30 hari terakhir).</p>
+            <p>Panel ini menampilkan line produksi di mana OEE hari ini <em>tidak biasa secara statistik</em> dibandingkan dengan baseline historis mereka sendiri (30 hari terakhir).</p>
 
             <div class="callout">
-                <strong>Cara anomali dideteksi:</strong> AI menghitung <strong>Z-Score</strong> untuk OEE setiap lini setiap jam. Z-Score 2,0 atau lebih berarti OEE saat ini lebih dari 2 deviasi standar di bawah rata-rata 30 hari — penurunan yang signifikan secara statistik.
+                <strong>Cara anomali dideteksi:</strong> AI menghitung <strong>Z-Score</strong> untuk OEE setiap line setiap jam. Z-Score 2,0 atau lebih berarti OEE saat ini lebih dari 2 deviasi standar di bawah rata-rata 30 hari — penurunan yang signifikan secara statistik.
             </div>
 
             <div class="tbl-wrap" style="margin-top: 20px;">
@@ -806,7 +806,7 @@
                         <tr>
                             <td><span class="tag error">BAHAYA</span></td>
                             <td>Z &ge; 3,0</td>
-                            <td>Penurunan OEE ekstrem — sangat tidak biasa untuk lini ini</td>
+                            <td>Penurunan OEE ekstrem — sangat tidak biasa untuk line ini</td>
                             <td>Selidiki segera</td>
                         </tr>
                         <tr>
@@ -820,7 +820,7 @@
             </div>
 
             <div class="callout ok">
-                <strong>Tidak ada anomali yang ditampilkan?</strong> Ini kabar baik — semua lini beroperasi dalam rentang normal hari ini.
+                <strong>Tidak ada anomali yang ditampilkan?</strong> Ini kabar baik — semua line beroperasi dalam rentang normal hari ini.
             </div>
         </section>
 
@@ -828,10 +828,10 @@
         <section id="health">
             <div class="section-title">
                 <span class="num">6</span>
-                <h2>Indeks Kesehatan Lini</h2>
+                <h2>Indeks Kesehatan Line</h2>
             </div>
 
-            <p>Indeks kesehatan merangkum kondisi keseluruhan setiap lini produksi menggunakan skor sederhana 0–100, berdasarkan data OEE dari 7 hari terakhir.</p>
+            <p>Indeks kesehatan merangkum kondisi keseluruhan setiap line produksi menggunakan skor sederhana 0–100, berdasarkan data OEE dari 7 hari terakhir.</p>
 
             <div class="tbl-wrap">
                 <table>
@@ -846,7 +846,7 @@
                         <tr>
                             <td><strong style="color: var(--accent2);">80 – 100</strong></td>
                             <td><span class="tag ok">Sehat</span></td>
-                            <td>Lini berjalan dengan baik — tidak perlu tindakan</td>
+                            <td>line berjalan dengan baik — tidak perlu tindakan</td>
                         </tr>
                         <tr>
                             <td><strong style="color: var(--warn);">60 – 79</strong></td>
@@ -863,7 +863,7 @@
             </div>
 
             <div class="callout">
-                <strong>Cara perhitungannya:</strong> Skor kesehatan = rata-rata OEE 7 hari untuk lini, diskalakan ke indeks 0–100. Lini dengan OEE tinggi yang konsisten mendapat skor tinggi; lini dengan sering turun atau downtime mendapat skor lebih rendah.
+                <strong>Cara perhitungannya:</strong> Skor kesehatan = rata-rata OEE 7 hari untuk line, diskalakan ke indeks 0–100. Line dengan OEE tinggi yang konsisten mendapat skor tinggi; line dengan sering turun atau downtime mendapat skor lebih rendah.
             </div>
         </section>
 
@@ -941,7 +941,7 @@
                         <tr>
                             <td><strong>Anomali OEE Terdeteksi</strong></td>
                             <td style="font-size: 1.2rem;">&#9888;&#65039;</td>
-                            <td>OEE lini produksi turun signifikan di bawah baseline hari ini</td>
+                            <td>OEE line produksi turun signifikan di bawah baseline hari ini</td>
                         </tr>
                         <tr>
                             <td><strong>Downtime Aktif</strong></td>
@@ -956,7 +956,7 @@
                         <tr>
                             <td><strong>Peringatan Kualitas</strong></td>
                             <td style="font-size: 1.2rem;">&#128300;</td>
-                            <td>Tingkat kualitas lini turun di bawah ambang batas yang dapat diterima</td>
+                            <td>Tingkat kualitas line turun di bawah ambang batas yang dapat diterima</td>
                         </tr>
                     </tbody>
                 </table>
@@ -1016,7 +1016,7 @@
                 <h2>Optimasi Produksi</h2>
             </div>
 
-            <p>Bagian ini menganalisis data OEE dari 14 hari terakhir untuk setiap lini produksi dan menyajikan peluang perbaikan yang diprioritaskan — sehingga Anda tahu persis di mana harus fokus untuk peningkatan OEE terbesar.</p>
+            <p>Bagian ini menganalisis data OEE dari 14 hari terakhir untuk setiap line produksi dan menyajikan peluang perbaikan yang diprioritaskan — sehingga Anda tahu persis di mana harus fokus untuk peningkatan OEE terbesar.</p>
 
             <h3 style="font-size: 1rem; margin: 24px 0 12px; color: var(--text-muted);">Tingkat Prioritas</h3>
 
@@ -1052,15 +1052,15 @@
                         </tr>
                         <tr>
                             <td><strong>Panah tren</strong> (&#8593; / &#8594; / &#8595;)</td>
-                            <td>Apakah OEE pada lini ini meningkat, stabil, atau menurun</td>
+                            <td>Apakah OEE pada line ini meningkat, stabil, atau menurun</td>
                         </tr>
                         <tr>
                             <td><strong>OEE Saat Ini</strong></td>
-                            <td>Rata-rata OEE 14 hari untuk lini ini</td>
+                            <td>Rata-rata OEE 14 hari untuk line ini</td>
                         </tr>
                         <tr>
                             <td><strong>-X%p di bawah target 85%</strong></td>
-                            <td>Seberapa jauh di bawah target 85% berkelas dunia lini ini saat ini</td>
+                            <td>Seberapa jauh di bawah target 85% berkelas dunia line ini saat ini</td>
                         </tr>
                         <tr>
                             <td><strong>Batang saat ini</strong></td>
@@ -1079,8 +1079,8 @@
                             <td>Rata-rata 14 hari untuk setiap komponen OEE; komponen hambatan disorot</td>
                         </tr>
                         <tr>
-                            <td><strong>vs. lini terbaik</strong></td>
-                            <td>Bagaimana lini ini dibandingkan dengan lini berkinerja terbaik di pabrik</td>
+                            <td><strong>vs. line terbaik</strong></td>
+                            <td>Bagaimana line ini dibandingkan dengan line berkinerja terbaik di pabrik</td>
                         </tr>
                         <tr>
                             <td><strong>Saran Perbaikan</strong></td>
@@ -1139,13 +1139,13 @@
                 <dd>Ukuran statistik tentang berapa banyak deviasi standar sebuah nilai dari rata-rata. Z-Score 2,0 atau lebih mengindikasikan nilai OEE yang tidak biasa rendah yang kecil kemungkinannya terjadi secara kebetulan.</dd>
 
                 <dt>Baseline (30 hari)</dt>
-                <dd>Rata-rata historis dan deviasi standar OEE untuk lini tertentu selama 30 hari terakhir, digunakan sebagai referensi untuk deteksi anomali.</dd>
+                <dd>Rata-rata historis dan deviasi standar OEE untuk line tertentu selama 30 hari terakhir, digunakan sebagai referensi untuk deteksi anomali.</dd>
 
                 <dt>Skor Risiko</dt>
                 <dd>Skor komposit (0–100) yang memperkirakan probabilitas kegagalan mesin, berdasarkan frekuensi downtime, tingkat downtime, dan waktu sejak pemeliharaan terakhir.</dd>
 
                 <dt>Indeks Kesehatan</dt>
-                <dd>Skor 0–100 yang merangkum kondisi keseluruhan lini produksi berdasarkan rata-rata OEE 7 harinya. Semakin tinggi semakin baik.</dd>
+                <dd>Skor 0–100 yang merangkum kondisi keseluruhan line produksi berdasarkan rata-rata OEE 7 harinya. Semakin tinggi semakin baik.</dd>
 
                 <dt>Hambatan (Bottleneck)</dt>
                 <dd>Komponen OEE (Ketersediaan, Kinerja, atau Kualitas) yang paling jauh di bawah targetnya, membatasi OEE keseluruhan paling banyak.</dd>
@@ -1180,7 +1180,7 @@
 
             <div class="card" style="margin-bottom: 12px;">
                 <h4>Bagian Optimasi Produksi tidak menampilkan kartu. Mengapa?</h4>
-                <p>Ini berarti semua lini produksi saat ini memenuhi target OEE 85% — hasil yang baik. Kartu optimasi hanya muncul untuk lini yang di bawah target.</p>
+                <p>Ini berarti semua line produksi saat ini memenuhi target OEE 85% — hasil yang baik. Kartu optimasi hanya muncul untuk line yang di bawah target.</p>
             </div>
 
             <div class="card" style="margin-bottom: 12px;">
@@ -1204,8 +1204,8 @@
             </div>
 
             <div class="card" style="margin-bottom: 12px;">
-                <h4>Apa arti "vs. lini terbaik" pada kartu optimasi?</h4>
-                <p>Ini menunjukkan berapa poin persentase OEE lini ini tertinggal dari lini berkinerja terbaik di pabrik yang sama. Ini membantu menetapkan target perbaikan yang realistis berdasarkan apa yang sudah dicapai di pabrik Anda sendiri.</p>
+                <h4>Apa arti "vs. line terbaik" pada kartu optimasi?</h4>
+                <p>Ini menunjukkan berapa poin persentase OEE line ini tertinggal dari line berkinerja terbaik di pabrik yang sama. Ini membantu menetapkan target perbaikan yang realistis berdasarkan apa yang sudah dicapai di pabrik Anda sendiri.</p>
             </div>
         </section>
 
@@ -1223,7 +1223,7 @@
                 <p>
                     ① Tren OEE &amp; Perkiraan AI — Exponential smoothing + algoritma pola musiman, 90% CI<br>
                     ② Deteksi Anomali — Metodologi Z-Score, ambang batas keparahan Kritis / Peringatan<br>
-                    ③ Indeks Kesehatan Lini — Kriteria grade kesehatan (Sehat / Peringatan / Kritis)<br>
+                    ③ Indeks Kesehatan line — Kriteria grade kesehatan (Sehat / Peringatan / Kritis)<br>
                     ④ Pemeliharaan Prediktif — Tiga indikator berbobot (Runtime 40% · Frekuensi 35% · OEE 25%)<br>
                     ⑤ Streaming AI Real-time — Jenis peristiwa SSE dan status koneksi<br>
                     ⑥ Optimasi Produksi — Proses analisis hambatan, tingkatan prioritas P1/P2/P3
