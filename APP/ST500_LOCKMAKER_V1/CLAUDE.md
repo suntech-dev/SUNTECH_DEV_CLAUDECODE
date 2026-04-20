@@ -278,15 +278,24 @@ const { chromium } = require('playwright');
 
 ## 디자인 색상 팔레트 (UI 수정 시 참조)
 
-| 용도 | 색상 |
-|---|---|
-| 헤더 | `#00BCD4` |
-| 배경 | `#ECECEC` |
-| 레이블 기본 | `#FFC107` |
-| 입력 필드 | `#FFEB3B` |
-| MAKE 버튼 | `#F44336` |
-| SETTING/BACK 버튼 | `#90CAF9` |
-| FINISH 버튼 | `#B0BEC5` |
+> **GitHub Dark 팔레트** — v1.0 리디자인 적용 (2025-04-20)
+
+CSS 변수는 `src/style.css`에 정의됨.
+
+| CSS 변수 | 색상값 | 용도 |
+|---|---|---|
+| `--bg` | `#0d1117` | 페이지 배경 |
+| `--surface` | `#161b22` | 카드·컨테이너 배경 |
+| `--surface2` | `#21262d` | 비활성 버튼 배경 |
+| `--border` | `#30363d` | 구분선·테두리 |
+| `--text` | `#e6edf3` | 기본 텍스트 |
+| `--text-muted` | `#8b949e` | 보조 텍스트 |
+| `--accent` | `#58a6ff` | 포인트 컬러 (파란색, MAKE 버튼 등) |
+| `--accent2` | `#3fb950` | 승인 상태 (초록색) |
+| `--warn` | `#d29922` | 대기 상태 (노란색) |
+| `--danger` | `#f85149` | 오류 상태 (빨간색) |
+
+Hero 타이틀 그라디언트: `linear-gradient(135deg, #e6edf3 → #58a6ff → #bc8cff)`
 
 ---
 

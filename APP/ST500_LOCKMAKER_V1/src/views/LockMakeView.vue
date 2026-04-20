@@ -186,7 +186,8 @@ function goBack() { router.push('/') }
 .back-icon { width: 18px; height: 18px; }
 
 .top-title {
-    font-size: 16px;
+    /* font-size: 16px; */
+    font-size: 20px;
     font-weight: 700;
     color: var(--text);
     letter-spacing: 0.5px;

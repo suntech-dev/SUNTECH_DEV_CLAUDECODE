@@ -1,5 +1,10 @@
 <template>
     <div class="page">
+        <!-- Logo -->
+        <div class="logo-topbar">
+            <img :src="`${baseUrl}logo_suntech.png`" alt="SUNTECH" class="logo-img">
+        </div>
+
         <!-- Hero -->
         <div class="hero">
             <div class="hero-glow" />
@@ -63,11 +68,12 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDeviceStore } from '@/stores/device.js'
 import InstallBanner from '@/components/InstallBanner.vue'
 
+const baseUrl = import.meta.env.BASE_URL
 const store  = useDeviceStore()
 const router = useRouter()
 
@@ -102,12 +108,26 @@ onUnmounted(() => store.stopPolling())
     padding: 0 20px 48px;
 }
 
+/* --- Logo --- */
+.logo-topbar {
+    width: 100%;
+    padding: 16px 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.logo-img {
+    width: 80px;
+    opacity: 0.85;
+}
+
 /* --- Hero --- */
 .hero {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 56px 0 44px;
+    padding: 32px 0 44px;
     position: relative;
     width: 100%;
 }
