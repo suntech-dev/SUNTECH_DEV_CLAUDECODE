@@ -94,10 +94,9 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
                     <span class="ai-summary-card__label" style="margin-top:2px;">OEE Real-time</span>
                 </div>
                 <div class="ai-summary-card__value" id="aiRealtimeOee">--</div>
-                <div class="ai-summary-card__sub" id="aiRealtimeSub">
-                    <span class="ai-spinner"></span>
-                </div>
-                <div>
+                <!-- 현재 시간대 서브 텍스트 + OEE 상태 뱃지 (같은 줄) -->
+                <div class="ai-summary-card__sub-row">
+                    <div class="ai-summary-card__sub" id="aiRealtimeSub"><span class="ai-spinner"></span></div>
                     <span id="aiRealtimeBadge" class="ai-status-badge" style="display:none;"></span>
                 </div>
             </div>
@@ -106,10 +105,9 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
             <div class="ai-summary-card ai-summary-card--prediction">
                 <span class="ai-summary-card__label">Prediksi AI 4 Jam ke Depan</span>
                 <div class="ai-summary-card__value" id="aiPredForecastOee">--</div>
-                <div class="ai-summary-card__sub" id="aiPredSub">
-                    <span class="ai-spinner"></span>
-                </div>
-                <div>
+                <!-- CI 범위 서브 텍스트 + 추세 뱃지 (같은 줄) -->
+                <div class="ai-summary-card__sub-row">
+                    <div class="ai-summary-card__sub" id="aiPredSub"><span class="ai-spinner"></span></div>
                     <span class="ai-trend-badge ai-trend-badge--stable" id="aiPredTrendBadge">--</span>
                 </div>
             </div>
@@ -118,10 +116,9 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
             <div class="ai-summary-card ai-summary-card--anomaly">
                 <span class="ai-summary-card__label">Deteksi Anomali</span>
                 <div class="ai-summary-card__value" id="aiAnomalyTotal">--</div>
-                <div class="ai-summary-card__sub" id="aiAnomalySub">
-                    <span class="ai-spinner"></span>
-                </div>
-                <div>
+                <!-- 이상 감지 요약 서브 텍스트 + Critical 뱃지 (같은 줄) -->
+                <div class="ai-summary-card__sub-row">
+                    <div class="ai-summary-card__sub" id="aiAnomalySub"><span class="ai-spinner"></span></div>
                     <span id="aiAnomalyCriticalBadge" class="ai-status-badge" style="display:none;"></span>
                 </div>
             </div>
@@ -130,10 +127,9 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
             <div class="ai-summary-card ai-summary-card--maintenance">
                 <span class="ai-summary-card__label">Mesin Berisiko Tinggi</span>
                 <div class="ai-summary-card__value" id="aiMaintDanger">--</div>
-                <div class="ai-summary-card__sub" id="aiMaintSub">
-                    <span class="ai-spinner"></span>
-                </div>
-                <div>
+                <!-- 경고/위험 기계 요약 서브 텍스트 + Warning 뱃지 (같은 줄) -->
+                <div class="ai-summary-card__sub-row">
+                    <div class="ai-summary-card__sub" id="aiMaintSub"><span class="ai-spinner"></span></div>
                     <span id="aiMaintWarnBadge" class="ai-status-badge ai-status-badge--warning" style="display:none;"></span>
                 </div>
             </div>
@@ -142,10 +138,9 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
             <div class="ai-summary-card ai-summary-card--health">
                 <span class="ai-summary-card__label">Indeks Kesehatan Line (Rata-rata)</span>
                 <div class="ai-summary-card__value" id="aiHealthAvg">--</div>
-                <div class="ai-summary-card__sub" id="aiHealthSub">
-                    <span class="ai-spinner"></span>
-                </div>
-                <div>
+                <!-- 건강도 서브 텍스트 + 상태 뱃지 (같은 줄) -->
+                <div class="ai-summary-card__sub-row">
+                    <div class="ai-summary-card__sub" id="aiHealthSub"><span class="ai-spinner"></span></div>
                     <span id="aiHealthStatusBadge" class="ai-status-badge" style="display:none;"></span>
                 </div>
             </div>

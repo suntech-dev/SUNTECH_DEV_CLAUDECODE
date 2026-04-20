@@ -142,12 +142,9 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
                 </div>
                 <!-- OEE 수치 표시 영역 (JS에서 동적으로 업데이트) -->
                 <div class="ai-summary-card__value" id="aiRealtimeOee">--</div>
-                <!-- 현재 시간대 서브 텍스트 (예: "Current: 14:00") -->
-                <div class="ai-summary-card__sub" id="aiRealtimeSub">
-                    <span class="ai-spinner"></span>
-                </div>
-                <div>
-                    <!-- OEE 상태 뱃지 (GOOD / WARNING / CRITICAL) -->
+                <!-- 현재 시간대 서브 텍스트 + OEE 상태 뱃지 (같은 줄) -->
+                <div class="ai-summary-card__sub-row">
+                    <div class="ai-summary-card__sub" id="aiRealtimeSub"><span class="ai-spinner"></span></div>
                     <span id="aiRealtimeBadge" class="ai-status-badge" style="display:none;"></span>
                 </div>
             </div>
@@ -158,12 +155,9 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
                 <span class="ai-summary-card__label">Next 4H AI Forecast</span>
                 <!-- 향후 4시간 평균 예측 OEE 값 -->
                 <div class="ai-summary-card__value" id="aiPredForecastOee">--</div>
-                <!-- CI 범위 서브 텍스트 (예: "CI: 72.0% ~ 88.5%") -->
-                <div class="ai-summary-card__sub" id="aiPredSub">
-                    <span class="ai-spinner"></span>
-                </div>
-                <div>
-                    <!-- 추세 뱃지: Trending Up / Down / Stable -->
+                <!-- CI 범위 서브 텍스트 + 추세 뱃지 (같은 줄) -->
+                <div class="ai-summary-card__sub-row">
+                    <div class="ai-summary-card__sub" id="aiPredSub"><span class="ai-spinner"></span></div>
                     <span class="ai-trend-badge ai-trend-badge--stable" id="aiPredTrendBadge">--</span>
                 </div>
             </div>
@@ -174,12 +168,9 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
                 <span class="ai-summary-card__label">Anomaly Detection</span>
                 <!-- 감지된 전체 이상 건수 -->
                 <div class="ai-summary-card__value" id="aiAnomalyTotal">--</div>
-                <!-- 이상 감지 요약 서브 텍스트 -->
-                <div class="ai-summary-card__sub" id="aiAnomalySub">
-                    <span class="ai-spinner"></span>
-                </div>
-                <div>
-                    <!-- 심각(Critical) 이상 뱃지 -->
+                <!-- 이상 감지 요약 서브 텍스트 + Critical 뱃지 (같은 줄) -->
+                <div class="ai-summary-card__sub-row">
+                    <div class="ai-summary-card__sub" id="aiAnomalySub"><span class="ai-spinner"></span></div>
                     <span id="aiAnomalyCriticalBadge" class="ai-status-badge" style="display:none;"></span>
                 </div>
             </div>
@@ -190,12 +181,9 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
                 <span class="ai-summary-card__label">High-Risk Machines</span>
                 <!-- 위험 등급 기계 수 -->
                 <div class="ai-summary-card__value" id="aiMaintDanger">--</div>
-                <!-- 경고/위험 기계 요약 서브 텍스트 -->
-                <div class="ai-summary-card__sub" id="aiMaintSub">
-                    <span class="ai-spinner"></span>
-                </div>
-                <div>
-                    <!-- 경고(Warning) 기계 뱃지 -->
+                <!-- 경고/위험 기계 요약 서브 텍스트 + Warning 뱃지 (같은 줄) -->
+                <div class="ai-summary-card__sub-row">
+                    <div class="ai-summary-card__sub" id="aiMaintSub"><span class="ai-spinner"></span></div>
                     <span id="aiMaintWarnBadge" class="ai-status-badge ai-status-badge--warning" style="display:none;"></span>
                 </div>
             </div>
@@ -206,12 +194,9 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
                 <span class="ai-summary-card__label">Line Health Index (Avg)</span>
                 <!-- 전체 라인 건강도 평균 수치 -->
                 <div class="ai-summary-card__value" id="aiHealthAvg">--</div>
-                <!-- 건강도 서브 텍스트 -->
-                <div class="ai-summary-card__sub" id="aiHealthSub">
-                    <span class="ai-spinner"></span>
-                </div>
-                <div>
-                    <!-- 건강도 상태 뱃지 (Healthy / Warning / Critical) -->
+                <!-- 건강도 서브 텍스트 + 상태 뱃지 (같은 줄) -->
+                <div class="ai-summary-card__sub-row">
+                    <div class="ai-summary-card__sub" id="aiHealthSub"><span class="ai-spinner"></span></div>
                     <span id="aiHealthStatusBadge" class="ai-status-badge" style="display:none;"></span>
                 </div>
             </div>

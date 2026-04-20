@@ -29,7 +29,7 @@ ST500_LOCKMAKER_V1/
 ├── src/
 │   ├── main.js                 ← 앱 진입점 (Pinia + Router 등록)
 │   ├── App.vue                 ← 루트 컴포넌트 (<RouterView /> 래퍼)
-│   ├── style.css               ← 전역 스타일 (다크 테마 리셋, #0d1b2a 배경)
+│   ├── style.css               ← 전역 스타일 (GitHub Dark 테마 리셋, #0d1117 배경, CSS 변수)
 │   │
 │   ├── router/
 │   │   └── index.js            ← Vue Router (Hash 히스토리, 3개 경로)
@@ -85,12 +85,12 @@ ST500_LOCKMAKER_V1/
            │                           ├─ registerDevice(deviceId, name)  → POST-like GET
            │                           └─ getDeviceStatus(deviceId)       → GET 폴링
            │                                   │
-           │                                   └─ [HTTP] → 서버 (115.68.227.31)
+           │                                   └─ [HTTP] → 서버 (49.247.27.154)
            │
            └─ [router/index.js] ← Hash 히스토리
-                    ├── /           → HomeView.vue
-                    ├── /make       → LockMakeView.vue
-                    └── /setting    → SettingView.vue
+                    ├── /#/          → HomeView.vue
+                    ├── /#/make      → LockMakeView.vue
+                    └── /#/setting   → SettingView.vue
 ```
 
 ## 상태 머신
@@ -121,7 +121,9 @@ ST500_LOCKMAKER_V1/
 App.vue
   └─ RouterView
         ├─ HomeView.vue
+        │     ├─ logo-topbar (logo_suntech.png — ${baseUrl}로 로드)
         │     ├─ useDeviceStore() ← 상태 읽기 + init(), retry() 호출
+        │     │     └─ shortDeviceId: UUID 앞 16자 + '…' 표시
         │     └─ InstallBanner.vue
         │           └─ useInstallPrompt() ← iOS/Android/PC 설치 팝업 처리
         │

@@ -21,7 +21,9 @@ Vue 3 + Vite PWA로 리뉴얼. iOS/Android/PC 모두 지원.
 | 스택 | Vue 3 + Vite 8 + Pinia 3 + Vue Router 4 + vite-plugin-pwa |
 | 언어 | JavaScript (ES Modules, `<script setup>` Composition API) |
 | 로컬 API | `http://localhost/dev/ST500_LOCKMAKER/api/index.php` |
-| 운영 서버 API | `http://115.68.227.31/api/st500/st500_api.php` (구 API) |
+| 운영 서버 IP | `49.247.27.154` |
+| 운영 앱 URL | `http://49.247.27.154/st500/lockmaker` |
+| 운영 서버 API | `http://49.247.27.154/api/st500/st500_api.php` (서버 구성 후 확인) |
 | 원본 앱 | `APP/lockmaker_211206/` (Kotlin/Java, 퇴사자 작성, 문서 없음) |
 
 ---
@@ -276,9 +278,114 @@ const { chromium } = require('playwright');
 
 ---
 
+## 운영 서버 직접 접속 (SSH / SFTP)
+
+사용자 요청 시 Claude가 직접 서버에 접속하여 배포·조회·명령 실행 가능. **사용자 허락 없이 자동 진행**.
+
+### 접속 정보 (고정값 — 재확인 불필요)
+
+| 항목 | 값 |
+|---|---|
+| 서버 IP | `49.247.27.154` |
+| SSH 포트 | `22` |
+| SSH 사용자 | `root` |
+| SSH 비밀번호 | `suntech9304!` |
+| MySQL 사용자 | `root` |
+| MySQL 비밀번호 | `suntech9304!` |
+| MySQL DB | `suntech_st500` |
+| OS | CentOS 7 |
+| Apache | 2.4.6 — DocumentRoot: `/var/www/html` |
+| PHP | 7.4.33 |
+| MySQL | 5.7.44 |
+
+### 접속 방법 — Python paramiko (고정값 — 재확인 불필요)
+
+> `sshpass` 미설치. `paramiko`(pip install 완료)로 접속한다.
+
+```python
+import paramiko, io, os
+
+def get_client():
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.connect('49.247.27.154', username='root', password='suntech9304!', timeout=15)
+    return client
+
+# 명령 실행
+client = get_client()
+_, out, err = client.exec_command('명령어')
+print((out.read() + err.read()).decode())
+client.close()
+
+# 파일 업로드 (SFTP)
+client = get_client()
+sftp = client.open_sftp()
+sftp.put('로컬경로', '원격경로')          # 단일 파일
+sftp.putfo(io.BytesIO(b'내용'), '경로')   # 메모리 → 파일
+sftp.close()
+client.close()
+```
+
+### 운영 서버 디렉토리 구조
+
+```
+/var/www/html/
+├── api/
+│   └── st500/
+│       ├── st500_api.php       ← LockMaker API 진입점
+│       ├── .env                ← DB 접속 정보
+│       ├── lib/
+│       │   ├── db.php
+│       │   └── helpers.php
+│       └── v1/
+│           ├── send_device.php
+│           └── get_device.php
+└── st500/
+    └── lockmaker/              ← Vue PWA dist 파일
+        ├── index.html
+        ├── sw.js
+        ├── manifest.webmanifest
+        └── assets/
+```
+
+### 운영 배포 절차 (전체)
+
+```python
+# 1. DB 테이블 생성 (최초 1회)
+sftp.putfo(io.BytesIO(schema_sql_bytes), '/tmp/schema.sql')
+client.exec_command('mysql -uroot -psuntech9304! < /tmp/schema.sql')
+
+# 2. API 파일 업로드
+sftp.put(local, '/var/www/html/api/st500/파일명')
+
+# 3. Vue 빌드 (로컬 — MSYS_NO_PATHCONV 필수)
+# Bash: MSYS_NO_PATHCONV=1 npm run build -- --base=/st500/lockmaker/
+
+# 4. dist 파일 업로드
+for root, dirs, files in os.walk(local_dist):
+    rel = os.path.relpath(root, local_dist).replace(os.sep, '/')
+    remote_dir = '/var/www/html/st500/lockmaker' if rel == '.' else '/var/www/html/st500/lockmaker/' + rel
+    for f in files:
+        sftp.put(os.path.join(root, f), remote_dir + '/' + f)
+
+# 5. 동작 확인
+client.exec_command('curl -s http://localhost/st500/lockmaker/')
+```
+
+### 빌드 명령 주의사항
+
+| 환경 | 빌드 명령 | base 결과 |
+|---|---|---|
+| Laragon 로컬 | `npm run build` | `/app/ST500_LOCKMAKER_V1/` |
+| 운영 서버 | `MSYS_NO_PATHCONV=1 npm run build -- --base=/st500/lockmaker/` | `/st500/lockmaker/` |
+
+> `MSYS_NO_PATHCONV=1` 없이 `--base=/st500/lockmaker/` 전달 시 Git Bash가 Windows 경로로 변환 → 빌드 오류 발생.
+
+---
+
 ## 디자인 색상 팔레트 (UI 수정 시 참조)
 
-> **GitHub Dark 팔레트** — v1.0 리디자인 적용 (2025-04-20)
+> **GitHub Dark 팔레트** — v1.1.0 리디자인 적용 (2026-04-18)
 
 CSS 변수는 `src/style.css`에 정의됨.
 
@@ -303,10 +410,10 @@ Hero 타이틀 그라디언트: `linear-gradient(135deg, #e6edf3 → #58a6ff →
 
 | 우선순위 | 항목 | 위치 |
 |---|---|---|
-| 🔴 높음 | PWA 아이콘 생성 (`icon-192.png`, `icon-512.png`) | `public/icons/` |
+| ✅ 완료 | PWA 아이콘 생성 (`icon-192.png`, `icon-512.png`) | `public/icons/` |
+| ✅ 완료 | `apple-touch-icon` 링크 추가 | `index.html` |
 | 🔴 높음 | 알고리즘 JS vs Kotlin 결과 동일 여부 실기기 검증 | `LockMakeView.vue` |
 | 🟠 중간 | HTTPS 전환 후 `.env.production` 생성 | 프로젝트 루트 |
-| 🟠 중간 | `apple-touch-icon` 링크 추가 | `index.html` |
 | 🟡 낮음 | 알고리즘을 PHP 서버 API로 이전 | `src/services/api.js` + 서버 |
 
 ---

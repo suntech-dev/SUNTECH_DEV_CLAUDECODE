@@ -23,7 +23,7 @@ export default defineConfig({
         background_color: '#ECECEC',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/',
+        start_url: '/st500/lockmaker/',
         icons: [
           {
             src: 'icons/icon-192.png',

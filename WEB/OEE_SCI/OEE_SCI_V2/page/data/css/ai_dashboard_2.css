@@ -154,6 +154,12 @@ body {
 .ai-signage-row-a .ai-summary-card__value { font-size: 1.6rem; margin-bottom: 2px; }
 .ai-signage-row-a .ai-summary-card__sub   { font-size: 11px; }
 .ai-signage-row-a .ai-trend-badge         { font-size: 10px; padding: 1px 6px; }
+.ai-signage-row-a .ai-summary-card__sub-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
 
 /* ─── Real-time OEE 카드 스트라이프 ────────────────────────── */
 /* 5번째 카드(실시간 OEE)의 좌측 스트라이프 — 시안색 */

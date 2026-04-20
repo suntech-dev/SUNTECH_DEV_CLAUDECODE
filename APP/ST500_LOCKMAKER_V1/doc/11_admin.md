@@ -128,7 +128,7 @@ WEB/ST500_LOCKMAKER/admin/
 | 환경 | URL |
 |---|---|
 | 로컬 (Laragon) | `http://localhost/dev/ST500_LOCKMAKER/admin/` |
-| 운영 서버 | `http://115.68.227.31/admin/` (배포 후) |
+| 운영 서버 | `http://49.247.27.154/st500/admin/` (배포 후 — 경로 확인 필요) |
 
 ---
 

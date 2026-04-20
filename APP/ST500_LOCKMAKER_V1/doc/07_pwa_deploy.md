@@ -154,10 +154,10 @@ npm run build
 
 # dist/ 폴더 내용을 웹서버 디렉토리에 복사
 # 예: FTP 업로드 또는 SSH scp
-scp -r dist/* user@115.68.227.31:/var/www/html/lockmaker/
+scp -r dist/* root@49.247.27.154:/var/www/html/st500/lockmaker/
 ```
 
-배포 URL 예시: `https://도메인/lockmaker/`
+배포 URL: `http://49.247.27.154/st500/lockmaker`
 
 ### Apache 서버 설정 (.htaccess)
 
@@ -180,7 +180,7 @@ Hash 히스토리 사용 중이므로 서버 설정 불필요.
 
 ```bash
 # .env (개발)
-VITE_API_BASE_URL=http://115.68.227.31/api/st500/st500_api.php
+VITE_API_BASE_URL=http://49.247.27.154/api/st500/st500_api.php
 
 # .env.production (배포)
 VITE_API_BASE_URL=https://도메인/api/st500/st500_api.php

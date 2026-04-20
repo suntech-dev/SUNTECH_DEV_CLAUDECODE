@@ -1,11 +1,11 @@
 /**
  * ST500 LockMaker API 서비스
- * 서버: http://115.68.227.31/api/st500/st500_api.php
+ * 서버: http://49.247.27.154/api/st500/st500_api.php (운영)
  * TODO: 운영 배포 시 HTTPS 서버로 변경 필수
  */
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
-  ?? 'http://115.68.227.31/api/st500/st500_api.php'
+  ?? 'http://49.247.27.154/api/st500/st500_api.php'
 
 /**
  * @param {string} params - URL 쿼리스트링 (예: "code=get_device&device_id=xxx")

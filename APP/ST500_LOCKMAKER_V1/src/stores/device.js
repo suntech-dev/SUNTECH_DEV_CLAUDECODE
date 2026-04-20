@@ -34,8 +34,15 @@ function _webglSignal() {
 }
 
 async function _sha256hex(str) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str))
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')
+  // crypto.subtle은 HTTPS 또는 localhost에서만 동작
+  if (crypto.subtle) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str))
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')
+  }
+  // HTTP fallback: djb2 hash를 64자 hex로 확장
+  let h = 5381
+  for (let i = 0; i < str.length; i++) h = (Math.imul(h, 33) ^ str.charCodeAt(i)) >>> 0
+  return h.toString(16).padStart(8, '0').repeat(8)
 }
 
 function _hexToUUID(hex) {
@@ -109,7 +116,7 @@ async function idbSet(value) {
 async function resolveDeviceId() {
   const ls = localStorage.getItem('lm_device_id')
   if (ls) {
-    idbSet(ls) // IndexedDB에 동기화 (fire-and-forget)
+    idbSet(ls)
     return ls
   }
 
@@ -119,7 +126,18 @@ async function resolveDeviceId() {
     return idb
   }
 
-  const fp = await computeFingerprint()
+  let fp
+  try {
+    fp = await computeFingerprint()
+  } catch {
+    // computeFingerprint 실패 시 (예외적 환경) crypto.getRandomValues fallback
+    const bytes = new Uint8Array(16)
+    crypto.getRandomValues(bytes)
+    bytes[6] = (bytes[6] & 0x0f) | 0x40
+    bytes[8] = (bytes[8] & 0x3f) | 0x80
+    const h = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('')
+    fp = _hexToUUID(h)
+  }
   localStorage.setItem('lm_device_id', fp)
   idbSet(fp)
   return fp

@@ -13,34 +13,38 @@
 ## HomeView.vue (`/#/`)
 
 ### 역할
-- 사용자 이름, 디바이스 ID, 승인 상태 표시
+- 상단에 SUNTECH 로고 표시
+- 사용자 이름, 디바이스 ID(앞 16자 + …), 승인 상태 표시
 - 승인되지 않은 상태에서 MAKE 버튼 비활성화 (접근 차단)
 - 앱 시작 시 자동 등록 + 폴링 시작
-- 오류 상태 시 오류 메시지 + RETRY 버튼 표시
+- 오류 상태 시 오류 메시지 박스 + RETRY 버튼 표시
 - 최초 접속 시 홈 화면 추가 안내 팝업 (InstallBanner)
 
 ### 주요 UI 요소
 
 | UI 요소 | 표시 내용 |
 |---|---|
-| 자물쇠 SVG 아이콘 | Cyan glow 효과, 브랜드 아이콘 |
-| ST500 타이틀 | 대형 bold 텍스트 |
-| 정보 카드 (Glassmorphism) | NAME / DEVICE / STATUS 3행 |
+| SUNTECH 로고 (`logo-topbar`) | 상단 좌측, `logo_suntech.png`, width 80px, opacity 0.85 |
+| 자물쇠 SVG 아이콘 (`hero-icon`) | Blue glow 효과 (`rgba(88,166,255,0.4)`), 브랜드 아이콘 |
+| ST500 타이틀 (`hero-title`) | 그라디언트 텍스트 (`#e6edf3 → #58a6ff → #bc8cff`), 48px, weight 900 |
+| LockMaker 서브타이틀 | 12px, muted, letter-spacing 5px |
+| 정보 카드 | NAME / DEVICE / STATUS 3행, border-radius 12px |
+| DEVICE 표시 | `shortDeviceId` = UUID 앞 16자 + `…` (monospace) |
 | STATUS 배지 | 컬러 원형 점 + 상태 텍스트 (pill 형태) |
-| MAKE 버튼 | 전체 너비, Cyan 그라디언트, 잠금 아이콘 포함 |
-| SETTING 버튼 | 전체 너비, outline 스타일 |
-| RETRY 버튼 | `status === 'error'` 일 때만 표시, 주황색 outline |
-| 오류 박스 | `status === 'error'` 일 때만 표시, 붉은 배경 메시지 |
+| 오류 박스 | `status === 'error'` 일 때만 표시, 붉은 테두리 메시지 |
+| MAKE 버튼 | 전체 너비 56px, 파란 그라디언트, 잠금 아이콘 포함 |
+| RETRY 버튼 | `status === 'error'` 일 때만 표시, 노란 outline 48px |
+| SETTING 버튼 | 전체 너비 48px, outline 스타일 |
 | FINISH 버튼 | 최하단 ghost 텍스트 버튼 |
 
-### STATUS 배지 색상
+### STATUS 배지 색상 (GitHub Dark 팔레트)
 
-| 상태 | 배지 색 | 점 애니메이션 |
-|---|---|---|
-| INIT | 회색 (`#94a3b8`) | 없음 |
-| WAITING | 주황 (`#fbbf24`) | pulse (1.4초 반복) |
-| APPROVED | 초록 (`#34d399`) | 없음 |
-| ERROR | 빨강 (`#fca5a5`) | 없음 |
+| 상태 | CSS 클래스 | 배지 배경 | 텍스트/점 색 | 점 애니메이션 |
+|---|---|---|---|---|
+| INIT | `.badge-init` | `rgba(139,148,158,0.12)` | `#8b949e` | 없음 |
+| WAITING | `.badge-waiting` | `rgba(210,153,34,0.12)` | `#d29922` | pulse 1.4초 반복 |
+| APPROVED | `.badge-approved` | `rgba(63,185,80,0.12)` | `#3fb950` | 없음 |
+| ERROR | `.badge-error` | `rgba(248,81,73,0.12)` | `#f85149` | 없음 |
 
 ### 생명주기
 
@@ -70,12 +74,12 @@ finish()    → window.history.back()
 
 | UI 요소 | 설명 |
 |---|---|
-| 상단 바 | 뒤로가기 버튼 + "LockMaker" 타이틀 |
-| OLD CODE 카드 | 숫자 입력 필드 (8~9자리) |
+| 상단 바 (height 56px) | 뒤로가기 버튼(36px) + "LockMaker" 타이틀(20px, bold) |
+| OLD CODE 카드 | 숫자 입력 필드 (8~9자리), font-size 24px, letter-spacing 3px |
 | LOCK DAY 카드 | 숫자 입력 + UnLock 커스텀 토글 스위치 |
-| NEW CODE 카드 | 결과 표시 (생성 전: `—` / 생성 후: 초록 숫자) |
-| MAKE 버튼 | Cyan 그라디언트, 전체 너비 |
-| BACK 버튼 | outline 스타일 |
+| NEW CODE 카드 | 결과 표시 (생성 전: `—` 회색 / 생성 후: 초록 `#3fb950`) |
+| MAKE 버튼 | 파란 그라디언트, 전체 너비, height 54px |
+| BACK 버튼 | outline 스타일, height 46px |
 
 ### UnLock 토글 스위치
 
@@ -182,47 +186,63 @@ function dismiss() {
 
 ---
 
-## 공통 디자인 시스템 (Dark Industrial Premium)
+## 공통 디자인 시스템 (GitHub Dark)
+
+> v1.1.0 리디자인 적용 (2026-04-18). CSS 변수는 `src/style.css`에 정의.
+
+### CSS 변수 팔레트
+
+| CSS 변수 | 색상값 | 용도 |
+|---|---|---|
+| `--bg` | `#0d1117` | 페이지 배경 (GitHub Dark 기본) |
+| `--surface` | `#161b22` | 카드·상단바 배경 |
+| `--surface2` | `#21262d` | 비활성 버튼·입력필드 배경 |
+| `--border` | `#30363d` | 구분선·테두리 |
+| `--text` | `#e6edf3` | 기본 텍스트 |
+| `--text-muted` | `#8b949e` | 보조 텍스트 |
+| `--accent` | `#58a6ff` | 포인트 컬러 (파란색, MAKE 버튼 등) |
+| `--accent2` | `#3fb950` | 승인 상태 (초록색) |
+| `--warn` | `#d29922` | 대기 상태 (노란색) |
+| `--danger` | `#f85149` | 오류 상태 (빨간색) |
+| `--purple` | `#bc8cff` | Hero 타이틀 그라디언트 끝 |
+| `--cyan` | `#39d5b6` | (정의됨, 현재 미사용) |
 
 ### 배경
+
 ```css
-background: linear-gradient(160deg, #0d1b2a 0%, #0c2233 55%, #0d1b2a 100%);
+/* 단색 배경 (그라디언트 없음) */
+background: var(--bg); /* = #0d1117 */
 ```
 
-### 색상 팔레트
+### 카드
 
-| 용도 | 색상 |
-|---|---|
-| 페이지 배경 | `#0d1b2a` (다크 네이비) |
-| 브랜드 Accent | `#06b6d4` (Cyan 500) |
-| 버튼 그라디언트 | `#06b6d4` → `#0284c7` |
-| 텍스트 Primary | `#f1f5f9` |
-| 텍스트 Secondary | `#94a3b8` |
-| 텍스트 Muted | `#64748b` |
-| 카드 배경 | `rgba(255,255,255,0.06)` |
-| 카드 테두리 | `rgba(255,255,255,0.10)` |
-| 성공 (APPROVED) | `#10b981` / `#34d399` |
-| 경고 (WAITING) | `#f59e0b` / `#fbbf24` |
-| 오류 (ERROR) | `#ef4444` / `#fca5a5` |
-
-### 카드 (Glassmorphism)
 ```css
-background: rgba(255, 255, 255, 0.06);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
-border: 1px solid rgba(255, 255, 255, 0.10);
-border-radius: 16~18px;
-box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+background: var(--surface);  /* #161b22 — glassmorphism 없음 */
+border: 1px solid var(--border);  /* #30363d */
+border-radius: 12px;
+/* backdrop-filter 없음 — 기본 카드는 불투명 */
 ```
+
+> InstallBanner의 `.sheet`는 예외: `background: #0f2033`, `border-radius: 24px 24px 0 0`
 
 ### 버튼 규격
 
 | 버튼 종류 | 높이 | 스타일 |
 |---|---|---|
-| Primary (MAKE/SAVE) | 58px | Cyan 그라디언트 + glow shadow |
-| Secondary (SETTING/BACK) | 50px | outline (`rgba(255,255,255,0.13)`) |
-| RETRY | 50px | 주황 outline |
-| FINISH | auto | ghost 텍스트 |
+| Primary MAKE (HomeView) | 56px | `linear-gradient(135deg, #58a6ff → #3b82f6)` + glow |
+| Primary MAKE/SAVE (LockMake/Setting) | 54px | 동일 그라디언트 |
+| Secondary SETTING | 48px | `transparent` border outline |
+| Secondary BACK | 46px | `transparent` border outline |
+| RETRY | 48px | `rgba(210,153,34,0.08)` 노란 outline |
+| FINISH | auto | ghost 텍스트, color `#6e7681` |
+
+### Hero 타이틀 그라디언트
+
+```css
+background: linear-gradient(135deg, #e6edf3 0%, #58a6ff 55%, #bc8cff 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+```
 
 ### 토스트 메시지
 

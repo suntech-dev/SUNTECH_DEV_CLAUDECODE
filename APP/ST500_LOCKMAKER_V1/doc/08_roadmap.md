@@ -117,7 +117,7 @@ VITE_API_BASE_URL=https://[HTTPS도메인]/api/st500/st500_api.php
 | 버전 | 날짜 | 내용 |
 |---|---|---|
 | v1.0.0 | 2026-04-17 | 초기 구조 구축 (Android 앱 PWA 이식) |
-| v1.1.0 | 2026-04-17 | UI 전면 리디자인 (Dark Industrial Premium), T-1/2/6/7 완료, base 경로 수정 |
+| v1.1.0 | 2026-04-18 | UI 전면 리디자인 — GitHub Dark 팔레트 적용, SUNTECH 로고 추가, T-1/2/6/7 완료, base 경로 수정 |
 | v1.2.0 | 2026-04-20 | Device ID 안정화 — 하드웨어 핑거프린트 + IndexedDB 이중 저장 (B-1 해결) |
 
 ---
