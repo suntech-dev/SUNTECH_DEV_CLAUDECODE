@@ -1,4 +1,4 @@
---------------- Build Started: 04/15/2026 08:33:59 Project: Design, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
+--------------- Build Started: 04/17/2026 10:32:47 Project: Design, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
 The code generation step is up to date.
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/ST7789V.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\ST7789V.c -o .\CortexM0\ARM_GCC_541\Debug\ST7789V.o
 In file included from lib\ST7789V.h:42:0,
@@ -191,6 +191,7 @@ lib\fonts.h:990:243: warning: multi-line comment [-Wcomment]
 lib\fonts.h:1093:243: warning: multi-line comment [-Wcomment]
  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xC0,0x00,0xC0,0x00,0xF0,0x00,0xFC,0x00,0xFC,0x00,0x3F,0x00,0x0F,0xC0,0x0F,0xC0,0x03,0xF0,0x00,0xFC,0x00,0xFC,0x00,0x3C,0x00,0x0C,0x00,0x0C,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,  // \
                                                                                                                                                                                                                                                    ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/server.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c lib\server.c -o .\CortexM0\ARM_GCC_541\Debug\server.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/main.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c main.c -o .\CortexM0\ARM_GCC_541\Debug\main.o
 In file included from lib/UI.h:16:0,
                  from menuDesign.h:16,
@@ -393,8 +394,6 @@ userMenuPatternSewingMachine.c:638:18: warning: unused variable 'targetInfoMenuN
 userMenuPatternSewingMachine.c:609:15: warning: variable 'g_ptrAndonMenuNode' set but not used [-Wunused-but-set-variable]
      MENUNODE *g_ptrAndonMenuNode = NULL;
                ^
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/userProjectPatternSewing.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c userProjectPatternSewing.c -o .\CortexM0\ARM_GCC_541\Debug\userProjectPatternSewing.o
-arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/count.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c count.c -o .\CortexM0\ARM_GCC_541\Debug\count.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/uartJson.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c uartJson.c -o .\CortexM0\ARM_GCC_541\Debug\uartJson.o
 In file included from lib/UI.h:16:0,
                  from lib/widget.h:16,
@@ -412,7 +411,7 @@ lib/fonts.h:1093:243: warning: multi-line comment [-Wcomment]
  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xC0,0x00,0xC0,0x00,0xF0,0x00,0xFC,0x00,0xFC,0x00,0x3F,0x00,0x0F,0xC0,0x0F,0xC0,0x03,0xF0,0x00,0xFC,0x00,0xFC,0x00,0x3C,0x00,0x0C,0x00,0x0C,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,  // \
                                                                                                                                                                                                                                                    ^
 uartJson.c: In function 'uartEmbParsor':
-uartJson.c:145:13: warning: unused variable 'token' [-Wunused-variable]
+uartJson.c:193:13: warning: unused variable 'token' [-Wunused-variable]
      char   *token    = NULL;
              ^
 arm-none-eabi-gcc.exe -mcpu=cortex-m0 -mthumb -I. -IGenerated_Source\PSoC4 -Wa,-alh=.\CortexM0\ARM_GCC_541\Debug/uartTestMenu.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c uartTestMenu.c -o .\CortexM0\ARM_GCC_541\Debug\uartTestMenu.o
@@ -538,6 +537,6 @@ No ELF section .cychecksum found, creating one
 Application checksum calculated and stored in ELF section .cychecksum
 Checksum calculated and stored in ELF section .cymeta
 cyelftool.exe -S C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S\Project\Design.cydsn\CortexM0\ARM_GCC_541\Debug\Design.elf
-Flash used: 120212 of 262144 bytes (45.9%). Bootloader: 13568 bytes. Application: 106388 bytes. Metadata: 256 bytes.
+Flash used: 120404 of 262144 bytes (45.9%). Bootloader: 13568 bytes. Application: 106580 bytes. Metadata: 256 bytes.
 SRAM used: 27708 of 32768 bytes (84.6%). Stack: 2048 bytes. Heap: 1024 bytes.
---------------- Build Succeeded: 04/15/2026 08:34:13 ---------------
+--------------- Build Succeeded: 04/17/2026 10:33:00 ---------------

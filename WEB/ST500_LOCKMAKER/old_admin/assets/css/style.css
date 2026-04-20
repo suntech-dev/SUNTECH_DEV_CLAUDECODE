@@ -1,0 +1,125 @@
+/* * {
+  font-size: 16px;
+} */
+/* hamani append */
+.content {
+  padding: 1.2rem 1.2rem 0rem;
+}
+.navbar-brand {
+  padding: 0.25rem 0;
+}
+.nav-link {
+  padding: 0.25rem 1rem;
+}
+/* hamani append end */
+
+.navbar .nav-item .dropdown-menu {
+  display: none;
+}
+
+/* .navbar .nav-item:hover .nav-link {} */
+
+.navbar .nav-item:hover .dropdown-menu {
+  display: block;
+}
+
+.navbar .nav-item .dropdown-menu {
+  margin-top: 0;
+}
+
+.navbar {
+  font-size: 16px;
+}
+
+.navbar .dropdown-item {
+  font-size: 15px;
+}
+
+table.dataTable th {
+  /* font-weight: normal; */
+  font-weight: 500;
+  /* color: #CC8B37; */
+  color: Gold;
+  font-size: 14px;
+}
+
+table.dataTable td {
+  font-size: 14px;
+  font-weight: 300;
+}
+
+span.form-check-label {
+  font-size: 15px;
+}
+
+/* td style */
+.a_edit {
+  color: white;
+  text-decoration: none;
+}
+
+/* td (unused) style */
+.a_edit_n {
+  color: Crimson;
+  text-decoration: none;
+}
+
+.a_edit:hover,
+.a_edit:focus,
+.a_edit_n:hover,
+.a_edit_n:focus {
+  color: DodgerBlue;
+  text-decoration: none;
+}
+
+/* td factory item */
+.factory_item {
+  border: 1px dotted white;
+  border-radius: 4px;
+  padding: 0px 4px;
+  margin-right: 4px;
+  opacity: 0.8;
+}
+
+.factory_item2 {
+  /* border: 1px dotted white; */
+  /* border-radius: 4px; */
+  padding: 0px 4px;
+  margin-right: 4px;
+  /* opacity: 0.7; */
+  font-size: 15px;
+  font-weight: 300;
+}
+
+/* td status style */
+.status {
+  color: white;
+  text-decoration: none;
+}
+
+/* td status (unused) style */
+.status_N {
+  color: Crimson;
+  text-decoration: none;
+}
+.status_unused {
+  color: Crimson;
+  text-decoration: none;
+}
+
+.status:hover,
+.status:focus,
+.status_N:hover,
+.status_N:focus {
+  color: DodgerBlue;
+  text-decoration: none;
+}
+.status_unused:hover,
+.status_unused:focus {
+  color: DodgerBlue;
+  text-decoration: none;
+}
+
+.option_pair {  
+  font-size: 15px;
+}
