@@ -1,6 +1,6 @@
 # BUG FIX: AUTO RESET — 교대 근무 날짜 경계 오작동
 
-## 상태: 🧪 테스트 대기 중 (코드 구현 완료)
+## 상태: 🧪 테스트 대기 중 (코드 구현 완료 — pre-shift window 추가 2026-04-21)
 
 ---
 
@@ -151,6 +151,7 @@ enQueueANDON_printf(ANDON_CURRENT_TIME, "get_dateTime&mac=%s", g_network.MAC);
 
 - [x] 분석 완료 (2026-04-09)
 - [x] `get_dateTime.php` 서버 수정 (2026-04-09)
+- [x] `get_dateTime.php` pre-shift window 10분 추가 (2026-04-21)
 - [x] `andonApi.c` 펌웨어 수정 (2026-04-09)
 - [x] `andonJson.c` 펌웨어 수정 (2026-04-09)
 - [ ] 통합 테스트: 2교대 자정 경계 시나리오
@@ -165,6 +166,8 @@ enQueueANDON_printf(ANDON_CURRENT_TIME, "get_dateTime&mac=%s", g_network.MAC);
 |---|---|---|
 | 2교대 중 자정 넘어 전원 ON | 리셋 **안 됨** | ⬜ |
 | 2교대→1교대 전환 후 전원 ON | 리셋 **됨** | ⬜ |
+| 근무 시작 10분 전 전원 ON | shift 정보 반환, 리셋 **안 됨** | ⬜ |
+| 근무 시작 11분 전 전원 ON | shift 정보 없음, fallback 동작 | ⬜ |
 | 근무 외 시간 전원 ON (fallback) | 달력 날짜 비교로 동작 | ⬜ |
 | 서버 구버전 (work_date 없음) | fallback 달력 비교 | ⬜ |
 | 최초 배포 직후 | 1회 리셋 후 정상 동작 | ⬜ |

@@ -40,6 +40,17 @@ if (!empty($mac)) {
             $machine['line_idx'],
             $today
         );
+        // 현재 shift 없으면 → 10분 후 시간으로 재조회 (pre-shift window)
+        // 근무 시작 10분 전에 디바이스가 ON 되어도 올바른 shift key 를 받아
+        // 근무 시작 후 재부팅 시 동일 key 반환 → 잘못된 ResetCount() 방지
+        if (!$current_shift_info) {
+            $lookahead = date('Y-m-d H:i:s', strtotime($today . ' +10 minutes'));
+            $current_shift_info = $apiHelper->getCurrentShiftInfo(
+                $machine['factory_idx'],
+                $machine['line_idx'],
+                $lookahead
+            );
+        }
         if ($current_shift_info) {
             $work_date = $current_shift_info['date'];
             $shift_idx = (int)$current_shift_info['shift_idx'];
@@ -74,6 +85,13 @@ http://49.247.26.228/OEE_SCI/OEE_SCI_V2/api/sewing.php?code=get_dateTime&mac=84:
   "datetime": "2026-04-09 02:30:00",
   "work_date": "2026-04-08",
   "shift_idx": 2
+}
+
+## 응답결과 예시 (근무 시작 10분 전 — pre-shift window)
+{
+  "datetime": "2026-04-09 06:56:00",
+  "work_date": "2026-04-09",
+  "shift_idx": 1
 }
 
 ## 응답결과 예시 (근무 외 또는 mac 없음)
