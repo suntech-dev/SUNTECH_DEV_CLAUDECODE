@@ -56,7 +56,7 @@ export const factoryConfig = {
         {
             key: 'idx',
             label: 'IDX',
-            sortable: true,
+            sortable: false,
             sortKey: 'idx',
             visible: false  // 화면에 표시하지 않음 (내부 식별용)
         },

@@ -32,18 +32,6 @@
  * - typeFilterSelect 기본값 'P' 강제 설정: 초기 목록을 패턴재봉기(P)만 표시
  */
 export function initAdvancedFeatures(resourceManager) {
-    // typeFilterSelect 기본값 'P' 강제 적용
-    const typeFilterSelect = document.getElementById('typeFilterSelect');
-    if (typeFilterSelect && typeFilterSelect.value === 'P') {
-        if (resourceManager && resourceManager.state) {
-            resourceManager.state.typeFilter = 'P';
-            // ResourceManager 초기화 완료 후 데이터 로드 (100ms 지연)
-            setTimeout(() => {
-                if (resourceManager.loadData) resourceManager.loadData();
-            }, 100);
-        }
-    }
-
     initRealTimeSearch(resourceManager);
     initQuickActions();
     initModalSteps();
@@ -100,7 +88,7 @@ export const machineConfig = {
         {
             key: 'idx',
             label: 'IDX',
-            sortable: true,
+            sortable: false,
             sortKey: 'm.idx',
             visible: false
         },

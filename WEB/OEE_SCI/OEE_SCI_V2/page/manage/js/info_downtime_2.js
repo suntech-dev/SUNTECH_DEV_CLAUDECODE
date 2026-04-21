@@ -53,8 +53,7 @@ export const downtimeConfig = {
             render: (item, index) => `<span style="color: var(--sap-text-secondary);">${index}</span>`,
             width: '60px'
         },
-        // idx는 화면에 표시하지 않지만 정렬 기준으로 사용 가능
-        { key: 'idx', label: 'IDX', sortable: true, sortKey: 'idx', visible: false },
+        { key: 'idx', label: 'IDX', sortable: false, sortKey: 'idx', visible: false },
         {
             key: 'downtime_name',
             label: 'Downtime Name',

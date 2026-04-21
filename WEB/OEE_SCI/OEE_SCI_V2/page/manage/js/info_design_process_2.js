@@ -82,7 +82,7 @@ export const designProcessConfig = {
             // 다른 파일과 달리 index+1로 1-based 표시
             render: (item, index) => `<span style="color: var(--sap-text-secondary);">${index + 1}</span>`
         },
-        { key: 'idx', label: 'IDX', sortable: true, sortKey: 'dp.idx', visible: false },
+        { key: 'idx', label: 'IDX', sortable: false, sortKey: 'dp.idx', visible: false },
         {
             key: 'factory_name',
             label: 'Factory',

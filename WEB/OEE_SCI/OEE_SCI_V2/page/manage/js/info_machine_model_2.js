@@ -53,7 +53,7 @@ export const machineModelConfig = {
         {
             key: 'idx',
             label: 'ID',
-            sortable: true,
+            sortable: false,
             sortKey: 'idx',
             visible: false
         },

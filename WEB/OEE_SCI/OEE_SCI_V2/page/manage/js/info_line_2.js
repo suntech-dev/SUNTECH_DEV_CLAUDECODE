@@ -68,7 +68,7 @@ export const lineConfig = {
         {
             key: 'idx',
             label: 'IDX',
-            sortable: true,
+            sortable: false,
             sortKey: 'l.idx',
             visible: false
         },

@@ -60,7 +60,7 @@ export const andonConfig = {
         {
             key: 'idx',
             label: 'IDX',
-            sortable: true,
+            sortable: false,
             sortKey: 'idx',
             visible: false
         },

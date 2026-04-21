@@ -71,8 +71,8 @@ $nav_active = 'machine'; require_once(__DIR__ . '/../../inc/nav-drawer-manage.ph
         </select>
         <!-- 기계 타입 필터: 기본값 'P'(Computer Sewing) — beforeInit에서 100ms 지연 후 설정 -->
         <select id="typeFilterSelect" class="fiori-select type-filter-select">
-            <option value="">All Types</option>
-            <option value="P" selected>Computer Sewing</option>
+            <option value="" selected>All Types</option>
+            <option value="P">Computer Sewing</option>
             <option value="E">Embroidery</option>
         </select>
         <!-- 컬럼 표시/숨김 토글 -->

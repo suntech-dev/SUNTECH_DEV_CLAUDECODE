@@ -53,7 +53,7 @@ export const defectiveConfig = {
             render: (item, index) => `<span style="color: var(--sap-text-secondary);">${index}</span>`,
             width: '60px'
         },
-        { key: 'idx', label: 'IDX', sortable: true, sortKey: 'idx', visible: false },
+        { key: 'idx', label: 'IDX', sortable: false, sortKey: 'idx', visible: false },
         {
             key: 'defective_name',
             label: 'Defective Name',
