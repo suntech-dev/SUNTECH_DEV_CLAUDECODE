@@ -151,8 +151,9 @@ try {
   ";
 
     $stmt = $pdo->prepare($sql);
-    // 바인딩 파라미터: 기간 관련 5개 + 필터 파라미터
-    $stmt->execute(array_merge([$half, $interval_days, $half + 1, $interval_days, $min_data_cnt], $params));
+    // 바인딩 파라미터: 기간 4개 + 필터(factory/line) + HAVING 최소 건수
+    // SQL 순서: ①recent_half ②prev_half_start ③prev_half_end ④WHERE_date ⑤factory/line_filter... ⑥HAVING
+    $stmt->execute(array_merge([$half, $interval_days, $half + 1, $interval_days], $params, [$min_data_cnt]));
     $lines = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // 데이터가 없으면 빈 결과 반환
