@@ -92,7 +92,7 @@ const statusBadgeClass = computed(() => ({
 
 function goMake()    { router.push('/make') }
 function goSetting() { router.push('/setting') }
-function finish()    { window.history.back() }
+function finish() { router.push('/') }
 
 onMounted(() => store.init())
 onUnmounted(() => store.stopPolling())

@@ -191,6 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_GET['action'] ?? '') === 'update
     <div class="nav-links" id="navLinks">
         <a class="nav-link active" href="device.php">DEVICE</a>
         <a class="nav-link" href="log.php">LOG</a>
+        <a class="nav-link" href="../parameter/index.php">PARAMETER</a>
     </div>
     <button class="nav-burger" onclick="document.getElementById('navLinks').classList.toggle('open')">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
