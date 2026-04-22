@@ -427,8 +427,8 @@ body {
 
 /* ─── 스크롤바 (내부 허용 영역만) ──────────────────────── */
 .log-row-main ::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
+    width: 8px;
+    height: 8px;
 }
 
 .log-row-main ::-webkit-scrollbar-track {
@@ -437,5 +437,5 @@ body {
 
 .log-row-main ::-webkit-scrollbar-thumb {
     background: var(--sap-border-neutral);
-    border-radius: 2px;
+    border-radius: 4px;
 }

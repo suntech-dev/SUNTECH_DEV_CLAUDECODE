@@ -337,8 +337,8 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
                 }
 
                 /* ── Kartu 1: OEE Real-time ── */
-                var curOee = (data.current_oee !== null && data.current_oee !== undefined) ?
-                    parseFloat(data.current_oee) : null;
+                var curOee = (data.today_realtime_oee !== null && data.today_realtime_oee !== undefined) ?
+                    parseFloat(data.today_realtime_oee) : null;
 
                 if (curOee !== null) {
                     var colorClass = curOee >= 85 ? 'ai-oee-good' : (curOee >= 60 ? 'ai-oee-warning' : 'ai-oee-danger');
@@ -359,10 +359,7 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
                     $('#aiRealtimeBadge').hide();
                 }
 
-                var hourLabel = (data.current_hour !== undefined && data.current_hour !== null) ?
-                    'Saat ini: ' + String(data.current_hour).padStart(2, '0') + ':00' :
-                    'Jam saat ini';
-                $('#aiRealtimeSub').text(hourLabel);
+                $('#aiRealtimeSub').text('Hari Ini · Langsung');
 
                 /* ── Kartu 2: Prediksi AI 4 Jam ke Depan ── */
                 var forecastAvg = null;

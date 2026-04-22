@@ -199,6 +199,37 @@ try {
     }
 
     // ════════════════════════════════════════════════════════
+    // STEP 2c. 실시간 OEE: data_oee 원본 테이블 직접 집계
+    //   - data_oee_rows_hourly(시간대 집계) 대신 data_oee 원본 사용
+    //   - data_oee_2.php의 Overall OEE 와 동일 방식 (오늘 전체 레코드 평균)
+    //   - "Current: HH:00" 없이 진짜 실시간 OEE 제공
+    // ════════════════════════════════════════════════════════
+    $where_do_parts = [];
+    $params_do      = [];
+    if ($factory_filter !== '') { $where_do_parts[] = 'do.factory_idx = ?';  $params_do[] = $factory_filter; }
+    if ($line_filter    !== '') { $where_do_parts[] = 'do.line_idx = ?';     $params_do[] = $line_filter; }
+    if ($machine_filter !== '') { $where_do_parts[] = 'do.machine_idx = ?';  $params_do[] = $machine_filter; }
+    $where_do_sql = $where_do_parts ? 'AND ' . implode(' AND ', $where_do_parts) : '';
+
+    $sql_realtime = "
+    SELECT ROUND(
+        (AVG(do.availabilty_rate)
+         * (SUM(do.actual_output) / NULLIF(SUM(do.theoritical_output), 0))
+         * AVG(do.quality_rate)
+        ) / 100, 2
+    ) AS today_realtime_oee
+    FROM data_oee do
+    WHERE do.work_date = CURDATE()
+      $where_do_sql
+    ";
+    $stmt_rt = $pdo->prepare($sql_realtime);
+    $stmt_rt->execute($params_do);
+    $rt_row = $stmt_rt->fetch(PDO::FETCH_ASSOC);
+    $today_realtime_oee = ($rt_row && $rt_row['today_realtime_oee'] !== null)
+        ? round(min(100.0, max(0.0, (float)$rt_row['today_realtime_oee'])), 1)
+        : null;
+
+    // ════════════════════════════════════════════════════════
     // STEP 3. 예측 시간대 계산
     //   - 현재 시간 이후 4시간의 시각(0~23 범위로 순환)
     // ════════════════════════════════════════════════════════
@@ -276,14 +307,15 @@ try {
 
     // ── 최종 JSON 응답 출력 ──────────────────────────────────
     echo json_encode([
-        'code'         => '00',
-        'current_oee'  => $current_oee,   // 클램핑된 현재(오늘 최신) OEE
-        'current_hour' => $current_hour,  // 현재 집계 시간
-        'today_data'   => $today_data,    // v5 신규: 오늘 시간대별 실제 OEE 배열
-        'forecast'     => $forecast,      // 향후 4시간 예측 배열
-        'trend'        => $trend,         // 트렌드 방향
-        'method'       => 'exponential_smoothing + seasonal_v5', // 사용 알고리즘
-        'history_days' => $history_days,  // 학습 기간 (일)
+        'code'               => '00',
+        'current_oee'        => $current_oee,          // 클램핑된 현재(오늘 최신 시간대) OEE
+        'current_hour'       => $current_hour,         // 현재 집계 시간
+        'today_realtime_oee' => $today_realtime_oee,   // 실시간: data_oee 원본 오늘 전체 평균
+        'today_data'         => $today_data,           // v5 신규: 오늘 시간대별 실제 OEE 배열
+        'forecast'           => $forecast,             // 향후 4시간 예측 배열
+        'trend'              => $trend,                // 트렌드 방향
+        'method'             => 'exponential_smoothing + seasonal_v5',
+        'history_days'       => $history_days,         // 학습 기간 (일)
     ]);
 } catch (PDOException $e) {
     // DB 오류 발생 시 code 99 와 오류 메시지 반환

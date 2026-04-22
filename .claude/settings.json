@@ -65,7 +65,18 @@
       "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} | size: %{size_download} bytes\" http://49.247.27.154/st500/lockmaker/)",
       "Bash(curl -s -o /dev/null -w \"API HTTP %{http_code}\" \"http://49.247.27.154/api/st500/st500_api.php?code=get_device&device_id=12345678-1234-4234-8234-123456789abc\")",
       "Bash(python -c \"import json; m=json.load\\(open\\('C:/SUNTECH_DEV_CLAUDECODE/APP/ST500_LOCKMAKER_V1/dist/manifest.webmanifest'\\)\\); print\\('start_url:', m['start_url'], '| scope:', m.get\\('scope','none'\\)\\)\")",
-      "Bash(python -c \"import json; m=json.load\\(open\\('C:/SUNTECH_DEV_CLAUDECODE/APP/ST500_LOCKMAKER_V1/dist/manifest.webmanifest', encoding='utf-8'\\)\\); print\\('start_url:', m['start_url'], '| scope:', m.get\\('scope','none'\\)\\)\")"
+      "Bash(python -c \"import json; m=json.load\\(open\\('C:/SUNTECH_DEV_CLAUDECODE/APP/ST500_LOCKMAKER_V1/dist/manifest.webmanifest', encoding='utf-8'\\)\\); print\\('start_url:', m['start_url'], '| scope:', m.get\\('scope','none'\\)\\)\")",
+      "Bash(python3 -)",
+      "Bash(python -c ' *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost/dev/ST500_LOCKMAKER/admin/device.php)",
+      "Bash(node C:/SUNTECH_DEV_CLAUDECODE/check_emb_line.js)",
+      "Bash(node C:/SUNTECH_DEV_CLAUDECODE/check_emb_machine.js)",
+      "Bash(git -C \"C:\\\\SUNTECH_DEV_CLAUDECODE\" diff --stat)",
+      "Bash(git -C \"C:\\\\SUNTECH_DEV_CLAUDECODE\" log --oneline -3)",
+      "Bash(git -C \"C:\\\\SUNTECH_DEV_CLAUDECODE\" diff WEB/OEE_SCI/OEE_SCI_V2/page/data/proc/ai_optimization_2.php)",
+      "Bash(git -C \"C:\\\\SUNTECH_DEV_CLAUDECODE\" add WEB/OEE_SCI/OEE_SCI_V2/page/data/proc/ai_optimization_2.php)",
+      "Bash(git -C 'C:\\\\SUNTECH_DEV_CLAUDECODE' commit -m ' *)",
+      "Bash(git -C \"C:\\\\SUNTECH_DEV_CLAUDECODE\" push origin master)"
     ],
     "additionalDirectories": [
       "C:\\laragon\\www\\dev\\OEE_SCI\\OEE_SCI_V2\\api\\sewing",

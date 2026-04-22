@@ -424,10 +424,10 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
                     return;
                 }
 
-                /* ── 카드1: Real-time OEE (항상 오늘 기준, 클램핑 완료) ── */
-                // current_oee 값이 존재하면 float로 파싱, 없으면 null 처리
-                var curOee = (data.current_oee !== null && data.current_oee !== undefined) ?
-                    parseFloat(data.current_oee) : null;
+                /* ── 카드1: Real-time OEE (data_oee 원본 오늘 전체 평균) ── */
+                // today_realtime_oee: data_oee 테이블 직접 집계 (시간대 무관 진짜 실시간)
+                var curOee = (data.today_realtime_oee !== null && data.today_realtime_oee !== undefined) ?
+                    parseFloat(data.today_realtime_oee) : null;
 
                 if (curOee !== null) {
                     // OEE 수치에 따라 색상 클래스 결정: 85% 이상=good, 60~85%=warning, 60% 미만=danger
@@ -451,11 +451,8 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
                     $('#aiRealtimeBadge').hide();
                 }
 
-                // 현재 시간대 레이블 생성 (예: "Current: 14:00")
-                var hourLabel = (data.current_hour !== undefined && data.current_hour !== null) ?
-                    'Current: ' + String(data.current_hour).padStart(2, '0') + ':00' :
-                    'Current hour';
-                $('#aiRealtimeSub').text(hourLabel);
+                // 서브 텍스트: 시간대 고정 대신 실시간 집계임을 표시
+                $('#aiRealtimeSub').text('Today · Live');
 
                 /* ── 카드2: Next 4H AI Forecast ──────────────── */
                 // 향후 4시간 예측 데이터 집계 변수 초기화

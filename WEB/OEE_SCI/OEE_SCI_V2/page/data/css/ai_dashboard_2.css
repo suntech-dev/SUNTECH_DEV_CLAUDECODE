@@ -382,7 +382,7 @@ body {
 
 /* ─── 스크롤바 ──────────────────────────────────────────── */
 /* 사이니지 전체 영역 얇은 스크롤바 (4px) */
-.ai-signage-main ::-webkit-scrollbar       { width: 4px; height: 4px; }
+.ai-signage-main ::-webkit-scrollbar       { width: 8px; height: 8px; }
 .ai-signage-main ::-webkit-scrollbar-track { background: var(--sap-surface-3); }
 .ai-signage-main ::-webkit-scrollbar-thumb { background: var(--sap-border-neutral); border-radius: 2px; }
 
