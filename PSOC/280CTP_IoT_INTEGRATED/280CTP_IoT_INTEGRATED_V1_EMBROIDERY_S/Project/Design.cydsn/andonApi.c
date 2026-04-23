@@ -30,6 +30,7 @@ static uint16 g_uAndonRequestType = ANDON_NONE;  /* andonApi.c 내부에서만 �
 uint8       g_bTargetReceived = FALSE;
 uint8       g_index_request_interval=0;
 uint8       g_bReceivedAndonStart = 0;
+static uint8 g_index_shift_check = 0;
 
 INFO  g_Info = {
     .nNoOfLineForNotice =0, 
@@ -53,15 +54,19 @@ uint8 andonLoop()
     
     if(g_bReceivedAndonStart)
     {
-        if(isFinishCounter_1ms(g_index_request_interval)) // Wifi Strength 체크를 5sec마다 수행한다.
+        /* 5분마다 shift 변경 감지 — ResetCount 는 andonCurrentTimeParsing() 내부에서 처리 */
+        if(isFinishCounter_1ms(g_index_shift_check))
+            makeAndonCurrentTimeRequest();
+
+        if(isFinishCounter_1ms(g_index_request_interval))
         {
             resetCounter_1ms(g_index_request_interval);
-            
-            if(g_ptrMachineParameter->andon_enable==TRUE) makeAndonList();             
-            
+
+            if(g_ptrMachineParameter->andon_enable==TRUE) makeAndonList();
+
             return TRUE;
         }
-        
+
         WarningLight();
     }
    
@@ -151,6 +156,7 @@ void makeAndonTextList()
 void initAndon()
 {
     g_index_request_interval = registerCounter_1ms(5000);
+    g_index_shift_check      = registerCounter_1ms(5UL * 60UL * 1000UL); /* 5분 주기 shift 감지 */
     makeAndonCurrentTimeRequest();
     makeAndonStart();
     makeAndonList();

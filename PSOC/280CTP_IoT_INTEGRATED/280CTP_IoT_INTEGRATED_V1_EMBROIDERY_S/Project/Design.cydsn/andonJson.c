@@ -155,8 +155,9 @@ uint8 andonCurrentTimeParsing(char *jsonString, int16 sizeOfJson)
         if (lastKey != currentKey)
         {
             if (g_ptrMachineParameter->bAutoReset) ResetCount();
+            g_ptrMachineParameter->lastPowerOnDateTime = currentKey;
+            SaveExternalFlashConfig();
         }
-        g_ptrMachineParameter->lastPowerOnDateTime = currentKey;
     }
     else
     {
@@ -170,13 +171,13 @@ uint8 andonCurrentTimeParsing(char *jsonString, int16 sizeOfJson)
         if (lastDay != currentDay)
         {
             if (g_ptrMachineParameter->bAutoReset) ResetCount();
+            g_ptrMachineParameter->lastPowerOnDateTime = (uint32)RTC_GetUnixTime();
+            SaveExternalFlashConfig();
         }
-        g_ptrMachineParameter->lastPowerOnDateTime = (uint32)RTC_GetUnixTime();
     }
 
     if(isInTopMenu()) reflashMenu();
     //g_TopMenuNode->func(NULL,REFLASH);
-    SaveExternalFlashConfig();
     return TRUE;
 }
 
