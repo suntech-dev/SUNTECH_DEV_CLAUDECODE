@@ -21,7 +21,7 @@
 /* 사이니지 모드: 스크롤 없이 뷰포트 전체를 채움 */
 html,
 body {
-  height: 100vh;    /* 뷰포트 전체 높이 사용 */
+  height: 100vh; /* 뷰포트 전체 높이 사용 */
   overflow: hidden; /* 사이니지 — 외부 스크롤 완전 차단 */
   margin: 0;
   padding: 0;
@@ -36,14 +36,14 @@ body {
 /* ─── 사이니지 헤더 (nav 대체) ──────────────────────────── */
 /* 일반 Fiori nav bar 대신 사이니지 전용 고정 높이 헤더 사용 */
 .signage-header {
-  height: 52px;  /* 헤더 높이 고정 — 메인 그리드 calc 기준점 */
+  height: 52px; /* 헤더 높이 고정 — 메인 그리드 calc 기준점 */
   background: var(--sap-surface-1);
   border-bottom: 1px solid var(--sap-border-neutral);
   display: flex;
   align-items: center;
   padding: 0 12px;
   gap: 10px;
-  flex-shrink: 0;    /* flex 자식: 헤더 높이 축소 방지 */
+  flex-shrink: 0; /* flex 자식: 헤더 높이 축소 방지 */
   box-sizing: border-box;
 }
 
@@ -150,10 +150,21 @@ body {
 }
 
 /* Row A 내부 텍스트 소형화 */
-.ai-signage-row-a .ai-summary-card__label { font-size: 10px; margin-bottom: 2px; }
-.ai-signage-row-a .ai-summary-card__value { font-size: 1.6rem; margin-bottom: 2px; }
-.ai-signage-row-a .ai-summary-card__sub   { font-size: 11px; }
-.ai-signage-row-a .ai-trend-badge         { font-size: 10px; padding: 1px 6px; }
+.ai-signage-row-a .ai-summary-card__label {
+  font-size: 10px;
+  margin-bottom: 2px;
+}
+.ai-signage-row-a .ai-summary-card__value {
+  font-size: 1.6rem;
+  margin-bottom: 2px;
+}
+.ai-signage-row-a .ai-summary-card__sub {
+  font-size: 11px;
+}
+.ai-signage-row-a .ai-trend-badge {
+  font-size: 10px;
+  padding: 1px 6px;
+}
 .ai-signage-row-a .ai-summary-card__sub-row {
   display: flex;
   align-items: center;
@@ -190,14 +201,27 @@ body {
 
 /* rtLivePulse: 50% 지점에서 opacity·scale 대폭 축소 → 빠른 맥박 효과 */
 @keyframes rtLivePulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.35; transform: scale(0.7); } /* scale 0.7 — 빠른 수축 */
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.7);
+  } /* scale 0.7 — 빠른 수축 */
 }
 
 /* OEE 등급별 색상 클래스 — !important 로 다른 color 재정의 */
-.ai-oee-good    { color: var(--sap-positive) !important; }  /* 양호: 초록 */
-.ai-oee-warning { color: var(--sap-caution) !important; }   /* 주의: 주황 */
-.ai-oee-danger  { color: var(--sap-negative) !important; }  /* 위험: 빨강 */
+.ai-oee-good {
+  color: var(--sap-positive) !important;
+} /* 양호: 초록 */
+.ai-oee-warning {
+  color: var(--sap-caution) !important;
+} /* 주의: 주황 */
+.ai-oee-danger {
+  color: var(--sap-negative) !important;
+} /* 위험: 빨강 */
 
 /* ─── Row B ────────────────────────────────────────────────── */
 /* OEE 예측 차트(2fr) + 이상 감지 패널(1fr) 2열 배치 */
@@ -305,11 +329,11 @@ body {
 /* ─── 공통 카드 스타일 ──────────────────────────────────── */
 /* 사이니지 메인 내 모든 fiori-card — 행 높이에 꽉 맞도록 flex column */
 .ai-signage-main .fiori-card {
-  height: 100%;       /* 부모 행 높이 100% */
+  height: 100%; /* 부모 행 높이 100% */
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  margin-bottom: 0;   /* 기본 카드 하단 여백 제거 */
+  margin-bottom: 0; /* 기본 카드 하단 여백 제거 */
   border-radius: var(--sap-radius-md);
   box-sizing: border-box;
 }
@@ -324,8 +348,13 @@ body {
 }
 
 /* 카드 제목·서브타이틀 폰트 크기 재정의 */
-.ai-signage-main .fiori-card__title    { font-size: var(--sap-font-size-md); }
-.ai-signage-main .fiori-card__subtitle { font-size: var(--sap-font-size-xs); margin: 0; }
+.ai-signage-main .fiori-card__title {
+  font-size: var(--sap-font-size-md);
+}
+.ai-signage-main .fiori-card__subtitle {
+  font-size: var(--sap-font-size-xs);
+  margin: 0;
+}
 
 /* 카드 콘텐츠 — flex:1 로 나머지 높이 모두 차지, 내부 스크롤 제어 */
 .ai-signage-main .fiori-card__content {
@@ -345,9 +374,15 @@ body {
 }
 
 /* 텍스트 소형화 — 11px/10px 로 더 많은 항목 표시 */
-.ai-signage-main .ai-anomaly-item__machine { font-size: 11px; }
-.ai-signage-main .ai-anomaly-item__line    { font-size: 10px; }
-.ai-signage-main .ai-anomaly-item__oee     { font-size: 0.9rem; }
+.ai-signage-main .ai-anomaly-item__machine {
+  font-size: 11px;
+}
+.ai-signage-main .ai-anomaly-item__line {
+  font-size: 10px;
+}
+.ai-signage-main .ai-anomaly-item__oee {
+  font-size: 0.9rem;
+}
 
 /* 정비 아이템 소형화 */
 .ai-signage-main .ai-maintenance-item {
@@ -355,8 +390,12 @@ body {
   margin-bottom: 2px;
 }
 
-.ai-signage-main .ai-maintenance-item__machine { font-size: 11px; }
-.ai-signage-main .ai-maintenance-item__line    { font-size: 10px; }
+.ai-signage-main .ai-maintenance-item__machine {
+  font-size: 11px;
+}
+.ai-signage-main .ai-maintenance-item__line {
+  font-size: 10px;
+}
 
 /* 라인 건강 아이템 열 너비 재정의 — 더 좁게 */
 .ai-signage-main .ai-health-item {
@@ -364,37 +403,76 @@ body {
   gap: 6px;
 }
 
-.ai-signage-main .ai-health-item__line { font-size: 11px; }
+.ai-signage-main .ai-health-item__line {
+  font-size: 11px;
+}
 
 /* ─── 스트리밍 이벤트 소형화 ────────────────────────────── */
 /* 사이니지: 더 많은 이벤트를 표시하기 위해 패딩·폰트 축소 */
-.ai-signage-main .ai-stream-event       { padding: 5px 8px; }
-.ai-signage-main .ai-stream-event__type { font-size: 11px; }
-.ai-signage-main .ai-stream-event__msg  { font-size: 11px; }
-.ai-signage-main .ai-stream-event__time { font-size: 10px; }
+.ai-signage-main .ai-stream-event {
+  padding: 5px 8px;
+}
+.ai-signage-main .ai-stream-event__type {
+  font-size: 11px;
+}
+.ai-signage-main .ai-stream-event__msg {
+  font-size: 11px;
+}
+.ai-signage-main .ai-stream-event__time {
+  font-size: 10px;
+}
 
 /* ─── Optimization 카드 소형화 ──────────────────────────── */
 /* 최적화 카드도 패딩·폰트 축소로 더 많은 항목 표시 */
-.ai-signage-main .ai-opt-card          { padding: 6px 10px; }
-.ai-signage-main .ai-opt-card__header  { margin-bottom: 6px; }
-.ai-signage-main .ai-opt-bottleneck    { padding: 3px 6px; font-size: 11px; margin-bottom: 4px; }
-.ai-signage-main .ai-opt-components    { font-size: 11px; gap: 6px; margin-bottom: 4px; }
+.ai-signage-main .ai-opt-card {
+  padding: 6px 10px;
+}
+.ai-signage-main .ai-opt-card__header {
+  margin-bottom: 6px;
+}
+.ai-signage-main .ai-opt-bottleneck {
+  padding: 3px 6px;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+.ai-signage-main .ai-opt-components {
+  font-size: 11px;
+  gap: 6px;
+  margin-bottom: 4px;
+}
 
 /* ─── 스크롤바 ──────────────────────────────────────────── */
 /* 사이니지 전체 영역 얇은 스크롤바 (4px) */
-.ai-signage-main ::-webkit-scrollbar       { width: 8px; height: 8px; }
-.ai-signage-main ::-webkit-scrollbar-track { background: var(--sap-surface-3); }
-.ai-signage-main ::-webkit-scrollbar-thumb { background: var(--sap-border-neutral); border-radius: 2px; }
+.ai-signage-main ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.ai-signage-main ::-webkit-scrollbar-track {
+  background: var(--sap-surface-3);
+}
+.ai-signage-main ::-webkit-scrollbar-thumb {
+  background: var(--sap-border-neutral);
+  border-radius: 2px;
+}
 
 /* ─── hover 효과 제거 ───────────────────────────────────── */
 /* 사이니지 = 터치·마우스 미사용 환경 → hover 전환 효과 비활성화 */
-.ai-signage-main .ai-summary-card:hover { box-shadow: var(--sap-shadow-1); } /* 기본 그림자 유지 */
-.ai-signage-main .ai-heatmap-cell:hover { filter: none; }                    /* brightness 효과 제거 */
+.ai-signage-main .ai-summary-card:hover {
+  box-shadow: var(--sap-shadow-1);
+} /* 기본 그림자 유지 */
+.ai-signage-main .ai-heatmap-cell:hover {
+  filter: none;
+} /* brightness 효과 제거 */
 
 /* ─── last-update 표시 소형화 ───────────────────────────── */
 /* 헤더 공간 절약을 위해 소형 폰트 적용 */
-.ai-signage-main .ai-last-update { font-size: 10px; }
-.ai-signage-main .ai-badge       { font-size: 9px; padding: 2px 6px; }
+.ai-signage-main .ai-last-update {
+  font-size: 10px;
+}
+.ai-signage-main .ai-badge {
+  font-size: 9px;
+  padding: 2px 6px;
+}
 
 /* ─── 햄버거 버튼 ───────────────────────────────────────── */
 /* 좌측 메뉴 드로어를 여는 토글 버튼 */
@@ -414,20 +492,24 @@ body {
 }
 
 /* hover 시 배경 강조 */
-.nav-drawer-btn:hover { background: var(--sap-surface-3); }
+.nav-drawer-btn:hover {
+  background: var(--sap-surface-3);
+}
 
 /* ─── 드로어 오버레이 ───────────────────────────────────── */
 /* 드로어 열림 시 배경 반투명 오버레이 — 클릭으로 닫기 */
 .nav-drawer-overlay {
-  display: none;           /* 기본 숨김 */
+  display: none; /* 기본 숨김 */
   position: fixed;
-  inset: 0;                /* top/right/bottom/left 모두 0 — 전체 화면 덮기 */
+  inset: 0; /* top/right/bottom/left 모두 0 — 전체 화면 덮기 */
   background: rgba(0, 0, 0, 0.3); /* 30% 반투명 검정 */
   z-index: 900;
 }
 
 /* is-open 클래스 추가 시 오버레이 표시 */
-.nav-drawer-overlay.is-open { display: block; }
+.nav-drawer-overlay.is-open {
+  display: block;
+}
 
 /* ─── 드로어 패널 ───────────────────────────────────────── */
 /* 좌측에서 슬라이드 인 하는 사이드 메뉴 패널 */
@@ -440,16 +522,18 @@ body {
   background: var(--sap-surface-1);
   border-right: 1px solid var(--sap-border-neutral);
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-  z-index: 901;                      /* 오버레이(900)보다 위 */
-  transform: translateX(-100%);      /* 기본: 왼쪽 화면 밖으로 숨김 */
-  transition: transform 0.25s ease;  /* 슬라이드 애니메이션 0.25초 */
+  z-index: 901; /* 오버레이(900)보다 위 */
+  transform: translateX(-100%); /* 기본: 왼쪽 화면 밖으로 숨김 */
+  transition: transform 0.25s ease; /* 슬라이드 애니메이션 0.25초 */
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
 /* is-open 추가 시 translateX(0)으로 이동 — 패널이 화면 안으로 슬라이드 인 */
-.nav-drawer.is-open { transform: translateX(0); }
+.nav-drawer.is-open {
+  transform: translateX(0);
+}
 
 /* 드로어 헤더 */
 .nav-drawer__header {
@@ -488,6 +572,15 @@ body {
 }
 
 /* 링크 상태별 스타일 */
-.nav-drawer__link:hover          { background: var(--sap-surface-3); }
-.nav-drawer__link--active        { color: var(--sap-color-accent); font-weight: var(--sap-font-weight-semibold); }
-.nav-drawer__divider             { height: 1px; background: var(--sap-border-neutral); margin: 6px 0; }
+.nav-drawer__link:hover {
+  background: var(--sap-surface-3);
+}
+.nav-drawer__link--active {
+  color: var(--sap-color-accent);
+  font-weight: var(--sap-font-weight-semibold);
+}
+.nav-drawer__divider {
+  height: 1px;
+  background: var(--sap-border-neutral);
+  margin: 6px 0;
+}

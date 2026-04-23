@@ -95,6 +95,13 @@ function _nav_cls(string $key, string $active): string
         </div>
         <div class="nav-drawer__divider"></div>
         <div class="nav-drawer__group">
+            <div class="nav-drawer__group-title">EMB Report</div>
+            <a href="<?= $_d ?>log_oee_emb_2.php" class="<?= _nav_cls('log_oee_emb',        $_nav) ?>">EMB Report by Shift</a>
+            <a href="<?= $_d ?>log_oee_hourly_emb_2.php" class="<?= _nav_cls('log_oee_hourly_emb', $_nav) ?>">EMB Report by Hourly</a>
+            <a href="<?= $_d ?>log_oee_row_emb_2.php" class="<?= _nav_cls('log_oee_row_emb',    $_nav) ?>">EMB Report by Row data</a>
+        </div>
+        <div class="nav-drawer__divider"></div>
+        <div class="nav-drawer__group">
             <div class="nav-drawer__group-title">Dashboard</div>
             <a href="<?= $_d ?>dashboard_2.php" class="<?= _nav_cls('oee_dashboard', $_nav) ?>">OEE Dashboard</a>
             <a href="<?= $_d ?>ai_dashboard_2.php" class="<?= _nav_cls('ai_dashboard', $_nav) ?>">AI Dashboard<span class="ai-badge">AI</span></a>

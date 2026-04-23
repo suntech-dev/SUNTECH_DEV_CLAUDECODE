@@ -176,6 +176,90 @@ function upsertEmbOeeRecord(
     }
 }
 
+/**
+ * 자수기 전용 EMB 테이블 UPSERT (OEE 계산 없음)
+ *
+ * data_oee_emb / data_oee_rows_hourly_emb 에서 공용으로 사용.
+ * - cycle_time  : 마지막 수신 CT 값으로 덮어씀 (누적 아님)
+ * - thread_breakage / motor_run_time : 누적(+)
+ * - actual_output : 누적(+packet_qty)
+ * - runtime : 기존 대비 delta 만큼 누적
+ */
+function upsertEmbPureRecord(
+    PDO $pdo, string $table, ?array $existing,
+    array $base_ctx,
+    int $runtime_sec, int $planned_work_time,
+    int $packet_qty, int $cycle_time, int $thread_break, int $motor_run,
+    string $today, string $time_update, int $work_hour
+): void {
+    $tbl = "`{$table}`";
+
+    if ($existing) {
+        $stmt = $pdo->prepare(
+            "UPDATE {$tbl} SET
+              time_update       = :time_update,
+              planned_work_time = :planned_work_time,
+              runtime           = runtime + :runtime_delta,
+              actual_output     = actual_output + :packet_qty,
+              cycle_time        = :cycle_time,
+              thread_breakage   = thread_breakage + :thread_break,
+              motor_run_time    = motor_run_time + :motor_run,
+              work_hour         = :work_hour,
+              update_date       = :update_date
+             WHERE idx = :idx"
+        );
+        $stmt->execute([
+            ':time_update'       => $time_update,
+            ':planned_work_time' => $planned_work_time,
+            ':runtime_delta'     => max(0, $runtime_sec - (int)($existing['runtime'] ?? 0)),
+            ':packet_qty'        => $packet_qty,
+            ':cycle_time'        => $cycle_time,
+            ':thread_break'      => $thread_break,
+            ':motor_run'         => $motor_run,
+            ':work_hour'         => $work_hour,
+            ':update_date'       => $today,
+            ':idx'               => $existing['idx'],
+        ]);
+    } else {
+        $stmt = $pdo->prepare(
+            "INSERT INTO {$tbl}
+             (work_date, time_update, shift_idx, factory_idx, factory_name, line_idx, line_name,
+              mac, machine_idx, machine_no, process_name,
+              planned_work_time, runtime, actual_output,
+              cycle_time, thread_breakage, motor_run_time,
+              pair_info, pair_count, work_hour, reg_date, update_date)
+             VALUES
+             (:work_date, :time_update, :shift_idx, :factory_idx, :factory_name, :line_idx, :line_name,
+              :mac, :machine_idx, :machine_no, :process_name,
+              :planned_work_time, :runtime, :actual_output,
+              :cycle_time, :thread_break, :motor_run,
+              0, 0, :work_hour, :reg_date, :update_date)"
+        );
+        $stmt->execute([
+            ':work_date'         => $base_ctx['work_date'],
+            ':time_update'       => $time_update,
+            ':shift_idx'         => $base_ctx['shift_idx'],
+            ':factory_idx'       => $base_ctx['factory_idx'],
+            ':factory_name'      => $base_ctx['factory_name'],
+            ':line_idx'          => $base_ctx['line_idx'],
+            ':line_name'         => $base_ctx['line_name'],
+            ':mac'               => $base_ctx['mac'],
+            ':machine_idx'       => $base_ctx['machine_idx'],
+            ':machine_no'        => $base_ctx['machine_no'],
+            ':process_name'      => $base_ctx['process_name'],
+            ':planned_work_time' => $planned_work_time,
+            ':runtime'           => $runtime_sec,
+            ':actual_output'     => $packet_qty,
+            ':cycle_time'        => $cycle_time,
+            ':thread_break'      => $thread_break,
+            ':motor_run'         => $motor_run,
+            ':work_hour'         => $work_hour,
+            ':reg_date'          => $today,
+            ':update_date'       => $today,
+        ]);
+    }
+}
+
 // ─────────────────────────────────────────────────────────────────────
 // 메인 처리
 // ─────────────────────────────────────────────────────────────────────
@@ -402,6 +486,78 @@ upsertEmbOeeRecord(
 );
 
 // ─────────────────────────────────────────────────────────────────────
+// ── EMB 전용 테이블 저장 (OEE 계산 없음) ──────────────────────────
+// ─────────────────────────────────────────────────────────────────────
+
+// data_oee_emb UPSERT
+$stmt = $pdo->prepare(
+    "SELECT * FROM `data_oee_emb` WHERE mac = ? AND work_date = ? AND shift_idx = ? AND process_name = ? LIMIT 1"
+);
+$stmt->execute([$mac, $work_date, $shift_idx, $process_name]);
+$emb_daily = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+
+upsertEmbPureRecord(
+    $pdo, 'data_oee_emb', $emb_daily,
+    $base_ctx,
+    $runtime_sec, $planned_work_time,
+    $packet_qty, $cycle_time, $thread_break, $motor_run,
+    $today, $time_update, $work_hour
+);
+
+// data_oee_rows_emb INSERT (항상 삽입)
+$stmt = $pdo->prepare(
+    "INSERT INTO `data_oee_rows_emb`
+     (work_date, time_update, shift_idx, factory_idx, factory_name, line_idx, line_name,
+      mac, machine_idx, machine_no, process_name,
+      planned_work_time, runtime, actual_output, packet_qty,
+      cycle_time, thread_breakage, motor_run_time,
+      pair_info, pair_count, work_hour, reg_date)
+     VALUES
+     (:work_date, :time_update, :shift_idx, :factory_idx, :factory_name, :line_idx, :line_name,
+      :mac, :machine_idx, :machine_no, :process_name,
+      :planned_work_time, :runtime, :actual_output, :packet_qty,
+      :cycle_time, :thread_break, :motor_run,
+      0, 0, :work_hour, :reg_date)"
+);
+$stmt->execute([
+    ':work_date'         => $work_date,
+    ':time_update'       => $time_update,
+    ':shift_idx'         => $shift_idx,
+    ':factory_idx'       => $factory_idx,
+    ':factory_name'      => $factory_name,
+    ':line_idx'          => $line_idx,
+    ':line_name'         => $line_name,
+    ':mac'               => $mac,
+    ':machine_idx'       => $machine_idx,
+    ':machine_no'        => $machine_no,
+    ':process_name'      => $process_name,
+    ':planned_work_time' => $planned_work_time,
+    ':runtime'           => $runtime_sec,
+    ':actual_output'     => $actual_output,
+    ':packet_qty'        => $packet_qty,
+    ':cycle_time'        => $cycle_time,
+    ':thread_break'      => $thread_break,
+    ':motor_run'         => $motor_run,
+    ':work_hour'         => $work_hour,
+    ':reg_date'          => $today,
+]);
+
+// data_oee_rows_hourly_emb UPSERT
+$stmt = $pdo->prepare(
+    "SELECT * FROM `data_oee_rows_hourly_emb` WHERE mac = ? AND work_date = ? AND shift_idx = ? AND process_name = ? AND work_hour = ? LIMIT 1"
+);
+$stmt->execute([$mac, $work_date, $shift_idx, $process_name, $work_hour]);
+$emb_hourly = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+
+upsertEmbPureRecord(
+    $pdo, 'data_oee_rows_hourly_emb', $emb_hourly,
+    $base_ctx,
+    $runtime_sec, $planned_work_time,
+    $packet_qty, $cycle_time, $thread_break, $motor_run,
+    $today, $time_update, $work_hour
+);
+
+// ─────────────────────────────────────────────────────────────────────
 // API 호출 로그 저장 및 응답 반환
 // ─────────────────────────────────────────────────────────────────────
 $apiHelper->logApiCall('logs_api_send_ecount', 'send_eCount', $machine_no, $mac, $_REQUEST, $response, $today);
@@ -419,7 +575,7 @@ embroidery/send_eCount.php (via embroidery.php?code=send_eCount)
 - mrt        : 모터동작시간 (초, 정수)  (예: 40)
 
 ## 요청 예시
-http://SERVER/OEE_SCI/OEE_SCI_V2/api/embroidery.php?code=send_eCount&mac=84:72:07:50:AA:BB&actual_qty=1&ct=45&tb=0&mrt=40
+http://SERVER/OEE_SCI/OEE_SCI_V2/api/embroidery.php?code=send_eCount&mac=84:72:07:50:37:AE&actual_qty=1&ct=45&tb=0&mrt=40
 
 ## 응답 예시
 {
