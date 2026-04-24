@@ -61,6 +61,8 @@ require_once(__DIR__ . '/../../inc/nav-drawer-manage.php'); ?>
         <a href="ai_dashboard_manual.html" target="_blank" class="fiori-btn fiori-btn--ghost" style="text-decoration:none;">Help</a>
     </div>
 
+    <img src="../../assets/images/logo_suntech.png" alt="SunTech" style="height:18px;width:auto;flex-shrink:0;opacity:0.85;">
+
     <div class="signage-header__status">
         <div class="ai-pulse-dot"></div>
         <span id="aiLastUpdateTime">Initializing...</span>
