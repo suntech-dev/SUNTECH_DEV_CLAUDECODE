@@ -1,0 +1,32 @@
+/**
+ * ============================================================
+ * 파일명  : ai_dashboard_2_1.css
+ * 목  적  : ai_dashboard_2.css 기반 — Row D 재정의
+ *           Production Optimization 제거 →
+ *           Streaming + Downtime Top5 + Defective Top5 (1fr 1fr 1fr)
+ * ============================================================
+ */
+
+/* ── ai_dashboard_2.css 전체 포함 ───────────────────────────── */
+@import url('ai_dashboard_2.css');
+
+/* ── Row D 레이아웃 재정의 ──────────────────────────────────── */
+/* 기존: 1fr 2fr (스트림 + 최적화) → 1fr 1fr 1fr (스트림 + 다운타임 + 불량) */
+.ai-signage-row-d {
+    grid-template-columns: 1fr 1fr 1fr !important;
+}
+
+/* ── 차트 캔버스 래퍼 ──────────────────────────────────────── */
+/* Row D 카드 콘텐츠 안에서 차트가 높이를 채우도록 설정 */
+.ai-top5-chart-wrap {
+    flex: 1;
+    position: relative;
+    min-height: 0;
+    width: 100%;
+}
+
+.ai-top5-chart-wrap canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
