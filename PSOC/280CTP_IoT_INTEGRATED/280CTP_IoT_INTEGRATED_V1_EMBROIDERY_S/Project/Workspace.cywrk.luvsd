@@ -13,7 +13,7 @@
 <v>Output</v>
 </TreeKeys>
 <TreeStates>
-<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Workspace\Design\Header Files\package.h">
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Workspace\Design\TopDesign">
 <ExpandedNodeIds>
 <v>Workspace</v>
 <v>Workspace\bootloader\TopDesign</v>
@@ -123,6 +123,27 @@
 <v>Workspace\Design\Generated_Source\PSoC4</v>
 </ExpandedNodeIds>
 <VisibleNodeIds>
+<v>Workspace</v>
+<v>Workspace\bootloader</v>
+<v>Workspace\Design</v>
+<v>Workspace\Design\TopDesign</v>
+<v>Workspace\Design\Design.cydwr</v>
+<v>Workspace\Design\Header Files</v>
+<v>Workspace\Design\Header Files\lib</v>
+<v>Workspace\Design\Header Files\lib\button.h</v>
+<v>Workspace\Design\Header Files\lib\externalFlash.h</v>
+<v>Workspace\Design\Header Files\lib\fonts.h</v>
+<v>Workspace\Design\Header Files\lib\FT5x46.h</v>
+<v>Workspace\Design\Header Files\lib\image.h</v>
+<v>Workspace\Design\Header Files\lib\internalFlash.h</v>
+<v>Workspace\Design\Header Files\lib\IODefine.h</v>
+<v>Workspace\Design\Header Files\lib\IOUtil.h</v>
+<v>Workspace\Design\Header Files\lib\jsmn.h</v>
+<v>Workspace\Design\Header Files\lib\LEDControl.h</v>
+<v>Workspace\Design\Header Files\lib\manageMenu.h</v>
+<v>Workspace\Design\Header Files\lib\menu.h</v>
+<v>Workspace\Design\Header Files\lib\RealTimeClock.h</v>
+<v>Workspace\Design\Header Files\lib\server.h</v>
 <v>Workspace\Design\Header Files\lib\ST7789V.h</v>
 <v>Workspace\Design\Header Files\lib\sysTick.h</v>
 <v>Workspace\Design\Header Files\lib\timerCounter.h</v>
@@ -140,27 +161,6 @@
 <v>Workspace\Design\Header Files\currentSensor.h</v>
 <v>Workspace\Design\Header Files\cyapicallbacks.h</v>
 <v>Workspace\Design\Header Files\defective.h</v>
-<v>Workspace\Design\Header Files\downtime.h</v>
-<v>Workspace\Design\Header Files\jsonUtil.h</v>
-<v>Workspace\Design\Header Files\main.h</v>
-<v>Workspace\Design\Header Files\menuDesign.h</v>
-<v>Workspace\Design\Header Files\package.h</v>
-<v>Workspace\Design\Header Files\resetMenu.h</v>
-<v>Workspace\Design\Header Files\setup.h</v>
-<v>Workspace\Design\Header Files\uartJson.h</v>
-<v>Workspace\Design\Header Files\uartProcess.h</v>
-<v>Workspace\Design\Header Files\USBBuffer.h</v>
-<v>Workspace\Design\Header Files\USBJsonConfig.h</v>
-<v>Workspace\Design\Header Files\userMenu.h</v>
-<v>Workspace\Design\Header Files\userProjectPatternSewing.h</v>
-<v>Workspace\Design\Header Files\userTimer.h</v>
-<v>Workspace\Design\Header Files\WarningLight.h</v>
-<v>Workspace\Design\Source Files</v>
-<v>Workspace\Design\Source Files\lib</v>
-<v>Workspace\Design\Source Files\lib\button.c</v>
-<v>Workspace\Design\Source Files\lib\externalFlash.c</v>
-<v>Workspace\Design\Source Files\lib\FT5x46.c</v>
-<v>Workspace\Design\Source Files\lib\internalFlash.c</v>
 </VisibleNodeIds>
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
 <CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Workspace\Design\TopDesign\TopDesign.cysch">
@@ -560,6 +560,7 @@
 <name v=".\Design.cydsn\uartJson.c" />
 <name v=".\Design.cydsn\lib\server.h" />
 <name v=".\Design.cydsn\package.h" />
+<name v=".\Design.cydsn\TopDesign\TopDesign.cysch" />
 </OpenDocs>
 <OpenDocsLayout><![CDATA[<?xml version="1.0"?><!--
 
@@ -567,7 +568,7 @@
   Copyright (c) 2001-2016 Actipro Software LLC.  All rights reserved.
   http://www.actiprosoftware.com
 
---><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="1077, 505" SelectedTabbedMdiWindow="5e504041-ca64-488a-b65d-5a26b1c23281"><ToolWindow Key="Start Page:bd4649ab-da6b-4d04-a663-c722b8bf99db:Start Page" Guid="a3c82d3c-d6de-455c-aa6a-a9ca67e58430" /><DocumentWindow Key="C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S\Project\Design.cydsn\uartJson.c" Guid="fee6564c-f196-4a54-a0b7-83701eeb7545" /><DocumentWindow Key="C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S\Project\Design.cydsn\lib\server.h" Guid="5e504041-ca64-488a-b65d-5a26b1c23281" /><DocumentWindow Key="C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S\Project\Design.cydsn\package.h" Guid="9fd5b5bf-05ad-48b6-b3b7-b32787212021" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
+--><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="1077, 505" SelectedTabbedMdiWindow="5e504041-ca64-488a-b65d-5a26b1c23281"><ToolWindow Key="Start Page:bd4649ab-da6b-4d04-a663-c722b8bf99db:Start Page" Guid="a3c82d3c-d6de-455c-aa6a-a9ca67e58430" /><DocumentWindow Key="C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S\Project\Design.cydsn\uartJson.c" Guid="fee6564c-f196-4a54-a0b7-83701eeb7545" /><DocumentWindow Key="C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S\Project\Design.cydsn\lib\server.h" Guid="5e504041-ca64-488a-b65d-5a26b1c23281" /><DocumentWindow Key="C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S\Project\Design.cydsn\package.h" Guid="9fd5b5bf-05ad-48b6-b3b7-b32787212021" /><DocumentWindow Key="C:\SUNTECH_DEV_CLAUDECODE\PSOC\280CTP_IoT_INTEGRATED\280CTP_IoT_INTEGRATED_V1_EMBROIDERY_S\Project\Design.cydsn\TopDesign\TopDesign.cysch" Guid="6fb26fb1-002e-48f2-b944-efdfc95bb5aa" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
 <config v="" />
 <AutoUpdate v="true" />
 </CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21>

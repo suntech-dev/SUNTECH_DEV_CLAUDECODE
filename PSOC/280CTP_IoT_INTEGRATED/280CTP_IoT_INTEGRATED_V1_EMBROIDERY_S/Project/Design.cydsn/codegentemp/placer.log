@@ -6,7 +6,7 @@
 
 #Build Date:         Sep  9 2019 11:47:43
 
-#File Generated:     Apr 3 2026 08:22:49
+#File Generated:     Apr 23 2026 09:40:34
 
 #Purpose:            
 
@@ -91,8 +91,8 @@ Clock: I2C_TC_SCBCLK(FFB)   | Frequency: N/A       | Target:   1.6 MHz
 Clock: SPIM_FLASH_IntClock  | Frequency:  58.0 MHz | Target:   8.0 MHz
 Clock: SPIM_LCD_IntClock    | Frequency:  61.0 MHz | Target:  16.0 MHz
 Clock: SwClk                | Frequency: 120.0 MHz | Target:   0.0 MHz
-Clock: UART_SCBCLK          | Frequency: N/A       | Target:   0.1 MHz
-Clock: UART_SCBCLK(FFB)     | Frequency: N/A       | Target:   0.1 MHz
+Clock: UART_SCBCLK          | Frequency: N/A       | Target:   1.5 MHz
+Clock: UART_SCBCLK(FFB)     | Frequency: N/A       | Target:   1.5 MHz
 Clock: UART_WIFI_SCBCLK     | Frequency: N/A       | Target:   1.4 MHz
 Clock: UART_WIFI_SCBCLK(FFB) | Frequency: N/A       | Target:   1.4 MHz
 
@@ -148,8 +148,8 @@ Clock: I2C_TC_SCBCLK(FFB)   | Frequency: N/A       | Target:   1.6 MHz
 Clock: SPIM_FLASH_IntClock  | Frequency:  58.0 MHz | Target:   8.0 MHz
 Clock: SPIM_LCD_IntClock    | Frequency:  61.0 MHz | Target:  16.0 MHz
 Clock: SwClk                | Frequency: 120.0 MHz | Target:   0.0 MHz
-Clock: UART_SCBCLK          | Frequency: N/A       | Target:   0.1 MHz
-Clock: UART_SCBCLK(FFB)     | Frequency: N/A       | Target:   0.1 MHz
+Clock: UART_SCBCLK          | Frequency: N/A       | Target:   1.5 MHz
+Clock: UART_SCBCLK(FFB)     | Frequency: N/A       | Target:   1.5 MHz
 Clock: UART_WIFI_SCBCLK     | Frequency: N/A       | Target:   1.4 MHz
 Clock: UART_WIFI_SCBCLK(FFB) | Frequency: N/A       | Target:   1.4 MHz
 
@@ -185,8 +185,8 @@ Clock: I2C_TC_SCBCLK(FFB)   | Frequency: N/A       | Target:   1.6 MHz
 Clock: SPIM_FLASH_IntClock  | Frequency:  58.0 MHz | Target:   8.0 MHz
 Clock: SPIM_LCD_IntClock    | Frequency:  61.0 MHz | Target:  16.0 MHz
 Clock: SwClk                | Frequency: 120.0 MHz | Target:   0.0 MHz
-Clock: UART_SCBCLK          | Frequency: N/A       | Target:   0.1 MHz
-Clock: UART_SCBCLK(FFB)     | Frequency: N/A       | Target:   0.1 MHz
+Clock: UART_SCBCLK          | Frequency: N/A       | Target:   1.5 MHz
+Clock: UART_SCBCLK(FFB)     | Frequency: N/A       | Target:   1.5 MHz
 Clock: UART_WIFI_SCBCLK     | Frequency: N/A       | Target:   1.4 MHz
 Clock: UART_WIFI_SCBCLK(FFB) | Frequency: N/A       | Target:   1.4 MHz
 
@@ -215,15 +215,15 @@ Clock: I2C_TC_SCBCLK(FFB)   | Frequency: N/A       | Target:   1.6 MHz
 Clock: SPIM_FLASH_IntClock  | Frequency:  55.4 MHz | Target:   8.0 MHz
 Clock: SPIM_LCD_IntClock    | Frequency:  61.0 MHz | Target:  16.0 MHz
 Clock: SwClk                | Frequency: 120.0 MHz | Target:   0.0 MHz
-Clock: UART_SCBCLK          | Frequency: N/A       | Target:   0.1 MHz
-Clock: UART_SCBCLK(FFB)     | Frequency: N/A       | Target:   0.1 MHz
+Clock: UART_SCBCLK          | Frequency: N/A       | Target:   1.5 MHz
+Clock: UART_SCBCLK(FFB)     | Frequency: N/A       | Target:   1.5 MHz
 Clock: UART_WIFI_SCBCLK     | Frequency: N/A       | Target:   1.4 MHz
 Clock: UART_WIFI_SCBCLK(FFB) | Frequency: N/A       | Target:   1.4 MHz
 
 ======================================================================
                      End of Clock Summary
 ######################################################################
-D2088: Phase 7, elapsed time : 0.4 (sec)
+D2088: Phase 7, elapsed time : 0.5 (sec)
 
 Final Design Statistics
     Number of Combinational MCs 	:	15
@@ -268,8 +268,8 @@ Clock: I2C_TC_SCBCLK(FFB)   | Frequency: N/A       | Target:   1.6 MHz
 Clock: SPIM_FLASH_IntClock  | Frequency:  62.4 MHz | Target:   8.0 MHz
 Clock: SPIM_LCD_IntClock    | Frequency:  61.0 MHz | Target:  16.0 MHz
 Clock: SwClk                | Frequency: 120.0 MHz | Target:   0.0 MHz
-Clock: UART_SCBCLK          | Frequency: N/A       | Target:   0.1 MHz
-Clock: UART_SCBCLK(FFB)     | Frequency: N/A       | Target:   0.1 MHz
+Clock: UART_SCBCLK          | Frequency: N/A       | Target:   1.5 MHz
+Clock: UART_SCBCLK(FFB)     | Frequency: N/A       | Target:   1.5 MHz
 Clock: UART_WIFI_SCBCLK     | Frequency: N/A       | Target:   1.4 MHz
 Clock: UART_WIFI_SCBCLK(FFB) | Frequency: N/A       | Target:   1.4 MHz
 
@@ -282,5 +282,5 @@ D2088: Phase 8, elapsed time : 0.0 (sec)
 
 D2054: Placement of the design completed successfully
 
-I2076: Total run-time: 0.9 sec.
+I2076: Total run-time: 1.5 sec.
 

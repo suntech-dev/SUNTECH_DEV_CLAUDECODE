@@ -219,14 +219,14 @@ void TopMenuPageUpdateValue(MONITORING_MENU *menu, uint8 page)
             persent = TRUE;
             break;
         case 1:
-            /* CT: 누산합(0.1초단위) ÷ 10 → 정수 초 */
+            /* CT: 누산합(초 단위) */
             SetButtonText(&menu->btn[2],"%lu",
                 (uint32)CONVERT_TO_4BYTE(ptrCount->patternCycleTimeSumH,
-                                         ptrCount->patternCycleTimeSumL) / 10u);
-            /* MRT: 누산합(0.1초단위) ÷ 10 → 정수 초 */
+                                         ptrCount->patternCycleTimeSumL));
+            /* MRT: 누산합(초 단위) */
             SetButtonText(&menu->btn[4],"%lu",
                 (uint32)CONVERT_TO_4BYTE(ptrCount->patternMotorRunTimeSumH,
-                                         ptrCount->patternMotorRunTimeSumL) / 10u);
+                                         ptrCount->patternMotorRunTimeSumL));
             /* TB: 실끊어진횟수 누산합 */
             SetButtonText(&menu->btn[6],"%lu",
                 (uint32)CONVERT_TO_4BYTE(ptrCount->embThreadBreakageQtySumH,

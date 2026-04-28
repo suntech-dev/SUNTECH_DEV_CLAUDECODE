@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
   28:count.c       **** void (*CountFunc)() = &PatternCountLoop;
   29:count.c       **** 
   30:count.c       **** void initCount()
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 2
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 2
 
 
   31:count.c       **** {
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
   55 0016 C046     		.align	2
   56              	.L4:
   57 0018 00000000 		.word	.LANCHOR0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 3
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 3
 
 
   58              		.cfi_endproc
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  107 0000 10B5     		push	{r4, lr}
  108              		.cfi_def_cfa_offset 8
  109              		.cfi_offset 4, -8
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 4
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 4
 
 
  110              		.cfi_offset 14, -4
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
   68:count.c       ****     g_bCountFlashDirty = FALSE;
  150              		.loc 1 68 0
  151 000a 0022     		movs	r2, #0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 5
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 5
 
 
  152 000c 024B     		ldr	r3, .L14
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  199              		.type	ResetCount, %function
  200              	ResetCount:
  201              	.LFB67:
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 6
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 6
 
 
   76:count.c       **** 
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  240              		.loc 1 91 0
  241 0026 D384     		strh	r3, [r2, #38]
   92:count.c       ****     g_ptrCount->patternEmergencyTimeSumL = 0;
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 7
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 7
 
 
  242              		.loc 1 92 0
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  284              		@ link register save eliminated.
  105:count.c       ****     g_uWorkingTimeCount++;
  285              		.loc 1 105 0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 8
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 8
 
 
  286 0000 024A     		ldr	r2, .L23
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  112:count.c       **** 
  113:count.c       **** void ResetWorkingTimeCount()
  114:count.c       **** {
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 9
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 9
 
 
  334              		.loc 1 114 0
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  386              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
  387              		.file 3 "main.h"
  388              		.file 4 "count.h"
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 10
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 10
 
 
  389              		.file 5 "lib/internalFlash.h"
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  443 0064 02       		.uleb128 0x2
  444 0065 04       		.byte	0x4
  445 0066 07       		.byte	0x7
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 11
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 11
 
 
  446 0067 D1030000 		.4byte	.LASF8
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  500 00d6 06       		.uleb128 0x6
  501 00d7 6D030000 		.4byte	.LASF19
  502 00db 03       		.byte	0x3
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 12
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 12
 
 
  503 00dc 32       		.byte	0x32
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  557 0145 1C       		.byte	0x1c
  558 0146 77000000 		.4byte	0x77
  559 014a 0E       		.byte	0xe
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 13
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 13
 
 
  560 014b 06       		.uleb128 0x6
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  614 01b7 06       		.uleb128 0x6
  615 01b8 9F000000 		.4byte	.LASF37
  616 01bc 04       		.byte	0x4
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 14
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 14
 
 
  617 01bd 28       		.byte	0x28
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  671 0229 31       		.byte	0x31
  672 022a 77000000 		.4byte	0x77
  673 022e 34       		.byte	0x34
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 15
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 15
 
 
  674 022f 06       		.uleb128 0x6
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  728 029b 06       		.uleb128 0x6
  729 029c 80050000 		.4byte	.LASF56
  730 02a0 04       		.byte	0x4
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 16
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 16
 
 
  731 02a1 3B       		.byte	0x3b
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  785 030a 1C030000 		.4byte	0x31c
  786 030e 02       		.byte	0x2
  787 030f 06       		.uleb128 0x6
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 17
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 17
 
 
  788 0310 26020000 		.4byte	.LASF65
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  842 038b 0C000000 		.4byte	.LVL2
  843 038f 56030000 		.4byte	0x356
  844 0393 00       		.byte	0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 18
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 18
 
 
  845 0394 0D       		.uleb128 0xd
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  899 0412 9C       		.byte	0x9c
  900 0413 10       		.uleb128 0x10
  901 0414 6A050000 		.4byte	.LASF74
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 19
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 19
 
 
  902 0418 01       		.byte	0x1
@@ -1138,7 +1138,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  956 048b 95040000 		.4byte	0x495
  957 048f 05       		.uleb128 0x5
  958 0490 03       		.byte	0x3
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 20
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 20
 
 
  959 0491 00000000 		.4byte	CountFunc
@@ -1198,7 +1198,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1013 000b 55       		.uleb128 0x55
  1014 000c 17       		.uleb128 0x17
  1015 000d 11       		.uleb128 0x11
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 21
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 21
 
 
  1016 000e 01       		.uleb128 0x1
@@ -1258,7 +1258,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1070 0044 00       		.byte	0
  1071 0045 06       		.uleb128 0x6
  1072 0046 0D       		.uleb128 0xd
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 22
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 22
 
 
  1073 0047 00       		.byte	0
@@ -1318,7 +1318,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1127 007d 0B       		.uleb128 0xb
  1128 007e 00       		.byte	0
  1129 007f 00       		.byte	0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 23
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 23
 
 
  1130 0080 0B       		.uleb128 0xb
@@ -1378,7 +1378,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1184 00ba 13       		.uleb128 0x13
  1185 00bb 00       		.byte	0
  1186 00bc 00       		.byte	0
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 24
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 24
 
 
  1187 00bd 0E       		.uleb128 0xe
@@ -1438,7 +1438,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1241 00f5 34       		.uleb128 0x34
  1242 00f6 00       		.byte	0
  1243 00f7 03       		.uleb128 0x3
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 25
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 25
 
 
  1244 00f8 0E       		.uleb128 0xe
@@ -1498,7 +1498,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1298 012e 01       		.byte	0x1
  1299 012f 01       		.uleb128 0x1
  1300 0130 13       		.uleb128 0x13
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 26
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 26
 
 
  1301 0131 00       		.byte	0
@@ -1558,7 +1558,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1355 0020 00000000 		.4byte	.LFB62
  1356 0024 18000000 		.4byte	.LFE62-.LFB62
  1357 0028 00000000 		.4byte	.LFB65
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 27
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 27
 
 
  1358 002c 1C000000 		.4byte	.LFE65-.LFB65
@@ -1618,7 +1618,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1401 0027 70617474 		.ascii	"patternEmergencyTimeSumH\000"
  1401      65726E45 
  1401      6D657267 
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 28
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 28
 
 
  1401      656E6379 
@@ -1678,7 +1678,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1423      636C6554 
  1423      696D6553 
  1423      756D4800 
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 29
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 29
 
 
  1424              	.LASF77:
@@ -1738,7 +1738,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1441 0226 63686563 		.ascii	"checksum\000"
  1441      6B73756D 
  1441      00
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 30
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 30
 
 
  1442              	.LASF9:
@@ -1798,7 +1798,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1465      6C4800
  1466              	.LASF52:
  1467 02d0 70617474 		.ascii	"patternStitchLengthSumL\000"
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 31
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 31
 
 
  1467      65726E53 
@@ -1858,7 +1858,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1489      746F7252 
  1489      756E5469 
  1489      6D6500
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 32
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 32
 
 
  1490              	.LASF48:
@@ -1918,7 +1918,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1511 0427 73686F72 		.ascii	"short unsigned int\000"
  1511      7420756E 
  1511      7369676E 
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 33
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 33
 
 
  1511      65642069 
@@ -1978,7 +1978,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1533      313600
  1534              	.LASF58:
  1535 04df 656D6254 		.ascii	"embThreadBreakageQtySumH\000"
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 34
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 34
 
 
  1535      68726561 
@@ -2038,7 +2038,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1557      46494700 
  1558              	.LASF36:
  1559 059b 70617474 		.ascii	"patternCount\000"
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 35
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 35
 
 
  1559      65726E43 
@@ -2098,7 +2098,7 @@ ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 1
  1579      756D4C00 
  1580              	.LASF90:
  1581 064c 436F756E 		.ascii	"CountSaveFlashIfDirty\000"
-ARM GAS  C:\Users\luvsd\AppData\Local\Temp\cci84hEH.s 			page 36
+ARM GAS  C:\Users\luvsd\AppData\Local\Temp\ccy3KwvA.s 			page 36
 
 
  1581      74536176 
