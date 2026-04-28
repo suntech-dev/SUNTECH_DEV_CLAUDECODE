@@ -1,6 +1,6 @@
 # BUG FIX: AUTO RESET — 교대 근무 날짜 경계 오작동
 
-## 상태: 🧪 테스트 대기 중 (코드 구현 완료 — 자수기 5분 폴링 추가 2026-04-23)
+## 상태: 🧪 테스트 대기 중 (코드 구현 완료 — Phase 3 시계 기준 폴링 + LCD Shift 표시 2026-04-24)
 
 ---
 
@@ -109,6 +109,15 @@ if (lastDay != currentDay)           → ResetCount()
 |---|---|---|---|
 | 4 | `PSOC/.../EMBROIDERY_S/andonApi.c` | 자수기 펌웨어 | 5분 폴링 타이머 등록 + `andonLoop()` 주기 호출 |
 | 5 | `PSOC/.../EMBROIDERY_S/andonJson.c` | 자수기 펌웨어 | EEPROM 쓰기 최적화 (key 변경 시에만 저장) |
+
+### Phase 3 — 시계 기준 폴링 + LCD Shift 정보 표시 (2026-04-24, 자수기 전용)
+
+| # | 파일 | 종류 | 변경 내용 |
+|---|---|---|---|
+| 6 | `PSOC/.../EMBROIDERY_S_115200/andonApi.c` | 자수기 펌웨어 | 부팅 기준 5분 → 시계 기준 :00/:05/... 폴링으로 변경 |
+| 7 | `PSOC/.../EMBROIDERY_S_115200/andonJson.c` | 자수기 펌웨어 | `g_currentShiftIdx`, `g_currentWorkDate` 전역 변수 추가 |
+| 8 | `PSOC/.../EMBROIDERY_S_115200/andonJson.h` | 자수기 펌웨어 | 위 두 변수 extern 선언 추가 |
+| 9 | `PSOC/.../EMBROIDERY_S_115200/userMenuPatternSewingMachine.c` | 자수기 펌웨어 | LCD 첫 화면 타이틀 "EMBROIDERY" → "MM-DD Shift N" 표시 |
 
 ---
 
@@ -274,6 +283,7 @@ if(isFinishCounter_1ms(g_index_shift_check))
 - **Fallback 보장**: 서버가 구버전이어서 `work_date`/`shift_idx`를 미지원해도 기존 달력 비교로 동작.
 - **최초 전환 시 1회 리셋**: 서버 업데이트 직후, 저장된 이전 Unix time 기반 값과 신규 인코딩 값이 달라 1회 리셋이 발생할 수 있음 → 정상 동작.
 - **근무 외 시간**: `getCurrentShiftInfo()`가 null 반환 시 `work_date`/`shift_idx` 미포함 → fallback 동작.
+- **LCD 타이틀**: 서버 미수신 상태(`g_currentShiftIdx == 0`)에서는 기존 "EMBROIDERY" 유지 → WiFi 불량 시 안전.
 
 ---
 
@@ -293,6 +303,85 @@ if(isFinishCounter_1ms(g_index_shift_check))
 - [ ] 통합 테스트: 교대 전환 시 5분 이내 자동 ResetCount 시나리오
 - [ ] 재봉기(IoT_INTEGRATED) 동일 패턴 적용
 - [ ] 현장 배포
+
+### Phase 3 — 시계 기준 폴링 + LCD Shift 정보 표시 (자수기)
+- [x] `andonApi.c` 부팅 기준 5분 → 시계 기준 :00/:05/... 폴링 변경 (2026-04-24)
+- [x] `andonJson.c` `g_currentShiftIdx`, `g_currentWorkDate` 전역 변수 추가 (2026-04-24)
+- [x] `andonJson.h` extern 선언 추가 (2026-04-24)
+- [x] `userMenuPatternSewingMachine.c` LCD 첫 화면 Shift 정보 표시 (2026-04-24)
+- [ ] 통합 테스트: LCD 타이틀 교대 정보 표시 확인
+- [ ] 통합 테스트: 교대 전환 시 LCD 타이틀 자동 업데이트 확인
+
+---
+
+## 상세 변경 내용 (Phase 3)
+
+### 6. `andonApi.c` — 시계 기준 폴링 (Phase 3)
+
+**Before (Phase 2):** 부팅 기준 5분 카운트다운 (1ms 슬롯 사용)
+```c
+static uint8 g_index_shift_check = 0;
+// initAndon():
+g_index_shift_check = registerCounter_1ms(5UL * 60UL * 1000UL);
+// andonLoop():
+if(isFinishCounter_1ms(g_index_shift_check))
+    makeAndonCurrentTimeRequest();
+```
+
+**After (Phase 3):** 1초마다 RTC 분 체크 → :00/:05/... 정각에만 폴링 (1s 슬롯 사용)
+```c
+static uint8 g_index_shift_check_1s = 0;
+// initAndon():
+g_index_shift_check_1s = registerCounter_1s(1);
+// andonLoop():
+if(isFinishCounter_1s(g_index_shift_check_1s))
+{
+    uint32 rtcTime = RTC_GetTime();
+    if(RTC_GetSecond(rtcTime) == 0u && (RTC_GetMinutes(rtcTime) % 5u) == 0u)
+        makeAndonCurrentTimeRequest();
+}
+```
+
+| 항목 | Before | After |
+|---|---|---|
+| 폴링 기준 | 부팅 시각 기준 +5분 | 시계 기준 :00/:05/:10/... |
+| 교대 전환 감지 지연 | 최대 5분 | 수 초 이내 (교대 시작 정각) |
+| 슬롯 | 1ms 슬롯 1개 | 1s 슬롯 1개 (1ms 슬롯 절약) |
+
+### 7·8. `andonJson.c` / `andonJson.h` — LCD 타이틀용 전역 변수 (Phase 3)
+
+```c
+// andonJson.c 전역 변수 추가
+uint8  g_currentShiftIdx = 0u;  /* 0 = 서버 미수신, 1·2·3 = 교대 번호 */
+uint32 g_currentWorkDate = 0u;  /* YYYYMMDD (논리적 작업일) */
+
+// andonCurrentTimeParsing() 내 갱신 — shift key 경로에서
+g_currentShiftIdx = newShiftIdx;
+g_currentWorkDate = newWorkDate;
+```
+
+### 9. `userMenuPatternSewingMachine.c` — LCD 첫 화면 타이틀 (Phase 3)
+
+**Before:**
+```c
+SetDrawMonitoringMenu(menu, "EMBROIDERY");
+```
+
+**After:**
+```c
+if (g_currentShiftIdx != 0u && g_currentWorkDate != 0u)
+{
+    uint32 mo = (g_currentWorkDate / 100u) % 100u;
+    uint32 dy = g_currentWorkDate % 100u;
+    SetDrawMonitoringMenu(menu, "%02lu-%02lu Shift %u", mo, dy, (uint32)g_currentShiftIdx);
+}
+else
+{
+    SetDrawMonitoringMenu(menu, "EMBROIDERY");
+}
+```
+
+표시 예시: `04-24 Shift 1` (논리적 작업일 기준, WiFi 미연결 시 `EMBROIDERY` 유지)
 
 ---
 
@@ -318,3 +407,13 @@ if(isFinishCounter_1ms(g_index_shift_check))
 | 같은 교대 내 5분마다 폴링 | 리셋 **안 됨**, 플래시 쓰기 **없음** | ⬜ |
 | 교대 전환 후 1회 폴링 | 플래시 쓰기 **1회** 발생 | ⬜ |
 | 근무 외 시간 폴링 (shift 없음) | fallback, 같은 날이면 리셋 안 됨 | ⬜ |
+
+### Phase 3 — 시계 기준 폴링 + LCD Shift 표시 (자수기)
+
+| 시나리오 | 기대 결과 | 확인 |
+|---|---|---|
+| 부팅 후 서버 응답 전 | LCD 타이틀 `EMBROIDERY` 표시 | ⬜ |
+| 서버 응답 후 (1교대) | LCD 타이틀 `MM-DD Shift 1` 표시 | ⬜ |
+| 교대 전환 정각(:00) | LCD 타이틀 자동 업데이트 (수 초 이내) | ⬜ |
+| WiFi 불량 상태 | LCD 타이틀 `EMBROIDERY` 유지 | ⬜ |
+| 근무 외 시간 (fallback) | LCD 타이틀 `EMBROIDERY` 유지 | ⬜ |

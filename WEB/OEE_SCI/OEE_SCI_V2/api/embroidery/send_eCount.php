@@ -180,7 +180,7 @@ function upsertEmbOeeRecord(
  * 자수기 전용 EMB 테이블 UPSERT (OEE 계산 없음)
  *
  * data_oee_emb / data_oee_rows_hourly_emb 에서 공용으로 사용.
- * - cycle_time  : 마지막 수신 CT 값으로 덮어씀 (누적 아님)
+ * - cycle_time  : 누적(+) — thread_breakage, motor_run_time 과 동일하게 누산
  * - thread_breakage / motor_run_time : 누적(+)
  * - actual_output : 누적(+packet_qty)
  * - runtime : 기존 대비 delta 만큼 누적
@@ -201,7 +201,7 @@ function upsertEmbPureRecord(
               planned_work_time = :planned_work_time,
               runtime           = runtime + :runtime_delta,
               actual_output     = actual_output + :packet_qty,
-              cycle_time        = :cycle_time,
+              cycle_time        = cycle_time + :cycle_time,
               thread_breakage   = thread_breakage + :thread_break,
               motor_run_time    = motor_run_time + :motor_run,
               work_hour         = :work_hour,

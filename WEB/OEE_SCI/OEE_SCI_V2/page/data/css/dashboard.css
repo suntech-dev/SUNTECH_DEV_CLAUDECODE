@@ -23,10 +23,20 @@
   flex-wrap: wrap;
 }
 
-#factoryFilterSelect,
+/* #factoryFilterSelect,
 #factoryLineFilterSelect,
 #factoryLineMachineFilterSelect {
   width: 200px;
+} */
+
+#factoryFilterSelect {
+  width: 170px;
+}
+#factoryLineFilterSelect {
+  width: 110px;
+}
+#factoryLineMachineFilterSelect {
+  width: 150px;
 }
 
 #timeRangeSelect,
@@ -173,7 +183,6 @@
 }
 
 @keyframes pulse {
-
   0%,
   100% {
     opacity: 1;
@@ -185,7 +194,6 @@
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0) rotate(0deg);
@@ -220,10 +228,6 @@
   opacity: 0.95;
   margin: 0 0 var(--sap-spacing-sm) 0;
 }
-
-
-
-
 
 .alarm-feed {
   display: flex;
